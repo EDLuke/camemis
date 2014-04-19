@@ -1,0 +1,426 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("COMMUNICATION");
+$OBJECT_FORM->setLoadUrl('/communication/jsonload/');
+$OBJECT_FORM->setSaveUrl('/communication/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("STAFF", "LIST_OF_STAFFS");
+$OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+$OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+
+//@veasna
+$OBJECT_GRID_TRAINING = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID_TRAINING->setLoadUrl("/training/jsonload/");  
+$OBJECT_GRID_TRAINING->setSaveUrl("/training/jsonsave/");
+//
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        //@veasna
+        $OBJECT_GRID_TRAINING->addReadField("name: 'CODE'");
+        $OBJECT_GRID_TRAINING->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID_TRAINING->addReadField("name: 'FIRSTNAME'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_GRID_TRAINING->addColumn("header: '".LASTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'LASTNAME'");
+            $OBJECT_GRID_TRAINING->addColumn("header: '".FIRSTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'FIRSTNAME'");
+	}else{
+            $OBJECT_GRID_TRAINING->addColumn("header: '".FIRSTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'FIRSTNAME'");
+            $OBJECT_GRID_TRAINING->addColumn("header: '".LASTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'LASTNAME'");
+	}
+        $OBJECT_GRID_TRAINING->addColumn("header: '".CODE_ID."', align:'left', width: 100, sortable: true, dataIndex: 'CODE'");
+        
+
+        $OBJECT_GRID_TRAINING->addTBarItems("
+            tbar.add([{
+                id: 'ENROLLMENT_ID'
+                ,text: '".APPLY."'
+                ,iconCls:'icon-disk'
+                ,scope:this
+                ,handler: function(){
+                    var selids = '';
+                    var seltexts = '';
+                    var sels = Ext.getCmp('" . $OBJECT_GRID_TRAINING->getObjectId() . "').getSelectionModel().getSelections();
+                    for( var i = 0; i < sels.length; i++ ) {
+                        if (i >0) selids += ',';
+                        selids += sels[i].get('ID');
+                        if (i >0) seltexts += '\\n';
+                        seltexts += i+1 + ') ' + sels[i].get('LASTNAME') +' '+ sels[i].get('FIRSTNAME');
+                    }
+                    Ext.getCmp('STR_RECIPIENT_NAME_ID').setValue(seltexts);
+                    Ext.getCmp('STR_RECIPIENT').setValue(selids);
+                }
+            }]);
+        ");
+        
+       
+        $OBJECT_GRID_TRAINING->baseParams = "
+             start:0
+            ,limit:100
+            ,studentId: '".Zend_Registry::get('USER')->ID."'
+            ,cmd: 'jsonTeacherByStudentTraining'
+        ";
+                       
+        
+        $OBJECT_GRID_TRAINING->isCheckboxSelect = true;
+        $OBJECT_GRID_TRAINING->forceFit = "false";
+        $OBJECT_GRID_TRAINING->renderJS();
+        //
+        
+        
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'USER_ROLE'");
+        $OBJECT_GRID->addColumn("header: '".CODE_ID."', align:'left', width: 100, sortable: true, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_GRID->addColumn("header: '".LASTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'LASTNAME'");
+            $OBJECT_GRID->addColumn("header: '".FIRSTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'FIRSTNAME'");
+	}else{
+            $OBJECT_GRID->addColumn("header: '".FIRSTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'FIRSTNAME'");
+            $OBJECT_GRID->addColumn("header: '".LASTNAME."', align:'left', width: 120, sortable: false, dataIndex: 'LASTNAME'");
+	}
+        $OBJECT_GRID->addColumn("header: '".USER_ROLE."', align:'left', width: 200, sortable: true, dataIndex: 'USER_ROLE'");
+
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ENROLLMENT_ID'
+                ,text: '".APPLY."'
+                ,iconCls:'icon-disk'
+                ,scope:this
+                ,handler: function(){
+                    var selids = '';
+                    var seltexts = '';
+                    var sels = Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').getSelectionModel().getSelections();
+                    for( var i = 0; i < sels.length; i++ ) {
+                        if (i >0) selids += ',';
+                        selids += sels[i].get('ID');
+                        if (i >0) seltexts += '\\n';
+                        seltexts += i+1 + ') ' + sels[i].get('LASTNAME') +' '+ sels[i].get('FIRSTNAME');
+                    }
+                    Ext.getCmp('STR_RECIPIENT_NAME_ID').setValue(seltexts);
+                    Ext.getCmp('STR_RECIPIENT').setValue(selids);
+                }
+            }]);
+        ");
+        
+        //@veasna
+         if(UserAuth::getUserType()){ 
+               switch(UserAuth::getUserType()){
+                    case 'STUDENT':   
+                            $OBJECT_GRID->baseParams = "
+                               start:0
+                                ,limit:100
+                                ,cmd: 'searchStaff'
+                                ,studentId: '".Zend_Registry::get('USER')->ID."'
+                                ,isTutor: 1
+                                ,status: 1
+                            ";
+                        break;
+                    default:
+                             $OBJECT_GRID->baseParams = "
+                               start:0
+                                ,limit:100
+                                ,cmd: 'searchStaff'
+                                ,isTutor: 1
+                                ,status: 1
+                            ";
+                        break;
+                                   
+               }
+         }
+         //
+  
+       
+
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isCheckboxSelect = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        $SUBJECT_EMAIL = "
+        {
+            title: '".SUBJECT_EMAIL."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [{".CamemisField::Textarea("SUBJECT", false,50, false, true)."}]
+            },{
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [
+                    {".CamemisField::Hidden("STR_RECIPIENT",false)."}
+                    ,{".CamemisField::Hidden("STR_RECIPIENT_NAME_ID",false)."}
+                ]
+            }]
+        }
+        ";
+        /*
+        $RECIPIENT = "
+        {
+            title: '".RECIPIENT."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [{".CamemisField::Textarea("STR_RECIPIENT_NAME", false,150, true, true)."}]
+            }]
+            ,tbar:[{
+                text: '".REMOVE."'
+                ,iconCls:'icon-user_delete'
+                ,handler: function(){
+                    Ext.getCmp('STR_RECIPIENT_NAME_ID').setValue();
+                    Ext.getCmp('STR_RECIPIENT').setValue();
+                }
+            },{
+                text: '".RECIPIENT."'
+                ,iconCls:'icon-user_add'
+                ,handler: function(){
+                    openWinXType('WinXType','".RECIPIENT."', '".$OBJECT_GRID->getObjectXType()."', percentWidth(70), percentHeight(80));
+                }
+            }]
+        }
+        "; 
+         */
+        //$veasna
+         if(UserAuth::getUserType()){ 
+               switch(UserAuth::getUserType()){
+                    case 'STUDENT':
+                        $RECIPIENT = "
+                        {
+                            title: '".RECIPIENT."'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,style: 'padding-bottom: 5px'
+                            ,width: 550
+                            ,items:[{
+                                layout: 'fit'
+                                ,border: false
+                                ,bodyStyle: 'padding:5px'
+                                ,items: [{".CamemisField::Textarea("STR_RECIPIENT_NAME", false,150, true, true)."}]
+                            }]
+                            ,tbar:[{
+                                text: '".REMOVE."'
+                                ,iconCls:'icon-user_delete'
+                                ,handler: function(){
+                                    Ext.getCmp('STR_RECIPIENT_NAME_ID').setValue();
+                                    Ext.getCmp('STR_RECIPIENT').setValue();
+                                }
+                            },{
+                                text: '".RECIPIENT."'
+                                ,iconCls:'icon-user_add'
+                                ,menu:[{
+                                         text: '".GENERAL_EDUCATION."'
+                                        ,iconCls:'icon-application_form_add'
+                                        ,scope:this
+                                        ,handler: function(){
+                                            openWinXType('WinXType','".RECIPIENT."', '".$OBJECT_GRID->getObjectXType()."', percentWidth(70), percentHeight(80));
+                                        }
+                                     },{
+                                        text: '".TRAINING_PROGRAMS."'
+                                        ,iconCls:'icon-application_form_add'
+                                        ,scope:this
+                                        ,handler: function(){
+                                            openWinXType('WinXType','".RECIPIENT."', '".$OBJECT_GRID_TRAINING->getObjectXType()."', percentWidth(70), percentHeight(80));
+                                        }
+                                     }]
+                            }]
+                        }
+                        ";
+                        break;
+                    default:
+                       $RECIPIENT = "
+                            {
+                                title: '".RECIPIENT."'
+                                ,collapsible: true
+                                ,collapsed: false
+                                ,style: 'padding-bottom: 5px'
+                                ,width: 550
+                                ,items:[{
+                                    layout: 'fit'
+                                    ,border: false
+                                    ,bodyStyle: 'padding:5px'
+                                    ,items: [{".CamemisField::Textarea("STR_RECIPIENT_NAME", false,150, true, true)."}]
+                                }]
+                                ,tbar:[{
+                                    text: '".REMOVE."'
+                                    ,iconCls:'icon-user_delete'
+                                    ,handler: function(){
+                                        Ext.getCmp('STR_RECIPIENT_NAME_ID').setValue();
+                                        Ext.getCmp('STR_RECIPIENT').setValue();
+                                    }
+                                },{
+                                    text: '".RECIPIENT."'
+                                    ,iconCls:'icon-user_add'
+                                    ,handler: function(){
+                                        openWinXType('WinXType','".RECIPIENT."', '".$OBJECT_GRID->getObjectXType()."', percentWidth(70), percentHeight(80));
+                                    }
+                                }]
+                            }
+                            "; 
+                       break; 
+                        
+               }
+         }
+        //
+
+        $CONTENT = "
+        {
+            title: '".SUBJECT_EMAIL."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items:[{".CamemisField::HTML("CONTENT",false,false)."}]
+            }]
+        }
+        ";
+        
+        $ITEMS = "[";
+        if($this->objectId!="new"){
+            $ITEMS .= $SUBJECT_EMAIL;
+            $ITEMS .= ",".$RECIPIENT;
+            $ITEMS .= ",".$CONTENT;
+        }else{
+            $ITEMS .= $SUBJECT_EMAIL;
+        }
+        $ITEMS .= "]";
+        
+        $FORM_ITEMS = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,width: 550
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$ITEMS."
+        ";
+        
+        $OBJECT_FORM->addObjectItems($FORM_ITEMS);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                
+               
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            }
+        ");
+
+        if ($this->objectId !="new") {
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetSend());
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        }else {
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        }
+        
+        $OBJECT_FORM->setLoadParams("
+            cmd: 'jsonLoadCommunication'
+            ,objectId: '".$this->objectId."'
+            ,academicId: '".$this->academicId."'
+        ");
+
+        $OBJECT_FORM->setSendParams("
+            cmd: 'jsonSendCommunication'
+            ,objectId: '".$this->objectId."'
+            ,academicId: '".$this->academicId."'
+            ,communication_type: 'STUDENT_TO_TEACHER'
+            ,recipient_type: 'STAFF'
+            ,sender_type: 'STUDENT'
+            ,action: 'SEND'
+        ");
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveCommunication'
+            ,objectId: '".$this->objectId."'
+            ,academicId: '".$this->academicId."'
+            ,communication_type: 'STUDENT_TO_TEACHER'
+            ,recipient_type: 'STAFF'
+            ,sender_type: 'STUDENT'
+            ,action: 'DRAFTS'
+        ");
+
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'jsonRemoveCommunication'
+            ,objectId: '".$this->objectId."'
+        ");
+
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('COMMUNICATION_DRAFTS_ID').store.reload();
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedSendEvents("
+            window.parent.Ext.getCmp('COMMUNICATION_DRAFTS_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('COMMUNICATION_DRAFTS_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->isObjectSend = true;
+        $OBJECT_FORM->labelAlign = "top";
+        $OBJECT_FORM->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,title: ''
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

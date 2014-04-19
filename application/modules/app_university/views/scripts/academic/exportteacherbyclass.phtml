@@ -1,0 +1,153 @@
+<?php
+
+require_once 'excel/phpexcel/Classes/PHPExcel.php';
+require_once 'excel/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once 'clients/CamemisExcelReport.php';
+require_once 'models/app_university/staff/StaffDBAccess.php';
+
+$params["gradeId"] = isset($_GET["gradeId"]) ? $_GET["gradeId"] : "";
+$params["gradingterm"] = "ALL";
+
+$DB_STAFF = StaffDBAccess::getInstance();
+$DB_STUDENT = StudentSearchDBAccess::getInstance();
+$DB_GRADE = AcademicDBAccess::getInstance();
+$DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
+
+$result = $DB_STAFF->jsonAssignedTeachersByClass($params, false);
+
+$teachers = array();
+if ($result) {
+    $i = 1;
+    $j = 1;
+    foreach ($result as $key => $value) {
+        if (!in_array($value['ID'], $teachers)) {
+            array_push($teachers, $value['ID']);
+            $entries[$i]['TEACHER_NAME'] = $value['TEACHER_NAME'];
+            $entries[$i]['NAME'] = '';
+            $entries[$i]['CLASS'] = '';
+            $entries[$i]['TERM'] = '';
+            $entries[$i]['PHONE'] = '';
+            $entries[$i]['EMAIL'] = '';
+            $i++;
+            foreach ($result as $key2 => $value2) {
+                if ($value2['ID'] == $value["ID"]) {
+                    $entries[$i]['STT'] = '';
+                    $entries[$i]['STT'] = $j;
+                    $entries[$i]['TEACHER_NAME'] = '';
+                    $entries[$i]['NAME'] = $value2['SUBJECT_NAME'];
+                    $entries[$i]['CLASS'] = $value2['CLASS'];
+                    $entries[$i]['TERM'] = $value2['TERM'];
+                    $entries[$i]['PHONE'] = $value2['PHONE'];
+                    $entries[$i]['EMAIL'] = $value2['EMAIL'];
+                    $i++;
+                    $j++;
+                }
+            }
+        } else
+            continue;
+    }
+}
+
+$columns[] = "STT";
+$columns[] = "TEACHER_NAME";
+$columns[] = "NAME";
+$columns[] = "CLASS";
+$columns[] = "TERM";
+$columns[] = "PHONE";
+$columns[] = "EMAIL";
+
+$ShowColumns[] = "N°";
+$ShowColumns[] = TEACHER;
+$ShowColumns[] = SUBJECT;
+$ShowColumns[] = CURRENT_CLASS;
+$ShowColumns[] = TERM;
+$ShowColumns[] = PHONE;
+$ShowColumns[] = EMAIL;
+
+$CamemisExcelReport = CamemisExcelReport::GetInstance();
+$CamemisExcelReport->iHeaderRowStart = 4;
+$CamemisExcelReport->iRowStart = 5;
+$objPHPExcel = $CamemisExcelReport->createExcelObject($columns, $ShowColumns, $entries, null, false, true);
+//var_dump($entries);
+
+if ($params["academicId"])
+    $classObject = $DB_GRADE->findObjectClassFromId($params["academicId"]);
+
+if (isset($classObject->SCHOOL_YEAR) && $classObject->SCHOOL_YEAR)
+    $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($classObject->SCHOOL_YEAR);
+
+if (isset($classObject->CAMPUS_ID) && $classObject->CAMPUS_ID)
+    $CAMPUS_OBJECT = $DB_GRADE->findObjectClassFromId($classObject->CAMPUS_ID);
+
+if (isset($classObject->GRADE_ID) && $classObject->GRADE_ID)
+    $gradeObject = $DB_GRADE->findObjectClassFromId($classObject->GRADE_ID);
+
+$TITLE = ASSIGNED_TEACHERS;
+
+$SCHOOL_INFO = setShowText(Zend_Registry::get('SCHOOL')->NAME);
+$SCHOOL_INFO .= "\n" . ADDRESS . " : " . setShowText(Zend_Registry::get('SCHOOL')->ADDRESS);
+$SCHOOL_INFO .= "\n" . PHONE . " : " . setShowText(Zend_Registry::get('SCHOOL')->PHONE);
+$SCHOOL_INFO .= "\n" . EMAIL . " : " . setShowText(Zend_Registry::get('SCHOOL')->EMAIL);
+
+if ($params["gradeId"]) {
+
+    $CLASS_INFO = "";
+    switch ($classObject->OBJECT_TYPE) {
+        case "CLASS":
+            $CLASS_INFO .= CAMPUS . " : " . setShowText($CAMPUS_OBJECT->NAME);
+            $CLASS_INFO .= "\n" . GRADE . " : " . setShowText($gradeObject->NAME);
+            $CLASS_INFO .= "\n" . SCHOOL_YEAR . " : " . setShowText($schoolyearObject->NAME);
+            $CLASS_INFO .= "\n" . GRADE_CLASS . " : " . setShowText($classObject->NAME);
+            break;
+        case "SCHOOLYEAR":
+            $CLASS_INFO .= CAMPUS . " : " . setShowText($CAMPUS_OBJECT->NAME);
+            $CLASS_INFO .= "\n" . GRADE . " : " . setShowText($gradeObject->NAME);
+            $CLASS_INFO .= "\n" . SCHOOL_YEAR . " : " . setShowText($classObject->NAME);
+            break;
+        default :
+            break;
+
+            $INSTRUCTOR_INFO = "";
+            $INSTRUCTOR_INFO .= INSTRUCTOR . " : " . setShowText($classObject->INSTRUCTOR_NAME);
+            $INSTRUCTOR_INFO .= "\n" . ADDRESS . " : " . setShowText($classObject->INSTRUCTOR_ADDRESS);
+            $INSTRUCTOR_INFO .= "\n" . PHONE . " : " . setShowText($classObject->PHONE);
+            $INSTRUCTOR_INFO .= "\n" . EMAIL . " : " . setShowText($classObject->EMAIL);
+    }
+}
+
+$DATE_INFO = DATE . " : " . getShowDate(getCurrentDBDate());
+
+$CamemisExcelReport->createTitle($TITLE, "G", 2, "A");
+
+$objPHPExcel->getActiveSheet()->setCellValue("A1", $SCHOOL_INFO);
+$objPHPExcel->getActiveSheet()->mergeCells("A1:D1");
+$objPHPExcel->getActiveSheet()->setCellValue("A3", $CLASS_INFO);
+$objPHPExcel->getActiveSheet()->setCellValue("E3", $INSTRUCTOR_INFO);
+$objPHPExcel->getActiveSheet()->mergeCells("E3:F3");
+$objPHPExcel->getActiveSheet()->mergeCells("A3:D3");
+
+$objPHPExcel->getActiveSheet()->setCellValue("G3", $DATE_INFO);
+
+$objPHPExcel->getActiveSheet()->getRowDimension(1)->setRowHeight(70);
+$objPHPExcel->getActiveSheet()->getRowDimension(2)->setRowHeight(70);
+$objPHPExcel->getActiveSheet()->getRowDimension(3)->setRowHeight(70);
+
+$style = array(
+    'alignment' => array(
+        'vertical' => PHPExcel_Style_Alignment::VERTICAL_TOP
+    )
+);
+$objPHPExcel->getActiveSheet()->getStyle("A3:G3")->applyFromArray($style);
+$filename = "List of teachers";
+$CamemisExcelReport->createSignatureField();
+header("Content-Type: application/x-msexcel; name=\"" . $filename . ".xls\"");
+header("Content-Disposition: attachment; filename=\"" . $filename . ".xls\"");
+// IE <= 6 cache fix
+header('Expires: 0');
+header('Pragma: cache');
+header('Cache-Control: private');
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+$objWriter->save('php://output');
+?>
+

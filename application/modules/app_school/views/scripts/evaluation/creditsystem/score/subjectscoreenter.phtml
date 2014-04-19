@@ -1,0 +1,424 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once 'models/app_school/assignment/AssignmentDBAccess.php';
+require_once 'models/app_school/academic/AcademicDBAccess.php';
+require_once setUserLoacalization();
+require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("EVALUATION", "LIST");
+$OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
+$OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
+$columndata = Utiles::getGridColumnData("EVALUATION_LIST_ID");
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+
+$campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
+$subjectObject = SubjectDBAccess::findSubjectClass($this->subjectId, $academicObject->ID);
+////////////////////////////////////////////////////////////////////////////////
+$TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $academicObject->ID);
+$CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
+$SEMESTER_NAME = $TERM_NAME;
+
+$SET_TITLE = isset($_GET["title"])?$_GET["title"]." &raquo; ".displaySchoolTerm($SEMESTER_NAME)."":"";
+
+$setParams = "";
+$setParams .= "subjectId=".$this->subjectId."";
+$setParams .= "&classId=".$this->classId."";
+$setParams .= "&assignmentId=".$this->assignmentId."";
+$setParams .= "&date=".$this->date."";
+
+/* @soda */
+$params["assignmentId"] = $this->assignmentId;
+$params["date"] = $this->date;
+$params["classId"] = $this->classId;
+$params["subjectId"] = $this->subjectId;
+
+$checkScore = new StudentAssignmentDBAccess();
+$score = $checkScore->jsonListStudentsScoreEnter($params, false);
+$option = "false";
+$sum = 0;
+if($score){
+    foreach($score as $value){
+        $sum+= $value['SCORE'];
+    }
+    if($sum == 0){
+        $option = "false";
+    }else{
+        $option = "true";
+    }
+}
+
+if($CHECK_STATUS){
+    $SQL = UserAuth::dbAccess()->select();
+    $SQL->from("t_schedule", array("C" => "COUNT(*)"));
+    $SQL->where("ACADEMIC_ID = '" . $this->classId . "'");
+    $SQL->where("SUBJECT_ID = '" . $this->subjectId . "'");
+    $SQL->where("TERM = '" . $TERM_NAME . "'");
+    //error_log($SQL);
+    $result = UserAuth::dbAccess()->fetchRow($SQL);
+    $CHECK_STATUS = $result ? $result->C : 0;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+var chooseId;
+var chooseStudent;
+var setnewValue;
+var comment;
+
+Ext.onReady(function() {
+
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+
+    function cssText(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="color:#333;background:#FFF;padding:4px;font-weight:normal;">' + value + '</div>';
+    }
+
+    function cssScore(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<span style="font-weight:normal; color:#000; padding: 5px; height: 15px;">' + value + '</span>';
+    }
+
+    <?
+    $js = "";
+        $js .="function actionTeacherComments(btn,text){";
+            $js .="if(btn=='ok'){";
+                $js .="Ext.Ajax.request({";
+                    $js .="url: '/evaluation/jsonsave/'";
+                    $js .=",method: 'POST'";
+                    $js .=",params:{";
+                        $js .="cmd: 'jsonActionTeacherAssignmentComment'";
+                        $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+                        $js .=",studentId:chooseId";
+                        $js .=",name:text";
+                    $js .="}";
+                    $js .=",success: function(response, options) {";
+                        $js .="Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();";
+                    $js .="}";
+                $js .="});";
+            $js .="}";
+        $js .="}";
+    $js .="";
+
+    $js .="function deleteAll(btn){";
+        $js .="Ext.Ajax.request({";
+            $js .="url: '/evaluation/jsonsave/'";
+            $js .=",method: 'POST'";
+            $js .=",params:{";
+                $js .="cmd: 'jsonActionDeleteAllScoresAssignment'";
+                $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+            $js .="}";
+            $js .=",success: function() {";
+                $js .="Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();";
+                $js .="window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID').root.reload();";
+                $js .="window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);";
+            $js .="}";
+        $js .="});";
+    $js .="}";
+
+    $js .="function deleteSingle(btn){";
+        $js .="if(btn=='yes'){";
+            $js .="Ext.Ajax.request({";
+                $js .="url: '/evaluation/jsonsave/'";
+                $js .=",method: 'POST'";
+                $js .=",params:{";
+                    $js .="cmd: 'jsonActionDeleteSingleScore'";
+                    $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+                    $js .=",studentId:chooseId";
+                $js .="}";
+                $js .=",success: function(response, options) {";
+                    $js .="Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();";
+                $js .="}";
+            $js .="});";
+        $js .="}";
+    $js .="}";
+
+    echo $js;
+
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    ////////////////////////////////////////////////////////////////////////////
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'GENDER'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'SCORE'");
+    $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
+
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, hidden:".checkColHidden(3, $columndata).", renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndata).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+
+    switch($subjectObject->SCORE_TYPE){
+        case 1:
+            $OBJECT_GRID->addColumn("
+                header: '<b>".SCORE."</b>'
+                , width: 100
+                , hidden:".checkColHidden(5, $columndata).",
+                , sortable: true
+                , align:'right'
+                , renderer:cssScore
+                , dataIndex: 'SCORE'
+                , editor: new Ext.form.NumberField({
+                    allowBlank: false
+                    ,minValue: 0
+                    ,maxValue: $subjectObject->SCORE_MAX
+                    ,name: 'SCORE'
+                })
+            ");
+            break;
+        case 2:
+            $STORE_DATA = array();
+            $scoresEntries = explode(',',$subjectObject->MAX_POSSIBLE_SCORE);
+            $STORE_DATA[0] = "{chooseValue: '0', chooseDisplay: '---'}";
+            if($scoresEntries){
+                $i=0;
+                foreach($scoresEntries as $value){
+                    $j = $i+1;
+                    $gradingObject = AssessmentConfig::getSQLGradingScale($value, 2, $campusObject->QUALIFICATION_TYPE, false);
+                    if($gradingObject && $value){
+                        $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".$value."'}";
+                    }
+                    $i++;
+                }
+
+            }
+            $OBJECT_GRID->addColumn("
+                header: '<b>".SCORE."</b>'
+                , width: 100
+                , sortable: true
+                , align:'center'
+                , renderer:cssScore
+                , dataIndex: 'SCORE'
+                , editor: new Ext.form.ComboBox({
+                    triggerAction:'all'
+                    ,mode:'local'
+                    ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:[".implode($STORE_DATA)."]
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                            replaceValue = combo.getValue();
+                            var newDisplay = record.get('chooseDisplay');
+                            combo.setValue(newDisplay);
+                            setnewValue = newDisplay;
+                        }
+                    }
+                })
+            ");
+            break;
+    }
+
+    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, hidden:".checkColHidden(6, $columndata).", renderer:cssText, sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonListStudentsScoreEnter'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    ";
+
+    $OBJECT_GRID->addTBarItems("tbar.add('-');");
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            }
+        }]);
+    ");
+    $OBJECT_GRID->addTBarItems("tbar.add('-');");
+    $OBJECT_GRID->addTBarItems("tbar.add('<b>".getShowDate($this->date)." (".displaySchoolTerm($SEMESTER_NAME).")</b>');");
+    $OBJECT_GRID->addTBarItems("tbar.add('-');");
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '" . REMOVE_ALL . "'
+            ,disabled: false
+            ,iconCls:'icon-delete'
+            ,handler: function(){
+                Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . DELETE_THIS_ITEM . "', deleteAll);
+            }
+        }]);
+    ");
+
+    //Import...
+    ////////////////////////////////////////////////////////////////////////////
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '" . IMPORT . "'
+            ,disabled: false
+            ,iconCls:'icon-list-items'
+            ,menu:[{
+                text: '" . EXCEL_TEMPLATE . "'
+                ,disabled: true
+                ,iconCls:'icon-page_excel'
+            },{
+                text: '" . IMPORT . "'
+                ,disabled: true
+                ,iconCls:'icon-database_copy'
+            }]
+        }]);
+    ");
+    ////////////////////////////////////////////////////////////////////////////
+
+    $setParams .="&term=".$TERM_NAME."";
+
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonSaveStudentScoreSubjectAssignment'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,setnewValue:setnewValue
+    ");
+
+    $OBJECT_GRID->setAftereditCallback("
+        myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID');
+        myNode = myTree.getNodeById('".$this->assignmentId."');
+        myNode.reload();
+        myNode.expand(true, false); 
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    
+    $OBJECT_GRID->addTBarItems("tbar.add('->');");
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+
+    if($CHECK_STATUS){
+        $VIEWPORT = "[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
+    }else{
+        $VIEWPORT = "
+        [{
+            layout: 'fit'
+            ,border: false
+            ,tbar:[{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                }
+            }]
+            ,contentEl: 'initCenter'
+        }]";
+    }
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items:<?=$VIEWPORT?>
+        }]
+    });
+
+    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+    if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        chooseId = grid.store.getAt(rowIndex).data.ID;
+        chooseStudent = grid.store.getAt(rowIndex).data.STUDENT;
+        score = grid.store.getAt(rowIndex).data.SCORE;
+
+        if(score){
+            var status = false;
+        }else{
+            var status = true;
+        }
+        if(columnIndex==1){
+            <?
+            $CONTEXTMENU_ITEMS = Array();
+            $TEACHER_COMMENT ="{";
+            $TEACHER_COMMENT .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
+            $TEACHER_COMMENT .=",iconCls: 'icon-comment_edit'";
+            $TEACHER_COMMENT .=",disabled:status";
+            $TEACHER_COMMENT .=",handler: function(){";
+                $TEACHER_COMMENT .= "Ext.MessageBox.show({";
+                    $TEACHER_COMMENT .= "title:chooseStudent,";
+                    $TEACHER_COMMENT .= "msg: '".TEACHER_COMMENTS.":',";
+                    $TEACHER_COMMENT .= "width:350,value:grid.store.getAt(rowIndex).data.TEACHER_COMMENTS,";
+                    $TEACHER_COMMENT .= "buttons: Ext.MessageBox.OKCANCEL,";
+                    $TEACHER_COMMENT .= "multiline: true,";
+                    $TEACHER_COMMENT .= "fn: actionTeacherComments,";
+                $TEACHER_COMMENT .= "});";
+            $TEACHER_COMMENT .="}";
+            $TEACHER_COMMENT .="}";
+            $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENT;
+
+            $DELETE_SCORE ="{";
+            $DELETE_SCORE .="text: '".SCORE." &raquo; ' + record.data.STUDENT";
+            $DELETE_SCORE .=",iconCls: 'icon-delete'";
+            $DELETE_SCORE .=",disabled:status";
+            $DELETE_SCORE .=",handler: function(){";
+            $DELETE_SCORE .="Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . DELETE_THIS_ITEM . "', deleteSingle);";
+            $DELETE_SCORE .="}";
+            $DELETE_SCORE .="}";
+            $CONTEXTMENU_ITEMS[] = $DELETE_SCORE;
+
+            $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
+            $html ="";
+            $html ."if (columnIndex ==1){";
+                $html .="var contextMenu = new Ext.menu.Menu({";
+                    $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                $html .="});";
+                $html .="event.stopEvent();";
+                $html .="contextMenu.showAt(event.xy);";
+            $html ."}";
+            echo $html;
+        ?>
+        }
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    if (parent.Ext.getCmp('CLICK_OPEN_PAGE')) parent.Ext.getCmp('CLICK_OPEN_PAGE').setTitle('<?=$SET_TITLE?>');
+});
+</script>
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError"><?=CHECK_TEACHING_SESSION;?>...!</h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

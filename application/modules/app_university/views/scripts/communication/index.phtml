@@ -1,0 +1,123 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'clients/CamemisGrid.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() { 
+        
+         var task = function(){
+            Ext.Ajax.request({
+                url: '/dataset/remote/'
+                ,method: 'POST'
+                ,params: {
+                    cmd: 'jsonLoadNewMessage'
+                    ,type: 'INBOX'
+                    ,recipientType: 'STAFF'
+                }
+                ,success: function(response) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    Ext.getCmp('INBOX').setTitle('<?=INBOX?> ' + '(' +jsonData.count + ')');
+                }
+                ,failure: function() {}
+            });
+        }
+        var runTask = {
+            run: task
+            ,interval:2000
+        };
+        Ext.TaskMgr.start(runTask);
+        
+        var taskSend = function(){
+            Ext.Ajax.request({
+                url: '/dataset/remote/'
+                ,method: 'POST'
+                ,params: {
+                    cmd: 'jsonLoadNewMessage'
+                    ,type: 'SEND'
+                    ,recipientType: 'SEND'
+                }
+                ,success: function(response) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    Ext.getCmp('SEND').setTitle('<?=SEND?> ' + '(' +jsonData.count + ')');
+                }
+                ,failure: function() {}
+            });
+        }
+        var runTaskSend = {
+            run: taskSend
+            ,interval:2000
+        };
+        Ext.TaskMgr.start(runTaskSend);
+        
+        var taskDrafts = function(){
+            Ext.Ajax.request({
+                url: '/dataset/remote/'
+                ,method: 'POST'
+                ,params: {
+                    cmd: 'jsonLoadNewMessage'
+                    ,type: 'DRAFTS'
+                    
+                }
+                ,success: function(response) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    Ext.getCmp('DRAFTS').setTitle('<?=DRAFTS?> ' + '(' +jsonData.count + ')');
+                }
+                ,failure: function() {}
+            });
+        }
+        var runTaskDrafts = {
+            run: taskDrafts
+            ,interval:2000
+        };
+        Ext.TaskMgr.start(runTaskDrafts);
+         
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:[{
+                        title: '<?=INBOX;?>(0)'
+                        ,id: 'INBOX' 
+                        /*,iconCls: 'icon-tabs'*/
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'INBOX', url: '<?=$this->URL_MAIN_INBOX;?>'})]
+                    },{
+                        title: '<?=SEND;?>'
+                        ,id: 'SEND'
+                        /*,iconCls: 'icon-tabs'*/
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'SEND', url: '<?=$this->URL_MAIN_SEND;?>'})]
+                    },{
+                        title: '<?=DRAFTS;?>'
+                        ,id: 'DRAFTS'
+                        /*,iconCls: 'icon-tabs'*/
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'DRAFTS', url: '<?=$this->URL_MAIN_DRAFTS;?>'})]
+                    }]        
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

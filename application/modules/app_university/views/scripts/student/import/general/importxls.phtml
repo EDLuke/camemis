@@ -1,0 +1,611 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
+$OBJECT_GRID->setLoadUrl("/student/jsonload/");
+$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+
+$GENERAL_EDU_TREE = new CamemisTree("ACADEMIC","LIST");
+$GENERAL_EDU_TREE->setURL('/academic/jsontree/');
+$GENERAL_EDU_TREE->setSaveUrl('/academic/jsonsave/');
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$educationSystem = isset($_GET["educationSystem"])?$_GET["educationSystem"]:"0";
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$setId = isset($_GET["setId"])?$_GET["setId"]:"";
+$disabledButton = $this->facette > 0 ? false : true; //@Math Man
+
+if($educationSystem){
+    $TITLE = CREDIT_EDUCATION_SYSTEM;
+}else{
+    $TITLE = TRADITIONAL_EDUCATION_SYSTEM;
+}
+
+$IMPORTXLS_EXECUTE_RIGHT=UserAuth::getACLValue("STUDENT_MODUL_IMPORT_FROM_XLS_FILE_GENERAL_EXECUTE_RIGHT")?"false":"true";
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+    <?
+    if($setId){
+        echo "var objectId='".$setId."';";
+    }else{
+        echo "var objectId;";
+    }
+    
+    ?>
+    var objectType;
+    Ext.onReady(function() {
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+        $OBJECT_SCHOOLYEAR->objectTitle = false;
+        $OBJECT_SCHOOLYEAR->allowBlank = "true";
+        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+        $OBJECT_SCHOOLYEAR->renderJS();
+
+        $GENERAL_EDU_TREE->isAsyncTreeNode = false;
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+        $GENERAL_EDU_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 120
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+
+        switch($educationSystem){
+            default:
+                $GENERAL_EDU_TREE->setBaseParams("
+                    cmd: 'getTreeTraditionalEducationSystem'
+                ");
+            break;
+            case 1:
+                $GENERAL_EDU_TREE->setBaseParams("
+                    cmd: 'getTreeCreditEducationSystem'
+                    ,educationSystem:1
+                ");
+            break;
+        }
+        
+        $GENERAL_EDU_TREE->backgroundColor = "#F9F9F9";
+        $GENERAL_EDU_TREE->isOnClickContextMenu = false;
+        $GENERAL_EDU_TREE->isTreeExpand = false;
+        $GENERAL_EDU_TREE->renderJS();  
+
+        if($educationSystem){
+            $triggerOnClick = "
+                openWinXType('SCHOOL_YEAR_OR_CLASS','".$TITLE."', '".$GENERAL_EDU_TREE->getObjectXType()."', 500, percentHeight(85));
+                var academicTree = Ext.getCmp('".$GENERAL_EDU_TREE->getObjectId()."');
+                Ext.getCmp('COMBO_ID').on('select', function() {
+                    academicTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+                    academicTree.root.reload();
+                    academicTree.getRootNode().expand(true, false);
+                });
+                academicTree.getRootNode().expand(true, false);
+                academicTree.on('click', function(node, e){   
+                    if(node.attributes.objecttype == 'SUBJECT' || node.attributes.objecttype == 'CLASS'){
+                        Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.text);
+                        Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                        objectId = node.id;
+                        objectType = 'GENERAL_EDUCATION'
+                        Ext.getCmp('UPLOAD').enable();
+                        Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                    }
+                });
+            ";
+        }else{
+            $triggerOnClick = "
+                openWinXType('SCHOOL_YEAR_OR_CLASS','".$TITLE."', '".$GENERAL_EDU_TREE->getObjectXType()."', 500, percentHeight(85));
+                var academicTree = Ext.getCmp('".$GENERAL_EDU_TREE->getObjectId()."');
+                Ext.getCmp('COMBO_ID').on('select', function() {
+                    academicTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+                    academicTree.root.reload();
+                    academicTree.getRootNode().expand(true, false);
+                });
+                academicTree.getRootNode().expand(true, false);
+                academicTree.on('click', function(node, e){   
+                    if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS'){
+                        Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.text);
+                        Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                        objectId = node.id;
+                        objectType = 'GENERAL_EDUCATION'
+                        Ext.getCmp('UPLOAD').enable();
+                        Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                    }
+                });
+            ";
+        }
+        
+        $OBJECT_GRID->addCellRenderer("
+        function renderQTip(val, cell, record){
+
+            if (record.data.ACTION_STATUS == 1){
+                return '<div qtip=\"' + '<span>" . CANNOT_IMPORT . "</span>' +'\">'+ val +'</div>';
+            }else{
+                return '<div qtip=\"' + '<span>" . CAN_IMPORT . "</span>' +'\">'+ val +'</div>';
+            }
+        }
+        ");
+
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+        
+        $OBJECT_GRID->addCellRenderer("
+            function renderTextAcademic(v, p, record, rowIndex){
+                var str = '<div style=\"padding:5px;font-weight:normal; color:#333;background:#F3E5AB;\">' + v + '</div>';
+                return str;
+            }
+        ");
+        
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME_LATIN'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'ACADEMIC_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'CAMPUS_NAME'");
+        $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
+        $OBJECT_GRID->addReadField("name: 'BIRTH_PLACE'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'ACTION_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'ACTION_STATUS_ICON'");
+        $OBJECT_GRID->addReadField("name: 'CONTRY'");
+        $OBJECT_GRID->addReadField("name: 'ADDRESS'");
+        $OBJECT_GRID->addReadField("name: 'PHONE'");
+        $OBJECT_GRID->addReadField("name: 'EMAIL'");
+        $OBJECT_GRID->addReadField("name: 'TOWN_CITY'");
+        $OBJECT_GRID->addReadField("name: 'POSTCODE_ZIPCODE'");
+        $OBJECT_GRID->addReadField("name: 'COUNTRY'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>" . ACTION_STATUS . "</b>', align:'center', renderer: renderQTip, width: 80, sortable: false, dataIndex: 'ACTION_STATUS_ICON'");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>".STUDENT_SCHOOL_ID."</b>',
+            dataIndex: 'STUDENT_SCHOOL_ID',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+        
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_GRID->addColumn("
+                header: '<b>".LASTNAME."</b>',
+                dataIndex: 'LASTNAME',
+                width: 120,
+                align: 'left',
+                renderer: renderText,
+                editor: new Ext.form.TextField({
+                    allowBlank: false
+                })
+            ");
+
+            $OBJECT_GRID->addColumn("
+                header: '<b>".FIRSTNAME."</b>',
+                dataIndex: 'FIRSTNAME',
+                width: 120,
+                align: 'left',
+                renderer: renderText,
+                editor: new Ext.form.TextField({
+                    allowBlank: false
+                })
+            ");
+
+            $OBJECT_GRID->addColumn("
+                header: '<b>".LASTNAME_LATIN."</b>',
+                dataIndex: 'LASTNAME_LATIN',
+                width: 120,
+                align: 'left',
+                renderer: renderText,
+                editor: new Ext.form.TextField({
+                    allowBlank: false
+                })
+            ");
+
+            $OBJECT_GRID->addColumn("
+                header: '<b>".FIRSTNAME_LATIN."</b>',
+                dataIndex: 'FIRSTNAME_LATIN',
+                width: 120,
+                align: 'left',
+                renderer: renderText,
+                editor: new Ext.form.TextField({
+                    allowBlank: false
+                })
+            ");            
+        }else{
+
+            $OBJECT_GRID->addColumn("
+                header: '<b>".FIRSTNAME."</b>',
+                dataIndex: 'FIRSTNAME',
+                width: 120,
+                align: 'left',
+                renderer: renderText,
+                editor: new Ext.form.TextField({
+                    allowBlank: false
+                })
+            ");
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>".LASTNAME."</b>',
+            dataIndex: 'LASTNAME',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>".FIRSTNAME_LATIN."</b>',
+            dataIndex: 'FIRSTNAME_LATIN',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>".LASTNAME_LATIN."</b>',
+            dataIndex: 'LASTNAME_LATIN',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+    }
+             
+    $OBJECT_GRID->addColumn("header: '<b>" . ACADEMIC . "</b>', align:'left', renderer: renderTextAcademic, width:150, sortable: false, dataIndex: 'CAMPUS_NAME'");
+    $OBJECT_GRID->addColumn("
+        header: '<b>".GENDER."</b>',
+        dataIndex: 'GENDER',
+        width: 120,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.ComboBox({
+            triggerAction:'all'
+            ,mode:'local'
+            ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:[{chooseValue: '0', chooseDisplay: '---'},{chooseValue: '1', chooseDisplay: '".MALE."'},{chooseValue: '2', chooseDisplay: '".FEMALE."'}]
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                    replaceValue = combo.getValue();
+                    var newDisplay = record.get('chooseDisplay');
+                    combo.setValue(newDisplay);
+                }
+            }
+        })
+    ");
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>".DATE_BIRTH."</b>',
+        dataIndex: 'DATE_BIRTH',
+        width: 120,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+        
+    if($target == "STUDENT"){
+        $OBJECT_GRID->addColumn("header: '<b>" . ACADEMIC_TYPE . "</b>', align:'left', width: 150, renderer: renderText, sortable: false, dataIndex: 'ACADEMIC_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . $TITLE . "</b>', align:'left', width: 150, renderer: renderText, sortable: false, dataIndex: 'CAMPUS_NAME'");
+    }
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>".EMAIL."</b>',
+        dataIndex: 'EMAIL',
+        width: 150,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>".PHONE."</b>',
+        dataIndex: 'PHONE',
+        width: 150,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>".ADDRESS."</b>',
+        dataIndex: 'ADDRESS',
+        width: 150,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>".TOWN_CITY."</b>',
+        dataIndex: 'TOWN_CITY',
+        width: 150,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>".POSTCODE_ZIPCODE."</b>',
+        dataIndex: 'POSTCODE_ZIPCODE',
+        width: 150,
+        align: 'left',
+        renderer: renderText,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+        
+    $OBJECT_GRID->addColumn("header: '<b>" . COUNTRY . "</b>', align:'left', width: 150, renderer: renderText, sortable: false, dataIndex: 'COUNTRY'");
+
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonActionChangeStudentImport'
+    ");
+
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->isCheckboxSelect = true;
+
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->isQuickySearch = true;
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'importStudents'
+        ,display: '1'
+        ,educationSystem: '".$educationSystem."'
+        ,objectId:objectId
+    ";
+        
+    if (UserAuth::getACLValue("STUDENT_MODUL_IMPORT_FROM_XLS_FILE_GENERAL_REMOVE_RIGHT"))
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            id: 'REMOVE_ALL_STUDENTS_ID'
+            ,text: '" . REMOVE_IMPORT_LIST . "'
+            ,iconCls:'icon-delete'
+            ,scope:this
+            ,handler: this.onRemoveSelection
+            ,disabled: '" . $disabledButton . "'
+        }]);
+    ");
+
+    if (UserAuth::getACLValue("STUDENT_MODUL_IMPORT_FROM_XLS_FILE_GENERAL_EXECUTE_RIGHT"))
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            id: 'ADD_STUDENT_ID'
+            ,text: '" . APPLY_INTO_LIST_OF_STUDENTS . "'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,handler: this.onSelection
+            ,disabled: '" . $disabledButton . "'
+        }]);
+    ");
+
+    $OBJECT_GRID->setRemoveParams("
+        cmd: 'removeStudentFromImport'
+    ");
+
+    $OBJECT_GRID->setSelectionParams("
+        cmd: 'jsonAddStudentToStudentDB'
+        ,display: '1'
+        ,educationSystem: '".$educationSystem."'
+    ");
+
+    $OBJECT_GRID->setRemoveSelectionParams("
+        cmd: 'jsonRemoveStudentsFromImport'
+    ");
+
+    $OBJECT_GRID->setSelectionEmbeddedEvents("
+        Ext.getCmp('STUDENT_LIST_ID').store.reload();
+    ");
+        
+    $OBJECT_GRID->setAftereditCallback("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+
+    $OBJECT_GRID->setRemoveEmbeddedEvents("
+        Ext.getCmp('STUDENT_LIST_ID').store.reload();
+    ");
+
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+    $OBJECT_GRID->renderJS();
+
+    $formItems = "[";
+    $formItems .= "
+    {
+        xtype: 'fileuploadfield'
+        ,id: 'form-file'
+        ,emptyText: '".SELECT_AN_XLS_FILE."'
+        ,fieldLabel: '".FILE."'
+        ,name: 'xlsfile'
+        ,buttonText: ''
+        ,buttonCfg: {
+            iconCls: 'upload-icon'
+        }
+    }
+    ";
+        
+    if(!$setId)
+    $formItems .= "
+        ,{".CamemisField::Hidden("CHOOSE_GRADE",false)."}
+        ,{".CamemisField::Trigger("CHOOSE_GRADE_NAME",$TITLE,$triggerOnClick, false, false, false)."}
+    ";
+
+    $formItems.= ",{".CamemisField::Datefield('CREATED_DATE',CREATED_DATE,false)."}";
+    $formItems .= "]";
+        
+    $FORM_TBAR = "";
+    $FORM_TBAR .= "{";
+        $FORM_TBAR .= "text: '".CANCEL."'";
+        $FORM_TBAR .= ",iconCls:'icon-cancel'";
+        
+        if($setId){
+            $FORM_TBAR .= ",hidden:false";
+        }else{
+            $FORM_TBAR .= ",hidden:true";
+        }
+        
+        $FORM_TBAR .= ",handler: function(){";
+            $FORM_TBAR .= "window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);window.parent.Ext.getCmp('ACADEMIC_ID').expand();";
+        $FORM_TBAR .= "}";
+    $FORM_TBAR .= "},'-',{";
+        $FORM_TBAR .= "tooltip: '".EXCEL_TEMPLATE."'";
+        $FORM_TBAR .= ",iconCls:'icon-table_save'";
+        $FORM_TBAR .= ",hidden:".$IMPORTXLS_EXECUTE_RIGHT."";
+        $FORM_TBAR .= ",handler: function(){";
+            $FORM_TBAR .= "window.location='".$this->URL_TEMPLATE_XLS."';";
+        $FORM_TBAR .= "}";
+    $FORM_TBAR .= "},'-',{";
+        $FORM_TBAR .= "tooltip: '".RESET."'";
+        $FORM_TBAR .= ",iconCls:'icon-arrow_undo'";
+        $FORM_TBAR .= ",handler: function(){";
+            $FORM_TBAR .= "fp.getForm().reset();";
+        $FORM_TBAR .= "}";
+    $FORM_TBAR .= "},'-',{";
+        $FORM_TBAR .= "tooltip: '".UPLOAD."'";
+        $FORM_TBAR .= ",id: 'UPLOAD'";
+        $FORM_TBAR .= ",hidden:".$IMPORTXLS_EXECUTE_RIGHT."";
+        $FORM_TBAR .= ",iconCls:'icon-disk'";
+        $FORM_TBAR .= ",disabled: false";
+        $FORM_TBAR .= ",handler: function(){";
+            $FORM_TBAR .= "if(fp.getForm().isValid()){";
+                $FORM_TBAR .= "Ext.Ajax.request({";
+                    $FORM_TBAR .= "url: '/student/jsonimport'";
+                    $FORM_TBAR .= ",isUpload: true";
+                    $FORM_TBAR .= ",headers: {'Content-type':'multipart/form-data'}";
+                    $FORM_TBAR .= ",method: 'POST'";
+                    $FORM_TBAR .= ",params:{cmd: 'importXLS', objectId: objectId,objectType:objectType, educationSystem:".$educationSystem."}";
+                    $FORM_TBAR .= ",waitMsg: 'Uploading your file...'";
+                    $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
+                    $FORM_TBAR .= ",success: function(response, options) {";
+                        $FORM_TBAR .= "".CamemisPage::setRequestURI(false)."";
+                    $FORM_TBAR .= "}";
+                    $FORM_TBAR .= ",failure: function(response, options) { console.log('fail'); }";
+                $FORM_TBAR .= "});";
+            $FORM_TBAR .= "}";
+        $FORM_TBAR .= "}";
+    $FORM_TBAR .= "}";
+        
+    ?>
+    var fp = new Ext.FormPanel({
+        fileUpload: true
+        ,labelAlign: 'left'
+        ,border: true
+        ,width:335
+        ,autoHeight: true
+        ,title: ''
+        ,bodyStyle: 'background:<?=CamemisPage::userFormBgColor();?>; color:#000;padding:10px'
+        ,labelWidth:140
+        ,defaults: {
+            anchor: '95%'
+            ,allowBlank: false
+            ,msgTarget: 'side'
+        },
+        items: <?=$formItems;?>
+        ,tbar:[<?=$FORM_TBAR;?>]
+    });
+
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            },
+            items: [{
+                title: ''
+                ,bodyStyle: 'background:<?=CamemisPage::userFormBgColor();?>;padding:5px'
+                ,region: 'west'
+                ,width: 350
+                ,minSize:350
+                ,maxSize:350
+                ,cmargins: '3 3 3 3'
+                ,margins: '3 0 3 3'
+                ,items:[{
+                    border: false
+                    ,bodyStyle: 'background:<?=CamemisPage::userFormBgColor();?>;'
+                    ,layout:'form'
+                    ,items: fp
+                }]
+            },{
+                title: '<?=IMPORT_RESULT?>'
+                ,collapsible: false
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'fit'
+                ,items:[{
+                    layout: 'fit'
+                    ,xtype: '<?=$OBJECT_GRID->getObjectXType();?>'
+                }]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

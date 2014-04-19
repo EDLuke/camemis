@@ -1,0 +1,260 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna
+// Date: 26.12.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl("/academic/jsonload/");
+$OBJECT_FORM->setSaveUrl("/academic/jsonsave/"); 
+
+$OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
+$OBJECT_TREE->setURL('/subject/jsontree/');
+$OBJECT_TREE->setSaveUrl('/subject/jsonsave/');
+
+$academicDateObjecct = AcademicDateDBAccess::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$PENEL_ITEMS = Array();
+$PERSONAL_INFORMATION = "";        
+$PERSONAL_INFORMATION .= "{";
+    $PERSONAL_INFORMATION .= "xtype:'fieldset'";
+    $PERSONAL_INFORMATION .= ",checkboxToggle:true";
+    $PERSONAL_INFORMATION .= ",collapsed: false";
+    $PERSONAL_INFORMATION .= ",title: '".PERSONAL_INFORMATION."'";
+    $PERSONAL_INFORMATION .= ",bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'";
+    $PERSONAL_INFORMATION .= ",autoHeight:true";
+    $PERSONAL_INFORMATION .= ",items:[";
+        $PERSONAL_INFORMATION .= "{".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}";
+        $PERSONAL_INFORMATION .= ",{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}";
+        $PERSONAL_INFORMATION .= ",{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}";    
+        $PERSONAL_INFORMATION .= ",{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}";
+        $PERSONAL_INFORMATION .= ",{".CamemisField::ComboGender(GENDER, false, false, 150)."}";
+    $PERSONAL_INFORMATION .= "]";
+$PERSONAL_INFORMATION .= "}";
+
+$store = "[";
+$store .= "['', '[---]']";
+$store .= ",['0', 'Ongoing']";
+$store .= ",['1', 'Incompleted']";
+$store .= ",['2', 'Completed']";
+$store .= "]";
+
+$STORE_SCHOOLYEAR = $academicDateObjecct->AcademicDateCombo();
+
+$triggerOnClick = "";
+        $triggerOnClick .="openWinXType('ALL_SUBJECTS','".ALL_SUBJECTS."', '".$OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));";
+        $triggerOnClick .="var academicTree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');";
+        $triggerOnClick .="academicTree.on('click', function(node, e){ ";
+            $triggerOnClick .= "if(node.isLeaf()){";
+                $triggerOnClick .="Ext.getCmp('SUBJECT_ID').setValue(node.text);";
+                $triggerOnClick .="Ext.getCmp('CHOOSE_SUBJECT').setValue(node.id);";
+                $triggerOnClick .="Ext.getCmp('ALL_SUBJECTS').close();"; 
+           $triggerOnClick .= "}";    
+        $triggerOnClick .="});";
+$triggerOnClick .="";
+
+$CREDIT_INFORMATION = "";
+$CREDIT_INFORMATION .= "{";
+$CREDIT_INFORMATION .= "xtype:'fieldset'";
+    $CREDIT_INFORMATION .= ",checkboxToggle:true";
+    $CREDIT_INFORMATION .= ",collapsed: false";
+    $CREDIT_INFORMATION .= ",title: 'Credit Information'";
+    $CREDIT_INFORMATION .= ",bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'";
+    $CREDIT_INFORMATION .= ",autoHeight:true";
+    $CREDIT_INFORMATION .= ",items:[";
+    $CREDIT_INFORMATION .= "{".CamemisField::Combo('COMO_SCHOOLYEAR',SCHOOL_YEAR,$STORE_SCHOOLYEAR, false,false,150,false)."}";
+    $CREDIT_INFORMATION .= ",{".CamemisField::Trigger("SUBJECT",SUBJECT,$triggerOnClick, false, false, false, 150)."}";
+    $CREDIT_INFORMATION .= ",{".CamemisField::Hidden("CHOOSE_SUBJECT",false)."}";
+    $CREDIT_INFORMATION .= ",{".CamemisField::Numberfield("CREDIT_NUMBER","CREDIT_NUMBER","Credit Number",false,false,false,false,false,150)."}";
+    $CREDIT_INFORMATION .= ",{".CamemisField::Combo("CREDIT_STATUS","Credit Status",$store,false,false,150)."}";
+    $CREDIT_INFORMATION .= "]";
+$CREDIT_INFORMATION .= "}";
+
+$items = "";
+$items .= "border: false";
+$items .= ",id: 'FORM_ITEMS'";
+$items .= ",bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:0px'";
+$items .= ",items: [";
+    $items .= $PERSONAL_INFORMATION;
+    $items .= ",";
+    $items .= $CREDIT_INFORMATION;
+$items .= "]";
+
+$FIND_FUNCTION = "";
+$FIND_FUNCTION .= "Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);";
+$FIND_FUNCTION .= "form = this.getForm();";
+$FIND_FUNCTION .= "var studentschoolId = form.findField('STUDENT_SCHOOL_ID').getValue(); ";
+$FIND_FUNCTION .= "var student_code_id = form.findField('CODE_ID').getValue();";        
+$FIND_FUNCTION .= "var firstname = form.findField('FIRSTNAME_ID').getValue(); ";       
+$FIND_FUNCTION .= "var lastname = form.findField('LASTNAME_ID').getValue();  ";      
+$FIND_FUNCTION .= "var gender = form.findField('GENDER_ID').getValue();  ";
+
+$FIND_FUNCTION .= "var schoolyearId = form.findField('COMO_SCHOOLYEAR').getValue();";
+$FIND_FUNCTION .= "var subjectId = form.findField('CHOOSE_SUBJECT').getValue();";
+$FIND_FUNCTION .= "var creditNumber = form.findField('CREDIT_NUMBER').getValue();";
+$FIND_FUNCTION .= "var creditStatus = form.findField('CREDIT_STATUS').getValue();";
+
+$FIND_FUNCTION .= "var alertMsg = ''; ";
+    $FIND_FUNCTION .= "alertMsg = alertMsg + ' || ".STUDENT_SCHOOL_ID."<br/>' + ";
+    $FIND_FUNCTION .= "alertMsg + ' || ".CODE_ID."<br/>' + ";
+    $FIND_FUNCTION .= "alertMsg + ' || ".LASTNAME."<br/>' + ";
+    $FIND_FUNCTION .= "alertMsg + ' || ".FIRSTNAME."<br/>'+ ";
+    $FIND_FUNCTION .= "alertMsg + ' || ".GENDER_NAME."<br/>'+";  
+    $FIND_FUNCTION .= "alertMsg + ' || ".SCHOOLYEAR_NAME."<br/>'+";
+    $FIND_FUNCTION .= "alertMsg + ' || ".SUBJECT."<br/>'+";
+    $FIND_FUNCTION .= "alertMsg + ' || ".NUMBER_CREDIT."<br/>'+";
+    $FIND_FUNCTION .= "alertMsg + ' || Credit Status<br/>'";
+    
+$FIND_FUNCTION .= "; ";
+$FIND_FUNCTION .= "if(firstname || lastname || studentschoolId || student_code_id || gender || schoolyearId || subjectId || creditStatus || creditNumber){"; 
+    $FIND_FUNCTION .= "searchString = 'studentschoolId=' + studentschoolId ";
+                        $FIND_FUNCTION .= "+ '&student_code_id=' + student_code_id ";
+                        $FIND_FUNCTION .= "+ '&firstname=' + firstname   ";
+                        $FIND_FUNCTION .= "+ '&lastname=' + lastname ";
+                        $FIND_FUNCTION .= "+ '&gender=' + gender";
+                        $FIND_FUNCTION .= "+ '&schoolyearId=' + schoolyearId";
+                        $FIND_FUNCTION .= "+ '&subjectId=' + subjectId";
+                        $FIND_FUNCTION .= "+ '&creditStatus=' + creditStatus";
+                        $FIND_FUNCTION .= "+ '&creditNumber=' + creditNumber; ";
+    $FIND_FUNCTION .= "clickOpenPage('center','', '/academic/creditinformation/?'+searchString); ";
+$FIND_FUNCTION .= "}else{  ";
+    $FIND_FUNCTION .= "Ext.Msg.show({     ";
+        $FIND_FUNCTION .= "title:'".STATUS."'   ";
+        $FIND_FUNCTION .= ",width: '250'  ";
+        $FIND_FUNCTION .= ",icon: Ext.MessageBox.QUESTION  ";
+        $FIND_FUNCTION .= ",msg: '" . PLEASE_SELECT . " <br/><br/>'+ alertMsg   ";
+        $FIND_FUNCTION .= ",buttons: Ext.Msg.OK  ";
+    $FIND_FUNCTION .= "}); ";    
+$FIND_FUNCTION .= "} ";
+
+///////////////
+//////viewport
+/////
+////////////////
+$DASHBOARD = "";
+$DASHBOARD .= "{";
+$DASHBOARD .= "title: '". CHART ."'";
+$DASHBOARD .= ",layout: 'fit'";
+$DASHBOARD .= ",items:[new Ext.ux.IFrameComponent({ id: 'DASHBAORD', url: '/academic/creditinformationdashbaord/?key=".camemisId()."'})]";
+$DASHBOARD .= "}";
+$PENEL_ITEMS[] = $DASHBOARD;
+
+$CREDIT_INFORMATION ="";
+$CREDIT_INFORMATION .= "{";
+$CREDIT_INFORMATION .= "title: '". SEARCH_RESULT ."'";
+$CREDIT_INFORMATION .= ",layout: 'fit'";
+$CREDIT_INFORMATION .= ",items:[new Ext.ux.IFrameComponent({ id: 'CREDIT_INFORMATION', url: '/academic/creditinformation/?key=".camemisId()."'})]";
+$CREDIT_INFORMATION .= "}";
+$PENEL_ITEMS[] = $CREDIT_INFORMATION;
+
+$CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+
+$viewport = "";
+$viewport .= "viewport = new Ext.Viewport({";
+    $viewport .= "layout: 'fit'";
+    $viewport .= ",border: false";
+    $viewport .= ",items:[{";
+        $viewport .= "layout:'border'";
+        $viewport .= ",border: false";
+        $viewport .= ",defaults: {";
+            $viewport .= "collapsible: true ";
+            $viewport .= ",split: true ";
+        $viewport .= "}";
+        $viewport .= ",items: [{";
+            $viewport .= "title: 'Search Credit Infromation'";
+            $viewport .= ",region:'west'";
+            $viewport .= ",id: 'WEST_ID'";
+            $viewport .= ",margins: '3 0 3 3'";
+            $viewport .= ",cmargins: '3 3 3 3' ";
+            $viewport .= ",width: 350 ";
+            $viewport .= ",minSize: 350 ";
+            $viewport .= ",maxSize: 350 ";
+            $viewport .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}] ";
+        $viewport .= "},{";
+            $viewport .= "title: ''";
+            $viewport .= ",collapsible: false ";
+            $viewport .= ",id: 'center'";
+            $viewport .= ",region:'center' ";
+            $viewport .= ",layout: 'card'";
+            $viewport .= ",activeItem: 0 ";
+            $viewport .= ",margins: '3 3 3 0'";
+            $viewport .= ",items:[{";
+                $viewport .= "layout:'fit' ";
+                $viewport .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                $viewport .= ",border: false";
+                $viewport .= ",items:[{ ";
+                    $viewport .= "xtype: 'tabpanel'";
+                    $viewport .= ",id:'TABPANEL_ID'";
+                    $viewport .= ",tabPosition: 'top' ";
+                    $viewport .= ",plain:true ";
+                    $viewport .= ",activeTab: 0 ";
+                    $viewport .= ",enableTabScroll:true ";
+                    $viewport .= ",items:".$CHOOSE_ITEMS."";
+                $viewport .= "}] ";
+            $viewport .= "}] ";
+        $viewport .= "}] ";
+    $viewport .= "}] ";
+$viewport .= "});";
+
+?>
+<script>
+    Ext.onReady(function() {  
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_TREE->isAsyncTreeNode = false;
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'treeAllSubjects'
+        ");
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = false;
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->renderJS();
+        
+        $OBJECT_FORM->addObjectItems($items);
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,handler: function(){".CamemisPage::setRequestURI(false)."}
+        ");
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,id: 'FIND_ID'
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){". $FIND_FUNCTION ."}
+        ");
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = false;
+        $OBJECT_FORM->renderJS();
+        ?>
+        <?=$viewport;?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

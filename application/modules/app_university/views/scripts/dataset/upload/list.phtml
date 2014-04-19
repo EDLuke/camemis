@@ -1,0 +1,171 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("UPLOAD", "ATTACHMENT");
+$OBJECT_GRID->setLoadUrl('/dataset/jsonload/');
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$object = isset($_GET["object"])?addText($_GET["object"]):"";
+
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+
+$ckSubject=new SubjectTeacherDBAccess() ;
+$disable_enable=$ckSubject->checkAssignedSubjectTeacherClass($subjectId, $teacherId, $academicId, false);
+
+ $HIDDEN_SHOW_DELETE = "false";
+    switch(UserAuth::getUserType()){
+        case "STUDENT":
+            $HIDDEN_SHOW_DELETE = "true";
+            
+        break;
+        case"INSTRUCTOR":
+        case"TEACHER":
+           
+            if($disable_enable){
+                $HIDDEN_SHOW_DELETE="false";
+            }else{
+                 $HIDDEN_SHOW_DELETE="true";
+            } 
+        break;
+    }
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style>
+    span.spanText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<script>
+Ext.onReady(function() {
+	
+    function renderText(v, p, record, rowIndex){
+        var str = '<span class=spanText>' + v + '</span>';
+        return str;
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'FILENAME'");
+    $OBJECT_GRID->addReadField("name: 'FILETYPE'");
+    $OBJECT_GRID->addReadField("name: 'SIZE'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".FILENAME."</b>', width: 300, renderer: renderText, sortable: true, dataIndex: 'FILENAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".FILETYPE."</b>', width: 200, renderer: renderText, sortable: true, dataIndex: 'FILETYPE'");
+    $OBJECT_GRID->addColumn("header: '<b>".SIZE."</b>', width: 150, renderer: renderText, sortable: true, dataIndex: 'SIZE'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    if(UserAuth::getUserType()!="STUDENT")
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'ATTACHMENT_ID'
+            ,text: '".ATTACHMENT."'
+            ,hidden:".$HIDDEN_SHOW_DELETE."
+            ,iconCls:'icon-application_form_add'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               openWinIFrame('".ATTACHMENT."', '/dataset/addattachment/?objectId=$this->objectId&object=$this->object', 600, percentHeight(85));
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$objectId."'
+        ,object: '".$object."'
+        ,cmd: 'jsonAttachmentList'
+    ";
+    
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'center'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+    if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        var contextMenu = new Ext.menu.Menu({
+            items: [{
+                text: '<?=SHOW_DETAIL;?>'
+                ,iconCls:'icon-application_form_magnify'
+                ,handler: function(){
+                    window.location = "/dataset/showblob/?blobId=" + record.data.ID;
+                }
+            },{
+                text: '<?=DELETE;?>' 
+                ,hidden:<?=$HIDDEN_SHOW_DELETE?>
+                ,iconCls:'icon-delete'
+                ,handler: function(){
+                    Ext.Ajax.request({
+                        url: '/dataset/jsonsave/'
+                        ,method: 'POST'
+                        ,params:{
+                            cmd: 'actionDeleteFile'
+                            ,blobId: record.data.ID
+                        }
+                        ,success: function(response, options) {
+                            <?=camemisPage::setRequestURI();?>
+                        }
+                    })
+                }
+            }]
+        });
+        event.stopEvent();
+        contextMenu.showAt(event.xy);
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

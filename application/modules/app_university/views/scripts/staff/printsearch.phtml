@@ -1,0 +1,102 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("STAFF", "STAFFSEARCH");
+$OBJECT_GRID->setLoadUrl('/staff/jsonload/');
+$OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    var code = '<?=isset($_GET['code'])?$_GET['code']:""?>';
+    var firstname = '<?=isset($_GET['firstname'])?$_GET['firstname']:""?>';
+    var lastname = '<?=isset($_GET['lastname'])?$_GET['lastname']:""?>';
+    var gender = '<?=isset($_GET['gender'])?$_GET['gender']:""?>';
+    var searchJobtype = '<?=isset($_GET['searchJobtype'])?$_GET['searchJobtype']:""?>';
+    var choosegrade = '<?=isset($_GET['choosegrade'])?$_GET['choosegrade']:""?>';
+    var searchUserRole = '<?=isset($_GET['searchUserRole'])?$_GET['searchUserRole']:""?>';
+    var subjectId = '<?=isset($_GET['subjectId'])?$_GET['subjectId']:""?>';
+    var staff_school_id = '<?=isset($_GET['staff_school_id'])?$_GET['staff_school_id']:""?>';
+    
+    Ext.onReady(function() {
+        Ext.ux.GridPrinter.stylesheetPath = '<?=Zend_Registry::get('CAMEMIS_URL')?>/public/css/gridPrint.css';
+
+        <?
+        $OBJECT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'STAFF_SCHOOL_ID'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'GENDER_NAME'");
+        $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
+        
+        $OBJECT_GRID->addColumn("header: '".STAFF_SCHOOL_ID."', renderer: renderText, width: 120, sortable: true, dataIndex: 'STAFF_SCHOOL_ID'");
+        $OBJECT_GRID->addColumn("header: '".FIRSTNAME."', width: 150, renderer: renderText, sortable: false, dataIndex: 'FIRSTNAME'");
+        $OBJECT_GRID->addColumn("header: '".LASTNAME."', width: 150, renderer: renderText, sortable: false, dataIndex: 'LASTNAME'");
+        
+        $OBJECT_GRID->addColumn("header: '".GENDER."', width: 120, renderer: renderText, sortable: true, dataIndex: 'GENDER_NAME'");
+        $OBJECT_GRID->addColumn("header: '".DATE_BIRTH."', width: 120, renderer: renderText, sortable: true, dataIndex: 'DATE_BIRTH'");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'searchStaff'
+            ,code: code
+            ,firstname: firstname
+            ,lastname: lastname
+            ,gender: gender
+            ,searchJobtype: searchJobtype
+            ,choosegrade: choosegrade
+            ,searchUserRole: searchUserRole
+            ,subjectId: subjectId
+            ,staff_school_id: staff_school_id
+        ";
+        
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                border: false
+                ,layout: 'fit'
+                ,items:[{
+                    layout: 'fit'
+                    ,border: false
+                    ,xtype: '<?=$OBJECT_GRID->getObjectXType();?>'
+                }]
+                ,tbar:[{
+                    text   : '<?=PRINTER?>'
+                    ,iconCls: 'icon-printer'
+                    ,handler: function() {
+                        Ext.ux.GridPrinter.print(Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>'));
+                    }
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

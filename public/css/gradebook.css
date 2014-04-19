@@ -1,0 +1,177 @@
+.grade_book{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    background:#fff;padding:10px;
+    position: relative;
+}
+.grade_book table{
+    border:0px;
+    width:100%;
+}
+h2.grade_title{
+    font:bold 18px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#155bb9;text-align:center;margin-bottom:10px;
+    clear: both;
+}	
+h3.title_name{
+    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+h3.title_name span,span.name{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#155bb9;
+}
+.grade_book table{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    border:1px solid #ccc;background:#fff;margin-top:5px;border-left:none;border-bottom: none;
+}
+.grade_book table th.sm1,.grade_book table td.sm1{
+    background: #fcd87d;
+    width: 7%;
+}
+.grade_book table th.sm2,.grade_book table td.sm2{
+    background: #bad6fe;
+    width: 7%;
+}
+.grade_book table th.year,.grade_book table td.year{
+    background: #fdf4dc;
+    width: 7%;
+}
+.grade_book table tr.colorHead,.grade_book table td.colorHead{
+    background: #EEEEEE;
+}
+.grade_book table tr.absenceYearBackColor{
+    background: #cbd8ec;
+}
+.grade_book table tr.setAssessmentBackColor{
+    background: #dfdfdf;
+}
+.grade_book table tr.setCongratulateBackColor{
+    background: #ffe6a6;
+}
+.grade_book table th,.grade_book table td{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    border-bottom:1px solid #ccc;border-left:1px solid #ccc;text-align:center;padding:5px 0px;
+}
+.grade_book table td.normal{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    text-align:left;padding-left:5px;
+}
+.grade_book table td.sub-title{
+    font:normal 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#155bb9;
+}
+.grade_book table td.none_bor{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    border-bottom:none;text-align:center;
+}
+.grade_book table td.border{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    text-align:center;
+}
+/*
+For Record Book
+*/
+.book_left{
+    float: left;
+    width: 200px;
+    clear: left;
+}
+.book_right{
+    float: right;
+    width: 400px;    
+}
+.book_left h2.grade_title,.book_right h2.grade_title{
+    color:#155bb9;
+    font-size: 14px;
+}
+.box_photo{
+    position:absolute;
+    right: 30px;
+    top:20px;
+    
+}
+.box_photo img{
+    border:1px solid #ccc;
+    padding: 2px;
+}
+.grade_book table td.nall{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    border:none;text-align:left;
+}
+h2.cc{
+    clear:both;
+    font-size: 14px;
+    color:#155bb9;
+    text-align: center;
+}
+.assessment{
+    background: #4ebbff;
+}
+/*=====div transcript======*/
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0px;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {
+	display: inline-block;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+* html .clearfix {
+	height: 1%;
+}
+.clearfix {
+	display: block;
+}
+	.table {width:100%;border:1px solid #ccc;margin: 10px 0px;border-bottom:none;}
+	.table .border_head{border-bottom:1px solid #ccc;}
+	.table .colorHead {background: #EEEEEE;}
+	.table .Data_score {background: #fcd87d;}
+	.table .Data_RT{background: #bad6fe;}
+	.table .Data_PT{background:none;}
+        .b_rang{background: #D84971;}
+	.table .subject,.table .average{border-right:1px solid #ccc;height:50px;text-align:center;}
+        .table .non{border-right: none;}
+	.table .point{border-right:1px solid #ccc;height:65px;text-align:center;}
+	.table .subject,.table .average {padding-top:15px;}
+	.table p{margin:0px;}
+	.table p.pp{padding-top:5px;padding-bottom: 7px;border-bottom:1px solid #ccc;}
+	.table .subject {float:left;width:15%;}
+	.table .point{float:left;width:30%;text-align:center;} .table .point .max{float:left;width:49%;text-align:center;padding-top:7px;border-right: 1px solid #CCCCCC;}
+	.table .point .non_r{border-right:none;}
+	.table .average{float:left;width:10.17%;}
+	.table .score{float:left;width:34%;text-align:center;height:65px;border-right: 1px solid #ccc;}
+        .table .score_1{float:left;width:44%;text-align:center;height:65px;border-right: 1px solid #ccc;}
+	.table .score .rt,.table .score .pt,.table .score_1 .rt,.table .score_1 .pt{float:left;width:49%;height:30px;padding-top:7px; text-align:center;}
+	.table .score .rt,.table .score_1 .rt{border-right:1px solid #ccc;}
+	.st_1 {float:left;width:100%;text-align: center;padding-top: 4px;}
+	.table .ls_sb{clear:both;float:left;width:15%;border-right:1px solid #ccc;}
+	.table .value{float:left;width:30%;border-right:1px solid #ccc;}
+	.table .value .max{float:left;width:49%;border-right:1px solid #ccc;text-align:center;height:20px;padding-top:9px;}
+	.none_bor{border-right:none !important;}
+	.table .value .non_r{border-right:none;}
+	.table .val_avg{float:left;width:10.3%;text-align:center;}
+        .table .val_m_avg{float: left;width: 10.8%;text-align: center;height:24px;padding-top:5px;}
+	.table .score_data{float:left;width:34%;}
+    .table .score_data1{float:left;width:44%;}
+	.table .score_data .st{float:left;width:48.6%;text-align:center;}
+	.table .score_data .st1{float:left;width:49.8%;text-align:center;}
+	.table .score_data1 .st{float:left;width:49%;border-right:1px solid #ccc;text-align:center;}
+    .table .score_data1 .st1{float:left;width:50%;text-align: center;}
+	.table .score_data .non {border-right:none;}
+	.table .value .non_r,.table .score_data .non{
+		padding:5px 0px;height:15px;
+	}
+	.table .ls_sb{height:24px;padding-top:5px;}
+	
+	.table .back_head{background:#eee;border-bottom:1px solid #ccc;}
+	.table .val_avg,.table .Data_RT,.st_1{height:24px;padding-top:5px;}
+    .table .score_data .Data_PT,.table .score_data1 .Data_PT{height: 20px;padding:5px 0px 3px 3px;}
+    .both_ms{float: left;width: 40%;}
+    .barcode{float:left;margin-left: 20px;margin-top: 20px;}
+        

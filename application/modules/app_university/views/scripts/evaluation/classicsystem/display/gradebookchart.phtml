@@ -1,0 +1,94 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 19.02.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
+$STUDENT_ASSESSMENT = StudentSubjectAssessment::getInstance();
+
+$section = isset($_GET["section"])?$_GET["section"]:"";
+$term = isset($_GET["term"])?$_GET["term"]:"";
+$monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$studentObject = StudentDBAccess::findStudentFromId($this->studentId);
+
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
+
+$STUDENT_ASSIGNMENT->classId = $academicObject->ID;
+$STUDENT_ASSESSMENT->classId = $academicObject->ID;
+$STUDENT_ASSESSMENT->section = $section;
+$STUDENT_ASSESSMENT->term = $term;
+
+if($monthyear){
+    $STUDENT_ASSESSMENT->month = getMonthNumberFromMonthYear($monthyear);
+    $STUDENT_ASSESSMENT->year = getYearFromMonthYear($monthyear);
+}
+
+$listOfSubjects = $STUDENT_ASSIGNMENT->listSubjects();
+
+$data = Array();
+if($listOfSubjects){
+    $i = 8;
+    foreach($listOfSubjects as $value){
+        if($value->SCORE_TYPE == 1){
+            $j = $i+1;
+            $facette = $STUDENT_ASSESSMENT->getStudentSubjectAssessment(
+                    $studentId
+                    , $value->SUBJECT_ID
+                    , false);
+            if($facette){
+                $data[] = "{legendLabel: '".$value->SUBJECT_NAME."', magnitude: ".$facette->SUBJECT_VALUE.", link: '#'}";
+            }
+            
+            $i++;
+        }
+    }
+}
+
+$dataSet = implode(",",$data);
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script type="text/javascript" src="/public/js/d3.v2.js"></script>
+<script type="text/javascript" src="/public/js/camemisChart.js"></script>
+<script>
+    
+    // Data Used for this example...
+    var dataSet = [<?=$dataSet;?>];
+    
+</script>
+
+<style type="text/css">
+  div.displayChart {
+    position: relative;
+    border:0px solid #333;
+    border-radius:7px;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
+    color:#555;
+    padding: 15px;
+    text-align:left;
+    margin-left:10px;
+    margin-top:10px;
+  }
+</style>
+
+<div class="displayChart" id="bar_chart_1">
+    <div class="chart"></div>
+</div>
+
+<script type="text/javascript">
+    drawHorizontalBarChart("Bars1", dataSet, "#bar_chart_1 .chart", "colorScale20c");
+</script>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

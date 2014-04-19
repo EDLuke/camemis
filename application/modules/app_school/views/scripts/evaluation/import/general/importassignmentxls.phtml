@@ -1,0 +1,128 @@
+<?
+///////////////////////////////////////////////////////////
+// @Thou Morng Sothearung
+// Date: 17.11.2010
+// 03 Rue des Pibleus Bailly Romainvilliers
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+
+    Ext.QuickTips.init();
+
+    var fp = new Ext.FormPanel({
+        fileUpload: true
+        ,labelAlign: 'top'
+        ,border: false
+        ,autoHeight: true
+        ,title: ''
+        ,bodyStyle: 'padding: 15px;'
+        ,labelWidth: 150
+        ,defaults: {
+            anchor: '95%'
+            ,allowBlank: false
+            ,msgTarget: 'side'
+        }
+        ,items:[{
+            xtype: 'fileuploadfield'
+            ,id: 'form-file'
+            ,emptyText: '<?=SELECT_AN_XLS_FILE?>'
+            ,fieldLabel: '<?=FILE?>'
+            ,name: 'xlsfile'
+            ,buttonText: ''
+            ,buttonCfg: {
+                iconCls: 'upload-icon'
+            }
+        }]
+        ,tbar: [{
+            text: '<?=RESET;?>'
+            ,iconCls:'icon-arrow_undo'
+            ,handler: function(){
+                fp.getForm().reset();
+            }
+        },{
+            text: '<?=UPLOAD?>'
+            ,iconCls:'icon-disk'
+            ,handler: function(){
+
+                if(fp.getForm().isValid()){
+                    Ext.MessageBox.show({
+                        title : '<?=UPLOAD;?>'                              
+                        ,msg : "<?=MSG_UPLOADING;?>"
+                        ,progressText : '<?=INITIALIZING?>'
+                        ,width : 300
+                        ,progress : true                                             
+                        ,closable : false
+                    });
+
+                    var updateFn = function(num){                                           
+                        return function(){
+                            if(num == 99){
+                                Ext.MessageBox.updateProgress(100, '<?=MSG_PROGRESS_COMPLETED?>');       
+                            }else{
+                                var i = num/100; 
+                                Ext.MessageBox.updateProgress(i, Math.round(100*i)+'% <?=MSG_PROGRESS_COMPLETED?>');
+                            }         
+                        };    
+                    };
+                    
+                    for (var i = 1; i < 100; i++){                                         
+                        setTimeout(updateFn(i), i * 50+1);
+                    }
+                    
+                    Ext.Ajax.request({ 
+                        url: '/evaluation/jsonimport/'
+                        ,isUpload: true
+                        ,headers: {'Content-type':'multipart/form-data'}
+                        ,method: 'POST'
+                        ,params:{cmd: 'importassignmentXLS',classId:'<?=$this->classId?>',assignmentId:'<?=$this->assignmentId?>',date:'<?=$this->date?>',subjectId:'<?=$this->subjectId?>'}
+                        ,form: fp.getForm().getEl().dom
+                        ,waitMsg: 'Uploading your file...'
+                        ,success: function(response, options) {
+                            Ext.MessageBox.show({
+                                title: '<?=STATUS;?>'
+                                ,msg: '<?=IMPORT_WAS_SUCCESSFUL;?>'
+                                ,buttons: Ext.MessageBox.OK
+                                ,fn: function(btn){
+                                    Ext.MessageBox.hide.defer(1500, Ext.MessageBox); 
+                                    if (btn == 'ok'){ 
+                                        window.parent.window.location='/evaluation/subjectscoreenter/?schoolyearId=<?=$this->schoolyearId?>&title=<?=$this->title?>&classId=<?=$this->classId;?>&assignmentId=<?=$this->assignmentId?>&date=<?=$this->date?>&subjectId=<?=$this->subjectId?>&teacherId=<?=$this->teacherId?>';
+                                    }              
+                                }
+                            });
+                        }
+                    });
+            	}
+            }
+        }]
+    });
+
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,layout:'form'
+                ,items: fp
+            }]
+        }]
+    });
+ });
+</script>
+<?
+$registry = Zend_Registry::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

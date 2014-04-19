@@ -1,0 +1,99 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTrainingTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisTrainingTree("TRAINING","LIST");
+$OBJECT_TREE->setURL("/training/jsontree/");
+$OBJECT_TREE->setSaveUrl("/training/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+
+<script>
+    var firstId;
+    Ext.onReady(function() {
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_TREE->isAsyncTreeNode = false;
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'jsonTreeAllTrainings'
+        ");
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = false;
+        $OBJECT_TREE->renderJS();
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,id: 'ACADEMIC_ID'
+                    ,title: '&nbsp;'
+                    ,autoScroll: true
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width:350
+                    ,minSize:350
+                    ,maxSize:350
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,bodyStyle: 'padding:1px'
+                    ,items: [{
+                        layout: 'fit'
+                        ,border: false
+                        ,contentEl: 'initCenter'
+                    }]
+                }]
+            }]                                              
+        });                                                                    
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        myTree.on('click', function(node){
+            if(node.isLeaf()){
+                //clickOpenPage('center',node.text, '/training/evaluationstudenttraining/?objectId=' + node.id);
+                 ///clickOpenPage('center',node.text, '/training/scoremonitortraining/?classId=' + node.id);
+                 clickOpenPage('center','', '/training/scoremonitortraining/?classId=' + node.id);
+            }
+        });
+    });
+</script>
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

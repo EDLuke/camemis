@@ -1,0 +1,112 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
+
+if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+
+$setParams = "";
+$setParams .= "&subjectId=".$this->subjectId."";
+$setParams .= "&academicId=".$this->academicId."";
+
+$DISPLAY_ERROR = "{
+    title: '".STATUS."'
+    ,layout: 'fit'
+    ,items:[{
+        layout:'fit'
+        ,bodyStyle: 'padding:15px'
+        ,border: false
+        ,html:'<h1 class=\"header\">No Data Available!</h1>'
+    }]
+}";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $PENEL_ITEMS = Array();
+
+    $MONTHLY_RESULT = "{
+        title: '".MONTHLY_RESULT."'
+        ,layout: 'fit'
+        ,items:[new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url: '/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+    }";
+    if($academicObject->DISPLAY_MONTH_RESULT)
+    $PENEL_ITEMS[] = $MONTHLY_RESULT;
+
+    $setParamsFirst = $setParams;
+    $setParamsFirst .= "&term=FIRST_SEMESTER";
+    $FIRST_SEMESTER_RESULT = "{
+        title: '".FIRST_SEMESTER_RESULT."'
+        ,layout: 'fit'
+        ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."'})]
+    }";
+    if($academicObject->DISPLAY_FIRST_RESULT)
+    $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
+
+    $setParamsSecond = $setParams;
+    $setParamsSecond .= "&term=SECOND_SEMESTER";
+    $SECOND_SEMESTER_RESULT = "{
+        title: '".SECOND_SEMESTER_RESULT."'
+        ,layout: 'fit'
+        ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."'})]
+    }";
+    if($academicObject->DISPLAY_SECOND_RESULT)
+    $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
+
+    $setParamsYear = $setParams;
+    $YEAR_RESULT = "{
+        title: '".YEAR_RESULT."'
+        ,layout: 'fit'
+        ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
+    }";
+    if($academicObject->DISPLAY_YEAR_RESULT)
+    $PENEL_ITEMS[] = $YEAR_RESULT;
+
+    if($PENEL_ITEMS){
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+    }else{
+        $CHOOSE_ITEMS = $DISPLAY_ERROR;
+    }
+
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:<?=$CHOOSE_ITEMS?>
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

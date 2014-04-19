@@ -1,0 +1,113 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ATTENDANCE", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
+
+switch(Zend_Registry::get('ADDITIONAL_ROLE')){
+    case 1:
+        $USER_TYPE = "INSTRUCTOR";
+    break;
+    case 2:
+        $USER_TYPE = "TEACHER";
+    break;
+    default:
+        $USER_TYPE = UserAuth::getUserType();
+    break;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    span.spanText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<script>
+
+Ext.onReady(function() {
+    function cssTextBold(value, metadata, record){
+        return '<div style="font-weight:bold; color:#000; padding: 3px;">' + value + '</div>';
+    }
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 3px; height:10px;;">' + value + '</div>';
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+    $OBJECT_GRID->addReadField("name: 'START_DATE'");
+    $OBJECT_GRID->addReadField("name: 'END_DATE'");
+    $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
+    $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 180, renderer: cssTextBold, sortable: true, dataIndex: 'ABSENT_TYPE'");
+    $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'START_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'END_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>', width: 100, renderer: cssText, sortable: true, dataIndex: 'COUNT_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 150, renderer: cssText, sortable: true, dataIndex: 'SCHOOLYEAR_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, renderer: cssText, sortable: true, dataIndex: 'CLASS_NAME'");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,classId: '".$this->classId."'
+        ,studentId: '".$this->studentId."'
+        ,target: '".$this->target."'
+        ,cmd: 'jsonSearchStudentAttendance'
+    ";
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField = "ABSENT_TYPE";
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>     
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'content'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    
+    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

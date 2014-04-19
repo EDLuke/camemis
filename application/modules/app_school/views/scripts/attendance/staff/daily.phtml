@@ -1,0 +1,234 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 02.08.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$DAILY_ATTENDANCE_GRID = new CamemisGrid("DAILY_ATTENDANCE", "LIST");
+$DAILY_ATTENDANCE_GRID->setLoadUrl("/attendance/jsonload/");
+$DAILY_ATTENDANCE_GRID->setSaveUrl('/attendance/jsonsave/');
+$columndata = Utiles::getGridColumnData("DAILY_ATTENDANCE_LIST_ID");
+
+$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STAFF',1);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$choosedate = isset($_GET["choosedate"])?$_GET["choosedate"]:date('Y-m-d');
+$staffEntries = StaffAttendanceDBAccess::getQueryStaffAttendance();
+?>
+
+<script>
+    var choosedate = '<?=getShowDate($choosedate);?>';
+    
+    function setAjaxRequest(newValue, field, staffId, actionType, choosedate,absentType){
+        Ext.Ajax.request({
+            url: '/attendance/jsonsave/'
+            ,method: 'POST'
+            ,params: {
+                cmd: 'jsonActionStaffDailyAttendance'
+                ,staffId:staffId
+                ,actionType:actionType
+                ,absentType:absentType
+                ,choosedate:choosedate
+                ,newValue:newValue
+                ,field:field
+            }
+            ,success: function(response, options) {
+                jsonData = Ext.util.JSON.decode(response.responseText);
+                if(jsonData){
+                    if(jsonData.msg) XMsg('<?=STATUS?>',jsonData.msg);
+                       
+                    if (jsonData.checked && !jsonData.error){
+                        openWinIFrame('', '/attendance/checktimebystaff/?objectId=new&staffId='+ staffId +'&choosedate=' + choosedate + '&absentType=' + absentType, 550,400);
+                    }
+                    
+                    if (jsonData.error) document.getElementById(jsonData.field).checked = jsonData.checked;   
+                }
+            }
+            ,failure: function(response, options) {}
+        });
+    }
+    
+    <?
+    if($staffEntries){
+        foreach($staffEntries as $value){
+            $staffIndex = $value->STAFF_INDEX;
+            if($ABSENT_TYPES){
+                foreach($ABSENT_TYPES as $v){
+                    $newIndex = $staffIndex."_".$v->ID;
+
+                    ///////////////////////////////////////////
+                    $js = "";
+                    $js .= "function functionActionDaily".$newIndex."() {";
+                        $js .= "var newValue = document.getElementById('TYPE_".$newIndex."').checked;";
+                        $js .= "if(newValue){";
+                            $js .= "setAjaxRequest(1,'TYPE_".$newIndex."','".$value->STAFF_ID."',1, choosedate,'".$v->ID."');";  
+                        $js .= "}else{";
+                            $js .= "setAjaxRequest(0,'TYPE_".$newIndex."','".$value->STAFF_ID."',1, choosedate,'".$v->ID."');";
+                        $js .= "}";
+                    $js .= "}";
+                    print $js;
+                    ////////////////////////////////////////////
+
+                }
+            }
+        }
+    }
+    ?>
+    
+    Ext.onReady(function() {
+        
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+            );
+        }
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px;;">' + value + '</div>';
+        }
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $STAFF_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STAFF_ATTENDANCE_READ_RIGHT")?"false":"true";
+
+        ///////////////////////////////////////////////////
+        //Daily Absence Grid...
+        ///////////////////////////////////////////////////
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                echo "
+                function renderText".$value->ID."(v, p, record, rowIndex){
+                    return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+                    ,v
+                    ,record.data['".$value->ID."_COLOR']
+                    ,record.data['".$value->ID."_COLOR_FONT']
+                    );
+                }
+                ";
+            }
+        }
+        
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'ID'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'CODE'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'LASTNAME'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'FIRSTNAME'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'BG_COLOR'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'BG_COLOR_FONT'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'STATUS_KEY'");
+        $DAILY_ATTENDANCE_GRID->addReadField("name: 'DATE_BIRTH'");
+    
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                $DAILY_ATTENDANCE_GRID->addReadField("name: 'TYPE_".$value->ID."'");
+                $DAILY_ATTENDANCE_GRID->addReadField("name: '".$value->ID."_COLOR'");
+                $DAILY_ATTENDANCE_GRID->addReadField("name: '".$value->ID."_COLOR_FONT'");
+            }
+        }
+        
+        switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+            case "VIETNAMESE": $width = 125;break;
+            default: $width = 85;break;
+        }
+
+        $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+        $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".CODE."</b>', width: 90, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+            $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        }else{
+            $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+            $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+        }
+        $DAILY_ATTENDANCE_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 120,renderer: cssText, sortable: true, dataIndex: 'DATE_BIRTH'");        
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                $DAILY_ATTENDANCE_GRID->addColumn("
+                    header: '<b>".setShowText($value->CODE)."</b>'
+                    ,renderer:renderText".$value->ID."
+                    ,dataIndex: 'TYPE_".$value->ID."'
+                    ,width: 80
+                    ,align: 'center'
+                ");
+            }
+        }
+        
+        $DAILY_ATTENDANCE_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonStaffDailyAttendance'
+            ,choosedate:choosedate
+            ,object:'h84k964g3434b5v6b54h34n45hgh3'
+        ";
+        $DAILY_ATTENDANCE_GRID->addTBarItems("
+            tbar.add(['<b>".DATE."</b>',{
+                xtype:'datefield'
+                ,width:150
+                ,id: 'CHOOSE_DATE'
+                ,name: 'CHOOSE_DATE'
+                ,format:'".setExtDatafieldFormat()."'
+                ,allowBlank:false
+                ,value:choosedate
+                
+            }]);
+        ");
+        $DAILY_ATTENDANCE_GRID->isGridEditing = false;
+        $DAILY_ATTENDANCE_GRID->forceFit = "false";
+        $DAILY_ATTENDANCE_GRID->isQuickySearch = true;
+        $DAILY_ATTENDANCE_GRID->renderJS();
+        
+        ?>
+        
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id:'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                /*,tbar:['<b><?=DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:150
+                    ,id:'CHOOSE_DATE'
+                    ,name: 'CHOOSE_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value:choosedate
+                    
+                }] */
+                ,items:[{xtype: '<?=$DAILY_ATTENDANCE_GRID->getObjectXtype();?>'}]
+                
+            }]
+        });
+        
+        Ext.getCmp('CHOOSE_DATE').setValue(choosedate);
+        Ext.getCmp('CHOOSE_DATE').on('select', function(date_picker, date) {
+            choosedate = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+            window.location='<?=$_SERVER["REQUEST_URI"]?>&choosedate='+choosedate;
+        }); 
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'})); 
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

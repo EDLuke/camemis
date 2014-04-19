@@ -1,0 +1,190 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/AbsentTypeDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ABSENT_TYPE");
+$OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
+
+$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
+
+$facette = AbsentTypeDBAccess::findObjectFromId($this->objectId);
+
+$removeStatus = false;
+if ($facette) {
+	$status = $facette->STATUS;
+	if ($status) {
+		$removeStatus = false;
+	}else{
+		$removeStatus = true;
+	}
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $TYPE_STORE = "[
+        [0, '---']
+        ,[1, '" . DAILY_ATTENDANCE . "']
+        ,[2, '" . BLOCK_ATTENDANCE . "']
+    ]";
+    
+    $FORM_ITEMS = "[
+        {".CamemisField::Textfield("CODE", "CODE", SHORT_CODE,false,false,false,false)."}
+        ,{".CamemisField::Textfield("ABSENT_NAME", "ABSENT_NAME", NAME,false,false,false,false)."}
+        ,{".CamemisField::Colorfield("COLOR", COLOR, false)."}
+        ,{".CamemisField::Combo("TYPE", TYPE, $TYPE_STORE,false, false, false)."}
+        ,{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}
+    ]";
+
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$FORM_ITEMS."
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; padding:5px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 200)."}]
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+            ,".$DESCRIPTION."
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+	
+    if($facette) {
+        if(UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($facette->STATUS));
+        if(UserAuth::getACLValue("ACADEMIC_SETTING_REMOVE_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+    }
+    if(UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+
+    $OBJECT_FORM->setLoadParams("cmd: 'loadAbsentType',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveAbsentType'
+        ,objectId: '".$this->objectId."'
+        ,objectType: '".$objectType."'
+    ");
+
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseAbsentType',objectId: '".$this->objectId."'");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        if(window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID').root.reload();
+        if(window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID').root.reload();
+        window.location='" . $_SERVER["REQUEST_URI"] . "';
+    ");
+
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'jsonRemoveAbsentType'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        if(window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID').root.reload();
+        if(window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID').root.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        if(window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID').root.reload();
+        if(window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID').root.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+	
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

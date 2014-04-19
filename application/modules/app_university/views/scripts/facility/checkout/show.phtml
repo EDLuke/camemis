@@ -1,0 +1,412 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 09.05.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("FACILITY");
+$OBJECT_FORM->setSaveUrl("/facility/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/facility/jsonload/");
+
+$CHECK_PERSON_GRID = new CamemisGrid("CHECK_STAFF", "LIST");
+$CHECK_PERSON_GRID->setLoadUrl('/staff/jsonload/');
+
+$AVAILABLE_PERSON_GRID = new CamemisGrid("AVAILABLE_STAFF", "LIST");
+$AVAILABLE_PERSON_GRID->setLoadUrl('/staff/jsonload/');
+
+$CHECK_ITEM_GRID = new CamemisGrid("CHECK_AVAILABLE", "LIST");
+$CHECK_ITEM_GRID->setLoadUrl('/facility/jsonload/');
+
+$ASSIGNED_ITEMS_GRID = new CamemisGrid("AVAILABLE_FACILITY", "LIST");
+$ASSIGNED_ITEMS_GRID->setLoadUrl('/facility/jsonload/');
+
+$actionType = isset($_GET['type'])?$_GET['type']:"0";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssText(value, metadata, record){
+        if(record.data.RETURN=="true")
+        return '<div style="color:#555;background:#99BBE8;padding:8px;font-weight:bold;height:50px;">' + value + '</div>';
+        else
+        return '<div style="color:#555;background:#FFDEDE;padding:8px;font-weight:bold;height:50px;">' + value + '</div>';
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $CHECK_OUT_NAME = "{
+        title: '".NAME."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width:600
+        ,bodyStyle: 'padding:10px'
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[
+                {".CamemisField::Textfield("NAME", "NAME", NAME, true, false)."} 
+            ]
+        }]}
+    ";
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //Check of person...
+    ////////////////////////////////////////////////////////////////////////////
+    $CHECK_PERSON_GRID->addReadField("name: 'ID'");
+    $CHECK_PERSON_GRID->addReadField("name: 'BG_COLOR'");
+    $CHECK_PERSON_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $CHECK_PERSON_GRID->addReadField("name: 'STATUS_KEY'");
+    $CHECK_PERSON_GRID->addReadField("name: 'CODE'");
+    $CHECK_PERSON_GRID->addReadField("name: 'FULL_NAME'");
+    $CHECK_PERSON_GRID->addReadField("name: 'PHONE'");
+    $CHECK_PERSON_GRID->addReadField("name: 'EMAIL'");
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $CHECK_PERSON_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $CHECK_PERSON_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
+    $CHECK_PERSON_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 220, renderer: cssText, sortable: true, dataIndex: 'FULL_NAME'");
+    $CHECK_PERSON_GRID->addColumn("header: '<b>".PHONE."</b>', width: 140, renderer: cssText, sortable: false, dataIndex: 'PHONE'");
+    $CHECK_PERSON_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 140, renderer: cssText, sortable: false, dataIndex: 'EMAIL'");
+    
+    $CHECK_PERSON_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'searchStaff'
+    ";
+    
+    $CHECK_PERSON_GRID->setEditEmbeddedEvents("
+         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    
+    $CHECK_PERSON_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+    
+    $CHECK_PERSON_GRID->isGridEditing = true;
+    $CHECK_PERSON_GRID->loadMask = false;
+    $CHECK_PERSON_GRID->isPagingToolbar = true;
+    $CHECK_PERSON_GRID->isQuickySearch = true;
+    $CHECK_PERSON_GRID->isObjectDefaultOnLoad = true;
+    $CHECK_PERSON_GRID->forceFit = "false";
+    $CHECK_PERSON_GRID->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    
+    $PERSON = "{
+        title: '".PERSON."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width:600
+        ,bodyStyle: 'padding:10px'
+        ,style: 'padding-bottom: 5px'
+        ,tbar:['->',{
+            text:'".AVAILABLE_PERSON."'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                openWinXType('AVAILABLE_PERSON','".AVAILABLE_PERSON."', '".$CHECK_PERSON_GRID->getObjectXType()."',percentWidth(80), percentHeight(85));
+                var grid = Ext.getCmp('".$CHECK_PERSON_GRID->getObjectId()."');
+                grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+                    var record = grid.store.getAt(rowIndex);
+                    Ext.getCmp('USER_ID').setValue(record.data.ID);
+                    Ext.getCmp('PERSON').setValue(record.data.FULL_NAME);
+                    Ext.getCmp('AVAILABLE_PERSON').close();
+                })
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[
+                {".CamemisField::Textfield("PERSON", "PERSON", FULL_NAME, true, true)."}
+                ,{".CamemisField::Hiddenfield("USER",false)."}
+            ]
+        }]}
+    ";
+    
+    $CHECK_ITEM_GRID->addReadField("name: 'ID'");
+    $CHECK_ITEM_GRID->addReadField("name: 'PARENT'");
+    $CHECK_ITEM_GRID->addReadField("name: 'BARCODE'"); 
+    $CHECK_ITEM_GRID->addReadField("name: 'QUANTITY'");
+    $CHECK_ITEM_GRID->addReadField("name: 'EXPIRED_WARRANTY'");
+    $CHECK_ITEM_GRID->addReadField("name: 'PERMANENT'");
+    
+    $CHECK_ITEM_GRID->addColumn("header: '<b>" . NAME . "</b>', align:'left', sortable: false, dataIndex: 'PARENT', width: 150,renderer: cssText");
+    $CHECK_ITEM_GRID->addColumn("header: '<b>" . BARCODE . "</b>', align:'left', sortable: false, dataIndex: 'BARCODE', width: 200,renderer: cssText");
+    $CHECK_ITEM_GRID->addColumn("header: '<b>" . QUANTITY . "</b>', align:'left', sortable: false, dataIndex: 'QUANTITY', width:80,renderer: cssText");
+    $CHECK_ITEM_GRID->addColumn("header: '<b>".EXPIRED_WARRANTY."</b>', align:'left', sortable: false, dataIndex: 'EXPIRED_WARRANTY', width:150,renderer: cssText");
+    
+    $CHECK_ITEM_GRID->isQuickySearch = true;
+    
+    $CHECK_ITEM_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonLoadAvailableFacilityItem'
+    ";
+    
+    $CHECK_ITEM_GRID->setEditEmbeddedEvents("
+         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    
+    $CHECK_ITEM_GRID->isGridEditing = true;
+    
+    $CHECK_ITEM_GRID->isGroupingView = true;
+    $CHECK_ITEM_GRID->groupField='PARENT';
+    $CHECK_ITEM_GRID->loadMask = false;
+    //$CHECK_ITEM_GRID->isCheckboxSelect=true;
+    $CHECK_ITEM_GRID->isObjectDefaultOnLoad = true;
+    $CHECK_ITEM_GRID->forceFit = "false";
+    $CHECK_ITEM_GRID->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'ID'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'ITEM_NAME'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'BARCODE'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'QUANTITY'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'LOCATION'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'ISSUED_DATE'"); 
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'ISSUED_BY'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'ITEM_ACTION_TYPE'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'STATUS'");
+    $ASSIGNED_ITEMS_GRID->addReadField("name: 'RETURN'");
+    
+    $ASSIGNED_ITEMS_GRID->addColumn("header: '<b>" . NAME . "</b>', align:'left', sortable: false, dataIndex: 'ITEM_NAME', width: 150,renderer: cssText");
+    $ASSIGNED_ITEMS_GRID->addColumn("header: '<b>" . BARCODE . "</b>', align:'left', sortable: false, dataIndex: 'BARCODE', width: 200,renderer: cssText");
+    $ASSIGNED_ITEMS_GRID->addColumn("header: '<b>" . QUANTITY . "</b>', align:'left', sortable: false, dataIndex: 'QUANTITY', width: 200,renderer: cssText");
+    $ASSIGNED_ITEMS_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', renderer: cssText, width:350, sortable: true, dataIndex: 'STATUS'");
+    $ASSIGNED_ITEMS_GRID->addColumn("header: '<b>".ISSUED_BY."</b>', align:'left', renderer: cssText, width: 150, sortable: true, dataIndex: 'ISSUED_BY'");
+    //$ASSIGNED_ITEMS_GRID->addColumn("header: '<b>Issued Date</b>', align:'left', renderer: cssText, width: 150, sortable: true, dataIndex: 'ISSUED_DATE'");
+    
+    $ASSIGNED_ITEMS_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '" . $this->objectId . "'
+        ,cmd: 'jsonAllCheckOutItems'
+    ";
+    
+    
+    $ASSIGNED_ITEMS_GRID->setEditEmbeddedEvents("
+         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+   
+   $ASSIGNED_ITEMS_GRID->addTBarItems("
+        tbar.add([{
+            text: '".ADD_ENTRY."'
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+            clickOpenPage('CONTENT','', '/facility/subshowcheckoutitem/?&objectId=new&parentId=".$this->objectId."');
+            }
+        }]);
+   ");
+     
+    //$ASSIGNED_ITEMS_GRID->isGridEditing = true;
+    //$ASSIGNED_ITEMS_GRID->isCheckboxSelect=true;
+    $ASSIGNED_ITEMS_GRID->loadMask = false;
+    $ASSIGNED_ITEMS_GRID->isPagingToolbar = true;
+    $ASSIGNED_ITEMS_GRID->isQuickySearch = true;
+    $ASSIGNED_ITEMS_GRID->isObjectDefaultOnLoad = true;
+    $ASSIGNED_ITEMS_GRID->forceFit = "false";
+    $ASSIGNED_ITEMS_GRID->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    
+    $ITEM = "{
+        title: 'Items'
+        ,collapsible: true
+        ,collapsed: false
+        ,width:600
+        ,height:300
+        ,layout: 'fit'
+        ,style: 'padding-bottom: 5px'
+        ,items:[{xtype: '".$ASSIGNED_ITEMS_GRID->getObjectXType()."'}]
+    }";
+    
+    $DESCRIPTION = "{
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width:600
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 150)."}]
+        }]}
+    ";
+    
+    $items = "[";
+    $items .= $CHECK_OUT_NAME;
+    $items .= ",".$PERSON;  
+    //if ($this->facette) $items .= ",".$ITEM;  
+    $items .= ",".$DESCRIPTION;  
+    $items .= "]";
+    
+    $formItems = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items:".$items."
+    ";
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('FACILITY_LIST_ID').store.load();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            window.parent.Ext.getCmp('WEST_ID').expand();
+            window.parent.Ext.getCmp('center').setTitle('".SEARCH_RESULT."');
+        }
+    ");
+   
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadFacilityUser'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveFacilityUser'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    if($this->objectId=="new"){
+          
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+           
+        ");
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+    }else{
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(true));
+       
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'deleteFacilityUser'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            window.parent.Ext.getCmp('FACILITY_LIST_ID').store.load();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    }
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = $this->facette?true:false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    $VIEWPORT ="";
+    $VIEWPORT .="viewport = new Ext.Viewport({";
+        $VIEWPORT .="layout: 'fit'";
+        $VIEWPORT .=",border: false";
+        $VIEWPORT .=",items: [{";
+            $VIEWPORT .="xtype: 'panel'";
+            $VIEWPORT .=",id: 'panel'";
+            $VIEWPORT .=",border: false";
+            $VIEWPORT .=",layout: 'card'";
+            $VIEWPORT .=",activeItem: 0";
+            $VIEWPORT .=",items: [{";
+                $VIEWPORT .="layout: 'fit'";
+                $VIEWPORT .=",border: false";
+                $VIEWPORT .=",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+            $VIEWPORT .="}]";
+        $VIEWPORT .="}]";
+    $VIEWPORT .="});";
+    
+    $VIEPORT_SECOND ="
+         viewport = new Ext.Viewport({
+             layout: 'fit'
+             ,border: false
+             ,items:[{
+                 layout:'fit'
+                 ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
+                 ,border: false
+                 ,items:[{
+                     xtype: 'tabpanel'
+                     ,tabPosition: 'top'
+                     ,plain:true
+                     ,activeTab: 0
+                     ,enableTabScroll:true
+                     ,items:[{
+                         title:'".MAIN_CONTENT."'
+                         ,border: false
+                         ,layout: 'fit'
+                         ,items:[{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+                     },{
+                         title:'".ITEM."'
+                         ,border: false
+                         ,layout: 'card'
+                         ,activeItem: 0
+                         ,id:'CONTENT'
+                         ,items:[{xtype: '".$ASSIGNED_ITEMS_GRID->getObjectXtype()."'}]
+                     }]
+                 }]
+             }]
+         });
+     ";
+    if($this->objectId=="new"){
+        echo $VIEWPORT;
+    }else{ 
+        echo $VIEPORT_SECOND;   
+    }
+       
+    $html = "";
+    $html .="var grid = Ext.getCmp('".$ASSIGNED_ITEMS_GRID->getObjectId()."');";
+    $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+        $html .="var record = grid.store.getAt(rowIndex);";
+        $html .="clickOpenPage('CONTENT','', '/facility/subshowcheckoutitem/?&objectId='+record.data.ID+'&parentId=".$this->objectId."');"; 
+    $html .="});";
+    echo $html;
+    
+    ?>
+ 
+  });   
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

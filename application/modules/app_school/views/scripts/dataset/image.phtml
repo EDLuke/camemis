@@ -1,0 +1,204 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// @Sothearung....
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/CAMEMISUploadDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_NAME = "";
+
+switch($this->objectName){
+    case "PERSONAL_IMAGE":
+        $OBJECT_NAME ="PERSONAL_IMAGE";
+        break;
+    case "SCHOOL_LOGO":
+        $OBJECT_NAME ="SCHOOL_LOGO";
+        break;
+    case "FACILITY_IMAGE":
+        $OBJECT_NAME ="FACILITY_IMAGE";
+    break;
+}
+
+if(!$OBJECT_NAME) {header("Location: /main/permission/");}
+
+$BLOB = CAMEMISUploadDBAccess::getFileFromObjectId($this->objectId, 1,"".$OBJECT_NAME."");
+$ATTACHMENT_ITEMS = "[{".CamemisField::Uploadfield("uploaded_file_1", false, false, false)."}]";
+$BLOB_NAME = isset($BLOB->FILE_NAME)?$BLOB->FILE_NAME:"---";
+$BLOB_SIZE = isset($BLOB->FILE_SIZE)?" ("._format_bytes($BLOB->FILE_SIZE).")":"";
+
+if($BLOB){
+    
+    $SRC_FILE_NAME = $BLOB_NAME;
+    $SHOW_FILE = $BLOB->FILE_SHOW;
+    $DISABLED_SHOW_FILE = "false";
+    $DISABLED_DELETE_FILE = "false";
+    $WIDTH = 150;
+    switch($BLOB->FILE_TYPE){
+        case "image/jpeg":
+        case "image":
+        case "image/png":
+            $SRC_FILE = "/public/".CAMEMISUploadDBAccess::getMyFolder()."" . $BLOB->FILE_SHOW . "";
+            break;
+        default:
+            
+            switch($OBJECT_NAME){
+                case "FACILITY_IMAGE":
+                case "SCHOOL_LOGO":
+                    $SRC_FILE = "/public/images/pics_2.png";
+                    break;
+                default:
+                    $SRC_FILE = "/public/images/user1_information.png";
+                    break;
+            }
+        break;
+    }
+    
+}else{
+    $SRC_FILE_NAME = "---";
+    
+    switch($OBJECT_NAME){
+        case "FACILITY_IMAGE":
+        case "SCHOOL_LOGO":
+            $SHOW_FILE = "pics_2.png";
+            $SRC_FILE = "/public/images/pics_2.png";
+        break;
+        default:
+            $SHOW_FILE = "user1_information.png";
+            $SRC_FILE = "/public/images/user1_information.png";
+        break;
+    }
+    $WIDTH = 150;
+    $DISABLED_SHOW_FILE = "true";
+    $DISABLED_DELETE_FILE = "true";
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() {
+        Ext.QuickTips.init();
+ 
+        <?
+        camemisPage::showBlob();
+        camemisPage::deleteBlob();
+        camemisPage::uploadBlob();
+        
+        $FORM_ITEMS ="[{";
+        $FORM_ITEMS .= "
+            title: ''
+            ,height:270
+            ,border:false
+            ,layout: 'form'
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,tbar:[{
+                text: '".UPLOAD_IMAGE."'
+                ,iconCls: 'icon-breakpoint_up'
+                ,handler: function(){
+                    win = new Ext.Window({
+                        title: '".UPLOAD_IMAGE."'
+                        ,id: 'myWin'
+                        ,width: 350
+                        ,height: 150
+                        ,modal: true
+                        ,layout: 'fit'
+                        ,items:[{
+                            layout: 'form'
+                            ,border: false
+                            ,bodyStyle: 'padding:10px'
+                            ,items:[{
+                                xtype: 'form'
+                                ,id: 'UPLOAD_FORM'
+                                ,border: false
+                                ,items: ".$ATTACHMENT_ITEMS."
+                            }]
+                        }]
+                        ,tbar:[{
+                            tooltip:'".UPLOAD_IMAGE."'
+                            ,iconCls: 'icon-breakpoint_up'
+                            ,handler: function(){
+                                uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$OBJECT_NAME."');
+                            }
+                        }]
+                        ,buttons:[{
+                            text: '".CLOSE."'
+                            ,iconCls:'icon-close'
+                            ,handler: function(){
+                                win.close();
+                            }
+                        }]
+                    });
+                    win.show();
+                }
+            },'->',{
+                tooltip:'".SAVE." (".PERSONAL_IMAGE.")'
+                ,text: '".SAVE."'
+                ,hidden:true
+                ,iconCls:'icon-breakpoint_down'
+                ,handler: function(){showBlob('".$SHOW_FILE."');}
+            },{
+                tooltip:'".REMOVE." (".PERSONAL_IMAGE.")'
+                ,text: '".REMOVE."'
+                ,disabled:".$DISABLED_DELETE_FILE."
+                ,iconCls: 'icon-breakpoint_delete'
+                ,handler: function(){deleteBlob('".$SHOW_FILE."')}
+            }]
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,height: 180
+                ,bodyStyle: 'padding:10px; background:#FFF;'
+                ,items: [{
+                    xtype:'box'
+                    ,anchor:''
+                    ,isFormField:true
+                    ,fieldLabel:''
+                    ,autoEl:{
+                        tag:'div', children:[{
+                            tag:'img'
+                            ,border: true
+                            ,qtip:'" . $BLOB_NAME . " " . $BLOB_SIZE . "'
+                            ,width: " . $WIDTH . "
+                            ,src:'" . $SRC_FILE . "'
+                        },{
+                            tag:'div'
+                            ,style:'margin:0px 0px 4px 0px'
+                            ,html:'<br>" . $SRC_FILE_NAME . "'
+                        }]
+                    }
+                }]
+            }]
+        ";
+        $FORM_ITEMS .="}]";
+        ?>
+                
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                border: false
+                ,layout: 'fit'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items:<?=$FORM_ITEMS;?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

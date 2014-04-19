@@ -1,0 +1,160 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 16.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl('/training/jsonload/');
+$OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+ 
+$VIEWPORT = new CamemisViewport();
+
+$trainingId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+$STUDENT_ASSIGNMENT = StudentTrainingDBAccess::getInstance();
+$STUDENT_ASSIGNMENT->trainingId = $this->objectId; 
+$entries = $STUDENT_ASSIGNMENT->listSubjectsTraining();
+
+$ENTRIES_SUBJECT = TrainingSubjectDBAccess::getTrainingClassSubject($trainingId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    span.spanText {
+        font-weight:bold;
+        color:#333; 
+        white-space:normal;
+    }
+</style>
+<script>
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssFirst(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#D1DDEF;">' + value + '</div>';
+    }
+    
+    function cssSecond(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#FFE5A6;">' + value + '</div>';
+    }
+    
+    function cssAverage(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
+    }
+    
+    function cssRang(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
+    }
+    
+    function cssEvaluation(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $EDITOR = "new Ext.form.TextField({allowBlank: false})";
+    $OBJECT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+    ");
+    
+    $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'RANK'"); 
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    
+    if($entries){
+        foreach($entries as $value){
+            $OBJECT_GRID->addReadField("name: '".$value->SUBJECT_ID."'");   
+        }
+    } 
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 210, dataIndex: 'STUDENT'");
+   
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 100, sortable: true, renderer: cssRang, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssAverage, width: 110, dataIndex: 'AVERAGE'");
+    
+     if($entries){
+        foreach($entries as $value){
+            $OBJECT_GRID->addColumn("header: '<b>".$value->NAME."</b>', align: 'center', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+        }
+    } 
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        //,objectId:'".$trainingId."'
+        //,cmd: 'jsonStudentTrainingAssessment'
+        ,trainingId:'".$trainingId."'                  
+        ,cmd: 'jsonListStudentsClassPerformanceTraining'
+        
+    ";
+    
+    $OBJECT_GRID->isGridEditing = false;
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    $VIEWPORT->viewportLayout = "Normal";
+    $ITEMS = "xtype:'".$OBJECT_GRID->getObjectXtype()."'";
+    $VIEWPORT->addItem($ITEMS);
+    $VIEWPORT->renderJS();
+    ?>
+   
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

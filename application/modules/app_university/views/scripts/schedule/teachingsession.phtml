@@ -1,0 +1,440 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("SCHEDULE");
+$OBJECT_FORM->setLoadUrl('/schedule/jsonload/');
+$OBJECT_FORM->setSaveUrl('/schedule/jsonsave/');
+
+$type = isset($_GET["type"])?$_GET["type"]:"";
+$chooseDate = isset($_GET["chooseDate"])?$_GET["chooseDate"]:"";
+
+$CHECK = timeDifference($chooseDate, getCurrentDBDate());
+
+$AVAILABLE_TEACHER_GRID = new CamemisGrid("SCHEDULE", "TEACHER");
+$AVAILABLE_TEACHER_GRID->setLoadUrl("/schedule/jsonload/");
+$AVAILABLE_TEACHER_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$ASSIGNED_TEACHER_GRID = new CamemisGrid("SCHEDULE", "ASSIGNED");
+$ASSIGNED_TEACHER_GRID->setLoadUrl("/schedule/jsonload/");
+$ASSIGNED_TEACHER_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$AVAILABLE_ROOM_GRID = new CamemisGrid("SCHEDULE", "ROOM");
+$AVAILABLE_ROOM_GRID->setLoadUrl("/schedule/jsonload/");
+$AVAILABLE_ROOM_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$OBJECT_DATA = $this->SCHEDULE_DATA;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    span.showText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<div id="initError" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError"><?=MSG_WARNING_EXAM_TIME;?></h1>
+</div>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $AVAILABLE_TEACHER_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+            var str = '<span class=showText>' + v + '</span>';
+            return str;
+        }
+        ");
+        
+        $AVAILABLE_TEACHER_GRID->addReadField("name: 'CODE'");
+        $AVAILABLE_TEACHER_GRID->addReadField("name: 'TEACHER'");
+        $AVAILABLE_TEACHER_GRID->addReadField("name: 'AVAILABLE'");
+        $AVAILABLE_TEACHER_GRID->addReadField("name: 'AVAILABLE_STATUS'");
+
+        $AVAILABLE_TEACHER_GRID->addColumn("header: '".STATUS."', align:'center', width: 80, sortable: false, dataIndex: 'AVAILABLE_STATUS'");
+        $AVAILABLE_TEACHER_GRID->addColumn("header: '".TEACHER."', align:'left', renderer: renderText, width: 210, sortable: false, dataIndex: 'TEACHER'");
+        
+        $AVAILABLE_TEACHER_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,scheduleId: '".$this->scheduleId."'
+            ,cmd: 'availableTeachingSession'
+        ";
+    
+        $AVAILABLE_TEACHER_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . APPLY . "'
+                ,id: 'TEACHER_APPLY'
+                ,iconCls:'icon-lightning_add'
+                ,handler: function(){
+                    var sm = Ext.getCmp('".$AVAILABLE_TEACHER_GRID->getObjectId()."').getSelectionModel();
+                    var record = sm.getSelected();
+                    if(record){
+                        if (record.data.AVAILABLE == 1){
+                            var Id = record.data.ID;
+                            Ext.getCmp('TEACHER_HIDDEN').setValue(Id);
+                            Ext.getCmp('TEACHER_NAME').setValue(record.data.TEACHER);
+                            Ext.getCmp('OPEN_WINDOW').close();
+                        }
+                    }
+                }
+            }]);
+        ");
+        
+        $AVAILABLE_TEACHER_GRID->isObjectDefaultOnLoad = true;
+        $AVAILABLE_TEACHER_GRID->renderJS();
+
+        $ASSIGNED_TEACHER_GRID->addReadField("name: 'TIME'");
+        $ASSIGNED_TEACHER_GRID->addReadField("name: 'TEACHING_INFORMATION'");
+        $ASSIGNED_TEACHER_GRID->addColumn("header: '".TIME."', align:'center', width:120, sortable: false, dataIndex: 'TIME'");
+        $ASSIGNED_TEACHER_GRID->addColumn("header: '".TEACHING_INFORMATION."', align:'left', renderer: renderText, width: 210, sortable: false, dataIndex: 'TEACHING_INFORMATION'");
+        
+        $ASSIGNED_TEACHER_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,scheduleId: '".$this->scheduleId."'
+            ,cmd: 'checkAssignedTeacherInSchedule'
+        ";
+        $ASSIGNED_TEACHER_GRID->isObjectDefaultOnLoad = false;
+        $ASSIGNED_TEACHER_GRID->renderJS();
+        
+        $AVAILABLE_ROOM_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+        ");
+
+        $AVAILABLE_ROOM_GRID->addReadField("name: 'ROOM'");
+        $AVAILABLE_ROOM_GRID->addReadField("name: 'BUILDING'");
+        $AVAILABLE_ROOM_GRID->addReadField("name: 'FLOOR'");
+
+        $AVAILABLE_ROOM_GRID->addColumn("header: '".NAME."', renderer: renderText, align:'left', width: 120, sortable: false, dataIndex: 'ROOM'");
+        $AVAILABLE_ROOM_GRID->addColumn("header: '".BUILDING."', renderer: renderText, align:'left', width: 150, sortable: false, dataIndex: 'BUILDING'");
+        $AVAILABLE_ROOM_GRID->addColumn("header: '".FLOOR."', renderer: renderText, align:'left', width: 150, sortable: false, dataIndex: 'FLOOR'");
+        $AVAILABLE_ROOM_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,scheduleId: '".$this->scheduleId."'
+            ,cmd: 'availableRoom'
+        ";
+        
+        $AVAILABLE_ROOM_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . APPLY . "'
+                ,id: 'ROOM_APPLY'
+                ,iconCls:'icon-lightning_add'
+                ,handler: function(){
+                    var sm = Ext.getCmp('".$AVAILABLE_ROOM_GRID->getObjectId()."').getSelectionModel();
+                    var record = sm.getSelected();
+                    if(record){
+                        Ext.getCmp('ROOM_HIDDEN').setValue(record.data.ID);
+                        Ext.getCmp('ROOM_NAME').setValue(record.data.ROOM);
+                    }
+                }
+            }]);
+        ");
+        $AVAILABLE_ROOM_GRID->renderJS();
+    
+        $DETAIL_INFORMATION = "
+        {
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Displayfield("START_TIME", START_TIME, $OBJECT_DATA["START_TIME"]?$OBJECT_DATA["START_TIME"]:"---", false)."}
+                    ,{".CamemisField::Displayfield("END_TIME", END_TIME, $OBJECT_DATA["END_TIME"]?$OBJECT_DATA["END_TIME"]:"---", false)."}
+                    ,{".CamemisField::Displayfield("EVENT", EVENT, $OBJECT_DATA["EVENT"]?$OBJECT_DATA["EVENT"]:"---", false)."}
+                    ,{".CamemisField::Displayfield("TEACHER_NAME", TEACHER, $OBJECT_DATA["TEACHER_NAME"]?$OBJECT_DATA["TEACHER_NAME"]:"---", false)."}
+                    ,{".CamemisField::Displayfield("ROOM_NAME", ROOM, $OBJECT_DATA["ROOM_NAME"]?$OBJECT_DATA["ROOM_NAME"]:"---", false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $TEACHER_INFORMATION = "
+        {
+            title: '".TEACHER."'
+            ,id: 'TEACHER_INFORMATION'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,tbar: ['->',{
+                    text: '".CHECK_AVAILABLE_TEACHER."'
+                    ,iconCls:'icon-lightning'
+                    ,handler: function(){
+                        var win = new Ext.Window({
+                            title: '".CHECK_AVAILABLE_TEACHER." &raquo; ".$OBJECT_DATA["SHORTDAY_NAME"]." &raquo; ".$OBJECT_DATA["EVENT"]."'
+                            ,id: 'OPEN_WINDOW'
+                            ,closable:true
+                            ,width:percentWidth(90)
+                            ,height: percentHeight(60)
+                            ,plain:true
+                            ,layout:'border'
+                            ,border: false
+                            ,defaults: {
+                                collapsible: false
+                                ,split: true
+                            }
+                            ,items: [{
+                                region:'west'
+                                ,margins: '3 0 3 3'
+                                ,cmargins: '3 3 3 3'
+                                ,width: percentWidth(90)/2
+                                ,minSize: percentWidth(90)/2
+                                ,maxSize: percentWidth(90)/2
+                                ,layout: 'fit'
+                                ,items: [{xtype: '".$AVAILABLE_TEACHER_GRID->getObjectXType()."'}]
+                            },{
+                                collapsible: false
+                                ,id: 'center'
+                                ,region:'center'
+                                ,margins: '3 3 3 0'
+                                ,layout: 'fit'
+                                ,items: [{xtype: '".$ASSIGNED_TEACHER_GRID->getObjectXType()."'}]
+                            }]
+                        });
+                        win.show();
+                        
+                        var grid = Ext.getCmp('".$AVAILABLE_TEACHER_GRID->getObjectId()."');
+                        grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+                            
+                            Ext.fly(Ext.getCmp('TEACHER_APPLY').getEl()).frame('ff0000');   
+                            var record = grid.store.getAt(rowIndex);  
+                            Ext.getCmp('".$ASSIGNED_TEACHER_GRID->getObjectId()."').store.baseParams = {
+                                start:0
+                                ,limit:100
+                                ,cmd: 'checkAssignedTeacherInSchedule'
+                                ,scheduleId: '".$this->scheduleId."'
+                                ,checkId: record.data.ID
+                            };
+                            //Ext.getCmp('".$ASSIGNED_TEACHER_GRID->getObjectId()."').store.load();
+                        });
+                    }
+                }]
+                ,layout: 'form'
+                ,items:[
+                    {".CamemisField::Textfield("TEACHER_NAME", "TEACHER_NAME", FULL_NAME, false, true, false)."}
+                    ,{".CamemisField::Hidden("TEACHER_HIDDEN", $this->teacherId)."}
+                ]
+            }]
+        }
+        ";
+    
+        $ROOM_INFORMATION = "
+        {
+            title: '".ROOM."'
+            ,id: 'ROOM_INFORMATION'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,tbar: ['->',{
+                    text: '".CHECK_AVAILABLE_ROOM."'
+                    ,iconCls:'icon-lightning'
+                    ,handler: function(){
+                        openWinXType('WinXType','".CHECK_AVAILABLE_ROOM."', '".$AVAILABLE_ROOM_GRID->getObjectXType()."', 500, percentHeight(85));
+                    }
+                }]
+                ,layout: 'form'
+                ,items:[
+                    {".CamemisField::Textfield("ROOM_NAME", "ROOM_NAME", NAME, false, true, false)."}
+                    ,{".CamemisField::Hidden("ROOM_HIDDEN", $this->roomId)."}
+                ]
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DESCRIPTION."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Checkbox("CANCEL", "CANCEL", DELAY_OR_CANCEL, false, false)."}
+                    ,{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 50)."}
+                ]
+            }]
+        }
+        ";
+        
+        $FORM_ITEMS = "[";
+        $FORM_ITEMS .= $DETAIL_INFORMATION;    
+        
+        switch(strtoupper($type)){
+            case "SUBSTITUTE":
+                $FORM_ITEMS .= ",".$TEACHER_INFORMATION;
+                $FORM_ITEMS .= ",".$ROOM_INFORMATION;
+                $FORM_ITEMS .= ",".$DESCRIPTION;
+                break;
+            case "EXTRASESSION":
+                $FORM_ITEMS .= ",".$TEACHER_INFORMATION;
+                $FORM_ITEMS .= ",".$ROOM_INFORMATION;
+                $FORM_ITEMS .= ",".$DESCRIPTION;
+                break;
+            case "DAYOFSCHOOL":
+                $FORM_ITEMS .= $DESCRIPTION;
+                break;
+        }
+        
+        $FORM_ITEMS .= "]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,width: 550
+            ,bodyStyle: 'padding:0px'
+            ,items:".$FORM_ITEMS."
+        ";
+        
+        $OBJECT_FORM->addObjectItems($items);
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+        $OBJECT_FORM->setLoadParams("
+            cmd: 'jsonLoadTeachingSession'
+            ,scheduleId: '".$this->scheduleId."'
+            ,chooseDate: '".$chooseDate."'
+        ");
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActionTeachingSession'
+            ,scheduleId: '".$this->scheduleId."'
+            ,chooseDate: '".$chooseDate."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'jsonDeleteTeachingSession'
+            ,scheduleId: '".$this->scheduleId."'
+            ,chooseDate: '".$chooseDate."'
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        if($CHECK){
+            $ITEMS = "[{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+            }]";
+        }else{
+            $ITEMS = "[{
+                layout: 'fit'
+                ,border: false
+                ,contentEl: 'initError'
+                ,tbar:[{
+                    text: '".CANCEL."'
+                    ,id: 'CANCEL_ID'
+                    ,formBind:true
+                    ,iconCls:'icon-cancel'
+                    ,scope:this
+                    ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+                }]
+            }]";
+        }
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'panel'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: <?=$ITEMS;?>
+            }]
+        });
+        /*
+        Ext.getCmp('CANCEL').on('check', function() {
+            
+            if(Ext.getCmp('CANCEL').getValue() === true){
+                Ext.getCmp('ROOM_NAME').setValue('');
+                Ext.getCmp('ROOM_HIDDEN').setValue('');
+                Ext.getCmp('TEACHER_NAME').setValue('');
+                Ext.getCmp('TEACHER_HIDDEN').setValue('');
+                Ext.getCmp('ROOM_INFORMATION').disable();
+                Ext.getCmp('TEACHER_INFORMATION').disable();
+            }else{
+                Ext.getCmp('ROOM_INFORMATION').enable();
+                Ext.getCmp('TEACHER_INFORMATION').enable();
+            }
+        });
+        */
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

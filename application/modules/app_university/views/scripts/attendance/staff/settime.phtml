@@ -1,0 +1,126 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 01.08.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ATTENDANCE_TIME");
+$OBJECT_FORM->setSaveUrl("/attendance/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/attendance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+    Ext.onReady(function() {
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $TIME_INFORMATION = "
+        {
+            title: '".TIME."'
+            ,id:'TIME_BLOCK_ID'
+            ,autoHeight: true
+            ,width: 500
+            ,style: 'padding-bottom: 5px'
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [{
+                    xtype: 'textfield'
+                    ,id: 'START_TIME'
+                    ,emptyText: 'HH:MM'
+                    ,name: 'START_TIME'
+                    ,fieldLabel: '".START_TIME."'
+                    ,width: 238
+                    ,allowBlank:false
+                },{
+                    xtype: 'textfield'
+                    ,id: 'END_TIME'
+                    ,emptyText: 'HH:MM'
+                    ,name: 'END_TIME'
+                    ,fieldLabel: '".END_TIME."'
+                    ,width: 238
+                    ,allowBlank:false
+                }]
+            }]
+        }
+        ";
+
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: [
+                ".$TIME_INFORMATION."
+            ]
+        ";        
+        
+        $OBJECT_FORM->addObjectItems($items);
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActonStaffAttendance'
+            ,staffId: '".$this->staffId."'
+            ,absentType: '".$this->absentType."'
+            ,objectId: '".$this->objectId."'
+            ,choosedate: '".$this->choosedate."'
+            ,actionType: 1
+        ");
+
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+        ");
+        
+        if($this->objectId != 'new'){
+             $OBJECT_FORM->setLoadParams("
+                cmd: 'jsonLoadStaffAttendance'
+                ,objectId: '".$this->objectId."'
+             ");   
+        }
+        
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        ?>
+            
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'panel'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                }]
+            }]
+        }); 
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,132 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// @Sothearung....
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/student/StudentDBAccess.php';
+require_once 'models/app_university/student/StudentAcademicDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("STUDENT");
+$OBJECT_FORM->setLoadUrl('/student/jsonload/');
+$OBJECT_FORM->setSaveUrl('/student/jsonsave/');
+
+$studentId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+
+$STUDENT_CLASS = StudentAcademicDBAccess::getCurrentStudentAcademic(
+        $studentId
+        , $academicId
+        , false
+        , false
+        );
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+
+    Ext.onReady(function() {
+        Ext.QuickTips.init();
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        camemisPage::setNoLogoutMessage();
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $ITEM = "
+            title: ''
+            ,border: false
+            ,items:[{
+                xtype: 'panel'
+                ,layout: 'form'
+                ,style: 'padding-bottom:10px'
+                ,width: percentWidth(85)
+                ,title: '".CLASS_REPRESENTATIVE."'
+                ,bodyStyle: 'padding:10px'
+                ,items: [{
+                    ".CamemisField::ComboClassRepresentative(CLASS_REPRESENTATIVE,$STUDENT_CLASS->PRESENTATIVE,false)."
+                }]
+            }]    
+        ";
+        
+        $formItems = "
+            border: false
+            ,layout: 'form'
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                border: false
+                ,layout:'card'
+                ,activeItem: 0
+                ,id: 'FORM_CONTENT'
+                ,items: [{".$ITEM."}]
+            }]
+        ";
+        
+        $OBJECT_FORM->addObjectItems($formItems);
+
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'actionStudentRepresentation'
+            ,objectId: '".$studentId."'
+            ,academicId: '".$academicId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            if (window.parent.Ext.getCmp('STUDENT_ENROLLED_STUDENTS_ID')) window.parent.Ext.getCmp('STUDENT_ENROLLED_STUDENTS_ID').store.reload();
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->bodyStyle = "padding:0px";
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 150;
+        $OBJECT_FORM->renderJS();
+        ?>
+                
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'panel'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+$registry = Zend_Registry::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,138 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 05.12.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ATTENDANCE", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$columndata = Utiles::getGridColumnData("ATTENDANCE_LIST_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+
+<script>
+    
+    function cssTextBold(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+
+        function cssTextBlue(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#061f83; padding: 5px;">' + value + '</div>';
+        }
+
+        function cssText(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssTextRed(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#CC0000; padding: 5px;">' + value + '</div>';
+        }
+
+    Ext.onReady(function() {
+        
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addReadField("name: 'STAFF', type: 'string'");
+        $OBJECT_GRID->addReadField("name: 'ABSENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'STAFF_ID'");
+        $OBJECT_GRID->addReadField("name: 'DATE'");
+        $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
+        $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".ATTENDANCE_TYPE."</b>', align:'center', width: 180, hidden:".checkColHidden(1, $columndata).", sortable: true, renderer: cssTextBlue, dataIndex: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".DATE."</b>', align:'center', width: 220, hidden:".checkColHidden(2, $columndata).", sortable: true, renderer: cssTextBlue, dataIndex: 'DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".COUNT_DATE."</b>', align:'center', width: 100, hidden:".checkColHidden(3, $columndata).", sortable: true, renderer: cssTextRed, dataIndex: 'COUNT_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>',align:'center', width: 150, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME'");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStaffAttendance'
+            ,objectId: '" . $this->objectId . "'
+        ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'CHART_ID'
+                ,text: '".REFRESH."'
+                ,iconCls:'icon-reload'
+                ,scope:this
+                ,disabled: false
+                ,handler: function(){
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+               title: ''
+                ,collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,margins: '3 3 3 0'
+                ,items:[{
+                    layout:'fit'
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                    ,border: false
+                    ,items:[{
+                        xtype: 'tabpanel'
+                        ,id:'TABPANEL_ID'
+                        ,tabPosition: 'top'
+                        ,plain:true
+                        ,activeTab: 0
+                        ,enableTabScroll:true
+                        ,items:[{
+                            title:'<?=CHARTS;?>'
+                            ,layout:'fit'
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_CHARTS', url:'/attendance/staffchartreport/?key=<?=camemisId();?>'})]
+                        },{
+                            title:'<?=LIST_OF_ATTENDANCE?>'
+                            ,layout:'fit'
+                            ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                        }]
+                    }]
+                }]
+            }]
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

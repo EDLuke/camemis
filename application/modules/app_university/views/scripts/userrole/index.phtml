@@ -1,0 +1,195 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("USERROLE", "LIST");
+$OBJECT_TREE->setURL('/userrole/jsontree/');
+$OBJECT_TREE->setSaveUrl('/userrole/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var roleId;
+Ext.onReady(function() {
+
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $OBJECT_TREE->addTBarItems("
+        iconCls:'icon-reload'
+        ,tooltip:'".REFRESH."'
+        ,handler: function(){
+            Ext.getCmp('WEST_ID').setTitle('".USER."');
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+            ".$OBJECT_TREE->ExtgetCmp().".loader.baseParams.educationType = '';
+            ".$OBJECT_TREE->ExtgetCmp().".root.reload();
+            ".$OBJECT_TREE->ExtgetCmp().".getRootNode().expand(true, false);
+        }
+    ");
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems("
+        xtype: 'buttongroup'
+        ,items:[{
+            xtype:'textfield'
+            ,id:'query'
+            ,emptyText: '".ENTER_NAME_OR_CODEID."'
+            ,width:120
+        },{
+            iconCls:'icon-find'
+            ,tooltip:'".SEARCH."'
+            ,handler: function(){
+                ".$OBJECT_TREE->ExtgetCmp().".loader.baseParams.query = document.getElementById('query').value;
+                ".$OBJECT_TREE->ExtgetCmp().".root.reload();
+                ".$OBJECT_TREE->ExtgetCmp().".getRootNode().expand(true, false);
+            }
+        }]
+    ");
+    
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarCreateUserRole("this.createOnlyItem"));
+    $OBJECT_TREE->setSaveParams("cmd:'createObject'");
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'treeAllUserrole'
+    ");
+
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isOnClickContextMenu = false;
+    $OBJECT_TREE->isTreeExpand = false;
+    $OBJECT_TREE->isMenuOnCollapse = false;
+    $OBJECT_TREE->renderJS();
+
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible:true
+                ,split: true
+            }
+            ,items: [{
+                title: '<?=USER;?>'
+                ,id:'WEST_ID'
+                ,region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+            },{
+                title: ''
+                ,collapsible: false
+                ,region:'center'
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,margins: '3 3 3 0'
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+
+    if (Ext.getCmp('PLEASE_CHOOSEL_ID')) Ext.getCmp('PLEASE_CHOOSEL_ID').hide();
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, event){
+        
+        if(node.isLeaf()){
+            var contextMenu = new Ext.menu.Menu({
+                items: [{
+                    text: '<?=SHOW_DETAIL?> &raquo; ' + node.text
+                    ,iconCls: 'icon-user'
+                    ,handler: function(){
+                        clickOpenPage('center','', '<?=$this->URL_USER_ITEM;?>&activeItem=0&objectId=' + node.id);
+                        //Ext.getCmp('WEST_ID').collapse();
+                    }
+                },{
+                    text: '<?=SUBJECT?> &raquo; ' + node.text
+                    ,iconCls: 'icon-table_link'
+                    ,handler: function(){
+                        clickOpenPage('center','', '/staff/teachersubject/?objectId=' + node.id);
+                        //Ext.getCmp('WEST_ID').collapse();
+                    }
+                },{
+                    text: '<?=ADMINISTRATION?> &raquo; ' + node.text
+                    ,iconCls: 'icon-table_link'
+                    ,handler: function(){
+                        clickOpenPage('center','<?=ADMINISTRATION?> &raquo; ' + node.text, '/staff/administration/?objectId=' + node.id);
+                        //Ext.getCmp('WEST_ID').collapse();
+                    }
+                }]
+            });
+        }else{
+            
+            var adduser = node.attributes.adduser?false:true;
+            var disabled = node.attributes.add?false:true;
+            
+            contextMenu = new Ext.menu.Menu({
+                items: [{
+                    text: '<?=SHOW_DETAIL?> &raquo; ' + node.text
+                    ,iconCls:'icon-key_add'
+                    ,handler: function(){
+                         clickOpenPage('center','', '<?=$this->URL_USERROLE_ITEM?>&objectId=' + node.id);
+                         //Ext.getCmp('WEST_ID').collapse();
+                    }
+                },{
+                    text: '<?=ADD_A_NEW_FOLDER?>'
+                    ,iconCls:'icon-group_add'
+                    ,disabled:disabled
+                    ,handler: function(){
+                         clickOpenPage('center','<?=ADD_A_NEW_FOLDER?>', '/userrole/addgroup/?objectId=new&parentId=' + node.id);
+                         //Ext.getCmp('WEST_ID').collapse();
+                    }
+                },{
+                    text: '<?=CREATE_USER?>'
+                    ,iconCls:'icon-user_add'
+                    ,hidden:adduser
+                    ,handler: function(){
+                         clickOpenPage('center','<?=CREATE_USER?>', '<?=$this->URL_USER_ITEM?>&objectId=new&roleId=' + node.id);
+                         //Ext.getCmp('WEST_ID').collapse();
+                    }
+                }]
+            });
+        }
+        event.stopEvent();
+        contextMenu.showAt(event.xy); 
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

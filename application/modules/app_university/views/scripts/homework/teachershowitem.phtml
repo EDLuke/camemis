@@ -1,0 +1,266 @@
+<?
+///////////////////////////////////////////////////////////
+// @soda
+// Date: 23.06.2013   
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance(); 
+$OBJECT_FORM = new CamemisForm("HOMEWORK","LIST");
+$OBJECT_FORM->setLoadUrl('/homework/jsonload/');
+$OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
+
+if(!$this->facette) {header("Location: /main/permission/");}
+
+$teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER;
+$homework_id = $this->facette->HOMEWORK_ID;
+if($homework_id == ''){$files = 'upload';$HEIGHT = 350;}
+else{$files = 'download';$HEIGHT = 155;}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $PUBLISH_INFORMATION = "
+    {
+        title: '".PUBLISH."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 250
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,name: 'START_DATE'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,startDateField: 'START_DATE' 
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: false
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 250
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,name: 'END_DATE'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: false
+            }]
+        }]
+    }
+    ";
+    
+    switch(UserAuth::getUserType()){
+        case "TEACHER":
+        case "INSTRUCTOR":
+            $HEIGHT = $HEIGHT;
+        break;
+        default:
+            $HEIGHT = 400;
+        break;
+    }
+    
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,height:".$HEIGHT."
+        ,style: 'padding-bottom: 5px'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?objectId=".$teacher_id."&template=homework&display=1&attachment=".$files."'})]
+    }
+    ";
+    
+    $CONTENT = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::HTML("CONTENT",false,false)."}]
+        }]
+    }
+    ";
+    
+     $TITLE = "{
+                title: '".TITLE."'
+                ,autoHeight: true
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,items:[{
+                        layout: 'form'
+                        ,border: false
+                        ,bodyStyle: 'padding:10px'
+                        ,items: [{".CamemisField::Textfield("NAME","NAME",HOMEWORK_NAME,false,false,false)."}]
+                }]
+    }"; 
+        
+    $ITEMS = "[";
+        $ITEMS .= $PUBLISH_INFORMATION;
+        $ITEMS .= ",".$TITLE;
+        $ITEMS .= ",".$CONTENT;
+        if($this->facette){
+          switch(UserAuth::getUserType()){
+                case 'INSTRUCTOR':
+                case 'TEACHER':
+                    $ITEMS .= ",".$ATTACHMENTS;
+                break;
+            }
+        }
+    $ITEMS .= "]";
+ 
+    $formItems = "
+        border: false
+        ,layout: 'form'
+        ,bodyStyle: 'padding:0px'
+        ,items:".$ITEMS 
+    ;
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+            window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        }
+    ");
+    
+    $removeStatus = false;
+    $status = $this->facette->STATUS;
+    if ($status) {
+        $removeStatus = false;
+    }else{
+        $removeStatus = true;
+    }
+    
+    if(UserAuth::getUserType()){ 
+        switch(UserAuth::getUserType()){
+            case 'INSTRUCTOR':
+            case 'TEACHER':
+
+                    if($homework_id == ''){
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease());
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                    }else{}                              
+                                                   
+                    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadSubjectHomework',objectId: '".$this->objectId."'");
+                    
+                    $OBJECT_FORM->setSaveParams("cmd: 'jsonAddSubjectHomework',objectId: '".$this->objectId."'");
+                                        
+                    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+                    $OBJECT_FORM->setOnEmbeddedReleaseEvents(" 
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                        if(window.parent.Ext.getCmp('HOMEWORK_LIST_ID'))
+                        window.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+                        window.location='" . $_SERVER["REQUEST_URI"] . "';
+                    "); 
+
+                    $OBJECT_FORM->setRemoveParams("cmd: 'jsonDeleteSubjectHomework',objectId: '".$this->objectId."'");
+                    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                        window.parent.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+                        window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+                    ");
+                    
+                    $OBJECT_FORM->setonEmbeddedEvents("
+                        if(window.parent.Ext.getCmp('HOMEWORK_LIST_ID'))
+                        window.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                        var result = Ext.util.JSON.decode(action.response.responseText);
+                        var objectId = result.objectId;
+                        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+                    ");
+                             
+            break;
+            case 'STUDENT':
+                 $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadSubjectHomework',objectId: '".$this->objectId."'");
+            break;
+         }
+    }
+    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+
+    $VIEWPORT = "
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'fit'
+                ,items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]
+            }]
+        }); 
+    ";
+    echo  $VIEWPORT;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

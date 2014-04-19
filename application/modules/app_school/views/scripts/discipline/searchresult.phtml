@@ -1,0 +1,217 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("DISCIPLINE", "LIST");
+$OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
+$OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+
+$studentschoolId = isset($_GET["studentschoolId"])?$_GET["studentschoolId"]:"";
+$code = isset($_GET["student_code_id"])?$_GET["student_code_id"]:"";
+$firstname = isset($_GET["firstname"])?$_GET["firstname"]:"";
+$lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
+$gender = isset($_GET["gender"])?$_GET["gender"]:"";
+$infractionType = isset($_GET["infraction_type"])?$_GET["infraction_type"]:"";
+$choosegrade = isset($_GET["choosegrade"])?$_GET["choosegrade"]:"";
+$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
+$endDate = isset($_GET["endDate"])?$_GET["endDate"]:"";
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$personType = isset($_GET["personType"])?$_GET["personType"]:""; //@Man
+
+switch ($personType) {
+	case "staff":
+		$DISCIPLINE_EXECUTE_RIGHT = "STAFF_DISCIPLINE_EXECUTE_RIGHT";
+		break;
+	default:
+		$DISCIPLINE_EXECUTE_RIGHT = "STUDENT_DISCIPLINE_EXECUTE_RIGHT";
+		break;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$columndata = Utiles::getGridColumnData("DISCIPLINE_LIST_ID");
+
+?>
+<script>
+    var studentschoolId = '<?php echo $studentschoolId;?>';
+    var code = '<?php echo $code;?>';
+    var firstname = '<?php echo $firstname;?>';
+    var lastname = '<?php echo $lastname;?>';
+    var gender = '<?php echo $gender;?>';
+    var infractionType = '<?php echo $infractionType;?>';
+    var choosegrade = '<?php echo $choosegrade;?>';
+    var trainingId = '<?php echo $trainingId;?>';
+    var startDate = '<?php echo $startDate;?>';
+    var endDate = '<?php echo $endDate;?>';
+    var target = '<?php echo $target;?>';
+    var personType = '<?php echo $personType; ?>';
+    var start = 0;
+    var limit = 100;
+
+    Ext.onReady(function() {
+    
+        function cssDefault(value, metadata, record){
+            var name = record.data.SUBJECT_BULLETIN;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000000; padding: 5px; height:15px; background:#FFFFFF;">' + value + '</div>';
+        }
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+       $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                return '<span class=spanText>' + v + '</span>';
+            }
+        ");
+        
+        $OBJECT_GRID->addCellRenderer("
+            function showSubjct(value, metadata, record, rowIndex, colIndex, store){
+                return '<div class=\"show-subject\">' + value + '</div>';
+            }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'INFRACTION_DATE'");
+        $OBJECT_GRID->addReadField("name: 'DISCIPLINE_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'INFRACTION_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'PUNISHMENT_TYPE'");
+        
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_TERM'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'DISCIPLINE_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80,hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CODE'");
+        $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 180,hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'STUDENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100,hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'GENDER'");
+        $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'INFRACTION_DATE'");
+        if ($personType != "staff")
+        	$OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'PUNISHMENT_TYPE'");
+
+        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,hidden:".checkColHidden(7, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120,hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
+        }
+
+        if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_TERM'");
+            $OBJECT_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150,hidden:".checkColHidden(10, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'TRAINING_NAME'");
+        }
+    
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListByDicipline'
+            ,studentschoolId:'".$studentschoolId."'
+            ,code:'".$code."'
+            ,firstname:'".$firstname."'
+            ,lastname:'".$lastname."'
+            ,gender:'".$gender."'
+            ,infractionType:'".$infractionType."'
+            ,choosegrade:'".$choosegrade."'
+            ,trainingId:'".$trainingId."'
+            ,startDate:'".$startDate."'
+            ,endDate:'".$endDate."'
+            ,target:'".$target."'
+            ,personType: '".$personType."'
+        ";
+
+        //@soda
+        if(UserAuth::getACLValue($DISCIPLINE_EXECUTE_RIGHT)){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,hidden: false
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    var param='';
+                    if(studentschoolId){ param +='&studentschoolId =".$studentschoolId."';}
+                    if(code){param +='&code=".$code."';}
+                    if(firstname){param +='&firstname=".$firstname."';}
+                    if(lastname){param +='&lastname=".$lastname."';}
+                    if(gender){param +='&gender=".$gender."';}
+                    if(infractionType){param +='&infractionType=".$infractionType."';}
+                    if(choosegrade){param +='&choosegrade=".$choosegrade."';}
+                    if(trainingId){param +='&trainingId=".$trainingId."';}
+                    if(startDate){param +='&startDate=".$startDate."';}
+                    if(endDate){param +='&endDate=".$endDate."';}
+                    if(personType){param +='&personType=".$personType."';}
+                    openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/studentsearchdiscipline/?type=export_student_disciplince&target=general&disciplince=1'+param,550,percentHeight(85));
+                }
+            }]);
+        ");
+        }
+        //
+
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "DISCIPLINE_TYPE";
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,xtype: 'panel'
+                ,layout: 'card'
+                ,id: 'center'
+                ,activeItem: 0
+                ,items:[{
+                    border: false
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+    <?
+    if(UserAuth::getUserType()!="STUDENT"){
+	    ?>
+	       var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+	        if(grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+	            var record = grid.store.getAt(rowIndex);
+	            clickOpenPage('center','', '/discipline/showitem?objectId='+record.data.ID + '&personType=<?=$personType;?>');
+	        })
+	    <?
+    }
+    ?>
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

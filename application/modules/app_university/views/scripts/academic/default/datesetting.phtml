@@ -1,0 +1,220 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/academic/AcademicDBAccess.php';
+require_once 'models/app_university/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+set_time_limit(120);
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+
+if(!$this->facette) {header("Location: /main/permission/");}
+
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
+
+switch ($TERM_NUMBER) {
+    case 1:
+        switch($this->target){
+            case "FIRST_TERM":
+                $nameStartDate = "TERM1_START";
+                $nameEndDate = "TERM1_END";
+                $valueStartDate = getShowDate($this->facette->TERM1_START);
+                $valueEndDate = getShowDate($this->facette->TERM1_END);
+                break;
+            case "SECOND_TERM":
+                $nameStartDate = "TERM2_START";
+                $nameEndDate = "TERM2_END";
+                $valueStartDate = getShowDate($this->facette->TERM2_START);
+                $valueEndDate = getShowDate($this->facette->TERM2_END);
+                break;
+            case "THIRD_TERM":
+                $nameStartDate = "TERM3_START";
+                $nameEndDate = "TERM3_END";
+                $valueStartDate = getShowDate($this->facette->TERM3_START);
+                $valueEndDate = getShowDate($this->facette->TERM3_END);
+                break;
+        }
+        break;
+    case 2:
+        switch($this->target){
+            case "FIRST_QUARTER":
+                $nameStartDate = "QUARTER1_START";
+                $nameEndDate = "QUARTER1_END";
+                $valueStartDate = getShowDate($this->facette->QUARTER1_START);
+                $valueEndDate = getShowDate($this->facette->QUARTER1_END);
+                break;
+            case "SECOND_QUARTER":
+                $nameStartDate = "QUARTER2_START";
+                $nameEndDate = "QUARTER2_END";
+                $valueStartDate = getShowDate($this->facette->QUARTER2_START);
+                $valueEndDate = getShowDate($this->facette->QUARTER2_END);
+                break;
+            case "THIRD_QUARTER":
+                $nameStartDate = "QUARTER3_START";
+                $nameEndDate = "QUARTER3_END";
+                $valueStartDate = getShowDate($this->facette->QUARTER3_START);
+                $valueEndDate = getShowDate($this->facette->QUARTER3_END);
+                break;
+            case "FOURTH_QUARTER":
+                $nameStartDate = "QUARTER4_START";
+                $nameEndDate = "QUARTER4_END";
+                $valueStartDate = getShowDate($this->facette->QUARTER4_START);
+                $valueEndDate = getShowDate($this->facette->QUARTER4_END);
+                break;
+            default:
+                $nameStartDate = "SEMESTER1_START";
+                $nameEndDate = "SEMESTER1_END";
+                $valueStartDate = getShowDate($this->facette->SEMESTER1_START);
+                $valueEndDate = getShowDate($this->facette->SEMESTER1_END);
+                break;
+        }
+        break;
+    default:
+        switch($this->target){
+            case "FIRST_SEMESTER":
+                $nameStartDate = "SEMESTER1_START";
+                $nameEndDate = "SEMESTER1_END";
+                $valueStartDate = getShowDate($this->facette->SEMESTER1_START);
+                $valueEndDate = getShowDate($this->facette->SEMESTER1_END);
+                break;
+            case "SECOND_SEMESTER":
+                $nameStartDate = "SEMESTER2_START";
+                $nameEndDate = "SEMESTER2_END";
+                $valueStartDate = getShowDate($this->facette->SEMESTER2_START);
+                $valueEndDate = getShowDate($this->facette->SEMESTER2_END);
+                break;
+        }
+        break;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+        
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $DETAIL_INFORMATION = "
+        {
+            title: ''
+            ,border:false
+            ,autoHeight: true
+            ,width: 500
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF;padding:10px'
+                ,items:[{
+                    border: false
+                    ,layout: 'form'
+                    ,bodyStyle:'padding:10px'
+                    ,items:[{
+                        fieldLabel: '".START_DATE."'
+                        ,id:'START_DATE'
+                        ,name: '".$nameStartDate."'
+                        ,xtype: 'datefield'
+                        ,width:250
+                        ,value: '".$valueStartDate."'
+                        ,format: '".setExtDatafieldFormat()."'
+                        ,allowBlank: true   
+                    },{
+                        fieldLabel: '".END_DATE."'
+                        ,id:'END_DATE'
+                        ,name: '".$nameEndDate."'
+                        ,xtype: 'datefield'
+                        ,width:250
+                        ,value: '".$valueEndDate."'
+                        ,format: '".setExtDatafieldFormat()."'
+                        ,allowBlank: true   
+                    },{
+                        ".CamemisField::Checkbox("FROM_SCHOOL_YEAR_SETTING", "FROM_SCHOOL_YEAR_SETTING", FROM_SCHOOL_YEAR_SETTING, false, false, false, false)."
+                    }]
+                }]
+            }]
+        }
+        ";
+        
+        $ITEMS = "[
+            ".$DETAIL_INFORMATION."
+        ]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: ".$ITEMS."
+        ";
+        
+        $OBJECT_FORM->addObjectItems($items);
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'saveSchoolyearDateSetting'
+            ,target: '".$this->target."'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            window.parent.window.location='/academic/editschoolyear/?objectId=".$this->objectId."';
+        ");
+        
+        if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 150;
+        $OBJECT_FORM->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'CONTENT'
+                ,xtype: 'panel'
+                ,layout: 'card'
+                ,enableTabScroll:true
+                ,activeItem: 0
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            }]
+        });
+        Ext.getCmp('FROM_SCHOOL_YEAR_SETTING').on('check', function(e, checked){
+            if(checked == true){
+                Ext.getCmp('START_DATE').setValue('');
+                Ext.getCmp('END_DATE').setValue('');
+            }else{
+                Ext.getCmp('START_DATE').setValue('<?=$valueStartDate?>');
+                Ext.getCmp('END_DATE').setValue('<?=$valueEndDate?>');
+            }
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

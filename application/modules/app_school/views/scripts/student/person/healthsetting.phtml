@@ -1,0 +1,272 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+require_once 'models/HealthSettingDBAccess.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$settingId = isset($_GET["settingId"])?$_GET["settingId"]:"";
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+$target = isset($_GET["target"])?strtoupper($_GET["target"]):"";
+
+$OBJECT_GRID = new CamemisGrid("HEALTH", "LIST");
+$OBJECT_GRID->setLoadUrl('/student/jsonload/');
+$OBJECT_GRID->setSaveUrl('/student/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+function columnDate($header, $dataindex, $width){
+    $js = "";
+    $js .= "editor: new Ext.form.DateField({";
+        $js .= "allowBlank: false,format: '" . setExtDatafieldFormat() . "'";
+    $js .= "})";
+    $js .=",format:'" . setExtDatafieldFormat() . "'";
+    $js .= ",renderer:showText";
+    $js .= ",header: '<b>".$header."</b>'";
+    $js .= ",dataIndex: '".$dataindex."'";
+    $js .= ",width: $width";
+    
+    return $js;
+}
+
+function columnTextarea($header, $dataindex, $width){
+    $js = "";
+    $js .= "editor: new Ext.form.TextArea({";
+        $js .= "allowBlank: false";
+    $js .= "})";
+    $js .= ",renderer:showText";
+    $js .= ",height:25";
+    $js .= ",header: '<b>".$header."</b>'";
+    $js .= ",dataIndex: '".$dataindex."'";
+    $js .= ",width: $width";
+    
+    return $js;
+}
+
+function columnInput($header, $dataindex, $width, $align, $css=false){
+    $js = "";
+    $js .= "editor: new Ext.form.TextField({";
+        $js .= "allowBlank: false";
+    $js .= "})";
+    if($css){
+        $js .= ",renderer:".$css."";
+    }else{
+        $js .= ",renderer:showText";
+    }
+    $js .= ",sortable: true";
+    $js .= ",align: '".$align."'";
+    $js .= ",header: '<b>".$header."</b>'";
+    $js .= ",dataIndex: '".$dataindex."'";
+    $js .= ",width: $width";
+    
+    return $js;
+}
+
+$params = "objectId=".$this->objectId."";
+$params .= "&target=".$target."";
+$params .= "&settingId=".$settingId."";
+
+$paramsgrid = $params;
+
+?>
+<script>
+
+Ext.onReady(function() {
+    
+    function showText(v){
+        return String.format('<div style=\"font-weight:normal;white-space:normal;color:#000; padding: 5px;\">{0}</div>'
+            ,v
+        );
+    }
+    
+    function showTextRed(v){
+        return String.format('<div style=\"font-weight:bold;white-space:normal;color:#CC0000; padding: 5px;\">{0}</div>'
+            ,v
+        );
+    }
+    
+    function showTextBlue(v){
+        return String.format('<div style=\"font-weight:bold;white-space:normal;color:#061f83; padding: 5px;\">{0}</div>'
+            ,v
+        );
+    }
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    switch($target){
+        case "DYNAMIC":
+            $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Date</b>',dataIndex: 'MEDICAL_DATE',width: 130");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".DESCRIPTION."</b>',dataIndex: 'DESCRIPTION',width: 250");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");
+
+        break;
+        case "BMI":
+            //Date, Height, Weight, BMI, Status
+            $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addReadField("name: 'WEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'BMI'");
+            $OBJECT_GRID->addReadField("name: 'STATUS'");
+            $OBJECT_GRID->addReadField("name: 'STANDARD'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+            $OBJECT_GRID->addReadField("name: 'DELETE'");
+            
+            $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
+            $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");    
+
+        break;
+        case "GROWTH_CHART":
+            
+            $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addReadField("name: 'WEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'PULSE'");
+            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+            $OBJECT_GRID->addReadField("name: 'DELETE'");
+
+            $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
+            $OBJECT_GRID->addColumn("header: '<b>Blood Pressure</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE'");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");  
+            
+        break;
+        case "MEDICAL_VISIT":
+            $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addReadField("name: 'DOCTOR_NAME'");
+            $OBJECT_GRID->addReadField("name: 'PLACE'");
+            $OBJECT_GRID->addReadField("name: 'REASON'");
+            $OBJECT_GRID->addReadField("name: 'DOCTOR_COMMENT'");
+            $OBJECT_GRID->addReadField("name: 'NEXT_VISIT'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+            $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+            $OBJECT_GRID->addReadField("name: 'DELETE'");
+            
+            $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
+            $OBJECT_GRID->addColumn("header: '<b>Doctor Name</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'DOCTOR_NAME'");
+            $OBJECT_GRID->addColumn("header: '<b>Reason</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'REASON'");
+            $OBJECT_GRID->addColumn("header: '<b>Doctor Comment</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'DOCTOR_COMMENT'");
+            $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'NEXT_VISIT'");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");
+        break;
+    }
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds:'".$this->urlEncryp->encryptedGet($params)."'
+        ,cmd: 'listStudentHealth'
+    ";
+
+    $paramsNew = $params;
+    $paramsNew .= "&setId=new";
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '" . REFRESH . "'
+            ,iconCls:'icon-arrow_refresh'
+            ,handler: function(){
+                ".CamemisPage::setRequestURI(false).";
+            }
+        }]);
+    ");
+
+    if(UserAuth::getUserType()=='SUPERADMIN' || UserAuth::getUserType()=='ADMIN'){ //@veasna
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-',{
+                text: '" . ADD_NEW_ITEM . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    clickOpenPage('content','" . ADD_NEW_ITEM . "','/student/studenthealth/?camIds=".$this->urlEncryp->encryptedGet($paramsNew)."');
+                }
+            }]);
+        ");
+    }
+
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'createStudentHealth'
+        ,camIds:'".$this->urlEncryp->encryptedGet($paramsgrid)."'
+    ");
+    
+    $OBJECT_GRID->loadMask = false;
+    $OBJECT_GRID->objectBorder = "true";
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->isGridEditing = false;
+    
+    $OBJECT_GRID->renderJS();
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    $html = "";
+    $html .="viewport = new Ext.Viewport({";
+        $html .="layout: 'fit'";
+        $html .=",border: false";
+        $html .=",items:[{";
+            $html .="id:'content'";
+            $html .=",layout:'card'";
+            $html .=",border:false";
+            $html .=",activeItem: 0";
+            $html .=",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
+        $html .="}]";
+    $html .="});";
+
+    $paramsDetail = $params;
+    $SHOW_DETAIL ="{";
+        $SHOW_DETAIL .="text: '".SHOW_DETAIL."'";
+        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
+        $SHOW_DETAIL .=",handler: function(){";
+            $SHOW_DETAIL .="clickOpenPage('content','','/student/studenthealth/?camIds=".$this->urlEncryp->encryptedGet($paramsDetail)."&setId=' + record.data.ID);";
+        $SHOW_DETAIL .="}";
+    $SHOW_DETAIL .="}";
+
+    $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+    $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
+
+    if($CONTEXTMENU_ITEMS){
+
+        $html .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $html .="var record = grid.store.getAt(rowIndex);";
+            $html .="var contextMenu = new Ext.menu.Menu({";
+                $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+            $html .="});";
+            $html .="event.stopEvent();";
+            $html .="contextMenu.showAt(event.xy);";
+        $html .="});";
+    }
+    
+    echo $html;
+    
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

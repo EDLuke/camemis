@@ -1,0 +1,196 @@
+<?
+require_once("Zend/Loader.php");
+require_once 'clients/CamemisPage.php';
+require_once 'models/app_university/academic/AcademicDBAccess.php';
+require_once 'models/app_university/subject/SubjectDBAccess.php';
+require_once setUserLoacalization();
+
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+
+$setId = isset($_GET["setId"]) ? $_GET["setId"] : "";
+
+$Ids = explode("-",$setId);
+
+$academicId = isset($Ids[0])?$Ids[0]:"";
+$objectId = isset($Ids[1])?$Ids[1]:"";
+
+$field = isset($_GET["field"])?strtoupper(addText($_GET["field"])):"";
+
+$facette = GradeSubjectDBAccess::getGradeSubject($objectId, false, false, false);
+$object = isset($_GET["object"])?addText($_GET["object"]):"";
+
+$content = "";
+    
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
+if(!$facette && !$academicObject) {header("Location: /main/permission/");}
+
+$subjectId = $facette->SUBJECT;
+$gradeId = $facette->GRADE;
+$schoolyearId = $facette->SCHOOLYEAR;
+$teacherId = Zend_Registry::get('USER')->ID;
+
+$SQL = $DB_ACCESS->select();
+$SQL->from('t_subject_teacher_class', 'COUNT(*) AS C');
+$SQL->where("SUBJECT = '" . $subjectId . "'");
+$SQL->where("TEACHER = '" . Zend_Registry::get('USER')->ID . "'");
+$SQL->where("ACADEMIC = '" . $academicObject->ID . "'");
+$SQL->where("SCHOOLYEAR = '" . $schoolyearId . "'");
+$result = $DB_ACCESS->fetchRow($SQL);
+//error_log($SQL);
+$CHECK = $result ? $result->C : 0;
+
+if ($_POST){
+
+    $field = isset($_POST["field"])?addText($_POST["field"]):"";
+    $object = isset($_POST["object"])?addText($_POST["object"]):"";
+    $objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    
+    $facette = GradeSubjectDBAccess::getGradeSubject(
+        $objectId
+        , false
+        , false
+        , false
+        , false
+    );
+    
+    if($facette){
+        $SAVEDATA = array();
+        $SAVEDATA_SUBJECT = array();
+        $WHERE = array();
+        $WHERE_SUBJECT = array();
+        $postedValue = stripslashes(addText($_POST["content"])) ;
+
+        $SAVEDATA[$field] = $postedValue;
+        $WHERE[] = $DB_ACCESS->quoteInto('ID = ?', $objectId);
+        $WHERE_SUBJECT[] = $DB_ACCESS->quoteInto('SUBJECT = ?', $subjectId);
+
+        switch($object){
+            case "gradesubject":  
+                
+                if(UserAuth::getUserType() == 'SUPERADMIN' || UserAuth::getUserType() == 'ADMIN'){
+                    $DB_ACCESS->update('t_grade_subject', $SAVEDATA, $WHERE);
+                }
+                
+                if(UserAuth::getUserType() == 'INSTRUCTOR' || UserAuth::getUserType() == 'TEACHER'){
+                    
+                    $SAVEDATA_SUBJECT['SUBJECT'] = $subjectId;
+                    $SAVEDATA_SUBJECT['TEACHER'] = Zend_Registry::get('USER')->ID;
+                    $SAVEDATA_SUBJECT['ACADEMIC'] = $academicObject->ID;
+                    
+                    if ($field == 'GOALS')
+                        $SAVEDATA_SUBJECT['GOALS'] = $SAVEDATA[$field];
+                    if ($field == 'OBJECTIVES')
+                        $SAVEDATA_SUBJECT['OBJECTIVES'] = $SAVEDATA[$field];
+                    if ($field == 'EVALUATION')
+                        $SAVEDATA_SUBJECT['EVALUATION'] = $SAVEDATA[$field];
+                    if ($field == 'MATERIALS')
+                        $SAVEDATA_SUBJECT['MATERIALS'] = $SAVEDATA[$field];
+
+                   if($check == 1){
+                       $DB_ACCESS->update('t_subject_teacher_content', $SAVEDATA_SUBJECT,$WHERE_SUBJECT);
+                   }
+                   else if($check == 0){
+                        $DB_ACCESS->insert('t_subject_teacher_content', $SAVEDATA_SUBJECT); 
+                   }
+                }
+            break;
+
+        }
+
+        header("Location: ".$_SERVER['REQUEST_URI']."?field=".$field."&objectId=".$objectId."&object=".$object."");
+    }
+}
+
+$SHOW_EDITOR = "";
+
+switch(UserAuth::getUserType()){
+    case 'SUPERADMIN':
+    case 'ADMIN':
+    case 'STUDENT':
+        $SHOW_EDITOR = "
+            CKEDITOR.replace( 'content',{
+                language:'".CamemisPage::ckeditorLanguage()."'
+                ,height:350
+                ,readOnly: true
+                ,uiColor: '#e0e7f7'
+                ,toolbar :
+                [
+                    { name: 'document', items : [ 'Print','-','Templates' ] }
+                    ,{ name: 'basicstyles', items : [ 'Bold','Italic' ] }
+                    ,{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] }
+                    ,{ name: 'insert', items : [ 'Table','HorizontalRule','SpecialChar','PageBreak'] }
+                    ,{ name: 'tools', items : [ 'Maximize','-','About' ] }
+                ]
+            });
+        ";
+        break;
+    case 'INSTRUCTOR':
+    case 'TEACHER':
+        if($CHECK)
+        $SHOW_EDITOR = "
+            CKEDITOR.replace( 'content',{
+                language:'".CamemisPage::ckeditorLanguage()."'
+                ,height:350
+                ,uiColor: '#e0e7f7'
+                ,toolbar :
+                [
+                    { name: 'document', items : [ 'Save','NewPage','DocProps','Preview','Print','-','Templates' ] }
+                    ,{ name: 'basicstyles', items : [ 'Bold','Italic' ] }
+                    ,{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] }
+                    ,{ name: 'insert', items : [ 'Table','HorizontalRule','SpecialChar','PageBreak'] }
+                    ,{ name: 'tools', items : [ 'Maximize','-','About' ] }
+                ]
+            });
+        "; 
+        if(!$CHECK)
+        $SHOW_EDITOR = "
+            CKEDITOR.replace( 'content',{
+                language:'".CamemisPage::ckeditorLanguage()."'
+                ,height:350
+                ,readOnly: true
+                ,uiColor: '#e0e7f7'
+                ,toolbar :
+                [
+                    { name: 'document', items : [ 'Print','-','Templates' ] }
+                    ,{ name: 'basicstyles', items : [ 'Bold','Italic' ] }
+                    ,{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] }
+                    ,{ name: 'insert', items : [ 'Table','HorizontalRule','SpecialChar','PageBreak'] }
+                    ,{ name: 'tools', items : [ 'Maximize','-','About' ] }
+                ]
+            });
+        ";
+    break;
+}
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.html or http://ckeditor.com/license
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>CAMEMIS</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<script type="text/javascript" src="/public/ckeditor/ckeditor.js"></script>
+<link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body style='background:#e0e7f7;'>
+   <form action="" method="post">
+    <textarea id="content" name="content"><?=$content;?></textarea>
+    <script type="text/javascript">
+        //<![CDATA[ 
+        CKEDITOR.on('instanceReady',function( evt ){
+            var editor = evt.editor;
+            editor.execCommand('maximize');
+        });
+        <?= $SHOW_EDITOR; ?>
+        //]]>
+    </script> 
+    <input type="hidden" name="field" value="<?=$field;?>">
+    <input type="hidden" name="gradeSubjectId" value="<?=$objectId;?>">
+    <input type="hidden" name="object" value="<?=$object;?>">  
+    </form>
+</body>
+</html>

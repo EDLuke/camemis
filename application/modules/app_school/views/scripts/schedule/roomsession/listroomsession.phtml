@@ -1,0 +1,353 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 30.10.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ROOMSESSION", "LIST");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+?>
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<script src="/public/nvd3/nvd3-camemis.php"></script>
+<script>
+    var startDate = '<?=getShowDate($startDate)?>';
+    var endDate = '<?=getShowDate($endDate)?>';
+    
+    function geFormat(data){
+        return date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+    }
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        function cssText(value, metadata, record){
+            var name = record.data.ROOM_NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssNoSession(value, metadata, record){
+            var name = record.data.ROOM_NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#fff; padding: 5px; background:#1f77b4;">' + value + '</div>';
+        }
+        
+        function cssNoExtraSession(value, metadata, record){
+            var name = record.data.ROOM_NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#fff; padding: 5px; background:#ff7f0e;">' + value + '</div>';
+        }
+        
+        function cssNoAbsence(value, metadata, record){
+            var name = record.data.ROOM_NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#fff; padding: 5px; background:#2ca02c;">' + value + '</div>';
+        }
+        
+        function cssTotal(value, metadata, record){
+            var name = record.data.ROOM_NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#fff; padding: 5px; background:#850000;">' + value + '</div>';
+        }
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        //$STAFF_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STAFF_ATTENDANCE_READ_RIGHT")?"false":"true";
+        
+        $FIND_OBJECT = "{
+            text:'".FIND."'
+            ,disabled: false
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                var _startDate = Ext.getCmp('START_DATE').getValue();
+                if(_startDate){
+                    startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
+                }else{
+                    startDate = '';
+                }
+                
+                var _endDate = Ext.getCmp('END_DATE').getValue(); 
+                if(_endDate){
+                    endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
+                }else{
+                    endDate = ''; 
+                }
+                Ext.getCmp('center').getLayout().setActiveItem(1);
+                
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonListRoomSession'
+                    ,endDate: endDate
+                    ,startDate: startDate
+                };
+                window.location='".$_SERVER["REQUEST_URI"]."&startDate='+startDate+'&endDate='+endDate;
+            }
+        }";
+
+        ///////////////////////////////////////////////////
+        //Object Grid...
+        ///////////////////////////////////////////////////
+        
+        $OBJECT_GRID->addReadField("name: 'ROOM_ID'");
+        $OBJECT_GRID->addReadField("name: 'ROOM_CODE'");
+        $OBJECT_GRID->addReadField("name: 'ROOM_NAME'");
+        $OBJECT_GRID->addReadField("name: 'NUMBER_SESSION'");
+        $OBJECT_GRID->addReadField("name: 'NUMBER_EXTRA_SESSION'");
+        $OBJECT_GRID->addReadField("name: 'TOTAL'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 190, renderer: cssText, sortable: true, dataIndex: 'ROOM_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".NUMBER_SESSION."</b>', width: 150, renderer: cssNoSession, sortable: true, dataIndex: 'NUMBER_SESSION'");
+        $OBJECT_GRID->addColumn("header: '<b>".NUMBER_EXTRA_SESSION."</b>', width: 150, renderer: cssNoExtraSession, sortable: true, dataIndex: 'NUMBER_EXTRA_SESSION'");
+        $OBJECT_GRID->addColumn("header: '<b>".TOTAL."</b>', width: 150, renderer: cssTotal, sortable: true, dataIndex: 'TOTAL'");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'REFRESH_ID'
+                ,text: '".REFRESH."'
+                ,iconCls:'icon-reload'
+                ,scope:this
+                ,disabled: false
+                ,handler: function(){
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListRoomSession'
+            ,startDate: startDate
+            ,endDate: endDate
+        ";
+        
+        //if(UserAuth::getACLValue("STAFF_ATTENDANCE_EXECUTE_RIGHT")){
+            $OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        var param='';
+                        if(code){ param +='&code=' + code;}
+                        if(staffSchoolId){ param +='&staffSchoolId=' + staffSchoolId;}
+                        if(firstname){param +='&firstname='+ firstname;}
+                        if(lastname){param +='&lastname='+ lastname;}
+                        if(startDate){param +='&startDate='+ startDate;}
+                        if(endDate){param +='&endDate='+ endDate;}
+                        if(absentType){param +='&absentType='+ absentType;}
+                        openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/teacherclass/?type=export_staff_attendance_university&target=export_staff_attendance&attendace=1' + param ,550,percentHeight(85));
+                    }
+                }]);
+            ");
+        //}
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('->');
+        ");
+        
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS(); 
+    
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,tbar:['<b><?=START_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'START_DATE'
+                    ,name: 'START_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: startDate
+                },'&nbsp;<b><?=END_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'END_DATE'
+                    ,name: 'END_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: endDate
+                }
+                ,<?=$FIND_OBJECT?>
+                ]
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,collapsible: true
+                        ,region:'north'
+                        ,id: 'NORTH_ID'
+                        ,margins: '3 3 0 3'
+                        ,cmargins: '3 3 3 3'
+                        ,height:280
+                        ,minSize:280
+                        ,maxSize:280
+                        ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                        ,items: [{
+                            border: false
+                            ,height:400
+                            ,items:[{
+                                border: false
+                                ,bodyStyle: 'background:#FFF;padding:10px;'
+                                ,contentEl: 'myChartRoomSession'
+                            }] 
+                        }]
+                    },{
+                        collapsible: false
+                        ,region:'center'
+                        ,margins: '0 3 3 3'
+                        ,layout: 'fit'
+                        ,items: [{
+                            layout: 'fit'
+                            ,border: false
+                            ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                        }]
+                    }]
+                }]
+            }]
+        });
+        <?  
+        ////////////////////////////////////////////////////////////
+        //Click on Grid
+        ///////////////////////////////////////////////////////////
+        $html ="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $html .="var record = grid.store.getAt(rowIndex);";
+            $html .="Ext.getCmp('center').getLayout().setActiveItem(0);";
+            $html .="var contextMenu = new Ext.menu.Menu({";
+                $html .="items: [{";
+                $html .="text: '".SHOW_DETAIL." &raquo; ' + record.data.ROOM_NAME";
+                $html .=",iconCls: 'icon-application_form_magnify'";
+                    $html .=",handler: function(){";
+                        $html .="clickOpenPage('center','','/schedule/showroomsession/?objectId='+record.data.ROOM_ID+'&startDate='+startDate+'&endDate='+endDate+'&actionType=1');";
+                    $html .="}";
+                $html .="}]";
+            $html .="});";
+            $html .="event.stopEvent();";
+            $html .="contextMenu.showAt(event.xy);";
+        $html .="});";
+        echo $html;
+        ?>
+    });
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //Pie Chart
+    ////////////////////////////////////////////////////////////////////////////
+
+    Ext.Ajax.request({
+        url:'/schedule/jsonload/'
+        ,method: 'POST'
+        ,params: {
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListRoomSession'
+            ,endDate: endDate
+            ,startDate: startDate
+        }
+        ,success: function(response) {
+            var jsonData = Ext.util.JSON.decode(response.responseText);
+            totalAllSession = jsonData.totalAllSession;
+            totalAllExtraSession = jsonData.totalAllExtraSession;
+            
+           roomdata = [
+                {key: '<?=NUMBER_SESSION?>',y: totalAllSession}
+                ,{key: '<?=NUMBER_EXTRA_SESSION?>',y: totalAllExtraSession}
+           ];
+           
+           nv.addGraph(function() {
+                var width = percentWidth(95);
+                var height = 240;
+                var chart = nv.models.pieChart()
+                .x(function(d) { return d.key })
+                .y(function(d) { return d.y })
+                .values(function(d) { return d })
+                .color(d3.scale.category10().range())
+                .width(width)
+                .height(height);
+                
+                d3.select("#roomSession")
+                .datum([roomdata])
+                .transition().duration(1200)
+                .attr('width', width)
+                .attr('height', height)
+                .call(chart);
+
+                return chart;
+            });     
+        }
+        ,failure: function() {}
+    });
+    
+</script>
+
+<div id="myChartRoomSession" class="x-hidden" style="padding:0;">
+    <svg id="roomSession"></svg>
+</div>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,406 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'clients/CamemisWindow.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+switch (strtoupper($personType)) {
+    case "STAFF":
+        $LABEL_SCHOOL_ID = STAFF_SCHOOL_ID;
+        $DISCIPLINE_TYPE = "DISCIPLINE_TYPE_STAFF";
+        $DISCIPLINE_READ_RIGHT = UserAuth::getACLValue("STAFF_DISCIPLINE_READ_RIGHT") ? "false" : "true";
+        $INFRACTION_TYPE = DISCIPLINE;
+        break;
+    default:
+        $LABEL_SCHOOL_ID = STUDENT_SCHOOL_ID;
+        $DISCIPLINE_TYPE = "DISCIPLINE_TYPE_STUDENT";
+        $DISCIPLINE_READ_RIGHT = UserAuth::getACLValue("STUDENT_DISCIPLINE_READ_RIGHT") ? "false" : "true";
+        $INFRACTION_TYPE = INFRACTION_TYPE;
+        break;
+}
+
+$OBJECT_FORM = new CamemisForm("DISCIPLINE");
+$OBJECT_FORM->setLoadUrl('/discipline/jsonload/');
+$OBJECT_FORM->setSaveUrl('/discipline/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("DISCIPLINE", "".$personType."_LIST");
+$OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
+$OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
+
+?>
+<script>
+    var target='<?=$this->target?>';
+    var personType='<?=$this->personType;?>';
+
+    Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+
+    Ext.onReady(function() {
+
+        function myAjaxRequest(formObject, gridObject){
+            var fieldValue = formObject.getForm().getFieldValues();
+            if(plsEnterKey(fieldValue)){
+                <?=CamemisPage::alertPleaseSelect(NOTES,PLS_ENTER_KEYWORD)?>
+            }else{
+                var myMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS <?=LOADING?></b>', msgCls:'x-mask-loading-camemis'});
+                myMask.show();
+                Ext.Ajax.request({
+                    url: '/discipline/jsonload'
+                    ,method: 'POST'
+                    ,params:{cmd:'jsonListByDicipline',start:0,limit:50,personType:'<?=$personType;?>'}
+                    ,form: formObject.getForm().getEl().dom
+                    ,success: function(response, options) {
+                        jsonData = Ext.util.JSON.decode(response.responseText);
+                        gridObject.getStore().loadData(jsonData);
+                        myMask.hide();
+                    }
+                });
+            }
+        }
+
+        function plsEnterKey(obj){
+            var s;
+            if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER
+                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.STUDENT_SCHOOL_ID
+                || obj.DISCIPLINE_TYPE_STAFF || obj.DISCIPLINE_TYPE_STAFF
+                || obj.START_DATE || obj.END_DATE
+            ){
+                s = 0;
+            }else{
+                s = 1;
+            }
+            return s;
+        }
+
+        function keyEnter(){
+            Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+            var formObject = Ext.getCmp('<?=$OBJECT_FORM->getObjectId()?>');
+            var gridObject = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+            myAjaxRequest(formObject, gridObject);
+        }
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_FORM->addObjectItems("
+           xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".DATE."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+            ,width: 310
+            ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        ");
+
+        switch (strtoupper($personType)) {
+            case "STAFF":
+                $OBJECT_FORM->addObjectItems("
+                    xtype:'fieldset'
+                    ,checkboxToggle:true
+                    ,title: '".PERSONAL_INFORMATION."'
+                    ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+                    ,width: 310
+                    ,items:[
+                        {".CamemisField::Textfield("STAFF_SCHOOL_ID", "STAFF_SCHOOL_ID", $LABEL_SCHOOL_ID, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                        ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                        ,{".CamemisField::comboCamemisTypes($DISCIPLINE_TYPE, $INFRACTION_TYPE, false,150, false)."}
+                    ]
+                ");
+            break;
+            default:
+                $OBJECT_FORM->addObjectItems("
+                    xtype:'fieldset'
+                    ,checkboxToggle:true
+                    ,title: '".PERSONAL_INFORMATION."'
+                    ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+                    ,width: 310
+                    ,items:[
+                        {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", $LABEL_SCHOOL_ID, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                        ,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                        ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                        ,{".CamemisField::comboCamemisTypes($DISCIPLINE_TYPE, $INFRACTION_TYPE, false,150, false)."}
+                    ]
+                ");
+            break;
+        }
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,id: 'FIND_ID'
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+                var formObject = Ext.getCmp('".$OBJECT_FORM->getObjectId()."');
+                var gridObject = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
+                myAjaxRequest(formObject, gridObject);
+            }
+        ");
+         $OBJECT_FORM->addTBarItems("
+            id: 'ADD_ID'
+            ,scope:this
+            ,text:'".DISCIPLINE."'
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+               clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&objectId=new&target=".$this->target."&personType=".$personType."');
+            }
+        ");
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = true;
+        $OBJECT_FORM->renderJS();
+
+        //////////////
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                return '<span class=spanText>' + v + '</span>';
+            }
+        ");
+
+        $OBJECT_GRID->addCellRenderer("
+            function showSubjct(value, metadata, record, rowIndex, colIndex, store){
+                return '<div class=\"show-subject\">' + value + '</div>';
+            }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'INFRACTION_DATE'");
+        $OBJECT_GRID->addReadField("name: 'DISCIPLINE_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'INFRACTION_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'PUNISHMENT_TYPE'");
+
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_TRAINING_NAME'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'DISCIPLINE_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80,hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CODE'");
+        $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 180,hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FULL_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100,hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'GENDER'");
+        $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'INFRACTION_DATE'");
+
+        switch (strtoupper($personType)) {
+            case "STUDENT":
+                $OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'PUNISHMENT_TYPE'");
+                if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
+                    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,hidden:".checkColHidden(7, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+                    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120,hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
+                }
+
+                if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
+                    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_TRAINING_NAME'");
+                }
+                break;
+        }
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListByDicipline'
+            ,personType: '".$personType."'
+        ";
+         
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,timeout: 600000
+                        ,params:{cmd: 'jsonSearchStudentDiscipline',start:0,limit:50,objectId:'".$OBJECT_GRID->getObjectId()."',personType: '".$personType."'}
+                        ,form: myForm.getEl().dom
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openstudentdisciplinelist/'
+                        }
+                    });
+                }
+            }]);
+        ");
+
+        $OBJECT_GRID->addTBarItems("tbar.add('->');");
+        
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "DISCIPLINE_TYPE";
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->setUserColumn = true;
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    title: '<?=DISCIPLIINE_SEARCH;?>'
+                    ,region:'west'
+                    ,id: 'WEST_ID'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 350
+                    ,minSize: 350
+                    ,maxSize: 350
+                    ,keys:{
+                            key:[13]
+                            ,fn: keyEnter
+                            ,scope:this
+                        }
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                },{
+                    title: ''
+                    ,collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,margins: '3 3 3 0'
+                    ,items:[{
+                        layout:'fit'
+                        ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                        ,border: false
+                        ,items:[{
+                            xtype: 'tabpanel'
+                            ,id:'TABPANEL_ID'
+                            ,tabPosition: 'top'
+                            ,plain:true
+                            ,activeTab: 0
+                            ,enableTabScroll:true
+                            ,items:[{
+                                title:'<?= CHART; ?>'
+                                ,layout:'fit'
+                                ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_CHARTS', url:'/discipline/chartreport/?personType=<?=$personType;?>'})]
+                            },{
+                                 title:'<?= SEARCH_RESULT;?>'
+                                ,layout:'fit'
+                                ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        });
+        <?
+        if(UserAuth::getUserType()!="STUDENT"){
+        ?>
+           var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+            if(grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+                var record = grid.store.getAt(rowIndex);
+                clickOpenPage('center','', '/discipline/showitem?objectId='+record.data.ID + '&personType=<?=$personType;?>');
+            })
+        <?
+        }
+        ?>
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

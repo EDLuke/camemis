@@ -1,0 +1,70 @@
+<?
+require_once 'models/statistic/UserOnlineStatisticsDBAccess.php';
+
+$dataset = UserOnlineStatisticsDBAccess::getDataSetUserOnline();
+
+?>
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<link href=http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer rel=stylesheet type=text/css>
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+<style>
+
+body {
+  overflow-y:scroll;
+}
+
+text {
+  font: 11px sans-serif;
+}
+
+#chart1, #chart2 {
+  height:300px;
+}
+
+</style>
+<body class='with-3d-shadow with-transitions'>
+
+<div>
+<svg id="chart1"></svg>
+</div>
+    
+<script src="/public/nvd3/nvd3-camemis.php"></script>
+<script>
+
+//an example of harmonizing colors between visualizations
+//observe that Consumer Discretionary and Consumer Staples have 
+//been flipped in the second chart
+var colors = d3.scale.category20();
+keyColor = function(d, i) {return colors(d.key);};
+
+var myDataset = <?=$dataset;?>;
+
+var chart;
+nv.addGraph(function() {
+    chart = nv.models.stackedAreaChart()
+    //.width(600).height(500)
+    .showLegend(false)
+    .useInteractiveGuideline(true)
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1];})
+    .color(keyColor)
+    .transitionDuration(300);
+    //.clipEdge(true);
+    //chart.stacked.scatter.clipVoronoi(false);
+    chart.xAxis
+    .tickFormat(function(d) { return d3.time.format("%d.%m.%Y")(new Date(d));});
+    chart.yAxis
+    //.tickFormat(d3.format(',.2f'));
+    .tickFormat(function(d){return d;});
+    d3.select('#chart1')
+    .datum(myDataset)
+    .transition().duration(0)
+    .call(chart);
+    nv.utils.windowResize(chart.update);
+    chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+    return chart;
+});
+</script>

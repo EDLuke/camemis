@@ -1,0 +1,139 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl("/training/jsonload/");
+$OBJECT_GRID->setSaveUrl("/training/jsonsave/");
+$columndata = Utiles::getGridColumnData("TRAINING_LIST_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+ 
+//print_r(UserAuth::printCLData());
+//exit;
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_CLASS'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>" . SUBJECT . "</b>', width: 150, hidden:".checkColHidden(1, $columndata).", renderer: renderText, sortable: true, dataIndex: 'SUBJECT_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'LASTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FIRSTNAME'");
+        }else{
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FIRSTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'LASTNAME'");
+        }
+                
+        switch($this->facette->OBJECT_TYPE){
+            case "CLASS":
+                $OBJECT_GRID->addColumn("header: '<b>" . CURRENT_COURSE . "</b>', width: 100, hidden:".checkColHidden(5, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CURRENT_CLASS'");
+                break;
+        }
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."'
+            ,cmd: 'jsonTeacherTraining'
+        ";
+
+        $OBJECT_GRID->addTBarItems("
+           tbar.add([{
+              id: 'REFRESH_ID'
+              ,text: '" . REFRESH . "'
+              ,iconCls:'icon-reload'
+              ,scope:this
+              ,disabled: false
+              ,handler: function(){
+                 Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+              }
+           }]);
+        ");
+        
+        //@soda
+        if(UserAuth::getUserType() == "SUPERADMIN" || UserAuth::getUserType() == "ADMIN"){
+            if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")){
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add([{
+                        text: '" . EXPORT_TO_EXCEL . "'
+                        ,id: 'EXPORT_TO_EXCEL'
+                        ,iconCls:'icon-page_excel'
+                        ,handler: function(){
+                            openWinIFrame('".EXPORT_TO_EXCEL."','/export/teacherclass/?objectId=$this->objectId&type=export_techer_training&target=training',550,percentHeight(85));
+                        }
+                    }]);
+                ");
+           }
+        }
+        if(UserAuth::getUserType() == "INSTRUCTOR" || UserAuth::getUserType() == "TEACHER"){
+            $OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        openWinIFrame('".EXPORT_TO_EXCEL."','/export/teacherclass/?objectId=$this->objectId&type=export_techer_training&target=training',550,percentHeight(85));
+                    }
+                }]);
+            ");
+        }
+        /////////////////////////////////////////
+
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "SUBJECT_NAME";
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

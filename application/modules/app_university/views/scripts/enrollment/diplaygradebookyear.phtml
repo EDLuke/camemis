@@ -1,0 +1,186 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("STUDENT_EVALUATION", "LIST");
+$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$classObject = AcademicDBAccess::findGradeFromId($this->classId);
+if(!$classObject) {header("Location: /main/permission/");}
+
+$STUDENT_ASSESSMENT = StudentSubjectAssessment::getInstance();
+$STUDENT_ASSESSMENT->classId = $this->classId;
+$STUDENT_ASSESSMENT->studetId = $this->studentId;
+
+$params["studentId"] = $this->studentId;
+$params["classId"] = $this->classId;
+$params["display"] = "year";
+
+$TEACHER_COMMENT_OBJECT = $STUDENT_ASSESSMENT->getStudentLearningResult($params);
+$TEACHER_COMMENT = $TEACHER_COMMENT_OBJECT?setShowText($TEACHER_COMMENT_OBJECT->TEACHER_COMMENT):"---";
+
+$AVERAGE_SCORE_LIST = $STUDENT_ASSESSMENT->listAllAverageSubjectYear();
+$AVERAGE_SCORE = $STUDENT_ASSESSMENT->getAllAverageSubjectYear($this->studentId);
+$AVERAGE_SCORE_VALUE = isset($AVERAGE_SCORE["VALUE"])?$AVERAGE_SCORE["VALUE"]:"---";
+?>
+<script>
+var behaviorValue;
+Ext.onReady(function() {
+    function cssText(v, p, record, rowIndex){
+        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:bold; height:15px; padding: 5px;color:#555 !important;\">{0}</div>'
+            ,v
+        );
+    }
+    <?
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 250, renderer: cssText, dataIndex: 'SUBJECT_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', sortable: true, width: 100, renderer:cssText, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', align: 'center', sortable: true, width: 150, renderer:cssText, dataIndex: 'ASSESSMENT'");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonLoadStudentLearningResult'
+        ,display:'year'
+        ,classId:'".$this->classId."'
+        ,studentId:'".$this->studentId."'
+    ";
+    
+    $OBJECT_GRID->loadMask = false;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    $html = "";
+    $html .= "var displayHight = Ext.getBody().getViewSize().height-230;";
+    $html .= "viewport = new Ext.Viewport({";
+        $html .= "layout: 'fit'";
+        $html .= ",border: false";
+        $html .= ",items:[{";
+            $html .= "layout:'fit'";
+            $html .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px;'";
+            $html .= ",border:false";
+            $html .= ",items:[{";
+                $html .= "xtype: 'tabpanel'";
+                $html .= ",tabPosition: 'bottom'";
+                $html .= ",plain:true";
+                $html .= ",activeTab: 0";
+                $html .= ",items:[{";
+                    $html .= "title:'".MAIN_CONTENT."'";
+                    $html .= ",style: 'padding-bottom: 5px'";
+                    $html .= ",bodyStyle: 'padding:10px'";
+                    $html .= ",width:550";
+                    $html .= ",items: [{";
+                        $html .= "title:'".MAIN_CONTENT."'";
+                        $html .= ",bodyStyle: 'background:#FFF; padding:5px'";
+                        $html .= ",style: 'padding-bottom: 5px'";
+                        $html .= ",width:550";
+                        $html .= ",height:180";
+                        $html .= ",autoScroll: true";
+                        $html .= ",items: [{";
+                            $html .= "border: false";
+                            $html .= ",bodyStyle: 'background:#FFF; padding:10px'";
+                            $html .= ",contentEl: 'iniMainContent'";
+                        $html .= "}]";  
+                    $html .= "},{";
+                        $html .= "title:'".TEACHER_COMMENTS."'";
+                        $html .= ",bodyStyle: 'background:#FFF; padding:5px'";
+                        $html .= ",style: 'padding-bottom: 5px'";
+                        $html .= ",width:550";
+                        $html .= ",height:displayHight";
+                        $html .= ",autoScroll: true";
+                        $html .= ",items: [{";
+                            $html .= "border: false";
+                            $html .= ",contentEl: 'iniTeacherComments'";
+                        $html .= "}]";
+                    $html .= "}]";
+                $html .= "},{";
+                    $html .= "border: false";
+                    $html .= ",title:'".SUBJECT_ASSESSMENT."'";
+                    $html .= ",id: 'content'";
+                    $html .= ",layout: 'card'";
+                    $html .= ",activeItem:0";
+                    $html .= ",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
+                $html .= "}";
+                $html .= "]";
+            $html .= "}]";
+        $html .= "}]";
+    $html .= "});";
+    
+    $SHOW_DETAIL ="{";
+    $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.SUBJECT_NAME";
+    $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
+    $SHOW_DETAIL .=",disabled:false";
+    $SHOW_DETAIL .=",handler: function(){";
+    $SHOW_DETAIL .="clickOpenPage('content','','".$this->URL_SUBJECT_BY_STUDENT."&subjectId=' + record.data.ID + '&display=year');";
+    $SHOW_DETAIL .="}";
+    $SHOW_DETAIL .="}";
+    
+    $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+    
+    $TEACHER_COMMENTS ="{";
+    $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.SUBJECT_NAME";
+    $TEACHER_COMMENTS .=",iconCls: 'icon-comments_add'";
+    $TEACHER_COMMENTS .=",disabled:false";
+    $TEACHER_COMMENTS .=",handler: function(){";
+    $TEACHER_COMMENTS .="clickOpenPage('content',record.data.SUBJECT_NAME,'".$this->URL_COMMENT_BY_STUDENT."&display=year&subjectId=' + record.data.ID);";
+    $TEACHER_COMMENTS .="}";
+    $TEACHER_COMMENTS .="}";
+    
+    $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENTS;
+    
+    $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
+    if($CONTEXTMENU_ITEMS){
+        $html .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $html .="var record = grid.store.getAt(rowIndex);";
+            $html .="var contextMenu = new Ext.menu.Menu({";
+            $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+            $html .="});";
+            $html .="event.stopEvent();";
+            $html .="contextMenu.showAt(event.xy);"; 
+        $html .="});";
+    }
+    echo $html;
+    ?>
+});
+</script>
+<div id="iniMainContent" class="x-hidden" style="padding: 5px;color:#555 !important;">
+    <table>
+        <tr>
+            <td style="width:120px;;font-weight:bold;height:30px;font-size:13px;"><?=AVERAGE?></td>
+            <td style="width:120px;;font-weight:bold;height:30px;font-size:13px;"><?=RANK?></td>
+            <td style="width:120px;;font-weight:bold;height:30px;font-size:13px;"><?=ASSESSMENT?></td>
+            <td style="width:120px;;font-weight:bold;height:30px;font-size:13px;"><?=BEHAVIOR?></td>
+            <td style="width:120px;;font-weight:bold;height:30px;font-size:13px;"><?=AWARD?></td>
+        </tr>
+        <tr>
+            <td style="width:120px;;font-weight:bold;height:20px;font-size:13px;"><?=isset($AVERAGE_SCORE["VALUE"])?$AVERAGE_SCORE["VALUE"]:"---"?></td>
+            <td style="width:120px;;font-weight:bold;height:20px;font-size:13px;"><?=AssessmentConfig::findRank($AVERAGE_SCORE_LIST,$AVERAGE_SCORE_VALUE);?> (<?=count($AVERAGE_SCORE_LIST)?>)</td>
+            <td style="width:120px;;font-weight:bold;height:20px;font-size:13px;"><?=AssessmentConfig::findGrading($AVERAGE_SCORE_VALUE,$classObject->QUALIFICATION_TYPE) ?></td>
+            <td style="width:120px;;font-weight:bold;height:20px;font-size:13px;">---</td>
+            <td style="width:120px;;font-weight:bold;height:20px;font-size:13px;">---</td>
+        </tr>
+    </table>
+</div>
+<div id="iniTeacherComments" class="x-hidden" style="padding: 5px;color:#555 !important;">
+<?=$TEACHER_COMMENT?>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,168 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 19.02.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+$studentObject = StudentDBAccess::findStudentFromId($studentId);
+
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
+
+$OBJECT_GRID = new CamemisGrid("EVALUATION", "MONTHLY");
+$OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$monthList = AcademicDBAccess::getAcademicMonthList($academicObject->ID);
+$selection = isset($_GET['monthyear'])?$_GET['monthyear']:"";
+
+if($selection){
+    $CURRENT_MONTH = $selection;
+}else{
+    $CHECK_MONTH = strtoupper(date("F"))."_".date("Y"); 
+    if(in_array($CHECK_MONTH,$monthList)){
+        $CURRENT_MONTH = $CHECK_MONTH; 
+    }else{
+        $CURRENT_MONTH = ""; 
+    }
+}
+
+$ACTION_MONTH = false;
+$STORE_ITEMS = "[";
+$STORE_ITEMS .= "['---','---']";
+if($monthList){
+    $i=0;
+    foreach($monthList as $key=>$value){
+        $STORE_ITEMS .= ",['".$key."_".$value."','".constant($key)." (".$value.")']";
+        ++$i;
+    }
+}
+$STORE_ITEMS .= "]";
+
+$COMBO_ITEMS = "[{".CamemisField::Combo('COMO_MONTH','COMO_MONTH',$STORE_ITEMS, false,$CURRENT_MONTH,150,false)."}]";
+
+?>
+<script>
+    var monthyear = '<?=$CURRENT_MONTH?>';
+    Ext.onReady(function() {
+        function cssText(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 2px;background:#FFF;">' + value + '</div>';
+        }
+        function cssRang(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 2px;background:#F3E5AB;">' + value + '</div>';
+        }
+
+        function cssAverage(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 2px;background:#FFFFC2;">' + value + '</div>';
+        }
+
+        function cssAssessment(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_GRID->addReadField("name: 'SHORT'");
+        $OBJECT_GRID->addReadField("name: 'NAME'");
+        $OBJECT_GRID->addReadField("name: 'RANK'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_VALUE'");
+        $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
+        $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".SCORE."</b>', width: 120, renderer:cssAverage, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 100, renderer:cssRang, align: 'center', sortable: true, dataIndex: 'RANK'");
+        $OBJECT_GRID->addColumn("header: '<b>Grade Scale</b>', width: 120, renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
+
+        $setParams = "";
+        $setParams .= "&schoolyearId=".$this->schoolyearId."";
+        $setParams .= "&section=1";
+        $setParams .= "&studentId=".$this->studentId."";
+
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,monthyear:monthyear
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+            ,cmd: 'jsonLoadStudentCreditAllSubjectAssessment'
+        ";
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+
+        ////////////////////////////////////////////////////////////////////////
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                    ,border: false
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px 0px 0px 0px'
+                    ,items:[{
+                        xtype: 'tabpanel'
+                        ,tabPosition: 'top'
+                        ,plain:true
+                        ,activeTab: 0
+                        ,enableTabScroll:true
+                        ,items:[{
+                            title:'<?=SUBJECT_ASSESSMENT?>'
+                            ,layout:'fit'
+                            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype()?>'}]
+                        },{
+                            title:'<?=TEACHER_COMMENTS?>'
+                            ,disabled:true
+                            ,layout:'fit'
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'TEACHER_COMMENTS', url:'/evaluation/teachercomment/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>&monthyear=' + monthyear})]
+                        },{
+                            title:'<?=CHART?>'
+                            ,disabled:true
+                            ,layout:'fit'
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'MY_CALENDAR', url:'/evaluation/gradebookchart/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>&monthyear=' + monthyear})]
+                        }]
+                    }]
+                    ,tbar:['->','-',{
+                        xtype: 'buttongroup'
+                        ,items:<?=$COMBO_ITEMS?>
+                    }]
+            }]
+        });
+        var combo = Ext.getCmp('COMO_MONTH_ID');
+        combo.on('select', function() {
+            monthyear = combo.getValue();
+            window.location='/evaluation/gradebookmonth/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>&monthyear=' + monthyear;
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

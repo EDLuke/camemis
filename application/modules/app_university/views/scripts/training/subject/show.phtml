@@ -1,0 +1,261 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 07.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("TRAINING");
+$OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
+$OBJECT_FORM ->setLoadUrl("/training/jsonload/");
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $ITEMS = "[";
+    $ITEMS .= "{".CamemisField::Displayfield("NAME",NAME,false)."}";
+    if($this->facette){
+        if(!$this->facette->PARENT){
+            $ITEMS .= "
+                ,{".CamemisField::Textfield("SCORE_MIN", "SCORE_MIN", MIN_POINTS, true)."}
+                ,{".CamemisField::Textfield("SCORE_MAX", "SCORE_MAX", MAX_POINTS, true)."}
+                ,{".CamemisField::Checkbox("INCLUDE_IN_EVALUATION","INCLUDE_IN_EVALUATION",INCLUDE_IN_EVALUATION, 1, false, false)."} 
+            ";
+        }
+    }
+    $ITEMS .= "]";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$ITEMS."
+        }]
+    }
+    ";
+    $ITEMS_ASSIGNMENT = "[";
+    $ITEMS_ASSIGNMENT .= "{".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}";
+    $ITEMS_ASSIGNMENT .= ",{".CamemisField::Textfield("NAME_ID", "ASSIGNMENTNAME", NAME, true)."}";
+    $ITEMS_ASSIGNMENT .= ",{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}";
+    $ITEMS_ASSIGNMENT .= "]";
+    $DETAIL_INFORMATION_ASSIGNMENT = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$ITEMS_ASSIGNMENT."
+        }]
+    }
+    ";
+    $GOALS = "
+    {
+        title: '".GOALS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("GOALS", false,200)."}]
+        }]
+    }
+    ";
+    
+    $BODY_OF_LESSON = "
+    {
+        title: '".BODY_OF_LESSON."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("BODY_OF_LESSON", false,200)."}]
+        }]
+    }
+    ";
+    
+    $MATERIALS = "
+    {
+        title: '".MATERIALS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("MATERIALS", false,200)."}]
+        }]
+    }
+    ";
+    
+    $EVALUATION = "
+    {
+        title: '".EVALUATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("EVALUATION", false,200)."}]
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", false,200)."}]
+        }]
+    }
+    ";
+    $EVALUATION_TYPE_STORE = "[
+        [0, '" . NUMBER . "']
+        ,[1, '".PERCENT."']
+    ]";
+    
+    
+    $EVALUATION_SETTINGS_ITEMS = "[";
+    
+    $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE, false, false, false, false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= "]";
+    
+    $EVALUATION_SETTINGS = "
+    {
+    title: '".EVALUATION_SETTINGS."'
+    ,autoHeight: true
+    ,style: 'padding-bottom: 5px'
+    ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$EVALUATION_SETTINGS_ITEMS."
+        }]
+    }
+    ";
+    
+    $FORM_ITEMS = "[";
+    if($this->facette){
+       
+        if(!$this->facette->PARENT){
+             $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$GOALS;
+            $FORM_ITEMS .= ",".$BODY_OF_LESSON;
+            $FORM_ITEMS .= ",".$MATERIALS;
+            $FORM_ITEMS .= ",".$EVALUATION;
+        }else{
+            $FORM_ITEMS .= $DETAIL_INFORMATION_ASSIGNMENT;
+            $FORM_ITEMS .= ",".$EVALUATION_SETTINGS;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+        }
+    }
+       
+    $FORM_ITEMS .= "]";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$FORM_ITEMS."
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+    
+    if($this->facette){
+        if(!$this->facette->PARENT){
+            $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+            ");
+        }
+    }
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    $OBJECT_FORM->setLoadParams("cmd: 'loadTrainingSubject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'saveTrainingSubject'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

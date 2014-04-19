@@ -1,0 +1,187 @@
+<?
+///////////////////////////////////////////////////////////
+// @chungveng
+// Date: 30-12-2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/subject/SubjectDBAccess.php';
+require_once 'models/app_university/subject/SubjectTeacherDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
+
+$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+$objectId= isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+$academicObject = TrainingDBAccess::findTrainingFromId($classId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+//if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");}
+
+$firstParams["trainingId"] = $classId;
+$firstParams["include_in_evaluation"] = 1;
+$ENTRIES = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($firstParams);
+
+$setParams = "";
+$setParams .= "&trainingId=".$classId."";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+switch (UserAuth::getUserType()) {
+    case "STUDENT":
+        break;
+    case "TEACHER":
+    case "INSTRUCTOR":
+        $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+        break;
+    case "ADMIN":
+    case "SUPERADMIN":
+        $teacherId = Zend_Registry::get('USER')->ID;
+        break;
+}
+?>
+<style type="text/css">
+    .ux-icon-combo-icon {
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        width: 18px;
+        height: 14px;
+    }
+    .ux-icon-combo-input {
+        padding-left: 25px;
+    }
+    .x-form-field-wrap .ux-icon-combo-icon {
+        top: 3px;
+        left: 5px;
+    }
+    .ux-icon-combo-item {
+        background-repeat: no-repeat ! important;
+        background-position: 3px 50% ! important;
+        padding-left: 24px ! important;
+    }
+</style>
+<script>
+var subjectId;
+Ext.onReady(function() {
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $subjectId = ""; 
+    $DATA = array();
+    
+    $STORE_SUBJECT = "["; 
+    if($ENTRIES){      
+        $i=0; 
+         
+        foreach($ENTRIES as $value){
+            
+            if($value->SUBJECT_ID){                     
+                $CHECK = $SUBJECT_TEACHER_ACCESS->checkAssignedSubjectTeacherTraining(
+                        $value->SUBJECT_ID
+                        , $teacherId
+                        , $classId
+                        , false);
+                        
+                switch (UserAuth::getUserType()) {
+                    case "TEACHER":
+                    case "INSTRUCTOR":
+                        if($CHECK){
+                            $icon = 'icon-star';
+                            $DATA[$i] = $value->SUBJECT_ID;
+                            $STORE_SUBJECT .= $i?",":"";
+                            $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', '".$icon."']";
+                            $i++;
+                        }
+                    break;
+                    case "ADMIN":
+                    case "SUPERADMIN":
+                        $icon = 'icon-star';
+                        $DATA[$i] = $value->SUBJECT_ID;
+                        $STORE_SUBJECT .= $i?",":"";
+                        $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', '".$icon."']";
+                        $i++;
+                    break;
+                }
+            }
+        }
+        $subjectId = isset($DATA[0])?$DATA[0]:0;
+    }
+    
+    $setParams .= "&subjectId=".$subjectId."";
+    
+    if(!$subjectId){
+        $SHOW_LAYOUT = "{
+            title:'".STATUS."'
+            ,layout: 'fit'
+            ,border: false
+            ,contentEl: 'initCenter'
+        }";
+    }else{
+        
+        $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/training/evaluationstudenttraining/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]";
+    }
+    
+    $STORE_SUBJECT .= "]";
+    $COMBO_SUBJECT = "[{
+        xtype:'combo'
+        ,id:'COMO_SUBJECT_ID'
+        ,width:280
+        ,fieldLabel:'IconCombo'
+        ,store: new Ext.data.SimpleStore({
+            fields: ['comboCode', 'comboName', 'comboIcon'],
+            data: ".$STORE_SUBJECT."
+        }),
+        plugins:new Ext.ux.plugins.IconCombo()
+        ,valueField: 'comboCode'
+        ,displayField: 'comboName'
+        ,iconClsField: 'comboIcon'
+        ,triggerAction: 'all'
+        ,mode: 'local'
+        ,value:'".$subjectId."'
+    }]";
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout: 'card'
+            ,id:'content'
+            ,activeItem: 0
+            ,border: false
+            ,tbar:[{
+                text: '<?=CANCEL?>'
+                ,id: 'CANCEL_ID'
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                    window.parent.Ext.getCmp('TRAINING_ID').expand();
+                }
+            },'-','<b><?=$academicObject->NAME?> &raquo; <?=TEACHER_ENTER_SCORE?></b>','->',
+                '<b><?=SUBJECT?>:</b>',{
+                xtype: 'buttongroup'
+                ,items:<?=$COMBO_SUBJECT;?>
+            }]
+            ,items:<?=$SHOW_LAYOUT?>
+        }]
+    });
+    var comboSubject = Ext.getCmp('COMO_SUBJECT_ID');
+    comboSubject.on('select', function() {
+        clickOpenPage('content','','/training/evaluationstudenttraining/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>&subjectId=' + comboSubject.getValue());
+    });
+});
+</script>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError">No data available .</h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

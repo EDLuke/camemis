@@ -1,0 +1,206 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 17.02.2012
+// @Sothearung....
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$ORGANIZATION_GRID = new CamemisGrid("ORGANIZATION_CHART", "LIST");
+$ORGANIZATION_GRID->setLoadUrl("/organization/jsonload/");
+$ORGANIZATION_GRID->setSaveUrl("/organization/jsonsave/");
+
+$CAMPUS_GRID = new CamemisGrid("STAFF", "CAMPUS");
+$CAMPUS_GRID->setLoadUrl("/organization/jsonload/");
+$CAMPUS_GRID->setSaveUrl("/organization/jsonsave/");
+
+$PROGRAM_GRID = new CamemisGrid("STAFF", "TRAINING");
+$PROGRAM_GRID->setLoadUrl("/organization/jsonload/");
+$PROGRAM_GRID->setSaveUrl("/organization/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+    Ext.onReady(function() {
+        <?
+        
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+                $CAMPUS_GRID->isGridEditing = true;
+                break;
+            case "ADMIN":
+                $CAMPUS_GRID->isGridEditing = false;
+            break;
+        }
+        
+        $CAMPUS_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+        
+        $CAMPUS_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'ASSIGNED'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+
+        $CAMPUS_GRID->addReadField("name: 'CAMPUS'");
+        $CAMPUS_GRID->addReadField("name: 'ASSIGNED'");
+        $CAMPUS_GRID->addColumn("header: '".NAME."', align:'left', width: 300, sortable: false, dataIndex: 'CAMPUS'");
+        $CAMPUS_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,teacherId: '".$this->objectId."'
+            ,cmd: 'jsonStaffCampus'
+        ";
+        $CAMPUS_GRID->setSaveParams("
+            cmd: 'actionsStaffCampus'
+            ,teacherId: '".$this->objectId."'
+        ");
+
+        $CAMPUS_GRID->forceFit = "false";
+        $CAMPUS_GRID->isCheckboxSelect = false;
+        $CAMPUS_GRID->isPagingToolbar = true;
+        $CAMPUS_GRID->renderJS();
+
+        ///////////////////////////////////////////////////
+        // Program...
+        ///////////////////////////////////////////////////
+        $PROGRAM_GRID->addReadField("name: 'PROGRAM'");
+        $PROGRAM_GRID->addReadField("name: 'ASSIGNED'");
+        $PROGRAM_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'ASSIGNED'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+
+        $PROGRAM_GRID->addColumn("header: '".CAMPUS."', align:'left', renderer: renderText, width: 150, sortable: false, dataIndex: 'PROGRAM'");
+        $PROGRAM_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,staffId: '".$this->objectId."'
+            ,target: 'program'
+            ,cmd: 'jsonStaffTrainingPrograms'
+        ";
+        $PROGRAM_GRID->setSaveParams("
+            cmd: 'actionsStaffCampus'
+            ,target: 'program'
+            ,staffId: '".$this->objectId."'
+        ");
+
+        $PROGRAM_GRID->forceFit = "false";
+        $PROGRAM_GRID->isGridEditing = true;
+        $PROGRAM_GRID->isCheckboxSelect = false;
+        $PROGRAM_GRID->renderJS();
+        
+        ////////////////////////////////////////////////////////////////////////
+        $ORGANIZATION_GRID->addReadField("name: 'NAME'");
+        $ORGANIZATION_GRID->addReadField("name: 'POSITION'");
+        $ORGANIZATION_GRID->addReadField("name: 'ASSIGNED'");
+        $ORGANIZATION_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'ASSIGNED'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+
+        $ORGANIZATION_GRID->addColumn("header: '".NAME."', align:'left', width: 200, sortable: false, dataIndex: 'NAME'");
+
+        $ORGANIZATION_GRID->addColumn("
+            header: '".POSITION."'
+            ,dataIndex: 'POSITION'
+            , align:'left'
+            , width: 200
+            , editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+
+        $ORGANIZATION_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,userId: '".$this->objectId."'
+            ,cmd: 'assignedUserOrganization'
+        ";
+
+        $ORGANIZATION_GRID->isPagingToolbar = true;
+        $ORGANIZATION_GRID->forceFit = "false";
+        $ORGANIZATION_GRID->isCheckboxSelect = false;
+        $ORGANIZATION_GRID->isGridEditing = false;
+        $ORGANIZATION_GRID->renderJS();
+        
+        $PENEL_ITEMS = Array();        
+        
+        $CAMPUS = "{
+            title: '".CAMPUS."'
+            ,layout:'fit'
+            ,items:[{xtype: '".$CAMPUS_GRID->getObjectXtype()."'}]
+        }";
+       
+        $TRAINING_PROGRAMS = "{
+            title: '".TRAINING_PROGRAMS."'
+            ,layout: 'fit'
+            ,items:[{xtype: '".$PROGRAM_GRID->getObjectXtype()."'}]
+        }";
+        
+        $ORGANIZATION_CHART = "{
+            title: '".ORGANIZATION_CHART."'
+            ,layout:'fit'
+            ,items:[{xtype: '".$ORGANIZATION_GRID->getObjectXtype()."'}]
+        }";
+        
+//        $PENEL_ITEMS[] = $CAMPUS;
+//        if (UserAuth::displayRoleTrainingEducation()){
+//            $PENEL_ITEMS[] = $TRAINING_PROGRAMS;
+//        }
+        
+        $PENEL_ITEMS[] = $ORGANIZATION_CHART;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:[<?=$CHOOSE_ITEMS?>]
+                }]
+            }]
+        });
+    });
+</script>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,516 @@
+<?
+///////////////////////////////////////////////////////////
+// @THORN Visal
+// Date: 16.12.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once 'models/CAMEMISUploadDBAccess.php';
+require_once 'models/app_school/student/StudentPreschoolDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$getID = "";
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("STUDENT_PRESCHOOL");
+$OBJECT_FORM->setLoadUrl('/studentpreschool/jsonload/');
+$OBJECT_FORM->setSaveUrl('/studentpreschool/jsonsave/');
+
+$APPLICATION_FORM = new CamemisForm("APPLICATION_PRESCHOOL");
+$APPLICATION_FORM->setLoadUrl('/studentpreschool/jsonload/');
+$APPLICATION_FORM->setSaveUrl('/studentpreschool/jsonsave/');
+
+$TESTING_FORM = new CamemisForm("TESTING_PRESCHOOL");
+$TESTING_FORM ->setLoadUrl('/studentpreschool/jsonload/');
+$TESTING_FORM ->setSaveUrl('/studentpreschool/jsonsave/');
+
+$REF_FORM = new CamemisForm("REFERENCE_PRESCHOOL");
+$REF_FORM ->setLoadUrl('/studentpreschool/jsonload/');
+$REF_FORM ->setSaveUrl('/studentpreschool/jsonsave/');
+
+$MEMBER_GRID = new CamemisGrid("STUDENT_PRESCHOOL", "LIST");
+$MEMBER_GRID->setLoadUrl("/studentpreschool/jsonload/");
+$MEMBER_GRID->setSaveUrl("/studentpreschool/jsonsave/");
+
+$objectId = isset($params["objectId"])? addText($params["objectId"]) : $this->objectId;
+$getStd_preschoolId = StudentPreschoolDBAccess::sqlStudentPreschoolId($objectId);
+if($getStd_preschoolId){
+    $getID = $getStd_preschoolId[0]->ID;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+       
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        ///////////////////////////////////////////////////////////
+        
+        $MEMBER_GRID->addReadField("name: 'ID'");
+        $MEMBER_GRID->addReadField("name: 'FIRSTNAME'");
+        $MEMBER_GRID->addReadField("name: 'LASTNAME'");
+        $MEMBER_GRID->addReadField("name: 'PHONE'");
+        $MEMBER_GRID->addReadField("name: 'EMAIL'");
+        $MEMBER_GRID->addReadField("name: 'ADDRESS'");
+        $MEMBER_GRID->addReadField("name: 'GENDER'");
+        
+        
+        $MEMBER_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', width: 150, dataIndex: 'FIRSTNAME'");
+        $MEMBER_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', align:'left', width: 150, dataIndex: 'LASTNAME'");
+        $MEMBER_GRID->addColumn("header: '<b>" . PHONE . "</b>', align:'left', width: 100, dataIndex: 'PHONE'");
+        $MEMBER_GRID->addColumn("header: '<b>" . EMAIL . "</b>', align:'left', width: 100, dataIndex: 'EMAIL'");
+        $MEMBER_GRID->addColumn("header: '<b>" . ADDRESS . "</b>', align:'left', width: 100, dataIndex: 'ADDRESS'");
+        $MEMBER_GRID->addColumn("header: '<b>" . GENDER . "</b>', align:'left', width: 100, dataIndex: 'GENDER'");
+        
+        
+        $MEMBER_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonShowAllChooseStudentPreschool'
+        ";
+        
+        $MEMBER_GRID->loadMask = true;
+        $MEMBER_GRID->isQuickySearch = true;
+        $MEMBER_GRID->isObjectDefaultOnLoad = true;
+        $MEMBER_GRID->renderJS();
+        
+        ///////////////////////////////////////////////////////////
+        
+        $APPLICATION_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'RE_CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+
+        $APPLICATION_FORM->setLoadParams("
+            cmd: 'jsonLoadTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'APPLICATION'
+        ");
+
+        $APPLICATION_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+
+        $APPLICATION_FORM->setSaveParams("
+            cmd: 'jsonSaveTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'APPLICATION'
+        ");
+
+        $APPLICATION_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        ");
+         
+        $APPLICATION_FORM->addObjectItems("
+            title: '".APPLICATION_TYPE."'
+            ,id:'APPLICATION_TYPE_ID'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [{".CamemisField::comboCamemisTypes("APPLICATION_TYPE", APPLICATION_TYPE, false,250, true)."}
+                ]
+            }]   
+        ");
+            
+        $APPLICATION_FORM->addObjectItems("
+            title: '".DESCRIPTION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,width:550
+            ,style: 'padding-bottom: 5px'
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items:[{".CamemisField::Textarea("DESCRIPTION",DESCRIPTION,200,false,false)."}]
+            }]   
+        ");
+        
+        $APPLICATION_FORM->isObjectDefaultOnLoad = true; 
+        $APPLICATION_FORM->labelAlign = "left";
+        $APPLICATION_FORM->labelWidth = 120;
+        $APPLICATION_FORM->renderJS();
+            
+        ///////////////////////////////////////////////////////////
+        
+        $TESTING_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'RE_CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+
+        $TESTING_FORM->setLoadParams("
+            cmd: 'jsonLoadTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'TESTING'
+        ");
+
+        $TESTING_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+
+        $TESTING_FORM->setSaveParams("
+            cmd: 'jsonSaveTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'TESTING'
+        ");
+
+         $TESTING_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+         ");
+         
+        $TESTING_FORM->addObjectItems("
+            title: '".TESTING_TYPE."'
+            ,id:'TESTING_TYPE_ID'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::comboCamemisTypes("TESTING_TYPE", TESTING_TYPE, false,250, true)."}
+                    ,{".CamemisField::Textfield("SCORE", "SCORE", SCORE, false, false, false, 250)."}
+                ]
+            }]   
+        ");
+
+        $TESTING_FORM->addObjectItems("
+            title: '".DESCRIPTION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,width:550
+            ,style: 'padding-bottom: 5px'
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items:[{".CamemisField::Textarea("DESCRIPTION",DESCRIPTION,200,false,false)."}]
+            }]   
+        ");
+        
+        $TESTING_FORM->isObjectDefaultOnLoad = true; 
+        $TESTING_FORM->labelAlign = "left";
+        $TESTING_FORM->labelWidth = 120;
+        $TESTING_FORM->renderJS();
+        ///////////////////////////////////////////////////////////
+
+        $REF_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'RE_CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+   
+        $REF_FORM->setLoadParams("
+            cmd: 'jsonLoadTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'REFERENCE'
+        ");
+        
+        $REF_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+
+        $REF_FORM->setSaveParams("
+            cmd: 'jsonSaveTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'REFERENCE'
+        ");
+    
+         $REF_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+         ");   
+         
+         $REF_FORM->addObjectItems("
+            title: '".REFERENCE_TYPE."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [{".CamemisField::comboCamemisTypes("REFERENCE_TYPE", TYPE, false,250, true)."}]
+            }]   
+        ");
+            
+        $REF_FORM->addObjectItems("
+            title: '".REFERENCE_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("REF_FIRSTNAME", "REF_FIRSTNAME", FIRSTNAME, false, false, false, 250)."}
+                    ,{".CamemisField::Textfield("REF_LASTNAME", "REF_LASTNAME", LASTNAME, false, false, false, 250)."}
+                    ,{".CamemisField::Textfield("REF_PHONE", "REF_PHONE", PHONE, false, false, false, 250)."}
+                    ,{".CamemisField::EMailfield("REF_EMAIL", EMAIL, false, false)."}
+                ]
+            }]   
+        ");
+            
+        $REF_FORM->addObjectItems("
+            title: '".DESCRIPTION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,width:550
+            ,style: 'padding-bottom: 5px'
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items:[{".CamemisField::Textarea("DESCRIPTION",DESCRIPTION,200,false,false)."}]
+            }]   
+        ");
+        
+        $REF_FORM->isObjectDefaultOnLoad = true; 
+        $REF_FORM->labelAlign = "left";
+        $REF_FORM->labelWidth = 120;
+        $REF_FORM->renderJS();
+        
+        //////////////////////////////////////////////////////////
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        
+        if($this->objectId != "new"){
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());            
+            $OBJECT_FORM->setLoadParams("
+                cmd: 'jsonLoadStudentPreschool'
+                ,objectId: '".$this->objectId."'
+                ,type: '".$this->type."'
+            ");
+            
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."'); 
+                window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0); 
+            ");
+            
+            $OBJECT_FORM->setRemoveParams("
+                cmd: 'jsonRemoveStudentPreschool'
+                ,objectId: '".$this->objectId."'
+                ,type: '".$this->type."'
+            "); 
+            
+        }
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveStudentPreschool'
+            ,objectId: '".$this->objectId."'
+            ,type: '".$this->type."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+        ");    
+        
+if($this->type)
+    switch($this->type){
+        case "studentPreschool":
+            $OBJECT_FORM->addObjectItems("
+                title: '".DETAIL_INFORMATION."'
+                ,autoHeight: true
+                ,style: 'padding-bottom:5px'
+                ,collapsible: true
+                ,collapsed: false
+                ,width: 550
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle: 'padding:10px'
+                    ,items: [
+                        {".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, true, false, false, 250)."}
+                        ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, true, false, false, 250)."}
+                        ,{".CamemisField::ComboGender(GENDER, false, false, 250)."}
+                    ]
+                }]   
+            ");
+            
+            $OBJECT_FORM->addObjectItems("
+                title: '".CONTACT_INFORMATION."'
+                ,autoHeight: true
+                ,style: 'padding-bottom:5px'
+                ,collapsible: true
+                ,collapsed: false
+                ,width: 550
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle: 'padding:10px'
+                    ,items: [
+                        {".CamemisField::Textarea("ADDRESS",ADDRESS,200,false,false)."}
+                        ,{".CamemisField::Textfield("PHONE_ID", "PHONE", PHONE, false, false, false, 250)."}
+                        ,{".CamemisField::EMailfield("EMAIL", EMAIL, false, true)."}
+                    ]
+                }]   
+            ");
+        break;
+        case "APPLICATION_TYPE":
+            
+            
+        break;
+    }
+
+        $OBJECT_FORM->isObjectDefaultOnLoad = ($this->objectId=="new")?false:true; 
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+        $js = "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+            $js .= ",items: [{" ;
+            
+        switch($this->type){
+            case "studentPreschool":
+            if($this->objectId == "new"){
+                $js .= "xtype: 'panel'";
+                $js .= ",id: 'panel'";    
+                $js .= ",border: false";    
+                $js .= ",layout: 'card'";    
+                $js .= ",activeItem: 0";    
+                $js .= ",items: [{";    
+                    $js .= "layout: 'fit'";        
+                    $js .= ",border: false";        
+                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'";
+                    $js .= "}]";
+                $js .= "}]";
+            }else{
+                $js .= "layout: 'fit'";
+                $js .= ",border: false";
+                $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                    $js .= ",items: [{";  
+                        $js .= "xtype: 'tabpanel'";
+                        $js .= ",id:'TABPANEL_ID'";
+                        $js .= ",tabPosition: 'top'";
+                        $js .= ",plain:true";
+                        $js .= ",activeTab: 0";
+                        $js .= ",enableTabScroll:true";
+                        $js .= ",items:[{";
+                            $js .= "title: '".MAIN_CONTENT."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".APPLICATION."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$APPLICATION_FORM->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".TESTING."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$TESTING_FORM->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".REFERENCE."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$REF_FORM->getObjectXType()."'}]";
+                        $js .= "}]";
+                    $js .= "}]";
+            }
+                break;
+            default:
+                $js .= "xtype: 'panel'";
+                $js .= ",id: 'panel'";    
+                $js .= ",border: false";    
+                $js .= ",layout: 'card'";    
+                $js .= ",activeItem: 0";    
+                $js .= ",items: [{";    
+                    $js .= "layout: 'fit'";        
+                    $js .= ",border: false";        
+                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'";
+                    $js .= "}]";
+                $js .= "}]";
+                break;
+        }
+            
+            
+            $js .= "}]"; 
+        $js .= "});";
+           
+        print $js;
+        ?>
+    });
+    
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

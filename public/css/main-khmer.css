@@ -1,0 +1,931 @@
+@font-face {
+    font-family: 'Hanuman';
+    src:url('../font/khmer/Hanuman.ttf');
+    font-weight: normal;
+    font-style: normal;	
+}
+
+html, body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+#app-header {
+    
+    background:transparent url(../images/camemis_default.png) no-repeat 5px 2px;
+}
+
+#app-header p.school-name{
+    color: #596F8F;
+    font-size: 18px;
+    font-weight: 200;
+    padding: 10px 3px;
+    text-shadow: 0 1px 0 #fff;
+    float:right;    
+}
+
+.x-border-layout-ct {
+    background:transparent;
+    background:#c3d5ed url(../images/bg.gif) repeat-x left top !important;
+}
+
+span.textBold{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+span.textBoldBlue{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#061f83;
+}
+span.textBoldBlue14{
+    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#061f83;
+}
+
+h1.header{
+    font:bold 15px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#555;
+}
+h1.installHeader{
+    font:bold 18px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+h2.installSubHeader{
+    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+h1.headerError{
+    font:bold 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#CC0000;
+}
+
+h1.headerInfo{
+    font:bold 12px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#061f83;
+}
+
+h1.modulName{
+    font:bold 9px  tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#FFFFFF;
+    text-align: right;
+}
+h1.schoolName{
+    font:bold 14px  tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#FFFFFF;
+    text-align: right;
+}
+h1.camemis{
+    font:bold 15px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#FFFFFF;
+    text-align: left;
+}
+p.header{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+h1.content{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+textarea{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    border: 1px solid #D0D0BF;
+}
+table.show{
+    /*
+    border-collapse:separate;
+    border-top: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    */
+}
+th.header{
+    font:bold 12px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    border-bottom: 1px solid #AAAAAA;
+    padding: 5px;
+}
+
+th.show{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    border-bottom: 1px solid #AAAAAA;
+    padding: 5px;
+}
+td.show{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    padding: 5px;
+}
+
+th.showReportItemNumber{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font-weight: bold;
+    color: #333333;
+    padding: 5px;
+    width: 40px;
+    border:1px solid #C3D0DF;background:#EEEEEE;
+}
+
+th.showReportItem{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font-weight: bold;
+    color: #333333;
+    padding: 5px;
+    width: 150px;
+    border:1px solid #C3D0DF;background:#EEEEEE;
+}
+
+td.showReportItemNumber{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font-weight: normal;
+    color: #333333;
+    padding: 5px;
+    width: 40px;
+    border:1px solid #C3D0DF;background:#FFFFFF;
+}
+
+td.showReportItem{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font-weight: normal;
+    color: #333333;
+    padding: 5px;
+    width: 150px;
+    border:1px solid #C3D0DF;background:#FFFFFF;
+}
+
+td.fieldBold{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font-weight: bold;
+    color: #333333;
+    padding: 5px;
+}
+td.fieldNormal{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    padding: 5px;
+}
+
+td.tdBold{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    padding: 5px;
+}
+td.tdNormal{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #333333;
+    padding: 5px;
+}
+.textNormal {
+    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+ul.list{
+    /*
+    margin-left:20px;
+    margin-top:20px;
+    margin-bottom:20px;
+    margin-right:0px;
+    */
+    list-style:square;
+}
+input.show-btn{
+    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    padding: 5px;
+}
+.header .x-panel-body{
+    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.disabled2{
+    cursor:default;
+    color: #333333;
+    opacity:.6;
+    -moz-opacity:.6;
+    filter:alpha(opacity=60);
+}
+
+label.x-form-item-label{
+    font-weight:normal;
+}
+.x-form-item label{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    text-decoration:none;
+}
+.x-grid3-row td,.x-grid3-summary-row td{
+    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-tree-node{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-grid3-hd-row td{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.ux-grid3-dirty-row {
+    background:#ffffa8;
+}
+.ux-grid3-new-row {
+    background:#c8ffc8;
+}
+.x-panel-header-text {
+    text-decoration:none;
+    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.details-panel .x-panel-body{
+    padding: 11px;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+h1.details {padding: 11px;color: #333333;font-size: 16px;font-weight:bold;}
+h2.details {padding: 11px;color: #333333;font-size: 14px;font-weight:bold;}
+
+p.details {padding: 11px;}
+
+.scheduleTime{
+    color: #CC0000;
+    padding: 11px;
+    height: 40px;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.line {
+    clear: both;
+    padding: 2px 0px;
+}
+
+.clean-header{
+    border:1px dotted #333333;
+    background:#EEEEEE;
+    padding-left:11px;
+    padding-right:11px;
+    padding-top:5px;
+    padding-bottom:5px;
+    text-align:left;
+    color: #333333;
+    font-weight:bold;
+    font-size : 11px;
+}
+.clean-items{
+    border-left: 1px dotted #333333;
+    border-right: 1px dotted #333333;
+    padding: 11px;
+    color: #333333;
+    background:#FFFFFF;
+    margin-top: 0px;
+}
+.clean-line{
+    border-top: 1px dotted #333333;
+    padding-right: 11px;
+    padding-left: 11px;
+}
+
+#ID_1 .x-panel-body {background:#F7F7F7;}
+/*
+
+#ID_1 .x-panel-header-text {}
+#ID_2 .x-panel-body {background:#F7F7F7;}
+#ID_2 .x-panel-header-text {}
+#ID_3 .x-panel-body {background:#F7F7F7;}
+#ID_3 .x-panel-header-text {}
+*/
+
+/*
+.x-panel-body {background-color:#FFFFFF;}
+*/
+.x-panel-header-text {font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;}
+.x-btn-text{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-grid3-header {
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-grid3-cell-inner{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-tree-node {
+    font:tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-tab-strip span.x-tab-strip-text {
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-toolbar .x-btn button{
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.combo-result-item {
+    padding :  2px;
+    border  : 1px solid #FFFFFF;
+}
+
+.nodeTextBold .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeTextThrough .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    text-decoration: line-through;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeText .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeTextUnderline .x-tree-node-anchor SPAN {
+    color : #CC0000 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    text-decoration:line-through
+}
+
+.nodeTextRed .x-tree-node-anchor SPAN {
+    color : #CC0000 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeTextRedBold .x-tree-node-anchor SPAN {
+    color : #CC0000 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeTextBlue .x-tree-node-anchor SPAN {
+    color : #061f83 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeTextBoldBlue .x-tree-node-anchor SPAN {
+    color : #061f83 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeFolderBold .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.nodeFolder .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.nodeCampus .x-tree-node-anchor SPAN {
+    color : #31005A !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.nodeGrade .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.nodeSchoolyear .x-tree-node-anchor SPAN {
+    color : #31005A !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.nodeClass .x-tree-node-anchor SPAN {
+    color : #1861A5 !important;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.disabled .x-tree-node-anchor SPAN {
+    color : #CC0000 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.enabled .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.disabled .x-tree-node-anchor SPAN {
+    color : #CC0000 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.enabled .x-tree-node-anchor SPAN {
+    color : #333333 !important;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.upload-icon {
+    background: url(../images/magnifier.png) no-repeat 0 0 !important;
+}
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+    position: absolute;
+    right: 0;
+    -moz-opacity: 0;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+.x-grid3-td-topic b {
+    font:normal 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    display:block;
+}
+.x-grid3-td-topic b i {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#000;
+}
+.x-grid3-td-topic .x-grid3-cell-inner {
+    white-space:normal;
+}
+.x-grid3-td-topic a {
+    text-decoration:none;
+}
+.x-grid3-td-topic a:hover {
+    text-decoration:underline;
+}
+
+.ext-ie .x-form-text,  {
+    height:22px;
+    line-height:18px;
+    margin: 0px 0px;
+    vertical-align:middle;
+}
+/*
+.x-superboxselect {position:relative; height: auto !important; min-height:18px;margin: 0px; overflow: hidden; padding:2px; display:block; outline: none !important;}
+.x-superboxselect ul {overflow: hidden; cursor: text;}
+.x-superboxselect-display-btns {padding-right: 33px !important;}
+.x-superboxselect-btns {position: absolute; right: 0px; top: 0; overflow:hidden; padding:0px;}
+.x-superboxselect-btns div {float: left; width: 17px; height: 22px; margin-top: 0px;}
+.x-form-focus .x-superboxselect-btn-clear {background: url(../images/clearfocus.png) no-repeat scroll left 0px;}
+.x-form-invalid .x-superboxselect-btn-clear {background: url(../images/clearinvalid.png) no-repeat scroll left 0px;}
+.x-superboxselect-btn-clear {background: url(../images/clear.png) no-repeat scroll left 0px;}
+.x-form-focus .x-superboxselect-btn-expand {background: url(../images/expandfocus.png) no-repeat scroll left 0px;}
+.x-form-invalid .x-superboxselect-btn-expand {background: url(../images/expandinvalid.png) no-repeat scroll left 0px;}
+.x-superboxselect-btn-expand {background: url(../images/expand.png) no-repeat scroll left 0px;}
+.x-superboxselect-btn-over {background-position: left -22px}
+.x-superboxselect-btn-hide {display:none;}
+.x-superboxselect li {float: left; margin-left: 1px; margin-bottom:1px;padding: 0;line-height: 1.2em;}
+.x-superboxselect-stacked li {float: none !important;}
+.x-superboxselect-input input { border: none; outline: none; margin-top: 1px; margin-bottom: 1px;}
+body.ext-ie .x-superboxselect-input input {background: none; border: none; margin-top: 0px;}
+.x-superboxselect-item {position: relative; border: 1px solid #CAD8F3; background-color: #DEE7F8; padding: 1px 15px 1px 2px !important; }
+.x-superboxselect-item {-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; o-border-radius: 3px; khtml-border-radius: 3px;}
+body.ext-ie7 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em; padding: 1px 17px 2px 2px !important;}
+body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em; padding: 2px 19px 4px 2px !important;}
+.x-superboxselect-item-hover {background: #BBCEF1; border: 1px solid #6D95E0;}
+.x-superboxselect-item-focus {border-color: #598BEC; background: #598BEC; color: #fff;}
+.x-superboxselect-item-close {background: url(../images/close.png) no-repeat scroll left 0px; border: none; cursor: default; font-size: 1px; height: 16px;padding:0; position: absolute; right: 0px; top: 0px; width: 13px;display:block;cursor:pointer;}
+.x-superboxselect-item-close:hover, .x-superboxselect-item-close:active  { background-position: left -11px;}
+.x-superboxselect-item-focus .x-superboxselect-item-close{ background-position: left -24px}
+.x-item-disabled .x-superboxselect-item-close{ background-position: left -36px}
+*/
+.task {
+    background-image:url(../images/cog.png) !important;
+}
+.task-folder {
+    background-image:url(../images/folder_go.png) !important;
+}
+
+.x-form-remote-wait {
+    width:100%;
+    height:19px;
+    width:19px;
+    background-image:url(../images/wait.gif);
+    background-repeat:no-repeat;
+    display:block;
+    position:absolute;
+}
+
+/* Left Panel background */
+.x-vr-tab-panel {
+    background: #CEDFF5;
+    font: 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+/* Left Panel */
+.x-vr-tab-panel-header {
+    float: left;
+}
+
+/* Right Panel */
+.x-vr-tab-panel-bwrap {
+    border-left: 1px solid #99BBE8;
+    float: right;
+    /* padding: 32px 8px 8px 8px; */
+    padding: 8px;
+    background: #fff;
+}
+
+/* Menu Items */
+.x-vr-tab-panel ul.x-tab-strip li {
+    display: inline-block;
+    float: left;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.x-vr-tab-panel .x-tab-strip span.x-tab-strip-text,
+/* Active Items */
+.x-vr-tab-panel .x-tab-strip-active .x-tab-right span.x-tab-strip-text {
+    padding: 5px 0px;
+}
+
+/* Top Margin */
+.x-vr-tab-panel ul.x-tab-strip {
+    margin-top: 8px;
+}
+
+.x-mask-loading-camemis div {
+    text-align: center;
+    width: 160px;
+    padding:5px 0 23px;
+    background: #fff url(../images/ajax-loader.gif) no-repeat center 23px;
+}
+
+.msg .x-box-mc {
+    font-size:14px;
+}
+#msg-div {
+    position:absolute;
+    left:35px;
+    top:10px;
+    width:300px;
+    z-index:20000;
+}
+
+/*
+Kaom
+*/
+
+.x-tab-strip span.x-tab-strip-text {
+    font: bold 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-form-field {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-form-grow-sizer {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-form-item {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-form-invalid-msg {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-small-editor .x-form-field {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.ext-webkit .x-small-editor .x-form-field {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-fieldset legend {
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-btn{
+    font:normal 11px ttahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-btn button{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    text-align: left;
+}
+
+.x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-grid3-row td, .x-grid3-summary-row td{
+    font:normal 11px/13px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-grid3-hd-row td {
+    font:normal 11px/15px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-grid3-topbar, .x-grid3-bottombar{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-grid-group-hd div.x-grid-group-title {
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+.x-grid-empty {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-dd-drag-ghost{
+
+    font: normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+
+.x-tree-node{
+    font: normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-date-inner th {
+    font:normal 10px tahoma,verdana,arial,sans-serif,Hanuman;
+
+}
+.x-date-inner a {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-date-mp td {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-date-mp-btns button {
+
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-tip .x-tip-mc {
+    font: normal 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-tip .x-tip-header-text {
+    font: bold 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-tip .x-tip-body {
+    font: normal 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-menu-list-item{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-box-mc {
+
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-combo-list {
+
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-combo-list-hd {
+    font:bold 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+
+.x-combo-list-small {
+    font:normal 11px tahoma, arial, helvetica, sans-serif,Hanuman;
+}
+.x-panel-header {
+
+    font-weight:bold; 
+    font-size: 11px;
+    font-family: tahoma,arial,verdana,sans-serif,Hanuman;
+}
+
+.x-panel-tl .x-panel-header {
+    font:bold 11px tahoma,arial,verdana,sans-serif,Hanuman;
+}
+
+.x-panel-mc {
+    font: normal 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-window-tl .x-window-header {
+
+    font:bold 11px tahoma,arial,verdana,sans-serif,Hanuman;
+}
+
+.x-window-mc {
+
+    font: normal 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-list-header-inner div em {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-list-body dt em {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+}
+
+.x-window-dlg .ext-mb-textarea {
+    font:normal 11px tahoma,arial,helvetica,sans-serif,Hanuman;
+}
+
+.x-tree {
+    background:#000 !important;
+}
+.x-border-layout-ct {
+    background:transparent;
+}
+.x-layout-split {
+    background-color:transparent !important;
+}
+.x-tree-selected {
+    border:1px dotted #a3bae9;
+    background:#DFE8F6;
+}
+.x-tree-node .x-tree-selected a span{
+    background:transparent;
+    color:#15428b;
+    font-weight:bold;
+}
+
+select.editStyle {
+    padding:2px;
+    height:25px;
+    border: solid 2px #85b1de;
+    white-space: nowrap;
+    overflow:hidden;
+    width:100px;
+    text-overflow: ellipsis;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#333;
+}
+
+select.alphabetEdit80 {
+    padding:2px;
+    height:25px;
+    border: solid 2px #85b1de;
+    white-space: nowrap;
+    overflow:hidden;
+    width:80px;
+    text-overflow: ellipsis;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color:#333;
+}
+
+input.numberEdit80[type=number] {
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    margin-bottom: 5px;
+    display: block;
+    padding: 4px;
+    width:65px;
+    border: solid 2px #85b1de;
+    text-align:right;
+}
+
+input.numberEdit80[type=number]:hover {
+    background:#F0F0F0;
+}
+
+input.numberEdit80[type=number]:focus {
+    background:#F9F9F9;
+    border: solid 2px #dc5343;
+}
+
+input.stringEdit150[type=text] {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    margin-bottom: 5px;
+    display: block;
+    padding: 4px;
+    width:150px;
+    height:30px;
+    border: solid 2px #85b1de;
+}
+
+input.stringEdit150[type=text]:hover {
+    background:#F0F0F0;
+}
+
+input.stringEdit150[type=text]:focus {
+    background:#F9F9F9;
+    border: solid 2px #dc5343;
+}
+
+input.editStyle[type=text] {
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    margin-bottom: 5px;
+    display: block;
+    padding: 4px;
+    width:85px;
+    border: solid 2px #85b1de;
+}
+
+input.editStyle[type=text]:hover {
+    background:#F0F0F0;
+}
+
+input.editStyle[type=text]:focus {
+    background:#F9F9F9;
+    border: solid 2px #dc5343;
+}
+
+textarea.editStyle {
+    border: solid 1px #D6D1D1;
+    padding: 3px;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    color: #2a2e2c;
+    background-color: #fff;
+}
+textarea.editStyle:hover {
+    background:#F0F0F0;
+}
+
+textarea.editStyle:focus {
+    background:#F8F6F6;
+}
+
+table.EventCalendar {
+    font-family: tahoma,verdana,arial,sans-serif,Hanuman;
+    border-collapse: collapse; }
+table.EventCalendar th {
+    background: #efefef;
+    color: #5f5762;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px;
+    text-align:center;
+    border: 1px solid #dedede;
+    border-top: none; }
+/**
+Grid border...
+*/
+table.EventCalendar tbody td {
+    vertical-align: top;
+    width: 125px;
+    height: 100px;
+    border: 1px solid #dedede;
+    background: #efefef; }
+table.EventCalendar tbody td time {
+    font-size: 11px;
+    display: block;
+    background: white;
+    padding: 2px;
+    text-align: right;
+    font-weight: normal; }
+table.EventCalendar tbody td.SCsuffix, table.EventCalendar tbody td.SCprefix {
+    background: white; }
+table.EventCalendar tbody td div.event {
+    color: #5f5762;
+    font-size: 11px;
+    padding: 5px;
+    line-height: 1em;
+    border-bottom: 1px solid #bbb;
+    background: #858585;
+    color: white; }
+table.EventCalendar tbody td.today {
+    background: #d2d2d2; }
+
+/**
+@Veng....
+*/
+.ux-icon-combo-icon {
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    width: 18px;
+    height: 14px;
+}
+.ux-icon-combo-input {
+    padding-left: 25px;
+}
+.x-form-field-wrap .ux-icon-combo-icon {
+    top: 3px;
+    left: 5px;
+}
+.ux-icon-combo-item {
+    background-repeat: no-repeat ! important;
+    background-position: 3px 50% ! important;
+    padding-left: 24px ! important;
+}
+
+.x-grid3-summary-row {
+    border-left:1px solid #FFF;
+    border-right:1px solid #FFF;
+    color:#3764ac;
+    background: #f1f2f4;
+}
+.x-grid3-summary-row .x-grid3-cell-inner {
+    font-weight:bold;
+    padding-bottom:4px;
+}
+.x-grid3-cell-first .x-grid3-cell-inner {
+    padding-left:16px;
+}
+.x-grid-hide-summary .x-grid3-summary-row {
+    display:none;
+}
+.x-grid3-summary-msg {
+    padding:4px 16px;
+    font-weight:bold;
+}

@@ -1,0 +1,184 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHOOLEVENT", "LIST");
+$OBJECT_GRID->setLoadUrl("/schoolevent/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schoolevent/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+    function cssText(v){
+        return String.format('<div style=\"font-weight:normal; white-space:normal; color:#333; padding: 10px;\">{0}</div>'
+            ,v
+        );
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'SCHOOLEVENT', type: 'string'");
+    $OBJECT_GRID->addReadField("name: 'START_DATE'");
+    $OBJECT_GRID->addReadField("name: 'END_DATE'");
+    $OBJECT_GRID->addReadField("name: 'REMARK'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    
+    if(UserAuth::isUserTypeAdmin()){
+        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 80, renderer: cssText, sortable: true, dataIndex: 'STATUS_KEY'");
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, renderer: cssText, sortable: false, dataIndex: 'SCHOOLEVENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".START_DATE."</b>', width: 150, renderer: cssText, sortable: false, dataIndex: 'START_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".END_DATE."</b>', width: 150, renderer: cssText, sortable: false, dataIndex: 'END_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".REMARK."</b>', width: 200, sortable: false, renderer:cssText, dataIndex: 'REMARK'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            }
+        }]);
+    ");
+
+    if(UserAuth::getUserType()!="STUDENT"){
+       $OBJECT_GRID->setSaveParams("
+            cmd: 'addObject'
+            ,schoolyearId: '".$this->schoolyearId."'
+        "); 
+    }
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'CLASS_EVENT_ID'
+            ,text: '".CLASS_EVENTS."'
+            ,iconCls:'icon-application_view_detail'
+            ,scope:this
+            ,handler: function(){
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'allSchoolevents'
+                    ,academicId: '".$this->academicId."'
+                    ,eventType: 'CLASS'
+                };
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'SCHOOL_EVENT_ID'
+            ,text: '".SCHOOL_EVENTS."'
+            ,iconCls:'icon-application_view_detail'
+            ,scope:this
+            ,handler: function(){
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'allSchoolevents'
+                    ,academicId: '".$this->academicId."'
+                    ,eventType: 'SCHOOL'
+                };
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            }
+        }]);
+    ");
+
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'DETAIL_INFORMATION_ID'
+            ,text: '".SHOW_DETAIL."'
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                var sm = this.getSelectionModel();
+                var record = sm.getSelected();
+                if(record){
+                    var objectId = record.data.ID;
+                    openWinIFrame(record.data.SCHOOLEVENT, '".$this->URL_SHOWITEM."&objectId=' + objectId, percentWidth(85), percentHeight(75));
+                }else{
+                    ".camemisPage::alertPleaseSelect()."
+                }
+            }
+        }]);
+    ");
+    
+    switch(UserAuth::getUserType()) {
+        case "INTRUCTOR":
+            $OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    id: 'ADD_EVENT_ID'
+                    ,text: '".ADD_EVENT."'
+                    ,iconCls:'icon-application_form_add'
+                    ,scope:this
+                    ,handler: this.onAddItem
+                }]);
+            ");
+
+            $OBJECT_GRID->setSaveParams("
+                cmd: 'addObject'
+                ,academicId: '".$this->academicId."'
+            ");
+        break;
+    }
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,academicId: '".$this->academicId."'
+        ,cmd: 'allSchoolevents'
+        ,eventType: 'CLASS'
+    ";
+    
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,xtype: 'panel'
+            ,layout: 'card'
+            ,id: 'panel'
+            ,activeItem: 0
+            ,items:[{
+                border: false
+                ,title: ''
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

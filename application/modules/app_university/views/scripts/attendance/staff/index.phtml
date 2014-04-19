@@ -1,0 +1,63 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 02.08.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$PENEL_ITEMS = Array();
+
+$DAILY_ATTENDANCE = "{
+    title: '".DAILY_ATTENDANCE."'
+    ,layout: 'fit'
+    ,items:[new Ext.ux.IFrameComponent({ id: 'DAILY_ATTENDANCE', url: '/attendance/staffbydaily/?dailyattendance'})]
+}";
+$PENEL_ITEMS[] = $DAILY_ATTENDANCE;
+
+$BLOCK_ATTENDANCE = "{
+    title: '".BLOCK_ATTENDANCE."'
+    ,layout: 'fit'
+    ,items:[new Ext.ux.IFrameComponent({ id: 'BLOCK_ATTENDANCE', url: '/attendance/staffbyblock/?blockattendance'})]
+}";
+$PENEL_ITEMS[] = $BLOCK_ATTENDANCE;
+
+$CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+?>
+
+<script>
+    Ext.onReady(function() {
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'bottom'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:<?=$CHOOSE_ITEMS;?>
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,22 @@
+############################################
+## Kaom Vibolrith
+## VikenSoft Germany
+## Am Stollhenn 18, 55120 Mainz
+## Germany
+############################################
+
+SetEnv APPLICATION_ENV development
+
+RewriteEngine on
+
+<Files *.css.gz>
+AddType "text/css" .gz
+AddEncoding gzip .gz
+</Files>
+ 
+<Files *.js.gz>
+AddType "application/javascript" .gz
+AddEncoding gzip .gz
+</Files>
+RewriteCond %{HTTP:Accept-Encoding} .*gzip.*
+RewriteRule !\.(js|gz|gzip|ico|gif|jpg|png|css|xml|swf|mp3|json|txt|php|flv|mp4|TFF|ttf|eot)$ public/index.php

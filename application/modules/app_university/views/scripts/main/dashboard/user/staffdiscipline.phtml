@@ -1,0 +1,74 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man Web Application Developer
+// Date: 04.03.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $PENEL_ITEMS = Array();
+    $WEEK = "{
+        title: '".WEEK."'
+        ,height:600
+        ,layout: 'fit'
+        ,border: false
+        ,items: [new Ext.ux.IFrameComponent({ id: '1', url:'/chart/discipline/?camIds=".$this->urlEncryp->encryptedGet("objectType=WEEKLY&personType=STAFF")."'})]
+    }";
+
+    $PENEL_ITEMS[] = $WEEK;
+
+    $MONTH = "{
+        title: '".MONTH."'
+        ,height:380
+        ,layout: 'fit'
+        ,border: false
+        ,items: [new Ext.ux.IFrameComponent({ id: '2', url:'/chart/discipline/?camIds=".$this->urlEncryp->encryptedGet("objectType=MONTHLY&personType=STAFF")."'})]
+    }";
+    $PENEL_ITEMS[] = $MONTH;
+
+    $YEAR = "{
+        title: '".YEAR."'
+        ,height:380
+        ,layout: 'fit'
+        ,border: false
+        ,items: [new Ext.ux.IFrameComponent({ id: '3', url:'/chart/discipline/?camIds=".$this->urlEncryp->encryptedGet("objectType=YEARLY&personType=STAFF")."'})]
+    }";
+    $PENEL_ITEMS[] = $YEAR;
+
+    $CHOOSE_PANEL = implode(',',$PENEL_ITEMS);
+    ////////////////////////////////////////////////////////////////////////
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:[<?=$CHOOSE_PANEL?>]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

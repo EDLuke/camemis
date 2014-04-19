@@ -1,0 +1,90 @@
+body {
+    /*background-color:#d7e4f3;*/
+    background-color:#FFFFFF;
+}
+#login-win .x-window-mc {
+    background:#FFFFFF none;
+    border:1px solid #eee;
+}
+#login-logo-default .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_default.png) no-repeat center;
+}
+#login-logo-vietnam .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_vietnam.png) no-repeat center;
+}
+#login-logo-cambodia .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_cambodia.png) no-repeat center;
+}
+#login-logo-laos .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_laos.png) no-repeat center center;
+}
+#login-logo-thailand .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_thailand.png) no-repeat center;
+}
+#login-logo-myanmar .x-plain-body {
+    /*margin-left: 10px; margin-top: 0px;*/
+    background:#4FACE0 url(../images/camemis_myanmar.png) no-repeat center;
+}
+#login-form .x-plain-body {
+    background:#FFFFFF none;
+    color:#222;
+    padding:25px 25px;
+}
+#login-win .x-window-body {
+    background:#FFFFFF none repeat scroll 0%;
+    border:1px solid #46A8DE;
+}
+.ext-ie .x-form-text{
+    height:22px;
+    line-height:18px;
+    margin: 0px 0px;
+    vertical-align:middle;
+}
+
+.flag_china {
+    background-image:url(../images/flag_china.png) ! important;
+}
+.flag_burma {
+    background-image:url(../images/flag_burma.png) ! important;
+}
+.flag_england {
+    background-image:url(../images/flag_england.png) ! important;
+}
+.flag_philippines {
+    background-image:url(../images/flag_philippines.png) ! important;
+}
+.flag_france {
+    background-image:url(../images/flag_france.png) ! important;
+}
+.flag_germany {
+    background-image:url(../images/flag_germany.png) ! important;
+}
+.flag_indonesia {
+    background-image:url(../images/flag_indonesia.png) ! important;
+}
+.flag_cambodia {
+    background-image:url(../images/flag_cambodia.png) ! important;
+}
+.flag_laos {
+    background-image:url(../images/flag_laos.png) ! important;
+}
+.flag_malaysia {
+    background-image:url(../images/flag_malaysia.png) ! important;
+}
+.flag_russia {
+    background-image:url(../images/flag_russia.png) ! important;
+}
+.flag_spain {
+    background-image:url(../images/flag_spain.png) ! important;
+}
+.flag_thailand {
+    background-image:url(../images/flag_thailand.png) ! important;
+}
+.flag_vietnam {
+    background-image:url(../images/flag_vietnam.png) ! important;
+}

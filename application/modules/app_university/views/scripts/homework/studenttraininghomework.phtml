@@ -1,0 +1,307 @@
+<?
+///////////////////////////////////////////////////////////
+// @soda
+// Date: 03.07.2013   
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';                                     
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance(); 
+$OBJECT_FORM = new CamemisForm("HOMEWORK");
+$OBJECT_FORM->setLoadUrl('/homework/jsonload/');
+$OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
+
+$studentId = Zend_Registry::get('USER')->ID;
+$teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER;
+$student_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$studentId;        
+
+if(!$this->facette) {header("Location: /main/permission/");}
+
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+$SQL = "";
+$SQL .= " SELECT *";
+$SQL .= " FROM t_subject_homework";
+$SQL .= " WHERE 1=1"; 
+$SQL .= " AND ID ='" . $this->objectId . "'";
+$SQL .= " AND END_DATE >= NOW()";
+$entries = $DB_ACCESS->fetchAll($SQL);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $PUBLISH_INFORMATION = "
+    {
+        title: '".PUBLISH."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:10px'
+            ,items: [{             
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'background:#FFF' 
+                ,items: [{".CamemisField::Box("START_DATE", START_DATE, $this->facette->START_DATE)."}]
+            },{                                 
+                layout: 'form'
+                ,border: false 
+                ,bodyStyle: 'background:#FFF' 
+                ,items: [{".CamemisField::Box("END_DATE", END_DATE, $this->facette->END_DATE)."}]
+            }]
+        }]
+    }
+    ";
+    
+    switch(UserAuth::getUserType()){
+        case "STUDENT":
+            $HEIGHT = 320;
+            break;
+        default:
+            $HEIGHT = 400;
+            break;
+    }
+    
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,height:167
+        ,style: 'padding-bottom: 1px'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?objectId=".$teacher_id."&template=homework&display=1&attachment=download'})]
+    }
+    ";
+    
+    $CONTENT = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'fit'
+            ,border: false 
+            ,bodyStyle: 'padding:10px; background:#FFF'
+            ,items: [{".CamemisField::Box("CONTENT", CONTENT, $this->facette->CONTENT)."}]
+        }]
+    }
+    ";
+    
+   $TITLE = "{        
+        title: '".TITLE."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; padding:10px'
+            ,items: [{".CamemisField::Box("NAME", HOMEWORK_NAME, $this->facette->NAME)."}]
+        }]
+    }";
+    
+    $TITLE_STUDENT = "{
+        title: '".TITLE."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; padding:10px'
+            ,items: [{".CamemisField::Textfield("TITLE_NAME","TITLE_NAME",HOMEWORK_NAME,false,false,false)."}]
+        }]
+    }";
+    
+    $CONTENT_STUDENT = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::HTML("CONTENT_STUDENT",false,false)."}]
+        }]
+    }
+    ";
+    
+    $ATTACHMENTS_STUDENT = "
+    {
+        title: '".ATTACHMENTS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,height:".$HEIGHT."
+        ,style: 'padding-bottom: 5px'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({id: 'ATTACHMENTS', url: '/dataset/attachment/?objectId=".$student_id."&template=homework&display=1&attachment=upload'})]
+    }
+    "; 
+
+    $ITEMS = "[";
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+            case "ADMIN":
+                $ITEMS .= $TITLE;
+                $ITEMS .= ",".$CONTENT;
+                $ITEMS .= ",".$PUBLISH_INFORMATION;
+                $ITEMS .= ",".$ATTACHMENTS;
+                break;
+            case 'STUDENT':
+                $ITEMS .= $TITLE;
+                $ITEMS .= ",".$CONTENT;
+                $ITEMS .= ",".$PUBLISH_INFORMATION;
+                $ITEMS .= ",".$ATTACHMENTS;
+                if($this->facette){
+                    if($entries){
+                        $ITEMS .= ",".$TITLE_STUDENT;
+                        $ITEMS .= ",".$CONTENT_STUDENT;
+                        $ITEMS .= ",".$ATTACHMENTS_STUDENT;
+                    }
+                }
+                break;
+        }
+    $ITEMS .= "]";
+
+    $formItems = "
+        border: false
+        ,layout: 'form'
+        ,bodyStyle: 'padding:0px'
+        ,items:".$ITEMS 
+    ;
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+            $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+                }
+            ");
+            break;
+        case 'STUDENT':
+             $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+                }
+            ");
+            break;
+    }
+
+    if($entries){
+        switch(UserAuth::getUserType()){
+            case "TEACHER":
+            case "INSTRUCTOR":
+            case 'STUDENT':
+                 $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                 break;
+        }
+    }
+
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonAddStudentHomework'
+        ,studentId: '".$studentId."'
+        ,homeworkId: '".$this->facette->ID."' 
+        ,objectId: '".$this->objectId."'  
+    ");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        if(window.parent.Ext.getCmp('HOMEWORK_LIST_ID'))
+        window.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        var objectId = result.objectId;
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+    ");
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadSubjectHomework',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadStudentHomework',objectId: '".$this->objectId."',studentId: '".$studentId."'");
+                    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+
+    $VIEWPORT = "
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'fit'
+                ,items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]
+            }]
+        }); 
+    ";
+    echo  $VIEWPORT;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

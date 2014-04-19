@@ -1,0 +1,85 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $STUDENT_PENEL_ITEMS = Array();
+        $TRADITIONAL_EDUCATION_SYSTEM = "{
+            title: '".TRADITIONAL_EDUCATION_SYSTEM."'
+            ,height:380
+            ,layout: 'fit'
+            ,border: false
+            ,items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=".$this->urlEncryp->encryptedGet("objectType=CAMPUS")."'})]
+        }";
+
+        if (Zend_Registry::get('SCHOOL')->TRADITIONAL_EDUCATION_SYSTEM)
+        $STUDENT_PENEL_ITEMS[] = $TRADITIONAL_EDUCATION_SYSTEM;
+
+        $CREDIT_EDUCATION_SYSTEM = "{
+            title: '".CREDIT_EDUCATION_SYSTEM."'
+            ,height:380
+            ,layout: 'fit'
+            ,border: false
+            ,items: [new Ext.ux.IFrameComponent({ id: 'CREDIT_EDUCATION_SYSTEM', url:'/chart/studentacademiccredit/?camIds=".$this->urlEncryp->encryptedGet("objectType=CAMPUS")."'})]
+        }";
+
+        if (Zend_Registry::get('SCHOOL')->CREDIT_EDUCATION_SYSTEM)
+        $STUDENT_PENEL_ITEMS[] = $CREDIT_EDUCATION_SYSTEM;
+
+        $TRAINING_PROGRAMS = "{
+            title: '".TRAINING_PROGRAMS."'
+            ,height:380
+            ,layout: 'fit'
+            ,border: false
+            ,items: [new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url:'/chart/studentacademictraining/?camIds=".$this->urlEncryp->encryptedGet("objectType=PROGRAM")."'})]
+        }";
+
+        if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS)
+        $STUDENT_PENEL_ITEMS[] = $TRAINING_PROGRAMS;
+
+        $CHOOSE_STUDENT_PANEL = implode(',',$STUDENT_PENEL_ITEMS);
+        ////////////////////////////////////////////////////////////////////////
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:[<?=$CHOOSE_STUDENT_PANEL?>]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

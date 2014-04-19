@@ -1,0 +1,71 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+
+    Ext.onReady(function() {
+        
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $EVALUATION_DASHBOARD = "{
+            title: '".EVALUATION_DASHBOARD."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'EVALUATION_DASHBOARD', url: '/camemisevaluation/evaluationdashboard/'})]
+        }";
+        $PENEL_ITEMS[] = $EVALUATION_DASHBOARD;
+        
+        $EVALUATION_TOPIC = "{
+            title: '".EVALUATION_TOPIC."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'EVALUATION_TOPIC', url: '/camemisevaluation/evaluationtopic/'})]
+        }";
+        $PENEL_ITEMS[] = $EVALUATION_TOPIC;
+        
+        $SETTING = "{
+            title: '".SETTING."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'SETTING', url: '/camemisevaluation/evaluationsetting/'})]
+        }";
+        $PENEL_ITEMS[] = $SETTING;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,12 @@
+############################################
+## Kaom Vibolrith
+## VikenSoft Germany
+## Am Stollhenn 18, 55120 Mainz
+## Germany
+## Date: 09.08.2011 16:45 (Futura Solutions GmbH)
+############################################
+
+SetEnv APPLICATION_ENV development
+
+RewriteEngine on
+RewriteRule !\.(js|ico|gif|jpg|png|css|xml|swf|mp3|json|txt|php|flv|mp4|ttf)$ ../index.php

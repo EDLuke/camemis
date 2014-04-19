@@ -1,0 +1,159 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+$gradesubjectId = isset($_GET["gradesubjectId"])?addText($_GET["gradesubjectId"]):"";
+$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
+$skipField = isset($_GET["skipfield"])?addText($_GET["skipfield"]):"";
+
+//@THORN Visal
+switch(UserAuth::getUserType()){
+    case "ADMIN":
+    case "SUPERADMIN":
+        if($parentId){
+            $classObject = AcademicDBAccess::findGradeFromId($parentId);
+            $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $classObject->CAMPUS_ID,$classObject->SUBJECT_ID,$classObject->SCHOOL_YEAR);
+            
+            $subjectId = $classObject->SUBJECT_ID;
+            $gradesubjectId = $getGradeSubject->ID;
+        }else{
+            $getGradeSubject = GradeSubjectDBAccess::getGradeSubject($gradesubjectId, false,false,false);
+            $subjectId = $getGradeSubject->SUBJECT;
+        }
+    break;
+}
+///
+if($gradesubjectId == 'null') {header("Location: /main/permission/");}
+///$veasna
+$hiddenHomework = false;
+$hiddenDetail = true;
+if($skipField){
+    switch(strtoupper($skipField)){
+        case 'HOMEWORK':
+              $hiddenHomework = true;   
+            break;    
+    }
+}
+///
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        $setParams = "target=".$target."&gradesubjectId=".$this->gradesubjectId."";
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+                $MAIN_CONTENT = "{
+                    title: '".DETAILS."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'DETAILS', url: '/subject/showgradesubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+                }";
+                if(!$parentId)//@THORN Visal
+                $PENEL_ITEMS[] = $MAIN_CONTENT;
+            break;
+        }
+        
+        $setParams1 = "objectId=".$gradesubjectId."&field=GOALS&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $GOALS = "{
+            title: '".GOALS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'GOALS', url: '/dataset/ckeditoradmin/?camIds=".$this->urlEncryp->encryptedGet($setParams1)."'})]
+        }";
+        $PENEL_ITEMS[] = $GOALS;
+        
+        $setParams2 = "objectId=".$gradesubjectId."&field=OBJECTIVES&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $OBJECTIVES = "{
+            title: '".OBJECTIVES."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'OBJECTIVES', url: '/dataset/ckeditoradmin/?camIds=".$this->urlEncryp->encryptedGet($setParams2)."'})]
+        }";
+        $PENEL_ITEMS[] = $OBJECTIVES;
+        
+        $setParams3 = "objectId=".$gradesubjectId."&field=EVALUATION&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $EVALUATION = "{
+            title: '".EVALUATION."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'EVALUATION', url: '/dataset/ckeditoradmin/?camIds=".$this->urlEncryp->encryptedGet($setParams3)."'})]
+        }";
+        $PENEL_ITEMS[] = $EVALUATION;
+        
+        $setParams4 = "objectId=".$gradesubjectId."&field=MATERIALS&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $MATERIALS = "{
+            title: '".MATERIALS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'MATERIALS', url: '/dataset/ckeditoradmin/?camIds=".$this->urlEncryp->encryptedGet($setParams4)."'})]
+        }";
+        $PENEL_ITEMS[] = $MATERIALS;
+        
+        $setParams5 = "target=ACADEMIC_SUBJECT&objectId=".$this->gradesubjectId."&academicId=".$classId."";
+        $ATTACHMENTS = "{
+            title: '".ATTACHMENTS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet($setParams5)."'})]
+        }";
+        $PENEL_ITEMS[] = $ATTACHMENTS;
+        
+        $setParams6 = "gradesubjectId=".$gradesubjectId."&subjectId=".$subjectId."&gradeId=".$gradeId."&schoolyearId=".$schoolyearId."";
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+            $HOMEWORK = "{
+                title: '".HOMEWORK."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/homework/homeworkshowgradesubject/?camIds=".$this->urlEncryp->encryptedGet($setParams6)."'})]
+            }";
+        if(!$hiddenHomework)//$veasna
+        $PENEL_ITEMS[] = $HOMEWORK;
+}        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:<?=$CHOOSE_ITEMS;?>    
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

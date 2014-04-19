@@ -1,0 +1,227 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.12.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'clients/CamemisTree.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisTree("REPORT", "LIST");
+$OBJECT_TREE->setURL('/report/jsontree/');
+$OBJECT_TREE->setSaveUrl('/report/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    
+    $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+    $STORE_SCHOOLYEAR = "[";
+    if(AcademicDateDBAccess::getAllSchoolyear()){
+        $i = 0;
+        foreach(AcademicDateDBAccess::getAllSchoolyear() as $value){
+            $DATA[$i] = $value->ID;
+            $STORE_SCHOOLYEAR .= $i?",":"";
+            $STORE_SCHOOLYEAR .= "['" . $value->ID . "', '" . setShowText($value->NAME) ."', 'icon-date']";
+            $i++;
+        }
+    }
+
+    $STORE_SCHOOLYEAR .= "]";
+    $OBJECT_TREE->addTBarItems("
+        xtype: 'buttongroup'
+        ,items:[{
+            xtype:'combo'
+            ,id:'COMO_SCHOOLYEAR_ID'
+            ,width:170
+            ,fieldLabel:'IconCombo'
+            ,store: new Ext.data.SimpleStore({
+                fields: ['comboCode', 'comboName', 'comboIcon'],
+                data: ".$STORE_SCHOOLYEAR."
+            })
+            ,plugins:new Ext.ux.plugins.IconCombo()
+            ,valueField: 'comboCode'
+            ,displayField: 'comboName'
+            ,iconClsField: 'comboIcon'
+            ,triggerAction: 'all'
+            ,mode: 'local'
+            ,value:'".$currentSchoolyearId."'
+        }]
+    ");
+    
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'treeReportTraditionalAcademic'
+        ,schoolyearId:'".$currentSchoolyearId."'
+    ");
+
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isOnClickContextMenu = false;
+    $OBJECT_TREE->isTreeExpand = true;
+    $OBJECT_TREE->isMenuOnCollapse = false;
+    $OBJECT_TREE->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+    <?
+    $js = "";
+    $js .= "var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+    $js .= "myTree.on('click', function(node, event){";
+        $js .= "if(node.attributes.isClick){";
+            $js .= "var contextMenu = new Ext.menu.Menu({";
+                $js .= "items: [{";
+                    $js .= "text: '".STUDENT." &raquo; ' + node.text";
+                    $js .= ",iconCls: 'icon-book'";
+                    $js .= ",menu:[{";
+                        $js .= "text: '".LIST_OF_STUDENTS."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                        $js .= ",handler: function(){";
+                            $js .= "clickOpenPage('center','".LIST_OF_STUDENTS." &raquo; ' + node.text,'/academic/studentfilter/?objectId=' + node.attributes.id);";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".STUDENT_ATTENDANCE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".STUDENT_ATTENDANCE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".STUDENT_DISCIPLINE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".STUDENT_DISCIPLINE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".STUDENT_ADVISORY."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".STUDENT_ADVISORY." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "}]";
+                $js .= "},{";
+                    $js .= "text: '".STAFF." &raquo; ' + node.text";
+                    $js .= ",iconCls: 'icon-book'";
+                    $js .= ",menu:[{";
+                        $js .= "text: '".ASSIGNED_TEACHERS."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                        $js .= ",handler: function(){";
+                            $js .= "clickOpenPage('center','".ASSIGNED_TEACHERS." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".STAFF_ATTENDANCE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".STAFF_ATTENDANCE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".STAFF_DISCIPLINE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".STAFF_DISCIPLINE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "}]";
+                $js .= "},{";
+                    $js .= "text: '".ACADEMIC." &raquo; ' + node.text";
+                    $js .= ",iconCls: 'icon-book'";
+                    $js .= ",menu:[{";
+                        $js .= "text: '".ACADEMIC_PERFORMANCES."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                        $js .= ",handler: function(){";
+                            $js .= "clickOpenPage('center','".ACADEMIC_PERFORMANCES." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".EXAMINATION_PERFORMANCE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".EXAMINATION_PERFORMANCE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".SUBJECT."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".SUBJECT." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "},{";
+                        $js .= "text: '".SCHEDULE."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                            $js .= ",handler: function(){";
+                                $js .= "clickOpenPage('center','".SCHEDULE." &raquo; ' + node.text,'/main/permission/');";
+                        $js .= "}";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "});";
+            $js .= "event.stopEvent();";
+            $js .= "contextMenu.showAt(event.xy);";
+        $js .= "}";
+    $js .= "});";
+    
+    echo $js;
+    ?>
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    var myCombo = Ext.getCmp('COMO_SCHOOLYEAR_ID');
+    if (myCombo)
+    myCombo.on('select', function() {
+        myTree.loader.baseParams.schoolyearId = Ext.getCmp('COMO_SCHOOLYEAR_ID').getValue();
+        myTree.root.reload();
+        myTree.getRootNode().expand(true, false);
+        Ext.getCmp('center').getLayout().setActiveItem(0);
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,11 @@
+############################################
+## Kaom Vibolrith
+## VikenSoft Germany
+## Am Stollhenn 18, 55120 Mainz
+## Germany
+############################################
+
+SetEnv APPLICATION_ENV development
+
+RewriteEngine on
+RewriteRule !\.(js|gz|ico|gif|jpg|png|css|xml|swf|mp3|json|txt|php|flv|mp4|TFF|ttf|eot)$ public/index.php

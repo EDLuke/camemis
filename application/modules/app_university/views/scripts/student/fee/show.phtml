@@ -1,0 +1,255 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<style>
+    span.spanText {
+        font-weight:bold;
+        color:#333; 
+        white-space:normal;
+    }
+</style>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_ITEMS = "
+    [
+        {".CamemisField::Displayfield("CODE", "<b>".CODE_ID."</b>", false)."}
+        ,{".CamemisField::Displayfield("TITLE", "<b>".NAME."</b>", false)."}
+        ,{".CamemisField::Displayfield("EDUCATION_TYPE_NAME", "<b>".EDUCATION_TYPE."</b>")."}
+    ]";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#d7e3f3;'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    if(!SchoolDBAccess::displayPersonNameInGrid()){
+        $INSTRUCTOR_INFORMATION = "
+        {
+            title: '".INSTRUCTOR."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px; background:#FFFFFF;'
+                ,items: [  
+                    {".CamemisField::Displayfield("INSTRUCTOR_LASTNAME", "<b>".LASTNAME."</b>", false)."}
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_FIRSTNAME", "<b>".FIRSTNAME."</b>", false)."}
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_PHONE", "<b>".PHONE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_EMAIL", "<b>".EMAIL."</b>", false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $TEACHING_SESSION_INFORMATION = "
+        {
+            title: '".TEACHING."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px; background:#d7e3f3;'
+                ,items: [  
+                    {".CamemisField::Displayfield("SUBSTITUTE_LASTNAME", "<b>".LASTNAME."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_FIRSTNAME", "<b>".FIRSTNAME."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_PHONE", "<b>".PHONE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_EMAIL", "<b>".EMAIL."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_START", "<b>".START_DATE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_END", "<b>".END_DATE."</b>", false)."}
+                ]
+            }]
+        }
+        ";
+    }else{
+        $INSTRUCTOR_INFORMATION = "
+        {
+            title: '".INSTRUCTOR."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px; background:#FFFFFF;'
+                ,items: [
+                    {".CamemisField::Displayfield("INSTRUCTOR_FIRSTNAME", "<b>".FIRSTNAME."</b>", false)."}  
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_LASTNAME", "<b>".LASTNAME."</b>", false)."} 
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_PHONE", "<b>".PHONE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("INSTRUCTOR_EMAIL", "<b>".EMAIL."</b>", false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $TEACHING_SESSION_INFORMATION = "
+        {
+            title: '".TEACHING."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px; background:#d7e3f3;'
+                ,items: [
+                    {".CamemisField::Displayfield("SUBSTITUTE_FIRSTNAME", "<b>".FIRSTNAME."</b>", false)."}  
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_LASTNAME", "<b>".LASTNAME."</b>", false)."} 
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_PHONE", "<b>".PHONE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_EMAIL", "<b>".EMAIL."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_START", "<b>".START_DATE."</b>", false)."}
+                    ,{".CamemisField::Displayfield("SUBSTITUTE_END", "<b>".END_DATE."</b>", false)."}
+                ]
+            }]
+        }
+        ";
+    }
+    
+    $SCHOOL_INFORMATION = "
+    {
+        title: '".SCHOOL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#FFFFFF;'
+            ,items: [  
+                {".CamemisField::Displayfield("SCHOLARSHIP", "<b>".SCHOLARSHIP."</b>", false)."}
+                ,{".CamemisField::Displayfield("CLASS_REPRESENTATIVE", "<b>".CLASS_REPRESENTATIVE."</b>", false)."}
+                ,{".CamemisField::Displayfield("CLASS_TRANSFER", "<b>".CLASS_TRANSFER."</b>", false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $WORKING_DAYS = "
+    {
+        title: '".WORKING_DAYS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#d7e3f3;'
+            ,items: [  
+                {".CamemisField::Displayfield("SHOW_MO", "<b>".MONDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_TU", "<b>".TUESDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_WE", "<b>".WEDNESDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_TH", "<b>".THURSDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_FR", "<b>".FRIDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_SA", "<b>".SATURDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_SU", "<b>".SUNDAY,false,false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $ITEMS = "";
+    $ITEMS .= $DETAIL_INFORMATION;
+    $ITEMS .= ",".$INSTRUCTOR_INFORMATION;
+    $ITEMS .= ",".$TEACHING_SESSION_INFORMATION;
+    $ITEMS .= ",".$SCHOOL_INFORMATION;
+    $ITEMS .= ",".$WORKING_DAYS;
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'padding:10px'
+        ,items: [".$ITEMS."]
+    ";
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '" . REFRESH . "'
+        ,tooltip:'" . REFRESH . "'
+        ,iconCls:'icon-reload'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false).";
+        }
+    ");
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadStudentClass',academicId: '".$this->academicId."',studentId: '".$this->objectId."'");
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

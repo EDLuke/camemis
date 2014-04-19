@@ -1,0 +1,90 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 26.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/subject/SubjectDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+
+Ext.onReady(function() {
+    
+   viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,bodyStyle: 'padding:5px'
+            ,id: 'CONTENT'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[new Ext.ux.IFrameComponent({ id: 'SCORES_MANAGEMENT', url: '<?=$this->URL_SCORE_SUBJECT?>'})]
+            ,tbar:[{
+                text: '<?=ASSESSMENT;?>'
+                /*,iconCls: 'icon-tabs'*/
+                ,handler: function(){
+                    Ext.getCmp('CONTENT').getLayout().setActiveItem(0);
+                }
+            },{
+                text: '<?=ASSESSMENT;?> (<?=FIRST_SEMESTER;?>)'
+                /*,iconCls: 'icon-tabs'*/
+                ,menu:[{
+                    text: '<?=SCORE;?>'
+                    ,iconCls:'icon-pencil_add'
+                    ,handler: function(){
+                        clickOpenPage('CONTENT', '', '<?=$this->URL_FIRST_SCORE_SUBJECT?>');
+                    }      
+                },{
+                    text: '<?=EXPORT;?>'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        window.location='<?= $this->URL_FIRST_EXPORT_SUBJECT ?>&template=ADD_SHOW_AVERAGE';
+                    } 
+                }]
+            },{
+                text: '<?=ASSESSMENT;?> (<?=SECOND_SEMESTER;?>)'
+                /*,iconCls: 'icon-tabs'*/
+                ,menu:[{
+                    text: '<?=SCORE;?>'
+                    ,iconCls:'icon-pencil_add'
+                    ,handler: function(){
+                        clickOpenPage('CONTENT', '', '<?=$this->URL_SECOND_SCORE_SUBJECT?>');
+                    }      
+                },{
+                    text: '<?=EXPORT;?>'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        window.location='<?= $this->URL_SECOND_EXPORT_SUBJECT ?>&template=ADD_SHOW_AVERAGE';
+                    } 
+                }]
+            },{
+               text: '<?=SUBJECT;?>'
+                /*,iconCls: 'icon-tabs'*/
+                ,handler: function(){
+                    clickOpenPage('CONTENT','', '<?=$this->URL_GRADE_SUBJECT;?>');
+                }     
+            }]
+        }]
+    });
+});
+</script>
+<?
+//$registry = Zend_Registry::getInstance();
+//print_r($registry);
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

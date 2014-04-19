@@ -1,0 +1,81 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$classObject = AcademicDBAccess::findGradeFromId($this->classId);
+$subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
+
+if(!$classObject && !$subjectObject) {header("Location: /main/permission/");}
+
+$schoolyearObject = AcademicDateDBAccess::findAcademicDateFromId($classObject->SCHOOL_YEAR);
+$gradesubjectObject = GradeSubjectDBAccess::getGradeSubject(
+        false
+        , $classObject->GRADE_ID
+        , $this->subjectId
+        , $classObject->SCHOOL_YEAR
+        , $classObject->ID);
+
+$TITLE = $classObject->NAME." ".$subjectObject->NAME." (".$schoolyearObject->NAME.")";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    Ext.onReady(function() {
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                title:'<?=$TITLE;?>'
+                ,bodyStyle: 'padding:5px'
+                ,layout:'fit'
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,border:true
+                    ,plain:true
+                    //,tabPosition: 'bottom'
+                    ,activeTab: 0
+                    ,items:[{
+                        title: '<?=DETAIL_INFORMATION?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'DETAIL_INFORMATION', url: '/subject/subjectdisplaymain/?gradeSubjectId=<?=$gradesubjectObject->ID;?>&teacherId=<?=$this->objectId;?>&classId=<?=$classObject->ID;?>&subjectId=<?=$this->subjectId?>'})]
+                    },{
+                        title: '<?=TEACHER_ENTER_SCORE?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'TEACHER_ENTER_SCORE', url: '/evaluation/subjectassignments/?teacherId=<?=$this->objectId;?>&classId=<?=$classObject->ID;?>&subjectId=<?=$this->subjectId?>'})]
+                    },{
+                        title: '<?=SUBJECT_ASSESSMENT?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ASSESSMENT', url: '/evaluation/subjectmainscoresummary/?teacherId=<?=$this->objectId;?>&classId=<?=$classObject->ID;?>&subjectId=<?=$this->subjectId?>&schoolyearId=<?=$classObject->SCHOOL_YEAR?>'})]
+                    },{
+                        title: '<?=TEACHING_REPORT?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'TEACHING_REPORT', url: '/subjectreport/?teacherId=<?=$this->objectId;?>&classId=<?=$classObject->ID;?>&subjectId=<?=$this->subjectId?>'})]
+                    },{
+                        title: '<?=HOMEWORK?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/homework/?teacherId=<?=$this->objectId;?>&classId=<?=$classObject->ID;?>&subjectId=<?=$this->subjectId?>'})]
+                    }]
+                }]
+                
+            }]
+        });      
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

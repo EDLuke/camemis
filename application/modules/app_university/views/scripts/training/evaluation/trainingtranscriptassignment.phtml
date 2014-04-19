@@ -1,0 +1,105 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor veasna
+// Date: 12.03.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("TRAINING");
+$OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
+$OBJECT_FORM ->setLoadUrl("/training/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $ITEMS = "[";
+    $ITEMS .= "{".CamemisField::Displayfield("NAME",NAME,false)."}";
+    $ITEMS .= ",{".CamemisField::Displayfield("SCORE",SCORE,false)."}";
+    $ITEMS .= ",{".CamemisField::Displayfield("SCORE_MIN",MIN_POINTS,false)."}";
+    $ITEMS .= ",{".CamemisField::Displayfield("SCORE_MAX",MAX_POINTS,false)."}";
+    $ITEMS .= "]";
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$ITEMS."
+        }]
+    }
+    ";
+   
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", false,200,true)."}]
+        }]
+    }
+    ";
+    
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= $DETAIL_INFORMATION;  
+    $FORM_ITEMS .= ",".$DESCRIPTION;
+    $FORM_ITEMS .= "]";
+
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->setLoadParams("cmd: 'loadTrainingAssignement',objectId: '".$this->objectId."',studentId: '".$this->studentId."'");
+
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS(); 
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,367 @@
+<?
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminField.php';
+require_once 'clients/app_admin/AdminBar.php';
+require_once 'clients/app_admin/AdminTree.php';
+require_once 'clients/app_admin/AdminPage.php';
+
+$CAMEMIS_PAGE = AdminPage::getInstance();
+$OBJECT_FORM = new AdminForm("CUSTOMER");
+$OBJECT_GRID = new AdminGrid("CUSTOMER", "LIST_OF_CUSTOMERS");
+$LOCAL_TREE = new AdminTree("MAIN", "LIST_LOCAL");
+print $CAMEMIS_PAGE->showCamemisHeader();
+$schoolURL = isset($_GET["schoolURL"])?$_GET["schoolURL"]:"";
+
+$CUSTOMER_OBJECT = $this->customerObject;
+
+$DISABLED_GOTO_CAMEMIS = ($CUSTOMER_OBJECT->URL=="URL")?"true":"false";
+$DISABLED_SCHOOL_WEBSITE = $CUSTOMER_OBJECT->SCHOOL_WEBSITE?"false":"true";
+
+?>
+<div id="iniContent" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection...</h1>
+</div>
+<script>
+    
+    function openCAMEMIS(){
+        window.open('http://<?=$CUSTOMER_OBJECT->URL;?>', '','fullscreen=yes, scrollbars=auto, statu=no, width=' + window.parent.percentWidth(100) + ', height=' + window.parent.percentHeight(100) + ',toolbar=no,menubar=no,location=no');
+    }
+    
+    function openSchoolWebsite(){
+        window.open('http://<?=$CUSTOMER_OBJECT->SCHOOL_WEBSITE;?>', '','fullscreen=yes, scrollbars=auto, statu=no, width=' + window.parent.percentWidth(100) + ', height=' + window.parent.percentHeight(100) + ',toolbar=no,menubar=no,location=no');
+    }
+    
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() != this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE->setExtDefaultGif();
+        
+        $LOCAL_TREE->setURL('/main/jsontree/');
+        $LOCAL_TREE->isAsyncTreeNode = false;
+        $LOCAL_TREE->isTreeExpand = false;
+        $LOCAL_TREE->addTBarItems(AdminBar::tbarTreeRefresh(false));
+        $LOCAL_TREE->setBaseParams("
+            cmd: 'jsonTreeAllLocals'
+        ");
+        $LOCAL_TREE->renderJS();
+
+        $triggerOnClick = "
+            openWinXType('Local', '".$LOCAL_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = ".$LOCAL_TREE->ExtgetCmp().";
+            myTree.on('click', function(node, e){   
+                Ext.getCmp('CHOOSE_LOCAL_NAME').setValue(node.text);
+                Ext.getCmp('HIDDEN_LOCAL').setValue(node.id);
+                Ext.getCmp('OPEN_WIN_XTYPE_ID').close();
+            });
+        ";
+        
+        $DETAIL_INFORMATION = "
+        {
+            title: 'Detail information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#fef0eb;color:#000000; padding:10px; font-weight: bold;'
+                ,items: [
+                    {".AdminField::Numberfield("SORTKEY", "SORTKEY", "Sortkey", false, false, false)."}
+                    ,{".AdminField::Textfield("SCHOOL_CODE", "SCHOOL_CODE", 'School Code-ID')."}
+                    ,{".AdminField::Trigger("CHOOSE_LOCAL_NAME",'Local',$triggerOnClick, true)."}  
+                    ,{".AdminField::Hidden("HIDDEN_LOCAL", false)."}    
+                    ,{".AdminField::Textfield("CONTACT_PERSON", "CONTACT_PERSON", 'Contact Person')."}
+                    ,{".AdminField::Textfield("CONTACT_PHONE", "CONTACT_PHONE", 'Contact Phone')."}
+                    ,{".AdminField::Textfield("CONTACT_EMAIL", "CONTACT_EMAIL", 'Contact EMail')."}
+                    ,{".AdminField::Textfield("SCHOOL_WEBSITE", "SCHOOL_WEBSITE", 'School Website')."}
+                    ,{".AdminField::Textarea("ADDRESS", "Address", 100, false, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $CONTRACT_INFORMATION = "
+        {
+            title: 'Contract information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items: [
+                    {".AdminField::Textarea("CONTRACT_NOTE", "Contact Person", 50, false, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $USE_INFORMATION = "
+        {
+            title: 'Use information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#ffa01a;color:#FFFFFF; padding:10px; font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textfield("SMS_CREDITS", "SMS_CREDITS", 'SMS Credits')."}
+                    ,{".AdminField::Textfield("SMS_CREDITS_USED", "SMS_CREDITS_USED", 'SMS Used', false, true)."}
+                    ,{".AdminField::Textfield("SMS_NOT_USED", "SMS_NOT_USED", 'SMS Not used', false, true)."}  
+                ]
+            }]
+        }
+        ";
+        
+        $SUPPORT_INFORMATION = "
+        {
+            title: 'Support information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items: [
+                    {".AdminField::Textfield("SUPPORT_PERSON", "SUPPORT_PERSON", 'Support Person')."}
+                    ,{".AdminField::Textfield("SUPPORT_EMAIL", "SUPPORT_EMAIL", 'Support EMail')."}
+                    ,{".AdminField::Textfield("SUPPORT_PHONE", "SUPPORT_PHONE", 'Support Phone')."}
+                ]
+            }]
+        }
+        ";
+        
+        $SYSTEM_INFORMATION = "
+        {
+            title: 'System information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#ba001f;color:#FFFFFF; padding:10px; font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textfield("SCHOOL_NAME", "SCHOOL_NAME", 'Name of School')."}
+                    ,{".AdminField::Textfield("SCHOOL_LOGIN", "SCHOOL_LOGIN", 'School Login-Name')."}
+                    ,{".AdminField::Textfield("URL", "URL", 'URL Application')."}
+                    ,{".AdminField::Textfield("DB_NAME", "DB_NAME", 'Databasename')."}
+                    ,{".AdminField::ComboSchulTemplate("System-Template")."}
+                ]
+            }]
+        }
+        ";
+        
+        $PRODUCT_INFORMATION = "
+        {
+            title: 'Product information'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#3280b1;color:#FFFFFF; padding:10px; font-weight: bold;'
+                ,items: [
+                    {".AdminField::Radio("ISDEM_2", "ISDEMO", "CAMEMIS in the Test Phase", 1, false)."}
+                    ,{".AdminField::Radio("ISDEM_1", "ISDEMO", "CAMEMIS in Working", 2, false)."}
+                    ,{
+                        fieldLabel: 'Start Date'
+                        ,xtype: 'datefield'
+                        ,name: 'startdt'
+                        ,id: 'startdt'
+                        ,vtype: 'daterange'
+                        ,anchor: '95%'
+                        ,format: 'Y-m-d'
+                        ,endDateField: 'enddt' // id of the end date field
+                    },{
+                        fieldLabel: 'End Date'
+                        ,xtype: 'datefield'
+                        ,name: 'enddt'
+                        ,id: 'enddt'
+                        ,vtype: 'daterange'
+                        ,anchor: '95%'
+                        ,format: 'Y-m-d'
+                        ,startDateField: 'startdt' // id of the start date field
+                    }
+                ]
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: 'Description'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 10px'
+            ,width: 450
+            ,items:[{
+                layout: 'fit'
+                ,bodyStyle: 'padding:5px'
+                ,border: false
+                ,items: [
+                    {".AdminField::HTML("DESCRIPTION", "percentWidth(45)", "percentHeight(50)", false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,width: 450
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$SYSTEM_INFORMATION."
+            ,".$USE_INFORMATION."
+            ,".$PRODUCT_INFORMATION."
+            ,".$DETAIL_INFORMATION."
+            ,".$SUPPORT_INFORMATION." 
+            ,".$DESCRIPTION."
+        ]
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: 'Cancel'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('west').expand();
+            }
+        ");
+         
+        $OBJECT_FORM->addTBarItems(AdminBar::tbarSingleSave());
+        
+        $OBJECT_FORM->addTBarItems("
+            text: 'Link to CAMEMIS'
+            ,id: 'CAMEMIS'
+            ,disabled: ".$DISABLED_GOTO_CAMEMIS."
+            ,iconCls:'icon-application_form_magnify'
+            ,scope:this
+            ,handler: function(){
+                openCAMEMIS();
+            }
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: 'Link to School Website'
+            ,id: 'SCHOOL_WEBSITE'
+            ,disabled: ".$DISABLED_SCHOOL_WEBSITE."
+            ,iconCls:'icon-application_form_magnify'
+            ,scope:this
+            ,handler: function(){
+                openSchoolWebsite();
+            }
+        ");
+        
+        $OBJECT_FORM->setURL("/customer/");
+        $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadCustomer',GuId: '".$this->GuId."'");
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveCustomer'
+            ,GuId: '".$this->GuId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('TREE.MAIN_LIST_LOCAL_ID').root.reload();
+            window.location='".$_SERVER["REQUEST_URI"]."'
+        ");
+        
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->isObjectDefaultOnLoad = true;
+        $OBJECT_FORM->renderJS();
+        ?>
+                
+        viewport = new Ext.Viewport({
+            layout:'fit'
+            ,border: false
+            ,items: [{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: false
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,title: ''
+                    ,id: 'VIEWPORT_BWEST'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 550
+                    ,minSize: 500
+                    ,maxSize: 500
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?= $OBJECT_FORM->getObjectXtype(); ?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'VIEWPORT_CENTER'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'URL_SHOW_DETAIL', url: '/customer/showdetail/?GuId=<?=$this->GuId;?>'})]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+$a = Zend_Registry::getInstance();
+print $CAMEMIS_PAGE->showCamemisFooter();
+?>

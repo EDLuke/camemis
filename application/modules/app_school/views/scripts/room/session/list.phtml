@@ -1,0 +1,200 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 31.10.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ROOM", "SESSION");
+$OBJECT_GRID->setLoadUrl("/room/jsonload/");
+$columndata = Utiles::getGridColumnData("ROOM_SESSION_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+
+?>
+<script>
+    var startDate = '<?=getShowDate($startDate)?>';
+    var endDate = '<?=getShowDate($endDate)?>';
+    
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        function showText(v, p, record, rowIndex){
+            return String.format('<div style=\"white-space:normal;font-weight:bold; padding: 10px; height: 18px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['COLOR']
+                ,record.data['COLOR_FONT']
+            );
+        }
+        
+        function showTextStatus(v, p, record, rowIndex){
+            return String.format('<div style=\"white-space:normal;font-weight:bold; padding: 10px; height: 18px;\">{0}</div>'
+                ,v
+            );
+        }
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $FIND_OBJECT = "{
+            text:'".FIND."'
+            ,disabled: false
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                var _startDate = Ext.getCmp('START_DATE').getValue();
+                if(_startDate){
+                    startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
+                }else{
+                    startDate = '';
+                }
+                
+                var _endDate = Ext.getCmp('END_DATE').getValue(); 
+                if(_endDate){
+                    endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
+                }else{
+                    endDate = ''; 
+                }
+                Ext.getCmp('center').getLayout().setActiveItem(1);
+                
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonListRoomSession'
+                    ,startDate: startDate
+                    ,endDate: endDate
+                };
+                window.location='".$_SERVER["REQUEST_URI"]."&startDate='+startDate+'&endDate='+endDate;
+            }
+        }";
+
+        $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'SESSION_DATE'");
+        $OBJECT_GRID->addReadField("name: 'EVENT'");
+        $OBJECT_GRID->addReadField("name: 'ROOM'");
+        $OBJECT_GRID->addReadField("name: 'COLOR'");
+        $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'CLASS'");
+        $OBJECT_GRID->addReadField("name: 'TIME'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:150, hidden:".checkColHidden(1, $columndata).", dataIndex: 'ROOM'"); 
+        $OBJECT_GRID->addColumn("header: '<b>".DATE."</b>', align:'left', renderer: showText, width: 120, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'SESSION_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".TIME."</b>', align:'left', renderer: showText, width:130, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'TIME'");
+        $OBJECT_GRID->addColumn("header: '<b>".EVENT."</b>', align:'left', renderer: showText, width: 220, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'EVENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_CLASS."</b>', align:'left', renderer: showText, width:130, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'CLASS'");
+        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'left', renderer: showTextStatus, width: 200, hidden:".checkColHidden(6, $columndata).",sortable: true, dataIndex: 'TEACHING_STATUS'");
+
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListRoomSession'
+            ,startDate:startDate
+            ,endDate:endDate
+        ";
+        
+        $OBJECT_GRID->isObjectDefaultOnLoad = true; 
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('->');
+        ");  
+        
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "ROOM";
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();  
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,tbar:['<b><?=START_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'START_DATE'
+                    ,name: 'START_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: startDate
+                },'&nbsp;<b><?=END_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'END_DATE'
+                    ,name: 'END_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: endDate
+                },<?=$FIND_OBJECT?>]
+                ,items: [{
+                    region:'west'
+                    ,title:''
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width:380
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SUMMARY', url: '/room/summaryroomsession/?key=<?=camemisId()?>&startDate=' +startDate + '&endDate=' + endDate})]
+                },{
+                    collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

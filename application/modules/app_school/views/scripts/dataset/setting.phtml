@@ -1,0 +1,182 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+/*
+$OBJECT_TREE = new CamemisTree("SETTING", "LIST");
+$OBJECT_TREE->setURL("/dataset/jsontree/");
+*/
+$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        /*
+        $TREE_ITEM = "";
+        $TREE_ITEM .= "[";
+        
+        switch($personType){
+            case "STAFF":
+                $DEFAULT_URL = $this->URL_DESCRIPTIOIN;
+                $TREE_ITEM .= "{";
+                $TREE_ITEM .= "text:'".PERSONAL_DESCRIPTION."'";
+                $TREE_ITEM .= ",iconCls:'icon-component'";
+                $TREE_ITEM .= ",leaf:true";
+                $TREE_ITEM .= ",url:'".$this->URL_DESCRIPTIOIN."'";
+                $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                $TREE_ITEM .= ",isClick:true";
+                break;
+            case "STUDENT":
+                $DEFAULT_URL = $this->URL_DESCRIPTIOIN;
+                $TREE_ITEM .= "{";
+                $TREE_ITEM .= "text:'".PERSONAL_DESCRIPTION."'";
+                $TREE_ITEM .= ",iconCls:'icon-folder_magnify'";
+                $TREE_ITEM .= ",cls:'nodeTextBold'";
+                $TREE_ITEM .= ",expanded:true";
+                $TREE_ITEM .= ",isClick:false";
+                $TREE_ITEM .= ",children:[";
+                    $TREE_ITEM .= "{";
+                        $TREE_ITEM .= "text:'".GENERAL_EDUCATION."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_DESCRIPTIOIN."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "},{";
+                        $TREE_ITEM .= "text:'".TRAINING_PROGRAMS."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_DESCRIPTIOIN_TRAINING."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "}";
+                $TREE_ITEM .= "]";
+                break;
+            default:
+                
+                $DEFAULT_URL = $this->URL_RELIGION;
+                $TREE_ITEM .= "{";
+                $TREE_ITEM .= "text:'".SETTING."'";
+                $TREE_ITEM .= ",iconCls:'icon-folder_magnify'";
+                $TREE_ITEM .= ",cls:'nodeTextBold'";
+                $TREE_ITEM .= ",expanded:true";
+                $TREE_ITEM .= ",isClick:false";
+                $TREE_ITEM .= ",children:[";
+                    $TREE_ITEM .= "{";
+                        $TREE_ITEM .= "text:'".RELIGION."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_RELIGION."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "},{";
+                        $TREE_ITEM .= "text:'".ETHNIC_GROUPS."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_ETHNIC."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "},{";
+                        $TREE_ITEM .= "text:'".NATIONALITY."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_NATIONALITY."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "},{";
+                        $TREE_ITEM .= "text:'".LOCATION."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_LOCATION."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "}";
+                $TREE_ITEM .= "]";
+
+                 $TREE_ITEM .= "{";
+                $TREE_ITEM .= ",";
+
+                $TREE_ITEM .= "}";
+                $TREE_ITEM .= "text:'".PERSONAL_DESCRIPTION."'";
+                $TREE_ITEM .= ",iconCls:'icon-folder_magnify'";
+                $TREE_ITEM .= ",cls:'nodeTextBold'";
+                $TREE_ITEM .= ",expanded:true";
+                $TREE_ITEM .= ",isClick:false";
+                $TREE_ITEM .= ",children:[";
+                    $TREE_ITEM .= "{";
+                        $TREE_ITEM .= "text:'".GENERAL_EDUCATION."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_DESCRIPTIOIN."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "},{";
+                        $TREE_ITEM .= "text:'".TRAINING_PROGRAMS."'";
+                        $TREE_ITEM .= ",iconCls:'icon-component'";
+                        $TREE_ITEM .= ",leaf:true";
+                        $TREE_ITEM .= ",url:'".$this->URL_DESCRIPTIOIN_TRAINING."'";
+                        $TREE_ITEM .= ",cls:'nodeTextBlue'";
+                        $TREE_ITEM .= ",isClick:true";
+                    $TREE_ITEM .= "}";
+                $TREE_ITEM .= "]";
+                break;
+        }
+        
+        $TREE_ITEM .= "}]";
+        
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        $OBJECT_TREE->isAsyncTreeNode = true;
+        $OBJECT_TREE->setAsyncTreeNode($TREE_ITEM);
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->renderJS();
+        */
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'bottom'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:[{
+                        title: '<?=PERSONAL_DESCRIPTION?>'
+                        ,layout:'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'PERSONAL_DESCRIPTION', url:"/dataset/alldescription/?personType=<?=$personType?>"})]
+                    }]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

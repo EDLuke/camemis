@@ -1,0 +1,262 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("TRAINING");
+$OBJECT_FORM->setLoadUrl('/training/jsonload/');
+$OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
+
+$ASSESSMENT_GRID = new CamemisGrid("TRAINING", "ASSESSMENT");
+$ASSESSMENT_GRID->setLoadUrl("/training/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<style>
+    span.spanText {
+        font-weight:bold;
+        color:#333; 
+        white-space:normal;
+    }
+</style>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_ITEMS = "
+    [
+        {".CamemisField::Displayfield("CODE", CODE_ID, false)."}
+        ,{".CamemisField::Displayfield("NAME", NAME, false)."}
+    ]
+    ";
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#E0E7F7;'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $SCHOLARSHIP_INFORMATION = "
+    {
+        title: '".SCHOLARSHIP."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#FFF;'
+            ,items: [  
+                new Ext.form.RadioGroup({
+                    fieldLabel:'".TYPE."'
+                    ,columns: 2
+                    ,items:[
+                        {boxLabel: '".SCHOLARSHIP." (A)', name: 'SCHOLARSHIP', inputValue: '1'}
+                        ,{boxLabel: '".SCHOLARSHIP." (B)', name: 'SCHOLARSHIP', inputValue: '2'}
+                        ,{boxLabel: '".SCHOLARSHIP." (C)', name: 'SCHOLARSHIP', inputValue: '3'}
+                        ,{boxLabel: '".SCHOLARSHIP." (D)', name: 'SCHOLARSHIP', inputValue: '4'}
+                        ,{boxLabel: '".NO_SCHOLARSHIP."', name: 'SCHOLARSHIP', inputValue:'0'}
+                    ]
+                })    
+            ]
+        },{
+            layout: 'fit'
+            ,border:false
+            ,bodyStyle: 'padding:10px; background:#FFF;'
+            ,items: [{".CamemisField::Textarea("SCHOLARSHIP_TEXT", false,100)."}]
+        }]
+    }
+    ";
+    
+    $REGISTRATION_INFORMATION = "
+    {
+        title: '".STUDENT_REGISTRATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#FFF;'
+            ,items: [  
+                {".CamemisField::Displayfield("REGISTRATION_START", DATE_FROM, false)."}
+                ,{".CamemisField::Displayfield("REGISTRATION_END", DATE_TO, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $PAYMENT_DATE_INFORMATION = "
+    {
+        title: '".PAYMENT_DATE."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#FFF;'
+            ,items: [  
+                {".CamemisField::Displayfield("PAYMENT_START", DATE_FROM, false)."}
+                ,{".CamemisField::Displayfield("PAYMENT_END", DATE_TO, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $CONTACT_INFORMATION = "
+    {
+        title: '".CONTACT_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#E0E7F7;'
+            ,items: [  
+                {".CamemisField::Displayfield("CONTACT_PERSON", CONTACT_PERSON, false)."}
+                ,{".CamemisField::Displayfield("CONTACT_EMAIL", CONTACT_EMAIL, false)."}
+                ,{".CamemisField::Displayfield("CONTACT_PHONE", CONTACT_PHONE, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $WORKING_DAYS = "
+    {
+        title: '".WORKING_DAYS."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px; background:#FFF;'
+            ,items: [  
+                {".CamemisField::Displayfield("SHOW_MO", MONDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_TU", TUESDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_WE", WEDNESDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_TH", THURSDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_FR", FRIDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_SA", SATURDAY,false,false)."}
+                ,{".CamemisField::Displayfield("SHOW_SU", SUNDAY,false,false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $ITEMS = "";
+    $ITEMS .= $DETAIL_INFORMATION;
+    $ITEMS .= ",".$SCHOLARSHIP_INFORMATION;
+    $ITEMS .= ",".$PAYMENT_DATE_INFORMATION;
+    $ITEMS .= ",".$REGISTRATION_INFORMATION;
+    $ITEMS .= ",".$CONTACT_INFORMATION;
+    $ITEMS .= ",".$WORKING_DAYS;
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'padding:5px'
+        ,items: [".$ITEMS."]
+    ";
+    if(UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave()); 
+    
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadStudentTraining',studentId: '".$this->studentId."',trainingId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("cmd: 'actionStudentTraining',studentId: '".$this->studentId."',trainingId: '".$this->objectId."'");
+    $OBJECT_FORM->setonEmbeddedEvents("XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');");
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    $ASSESSMENT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            return '<span class=spanText>' + v + '</span>';
+        }
+    ");
+
+    $ASSESSMENT_GRID->addReadField("name: 'SUBJECT'");
+    $ASSESSMENT_GRID->addReadField("name: 'AVERAGE'");
+    $ASSESSMENT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, renderer:renderText, sortable: true, dataIndex: 'SUBJECT'");
+    $ASSESSMENT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 150, renderer:renderText, sortable: true, dataIndex: 'AVERAGE'");
+
+    $ASSESSMENT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->studentId."'
+        ,trainingId: '".$this->objectId."'
+        ,cmd: 'jsonAssessemntByTrainingSubjects'
+    ";
+    $ASSESSMENT_GRID->forceFit = "false";
+    $ASSESSMENT_GRID->renderJS();
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype(); ?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

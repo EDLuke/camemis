@@ -1,0 +1,19 @@
+<?
+
+require_once 'Zend/Barcode.php';
+require_once 'models/app_school/student/StudentDBAccess.php';
+
+$studentId = isset($_GET["v"]) ? $_GET["v"] : "";
+
+$STUDENT_OBJECT = StudentDBAccess::findStudentFromId($studentId);
+
+//$barcodeOptions = array('text' => $STUDENT_OBJECT->STUDENT_SCHOOL_ID);
+$barcodeOptions = array('text' => $STUDENT_OBJECT->CODE);
+// No required options
+$rendererOptions = array();
+// Draw the barcode in a new image,
+// send the headers and the image
+Zend_Barcode::factory(
+        'code39', 'image', $barcodeOptions, $rendererOptions
+)->render();
+?>

@@ -1,0 +1,94 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("TRAINING");
+$OBJECT_FORM->setLoadUrl('/training/jsonload/');
+$OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
+
+$ASSESSMENT_GRID = new CamemisGrid("TRAINING", "ASSESSMENT");
+$ASSESSMENT_GRID->setLoadUrl("/training/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<style>
+    span.spanText {
+        font-weight:bold;
+        color:#333; 
+        white-space:normal;
+    }
+</style>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'padding:8px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,plain:true
+                ,activeTab: 0
+                ,items:[{
+                    title: '<?=DETAIL_INFORMATION?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '<?=$this->URL_STUDENT_TRAINING_INFORMATION;?>'})]
+                },{
+                    title: '<?=ATTENDANCE_INFORMATION?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '<?=$this->URL_STUDENT_ATTENDANCE;?>'})]
+                },{
+                    title: '<?=DISCIPLINE_INFORMATION?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_INFORMATION', url: '<?=$this->URL_STUDENT_DISCIPLINE;?>'})]
+                },{
+                    title: '<?=ASSESSMENT_INFORMATION?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'ASSESSMENT_INFORMATION', url: '<?=$this->URL_TRAINING_ASSESSMENT;?>'})]
+                },{
+                    title: '<?=POST_TRAINING_STATUS?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'POST_TRAINING_STATUS', url: '<?=$this->URL_STUDENT_TRAINING_DESCRIPTION;?>'})]
+                },{
+                    title: '<?=TRACKING_GRADUATE_STUDENT?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'TRACKING_GRADUATE_STUDENT', url: '<?=$this->URL_TRACKING_CONTENT;?>'})]
+                }]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

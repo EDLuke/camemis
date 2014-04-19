@@ -1,0 +1,335 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisGrid.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ROOM");
+$OBJECT_FORM->setLoadUrl('/room/jsonload/');
+$OBJECT_FORM->setSaveUrl('/room/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("ROOM", "LIST");
+$OBJECT_GRID->setLoadUrl('/room/jsonload/');
+$OBJECT_GRID->setSaveUrl('/room/jsonsave/');
+
+function setItems($fieldObject){
+    $data = Array();
+    switch($fieldObject->CHOOSE_TYPE){
+        case 1:
+            $entries = RoomDescriptionDBAccess::sqlDescription($fieldObject->ID, 1);
+            if($entries){
+                foreach($entries as $value){
+                    $data[] = "{boxLabel: '" . setShowText($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                }
+            }
+            break;
+        case 2:
+            $entries = RoomDescriptionDBAccess::sqlDescription($fieldObject->ID, 2);
+            if($entries){
+                foreach($entries as $value){
+                    $data[] = "{boxLabel: '" . setShowText($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
+                }
+            }
+        break;
+    }
+    return implode(",",$data);
+}
+
+$FIELD_PANEL_ITEMS = Array();
+$entries = RoomDescriptionDBAccess::sqlDescription(false,false);
+if($entries){
+    foreach($entries as $value){
+
+        $fieldObject = RoomDescriptionDBAccess::findObjectFromId($value->ID);
+        if($fieldObject){
+
+            if(RoomDescriptionDBAccess::checkChild($value->ID)){
+                $ITEMS = "";
+                $ITEMS .= "{";
+                $ITEMS .= "xtype:'fieldset'";
+                $ITEMS .= ",checkboxToggle:true";
+                $ITEMS .= ",collapsed: false";
+                $ITEMS .= ",title: '".setShowText($fieldObject->NAME)."'";
+                $ITEMS .= ",bodyStyle: 'padding:10px;background: ".CamemisPage::userFormBgColor().";'";
+                $ITEMS .= ",style: 'padding-bottom: 5px'";
+                $ITEMS .= ",width: 310";
+
+                switch($fieldObject->CHOOSE_TYPE){
+                    case 1:
+                        $ITEMS .= ",items:[{";
+                            $ITEMS .= "xtype: 'checkboxgroup'";
+                            $ITEMS .= ",fieldLabel: ''";
+                            $ITEMS .= ",hideLabel: true";
+                            $ITEMS .= ",border: false";
+                            $ITEMS .= ",autoHeight:true";
+                            $ITEMS .= ",columns:2";
+                            $ITEMS .= ",itemCls: 'x-check-group-alt'";
+                            $ITEMS .= ",items:[".setItems($fieldObject)."]";
+                        $ITEMS .= "}]";
+                        break;
+                    case 2:
+                        $ITEMS .= ",items:[{";
+                            $ITEMS .= "xtype: 'radiogroup'";
+                            $ITEMS .= ",fieldLabel: ''";
+                            $ITEMS .= ",hideLabel: true";
+                            $ITEMS .= ",border: false";
+                            $ITEMS .= ",autoHeight:true";
+                            $ITEMS .= ",columns:2";
+                            $ITEMS .= ",itemCls: 'x-check-group-alt'";
+                            $ITEMS .= ",items:[".setItems($fieldObject)."]";
+                        $ITEMS .= "}]";
+                        break;
+                }
+                $ITEMS .= "}";
+                $FIELD_PANEL_ITEMS[] = $ITEMS;
+            }
+        }
+    }
+}
+
+$DISPLAY_FIELDS = implode(",",$FIELD_PANEL_ITEMS);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$READ_RIGHT=UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT")?"false":"true";
+$EDIT_RIGHT=UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT")?"false":"true";
+
+?>
+<script>
+Ext.onReady(function() {
+
+    function renderText(value,metadata,record){
+        var name = '';
+        if(record.data.AVAIABLE_ROOM){
+            var bgColor = '#FF0000';
+            var fontColor = '#FFF';
+            name = 'Room not available on this time';
+        }else{
+            var bgColor = '#FFFFFF';
+            var fontColor = '#000';
+            name = 'Room available on this time';
+        }
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style=\"font-weight:normal; color:' + fontColor + '; padding: 5px; height:15px;background:'+bgColor+';\">' + value + '</div>';
+    }
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $DETAIL_INFORMATION = "
+    {
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed: false
+        ,title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,width: 310
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";'
+            ,items: [
+                {".CamemisField::Textfield("NAME","NAME",NAME,false,false,false, 150, false). "}
+                ,{".CamemisField::Numberfield("MAX_COUNT", "MAX_COUNT", PERSONS, false, false, false, false, false, 150) . "}
+                ,{".CamemisField::Numberfield("ROOM_SIZE", "ROOM_SIZE", ROOM_SIZE, false, false, false, false, false, 150) . "}
+            ]
+        }]
+    }
+    ";
+    
+    $FACILITY_INFORMATION = "
+    {
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed: false
+        ,title: '".FACILITY_INFORMATION."'
+        ,autoHeight: true
+        ,width: 310
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";'
+            ,items: [
+                {".CamemisField::Textfield("ITEM_NAME","ITEM_NAME",ITEM_NAME,false,false,false, 150, false). "}
+                ,{".CamemisField::Numberfield("BARCODE", "BARCODE", BARCODE, false, false, false, false, false, 150) . "}
+            ]
+        }]
+    }
+    ";
+
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= "".$DETAIL_INFORMATION;
+    $FORM_ITEMS .= ",".$FACILITY_INFORMATION;
+    if ($DISPLAY_FIELDS) $FORM_ITEMS .= ",".$DISPLAY_FIELDS;
+    $FORM_ITEMS .= "]";
+
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'searchRoom'
+    ");
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".RESET."'
+        ,iconCls:'icon-arrow_undo'
+        ,handler:function(){
+            " . camemisPage::setRequestURI() . "
+        }
+    ");
+
+    if(UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT"))
+    $OBJECT_FORM->addTBarItems("
+        text:'".SEARCH."'
+        ,iconCls:'icon-zoom'
+        ,disabled: false
+        ,handler: function(){
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+            var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS " . LOADING . "</b>', msgCls:'x-mask-loading-camemis'});
+            loadMask.show();
+            Ext.Ajax.request({
+                url: '/room/jsonload'
+                ,method: 'POST'
+                ,params:{cmd: 'allRooms',start:0,limit:100,type: 1}
+                ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
+                ,success: function(response, options) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().loadData(jsonData);
+                    loadMask.hide();
+                }
+            });
+        }
+    ");
+
+    $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 110;
+    $OBJECT_FORM->renderJS();
+
+    $OBJECT_GRID->addReadField("name: 'SHORT'");
+    $OBJECT_GRID->addReadField("name: 'ROOM'");
+    $OBJECT_GRID->addReadField("name: 'BUILDING'");
+    $OBJECT_GRID->addReadField("name: 'FLOOR'");
+    $OBJECT_GRID->addReadField("name: 'MAX_COUNT'");
+    $OBJECT_GRID->addReadField("name: 'ROOM_SIZE'");
+    $OBJECT_GRID->addReadField("name: 'AVAIABLE_ROOM'");
+
+    $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', align:'left', width: 80, renderer: renderText, sortable: true, dataIndex: 'SHORT'");
+    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', align:'left', width: 150, renderer: renderText, sortable: true, dataIndex: 'ROOM'");
+    $OBJECT_GRID->addColumn("header: '<b>".BUILDING."</b>', width: 120, renderer: renderText, sortable: true, dataIndex: 'BUILDING'");
+    $OBJECT_GRID->addColumn("header: '<b>".FLOOR."</b>', renderer: renderText, width: 120, sortable: true, dataIndex: 'FLOOR'");
+    $OBJECT_GRID->addColumn("header: '<b>".PERSONS."</b>', renderer: renderText, width: 120, sortable: true, dataIndex: 'MAX_COUNT'");
+    $OBJECT_GRID->addColumn("header: '<b>".ROOM_SIZE."</b>', renderer: renderText, width: 120, sortable: true, dataIndex: 'ROOM_SIZE'");
+
+    //@soda
+    if(UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT")){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ADD_ID'
+                ,scope:this
+                ,text:'".ADD_A_NEW_ITEM."'
+                ,tooltip:'".ADD_A_NEW_ITEM."'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    clickOpenPage('center','".ADD_A_NEW_ITEM."', '/room/showitem/?objectId=new&&parentId=0');
+                }
+            }]);
+        ");
+    }
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+    //
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'allRooms'
+        ,type: 1
+    ";
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->isPagingToolbar = true;
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                title: ''
+                ,id:'WEST_ID'
+                ,region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 350
+                ,minSize: 350
+                ,maxSize: 350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            },{
+                title: ''
+                ,collapsible: false
+                ,region:'center'
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,margins: '3 3 3 0'
+                ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+            }]
+        }]
+    });
+
+    var grid = <?=$OBJECT_GRID->ExtgetCmp();?>;
+    if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        var contextMenu = new Ext.menu.Menu({
+            items: [{
+                text: '<?=SHOW_DETAIL;?>'
+                ,hidden:<?=$READ_RIGHT;?>
+                ,iconCls:'icon-application_form_magnify'
+                ,handler: function(){
+                    clickOpenPage('center','<?=SHOW_DETAIL?>', '/room/showitem/?objectId=' + record.data.ID);
+                }
+            }]
+        });
+        event.stopEvent();
+        contextMenu.showAt(event.xy);
+    });
+});
+</script>
+<style type="text/css">
+.x-check-group-alt {
+    background: #D1DDEF;
+}
+</style>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

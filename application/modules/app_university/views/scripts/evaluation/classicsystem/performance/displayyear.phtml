@@ -1,0 +1,257 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
+$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
+$OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style type="text/css">
+    span.csssAverage {
+        color: #CC0000;
+        font-weight:normal;
+        font-size: 14px;
+    }
+</style>
+<script>          
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
+    function cssRang(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
+    }
+    
+    function cssAverage(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#FFFFC2;">' + value + '</div>';
+    }
+    
+    function cssAssessmentYear(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
+    }
+    
+    function cssAssessmentSemester(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#E0FFFF;">' + value + '</div>';
+    }
+    
+    function cssEvaluationSemester(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
+    }
+    
+    <?
+    ////////////////////////////////////////////////////////////////////////////
+    $comboEditor = "
+        new Ext.form.ComboBox({
+            triggerAction:'all'
+            ,mode:'local'
+            ,store: new Ext.data.JsonStore({
+                autoDestroy: true
+                ,fields: ['chooseValue', 'chooseDisplay']
+                ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject->QUALIFICATION_TYPE)."]
+            })
+            ,valueField: 'chooseValue'
+            ,displayField: 'chooseDisplay'
+            ,editable: false
+            ,listeners: {
+                select: function(combo, record, index) {
+                    replaceValue = combo.getValue();
+                    var newDisplay = record.get('chooseDisplay');
+                    combo.setValue(newDisplay);
+                }
+            }
+        })
+    ";
+    ////////////////////////////////////////////////////////////////////////////
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");   
+    $OBJECT_GRID->addReadField("name: 'RANK'");  
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");   
+    $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER_RESULT'");   
+    $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");  
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_YEAR'");  
+    
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_FIRST_SEMESTER'");  
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_SECOND_SEMESTER'");  
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssRang, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssAverage, dataIndex: 'AVERAGE_TOTAL'");
+    
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+        case 'INSTRUCTOR':
+        case 'TEACHER':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".ASSESSMENT."</b>'
+                , width: 130
+                , align: 'right'
+                , sortable: true
+                , dataIndex: 'ASSESSMENT_YEAR'
+                , renderer:cssAssessmentYear
+                , editor: ".$comboEditor."
+            ");
+            break;
+         case 'STUDENT':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".ASSESSMENT."</b>'
+                , width: 120
+                , align: 'center'
+                , sortable: true
+                , dataIndex: 'ASSESSMENT_YEAR'
+                , renderer:cssAssessmentYear
+            ");
+            break;  
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER."</b>', align: 'right', width: 130, sortable: true, renderer: cssAssessmentSemester, dataIndex: 'ASSESSMENT_FIRST_SEMESTER'");
+    $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssAverage, dataIndex: 'FIRST_SEMESTER_RESULT'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER."</b>', align: 'right', width: 130, sortable: true, renderer: cssAssessmentSemester, dataIndex: 'ASSESSMENT_SECOND_SEMESTER'");
+    $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssAverage, dataIndex: 'SECOND_SEMESTER_RESULT'");
+    
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+        case 'INSTRUCTOR':
+        case 'TEACHER':
+             $OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    text: '" . REFRESH . "'
+                    ,iconCls:'icon-reload'
+                    ,handler: function(){
+                        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                    }
+                }]);
+            ");
+        break;
+    }
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonListStudentsYearClassPerformance'
+        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+    ";
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonActionStudentClassPerformance'
+        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+    ");
+    $OBJECT_GRID->setAftereditCallback("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    
+    $OBJECT_GRID->comboReplaceValue = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id:'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+    <?
+    
+    $TEACHER_COMMENTS ="{";
+    $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
+    $TEACHER_COMMENTS .=",iconCls: 'icon-comments_add'";
+    $TEACHER_COMMENTS .=",disabled:false";
+    $TEACHER_COMMENTS .=",handler: function(){";
+    $TEACHER_COMMENTS .="openWinIFrame(record.data.STUDENT,'".$this->URL_TEACHER_COMMENT."&section=3&studentId=' + record.data.ID, 600,percentHeight(85));";
+    $TEACHER_COMMENTS .="}";
+    $TEACHER_COMMENTS .="}";
+    
+    $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENTS;
+    
+    $GRADEBOOK ="{";
+    $GRADEBOOK .="text: '".GRADEBOOK." &raquo; ' + record.data.STUDENT";
+    $GRADEBOOK .=",iconCls: 'icon-book'";
+    $GRADEBOOK .=",disabled:false";
+    $GRADEBOOK .=",handler: function(){";
+    $GRADEBOOK .="openWinIFrame(record.data.STUDENT,'/evaluation/gradebooktraditional/?camIds=".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."")."&studentId=' + record.data.ID, percentWidth(70),percentHeight(85));";
+    $GRADEBOOK .="}";
+    $GRADEBOOK .="}";
+    
+    $CONTEXTMENU_ITEMS[] = $GRADEBOOK;
+    
+    $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
+    if($CONTEXTMENU_ITEMS){
+        $js = "";
+        $js .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $js .="if(columnIndex<=2){";
+                $js .="var record = grid.store.getAt(rowIndex);";
+                $js .="var contextMenu = new Ext.menu.Menu({";
+                $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                $js .="});";
+                $js .="event.stopEvent();";
+                $js .="contextMenu.showAt(event.xy);"; 
+            $js .="}";
+        $js .="});";
+        echo $js;
+    }
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

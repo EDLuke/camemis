@@ -1,0 +1,174 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/staff/StaffDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("STAFF", "HISTORY");
+$OBJECT_TREE->setURL('/staff/jsontree/');
+
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+
+$a = StaffDBAccess::getSubjectTeacherClass($this->objectId);
+
+
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    var clickTitle = '';
+    var academicId = '';
+    var schoolyearId = '';
+    var instructorId = '';
+    var teacherId = '<?=$this->objectId;?>';
+    
+    Ext.onReady(function() {
+
+        var tabs =  new Ext.TabPanel({
+            autoTabs:true
+            ,border:false
+            ,tabPosition: 'top'
+            ,enableTabScroll:true
+            ,activeTab:0
+            ,items:[{
+                title: '&nbsp;'
+                ,id: 'TAB_DEFAULT'
+                ,layout: 'fit'
+                /*,iconCls: 'icon-tabs'*/
+                ,items: [{
+                    layout:'anchor'
+                    ,border:false
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items:[{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class=\"header\"><?=PLEASE_MAKE_YOUR_SELECTIONS?></h1>'    
+                    }]
+                }]
+            }]
+        });
+        Ext.QuickTips.init();
+        
+        <?
+        camemisPage::setNoLogoutMessage();
+        
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        $CAMEMIS_PAGE_OBJECT->setAddTab();
+        
+        //History tree...
+        $OBJECT_TREE->isAsyncTreeNode = false;
+        if($target)
+        $OBJECT_TREE->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);}
+        ");
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'academicHistoryTree'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = true;
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->renderJS();
+        
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "border: false";
+            $js .= ",layout:'fit'";
+            $js .= ",items:[{";
+                $js .= "layout:'border'";
+                $js .= ",defaults: {";
+                    $js .= "collapsible: true";
+                    $js .= ",split: true";
+                $js .= "}";
+                $js .= ",border: false";
+                $js .= ",items: [{";
+                    $js .= "title: '&nbsp;'";
+                    $js .= ",region:'west'";
+                    $js .= ",id: 'WEST_ID'";
+                    $js .= ",margins: '3 0 3 3'";
+                    $js .= ",cmargins: '3 3 3 3'";
+                    $js .= ",width: 280";
+                    $js .= ",minSize: 280";
+                    $js .= ",maxSize: 280";
+                    $js .= ",autoScroll: true";
+                    $js .= ",layout: 'fit'";
+                    $js .= ",items: [{xtype: '".$OBJECT_TREE->getObjectXType()."'}]";
+                $js .= "},{";
+                    $js .= "collapsible: false";
+                    $js .= ",region:'center'";
+                    $js .= ",margins: '3 3 3 0'";
+                    $js .= ",bodyStyle: 'padding:1px'";
+                    $js .= ",id: 'center'";
+                    $js .= ",layout:'card'";
+                    $js .= ",activeItem: 0";
+                    $js .= ",items: [{";
+                        $js .= "border: false";
+                        $js .= ",layout: 'fit'";
+                        $js .= ",items: tabs";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+        $js .= "var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+        $js .= "if (myTree) myTree.on('click', function(node, e){";
+            $js .= "switch(node.attributes.type){";
+                $js .= "case '2':";
+                    $js .= "var teacherSchoolyearURL = '".$this->URL_TEACHER_SCHOOLYEAR."'";
+                    $js .= "+ '&teacherId=' + teacherId";
+                    $js .= "+ '&academicId=' + node.attributes.academicId";
+                    $js .= "+ '&gradeId=' + node.attributes.gradeId";
+                    $js .= "+ '&schoolyearId=' + node.attributes.schoolyearId;";
+                    $js .= "addTab(node.id,node.text,teacherSchoolyearURL);";
+                $js .= "break;";
+                $js .= "case '3':";
+                    $js .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
+                    $js .= "clickTitle = node.text;";
+                    $js .= "academicId = node.attributes.academicId;";
+                    $js .= "schoolyearId = node.attributes.schoolyearId;";
+                    $js .= "var targetURL = '/staff/classdetails/?'";
+                    $js .= "+ 'academicId=' + academicId";
+                    $js .= "+ '&target=general'";//@veasna
+                    $js .= "+ '&teacherId=' + teacherId";
+                    $js .= "+ '&current_instructor=' + instructorId";
+                    $js .= "+ '&schoolyearId=' + schoolyearId;";
+                    $js .= "addTab(node.id,clickTitle,targetURL);";
+                $js .= "break;";
+                $js .= "case '4':";
+                    $js .= "var targetURL = '".$this->URL_SUBJECT_SCORE_MAIN."&taskId=' + node.attributes.taskId;";
+                    $js .= "addTab(node.id,node.text,targetURL);";
+                $js .= "break;";
+            $js .= "}";
+        $js .= "});";
+        print $js;
+        ?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

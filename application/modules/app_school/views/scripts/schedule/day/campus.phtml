@@ -1,0 +1,412 @@
+<?
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once 'models/app_school/schedule/CampusScheduleDBAccess.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+
+$DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
+
+$currentYearId = "";
+if (AcademicDateDBAccess::findSchoolyearByCurrentDate()) 
+    $currentYearId = AcademicDateDBAccess::findSchoolyearByCurrentDate()->ID;
+$YEAR_OBJECT = $DB_SCHOOLYEAR->findAcademicDateFromId($currentYearId);
+
+$YEAR_DATE = $YEAR_OBJECT?getShowDate($YEAR_OBJECT->START):"";
+$YEAR_DATE .= " - ";
+$YEAR_DATE .= $YEAR_OBJECT?getShowDate($YEAR_OBJECT->END):"";
+
+$FIRST_SEMESTER_DATE = $YEAR_OBJECT?getShowDate($YEAR_OBJECT->SEMESTER1_START):"";
+$FIRST_SEMESTER_DATE .= " - ";
+$FIRST_SEMESTER_DATE .= $YEAR_OBJECT?getShowDate($YEAR_OBJECT->SEMESTER1_END):"";
+
+$SECOND_SEMESTER_DATE = $YEAR_OBJECT?getShowDate($YEAR_OBJECT->SEMESTER2_START):"";
+$SECOND_SEMESTER_DATE .= " - ";
+$SECOND_SEMESTER_DATE .= $YEAR_OBJECT?getShowDate($YEAR_OBJECT->SEMESTER2_END):"";
+
+$EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var clickDB = '<?=getCurrentDBDate();?>';
+var chooseRoom;
+var chooseTeacher;
+var teacherId;
+var roomId;
+var forTime;
+Ext.onReady(function() {
+
+    function showText(v, p, record, rowIndex){
+        return String.format('<div style=\"white-space:normal;font-weight:bold; padding: 20px; height: 35px; background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+            ,record.data['COLOR_FONT']
+        );
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+   
+    $OBJECT_TIME_COMBO = new CamemisDynCombo("SCHEDULE","COMBO");
+    $OBJECT_TIME_COMBO->setLoadUrl('/schedule/jsonload/');
+    $OBJECT_TIME_COMBO->objectTitle = false;
+    $OBJECT_TIME_COMBO->allowBlank = "true";
+    $OBJECT_TIME_COMBO->varName = "TIME";
+    $OBJECT_TIME_COMBO->setLoadParams("cmd: 'campusTimeList' ,academicId: '".$this->academicId."', eventDay: clickDB");
+    $OBJECT_TIME_COMBO->renderJS();  
+    
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'CLASS'");
+    $OBJECT_GRID->addReadField("name: 'SCHEDULE_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'EVENT'");
+    $OBJECT_GRID->addReadField("name: 'TEACHER'");
+    $OBJECT_GRID->addReadField("name: 'ROOM'");
+    $OBJECT_GRID->addReadField("name: 'TEACHER_ID'");
+    $OBJECT_GRID->addReadField("name: 'ROOM_ID'");
+    $OBJECT_GRID->addReadField("name: 'COLOR'");
+    $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . GRADE_CLASS . "</b>'
+        , align:'center'
+        ,renderer: showText
+        , sortable: false
+        , dataIndex: 'CLASS'
+        , width: 150
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . EVENT . "</b>'
+        ,renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'EVENT'
+        , width: 200
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . TEACHER . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'TEACHER'
+        , width: 200
+    ");
+        
+     $OBJECT_GRID->addColumn("
+        header: '<b>" . ROOM . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'ROOM'
+        , width: 150
+    ");
+     
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['<b>".TIME."</b>',{
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 120
+                ,xtype: '".$OBJECT_TIME_COMBO->getObjectXType()."'
+            }]
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['<b>".TEACHER."</b>',{
+            xtype: 'buttongroup'
+            ,items:[{".CamemisField::comboTutors(false,170)."}]
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['<b>".ROOM."</b>',{
+            xtype: 'buttongroup'
+            ,items:[{".CamemisField::ComboRoom("ROOM_ID", false, false, false, 120)."}]
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'MORE_INFORMATION'
+            ,text: '" . MORE_INFORMATION . "'
+            ,hidden:".$EXECUTE_RIGHT."
+            ,iconCls:'icon-list-items'
+            ,menu:[{  
+                id: 'TEACHER_SCHEDULE_DETAIL'
+                ,hidden:".$EXECUTE_RIGHT."
+                ,text: '" . TEACHER_SCHEDULE_DETAIL . "'
+                ,iconCls:'icon-application_form_magnify'
+                ,handler: function(){
+                    var win = new Ext.Window({
+                        title: '".TEACHER_SCHEDULE_DETAIL."'
+                        ,id: 'OPEN_WINDOW'
+                        ,closable:true
+                        ,width: percentWidth(90)
+                        ,height: percentHeight(75)
+                        ,modal: true
+                        ,layout:'fit'
+                        ,border: false
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'OPEN_WINDOW', url:'/schedule/assignedtoteacher/?chooseId=' + chooseTeacher})]
+                    });
+                    win.show();
+                }
+            },{
+                id: 'ROOM_SCHEDULE_DETAIL'
+                ,hidden:".$EXECUTE_RIGHT."
+                ,text: '" . ROOM_SCHEDULE_DETAIL . "'
+                ,iconCls:'icon-application_form_magnify'
+                ,handler: function(){
+                    var win = new Ext.Window({
+                        title: '".ROOM_SCHEDULE_DETAIL."'
+                        ,id: 'OPEN_WINDOW'
+                        ,closable:true
+                        ,width: percentWidth(90)
+                        ,height: percentHeight(75)
+                        ,modal: true
+                        ,layout:'fit'
+                        ,border: false
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'OPEN_WINDOW', url:'/schedule/assignedtoroom/?chooseId=' + chooseRoom})]
+                    });
+                    win.show();
+                }
+            }]
+        }]);
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,academicId: '".$academicId."'
+        ,eventDay: clickDB
+        ,target:'GENERAL'
+        ,cmd: 'campusEventList'
+    ";
+    
+    //@soda                                                        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,hidden: false
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){ 
+                var param='';                                        
+                    if(teacherId){param +='&teacherId='+ teacherId;}
+                    if(roomId){param +='&roomId='+ roomId;}
+                    if(forTime){param +='&forTime='+ forTime;} 
+                    window.location ='/export/index/?academicId=".$academicId."&eventDay=".getCurrentDBDate()."&type=export_student_year_schedule&target=general'+param;
+                }
+            }]);
+        "); 
+        }
+        //
+    
+    $OBJECT_GRID->isPagingToolbar = false;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    ?>
+
+    var dp = new Ext.DatePicker({        
+        listeners: {
+            'select': function(date_picker, date){
+                var clickTitle = date.getDate() + '.' + (parseInt(date.getMonth()) + 1) + '.' + date.getFullYear();
+                clickDB = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+                Ext.getCmp('center').setTitle(clickTitle);
+                //Ext.getCmp('center').update("<font size = '8'>"+clickDB+"</font>");
+                Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,academicId: '<?=$academicId;?>'                                
+                    ,eventDay: clickDB
+                    ,cmd: 'campusEventList'
+                    ,target:'GENERAL'
+                    ,forTime: Ext.getCmp('<?=$OBJECT_TIME_COMBO->getObjectId()?>').getValue()
+                };
+                if (Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>')) Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.reload();
+                Ext.get(document.body).unmask();             
+            }
+        }
+    });
+
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                region:'east'
+                ,title:'&nbsp;'
+                ,margins: '3 3 3 0'
+                ,cmargins: '3 3 3 3'
+                ,width: 220
+                ,minSize: 220
+                ,maxSize: 220
+                ,autoScroll: true
+                ,bodyStyle: 'background:#FFFFFF;'
+                ,defaults: {
+                    style: {margin: '10px'}
+                }
+                ,items:[{
+                    xtype: 'panel'
+                    ,title: '&nbsp;'
+                    ,bodyStyle: 'padding:10px'
+                    ,autoHeight: true
+                    ,items: [dp]  
+                },{
+                    layout: 'form'
+                    ,border: false
+                    ,labelWidth: 20
+                    ,bodyStyle: 'background:transparent; padding:5px 10px 10px;'
+                    ,items:[{
+                        xtype: 'displayfield'
+                        ,value : '<b><?=SCHOOL_YEAR?></b><br><?=$YEAR_DATE?>'
+                        ,id:'SCHOOL_YEAR'
+                        ,labelStyle: 'background:#0000FF; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    }]
+                },{
+                    layout: 'form'
+                    ,border: false
+                    ,labelWidth: 20
+                    ,bodyStyle: 'background:transparent; padding:5px 10px 10px;'
+                    ,items:[{
+                        xtype: 'displayfield'
+                        ,value : '<b><?=FIRST_SEMESTER?></b><br><?=$FIRST_SEMESTER_DATE;?>'
+                        ,id:'FIRST_SEMESTER'
+                        ,labelStyle: 'background:#86a723; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    }]
+                },{
+                    layout: 'form'
+                    ,border: false
+                    ,labelWidth: 20
+                    ,bodyStyle: 'background:transparent; padding:5px 10px 10px;'
+                    ,items:[{
+                        xtype: 'displayfield'
+                        ,value : '<b><?=SECOND_SEMESTER?></b><br><?=$SECOND_SEMESTER_DATE;?>'
+                        ,id:'SECOND_SEMESTER'
+                        ,labelStyle: 'background:#FF00AE; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    }]
+                }]
+            },{
+               	collapsible: false
+               	,title: '<?=showCurrentDBDate();?>'
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 0 3 3'
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    
+    var time = Ext.getCmp('<?=$OBJECT_TIME_COMBO->getObjectId()?>');
+    var teacher = Ext.getCmp('TEACHER_ID');
+    var room = Ext.getCmp('ROOM_ID');
+    
+    if (time){
+        time.on('select', function() {
+            forTime = time.getValue();
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                start:0
+                ,limit:100
+                ,academicId: '<?=$academicId;?>'                         
+                ,eventDay: clickDB
+                ,roomId: roomId
+                ,teacherId: teacherId
+                ,cmd: 'campusEventList'
+                ,target:'GENERAL'
+                ,forTime: forTime
+            };
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.reload();
+        });
+     }
+
+     if (teacher){
+        teacher.on('select', function() {
+            teacherId = teacher.getValue();
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                start:0
+                ,limit:100
+                ,academicId: '<?=$academicId;?>'                            
+                ,eventDay: clickDB
+                ,cmd: 'campusEventList'
+                ,target:'GENERAL'
+                ,roomId: roomId
+                ,teacherId: teacherId
+                ,forTime: forTime
+            };
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.reload();
+        });
+    }
+    
+    if (room){
+        room.on('select', function() {
+            roomId = room.getValue();
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                start:0
+                ,limit:100
+                ,academicId: '<?=$academicId;?>'                          
+                ,eventDay: clickDB
+                ,cmd: 'campusEventList'
+                ,roomId: roomId
+                ,target:'GENERAL'
+                ,teacherId: teacherId
+                ,forTime: forTime
+            };
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.reload();
+        });
+    }
+    Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        switch(columnIndex){
+            case 1:
+            case 2:
+                Ext.getCmp('TEACHER_SCHEDULE_DETAIL').disable();
+                Ext.getCmp('ROOM_SCHEDULE_DETAIL').disable();
+                break;
+            case 3:
+                chooseTeacher = record.data.TEACHER_ID;
+                Ext.fly(Ext.getCmp('MORE_INFORMATION').getEl()).frame('ff0000');   
+                Ext.getCmp('TEACHER_SCHEDULE_DETAIL').enable();
+                Ext.getCmp('ROOM_SCHEDULE_DETAIL').disable();
+                break;
+            case 4:
+                chooseRoom = record.data.ROOM_ID;
+                Ext.fly(Ext.getCmp('MORE_INFORMATION').getEl()).frame('ff0000');   
+                Ext.getCmp('ROOM_SCHEDULE_DETAIL').enable();
+                Ext.getCmp('TEACHER_SCHEDULE_DETAIL').disable();
+                break;
+        }
+    });
+});
+
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

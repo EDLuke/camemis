@@ -1,0 +1,133 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("FINANCE", "LIST");
+$OBJECT_GRID->setLoadUrl("/finance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$name = isset($_GET["name"])?$_GET["name"]:"";
+$code = isset($_GET["code"])?$_GET["code"]:"";
+$campusId = isset($_GET["campusId"])?$_GET["campusId"]:"";
+$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+
+?>
+<script>
+
+Ext.onReady(function() {
+    
+    function cssTextBold(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    
+    function cssNumber(value, metadata, record){
+        return '<div style="font-weight:bold; color:#3B5998; padding: 5px;">' + value + '</div>';
+    }
+        
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'NAME', type: 'string'");
+    $OBJECT_GRID->addReadField("name: 'AMOUNT_OPTION'");
+    $OBJECT_GRID->addReadField("name: 'INCOME_CATEGORY'");
+    $OBJECT_GRID->addReadField("name: 'AMOUNT'");
+    $OBJECT_GRID->addReadField("name: 'FIRST_OPTION_AMOUNT'");
+    $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+    $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".FEE_NAME."</b>', align:'left', renderer: cssTextBold, width: 250, sortable: true, dataIndex: 'NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".AMOUNT."</b>', align:'right', renderer: cssNumber, width:120, sortable: true, dataIndex: 'FIRST_OPTION_AMOUNT'");
+    $OBJECT_GRID->addColumn("header: '<b>".AMOUNT_OPTION."</b>', align:'right', renderer: cssText, width: 120, sortable: true, dataIndex: 'AMOUNT_OPTION'");
+    $OBJECT_GRID->addColumn("header: '<b>".INCOME_CATEGORY."</b>', align:'right', renderer: cssText, width: 120, sortable: true, dataIndex: 'INCOME_CATEGORY'");
+    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align:'right', renderer: cssText, width: 120, sortable: true, dataIndex: 'CREATED_DATE'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: '" . ADVENCED_SEARCH . "'
+            ,iconCls:'icon-magnifier'
+            ,handler: function(){
+                window.parent.Ext.getCmp('WEST_ID').expand();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonSearchFee'
+        ,name: '".$name."'
+        ,code: '".$code."'
+        ,campusId: '".$campusId."'
+        ,gradeId: '".$gradeId."'
+        ,schoolyearId: '".$schoolyearId."'
+        ,type:'GENERAL_EDU'
+    ";
+    
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,xtype: 'panel'
+            ,layout: 'card'
+            ,id: 'center'
+            ,activeItem: 0
+            ,items:[{
+                border: false
+                ,title: ''
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    var myGrid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+    if (myGrid) myGrid.on('cellclick', function(grid,rowIndex) {
+        window.parent.Ext.getCmp('WEST_ID').collapse();
+        var record = grid.store.getAt(rowIndex);
+        clickOpenPage('center',record.data.NAME,'/finance/showfeegrade/?objectId=' + record.data.ID);
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

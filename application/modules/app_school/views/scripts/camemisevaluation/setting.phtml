@@ -1,0 +1,67 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style>
+    .x-vr-tab-panel-bwrap {
+        background: none repeat scroll 0 0 <?=CamemisPage::userBgColor();?>;
+        border-left: 1px solid #99BBE8;
+        float: right;
+        padding: 3px;
+    }
+</style>
+<script>
+
+    Ext.onReady(function() {
+        
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $QUESTION = "{
+            title: '".QUESTION."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'QUESTION', url: '/camemisevaluation/evaluationquestion/'})]
+        }";
+        $PENEL_ITEMS[] = $QUESTION;
+        
+        $ANSWER = "{
+            title: '".ANSWER."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ANSWER', url: '/camemisevaluation/evaluationanswer/'})]
+        }";
+        $PENEL_ITEMS[] = $ANSWER;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'vrtabpanel'
+                ,activeTab: 0
+                ,tabMarginTop:100
+                ,enableTabScroll:true       
+                ,defaults: {autoScroll:true}
+                ,items:<?=$CHOOSE_ITEMS?>
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

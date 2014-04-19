@@ -1,0 +1,294 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 19.02.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$studentId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+
+$studentObject = StudentDBAccess::findStudentFromId($studentId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+class DisplayItem {
+	public function __construct ($studentObject, $academicObject) {
+		$this->studentObject = $studentObject;
+		$this->academicObject = $academicObject;
+		$this->urlEncryp = new URLEncryption();
+	}
+
+	public function getParams ($type) {
+		$result = "";
+		$result .= "&studentId=".$this->studentObject->ID."";
+		$result .= "&schoolyearId=".$this->academicObject->SCHOOL_YEAR."";
+		switch ($type) {
+			case "FIRST_SEMESTER":
+				$result .= "&section=2";
+				$result .= "&term=FIRST_SEMESTER";
+				break;
+			case "SECOND_SEMESTER":
+				$result .= "&section=2";
+				$result .= "&term=SECOND_SEMESTER";
+				break;
+			case "FIRST_TERM":
+				$result .= "&section=4";
+				$result .= "&term=FIRST_TERM";
+				break;
+			case "SECOND_TERM":
+				$result .= "&section=4";
+				$result .= "&term=SECOND_TERM";
+				break;
+			case "THIRD_TERM":
+				$result .= "&section=4";
+				$result .= "&term=THIRD_TERM";
+				break;
+			case "FIRST_QUARTER":
+				$result .= "&section=5";
+				$result .= "&term=FIRST_QUARTER";
+				break;
+			case "SECOND_QUARTER":
+				$result .= "&section=5";
+				$result .= "&term=SECOND_QUARTER";
+				break;
+			case "THIRD_QUARTER":
+				$result .= "&section=5";
+				$result .= "&term=THIRD_QUARTER";
+				break;
+			case "FOURTH_QUARTER":
+				$result .= "&section=5";
+				$result .= "&term=FOURTH_QUARTER";
+				break;
+			case "YEAR":
+				$result .= "&section=3";
+				break;
+		}
+		
+		return $result;
+	}
+
+	public function renderGrid ($type) {
+		$GRID_OBJECT = new CamemisGrid("EVALUATION", $type);
+		$GRID_OBJECT->setLoadUrl("/evaluation/jsonload/");
+
+		$GRID_OBJECT->addReadField("name: 'SHORT'");
+		$GRID_OBJECT->addReadField("name: 'NAME'");
+		$GRID_OBJECT->addReadField("name: 'RANK'");
+		$GRID_OBJECT->addReadField("name: 'SUBJECT_VALUE'");
+		$GRID_OBJECT->addReadField("name: 'ASSESSMENT'");
+
+		$GRID_OBJECT->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
+		$GRID_OBJECT->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
+		$GRID_OBJECT->addColumn("header: '<b>".SCORE."</b>', width: 120, renderer:cssAverage, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
+		$GRID_OBJECT->addColumn("header: '<b>".RANK."</b>', width: 100, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
+		$GRID_OBJECT->addColumn("header: '<b>".GRADING_SCALES."</b>', width: 120, renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
+
+		$GRID_OBJECT->baseParams = "
+			start:0
+			,limit:100
+			,camIds: '".$this->urlEncryp->encryptedGet($this->getParams($type))."'
+			,cmd: 'jsonLoadStudentCreditAllSubjectAssessment'
+		";
+		$GRID_OBJECT->isObjectDefaultOnLoad = true;
+		$GRID_OBJECT->forceFit = "false";
+		$GRID_OBJECT->renderJS();
+
+		return $GRID_OBJECT;
+	}
+
+	public function getLayoutColumn ($grid, $type) {
+		return "{
+			columnWidth:1
+			,baseCls:'x-plain'
+			,bodyStyle:'padding:5px 10px 5px 10px'
+			,items:[{
+				title: '".constant($type)."'
+				,collapsible: true
+				,collapsed: false
+				,items:[{
+					layout:'fit'
+					,height:450
+					,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
+					,border: false
+					,items:[{
+						xtype: 'tabpanel'
+						,tabPosition: 'top'
+						,plain:true
+						,activeTab: 0
+						,enableTabScroll:true
+						,items:[{
+							title:'".SUBJECT_ASSESSMENT."'
+							,layout:'fit'
+							,items:[{xtype: '".$grid->getObjectXtype()."'}]
+						},{
+							title:'".TEACHER_COMMENTS."'
+							,disabled:true
+							,layout:'fit'
+							,items: [new Ext.ux.IFrameComponent({ id: '".$type."_TEACHER_COMMENTS', url:''})]
+						},{
+							title:'".CHART."'
+							,disabled:true
+							,layout:'fit'
+							,items: [new Ext.ux.IFrameComponent({ id: '".$type."_CHART', url:''})]
+						}]
+					}]
+				}]
+			}]
+		}";
+	}
+}
+
+$DISPLAY_ITEM = new DisplayItem(
+	$studentObject
+	,$academicObject
+);
+
+?>
+<script>
+    Ext.onReady(function() {
+        function cssText(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000; padding: 1px;background:#FFF;">' + value + '</div>';
+        }
+        function cssRang(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000; padding: 1px;background:#F3E5AB;">' + value + '</div>';
+        }
+
+        function cssAverage(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000; padding: 1px;background:#FFFFC2;">' + value + '</div>';
+        }
+
+        function cssAssessment(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		///////////////////////////////////////////////////////////////
+		$YEAR_RESULT_GRID = $DISPLAY_ITEM->renderGrid("YEAR");
+		$FS_RESULT_GRID = $DISPLAY_ITEM->renderGrid("FIRST_SEMESTER");
+		$SS_RESULT_GRID = $DISPLAY_ITEM->renderGrid("SECOND_SEMESTER");
+		$FT_RESULT_GRID = $DISPLAY_ITEM->renderGrid("FIRST_TERM");
+		$ST_RESULT_GRID = $DISPLAY_ITEM->renderGrid("SECOND_TERM");
+		$TT_RESULT_GRID = $DISPLAY_ITEM->renderGrid("THIRD_TERM");
+		$FQ_RESULT_GRID = $DISPLAY_ITEM->renderGrid("FIRST_QUARTER");
+		$SQ_RESULT_GRID = $DISPLAY_ITEM->renderGrid("SECOND_QUARTER");
+		$TQ_RESULT_GRID = $DISPLAY_ITEM->renderGrid("THIRD_QUARTER");
+		$FOQ_RESULT_GRID = $DISPLAY_ITEM->renderGrid("FOURTH_QUARTER");
+		////////////////////////////////////////////////////////////////
+
+        $setMonthParams = "";
+        $setMonthParams .= "&section=1";
+        $setMonthParams .= "&studentId=".$studentId."";
+        $setMonthParams .= "&academicId=".$academicId."";
+
+        $PENEL_ITEMS = Array();
+
+        $MONTHLY_RESULT = "{
+            columnWidth:1
+            ,baseCls:'x-plain'
+            ,bodyStyle:'padding:5px 10px 0px 10px'
+            ,items:[{
+                title: '".MONTHLY_RESULT."'
+                ,collapsible: true
+                ,collapsed: false
+                ,items:[{
+                    layout:'fit'
+                    ,height:510
+                    ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
+                    ,border: false
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url:'/evaluation/creditgradebookmonth/?camIds=".$this->urlEncryp->encryptedGet($setMonthParams)."'})]
+                }]
+            }]
+        }";
+
+		if($academicObject->DISPLAY_MONTH_RESULT)
+		$PENEL_ITEMS[] = $MONTHLY_RESULT;
+
+		if($academicObject->DISPLAY_YEAR_RESULT)
+		$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($YEAR_RESULT_GRID, "YEAR");
+
+		switch (AcademicDBAccess::findAcademicTerm($academicObject->ID)) {
+			case 1:
+				if($academicObject->DISPLAY_FIRST_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($FT_RESULT_GRID, "FIRST_TERM");
+
+				if($academicObject->DISPLAY_SECOND_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($ST_RESULT_GRID, "SECOND_TERM");
+
+				if($academicObject->DISPLAY_THIRD_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($TT_RESULT_GRID, "THIRD_TERM");
+				break;
+			case 2:
+				if($academicObject->DISPLAY_FIRST_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($FQ_RESULT_GRID, "FIRST_QUARTER");
+
+				if($academicObject->DISPLAY_SECOND_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($SQ_RESULT_GRID, "SECOND_QUARTER");
+
+				if($academicObject->DISPLAY_THIRD_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($TQ_RESULT_GRID, "THIRD_QUARTER");
+
+				if($academicObject->DISPLAY_FOURTH_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($FOQ_RESULT_GRID, "FOURTH_QUARTER");
+				break;
+			default:
+				if($academicObject->DISPLAY_FIRST_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($FS_RESULT_GRID, "FIRST_SEMESTER");
+
+				if($academicObject->DISPLAY_SECOND_RESULT)
+				$PENEL_ITEMS[] = $DISPLAY_ITEM->getLayoutColumn($SS_RESULT_GRID, "SECOND_SEMESTER");
+				break;
+		}
+
+		$SELECTION_PANEL_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'card'
+                ,id: 'CONTENT'
+                ,activeItem: 0
+                ,border: false
+                ,items: [{
+                    layout:'column'
+                    ,border:false
+                    ,autoScroll:true
+                    ,items:<?=$SELECTION_PANEL_ITEMS;?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

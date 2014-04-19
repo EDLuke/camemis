@@ -1,0 +1,108 @@
+<?
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminField.php';
+require_once 'clients/app_admin/AdminBar.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'models/app_admin/AdminCustomerDBAccess.php';
+
+$CAMEMIS_PAGE = AdminPage::getInstance();
+
+$ENROLLED_STUDENTS_GRID = new AdminGrid("CUSTOMER", "ENROLLED_STUDENTS");
+$DB_CUSTOMER = new AdminCustomerDBAccess();
+
+print $CAMEMIS_PAGE->showCamemisHeader();
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        function showText(v){
+            return String.format('<div style=\"font-weight:bold; padding: 10px;background:{1};\">{0}</div>'
+                ,v
+            );
+        }
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE->setExtDefaultGif();
+        
+        $ENROLLED_STUDENTS_GRID->addReadField("name: 'COLOR'");
+        $ENROLLED_STUDENTS_GRID->addReadField("name: 'YEAR'");
+        $ENROLLED_STUDENTS_GRID->addReadField("name: 'TOTAL'");
+        $ENROLLED_STUDENTS_GRID->addReadField("name: 'TOTAL_MALE'");
+        $ENROLLED_STUDENTS_GRID->addReadField("name: 'TOTAL_FEMALE'");
+        $ENROLLED_STUDENTS_GRID->addColumn("header: '<b>Year</b>', renderer: showText, hidden: false, align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'YEAR'");
+        $ENROLLED_STUDENTS_GRID->addColumn("header: '<b>Total</b>', renderer: showText, align:'center', menuDisabled : true, sortable: true, width:120, dataIndex: 'TOTAL'");
+        $ENROLLED_STUDENTS_GRID->addColumn("header: '<b>Total (Male)</b>', renderer: showText, align:'center', menuDisabled : true, sortable: true, width:120, dataIndex: 'TOTAL_MALE'");
+        $ENROLLED_STUDENTS_GRID->addColumn("header: '<b>Total (Female)</b>', renderer: showText, align:'center', menuDisabled : true, sortable: true, width:120, dataIndex: 'TOTAL_FEMALE'");
+        $ENROLLED_STUDENTS_GRID->isGroupingView = true;
+        $ENROLLED_STUDENTS_GRID->groupField = "YEAR";
+        $ENROLLED_STUDENTS_GRID->forceFit = "false";
+        $ENROLLED_STUDENTS_GRID->renderJS();
+
+        $ENROLLED_STUDENTS_GRID->addTBarItems("
+            tbar.add([{
+                text: 'Refresh'
+                ,iconCls:'icon-reload'
+                ,handler: function(){
+                    Ext.getCmp('" . $ENROLLED_STUDENTS_GRID->getObjectId() . "').store.reload();
+                }
+            }]);
+        ");
+
+        $ENROLLED_STUDENTS_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,GuId: '".$this->GuId."'
+            ,cmd: 'jsonEnrolledStudents'
+        ";
+        $ENROLLED_STUDENTS_GRID->setURL('/customer/jsonload/');
+        $ENROLLED_STUDENTS_GRID->renderJS();
+        ?>
+        
+        viewport = new Ext.Viewport({
+            layout:'fit'
+            ,border: false
+            ,items: [{
+                border: false
+                ,id: 'content'
+                ,xtype: 'panel'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{xtype: '<?= $ENROLLED_STUDENTS_GRID->getObjectXtype(); ?>'}]
+                ,tbar:[{
+                    text: 'Enrolled Students'
+                    ,iconCls: 'icon-tabs'
+                    ,handler: function(){
+                        Ext.getCmp('content').getLayout().setActiveItem(0);
+                    }
+                },{
+                   text: 'System User'
+                   ,disabled: true
+                   ,iconCls: 'icon-tabs'
+                },{
+                    text: 'Protocol Support'
+                    ,disabled: true
+                   ,iconCls: 'icon-tabs'
+                },{
+                    text: 'Visited CAMEMIS'
+                   ,iconCls: 'icon-tabs'
+                   ,handler: function(){
+                       clickOpenPage('content','Visited CAMEMIS', '/customer/visitors/?GuId=<?=$this->GuId?>'); 
+                   }
+                }]
+            }]
+        });
+    });
+</script>
+<?
+$a = Zend_Registry::getInstance();
+//print_r($a);
+print $CAMEMIS_PAGE->showCamemisFooter();
+?>

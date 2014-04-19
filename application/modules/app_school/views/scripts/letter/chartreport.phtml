@@ -1,0 +1,81 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Math Man Web Application Developer
+// Date: 04.03.2014
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+	Ext.onReady(function() {
+		viewport = new Ext.Viewport({
+			layout: 'fit'
+			,border: false
+			,items:[{
+				border: false
+				,layout: 'fit'
+				,tbar:[{
+					text:'<?=REFRESH?>'
+					,iconCls:'icon-arrow_refresh'
+					,handler: function(){
+						window.location="<?=CamemisPage::setRequestURI()?>";
+					}
+				}]
+				,items:[{
+					layout:'column'
+					,height:percentHeight(100)
+					,autoScroll:true
+					,border:false
+					,defaults: {
+						layout: 'anchor'
+						,defaults: {anchor: '100%'}
+					}
+					,items: [{
+						columnWidth: 1
+						,baseCls:'x-plain'
+						,bodyStyle:'padding:5px 5px 5px 5px'
+						,items:[{
+							title: '<?=WEEK?>'
+							,layout: 'fit'
+							,collapsible: true
+							,collapsed: false
+							,height:350
+							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_WEEKLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY")?>'})]
+						}]
+					},{
+						columnWidth: 1
+						,baseCls:'x-plain'
+						,bodyStyle:'padding:0px 5px 5px 5px'
+						,items:[{
+							title: '<?=MONTH?>'
+							,layout: 'fit'
+							,collapsible: true
+							,collapsed: false
+							,height:350
+							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_MONTHLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY")?>'})]
+						}]
+					},{
+						columnWidth: 1
+						,baseCls:'x-plain'
+						,bodyStyle:'padding:0px 5px 5px 5px'
+						,items:[{
+							title: '<?=YEAR?>'
+							,layout: 'fit'
+							,collapsible: true
+							,collapsed: false
+							,height:350
+							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_YEARLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
+						}]
+					}]
+				}]
+			}]
+		});
+	});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

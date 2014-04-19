@@ -1,0 +1,72 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @THORN Visal
+// Date: 16.12.2013
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    ////////////////////////////////////////////////////////////////////////////
+    //@Viewport
+    ////////////////////////////////////////////////////////////////////////////
+    Ext.onReady(function() {
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,layout: 'fit'
+                ,tbar:[{
+                    text:'<?=REFRESH?>'
+                    ,iconCls:'icon-arrow_refresh'
+                    ,handler: function(){
+                        window.location="<?=CamemisPage::setRequestURI()?>";
+                    }
+                }]
+                ,items:[{
+                    layout:'column'
+                    ,height:percentHeight(100)
+                    ,autoScroll:true
+                    ,border:false
+                    ,defaults: {
+                        layout: 'anchor'
+                        ,defaults: {anchor: '100%'}
+                    }
+                    ,items: [{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: '<?=APPLICATION_TYPE?>'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:350
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'APPLICATION_TYPE', url:'/chart/studentpreschool/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=APPLICATION_TYPE")?>'})]
+                        }]    
+                    },{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:0px 5px 5px 5px'
+                        ,items:[{
+                            title: '<?=TESTING_TYPE?>'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:350
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'TESTING_TYPE', url:'/chart/studentpreschool/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=TESTING_TYPE")?>'})]
+                        }]    
+                    }]///////////////////be continune
+                }]
+            }]
+        });
+    });
+</script>
+    
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

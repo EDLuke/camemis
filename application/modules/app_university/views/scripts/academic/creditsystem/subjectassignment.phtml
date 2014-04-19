@@ -1,0 +1,379 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$SUBJECT_TREE = new CamemisTree("SUBJECT", false);
+$SUBJECT_TREE->setURL('/subject/jsontree/');
+$SUBJECT_TREE->setSaveUrl('/subject/jsonsave/');
+
+$ASSIGNMENT_TEMP_TREE = new CamemisTree("ASSIGNMENT_TEMP", false);
+$ASSIGNMENT_TEMP_TREE->setURL("/assignment/jsontree/");
+
+$SUBJECT_ASSIGNMENTT_TREE = new CamemisTree("SUBJECT_ASSIGNMENT", false);
+$SUBJECT_ASSIGNMENTT_TREE->setURL("/subject/jsontree/");
+
+if($this->facette->OBJECT_TYPE == "CLASS"){
+    $CHECK = GradeSubjectDBAccess::checkAssignedSubjectByClass($this->facette->ID);
+    if(!$CHECK){
+        GradeSubjectDBAccess::copySubjectAssingmentToClass($this->facette->GUID, "schoolyear");
+    }
+}
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader(); 
+
+function winCopySubjectAssignmentIntoClass($facette){
+    
+    $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+    $SQL = "SELECT * FROM t_grade WHERE GRADE_ID='".$facette->GRADE_ID."' AND SCHOOL_YEAR='".$facette->SCHOOL_YEAR."' AND OBJECT_TYPE='CLASS'";
+    $entries = $DB_ACCESS->fetchAll($SQL);
+    
+    $data[0] = "{xtype:'radio',id:'".$facette->SCHOOL_YEAR."',boxLabel:'".COPY_FROM_SCHOOLYEAR."',name:'xxx',inputValue:'schoolyear',hideLabel:true,onClick:function(e){Ext.getCmp('APPY_ID').enable();copyFrom='schoolyear';}}";
+    if($entries){
+        $i=1;
+        foreach($entries as $value){
+            if ($value->ID!=$facette->ID) 
+                $data[$i] = "{xtype:'radio',id:'".$value->ID."',boxLabel:'".COPY_FROM_CLASS." &raquo; ".$value->NAME."',name:'xxx',inputValue:'".$value->ID."',hideLabel:true,onClick:function(e){Ext.getCmp('APPY_ID').enable();copyFrom='".$value->ID."';}}";
+            $i++;
+        }
+    }
+    
+    $RADIO_ITEMS = implode(",",$data);
+    
+    $js = "";
+    $js .= "var win = new Ext.Window({";
+        $js .= "title: '<b>".COPY."</b>'";
+        $js .= ",id: 'OPEN_WIN_IFRAME_ID'";
+        $js .= ",maximizable: true";
+        $js .= ",plain: true";
+        $js .= ",modal: true";
+        $js .= ",width: 400";
+        $js .= ",height: 300";
+        $js .= ",layout: 'fit'";
+        $js .= ",items:[{
+            border:false
+            ,bodyStyle: 'background:#FFFFFF; padding:10px;'
+            ,items:[".$RADIO_ITEMS."]
+        }]";
+        $js .= ",tbar: ['->',{";
+            $js .= "text: '" . APPLY . "'";
+            $js .= ",id: 'APPY_ID'";
+            $js .= ",disabled:true";
+            $js .= ",iconCls: 'icon-lightning_add'";
+            $js .= ",handler: function (){";
+                $js .= "window.parent.Ext.MessageBox.show({";
+                    $js .= "title:'" . STATUS . "'";
+                    $js .= ",width: 250";
+                    $js .= ",msg: '" . MSG_COPY_DATA . "'";
+                    $js .= ",buttons: Ext.MessageBox.YESNOCANCEL";
+                    $js .= ",icon: Ext.MessageBox.WARNING";
+                    $js .= ",fn: function(btn, text){";
+                        $js .= "if (btn == 'yes'){";
+                            $js .= "Ext.Ajax.request({";
+                                $js .= "url: '/subject/jsonsave/'";
+                                $js .= ",method: 'POST'";
+                                $js .= ",params: {cmd: 'copySubjectAssingmentToClass',academicId:'".$facette->GUID."',copyFrom:copyFrom}";
+                                $js .= ",success: function(response, options) {XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').root.reload();}";
+                                $js .= ",failure: function(response, options) {}";
+                            $js .= "});";
+                        $js .= "}";
+                    $js .= "}";
+                $js .= "});";
+            $js .= "}";
+        $js .= "}]";
+        $js .= ",fbar: ['->',{";
+            $js .= "text: '" . CLOSE . "'";
+            $js .= ",iconCls: 'icon-cancel'";
+            $js .= ",handler: function (){";
+                $js .= "win.close();";
+            $js .= "}";
+        $js .= "}]";
+    $js .= "});";
+    $js .= "win.show();";
+    
+    return $js;
+}
+?>
+<script>
+
+var subjectId;
+var assignmentTempId;
+var parentSubject;
+var copyFrom;
+Ext.onReady(function() {
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333;">' + value + '</div>';
+    }
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+     
+    ///////////////////////////////////////////////////////
+    //Subject tree...
+    ///////////////////////////////////////////////////////
+    $SUBJECT_TREE->isAsyncTreeNode = false;
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $SUBJECT_TREE->setBaseParams("
+        cmd: 'treeAllSubjects'
+        ,department:'YES'
+        ,academicId:'".$this->facette->GUID."'
+    ");
+    
+    $SUBJECT_TREE->addTBarItems("
+        text: '" . SUBJECT . "'
+        ,id: 'FACULTY_OR_DEPARTMENT'
+        ,formBind:true
+        ,iconCls:'icon-find'
+        ,scope:this
+        ,handler: function(){
+            this.loader.baseParams.department = 'YES';
+            this.root.reload();
+        }
+    ");
+    
+    $SUBJECT_TREE->addTBarItems("
+        text: '" . ALL_SUBJECTS . "'
+        ,id: 'ALL_SUBJECTS'
+        ,formBind:true
+        ,iconCls:'icon-find'
+        ,scope:this
+        ,handler: function(){
+            this.loader.baseParams.department = 'ALL';
+            this.root.reload();
+        }
+    ");
+    
+    $SUBJECT_TREE->backgroundColor = "#F9F9F9";
+    $SUBJECT_TREE->isTreeExpand = false;
+    $SUBJECT_TREE->isOnClickContextMenu = false;
+    $SUBJECT_TREE->renderJS();
+    ///////////////////////////////////////////////////////
+    //Assignment tree...
+    ///////////////////////////////////////////////////////
+    $ASSIGNMENT_TEMP_TREE->isAsyncTreeNode = false;
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $ASSIGNMENT_TEMP_TREE->setBaseParams("
+        cmd: 'jsonTreeAllAssignmentTemp'
+        ,type:'1'
+        ,subjectId:subjectId
+        ,academicId:'".$this->facette->GUID."'
+    ");
+    $ASSIGNMENT_TEMP_TREE->backgroundColor = "#F9F9F9";
+    $ASSIGNMENT_TEMP_TREE->isTreeExpand = true;
+    $ASSIGNMENT_TEMP_TREE->isOnClickContextMenu = false;
+    $ASSIGNMENT_TEMP_TREE->renderJS();
+    ///////////////////////////////////////////////////////
+    // Subject-Assignment...
+    ///////////////////////////////////////////////////////
+    $SUBJECT_ASSIGNMENTT_TREE->isAsyncTreeNode = false;
+    
+    $SUBJECT_ASSIGNMENTT_TREE->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            window.parent.Ext.getCmp('ACADEMIC_ID').expand();
+        }
+    ");
+    $SUBJECT_ASSIGNMENTT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $SUBJECT_ASSIGNMENTT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $SUBJECT_ASSIGNMENTT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT")){
+        
+        if (!$this->teacherId & !$this->subjectId){
+            
+            if(!$this->facette->EDUCATION_SYSTEM){
+                $SUBJECT_ASSIGNMENTT_TREE->addTBarItems("    
+                    id: 'ADD_SUBJECT_ID'
+                    ,tooltip:'".ADD_SUBJECTS."'
+                    ,scope:this
+                    ,iconCls:'icon-application_form_add'
+                    ,handler: function(){
+                        Ext.getCmp('center').getLayout().setActiveItem(0);
+                        openWinXType('WinXType','".ADD_SUBJECTS."', '".$SUBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+                        var subjectTree = Ext.getCmp('".$SUBJECT_TREE->getObjectId()."');
+                        subjectTree.on('click', function(node, e){
+                            if(node.isLeaf()){
+                                Ext.Ajax.request({
+                                    url: '/subject/jsonsave/'
+                                    ,method: 'POST'
+                                    ,params: {cmd: 'jsonAddSubjectToGrade', subjectId: node.id, academicId:'".$this->facette->GUID."'}
+                                    ,success: function(response, options) {
+                                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+                                        Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').root.reload(); 
+                                        Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').getRootNode().expand(true, false); 
+                                        node.remove(node.id);     
+                                    }
+                                    ,failure: function(response, options) {}
+                                });
+                            }
+                        });
+                    }
+                ");
+                if($this->facette->OBJECT_TYPE == "CLASS")
+                $SUBJECT_ASSIGNMENTT_TREE->addTBarItems("
+                    id: 'COPY_FROM_SCHOOLYEAR'
+                    ,tooltip:'".COPY_FROM_SCHOOLYEAR."'
+                    ,scope:this
+                    ,iconCls:'icon-disk_multiple'
+                    ,handler: function(){
+                        ".winCopySubjectAssignmentIntoClass($this->facette).";
+                    }
+                "); 
+            }
+        }
+    }
+    
+    $SUBJECT_ASSIGNMENTT_TREE->backgroundColor = "#F9F9F9";
+    $SUBJECT_ASSIGNMENTT_TREE->isTreeExpand = true;
+    $SUBJECT_ASSIGNMENTT_TREE->setBaseParams("
+        cmd: 'jsonTreeAcademicSubjectAssignment'
+        ,academicId:'".$this->facette->GUID."'
+    ");
+    $SUBJECT_ASSIGNMENTT_TREE->setRemoveParams("
+        cmd: 'removeSubjectFromAcademic'
+        ,gradesubjectId: clickId
+        ,academicId:'".$this->facette->GUID."'
+    ");
+    $SUBJECT_ASSIGNMENTT_TREE->setOnEmbeddedRemoveEvents("
+        Ext.getCmp('SUBJECT_ASSIGNMENT_ID').root.reload();
+        Ext.getCmp('SUBJECT_ASSIGNMENT_ID').getRootNode().expand(true, false);    
+    ");
+    $SUBJECT_ASSIGNMENTT_TREE->isOnClickContextMenu = false;
+    $SUBJECT_ASSIGNMENTT_TREE->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,id:'WEST_ID'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,autoScroll: true
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$SUBJECT_ASSIGNMENTT_TREE->getObjectXtype();?>'}]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,bodyStyle: 'padding:1px'
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+
+    <?
+    $html = "";
+    $html .= "var myTree = ".$SUBJECT_ASSIGNMENTT_TREE->ExtgetCmp().";";
+    $html .= "myTree.on('click', function(node, event){";
+            $html .= "if(!node.isLeaf()){";
+                $html .= "parentSubject = node.attributes.gradeSubjectId;";
+                $html .= "subjectId = node.attributes.subjectId;";
+                $html .= "var contextMenu = new Ext.menu.Menu({";
+                    $html .= "items: [{";
+                        $html .= "text: '".ASSIGNMENT." &raquo; ' + node.text";
+                        $html .= ",iconCls: 'icon-application_form_add'";
+                        $html .= ",handler: function(){";
+                            $html .="
+                            Ext.getCmp('center').getLayout().setActiveItem(0);
+                            openWinXType('WinXType','".ASSIGNMENT."', '".$ASSIGNMENT_TEMP_TREE->getObjectXType()."', 500, percentHeight(85));
+                            var subjectTree = Ext.getCmp('".$ASSIGNMENT_TEMP_TREE->getObjectId()."');
+                            subjectTree.on('click', function(node, e){
+                                if(node.isLeaf()){
+                                    Ext.Ajax.request({
+                                        url: '/assignment/jsonsave/'
+                                        ,method: 'POST'
+                                        ,params: {cmd: 'jsonAddAssignmentToSubject',  assignmentId:node.id, subjectId:subjectId, academicId:'".$this->facette->GUID."'}
+                                        ,success: function(response, options) {
+                                            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                                            myTree = window.Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID');
+                                            myNode = myTree.getNodeById('SUBJECT_'+subjectId);
+                                            myNode.reload();
+                                            myNode.expand(true, false);
+                                            node.remove(node.id);
+                                        }
+                                        ,failure: function(response, options) {}
+                                    });
+                                }
+                            });
+                            ";
+                        $html .= "}";
+                    $html .= "},{";
+                        $html .= "text: '".SHOW_DETAIL." &raquo; ' + node.text";
+                        $html .= ",iconCls: 'icon-application_form_magnify'";
+                        $html .= ",handler: function(){";
+                            $html .= "clickOpenPage('center','', '/subject/gradesubject/?target=".camemisId()."&academicId=".$this->facette->GUID."&gradesubjectId=' + node.attributes.gradeSubjectId + '&subjectId=' + node.attributes.subjectId + '&classId=' + node.attributes.classId);";
+                        $html .= "}";
+                    $html .= "}]";
+                $html .= "});";   
+            $html .= "}else{";
+                $html .= "var contextMenu = new Ext.menu.Menu({";
+                $html .= "items: [{";
+                    $html .= "text: '".SHOW_DETAIL." &raquo; ' + node.text";
+                    $html .= ",iconCls: 'icon-application_form_magnify'";
+                    $html .= ",handler: function(){";
+                        $html .= "clickOpenPage('center','', '/assignment/showitem/?academicId=".$this->facette->GUID."&objectId=' + node.attributes.assignmentId + '&subjectId=' + node.attributes.subjectId);";
+                    $html .= "}";
+                $html .= "}]";
+                $html .= "});";  
+            $html .= "}";
+        $html .= "event.stopEvent();";
+        $html .= "contextMenu.showAt(event.xy);"; 
+    $html .= "});";
+    
+    print $html;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,129 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$DISPLAY_ERROR = "{
+    title: '".STATUS."'
+    ,layout: 'fit'
+    ,items:[{
+        layout:'fit'
+        ,bodyStyle: 'padding:15px'
+        ,border: false
+        ,html:'<h1 class=\"header\">No Data Available!</h1>'
+    }]
+}";
+
+$setParams = "";
+$setParams .= "&classId=".$this->classId."";
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $MONTHLY_RESULT = "{
+            title: '".MONTHLY_RESULT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url: '/evaluation/performancemonthtraditionalmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+        }";
+        if($academicObject->DISPLAY_MONTH_RESULT)
+        $PENEL_ITEMS[] = $MONTHLY_RESULT;
+
+        $setFirstParams = "";
+        $setFirstParams .= $setParams;
+        $setFirstParams .= "&term=FIRST_SEMESTER";
+        $FIRST_SEMESTER_RESULT = "{
+            title: '".FIRST_SEMESTER_RESULT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: '/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setFirstParams)."'})]
+        }";
+        if($academicObject->DISPLAY_FIRST_RESULT)
+        $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
+        
+        $setSecondParams = "";
+        $setSecondParams .= $setParams;
+        $setSecondParams .= "&term=SECOND_SEMESTER";
+        $SECOND_SEMESTER_RESULT = "{
+            title: '".SECOND_SEMESTER_RESULT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: '/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setSecondParams)."'})]
+        }";
+        if($academicObject->DISPLAY_SECOND_RESULT)
+        $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
+        
+        $setYearParams = "";
+        $setYearParams .= $setParams;
+        $YEAR_RESULT = "{
+            title: '".YEAR_RESULT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setYearParams)."'})]
+        }";
+        if($academicObject->DISPLAY_YEAR_RESULT)
+        $PENEL_ITEMS[] = $YEAR_RESULT;
+        
+        if($PENEL_ITEMS){
+            $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        }else{
+            $CHOOSE_ITEMS = $DISPLAY_ERROR;
+        }
+        
+        $HIDDEN_CANCEL = UserAuth::isUserTypeAdmin()?"false":"true";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,tbar:[{
+                    text: '<?=CANCEL?>'
+                    ,id: 'CANCEL_ID'
+                    ,hidden:<?=$HIDDEN_CANCEL?>
+                    ,iconCls:'icon-cancel'
+                    ,scope:this
+                    ,handler: function(){
+                        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                        window.parent.Ext.getCmp('ACADEMIC_ID').expand();
+                    }
+                },'-','<b><?=$academicObject->NAME?> &raquo; <?=ACADEMIC_PERFORMANCES?></b>']
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:<?=$CHOOSE_ITEMS;?>   
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

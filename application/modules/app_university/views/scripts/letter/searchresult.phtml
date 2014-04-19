@@ -1,0 +1,138 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man Web Application Developer
+// Date: 17.02.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("LETTER", "LIST");
+$OBJECT_GRID->setLoadUrl('/letter/jsonload/');
+$columndata = Utiles::getGridColumnData("LETTER_LIST_ID");
+
+$code = isset($_GET["code"])?$_GET["code"]:"";
+$firstname= isset($_GET["firstname"])?$_GET["firstname"]:"";
+$lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
+$name = isset($_GET["name"])?$_GET["name"]:"";
+$number = isset($_GET["number"])?$_GET["number"]:"";
+$type = isset($_GET["type"])?$_GET["type"]:"";
+$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
+$endDate = isset($_GET["endDate"])?$_GET["endDate"]:"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+    Ext.onReady(function() {
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                return '<span class=\"spanText\">' + v + '</span>';
+            }
+        ");
+        
+
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        //$OBJECT_GRID->addReadField("name: 'CODE'");
+        //$OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        //$OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT'");
+        $OBJECT_GRID->addReadField("name: 'NUMBER'");
+        $OBJECT_GRID->addReadField("name: 'LETTER_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'TYPE'");
+        $OBJECT_GRID->addReadField("name: 'DATE'");
+        $OBJECT_GRID->addReadField("name: 'FROM'");
+        $OBJECT_GRID->addReadField("name: 'TO'");
+        $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+        $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".NUMBER."</b>', align:'center', width: 100, hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'NUMBER'");
+        $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', renderer: renderText, width: 150, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'SUBJECT'");
+        $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', renderer: renderText, width: 150, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'LETTER_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".DATE."</b>', renderer: renderText, width: 100, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".FROM_TEXT."</b>', renderer: renderText, width: 150, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'FROM'");
+        $OBJECT_GRID->addColumn("header: '<b>".TO_TEXT."</b>', renderer: renderText, width: 150, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'TO'");
+        switch (UserAuth::getUserType()) {
+            case "SUPERADMIN":
+            case "ADMIN":
+                $OBJECT_GRID->addColumn("header: '<b>".CREATED_BY."</b>', renderer: renderText, width: 100, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'CREATED_BY'");
+                $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', renderer: renderText, width: 150, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'CREATED_DATE'");
+                break;
+        }
+
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'showListByLetter'
+            ,code:'".$code."'
+            ,firstname:'".$firstname."'
+            ,lastname:'".$lastname."'
+            ,name:'".$name."'
+            ,number:'".$number."'
+            ,type:'".$type."'
+            ,startDate:'".$startDate."'
+            ,endDate:'".$endDate."'
+        ";
+
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text:'".REFRESH."'
+                ,iconCls:'icon-arrow_refresh'
+                ,handler: function(){
+                    window.location=".CamemisPage::setRequestURI()."
+                }
+            }],'->');
+        ");
+
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->isQuickySearch = false;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "LETTER_TYPE";
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,xtype: 'panel'
+                ,layout: 'card'
+                ,id: 'center'
+                ,activeItem: 0
+                ,items:[{
+                    border: false
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+
+        var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>');
+        if(grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            clickOpenPage('center','', '/letter/showitem?objectId='+record.data.ID+'&typeLetter='+record.data.TYPE);
+        })
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
