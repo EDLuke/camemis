@@ -48,7 +48,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,collapsible: true
                             ,collapsed: false
                             ,height:350
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPINE_WEEKLY', url:'/chart/studentdiscipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY&personType=$personType")?>'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPINE_WEEKLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY&personType=$personType")?>'})]
                         }]
                     },{
                         columnWidth: 1
@@ -60,7 +60,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,collapsible: true
                             ,collapsed: false
                             ,height:350
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_MONTHLY', url:'/chart/studentdiscipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY&personType=$personType")?>'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_MONTHLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY&personType=$personType")?>'})]
                         }]    
                     },{
                         columnWidth: 1
@@ -72,7 +72,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,collapsible: true
                             ,collapsed: false
                             ,height:350
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_YEARLY', url:'/chart/studentdiscipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY&personType=$personType")?>'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_YEARLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY&personType=$personType")?>'})]
                         }]    
                     }]///////////////////be continune
                 }]

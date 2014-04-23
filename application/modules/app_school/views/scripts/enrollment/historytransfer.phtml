@@ -22,10 +22,10 @@ $OBJECT_FORM = new CamemisForm("DISCIPLINE");
 $OBJECT_FORM->setLoadUrl('/enrollment/jsonload/');
 $OBJECT_FORM->setSaveUrl('/enrollment/jsonsave/');
 
-$OBJECT_GRID=new CamemisGrid("STUDENT","LIST");
+$OBJECT_GRID=new CamemisGrid("STUDENT_ACADEMIC_HISTORY","LIST");
 $OBJECT_GRID->setLoadUrl('/enrollment/jsonload/');
 $OBJECT_GRID->setSaveUrl('/enrollment/jsonload/');
-$columndata = Utiles::getGridColumnData("STUDENT_LIST_ID");
+$columndata = Utiles::getGridColumnData("STUDENT_ACADEMIC_HISTORY_LIST_ID");
 
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -60,9 +60,10 @@ Ext.onReady(function() {
     $js .= ",mode: 'local'";
     $js .= ",triggerAction: 'all'";
     $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-    $js .= ",store: [['','[---]'],['TRANSFER','TRANSFER'],['UPGRADE','UPGRADE'],['DOWNGRADE','DOWNGRADE']]";
+    $js .= ",store: [[0, '[---]'],['TRANSFER','TRANSFER'],['UPGRADE','UPGRADE'],['DOWNGRADE','DOWNGRADE']]";
     $js .= ",editable:false";
     $js .= ",name: 'CHOOSE_OPTION'";
+    $js .= ",hiddenName: 'CHOOSE_OPTION'";
     $js .= ",width:150";
 
     $OBJECT_GRID->addReadField("name: 'CODE'");                  
@@ -113,9 +114,12 @@ Ext.onReady(function() {
         }]);
     ");
     
-    $OBJECT_GRID->isObjectDefaultOnLoad=false; 
-    $OBJECT_GRID->isQuickySearch=true; 
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->isPagingToolbar = true;
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = false;
     $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->renderJS();
 	
     $OBJECT_FORM->addObjectItems("
@@ -170,7 +174,15 @@ Ext.onReady(function() {
                 ,params:{cmd: 'jsonAllStudentsHistory',start:0,limit:100}
                 ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
                 ,success: function(response, options) {
+                    var gridObject=Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
                     jsonData = Ext.util.JSON.decode(response.responseText);
+                    var myform=".$OBJECT_FORM->ExtgetCmp().";
+                    for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                        if(myform.getForm().getEl().dom[i].value){
+                            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                        }
+                    }
+                    
                     Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().loadData(jsonData);
                     loadMask.hide();
                 }

@@ -807,12 +807,12 @@ class AcademicDBAccess {
         $SQL .= " WHERE 1=1";
         if ($campusId)
         {
-            $SQL .= " AND EDUCATION_TYPE = '" . $campusId . "' AND OBJECT_TYPE = 'GRADE'";
+            $SQL .= " AND CAMPUS_ID = '" . $campusId . "'";
         }
-        else
-        {
+        
+        
             $SQL .= " AND OBJECT_TYPE = 'GRADE'";
-            if ($object)
+            /*if ($object)
             {
                 if ($check)
                 {
@@ -822,9 +822,9 @@ class AcademicDBAccess {
                 {
                     $SQL .= " AND LEVEL >= '" . $object->LEVEL . "'";
                 }
-            }
+            }*/
             $SQL .= " ORDER BY LEVEL ASC";
-        }
+       
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }

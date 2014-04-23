@@ -92,6 +92,12 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
                     ,form: formObject.getForm().getEl().dom
                     ,success: function(response, options) {
                         jsonData = Ext.util.JSON.decode(response.responseText);
+                        var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                        for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                            if(myform.getForm().getEl().dom[i].value){
+                                Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                            }
+                        }
                         gridObject.getStore().loadData(jsonData);
                         myMask.hide();
                     }
@@ -102,8 +108,8 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
         function plsEnterKey(obj){
             var s;
             if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER
-                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.STUDENT_SCHOOL_ID
-                || obj.DISCIPLINE_TYPE_STAFF || obj.DISCIPLINE_TYPE_STAFF
+                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.STAFF_SCHOOL_ID
+                || obj.DISCIPLINE_TYPE_STUDENT || obj.DISCIPLINE_TYPE_STAFF
                 || obj.START_DATE || obj.END_DATE
             ){
                 s = 0;

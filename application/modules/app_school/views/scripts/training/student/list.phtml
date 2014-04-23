@@ -138,7 +138,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         ");
         
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, hidden:".checkColHidden(1, $columndataStudentGrid).", dataIndex: 'CODE'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataStudentGrid).", dataIndex: 'STUDENT'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataStudentGrid).",sortable: true, dataIndex: 'STUDENT'");
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100,  hidden:".checkColHidden(3, $columndataStudentGrid).",sortable: true, dataIndex: 'GENDER'");
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, hidden:".checkColHidden(4, $columndataStudentGrid).", sortable: true, dataIndex: 'DATE_BIRTH'");
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, hidden:".checkColHidden(5, $columndataStudentGrid).", sortable: true, dataIndex: 'CURRENT_CLASS'");
@@ -184,7 +184,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addReadField("name: 'TERM_NAME'");     
         
         $OBJECT_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', width: 80, hidden:".checkColHidden(1, $columndata).", renderer: cssDefault, sortable: false, dataIndex: 'CODE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . FULL_NAME . "</b>', width: 180, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, sortable: false, dataIndex: 'STUDENT'");
+        $OBJECT_GRID->addColumn("header: '<b>" . FULL_NAME . "</b>', width: 180, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, sortable: true, dataIndex: 'STUDENT'");
         $OBJECT_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(3, $columndata).", renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
         $OBJECT_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer:cssGray, sortable: true, dataIndex: 'DATE_BIRTH'");
         $OBJECT_GRID->addColumn("header: '<b>" . PHONE . "</b>', width: 150, hidden:".checkColHidden(5, $columndata).", renderer:cssDefault, sortable: true, dataIndex: 'PHONE'");

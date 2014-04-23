@@ -519,6 +519,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
             , "B.COLOR AS SUBJECT_COLOR"
             , "D.NAME AS ROOM"
             , "CONCAT(D.NAME,'<br>',D.BUILDING,'<br>',D.FLOOR) AS ROOM_NAME"
+            , "E.NAME AS ACADEMIC_NAME"
         );
 
         $SQL = self::dbAccess()->select();
@@ -535,8 +536,11 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         if ($teacherId)
             $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
 
-        $SQL->where("A.START_DATE<='" . $endDate . "'");
-        $SQL->where("A.END_DATE>='" . $startDate . "'");
+        //$SQL->where("A.START_DATE<='" . $startDate . "'");
+        //$SQL->where("A.END_DATE>='" . $endDate . "'");
+        
+        $SQL->where("A.START_DATE<='" . $startDate . "'");
+        $SQL->where("A.END_DATE>='" . $endDate . "'");
 
         switch (strtoupper($academicType)) {
             case "GENERAL":
@@ -608,7 +612,9 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         $data = array();
         $i = 0;
         foreach ($days as $day) {
+            
             $shortday = getWEEKDAY($day);
+            
             if ($shortday) {
                 $entries = self::getSQLTeacherEvent($teacherId, $startDate, $endDate, $shortday, $academicType);
                 if ($entries) {
@@ -625,6 +631,8 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                         $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
                         $data[$i]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);
                         $data[$i]["CLASS"] = $value->ACADEMIC_NAME;
+                        $data[$i]["TERM"] = displaySchoolTerm($value->TERM);
+                        $data[$i]["TIME"] = secondToHour($value->START_TIME) . " " . secondToHour($value->END_TIME);
                     }
                 }
             }

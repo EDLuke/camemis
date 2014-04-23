@@ -131,7 +131,7 @@ class DisplayItem{
 
         $GRID_OBJECT->addColumn("header: '<b>".SHORT."</b>', width: 80, hidden:".checkColHidden(1, $columndata).", renderer:cssText, sortable: true, dataIndex: 'SHORT'");
         $GRID_OBJECT->addColumn("header: '<b>".NAME."</b>', width: 150, hidden:".checkColHidden(2, $columndata).", renderer:cssText, sortable: true, dataIndex: 'NAME'");
-        $GRID_OBJECT->addColumn("header: '<b>".RANK."</b>', width: 100, hidden:".checkColHidden(3, $columndata).", renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
+        $GRID_OBJECT->addColumn("header: '<b>".RANK."</b>', width: 80, hidden:".checkColHidden(3, $columndata).", renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
         $GRID_OBJECT->addColumn("header: '<b>".VALUE."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer:cssAverage, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
         $GRID_OBJECT->addColumn("header: '<b>".ASSESSMENT."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
@@ -335,31 +335,31 @@ $DISPLAY_ITEM = new DisplayItem(
 
         $PENEL_ITEMS = Array();
 
-        $SUMMARY = "{
-            columnWidth:1
-            ,baseCls:'x-plain'
-            ,bodyStyle:'padding:5px 10px 0px 10px'
-            ,items:[{
-                title: '".SUMMARY."'
-                ,collapsible: true
-                ,collapsed: false
-                ,items:[{
-                    layout:'fit'
-                    ,height:180
-                    ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
-                    ,border: false
-                    ,items:[{
-                        xtype: 'tabpanel'
-                        ,tabPosition: 'top'
-                        ,plain:true
-                        ,activeTab: 0
-                        ,enableTabScroll:true
-                        ,items:".$SELECTION_SUMMARY_ITEMS."
-                    }]
-                }]
-            }]
-        }";
-        $PENEL_ITEMS[] = $SUMMARY;
+//        $SUMMARY = "{
+//            columnWidth:1
+//            ,baseCls:'x-plain'
+//            ,bodyStyle:'padding:5px 10px 0px 10px'
+//            ,items:[{
+//                title: '".SUMMARY."'
+//                ,collapsible: true
+//                ,collapsed: false
+//                ,items:[{
+//                    layout:'fit'
+//                    ,height:180
+//                    ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
+//                    ,border: false
+//                    ,items:[{
+//                        xtype: 'tabpanel'
+//                        ,tabPosition: 'top'
+//                        ,plain:true
+//                        ,activeTab: 0
+//                        ,enableTabScroll:true
+//                        ,items:".$SELECTION_SUMMARY_ITEMS."
+//                    }]
+//                }]
+//            }]
+//        }";
+//        $PENEL_ITEMS[] = $SUMMARY;
 
         $MONTHLY_RESULT = "{
             columnWidth:1

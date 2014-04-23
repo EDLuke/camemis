@@ -80,6 +80,7 @@ class StudentPreschoolDBAccess {
                     $data['ADDRESS'] = $result->ADDRESS;
                     $data['EMAIL'] = $result->EMAIL;
                     $data['GENDER'] = $result->GENDER;
+                    $data['DATE_BIRTH'] = $result->DATE_BIRTH;
                 }
             break;
             case "APPLICATION_TYPE":
@@ -338,6 +339,10 @@ class StudentPreschoolDBAccess {
             
         if (isset($params["GENDER"]))
             $SAVEDATA["GENDER"] = addText($params["GENDER"]);
+            
+        if (isset($params["DATE_BIRTH"]))
+            $SAVEDATA["DATE_BIRTH"] = setDate2DB($params["DATE_BIRTH"]);
+            
         if ($objectId == "new") {
             $SAVEDATA['ID'] = generateGuid();
             $GETDATA['PRESTUDENT'] = $SAVEDATA['ID'];
@@ -392,7 +397,7 @@ class StudentPreschoolDBAccess {
         );
     }
     
-   public static function sqlGetStudentPreschool($params) {
+    public static function sqlGetStudentPreschool($params) {
         
         $startDate = "";
         $endDate = "";
@@ -403,6 +408,7 @@ class StudentPreschoolDBAccess {
         $address = isset($params["ADDRESS"]) ? addText($params["ADDRESS"]) : "";
         $phone = isset($params["PHONE"]) ? addText($params["PHONE"]) : "";
         $email = isset($params["EMAIL"]) ? addText($params["EMAIL"]) : "";
+        $dob = isset($params["DATE_BIRTH"]) ? addText($params["DATE_BIRTH"]) : "";
         $informationType = isset($params["INFORMATION_TYPE"]) ? addText($params["INFORMATION_TYPE"]) : "";
         $infoType = isset($params["infoType"]) ? addText($params["infoType"]) : "";
         
@@ -439,6 +445,10 @@ class StudentPreschoolDBAccess {
             
         if ($gender)
             $SQL->where("A.GENDER ='" . $gender . "'");
+        
+        $DateOfBirth = setDate2DB($dob);
+        if ($DateOfBirth)
+            $SQL->where("A.DATE_BIRTH ='" . $DateOfBirth . "'");
 
         if ($firstname)
             $SQL->where("A.FIRSTNAME LIKE '" . $firstname . "%'");
@@ -474,6 +484,8 @@ class StudentPreschoolDBAccess {
 
         if ($infoType)
             $SQL->where("C.OBJECT_TYPE = '".$infoType."'");
+            
+        $SQL .= "GROUP BY A.ID";
 
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
@@ -495,11 +507,13 @@ class StudentPreschoolDBAccess {
                 $data[$i]['ID'] = $value->ID;
                 $data[$i]['STUDENT_INDEX'] = $value->STUDENT_INDEX;
                 $data[$i]['ID_PRESCHOOLTYPE'] = $value->PRESCHOOLTYPE_ID;
+                $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
+                $data[$i]["LASTNAME"] = $value->LASTNAME;
+                $data[$i]["GENDER"] = getGenderName($value->GENDER);
+                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
                 if (!SchoolDBAccess::displayPersonNameInGrid()) {
-                    $data[$i]["STUDENT_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
                     $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
                 } else {
-                    $data[$i]["STUDENT_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
                     $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
                 }
                 

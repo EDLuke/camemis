@@ -218,7 +218,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             if ($selectedStudents) {
                 foreach ($selectedStudents as $studentId) {
                     ///check student have in the class and then update his class
-                    $checkSt = StudentAcademicDBAccess::checkStudentEnrolledTraditionalSystem($studentId, $academicObject->GRADE_ID, $schoolyearId);
+                    $checkSt = StudentAcademicDBAccess::checkStudentEnrolledTraditionalSystem($studentId, $gradeLeftId,$schoolyearId);
 
                     if (isset($academicObject) && isset($schoolyearObject)) {
 
@@ -236,7 +236,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
                             $SAVEDATA["CLASS"] = $academicObject->ID;
                             $WHERE['STUDENT = ?'] = $studentId;
-                            $WHERE['GRADE = ?'] = $academicObject->GRADE_ID;
+                            $WHERE['GRADE = ?'] = $gradeLeftId;
                             $WHERE['SCHOOL_YEAR = ?'] = $schoolyearId;
                             self::dbAccess()->update('t_student_schoolyear', $SAVEDATA, $WHERE);
                             //new update
@@ -378,16 +378,16 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         }
 
         if ($studentSchoolId)
-            $SQL->where("C.STUDENT_SCHOOL_ID = '" . $studentSchoolId . "'");
+            $SQL->where("C.STUDENT_SCHOOL_ID LIKE ?","" . $studentSchoolId . "%");
 
         if ($code)
-            $SQL->where("C.CODE = '" . $code . "'");
+            $SQL->where("C.CODE LIKE ?","" . $code . "%");
 
         if ($lastName)
-            $SQL->where("C.LASTNAME = '" . $lastName . "'");
+            $SQL->where("C.LASTNAME LIKE ?","" . $lastName . "%");
 
         if ($firstName)
-            $SQL->where("C.FIRSTNAME = '" . $firstName . "'");
+            $SQL->where("C.FIRSTNAME LIKE ?","" . $firstName . "%");
 
         if ($gender) {
             $SQL->where("C.GENDER = '" . $gender . "'");
@@ -398,7 +398,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         }
 
         if ($search) {
-            $SQL->where("C.FIRSTNAME = '" . $search . "' OR C.LASTNAME = '" . $search . "' OR C.CODE='" . $search . "' OR C.STUDENT_SCHOOL_ID='" . $search . "'");
+            $SQL->where("C.FIRSTNAME LIKE '" . $search . "%' OR C.LASTNAME LIKE '" . $search . "%' OR C.CODE LIKE '" . $search . "%' OR C.STUDENT_SCHOOL_ID LIKE '" . $search . "%'");
         }
         switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
             default:
@@ -411,7 +411,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                 $SQL .= " ORDER BY C.FIRSTNAME DESC";
                 break;
         }
-        //error_log($SQL->__toString());
+        //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
@@ -430,9 +430,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             foreach ($result as $value) {
 
                 $oldGrade = explode('&raquo;', $value->TITLE);
-
                 $object = AcademicDBAccess::findClass($value->NEW_CLASS);
-                $newGrade = explode('&raquo;', $object->TITLE);
+                $newGrade = $object?explode('&raquo;', $object->TITLE):array();
 
                 $data[$i]["ID"] = $value->STUDENT_ID;
                 $data[$i]["CODE"] = $value->CODE_ID;
@@ -441,9 +440,9 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                 $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
                 $data[$i]["FROM_CLASS_NAME"] = setShowText($value->CLASS_NAME);
-                $data[$i]["FROM_GRADE"] = $oldGrade[1];
-                $data[$i]["CURRENT_CLASS_NAME"] = setShowText($object->NAME);
-                $data[$i]["CURRENT_GRADE"] = $newGrade[1];
+                $data[$i]["FROM_GRADE"] = isset($oldGrade[1])?$oldGrade[1]:'';
+                $data[$i]["CURRENT_CLASS_NAME"] = $object?setShowText($object->NAME):'---';
+                $data[$i]["CURRENT_GRADE"] = $newGrade?$newGrade[1]:'';
                 $data[$i]["TYPE"] = $value->TYPE;
                 $data[$i]["CREATE_DATE"] = getShowDate($value->CREATED_DATE);
                 ++$i;

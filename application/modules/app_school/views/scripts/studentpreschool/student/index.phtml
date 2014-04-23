@@ -170,6 +170,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                 {".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
                 ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
                 ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, true, false, 150)."}
             ]
         ");
         
@@ -290,6 +291,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
         $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
         $OBJECT_GRID->addReadField("name: 'STUDENT_INDEX'");
         $OBJECT_GRID->addReadField("name: 'CAMEMIS_TYPE'");
         $OBJECT_GRID->addReadField("name: 'SCORE'");
@@ -302,11 +305,13 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
 
         $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', width: 150,hidden:".checkColHidden(1, $columndata).", dataIndex: 'FIRSTNAME'");
         $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', align:'left', width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'LASTNAME'");
-        $OBJECT_GRID->addColumn("header: '<b>" . TYPE . "</b>', align:'left', width: 120,hidden:".checkColHidden(3, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . SCORE . "</b>', align:'left', width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'SCORE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'DESCRIPTION'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(6, $columndata).", dataIndex: 'CREATED_DATE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(7, $columndata).", dataIndex: 'CREATED_BY'");
+        $OBJECT_GRID->addColumn("header: '<b>" . GENDER . "</b>', align:'left', width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'GENDER'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', align:'left', width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'DATE_BIRTH'");
+        $OBJECT_GRID->addColumn("header: '<b>" . TYPE . "</b>', align:'left', width: 120,hidden:".checkColHidden(5, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . SCORE . "</b>', align:'left', width: 150,hidden:".checkColHidden(6, $columndata).", dataIndex: 'SCORE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(7, $columndata).", dataIndex: 'DESCRIPTION'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(8, $columndata).", dataIndex: 'CREATED_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(9, $columndata).", dataIndex: 'CREATED_BY'");
         
         //if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         $OBJECT_GRID->addTBarItems("
@@ -439,11 +444,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('PERSONAL_INFORMATION_ID').show();
                     Ext.getCmp('CONTACT_INFORMATION_ID').show();
                     Ext.getCmp('REFERENCE_TYPE_ID').hide();
-                    myGrid.getColumnModel().setHidden(3, false);
-                    myGrid.getColumnModel().setHidden(4, true);
+                    myGrid.getColumnModel().setHidden(4, false);
                     myGrid.getColumnModel().setHidden(5, false);
-                    myGrid.getColumnModel().setHidden(6, false);
+                    myGrid.getColumnModel().setHidden(6, true);
                     myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, false);
+                    myGrid.getColumnModel().setHidden(9, false);
                     break;
                     
                 case 'TESTING':
@@ -452,11 +458,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('PERSONAL_INFORMATION_ID').show();
                     Ext.getCmp('CONTACT_INFORMATION_ID').show();
                     Ext.getCmp('REFERENCE_TYPE_ID').hide();
-                    myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, false);
                     myGrid.getColumnModel().setHidden(5, false);
                     myGrid.getColumnModel().setHidden(6, false);
                     myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, false);
+                    myGrid.getColumnModel().setHidden(9, false);
                     break
                     
                 case 'REFERENCE':
@@ -465,11 +472,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('PERSONAL_INFORMATION_ID').hide();
                     Ext.getCmp('CONTACT_INFORMATION_ID').hide();
                     Ext.getCmp('REFERENCE_TYPE_ID').show();
-                    myGrid.getColumnModel().setHidden(3, false);
-                    myGrid.getColumnModel().setHidden(4, true);
+                    myGrid.getColumnModel().setHidden(4, false);
                     myGrid.getColumnModel().setHidden(5, false);
                     myGrid.getColumnModel().setHidden(6, true);
-                    myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, true);
+                    myGrid.getColumnModel().setHidden(9, true);
                     break
                 
                 default:
@@ -478,11 +486,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('PERSONAL_INFORMATION_ID').show();
                     Ext.getCmp('CONTACT_INFORMATION_ID').show();
                     Ext.getCmp('REFERENCE_TYPE_ID').hide();
-                    myGrid.getColumnModel().setHidden(3, true);
-                    myGrid.getColumnModel().setHidden(4, true);
-                    myGrid.getColumnModel().setHidden(5, true);
-                    myGrid.getColumnModel().setHidden(6, false);
+                    myGrid.getColumnModel().setHidden(4, false);
+                    myGrid.getColumnModel().setHidden(5, false);
+                    myGrid.getColumnModel().setHidden(6, true);
                     myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, true);
+                    myGrid.getColumnModel().setHidden(9, true);
                     break;
             }
         });

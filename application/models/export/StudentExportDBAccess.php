@@ -10,27 +10,22 @@ require_once 'models/export/CamemisExportDBAccess.php';
 
 class StudentExportDBAccess extends CamemisExportDBAccess {
 
-    function __construct($objectId)
-    {
+    function __construct($objectId) {
 
         $this->objectId = $objectId;
         parent::__construct();
     }
 
-    public function getUserSelectedColumns()
-    {
+    public function getUserSelectedColumns() {
         return Utiles::getSelectedGridColumns($this->objectId);
     }
 
-    public function setContentHeader()
-    {
+    public function setContentHeader() {
 
         $i = 0;
-        foreach ($this->getUserSelectedColumns() as $value)
-        {
+        foreach ($this->getUserSelectedColumns() as $value) {
 
-            switch ($value)
-            {
+            switch ($value) {
                 case "STATUS_KEY":
                     $CONST_NAME = "STATUS";
                     $colWidth = 20;
@@ -87,24 +82,19 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setContent($searchParams)
-    {
+    public function setContent($searchParams) {
         $entries = $this->DB_STUDENT_SEARCH->searchStudents($searchParams, false);
-        if ($entries)
-        {
-            for ($i = 0; $i <= count($entries); $i++)
-            {
+        if ($entries) {
+            for ($i = 0; $i <= count($entries); $i++) {
                 $colIndex = 0;
                 $rowIndex = $i + $this->startContent();
-                foreach ($this->getUserSelectedColumns() as $colName)
-                {
+                foreach ($this->getUserSelectedColumns() as $colName) {
 
                     $STATUS_KEY = isset($entries[$i]["STATUS_KEY"]) ? $entries[$i]["STATUS_KEY"] : "";
                     $CONTENT = isset($entries[$i][$colName]) ? $entries[$i][$colName] : "";
                     $BG_COLOR = isset($entries[$i]["BG_COLOR"]) ? $entries[$i]["BG_COLOR"] : "";
 
-                    switch ($colName)
-                    {
+                    switch ($colName) {
                         case "STATUS_KEY":
                             $this->setCellContent($colIndex, $rowIndex, $STATUS_KEY);
                             $this->setFontStyle($colIndex, $rowIndex, true, 10, "FFFFFF");
@@ -113,8 +103,7 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
                             $this->setBorderStyle($colIndex, $rowIndex, "DADCDD");
                             break;
                         default:
-                            if ($CONTENT)
-                            {
+                            if ($CONTENT) {
                                 $this->setCellContent($colIndex, $rowIndex, $CONTENT);
                                 $this->setFontStyle($colIndex, $rowIndex, false, 9, "000000");
                                 $this->setCellStyle($colIndex, $rowIndex, false, 20);
@@ -128,8 +117,7 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function studentSearch($searchParams)
-    {
+    public function studentSearch($searchParams) {
         ini_set('max_execution_time', 600000);
         set_time_limit(35000);
 

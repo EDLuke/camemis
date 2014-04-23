@@ -62,6 +62,13 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
                     ,form: formObject.getForm().getEl().dom
                     ,success: function(response, options) {
                         jsonData = Ext.util.JSON.decode(response.responseText);
+                        var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                        for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                            if(myform.getForm().getEl().dom[i].value){
+                                Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                            }
+                        }
+                        
                         gridObject.getStore().loadData(jsonData);
                         myMask.hide();
                     }
@@ -405,6 +412,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
             $OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", sortable: true, dataIndex: 'TRAINING_NAME'");
         }
         
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStudentAttendance'
+        ";
+        
         $OBJECT_GRID->addTBarItems("
             tbar.add(['-',{
                 text: '" . EXPORT_TO_EXCEL . "'
@@ -434,7 +447,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
                 }
             }]);
         ");
-        
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
         $OBJECT_GRID->isGroupingView = true;
         $OBJECT_GRID->groupField = "STUDENT";
         $OBJECT_GRID->forceFit = "false";

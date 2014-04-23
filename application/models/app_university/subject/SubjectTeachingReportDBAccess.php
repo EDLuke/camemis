@@ -173,7 +173,7 @@ class SubjectTeachingReportDBAccess {
              
             $SAVEDATA['TITLE'] = isset($params["TITLE"]) ? addText($params["TITLE"]) : "";
             $SAVEDATA['CREATED_DATE'] = $CREATEDATE ? $CREATEDATE : getCurrentDBDate();
-            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "";
+            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? $params["CONTENT"] : "";
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_subject_teaching_report', $SAVEDATA, $WHERE);  
         }else{

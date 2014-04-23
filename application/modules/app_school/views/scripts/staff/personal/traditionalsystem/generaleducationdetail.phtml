@@ -42,7 +42,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '/attendance/studentclassmain/?camIds=".$this->urlEncryp->encryptedGet($attendanceParams)."'})]
         }";
         
-        if (UserAuth::getACLTutorPermint("STUDENT_ATTENDANCE"))
+        //if (UserAuth::getACLTutorPermint("STUDENT_ATTENDANCE"))
         $PANEL_ITEMS[] = "" . $ATTENDANCE_INFORMATION . "";
         
         $scheduleParams = "academicId=".$classObject->ID."";
@@ -108,7 +108,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_INFORMATION', url: '/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'})]
         }";
         
-        if (UserAuth::getACLTutorPermint("STUDENT_DISCIPLINE"))
+        //if (UserAuth::getACLTutorPermint("STUDENT_DISCIPLINE"))
         $PANEL_ITEMS[] = "" . $DISCIPLINE_INFORMATION . "";
         
         $listOfStudentsParams = "objectId=".$classObject->ID."";
@@ -118,7 +118,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/academic/studentlist?camIds=".$this->urlEncryp->encryptedGet($listOfStudentsParams)."'})]
         }";
         
-        if (UserAuth::getACLTutorPermint("LIST_OF_STUDENTS"))
+        //if (UserAuth::getACLTutorPermint("LIST_OF_STUDENTS"))
         $PANEL_ITEMS[] = "" . $LIST_OF_STUDENTS . "";
         
         $listOfTeachersParams = "objectId=".$classObject->ID."";
