@@ -651,9 +651,9 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
             $this->year = getYearFromMonthYear($this->monthyear);
         }
 
-        parent::$this->term = $this->term;
-        parent::$this->classId = $this->classId;
-        parent::$this->section = $this->section;
+//        parent::$this->term = $this->term;
+//        parent::$this->classId = $this->classId;
+//        parent::$this->section = $this->section;
 
         $listOfSubjects = $this->listSubjects();
 
