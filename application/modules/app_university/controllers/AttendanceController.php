@@ -549,7 +549,7 @@ class AttendanceController extends Zend_Controller_Action {
                 break;
 
             case "jsonDeleteStudentAttendance":
-                $jsondata = $this->DB_STUDENT_ATTENDANCE->jsonDeleteStudentAttendance($this->REQUEST->getPost());
+                $jsondata = $this->DB_STUDENT_ATTENDANCE->jsonDeleteStudentAttendance($this->REQUEST->getPost("objectId"));
                 break;
 
             case "jsonReleaseStudentAttendance":

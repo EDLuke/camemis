@@ -773,7 +773,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
             if ($term != "TERM_ERROR")
             {
-                $searchParams["classId"] = $classId;
+                $searchParams["academicId"] = $classId;
                 $searchParams["schoolyearId"] = $schoolyearId;
                 $searchParams["shortday"] = getWEEKDAY($date);
                 $searchParams["term"] = $term;

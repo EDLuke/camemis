@@ -92,6 +92,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_SCHOOLYEAR->renderJS();      
         
         ////@veasna
+        
         $RIGHT_GRADE_OBJECT = new CamemisDynCombo("DATASET","RIGHT_GRADE");
         $RIGHT_GRADE_OBJECT->setLoadUrl("/academic/jsonload/");
         $RIGHT_GRADE_OBJECT->objectTitle = "<b>".GRADE."</b>";
@@ -286,7 +287,14 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         //$ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GPA."</b>', align:'left', renderer: cssText, width: 100, sortable: true, dataIndex: 'GRADING'");//@veasna
 
-        
+        $ASSIGNED_STUDENTS_GRID->addTBarItems("
+            tbar.add(['<b>".CAMPUS."<b>',{
+                xtype: 'buttongroup'
+               ,items:[{
+                ".CamemisField::ComboCampus("",false)."
+                }]
+            }]);
+        "); 
         
         
         $ASSIGNED_STUDENTS_GRID->addTBarItems("
@@ -297,7 +305,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
                 }]
             }]);
-        ");  
+        ");
         
         $ASSIGNED_STUDENTS_GRID->addTBarItems("
             tbar.add(['<b>".GRADE."<b>',{
@@ -408,19 +416,30 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         });
         
-        
-       var comboRightSchoolYear=Ext.getCmp('<?=$OBJECT_SCHOOLYEAR->getObjectId();?>');
-       var comboRightGrade=Ext.getCmp('<?=$RIGHT_GRADE_OBJECT->getObjectId();?>');
-       comboRightGrade.disable();
-       var comboRightClass=Ext.getCmp('<?=$RIGHT_CLASS_OBJECT->getObjectId();?>');
-       comboRightClass.disable();
+        var comboRightCampus = Ext.getCmp('CAMPUS_ID'); 
+        var comboRightSchoolYear=Ext.getCmp('<?=$OBJECT_SCHOOLYEAR->getObjectId();?>');
+        comboRightSchoolYear.disable();
+        var comboRightGrade=Ext.getCmp('<?=$RIGHT_GRADE_OBJECT->getObjectId();?>');
+        comboRightGrade.disable();
+        var comboRightClass=Ext.getCmp('<?=$RIGHT_CLASS_OBJECT->getObjectId();?>');
+        comboRightClass.disable();
+       
+        if(comboRightCampus)
+        {
+            comboRightCampus.on('select', function() {
+                comboRightSchoolYear.enable();
+                comboRightGrade.disable();
+                comboRightClass.disable();      
+            });
+        }
+       
        if(comboRightSchoolYear){
            comboRightSchoolYear.on('select', function() {
                 leftSchoolyearId ='<?=$leftSchoolYear;?>';
                 leftGradeId='<?=$leftGradeId;?>';
                 leftClassId='<?=$leftClass;?>';
                 righSchoolyearId=comboRightSchoolYear.getValue();
-                if(leftSchoolyearId==righSchoolyearId){
+                /*if(leftSchoolyearId==righSchoolyearId){
                     comboRightGrade.disable();
                     comboRightGrade.setValue('<?=$leftGradeName;?>');
                     comboRightClass.enable(); 
@@ -432,19 +451,20 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,gradeId: leftGradeId
                         ,leftClass: leftClassId  
                     };
-                    comboRightClass.store.reload();       
-                }else{
+                    comboRightClass.store.reload(); */      
+                //}else{
                     comboRightGrade.enable();
                     comboRightGrade.setValue('');
                     comboRightGrade.store.baseParams={
                         cmd: 'jsonSearchGrade'
                         ,searchType:'GRADE'
+                        ,campusId: comboRightCampus.getValue() 
                         ,gradeLeftId: leftGradeId  
                         ,leftSchoolYear: leftSchoolyearId
                         ,rightSchoolYear: righSchoolyearId  
                     };
                     comboRightGrade.store.reload();
-                }
+                //}
                 
                 loadLeftGrid(leftClassId, leftGradeId , leftSchoolyearId, righSchoolyearId);
                 

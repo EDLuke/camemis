@@ -141,7 +141,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
           
             if(node.attributes.objecttype=='CLASS') {
                
-               clickOpenPage('center','','/enrollment/enrollmentbyyear/?objectId=' + node.id + '&gradeId='+ node.attributes.gradeId + '&schoolyearId=' + node.attributes.schoolyearId);
+               clickOpenPage('center','<?=CLASS_NAME;?>&raquo;'+node.text,'/enrollment/enrollmentbyyear/?objectId=' + node.id + '&gradeId='+ node.attributes.gradeId + '&schoolyearId=' + node.attributes.schoolyearId);
                
             } 
             

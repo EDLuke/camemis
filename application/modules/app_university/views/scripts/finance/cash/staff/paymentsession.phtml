@@ -120,7 +120,7 @@ if($entriesParentRadiobox){
         Ext.form.Field.prototype.msgTarget = 'side';
         
         function showText(v, p, record, rowIndex){
-            return String.format('<div style=\"white-space:normal;font-weight:bold; padding:15px; height:40px; background:{1};color:{2};\">{0}</div>'
+            return String.format('<div style=\"white-space:normal;font-weight:bold; background:{1};color:{2};\">{0}</div>'
                 ,v
                 ,record.data['COLOR']
                 ,record.data['COLOR_FONT']
@@ -128,10 +128,17 @@ if($entriesParentRadiobox){
         }
         
         function showTextStatus(v, p, record, rowIndex){
-            return String.format('<div style=\"white-space:normal;font-weight:bold; padding:15px; height:40px;\">{0}</div>'
+            return String.format('<div style=\"white-space:normal;font-weight:bold;\">{0}</div>'
                 ,v
             );
         }
+        
+        function showHour(v){
+            return String.format('<div style=\"white-space:normal;font-weight:bold;\">{0}</div>'
+                ,v + ' hours'
+            );   
+        }
+            
         <?
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
@@ -417,9 +424,11 @@ if($entriesParentRadiobox){
         $OBJECT_FORM->labelAlign = "left";
         $OBJECT_FORM->labelWidth = 120;
         $OBJECT_FORM->renderJS();
-
+        
         $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'TEACHER_NAME'");
         $OBJECT_GRID->addReadField("name: 'SESSION_DATE'");
+        $OBJECT_GRID->addReadField("name: 'SESSION_TIME'");
         $OBJECT_GRID->addReadField("name: 'EVENT'");
         $OBJECT_GRID->addReadField("name: 'ROOM'");
         $OBJECT_GRID->addReadField("name: 'HOURS'");
@@ -427,10 +436,34 @@ if($entriesParentRadiobox){
         $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
         $OBJECT_GRID->addReadField("name: 'CLASS'");
 
-        $OBJECT_GRID->addColumn("header: '<b>".DATE."</b>', align:'left', renderer: showText, width: 150, sortable: true, dataIndex: 'SESSION_DATE'");
-        $OBJECT_GRID->addColumn("header: '<b>".EVENT."</b>', align:'left', renderer: showText, width: 150, sortable: true, dataIndex: 'EVENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".TEACHER."</b>', align:'left', renderer: showText, width: 150, sortable: true, dataIndex: 'TEACHER_NAME'");
+        $OBJECT_GRID->addColumn("
+            header: '<b>".DATE."</b>'
+            , align:'left'
+            , sortable: true
+            , width:200
+            , dataIndex: 'SESSION_DATE'
+            , renderer: showText
+            , summaryRenderer: function(){
+                return '".TOTAL."';
+            }
+        ");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".EVENT."</b>', align:'left', renderer: showText, width: 200, sortable: true, dataIndex: 'EVENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".TIME."</b>', align:'left', renderer: showText, width: 170, sortable: true, dataIndex: 'SESSION_TIME'");
         $OBJECT_GRID->addColumn("header: '<b>".GRADE_CLASS."</b>', align:'left', renderer: showText, width:150, sortable: true, dataIndex: 'CLASS'");
-        $OBJECT_GRID->addColumn("header: '<b>".HOURS."</b>', align:'left', renderer: showText, width:150, sortable: true, dataIndex: 'HOURS'");
+        $OBJECT_GRID->addColumn("
+            header: '<b>".HOURS."</b>'
+            , align:'left'
+            , sortable: true
+            , width:200
+            , dataIndex: 'HOURS'
+            , renderer: showHour
+            , summaryType: 'sum'
+            , summaryRenderer: function(total){
+                return ((total === 0 || total > 1) ? total + ' hours' : ' ');
+            }
+        ");
         $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'left', renderer: showTextStatus, width: 200, sortable: true, dataIndex: 'TEACHING_STATUS'");
         
         if($facette){
@@ -474,6 +507,8 @@ if($entriesParentRadiobox){
         }
         
         $OBJECT_GRID->objectTitle = TEACHING_SESSION;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "TEACHER_NAME";
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         

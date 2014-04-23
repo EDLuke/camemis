@@ -129,17 +129,17 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
 
-        $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
-        $searchGrade = isset($params["choosegrade"]) ? addText($params["choosegrade"]) : "";
-        $searchAbsencetype = isset($params["attendance_type"]) ? addText($params["attendance_type"]) : "";
+        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
+        $searchGrade = isset($params["CHOOSE_GRADE"]) ? addText($params["CHOOSE_GRADE"]) : "";
+        $searchAbsencetype = isset($params["ABSENT_TYPE"]) ? addText($params["ABSENT_TYPE"]) : "";
         $searchSubjecttype = isset($params["subject_type"]) ? $params["subject_type"] : "";
-        $code = isset($params["code"]) ? addText($params["code"]) : "";
-        $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
-        $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
-        $studentschoolId = isset($params["studentschoolId"]) ? addText($params["studentschoolId"]) : "";
-        $target = isset($params["target"]) ? addText($params["target"]) : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
+        $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
+        $target = isset($params["TARGET"]) ? addText($params["TARGET"]) : "";
+        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
+        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
 
         $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
 
@@ -585,9 +585,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         return $data;
     }
 
-    public function getSemesterTermByStartDateSchoolyear($start_date, $schoolyear_id) {
+    public function getSemesterTermByStartDateSchoolyear($start_date,$academicId,$schoolyear_id) {
 
-        return AcademicDBAccess::getNameOfSchoolTermByDate($start_date, false, $schoolyear_id);
+        return AcademicDBAccess::getNameOfSchoolTermByDate($start_date, $academicId, $schoolyear_id);
     }
 
     public function dates_range($START_DATE, $END_DATE) {
@@ -688,7 +688,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
             $term = AcademicDBAccess::getNameOfSchoolTermByDate($date, $facette->CLASS_ID);
 
             if ($term != "TERM_ERROR") {
-                $searchParams["classId"] = $academicId;
+                $searchParams["academicId"] = $academicId;
                 $searchParams["schoolyearId"] = $schoolyearId;
                 $searchParams["shortday"] = getWEEKDAY($date);
                 $searchParams["term"] = $term;
@@ -856,7 +856,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $CHECK_COUNT_EXISTING_DATE = count($CHECK_EXISTING_DATE);
 
         if ($academicId&& $schoolyearId) {
-            $SEMESTER_TERM = $this->getSemesterTermByStartDateSchoolyear($START_DATE, $schoolyearId);
+            $SEMESTER_TERM = $this->getSemesterTermByStartDateSchoolyear($START_DATE,$academicId,$schoolyearId);
             $SAVEDATA['TERM'] = $SEMESTER_TERM;
             $CHECK_ERROR_TERM = $SEMESTER_TERM ? 0 : 1;
         } else {

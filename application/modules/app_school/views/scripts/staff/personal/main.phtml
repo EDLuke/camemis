@@ -127,7 +127,7 @@ Ext.onReady(function() {
                     $PERSON_ITEMS .= ",iconCls: 'icon-component_yellow'";
                     $PERSON_ITEMS .= ",leaf: true";
                     $PERSON_ITEMS .= ",cls:'nodeTextBlue'";
-                    $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=EMERCP&object=student&isCancel=true")."'";
+                    $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=RELATIVE_INFO&object=staff&isCancel=true")."'";
                     $PERSON_ITEMS .= ",isClick:true";
                 $PERSON_ITEMS .= "}";
                 $PERSON_ITEMS .= ",{";
@@ -187,7 +187,7 @@ Ext.onReady(function() {
                     $PERSON_ITEMS .= ",iconCls: 'icon-component_yellow'";
                     $PERSON_ITEMS .= ",leaf: true";
                     $PERSON_ITEMS .= ",cls:'nodeTextBlue'";
-                    $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=PUBLICATION&object=student&isCancel=true")."'";
+                    $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=PUBLICATION&object=staff&isCancel=true")."'";
                     $PERSON_ITEMS .= ",isClick:true";
                 $PERSON_ITEMS .= "}";
                 $PERSON_ITEMS .= ",{";
@@ -207,7 +207,7 @@ Ext.onReady(function() {
             $PERSON_ITEMS .= ",iconCls: 'icon-folder_magnify'";
             $PERSON_ITEMS .= ",leaf: false";
             $PERSON_ITEMS .= ",expanded: true";
-            $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=BACKGROUND_INFO&object=staff&isCancel=true")."'";
+            $PERSON_ITEMS .= ",url:'/staffcontract/staffcontractmain/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId)."'";
             $PERSON_ITEMS .= ",isClick:true";
             $PERSON_ITEMS .= ",children: [";
                 $PERSON_ITEMS .= "{";
@@ -215,7 +215,7 @@ Ext.onReady(function() {
                     $PERSON_ITEMS .= ",iconCls: 'icon-component'";
                     $PERSON_ITEMS .= ",cls:'nodeTextBlue'";
                     $PERSON_ITEMS .= ",leaf: true";
-                    $PERSON_ITEMS .= ",url:'/staffcontract/staffcontractmain/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId)."'";
+                    $PERSON_ITEMS .= ",url:'/dataset/ckeditor/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&field=CONTRACT_INFO&object=staff&isCancel=true")."'";
                     $PERSON_ITEMS .= ",isClick:true";
                 $PERSON_ITEMS .= "}";
             $PERSON_ITEMS .= "]";

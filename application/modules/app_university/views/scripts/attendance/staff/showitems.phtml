@@ -186,7 +186,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     ,iconCls:'icon-application_form_magnify'
                     ,hidden:hasHidden
                     ,handler:function(){
-                        clickOpenPage('center','','/attendance/showbystaff/?staffId=' + record.data.ID +'&objectId=' + record.data.ABSENT_ID);
+                        clickOpenPage('center','','/attendance/showbystaff/?staffId=' + record.data.STAFF_ID +'&objectId=' + record.data.ABSENT_ID);
                     }
                 }]
             });

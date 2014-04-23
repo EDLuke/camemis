@@ -16,7 +16,7 @@ $object = isset($_GET["object"]) ? $_GET["object"] : "";
 
 $academicObject = AcademicDBAccess::findGradeFromId($classId);
 $subjectObject = SubjectDBAccess::findSubjectClass($objectId, $classId);
-
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 function checkTeacherSchedule($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();
     $SQL->from('t_schedule', 'COUNT(*) AS C');
@@ -28,28 +28,48 @@ function checkTeacherSchedule($academicId, $subjectId){
     return $result ? $result->C : 0;
 }
 
+function checkTeacherSubjectConment($academicId, $subjectId){
+    $SQL = Zend_Registry::get('DB_ACCESS')->select();
+    $SQL->from('t_subject_teacher_content', array('*'));
+    $SQL->where("SUBJECT = '" . $subjectId . "'");
+    if(UserAuth::getUserType() == 'INSTRUCTOR' || UserAuth::getUserType() == 'TEACHER')
+    {
+    $SQL->where("TEACHER = '" . Zend_Registry::get('USER')->ID . "'");
+    }
+    $SQL->where("ACADEMIC = '" . $academicId . "'");
+     //error_log($SQL);
+    $result = Zend_Registry::get('DB_ACCESS')->fetchRow($SQL);
+   
+    return $result ? $result : 0;    
+}
+
+
+
+if(!$subjectObject) {header("Location: /main/permission/");}
+
+$CHECK = checkTeacherSchedule($classId, $objectId);
+$checkTeacherConment=checkTeacherSubjectConment($classId, $objectId);
 $content = "";
 ///@veasna 
 
 if($field && $subjectObject){    ///not yet check the teacher subject contents
    $content = $subjectObject->$field;     
 }
+if($field && $checkTeacherConment){    ///not yet check the teacher subject contents
+   $content = $checkTeacherConment->$field;     
+}
 //error_log($content);
 ///
-
-if(!$subjectObject) {header("Location: /main/permission/");}
-
-$CHECK = checkTeacherSchedule($classId, $objectId);
-
 if ($_POST){
 
     $field = isset($_POST["field"])?addText($_POST["field"]):"";
     $object = isset($_POST["object"])?addText($_POST["object"]):"";
-    $objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    //$objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
     
     $subjectObject = SubjectDBAccess::findSubjectClass($objectId, $classId);
 
     if($subjectObject){
+       
         $SAVEDATA = array();
         $SAVEDATA_SUBJECT = array();
         $WHERE = array();
@@ -64,14 +84,15 @@ if ($_POST){
             case "gradesubject":  
                 
                 if(UserAuth::getUserType() == 'SUPERADMIN' || UserAuth::getUserType() == 'ADMIN'){
+                    
                     $DB_ACCESS->update('t_grade_subject', $SAVEDATA, $WHERE);
                 }
                 
                 if(UserAuth::getUserType() == 'INSTRUCTOR' || UserAuth::getUserType() == 'TEACHER'){
                     
-                    $SAVEDATA_SUBJECT['SUBJECT'] = $subjectId;
+                    $SAVEDATA_SUBJECT['SUBJECT'] = $objectId;
                     $SAVEDATA_SUBJECT['TEACHER'] = Zend_Registry::get('USER')->ID;
-                    $SAVEDATA_SUBJECT['ACADEMIC'] = $academicObject->ID;
+                    $SAVEDATA_SUBJECT['ACADEMIC'] = $classId;
 
                     if ($field == 'GOALS')
                         $SAVEDATA_SUBJECT['GOALS'] = $SAVEDATA[$field];
@@ -81,18 +102,23 @@ if ($_POST){
                         $SAVEDATA_SUBJECT['EVALUATION'] = $SAVEDATA[$field];
                     if ($field == 'MATERIALS')
                         $SAVEDATA_SUBJECT['MATERIALS'] = $SAVEDATA[$field];
-
-                    if($check == 1){
+                    
+                    
+                    if($checkTeacherConment){
+                         
                         $DB_ACCESS->update('t_subject_teacher_content', $SAVEDATA_SUBJECT,$WHERE_SUBJECT);
                     }
-                    else if($check == 0){
+                    else{
+                         
                         $DB_ACCESS->insert('t_subject_teacher_content', $SAVEDATA_SUBJECT); 
                     }
+                   
                 }
             break;
 
         }
-        header("Location: ".$_SERVER['REQUEST_URI']."?field=".$field."&objectId=".$objectId."&object=".$object."");
+        header("Location: ".$_SERVER['REQUEST_URI']."?&field=".$field."&setId=".$classId."-".$objectId."&object=".$object."");
+        exit;
     }
 }
 

@@ -96,7 +96,7 @@ Ext.onReady(function() {
          $subjectId = isset($DATA[0])?$DATA[0]:0;
          $defaultParams = $setParams;
          $defaultParams .= "&subjectId=".$subjectId."";
-         $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/subjectreport/subjectreportlist/?camIds=".$this->urlEncryp->encryptedGet($defaultParams)."'})]";
+         $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/homework/homeworklist/?camIds=".$this->urlEncryp->encryptedGet($defaultParams)."'})]";
     }else{
         $SHOW_LAYOUT = "{
             title:'".STATUS."'

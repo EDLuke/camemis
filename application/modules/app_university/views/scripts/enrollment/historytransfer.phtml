@@ -21,9 +21,11 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("DISCIPLINE");
 $OBJECT_FORM->setLoadUrl('/enrollment/jsonload/');
 $OBJECT_FORM->setSaveUrl('/enrollment/jsonsave/');
-$OBJECT_GRID=new CamemisGrid("STUDENT","LIST");
+
+$OBJECT_GRID=new CamemisGrid("STUDENT_ACADEMIC_HISTORY","LIST");
 $OBJECT_GRID->setLoadUrl('/enrollment/jsonload/');
 $OBJECT_GRID->setSaveUrl('/enrollment/jsonload/');
+$columndata = Utiles::getGridColumnData("STUDENT_ACADEMIC_HISTORY_LIST_ID");
 
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -31,7 +33,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 <script>
  
 Ext.onReady(function() {
-	 function cssStatus(v, p, record){
+     function cssStatus(v, p, record){
             return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
             ,v
             ,record.data['BG_COLOR']
@@ -58,9 +60,10 @@ Ext.onReady(function() {
     $js .= ",mode: 'local'";
     $js .= ",triggerAction: 'all'";
     $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-    $js .= ",store: [['','[---]'],['TRANSFER','TRANSFER'],['UPGRADE','UPGRADE'],['DOWNGRADE','DOWNGRADE']]";
+    $js .= ",store: [[0, '[---]'],['TRANSFER','TRANSFER'],['UPGRADE','UPGRADE'],['DOWNGRADE','DOWNGRADE']]";
     $js .= ",editable:false";
     $js .= ",name: 'CHOOSE_OPTION'";
+    $js .= ",hiddenName: 'CHOOSE_OPTION'";
     $js .= ",width:150";
 
     $OBJECT_GRID->addReadField("name: 'CODE'");                  
@@ -80,15 +83,15 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'CREATE_DATE'");   
     
     //$OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 120, renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer: cssText, width: 80, sortable: true, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', align:'left', renderer: cssText, width: 120, sortable: true, dataIndex: 'STUDENT_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'left', renderer: cssText, width: 80, sortable: true, dataIndex: 'GENDER'");
-    $OBJECT_GRID->addColumn("header: '<b>".PREVIOUS_GRADE."</b>', align:'left', renderer: cssText, width: 120, sortable: true, dataIndex: 'FROM_GRADE'");
-    $OBJECT_GRID->addColumn("header: '<b>".PREVIOUS_CLASS."</b>', align:'left', renderer: cssText, width: 110, sortable: true, dataIndex: 'FROM_CLASS_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_GRADE."</b>', align:'left', renderer: cssText, width: 110, sortable: true, dataIndex: 'CURRENT_GRADE'");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', align:'left', renderer: cssText, width: 120, sortable: true, dataIndex: 'CURRENT_CLASS_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', align:'left', renderer: cssText, width: 110, sortable: true, dataIndex: 'TYPE'");
-    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align:'left', renderer: cssText, width: 110, sortable: true, dataIndex: 'CREATE_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer: cssText, width: 80, hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', align:'left', renderer: cssText, width: 120, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'STUDENT_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'left', renderer: cssText, width: 80, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>".PREVIOUS_GRADE."</b>', align:'left', renderer: cssText, width: 120, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'FROM_GRADE'");
+    $OBJECT_GRID->addColumn("header: '<b>".PREVIOUS_CLASS."</b>', align:'left', renderer: cssText, width: 110, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'FROM_CLASS_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_GRADE."</b>', align:'left', renderer: cssText, width: 110, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'CURRENT_GRADE'");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', align:'left', renderer: cssText, width: 120, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'CURRENT_CLASS_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', align:'left', renderer: cssText, width: 110, hidden:".checkColHidden(8, $columndata).", sortable: true, dataIndex: 'TYPE'");
+    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align:'left', renderer: cssText, width: 110, hidden:".checkColHidden(9, $columndata).", sortable: true, dataIndex: 'CREATE_DATE'");
     
     
     
@@ -111,11 +114,14 @@ Ext.onReady(function() {
         }]);
     ");
     
-    $OBJECT_GRID->isObjectDefaultOnLoad=false; 
-    $OBJECT_GRID->isQuickySearch=true; 
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->isPagingToolbar = true;
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = false;
     $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->renderJS();
-	
+    
     $OBJECT_FORM->addObjectItems("
         xtype:'fieldset'
         ,checkboxToggle:true
@@ -127,7 +133,7 @@ Ext.onReady(function() {
             ,{".CamemisField::Datefield("END_DATE",END_DATE,false,false,150)."}
         ]
     ");
-	
+    
 
     $OBJECT_FORM->addObjectItems("
         xtype:'fieldset'
@@ -168,7 +174,15 @@ Ext.onReady(function() {
                 ,params:{cmd: 'jsonAllStudentsHistory',start:0,limit:100}
                 ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
                 ,success: function(response, options) {
+                    var gridObject=Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
                     jsonData = Ext.util.JSON.decode(response.responseText);
+                    var myform=".$OBJECT_FORM->ExtgetCmp().";
+                    for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                        if(myform.getForm().getEl().dom[i].value){
+                            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                        }
+                    }
+                    
                     Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().loadData(jsonData);
                     loadMask.hide();
                 }
@@ -220,7 +234,7 @@ Ext.onReady(function() {
             }]
         }]
     });
-	
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?

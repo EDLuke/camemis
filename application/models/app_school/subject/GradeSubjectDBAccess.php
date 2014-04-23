@@ -940,6 +940,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["SUBJECT_SHORT"] = $value->SUBJECT_SHORT;
                 $data[$i]["SUBJECT_NAME"] = $value->SUBJECT_NAME;
+                $data[$i]["SUBJECT_ID"] = $value->SUBJECT_ID;
 
                 switch ($TERM_NUMBER)
                 {

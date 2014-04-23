@@ -29,6 +29,8 @@ $subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
+
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -74,13 +76,13 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
     }
     
-    function cssEvaluationMonth(value, metadata, record){
+    function cssMonthEvaluation(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#EEEEEE;">' + value + '</div>';
     }
     
-    function cssEvaluationSemester(value, metadata, record){
+    function cssTermEvaluation(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
@@ -98,8 +100,25 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
-    $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");
-    $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER_RESULT'");
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $OBJECT_GRID->addReadField("name: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'");
+            break;
+        case 2:
+            $OBJECT_GRID->addReadField("name: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'FOURTH_QUARTER_RESULT'");
+            break;
+        default:
+            $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER_RESULT'");
+            break;
+    }
+    
     $OBJECT_GRID->addReadField("name: 'RANG'");
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -113,8 +132,8 @@ Ext.onReady(function() {
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 100, align: 'right', sortable: true, renderer:cssRang, dataIndex: 'RANK'");
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 120, align: 'right', sortable: true, renderer:cssAverage, dataIndex: 'AVERAGE'");
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssRang, dataIndex: 'RANK'");
+            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssAverage, dataIndex: 'AVERAGE'");
             ////////////////////////////////////////////////////////////////////
             $comboEditor = "
                 new Ext.form.ComboBox({
@@ -183,6 +202,7 @@ Ext.onReady(function() {
             ////////////////////////////////////////////////////////////////////
             break;
     }
+    
     $OBJECT_GRID->addColumn("
         header: '<b>".ASSESSMENT."</b>'
         , width: 130
@@ -192,8 +212,24 @@ Ext.onReady(function() {
         , renderer:cssAssessment
         , editor: ".$comboEditor."
     ");
-    $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 130, align: 'right', renderer:cssEvaluationMonth, dataIndex: 'FIRST_SEMESTER_RESULT'");
-    $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 130, align: 'right', renderer:cssEvaluationSemester, dataIndex: 'SECOND_SEMESTER_RESULT'");
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'THIRD_TERM_RESULT'");
+            break;
+        case 2:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'FOURTH_QUARTER_RESULT'");
+            break;
+        default:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssTermEvaluation, dataIndex: 'SECOND_SEMESTER_RESULT'");
+            break;
+    }
     
     $OBJECT_GRID->addTBarItems("
         tbar.add([{

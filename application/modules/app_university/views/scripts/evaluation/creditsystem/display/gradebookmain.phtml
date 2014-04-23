@@ -80,7 +80,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $YEAR_RESULT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
         $YEAR_RESULT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
         $YEAR_RESULT_GRID->addColumn("header: '<b>".SCORE."</b>', width: 120, renderer:cssAverage, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
-        $YEAR_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 100, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
+        $YEAR_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
         $YEAR_RESULT_GRID->addColumn("header: '<b>Grade Scale</b>', width: 120, renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
         $setYearParams = "";
@@ -108,7 +108,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $FS_RESULT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
         $FS_RESULT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
         $FS_RESULT_GRID->addColumn("header: '<b>".SCORE."</b>', width: 120, renderer:cssAverage,align: 'right', cssAverage: true, dataIndex: 'SUBJECT_VALUE'");
-        $FS_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 100, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
+        $FS_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
         $FS_RESULT_GRID->addColumn("header: '<b>Grade Scale</b>', width: 120, renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
         $setFirstParams = "";
@@ -136,7 +136,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $SS_RESULT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
         $SS_RESULT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
         $SS_RESULT_GRID->addColumn("header: '<b>".SCORE."</b>', width: 120, renderer:cssAverage,align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
-        $SS_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 100, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
+        $SS_RESULT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssRang,align: 'right', sortable: true, dataIndex: 'RANK'");
         $SS_RESULT_GRID->addColumn("header: '<b>Grade Scale</b>', width: 120, renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
         $setSecondParams = "";

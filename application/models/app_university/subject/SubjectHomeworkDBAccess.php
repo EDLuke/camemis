@@ -313,7 +313,7 @@ class SubjectHomeworkDBAccess {
 
         if ($objectId != "new") {
             $SAVEDATA['NAME'] = addText($title);
-            $SAVEDATA['CONTENT'] = addText($content);
+            $SAVEDATA['CONTENT'] = $content;
             $SAVEDATA['START_DATE'] = setDate2DB($params["START_DATE"]);
             $SAVEDATA['END_DATE'] = setDate2DB($params["END_DATE"]);
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
@@ -323,7 +323,7 @@ class SubjectHomeworkDBAccess {
             $SAVEDATA['CLASS_ID'] = $classId;
             $SAVEDATA['TEACHER'] = Zend_Registry::get('USER')->ID;
             $SAVEDATA['NAME'] = addText($title);
-            $SAVEDATA['CONTENT'] = addText($content);
+            $SAVEDATA['CONTENT'] = $content;
             $SAVEDATA['START_DATE'] = setDate2DB($params["START_DATE"]);
             $SAVEDATA['END_DATE'] = setDate2DB($params["END_DATE"]);
             self::dbAccess()->insert('t_subject_homework', $SAVEDATA);

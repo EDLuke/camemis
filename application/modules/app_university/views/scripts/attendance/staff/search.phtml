@@ -47,6 +47,12 @@ $columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
                 ,form: formObject.getForm().getEl().dom
                 ,success: function(response, options) {
                     jsonData = Ext.util.JSON.decode(response.responseText);
+                    var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                    for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                        if(myform.getForm().getEl().dom[i].value){
+                            Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                        }
+                    }
                     gridObject.getStore().loadData(jsonData);
                     myMask.hide();
                 }
@@ -306,6 +312,14 @@ $columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
                 }
             }]);
         ");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStaffAttendance'
+        ";
+        
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
         
         $OBJECT_GRID->isGroupingView = true;
         $OBJECT_GRID->groupField = "STAFF";

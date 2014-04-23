@@ -15,9 +15,9 @@ require_once 'utiles/Utiles.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-$OBJECT_FORM = new CamemisForm("STUDENT");
-$OBJECT_FORM->setLoadUrl('/student/jsonload/');
-$OBJECT_FORM->setSaveUrl('/student/jsonsave/');
+$OBJECT_FORM = new CamemisForm("STAFF");
+$OBJECT_FORM->setLoadUrl('/staff/jsonload/');
+$OBJECT_FORM->setSaveUrl('/staff/jsonsave/');
 
 ////////////////////////////////////////////////////////////////////////////////
 //Checkbox...
@@ -26,6 +26,7 @@ function getExtCheckBoxField($parentId){
     $data = Array();
     $objectParent = DescriptionDBAccess::findObjectFromId($parentId);
     $entries = DescriptionDBAccess::sqlDescription($parentId, "STAFF", false);
+    $CHECKBOX_JS="";
     $CHECKBOX_JS .= "new Ext.form.CheckboxGroup({";
     $CHECKBOX_JS .= "fieldLabel: '".addslashes(stripcslashes($objectParent->NAME))."'";
     $CHECKBOX_JS .= ",columns: 2";
@@ -47,6 +48,7 @@ function getExtRadioBoxField($parentId){
     $data = Array();
     $objectParent = DescriptionDBAccess::findObjectFromId($parentId);
     $entries = DescriptionDBAccess::sqlDescription($parentId, "STAFF", false);
+    $RADIOBOX_JS="";
     $RADIOBOX_JS .= "new Ext.form.RadioGroup({";
         $RADIOBOX_JS .= "fieldLabel: '".addslashes(stripcslashes($objectParent->NAME))."'"; 
         $RADIOBOX_JS .= ",columns: 2";
@@ -191,9 +193,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,bodyStyle: 'padding:0px'
             ,items: ".$SET_ITEMS."
         ";
-        $OBJECT_FORM->setLoadParams("cmd: 'loadStudentDescripton',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setLoadParams("cmd: 'loadStaffDescripton',objectId: '".$this->objectId."'");
         $OBJECT_FORM->setSaveParams("
-            cmd: 'actionStudentDescription'
+            cmd: 'actionStaffDescription'
             ,objectId: '".$this->objectId."'
         ");
         $OBJECT_FORM->setonEmbeddedEvents("
