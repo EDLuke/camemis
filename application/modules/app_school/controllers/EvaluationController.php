@@ -585,7 +585,8 @@ class EvaluationController extends Zend_Controller_Action {
         switch ($this->REQUEST->getPost('cmd')) {
 
             case "jsonListStudentSubjectAssignments":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonListStudentSubjectAssignments($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonListStudentSubjectAssignments($this->REQUEST->getPost());
                 break;
 
             case "jsonSubjectMonthResult":

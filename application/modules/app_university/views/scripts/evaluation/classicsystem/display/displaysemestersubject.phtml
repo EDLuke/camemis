@@ -16,9 +16,11 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("STUDENT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 
+$columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
+
 $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
@@ -93,9 +95,9 @@ Ext.onReady(function() {
             $viewport .= ",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
         $viewport .= "}]";
     $viewport .= "});";
-$viewport .= "});";
-echo $viewport;
+    echo $viewport;
 ?>
+});
 </script>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();

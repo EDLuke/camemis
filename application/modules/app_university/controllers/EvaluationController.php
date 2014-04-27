@@ -20,6 +20,8 @@ require_once 'models/app_university/evaluation/default/StudentAssignmentDBAccess
 require_once 'models/app_university/evaluation/default/StudentSubjectAssessment.php';
 require_once 'models/app_university/evaluation/default/StudentTraditionalPerformance.php';
 
+require_once 'models/assessment/jsonEvaluationSubjectAssessment.php';
+
 class EvaluationController extends Zend_Controller_Action {
 
     public function init() {
@@ -598,19 +600,23 @@ class EvaluationController extends Zend_Controller_Action {
         switch ($this->REQUEST->getPost('cmd')) {
 
             case "jsonListStudentSubjectAssignments":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonListStudentSubjectAssignments($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonListStudentSubjectAssignments($this->REQUEST->getPost());
                 break;
 
             case "jsonSubjectMonthResult":
-                $jsondata = $this->DB_SUBJECT_ASSESSMENT->jsonSubjectMonthResult($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonSubjectMonthResult($this->REQUEST->getPost());
                 break;
 
             case "jsonSubjectTermResult":
-                $jsondata = $this->DB_SUBJECT_ASSESSMENT->jsonSubjectTermResult($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonSubjectTermResult($this->REQUEST->getPost());
                 break;
 
             case "jsonSubjectYearResult":
-                $jsondata = $this->DB_SUBJECT_ASSESSMENT->jsonSubjectYearResult($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonSubjectYearResult($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsScoreEnter":
@@ -659,7 +665,7 @@ class EvaluationController extends Zend_Controller_Action {
             ////////////////////////////////////////////////////////////////////
             //CREDIT SYSTEM...
             case "jsonLoadStudentCreditAllSubjectAssessment":
-                require_once 'models/app_university/evaluation/default/StudentCreditPerformance.php';
+                require_once 'models/app_school/evaluation/default/StudentCreditPerformance.php';
                 $DB_PERFORMANCE = StudentCreditPerformance::getInstance();
                 $jsondata = $DB_PERFORMANCE->jsonLoadStudentCreditAllSubjectAssessment($this->REQUEST->getPost());
                 break;

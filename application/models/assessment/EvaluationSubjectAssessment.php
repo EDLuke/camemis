@@ -56,6 +56,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
+    public function getListStudentSubjectAssignments() {
+        
+        $data = array();
+        
+        return $data;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // MONTH CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
@@ -123,12 +130,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($studentId);
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($studentId, $this->term);
-                        $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_NUMBER;
-                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_NUMBER;
+                        $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId, $this->term)->LETTER_GRADE_NUMBER;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId, $this->term)->LETTER_GRADE_NUMBER;
                         break;
                     case self::SCORE_CHAR:
-                        $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_CHAR;
-                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId)->ASSESSMENT_ID;
+                        $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId, $this->term)->LETTER_GRADE_CHAR;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId, $this->term)->ASSESSMENT_ID;
                         break;
                 }
 
@@ -190,6 +197,24 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($studentId)->LETTER_GRADE_NUMBER;
                         break;
                     case self::SCORE_CHAR:
+
+                        switch ($this->getTermNumber()) {
+                            case 1:
+                                $data[$i]["FIRST_TERM_RESULT"] = $this->getSubjectTermAssessment($studentId, "FIRST_TERM")->LETTER_GRADE_CHAR;
+                                $data[$i]["SECOND_TERM_RESULT"] = $this->getSubjectTermAssessment($studentId, "SECOND_TERM")->LETTER_GRADE_CHAR;
+                                $data[$i]["THIRD_TERM_RESULT"] = $this->getSubjectTermAssessment($studentId, "THIRD_TERM")->LETTER_GRADE_CHAR;
+                                break;
+                            case 2:
+                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "FIRST_QUARTER")->LETTER_GRADE_CHAR;
+                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "SECOND_QUARTER")->LETTER_GRADE_CHAR;
+                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "THIRD_QUARTER")->LETTER_GRADE_CHAR;
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "FOURTH_QUARTER")->LETTER_GRADE_CHAR;
+                                break;
+                            default:
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "FIRST_SEMESTER")->LETTER_GRADE_CHAR;
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->getSubjectTermAssessment($studentId, "SECOND_SEMESTER")->LETTER_GRADE_CHAR;
+                                break;
+                        }
                         $data[$i]["ASSESSMENT"] = $this->getSubjectYearAssessment($studentId)->LETTER_GRADE_CHAR;
                         $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($studentId)->ASSESSMENT_ID;
                         break;
@@ -437,13 +462,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getSubjectTermAssessment($studentId) {
+    public function getSubjectTermAssessment($studentId, $term) {
 
         $object = (object) array(
                     "studentId" => $studentId
                     , "classId" => $this->classId
                     , "subjectId" => $this->subjectId
-                    , "term" => $this->term
+                    , "term" => $term
                     , "month" => self::NO_MONTH
                     , "year" => self::NO_YEAR
                     , "section" => "SEMESTER"
@@ -538,13 +563,30 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function getSubjectValue() {
+
+        $result = "";
         switch ($this->getSubjectScoreType()) {
             case self::SCORE_NUMBER:
-                return $this->actionValue;
+                switch ($this->getSection()) {
+                    case "MONTH":
+                        $result = $this->averageMonthSubjectResult($this->studentId);
+                        break;
+                    case "TERM":
+                    case "QUARTER":
+                    case "SEMESTER":
+                        $result = $this->calculatedAverageTermSubjectResult($this->studentId, $this->term);
+                        break;
+                    case "YEAR":
+                        $result = $this->calculatedAverageYearSubjectResult($this->studentId);
+                        break;
+                }
+                break;
             case self::SCORE_CHAR:
                 $gradingObject = SpecialDBAccess::findGradingSystemFromId($this->actionValue);
-                return $gradingObject ? $gradingObject->LETTER_GRADE : "";
+                $result = $gradingObject ? $gradingObject->LETTER_GRADE : "";
+                break;
         }
+        return $result;
     }
 
 }

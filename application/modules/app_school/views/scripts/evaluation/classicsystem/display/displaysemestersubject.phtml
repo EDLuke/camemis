@@ -51,10 +51,10 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STYLE_COLOR'");
     $OBJECT_GRID->addReadField("name: 'STYLE_COLOR_FONT'");
 
-    $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT."</b>', width: 200, hidden:".checkColHidden(1, $columndata).", renderer: textBold, dataIndex: 'ASSIGNMENT'");
-    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align: 'left', width: 150, hidden:".checkColHidden(2, $columndata).", renderer:textNormal, dataIndex: 'CREATED_DATE'");
-    $OBJECT_GRID->addColumn("header: '<b>".POINTS."</b>', align: 'left', width: 100, hidden:".checkColHidden(3, $columndata).", renderer:textBold, dataIndex: 'POINTS'");
-    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', align: 'left', width:250, hidden:".checkColHidden(4, $columndata).", renderer:textNormal, dataIndex: 'TEACHER_COMMENTS'");
+    $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT."</b>', width: 200, renderer: textBold, dataIndex: 'ASSIGNMENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align: 'left', width: 150, renderer:textNormal, dataIndex: 'CREATED_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".POINTS."</b>', align: 'left', width: 100, renderer:textBold, dataIndex: 'POINTS'");
+    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', align: 'left', width:250, renderer:textNormal, dataIndex: 'TEACHER_COMMENTS'");
     
     $OBJECT_GRID->addTBarItems("
         tbar.add([{
@@ -95,10 +95,8 @@ Ext.onReady(function() {
             $viewport .= ",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
         $viewport .= "}]";
     $viewport .= "});";
-$viewport .= "});";
-echo $viewport;
+    echo $viewport;
 ?>
-Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?

@@ -61,6 +61,25 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             $this->section = $params["section"];
     }
 
+    public function jsonListStudentSubjectAssignments($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+
+        $data = $this->getListStudentSubjectAssignments();
+
+        $a = array();
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $a
+        );
+    }
+
     public function jsonSaveStudentScoreSubjectAssignment($params) {
         $this->setParams($params);
     }
@@ -71,6 +90,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
     }
 
     public function jsonSubjectMonthResult($encrypParams) {
+        
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
