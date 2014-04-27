@@ -10,6 +10,9 @@ require_once 'models/export/CamemisExportDBAccess.php';
 
 class StudentPreschoolExportDBAccess extends CamemisExportDBAccess {
 
+    public $columnIndex = 0;
+    private $CONST_NAME = null;
+    private $colWidth = null;
     function __construct($objectId)
     {
 
@@ -93,43 +96,69 @@ class StudentPreschoolExportDBAccess extends CamemisExportDBAccess {
             $i++;
         }
     }
-
-    public function setContent($searchParams)
+    
+    public static function getGroupAssoc($array, $key)
     {
+        $return = array();
+        foreach ($array as $v)
+        {
+            $return[$v[$key]][] = $v;
+        }
+        return $return;
+    }
+    
+    public function getStudentPreschoolArrayResult($searchParams){
         $entries = $this->DB_STUDENT_PRESCHOOL->jsonSearchStudentPreschool($searchParams, false);
+        return $entries;         
+    }
+
+    public function setContent($entries,$groupId,$groupField)
+    {
         if ($entries)
         {
-            for ($i = 0; $i <= count($entries); $i++)
+            $GOUPING_DATA = self::getGroupAssoc($entries, $groupId);
+            if ($GOUPING_DATA)
             {
-                $colIndex = 0;
-                $rowIndex = $i + $this->startContent();
-                foreach ($this->getUserSelectedColumns() as $colName)
+                $rowIndex = $this->startContent();
+
+                foreach ($GOUPING_DATA as $dataId => $EACH_DATA)
                 {
 
-                    $STATUS_KEY = isset($entries[$i]["STATUS_KEY"]) ? $entries[$i]["STATUS_KEY"] : "";
-                    $CONTENT = isset($entries[$i][$colName]) ? $entries[$i][$colName] : "";
-                    $BG_COLOR = isset($entries[$i]["BG_COLOR"]) ? $entries[$i]["BG_COLOR"] : "";
-
-                    switch ($colName)
+                    //Name of Student
+                    $colIndex = 0;
+                    $GROUP_NAME = $EACH_DATA[0][$groupField];
+                    $this->setCellContent($colIndex, $rowIndex, $GROUP_NAME);
+                    $this->setFontStyle($colIndex, $rowIndex, true, 10, "FFFFFF");
+                    $this->setCellStyle($colIndex, $rowIndex, false, 20);
+                    for ($ii = 0; $ii < count($this->getUserSelectedColumns()); $ii++)
                     {
-                        case "STATUS_KEY":
-                            $this->setCellContent($colIndex, $rowIndex, $STATUS_KEY);
-                            $this->setFontStyle($colIndex, $rowIndex, true, 10, "FFFFFF");
-                            $this->setFullStyle($colIndex, $rowIndex, substr($BG_COLOR, 1));
-                            $this->setCellStyle($colIndex, $rowIndex, false, 15);
-                            $this->setBorderStyle($colIndex, $rowIndex, "DADCDD");
-                            break;
-                        default:
-                            if ($CONTENT)
-                            {
-                                $this->setCellContent($colIndex, $rowIndex, $CONTENT);
-                                $this->setFontStyle($colIndex, $rowIndex, false, 9, "000000");
-                                $this->setCellStyle($colIndex, $rowIndex, false, 20);
-                            }
-
-                            break;
+                        $this->setBorderStyle($ii, $rowIndex, "FF6495ED");
+                        $this->setFullStyle($ii, $rowIndex,"8DB2E3");
                     }
-                    $colIndex ++;
+
+                    for ($j = 0; $j < count($EACH_DATA); $j++)
+                    {
+
+                        $rowIndex++;
+                        $colIndex = $this->columnIndex;
+
+                        foreach ($this->getUserSelectedColumns() as $colName)
+                        {
+
+                            $CONTENT = isset($EACH_DATA[$j][$colName]) ? $EACH_DATA[$j][$colName] : "";
+                            //skip column data 
+                            if ($colName == $groupField)
+                                continue;
+                            /////
+                            
+                            $this->setCellContent($colIndex, $rowIndex, $CONTENT);
+                            $this->setFontStyle($colIndex, $rowIndex, false, 9, "000000");
+                            $this->setCellStyle($colIndex, $rowIndex, false, 20);
+
+                            $colIndex++;
+                        }
+                    }
+                    $rowIndex++;
                 }
             }
         }
@@ -142,7 +171,8 @@ class StudentPreschoolExportDBAccess extends CamemisExportDBAccess {
 
         $this->EXCEL->setActiveSheetIndex(0);
         $this->setContentHeader();
-        $this->setContent($searchParams);
+        $entries=$this->getStudentPreschoolArrayResult($searchParams);
+        $this->setContent($entries,"ID","STUDENT_NAME");
         $this->EXCEL->getActiveSheet()->setTitle("" . LIST_OF_STUDENTS . "");
         $this->WRITER->save($this->getFileStudentPreschoolList());
 

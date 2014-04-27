@@ -85,6 +85,9 @@ class StudentPreschoolController extends Zend_Controller_Action {
             case "jsonLoadTypePreschool":
                 $jsondata = $this->DB_STUDENT_PRESCHOOL->jsonLoadTypePreschool($this->REQUEST->getPost());
                 break;
+            case "jsonListGridpreschool":
+                $jsondata = $this->DB_STUDENT_PRESCHOOL->jsonListGridpreschool($this->REQUEST->getPost());
+                break;
             case "jsonShowAllChooseStudentPreschool":
                 $jsondata = $this->DB_STUDENT_PRESCHOOL->jsonShowAllChooseStudentPreschool($this->REQUEST->getPost());
                 break;
@@ -108,6 +111,10 @@ class StudentPreschoolController extends Zend_Controller_Action {
                 
              case "jsonSaveTypePreschool":
                 $jsondata = $this->DB_STUDENT_PRESCHOOL->jsonSaveTypePreschool($this->REQUEST->getPost());
+                break;
+             
+             case "jsonSaveGridpreschool":
+                $jsondata = $this->DB_STUDENT_PRESCHOOL->jsonSaveGridpreschool($this->REQUEST->getPost());
                 break;
                 
              case "jsonRemoveStudentPreschool":

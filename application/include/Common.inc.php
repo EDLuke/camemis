@@ -2415,4 +2415,21 @@ function getScoreRank($scoreList, $checkSchore) {
     return $result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//Check and return duplicates array
+////////////////////////////////////////////////////////////////////////////////
+function returndup($array) {
+    $results = array();
+    $duplicates = array();
+    foreach ($array as $item) {
+        if (in_array($item, $results)) {
+            $duplicates[] = $item;
+        }
+
+        $results[] = $item;
+    }
+
+    return $duplicates;
+}
+
 ?>

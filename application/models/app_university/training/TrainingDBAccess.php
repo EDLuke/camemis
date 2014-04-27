@@ -160,21 +160,38 @@
             }
             else
                 $SQL->where("PARENT = '0'");
-            $SQL->order('SORTKEY ASC');
+                
+            switch($objectTypeLevel){
+                case 'TERM':
+                    $SQL->order('START_DATE DESC');      
+                    break;
+                default:
+                    $SQL->order('SORTKEY ASC');   
+                    break;       
+            }
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchAll($SQL);
+        }
+        
+        public static function getObjectTypeLevelByParentId($parentId){
+            $SQL = self::dbAccess()->select();
+            $SQL->from("t_training", array('OBJECT_TYPE'));
+            $SQL->where("PARENT = '" . $parentId . "'");
+            //error_log($SQL->__toString());
+            return self::dbAccess()->fetchRow($SQL);        
         }
 
         public static function jsonTreeAllTrainings($params) {
 
-            $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
+            //$objectTypeLevel = isset($params["objectType"]) ? $params["objectType"] : false;
             $children = isset($params["children"]) ? $params["children"] : false;
             $node = isset($params["node"]) ? addText($params["node"]) : 0;
+            $objectTypeLevel = self::getObjectTypeLevelByParentId($node);
 
             if ($node == 0) {
                 $resultRows = self::allTrainingprograms(false);
             } else {
-                $resultRows = self::allTrainingprograms($node, $objectTypeLevel);
+                $resultRows = self::allTrainingprograms($node, $objectTypeLevel->OBJECT_TYPE);
             }
 
             $data = array();

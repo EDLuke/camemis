@@ -2078,7 +2078,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         }
     }
     
-    public function jsonSetSubjectAssessmentTraining($encrypParams) {
+    public function jsonActionPublishSubjectAssessmentTraining($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 

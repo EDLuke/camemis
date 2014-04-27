@@ -154,7 +154,7 @@ Ext.onReady(function() {
                 Ext.Ajax.request({
                     url:'/training/jsonsave/'
                     ,method: 'POST'
-                    ,params: {cmd: 'jsonSetSubjectAssessmentTraining',section:1,trainingId:'".$this->trainingId."',subjectId:'".$this->subjectId."'}
+                    ,params: {cmd: 'jsonActionPublishSubjectAssessmentTraining',section:1,trainingId:'".$this->trainingId."',subjectId:'".$this->subjectId."'}
                     ,success: function(response, options) {
                         var jsonData = Ext.util.JSON.decode(response.responseText);
                         Ext.MessageBox.hide();

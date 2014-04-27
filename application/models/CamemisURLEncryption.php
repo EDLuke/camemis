@@ -78,7 +78,6 @@ class URLEncryption {
                 $str .= "&choosedate=" . trim($_GET["choosedate"]);
             if (isset($_GET["eventDay"]))
                 $str .= "&eventDay=" . trim($_GET["eventDay"]);
-            
         } else {
             $str = $this->decrypt($pData);
         }

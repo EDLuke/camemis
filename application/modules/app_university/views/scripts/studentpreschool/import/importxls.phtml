@@ -180,7 +180,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,cmd: 'importStudents'
         ";
 
-        if (UserAuth::getACLValue("IMPORT_FROM_XLS_FILE_REMOVE_RIGHT"))
+        if (UserAuth::getACLValue("PRE_SCHOOL_REMOVE_RIGHT"))
         $OBJECT_GRID->addTBarItems("
             tbar.add(['-',{
                 id: 'REMOVE_ALL_STUDENTS_ID'
@@ -192,7 +192,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]);
         ");
 
-        if (UserAuth::getACLValue("IMPORT_FROM_XLS_FILE_EXECUTE_RIGHT"))
+        if (UserAuth::getACLValue("PRE_SCHOOL_EXECUTE_RIGHT"))
         $OBJECT_GRID->addTBarItems("
             tbar.add(['-',{
                 id: 'ADD_STUDENT_ID'

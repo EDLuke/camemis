@@ -664,34 +664,36 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 $i = 0;
                 foreach ($listOfSubjects as $value) {
 
-                    $data[$i]["SHORT"] = $value->SUBJECT_SHORT;
-                    $data[$i]["NAME"] = $value->SUBJECT_NAME;
+                    if ($value->SUBJECT_NAME) {
+                        $data[$i]["SHORT"] = $value->SUBJECT_SHORT;
+                        $data[$i]["NAME"] = $value->SUBJECT_NAME;
 
-                    switch ($this->section) {
-                        case 1:
-                            $facette = $this->getStudentSubjectAssessment(
-                                    $this->studentId
-                                    , $value->SUBJECT_ID
-                                    , false);
-                            break;
-                        case 2:
-                            $facette = $this->getStudentSubjectYearSemesterAssessment(
-                                    $this->studentId
-                                    , $value->SUBJECT_ID
-                                    , $this->term);
-                            break;
-                        case 3:
-                            $facette = $this->getStudentSubjectAssessment(
-                                    $this->studentId
-                                    , $value->SUBJECT_ID
-                                    , false);
-                            break;
+                        switch ($this->section) {
+                            case 1:
+                                $facette = $this->getStudentSubjectAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , false);
+                                break;
+                            case 2:
+                                $facette = $this->getStudentSubjectYearSemesterAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , $this->term);
+                                break;
+                            case 3:
+                                $facette = $this->getStudentSubjectAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , false);
+                                break;
+                        }
+
+                        $data[$i]["SUBJECT_VALUE"] = $facette ? $facette->SUBJECT_VALUE : "---";
+                        $data[$i]["ASSESSMENT"] = $facette ? setShowText($facette->LETTER_GRADE) : "---";
+                        $data[$i]["RANK"] = $facette ? setShowText($facette->RANK) : "---";
+                        $i++;
                     }
-
-                    $data[$i]["SUBJECT_VALUE"] = $facette ? $facette->SUBJECT_VALUE : "---";
-                    $data[$i]["ASSESSMENT"] = $facette ? setShowText($facette->LETTER_GRADE) : "---";
-                    $data[$i]["RANK"] = $facette ? setShowText($facette->RANK) : "---";
-                    $i++;
                 }
             }
         }

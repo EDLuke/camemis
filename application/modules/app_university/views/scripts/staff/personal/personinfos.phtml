@@ -64,6 +64,8 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'COMPANY_NAME'");
                 $OBJECT_GRID->addReadField("name: 'POSITION'");
+                $OBJECT_GRID->addReadField("name: 'START_SALARY'");
+                $OBJECT_GRID->addReadField("name: 'END_SALARY'");
                 $OBJECT_GRID->addReadField("name: 'ORGANIZATION_TYPE'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
                 
@@ -71,6 +73,8 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addColumn(columnProperties(END_DATE,"END_DATE",150,checkColHidden(2,$columndata)));
                 $OBJECT_GRID->addColumn(columnProperties(COMPANY_NAME,"COMPANY_NAME",150,checkColHidden(3,$columndata)));
                 $OBJECT_GRID->addColumn(columnProperties(POSITION,"POSITION",150,checkColHidden(4,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(START_SALARY,"START_SALARY",150,checkColHidden(5,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(END_SALARY,"END_SALARY",150,checkColHidden(6,$columndata)));
                 ////////////////////////////////////////////////////// ORGANIZATION CAMBOBOX IN GRID
                 $OBJECT_GRID->addColumn("
                     header: '<b>".ORGANIZATION_TYPE."</b>',
@@ -440,6 +444,8 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                         ,COURSE:''
                         ,POSITION:''
                         ,ORGANIZATION_TYPE:''
+                        ,START_SALARY:''
+                        ,END_SALARY:''
                     };
                     Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
                 }

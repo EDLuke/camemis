@@ -3194,6 +3194,9 @@ class StaffDBAccess {
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
                 $data[$i]["COMPANY_NAME"] = setShowText($value->COMPANY_NAME);
                 $data[$i]["COURSE"] = setShowText($value->COURSE);
+                $data[$i]["POSITION"] = setShowText($value->POSITION);
+                $data[$i]["START_SALARY"] = setShowText($value->START_SALARY);
+                $data[$i]["END_SALARY"] = setShowText($value->END_SALARY);
 
                 if ($value->COUNTRY <> 0)
                     $data[$i]["COUNTRY"] = CamemisTypeDBAccess::findObjectFromId($value->COUNTRY)->NAME;
@@ -3205,10 +3208,14 @@ class StaffDBAccess {
                     $data[$i]["RELATIONSHIP"] = CamemisTypeDBAccess::findObjectFromId($value->RELATIONSHIP)->NAME;
                 if ($value->EMERGENCY_CONTACT <> 0)
                     $data[$i]["EMERGENCY_CONTACT"] = CamemisTypeDBAccess::findObjectFromId($value->EMERGENCY_CONTACT)->NAME;
+                if ($value->MAJOR_TYPE <> 0)
+                    $data[$i]["MAJOR_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->MAJOR_TYPE)->NAME;
                 if ($value->MAJOR <> 0)
                     $data[$i]["MAJOR"] = CamemisTypeDBAccess::findObjectFromId($value->MAJOR)->NAME;
                 if ($value->QUALIFICATION_DEGREE <> 0)
                     $data[$i]["QUALIFICATION_DEGREE"] = CamemisTypeDBAccess::findObjectFromId($value->QUALIFICATION_DEGREE)->NAME;
+                if ($value->ORGANIZATION_TYPE <> 0)
+                    $data[$i]["ORGANIZATION_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->ORGANIZATION_TYPE)->NAME;
 
                 $i++;
             }
@@ -3220,7 +3227,6 @@ class StaffDBAccess {
             , "rows" => $data
         );
     }
-
     ////////////////////////////////////////////////////////////////////////////
 }
 

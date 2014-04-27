@@ -3230,6 +3230,8 @@ class StaffDBAccess {
                 $data[$i]["COMPANY_NAME"] = setShowText($value->COMPANY_NAME);
                 $data[$i]["COURSE"] = setShowText($value->COURSE);
                 $data[$i]["POSITION"] = setShowText($value->POSITION);
+                $data[$i]["START_SALARY"] = setShowText($value->START_SALARY);
+                $data[$i]["END_SALARY"] = setShowText($value->END_SALARY);
 
                 if ($value->COUNTRY <> 0)
                     $data[$i]["COUNTRY"] = CamemisTypeDBAccess::findObjectFromId($value->COUNTRY)->NAME;
@@ -3260,7 +3262,6 @@ class StaffDBAccess {
             , "rows" => $data
         );
     }
-
     ////////////////////////////////////////////////////////////////////////////
 }
 

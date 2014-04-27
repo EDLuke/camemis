@@ -118,8 +118,8 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 }
 
                 $AVERAGE_TOTAL = $this->getAvgClassPerformance(
-                    $value->STUDENT_ID
-                    , false);
+                        $value->STUDENT_ID
+                        , false);
 
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE_TOTAL;
                 $data[$i]["RANK"] = AssessmentConfig::findRank($scoreList, $AVERAGE_TOTAL);
@@ -127,9 +127,9 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 if ($this->listSubjects()) {
                     foreach ($this->listSubjects() as $subjectObject) {
                         $SUBJECT_ASSESSMENT = $this->getStudentSubjectAssessment(
-                            $value->STUDENT_ID
-                            , $subjectObject->SUBJECT_ID
-                            , false);
+                                $value->STUDENT_ID
+                                , $subjectObject->SUBJECT_ID
+                                , false);
                         $data[$i][$subjectObject->SUBJECT_ID] = $SUBJECT_ASSESSMENT ? $SUBJECT_ASSESSMENT->SUBJECT_VALUE : "---";
                     }
                 }
@@ -185,8 +185,8 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 }
 
                 $AVERAGE_TOTAL = $this->getAvgClassPerformance(
-                    $value->STUDENT_ID
-                    , false);
+                        $value->STUDENT_ID
+                        , false);
 
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE_TOTAL;
                 $data[$i]["RANK"] = AssessmentConfig::findRank($scoreList, $AVERAGE_TOTAL);
@@ -194,9 +194,9 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 if ($this->listSubjects()) {
                     foreach ($this->listSubjects() as $subjectObject) {
                         $SUBJECT_ASSESSMENT = $this->getStudentSubjectAssessment(
-                            $value->STUDENT_ID
-                            , $subjectObject->SUBJECT_ID
-                            , false);
+                                $value->STUDENT_ID
+                                , $subjectObject->SUBJECT_ID
+                                , false);
                         $data[$i][$subjectObject->SUBJECT_ID] = $SUBJECT_ASSESSMENT ? $SUBJECT_ASSESSMENT->SUBJECT_VALUE : "---";
                     }
                 }
@@ -256,12 +256,12 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 $data[$i]["RANK"] = AssessmentConfig::findRank($scoreList, $AVERAGE_TOTAL);
 
                 $data[$i]["FIRST_SEMESTER_RESULT"] = $this->getAvgClassPerformance(
-                    $value->STUDENT_ID
-                    , "FIRST_SEMESTER");
+                        $value->STUDENT_ID
+                        , "FIRST_SEMESTER");
 
                 $data[$i]["SECOND_SEMESTER_RESULT"] = $this->getAvgClassPerformance(
-                    $value->STUDENT_ID
-                    , "SECOND_SEMESTER");
+                        $value->STUDENT_ID
+                        , "SECOND_SEMESTER");
 
                 $FS_ASSESSMENT = $this->getStudentPerformance("FIRST_SEMESTER");
                 if ($FS_ASSESSMENT) {
@@ -407,10 +407,10 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 $COEFF_SS = $this->classObject->SEMESTER2_WEIGHTING ? $this->classObject->SEMESTER2_WEIGHTING : 1;
                 switch ($this->classObject->YEAR_RESULT) {
                     case 1:
-                        $result = is_numeric($FIRST_SEMESTER)?$FIRST_SEMESTER:"---";
+                        $result = is_numeric($FIRST_SEMESTER) ? $FIRST_SEMESTER : "---";
                         break;
                     case 2:
-                        $result = is_numeric($SECOND_SEMESTER)?$SECOND_SEMESTER:"---";
+                        $result = is_numeric($SECOND_SEMESTER) ? $SECOND_SEMESTER : "---";
                         break;
                     default:
                         if (is_numeric($FIRST_SEMESTER) && is_numeric($SECOND_SEMESTER)) {
@@ -509,8 +509,8 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
             case 1:
                 $scoreList = $this->scoreListClassPerformance();
                 $AVERAGE = $this->getAvgClassPerformance(
-                    $this->studentId
-                    , false);
+                        $this->studentId
+                        , false);
                 $RANK = AssessmentConfig::findRank($scoreList, $AVERAGE);
                 $UPDATE_DATA["LEARNING_VALUE"] = $AVERAGE;
                 $UPDATE_DATA["RANK"] = $RANK;
@@ -527,8 +527,8 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
             case 2:
                 $scoreList = $this->scoreListClassPerformance();
                 $AVERAGE = $this->getAvgClassPerformance(
-                    $this->studentId
-                    , false);
+                        $this->studentId
+                        , false);
                 $RANK = AssessmentConfig::findRank($scoreList, $AVERAGE);
                 $UPDATE_DATA["LEARNING_VALUE"] = $AVERAGE;
                 $UPDATE_DATA["RANK"] = $RANK;
@@ -664,34 +664,36 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                 $i = 0;
                 foreach ($listOfSubjects as $value) {
 
-                    $data[$i]["SHORT"] = $value->SUBJECT_SHORT;
-                    $data[$i]["NAME"] = $value->SUBJECT_NAME;
+                    if ($value->SUBJECT_NAME) {
+                        $data[$i]["SHORT"] = $value->SUBJECT_SHORT;
+                        $data[$i]["NAME"] = $value->SUBJECT_NAME;
 
-                    switch ($this->section) {
-                        case 1:
-                            $facette = $this->getStudentSubjectAssessment(
-                                $this->studentId
-                                , $value->SUBJECT_ID
-                                , false);
-                            break;
-                        case 2:
-                            $facette = $this->getStudentSubjectYearSemesterAssessment(
-                                $this->studentId
-                                , $value->SUBJECT_ID
-                                , $this->term);
-                            break;
-                        case 3:
-                            $facette = $this->getStudentSubjectAssessment(
-                                $this->studentId
-                                , $value->SUBJECT_ID
-                                , false);
-                            break;
+                        switch ($this->section) {
+                            case 1:
+                                $facette = $this->getStudentSubjectAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , false);
+                                break;
+                            case 2:
+                                $facette = $this->getStudentSubjectYearSemesterAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , $this->term);
+                                break;
+                            case 3:
+                                $facette = $this->getStudentSubjectAssessment(
+                                        $this->studentId
+                                        , $value->SUBJECT_ID
+                                        , false);
+                                break;
+                        }
+
+                        $data[$i]["SUBJECT_VALUE"] = $facette ? $facette->SUBJECT_VALUE : "---";
+                        $data[$i]["ASSESSMENT"] = $facette ? setShowText($facette->LETTER_GRADE) : "---";
+                        $data[$i]["RANK"] = $facette ? setShowText($facette->RANK) : "---";
+                        $i++;
                     }
-
-                    $data[$i]["SUBJECT_VALUE"] = $facette ? $facette->SUBJECT_VALUE : "---";
-                    $data[$i]["ASSESSMENT"] = $facette ? setShowText($facette->LETTER_GRADE) : "---";
-                    $data[$i]["RANK"] = $facette ? setShowText($facette->RANK) : "---";
-                    $i++;
                 }
             }
         }

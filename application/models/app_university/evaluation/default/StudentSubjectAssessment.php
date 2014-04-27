@@ -1056,7 +1056,7 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         }
     }
 
-    public function jsonSetSubjectAssessment($encrypParams) {
+    public function jsonActionPublishSubjectAssessment($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
@@ -1069,11 +1069,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $this->classObject = $this->getClassObject();
         $this->classSubject = $this->getClassSubject();
 
-        parent::$this->term = $this->term;
-        parent::$this->monthyear = $this->monthyear;
-        parent::$this->classObject = $this->classObject;
-        parent::$this->academicId = $this->academicId;
-        parent::$this->subjectId = $this->subjectId;
+//        parent::$this->term = $this->term;
+//        parent::$this->monthyear = $this->monthyear;
+//        parent::$this->classObject = $this->classObject;
+//        parent::$this->academicId = $this->academicId;
+//        parent::$this->subjectId = $this->subjectId;
 
         if ($this->monthyear) {
 

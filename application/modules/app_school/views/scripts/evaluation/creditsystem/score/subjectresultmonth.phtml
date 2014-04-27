@@ -230,7 +230,7 @@ Ext.onReady(function() {
                 Ext.Ajax.request({
                     url:'/evaluation/jsonsave/'
                     ,method: 'POST'
-                    ,params: {cmd: 'jsonSetSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
+                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                     ,success: function(response, options) {
                         var jsonData = Ext.util.JSON.decode(response.responseText);
                         Ext.MessageBox.hide();

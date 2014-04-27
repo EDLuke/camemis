@@ -693,7 +693,8 @@ class EvaluationController extends Zend_Controller_Action {
                 break;
 
             case "jsonActionStudentSubjectAssessment":
-                $jsondata = $this->DB_SUBJECT_ASSESSMENT->jsonActionStudentSubjectAssessment($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionStudentSubjectAssessment($this->REQUEST->getPost());
                 break;
 
             case "jsonActionStudentClassPerformance":
@@ -704,8 +705,9 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionDeleteAllScoresSubject($this->REQUEST->getPost());
                 break;
 
-            case "jsonSetSubjectAssessment":
-                $jsondata = $this->DB_SUBJECT_ASSESSMENT->jsonSetSubjectAssessment($this->REQUEST->getPost());
+            case "jsonActionPublishSubjectAssessment":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionPublishSubjectAssessment($this->REQUEST->getPost());
                 break;
         }
 

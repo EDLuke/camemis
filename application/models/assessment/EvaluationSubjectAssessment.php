@@ -9,6 +9,7 @@
 require_once 'models/assessment/AssessmentProperties.php';
 require_once 'models/assessment/SQLEvaluationStudentAssignment.php';
 require_once 'models/assessment/SQLEvaluationStudentSubject.php';
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAccess.php";
 
 class EvaluationSubjectAssessment extends AssessmentProperties {
 
@@ -17,10 +18,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     const NO_TERM = false;
     const NO_ASSIGNMENT = false;
     const NO_SECTION = false;
+    const NO_SCHOOLYEAR_ID = false;
     const SCORE_NUMBER = 1;
     const SCORE_CHAR = 2;
     const INCLUDE_IN_MONTH = 1;
     const INCLUDE_IN_TERM = 2;
+    const SCORE_TYPE_NUMBER = 1;
+    const SCORE_TYPE_CHAR = 2;
 
     function __construct() {
         parent::__construct();
@@ -35,7 +39,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $studentId = $value->ID;
 
                 $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
-                $data[$i]["STUDENT_ID"] = $studentId;
+                $data[$i]["ID"] = $studentId;
                 $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
                 $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
                 $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
@@ -75,9 +79,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($studentId)->LETTER_GRADE_NUMBER;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectMonthAssessment($studentId)->LETTER_GRADE_NUMBER;
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($studentId)->LETTER_GRADE_CHAR;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectMonthAssessment($studentId)->ASSESSMENT_ID;
                         break;
                 }
 
@@ -118,9 +124,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($studentId);
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($studentId, $this->term);
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_NUMBER;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_NUMBER;
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId)->LETTER_GRADE_CHAR;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($studentId)->ASSESSMENT_ID;
                         break;
                 }
 
@@ -179,9 +187,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         }
 
                         $data[$i]["ASSESSMENT"] = $this->getSubjectYearAssessment($studentId)->LETTER_GRADE_NUMBER;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($studentId)->LETTER_GRADE_NUMBER;
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getSubjectYearAssessment($studentId)->LETTER_GRADE_CHAR;
+                        $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($studentId)->ASSESSMENT_ID;
                         break;
                 }
 
@@ -401,15 +411,18 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getSubjectMonthAssessment($studentId) {
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation(
-                        $studentId
-                        , $this->classId
-                        , $this->subjectId
-                        , self::NO_TERM
-                        , $this->getMonth()
-                        , $this->getYear()
-                        , self::NO_SECTION
+        $object = (object) array(
+                    "studentId" => $studentId
+                    , "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+                    , "term" => self::NO_TERM
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "section" => "MONTH"
+                    , "schoolyearId" => $this->getSchoolyearId()
         );
+
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
     }
 
     protected function getScoreListSubjectYearResult() {
@@ -426,28 +439,112 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getSubjectTermAssessment($studentId) {
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation(
-                        $studentId
-                        , $this->classId
-                        , $this->subjectId
-                        , $this->term
-                        , self::NO_MONTH
-                        , self::NO_YEAR
-                        , self::NO_SECTION
+        $object = (object) array(
+                    "studentId" => $studentId
+                    , "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "month" => self::NO_MONTH
+                    , "year" => self::NO_YEAR
+                    , "section" => "SEMESTER"
+                    , "schoolyearId" => $this->getSchoolyearId()
         );
+
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
     }
 
     public function getSubjectYearAssessment($studentId) {
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation(
-                        $studentId
-                        , $this->classId
-                        , $this->subjectId
-                        , $this->term
-                        , self::NO_MONTH
-                        , self::NO_YEAR
-                        , "YEAR"
+        $object = (object) array(
+                    "studentId" => $studentId
+                    , "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "month" => self::NO_MONTH
+                    , "year" => self::NO_YEAR
+                    , "section" => "YEAR"
+                    , "schoolyearId" => $this->getSchoolyearId()
         );
+
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
+    }
+
+    public function actionStudentSubjectAssessment() {
+
+        $object = (object) array(
+                    "studentId" => $this->studentId
+                    , "classId" => $this->classId
+                    , "section" => $this->getSection()
+                    , "subjectId" => $this->subjectId
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "term" => $this->term
+                    , "assessmentId" => $this->actionValue
+                    , "subjectValue" => $this->getSubjectValue()
+                    , "schoolyearId" => $this->getSchoolyearId()
+                    , "educationSystem" => $this->getEducationSystem()
+        );
+
+        return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($object);
+    }
+
+    public function actionPublishSubjectAssessment() {
+
+        $data = array(
+            "classId" => $this->classId
+            , "section" => $this->getSection()
+            , "subjectId" => $this->subjectId
+            , "scoreType" => $this->getSubjectScoreType()
+            , "month" => $this->getMonth()
+            , "year" => $this->getYear()
+            , "term" => $this->term
+            , "actionField" => "SUBJECT_VALUE"
+            , "schoolyearId" => $this->getSchoolyearId()
+            , "educationSystem" => $this->getEducationSystem()
+        );
+
+        switch ($this->getSection()) {
+            case "MONTH":
+                $result = $this->getSubjectMonthResult();
+                break;
+            case "TERM":
+            case "QUARTER":
+            case "SEMESTER":
+                $result = $this->getSubjectTermResult();
+                break;
+            case "YEAR":
+                $result = $this->getSubjectYearResult();
+                break;
+        }
+
+        for ($i = 0; $i <= count($result); $i++) {
+
+            $data["studentId"] = isset($result[$i]["ID"]) ? $result[$i]["ID"] : "";
+            $data["actionRank"] = isset($result[$i]["RANK"]) ? $result[$i]["RANK"] : "";
+            $data["assessmentId"] = isset($result[$i]["ASSESSMENT_ID"]) ? $result[$i]["ASSESSMENT_ID"] : "";
+
+            switch ($this->getSubjectScoreType()) {
+                case self::SCORE_NUMBER:
+                    $data["subjectValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
+                    break;
+                case self::SCORE_CHAR:
+                    $data["subjectValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
+                    break;
+            }
+
+            SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation((object) $data);
+        }
+    }
+
+    public function getSubjectValue() {
+        switch ($this->getSubjectScoreType()) {
+            case self::SCORE_NUMBER:
+                return $this->actionValue;
+            case self::SCORE_CHAR:
+                $gradingObject = SpecialDBAccess::findGradingSystemFromId($this->actionValue);
+                return $gradingObject ? $gradingObject->LETTER_GRADE : "";
+        }
     }
 
 }

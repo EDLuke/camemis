@@ -48,13 +48,13 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $this->year = getYearFromMonthYear($this->monthyear);
         $this->section = 1;
 
-//        parent::$this->section = $this->section;
-//        parent::$this->month = $this->month;
-//        parent::$this->year = $this->year;
-//        parent::$this->classId = $this->classId;
-//        parent::$this->subjectId = $this->subjectId;
-//        parent::$this->classObject = $this->classObject;
-//        parent::$this->classSubject = $this->classSubject;
+        //        parent::$this->section = $this->section;
+        //        parent::$this->month = $this->month;
+        //        parent::$this->year = $this->year;
+        //        parent::$this->classId = $this->classId;
+        //        parent::$this->subjectId = $this->subjectId;
+        //        parent::$this->classObject = $this->classObject;
+        //        parent::$this->classSubject = $this->classSubject;
 
         return $this->getstudentsSubjectMonthResult();
     }
@@ -77,11 +77,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
 
         $this->scoreType = $this->classSubject ? $this->classSubject->SCORE_TYPE : "";
 
-//        parent::$this->section = $this->section;
-//        parent::$this->term = $this->term;
-//        parent::$this->classId = $this->classId;
-//        parent::$this->subjectId = $this->subjectId;
-//        parent::$this->classSubject = $this->classSubject;
+        //        parent::$this->section = $this->section;
+        //        parent::$this->term = $this->term;
+        //        parent::$this->classId = $this->classId;
+        //        parent::$this->subjectId = $this->subjectId;
+        //        parent::$this->classSubject = $this->classSubject;
 
         return $this->getStudentsSubjectSemesterResult();
     }
@@ -103,17 +103,17 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
 
         $this->scoreType = $this->classSubject ? $this->classSubject->SCORE_TYPE : "";
 
-//        parent::$this->section = $this->section;
-//        parent::$this->classId = $this->classId;
-//        parent::$this->subjectId = $this->subjectId;
-//        parent::$this->classSubject = $this->classSubject;
+        //        parent::$this->section = $this->section;
+        //        parent::$this->classId = $this->classId;
+        //        parent::$this->subjectId = $this->subjectId;
+        //        parent::$this->classSubject = $this->classSubject;
 
         return $this->getStudentslSubjectYearResult();
     }
 
     /*     * *******************************************************************
-     * Grid: Class subject month result...
-     * ********************************************************************** */
+    * Grid: Class subject month result...
+    * ********************************************************************** */
 
     public function getstudentsSubjectMonthResult()
     {
@@ -168,10 +168,10 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                         foreach ($this->listAssignmentsByClass() as $assignment)
                         {
                             $data[$i][$assignment->ASSIGNMENT_ID] = $this->getImplodeStudentAssignment(
-                                    $value->STUDENT_ID
-                                    , $this->subjectId
-                                    , false
-                                    , $assignment->ASSIGNMENT_ID
+                                $value->STUDENT_ID
+                                , $this->subjectId
+                                , false
+                                , $assignment->ASSIGNMENT_ID
                             );
                         }
                     }
@@ -197,8 +197,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
     }
 
     /*     * *******************************************************************
-     * Grid: Class subject term result...
-     * ********************************************************************** */
+    * Grid: Class subject term result...
+    * ********************************************************************** */
 
     public function getStudentsSubjectSemesterResult()
     {
@@ -236,9 +236,9 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                 ////////////////////////////////////////////////////////////////
                 //Show Average...
                 $AVERAGE = $this->studentTotalAvgSemesterSubject(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term);
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term);
 
                 $data[$i]["AVERAGE"] = $AVERAGE;
                 ////////////////////////////////////////////////////////////////
@@ -251,49 +251,49 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                     foreach ($this->listAssignmentsByClass() as $assignment)
                     {
                         $data[$i][$assignment->ASSIGNMENT_ID] = $this->getImplodeStudentAssignment(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , $this->term
-                                , $assignment->ASSIGNMENT_ID);
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , $this->term
+                            , $assignment->ASSIGNMENT_ID);
                     }
                 }
 
                 $data[$i]["ASSESSMENT"] = $this->studentTotalAssessmentSubjectSemester(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term);
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term);
 
                 $data[$i]["MONTHLY_RESULT"] = $this->studentAvgMonthSubjectInSemester(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term);
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term);
 
                 switch (strtoupper($this->term))
                 {
                     case "FIRST_SEMESTER":
                         $data[$i]["FIRST_SEMESTER_RESULT"] = $this->studentAvgSemesterSubjectInSemester(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , $this->term);
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , $this->term);
                         break;
                     case "SECOND_SEMESTER":
                         $data[$i]["SECOND_SEMESTER_RESULT"] = $this->studentAvgSemesterSubjectInSemester(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , $this->term);
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , $this->term);
                         break;
                 }
 
                 //Ok...
                 $data[$i]["ASSIGNMENT_MONTH"] = $this->implodeAssignmentMonthBySemester(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term);
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term);
 
                 $data[$i]["ASSIGNMENT_SEMESTER"] = $this->implodeAssignmentSemesterBySemester(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term);
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term);
 
                 $i++;
             }
@@ -314,8 +314,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
     }
 
     /*     * *******************************************************************
-     * Grid: Class subject year result...
-     * ********************************************************************** */
+    * Grid: Class subject year result...
+    * ********************************************************************** */
 
     public function getStudentslSubjectYearResult()
     {
@@ -344,15 +344,15 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                 {
                     case 1:
                         $AVG_FS = $this->studentTotalAvgSemesterSubject(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , 'FIRST_SEMESTER'
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , 'FIRST_SEMESTER'
                         );
 
                         $AVG_SS = $this->studentTotalAvgSemesterSubject(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , 'SECOND_SEMESTER'
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , 'SECOND_SEMESTER'
                         );
 
                         $data[$i]["FIRST_SEMESTER_RESULT"] = $AVG_FS;
@@ -361,14 +361,14 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                     case 2:
 
                         $ASSESSMENT_FS = $this->getStudentSubjectYearSemesterAssessment(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , 'FIRST_SEMESTER');
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , 'FIRST_SEMESTER');
 
                         $ASSESSMENT_SS = $this->getStudentSubjectYearSemesterAssessment(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , 'SECOND_SEMESTER');
+                            $value->STUDENT_ID
+                            , $this->subjectId
+                            , 'SECOND_SEMESTER');
 
                         $data[$i]["FIRST_SEMESTER_RESULT"] = $ASSESSMENT_FS ? $ASSESSMENT_FS->LETTER_GRADE : "---";
                         $data[$i]["SECOND_SEMESTER_RESULT"] = $ASSESSMENT_SS ? $ASSESSMENT_SS->LETTER_GRADE : "---";
@@ -379,8 +379,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                 ////////////////////////////////////////////////////////////////
                 //Show Average...
                 $AVERAGE = $this->studentAvgSubjectByYear(
-                        $value->STUDENT_ID
-                        , $this->subjectId
+                    $value->STUDENT_ID
+                    , $this->subjectId
                 );
                 $data[$i]["AVERAGE"] = $AVERAGE;
 
@@ -437,8 +437,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
     }
 
     /*     * *******************************************************************
-     * Action Student Subject Assessment...
-     * ********************************************************************** */
+    * Action Student Subject Assessment...
+    * ********************************************************************** */
 
     public function jsonActionStudentSubjectAssessment($encrypParams, $noJson = false)
     {
@@ -478,28 +478,28 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         {
             case 1:
                 $this->setStudentMonthSubjectAssessment(
-                        $this->studentId
-                        , $this->subjectId
-                        , $comment
-                        , $assessmentId
-                        , $this->scoreListSubjectByMonth()
+                    $this->studentId
+                    , $this->subjectId
+                    , $comment
+                    , $assessmentId
+                    , $this->scoreListSubjectByMonth()
                 );
                 break;
             case 2:
                 $this->setStudentSemesterSubjectAssessment(
-                        $this->studentId
-                        , $this->subjectId
-                        , $comment
-                        , $assessmentId
-                        , $this->scoreListSubjectBySemester());
+                    $this->studentId
+                    , $this->subjectId
+                    , $comment
+                    , $assessmentId
+                    , $this->scoreListSubjectBySemester());
                 break;
             case 3:
                 $this->setStudentYearSubjectAssessment(
-                        $this->studentId
-                        , $this->subjectId
-                        , $comment
-                        , $assessmentId
-                        , $this->scoreListSubjectByYear());
+                    $this->studentId
+                    , $this->subjectId
+                    , $comment
+                    , $assessmentId
+                    , $this->scoreListSubjectByYear());
                 break;
         }
 
@@ -512,8 +512,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
     }
 
     /*     * *******************************************************************
-     * Load: Student Assessment...
-     * ********************************************************************** */
+    * Load: Student Assessment...
+    * ********************************************************************** */
 
     public function jsonListStudentsSubjectAssessment($encrypParams)
     {
@@ -586,11 +586,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         if ($CHECK)
         {
             return $this->studentAvgAllAssignmentsBySubject(
-                            $studentId
-                            , $subjectId
-                            , false
-                            , false
-                            , false
+                $studentId
+                , $subjectId
+                , false
+                , false
+                , false
             );
         }
         else
@@ -606,11 +606,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         if ($CHECK)
         {
             return $this->studentAvgAllAssignmentsBySubject(
-                            $studentId
-                            , $subjectId
-                            , $term
-                            , false
-                            , 1
+                $studentId
+                , $subjectId
+                , $term
+                , false
+                , 1
             );
         }
         else
@@ -662,11 +662,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         if ($CHECK)
         {
             return $this->studentAvgAllAssignmentsBySubject(
-                            $studentId
-                            , $subjectId
-                            , $term
-                            , false
-                            , 2
+                $studentId
+                , $subjectId
+                , $term
+                , false
+                , 2
             );
         }
         else
@@ -682,11 +682,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         if ($CHECK)
         {
             return $this->studentAvgAllAssignmentsBySubject(
-                            $studentId
-                            , $subjectId
-                            , $term
-                            , false
-                            , false
+                $studentId
+                , $subjectId
+                , $term
+                , false
+                , false
             );
         }
         else
@@ -706,9 +706,9 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $secondCoeff = $this->classObject->SEMESTER2_WEIGHTING ? $this->classObject->SEMESTER2_WEIGHTING : 1;
 
         $firstSemester = $this->studentTotalAvgSemesterSubject(
-                $studentId
-                , $subjectId
-                , "FIRST_SEMESTER"
+            $studentId
+            , $subjectId
+            , "FIRST_SEMESTER"
         );
 
         if (is_numeric($firstSemester))
@@ -717,9 +717,9 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         }
 
         $secondSemester = $this->studentTotalAvgSemesterSubject(
-                $studentId
-                , $subjectId
-                , "SECOND_SEMESTER"
+            $studentId
+            , $subjectId
+            , "SECOND_SEMESTER"
         );
 
         if (is_numeric($secondSemester))
@@ -766,19 +766,19 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $data = Array();
         $entries = $this->listStudentsByClass();
 
-//        parent::$this->month = $this->month;
-//        parent::$this->year = $this->year;
-//        parent::$this->subjectId = $this->subjectId;
+        //        parent::$this->month = $this->month;
+        //        parent::$this->year = $this->year;
+        //        parent::$this->subjectId = $this->subjectId;
 
         if ($entries)
         {
             foreach ($entries as $value)
             {
                 $data[] = $this->studentAvgAllAssignmentsBySubject(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , false
-                        , false
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , false
+                    , false
                 );
             }
         }
@@ -790,8 +790,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
 
         $data = Array();
 
-//        parent::$this->term = $this->term;
-//        parent::$this->subjectId = $this->subjectId;
+        //        parent::$this->term = $this->term;
+        //        parent::$this->subjectId = $this->subjectId;
 
         $entries = $this->listStudentsByClass();
         if ($entries)
@@ -799,9 +799,9 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
             foreach ($entries as $value)
             {
                 $data[] = $this->studentTotalAvgSemesterSubject(
-                        $value->STUDENT_ID
-                        , $this->subjectId
-                        , $this->term
+                    $value->STUDENT_ID
+                    , $this->subjectId
+                    , $this->term
                 );
             }
         }
@@ -1017,9 +1017,9 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
         $AVERAGE = $this->studentTotalAvgSemesterSubject(
-                $studentId
-                , $subjectId
-                , $this->term);
+            $studentId
+            , $subjectId
+            , $this->term);
 
         $RANK = AssessmentConfig::findRank($scoreList, $AVERAGE);
 
@@ -1111,8 +1111,8 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
         $AVERAGE = $this->studentAvgSubjectByYear(
-                $studentId
-                , $subjectId
+            $studentId
+            , $subjectId
         );
 
         $RANK = AssessmentConfig::findRank($scoreList, $AVERAGE);
@@ -1196,7 +1196,7 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         }
     }
 
-    public function jsonSetSubjectAssessment($encrypParams)
+    public function jsonActionPublishSubjectAssessment($encrypParams)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -1210,11 +1210,11 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
         $this->classObject = $this->getClassObject();
         $this->classSubject = $this->getClassSubject();
 
-        parent::$this->term = $this->term;
-        parent::$this->monthyear = $this->monthyear;
-        parent::$this->classObject = $this->classObject;
-        parent::$this->classId = $this->classId;
-        parent::$this->subjectId = $this->subjectId;
+//        parent::$this->term = $this->term;
+//        parent::$this->monthyear = $this->monthyear;
+//        parent::$this->classObject = $this->classObject;
+//        parent::$this->classId = $this->classId;
+//        parent::$this->subjectId = $this->subjectId;
 
         if ($this->monthyear)
         {
@@ -1246,29 +1246,29 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
                     case 1:
                         if ($this->getCountScoreEnterByStudent($studentObject->STUDENT_ID, $this->subjectId, false, false))
                             $this->setStudentMonthSubjectAssessment(
-                                    $studentObject->STUDENT_ID
-                                    , $this->subjectId
-                                    , false
-                                    , false
-                                    , $this->scoreList);
+                                $studentObject->STUDENT_ID
+                                , $this->subjectId
+                                , false
+                                , false
+                                , $this->scoreList);
                         break;
                     case 2:
                         if ($this->getCountScoreEnterByStudent($studentObject->STUDENT_ID, $this->subjectId, $this->term, false))
                             $this->setStudentSemesterSubjectAssessment(
-                                    $studentObject->STUDENT_ID
-                                    , $this->subjectId
-                                    , false
-                                    , false
-                                    , $this->scoreList);
+                                $studentObject->STUDENT_ID
+                                , $this->subjectId
+                                , false
+                                , false
+                                , $this->scoreList);
                         break;
                     case 3:
                         if ($this->getCountScoreEnterByStudent($studentObject->STUDENT_ID, $this->subjectId, false, false))
                             $this->setStudentYearSubjectAssessment(
-                                    $studentObject->STUDENT_ID
-                                    , $this->subjectId
-                                    , false
-                                    , false
-                                    , $this->scoreList);
+                                $studentObject->STUDENT_ID
+                                , $this->subjectId
+                                , false
+                                , false
+                                , $this->scoreList);
                         break;
                 }
             }

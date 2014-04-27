@@ -319,7 +319,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         if ($startDate && $endDate)
         {
-            $SQL .= " AND A.START_DATE >= '" . $startDate . "' AND A.END_DATE <= '" . $endDate . "'";
+            $SQL .= " AND A.START_DATE >= '" . setDate2DB($startDate) . "' AND A.END_DATE <= '" . setDate2DB($endDate) . "'";
         }
 
         if ($actionType)

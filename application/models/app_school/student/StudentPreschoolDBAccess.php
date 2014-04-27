@@ -43,26 +43,13 @@ class StudentPreschoolDBAccess {
     
     public static function findObjectFromId($params) {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $type = isset($params["type"]) ? addText($params["type"]) : '';
-        switch($type){
-            case "studentPreschool":
-                $SQL = self::dbAccess()->select();
-                $SQL->distinct();
-                $SQL->from(array('A' => 't_student_preschool'), array('*'));
-                $SQL->where("A.STUDENT_INDEX='" . $objectId . "'");
-                //error_log($SQL);
-                return self::dbAccess()->fetchRow($SQL);
-            break;
-            default:
-                $SQL = self::dbAccess()->select();
-                $SQL->distinct();
-                $SQL->from(array('A' => 't_student_preschooltype'), array('*'));
-                $SQL->joinRight(array('B' => 't_student_preschool'), 'A.PRESTUDENT = B.ID', array('ID AS STUDENT_ID', 'FIRSTNAME AS STUDENT_FIRSTNAME', 'LASTNAME AS STUDENT_LASTNAME'));
-                $SQL->where("A.ID='" . $objectId . "'");
-                //error_log($SQL);
-                return self::dbAccess()->fetchRow($SQL);
-            break;
-        }
+      
+        $SQL = self::dbAccess()->select();
+        $SQL->distinct();
+        $SQL->from(array('A' => 't_student_preschool'), array('*'));
+        $SQL->where("A.STUDENT_INDEX='" . $objectId . "'");
+        //error_log($SQL);
+        return self::dbAccess()->fetchRow($SQL);
     }
     
     public static function getObjectDataFromId($params) {
@@ -71,48 +58,18 @@ class StudentPreschoolDBAccess {
         $type = isset($params["type"]) ? addText($params["type"]) : '';
         $result = self::findObjectFromId($params);
         $data = array();
-        switch($type){
-            case "studentPreschool":
-                if ($result) {
-                    $data['FIRSTNAME'] = $result->FIRSTNAME;
-                    $data['LASTNAME'] = $result->LASTNAME;
-                    $data['PHONE'] = $result->PHONE;
-                    $data['ADDRESS'] = $result->ADDRESS;
-                    $data['EMAIL'] = $result->EMAIL;
-                    $data['GENDER'] = $result->GENDER;
-                    $data['DATE_BIRTH'] = $result->DATE_BIRTH;
-                }
-            break;
-            case "APPLICATION_TYPE":
-                 if ($result) {
-                    $data['APPLICATION_TYPE'] = $result->CAMEMIS_TYPE;
-                    $data['DESCRIPTION'] = $result->DESCRIPTION;
-                    if (!SchoolDBAccess::displayPersonNameInGrid()){
-                        $data["STUDENT_PRESCHOOL_NAME"] = setShowText($result->STUDENT_FIRSTNAME) . " " . setShowText($result->STUDENT_LASTNAME);
-                        $data["CHOSE_STUDENT_PRESCHOOL"] = $result->STUDENT_ID;
-                    }else{
-                        $data["STUDENT_PRESCHOOL_NAME"] = setShowText($result->STUDENT_LASTNAME) . " " . setShowText($result->STUDENT_FIRSTNAME);
-                        $data["CHOSE_STUDENT_PRESCHOOL"] = $result->STUDENT_ID;
-                    }
-                    
-                }
-            break;
-            case "TESTING_TYPE":
-                if ($result) {
-                    $data['TESTING_TYPE'] = $result->CAMEMIS_TYPE;
-                    $data['DESCRIPTION'] = $result->DESCRIPTION;
-                    $data['SCORE'] = $result->SCORE;
-                    if (!SchoolDBAccess::displayPersonNameInGrid()){
-                        $data["STUDENT_PRESCHOOL_NAME"] = setShowText($result->STUDENT_FIRSTNAME) . " " . setShowText($result->STUDENT_LASTNAME);
-                        $data["CHOSE_STUDENT_PRESCHOOL"] = $result->STUDENT_ID;
-                    }else{
-                        $data["STUDENT_PRESCHOOL_NAME"] = setShowText($result->STUDENT_LASTNAME) . " " . setShowText($result->STUDENT_FIRSTNAME);
-                        $data["CHOSE_STUDENT_PRESCHOOL"] = $result->STUDENT_ID;
-                    }
-                    
-                }
-            break;
+        
+        if ($result) {
+            $data['STUDENT_ID'] = $result->ID;
+            $data['FIRSTNAME'] = $result->FIRSTNAME;
+            $data['LASTNAME'] = $result->LASTNAME;
+            $data['PHONE'] = $result->PHONE;
+            $data['ADDRESS'] = $result->ADDRESS;
+            $data['EMAIL'] = $result->EMAIL;
+            $data['GENDER'] = $result->GENDER;
+            $data['DATE_BIRTH'] = getShowDate($result->DATE_BIRTH);
         }
+        
         return $data;
     }
     
@@ -199,63 +156,6 @@ class StudentPreschoolDBAccess {
         return $o;
     }
     
-    public static function sqlGetAllChooseStudentPreschool($params) {
-        
-        $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student_preschool'), array('*'));
-        $SQL .= " WHERE 1=1";
-        if ($globalSearch) {
-            $SQL .= " AND ((A.EMAIL LIKE '" . $globalSearch . "%')";
-            $SQL .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
-            $SQL .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
-            $SQL .= " OR (A.ADDRESS LIKE '" . $globalSearch . "%')";
-            $SQL .= " ) ";
-        }
-        
-        //error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);
-    }
-    
-    public static function jsonShowAllChooseStudentPreschool($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
-
-        $data = array();
-        $i = 0;
-
-        $result = self::sqlGetAllChooseStudentPreschool($params);
-
-        if ($result) {
-            foreach ($result as $value) {
-                $data[$i]['ID'] = $value->ID;
-                //////////////////////////////////////
-                $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
-                $data[$i]["LASTNAME"] = $value->LASTNAME;
-                $data[$i]["PHONE"] = $value->PHONE;
-                $data[$i]["EMAIL"] = $value->EMAIL;
-                $data[$i]["ADDRESS"] = $value->ADDRESS;
-                $data[$i]["GENDER"] = getGenderName($value->GENDER);
-
-                $i++;
-            }
-        }
-
-        $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
-            if (isset($data[$i]))
-                $a[] = $data[$i];
-        }
-
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
-    }
-    
-    
     public static function jsonSaveTypePreschool($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
@@ -317,8 +217,9 @@ class StudentPreschoolDBAccess {
     public static function jsonSaveStudentPreschool($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
-        $type = isset($params["type"]) ? addText($params["type"]) : '';
-
+        
+        $date = isset($params["DATE_BIRTH"])? setDate2DB($params["DATE_BIRTH"]):'';
+  
         $SAVEDATA = array();
         $GETDATA = array();
 
@@ -340,24 +241,14 @@ class StudentPreschoolDBAccess {
         if (isset($params["GENDER"]))
             $SAVEDATA["GENDER"] = addText($params["GENDER"]);
             
-        if (isset($params["DATE_BIRTH"]))
-            $SAVEDATA["DATE_BIRTH"] = setDate2DB($params["DATE_BIRTH"]);
+        if (isset($date))    
+            $SAVEDATA["DATE_BIRTH"] = $date;
             
         if ($objectId == "new") {
             $SAVEDATA['ID'] = generateGuid();
             $GETDATA['PRESTUDENT'] = $SAVEDATA['ID'];
             $GETDATA['OBJECT_TYPE'] = "REFERENCE";
-            $GETAPPDATA['PRESTUDENT'] = $SAVEDATA['ID'];
-            $GETAPPDATA['OBJECT_TYPE'] = "APPLICATION";
-            $GETAPPDATA['CREATED_DATE'] = getCurrentDBDateTime();
-            $GETAPPDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-            $GETTESTDATA['PRESTUDENT'] = $SAVEDATA['ID'];
-            $GETTESTDATA['OBJECT_TYPE'] = "TESTING";
-            $GETTESTDATA['CREATED_DATE'] = getCurrentDBDateTime();
-            $GETTESTDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
             
-            self::dbAccess()->insert('t_student_preschooltype', $GETTESTDATA);
-            self::dbAccess()->insert('t_student_preschooltype', $GETAPPDATA);
             self::dbAccess()->insert('t_student_preschooltype', $GETDATA);
             self::dbAccess()->insert('t_student_preschool', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
@@ -365,8 +256,6 @@ class StudentPreschoolDBAccess {
             $WHERE[] = "STUDENT_INDEX = '" . $objectId . "'";
             self::dbAccess()->update('t_student_preschool', $SAVEDATA, $WHERE);
         }
-          
-        
         
         return array(
             "success" => true
@@ -376,22 +265,11 @@ class StudentPreschoolDBAccess {
     
     public function jsonRemoveStudentPreschool($params) {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $type = isset($params["type"]) ? addText($params["type"]) : '';
+        $stdId = isset($params["stdId"]) ? addText($params["stdId"]) : '';
         
-        switch($type){
-            case "studentPreschool":
-                $result = self::sqlGetStudentPreschool($params);
-                foreach($result as $value){
-                    self::dbAccess()->delete('t_student_preschool_reference', array("STD_PRESCHOOL_ID='" . $value->ID . "'"));
-                    self::dbAccess()->delete('t_student_preschooltype', array("PRESTUDENT='" . $value->ID . "'"));
-                }
-                self::dbAccess()->delete('t_student_preschool', array("STUDENT_INDEX='" . $objectId . "'"));
-            break;
-            case "APPLICATION_TYPE":
-            case "TESTING_TYPE":
-                self::dbAccess()->delete('t_student_preschooltype', array("ID='" . $objectId . "'"));
-            break;
-        }
+        self::dbAccess()->delete('t_student_preschooltype', array("PRESTUDENT='" . $stdId . "'"));
+        self::dbAccess()->delete('t_student_preschool', array("STUDENT_INDEX='" . $objectId . "'"));
+            
         return array(
             "success" => true
         );
@@ -472,20 +350,21 @@ class StudentPreschoolDBAccess {
         if ($informationType){
             switch($informationType){
                 case "CLEAR":
-                    $SQL->where("B.CAMEMIS_TYPE = '0'");
+                    $SQL->where("B.OBJECT_TYPE = 'REFERENCE'");
+                    $SQL->where("B.CAMEMIS_TYPE is Null");
                     break;
                 default:
                     $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
-                    $SQL->where("B.CAMEMIS_TYPE != '0'");
                     break;
-            }
-            
+            }   
+           
+ 
         }
 
         if ($infoType)
             $SQL->where("C.OBJECT_TYPE = '".$infoType."'");
             
-        $SQL .= "GROUP BY A.ID";
+        //$SQL .= "GROUP BY A.ID";
 
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
@@ -509,12 +388,13 @@ class StudentPreschoolDBAccess {
                 $data[$i]['ID_PRESCHOOLTYPE'] = $value->PRESCHOOLTYPE_ID;
                 $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
                 $data[$i]["LASTNAME"] = $value->LASTNAME;
-                $data[$i]["GENDER"] = getGenderName($value->GENDER);
-                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
                 if (!SchoolDBAccess::displayPersonNameInGrid()) {
-                    $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
+                    $data[$i]["STUDENT_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME)." "."(".getGenderName($value->GENDER).")";
+                    $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
                 } else {
+                    $data[$i]["STUDENT_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME)." "."(".getGenderName($value->GENDER).")";
                     $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
+                    
                 }
                 
                 
@@ -559,6 +439,125 @@ class StudentPreschoolDBAccess {
         $SQL->where("A.STUDENT_INDEX = '" . $objectId . "'");
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
+    }
+    
+    public static function jsonSaveGridpreschool($params)
+    {
+
+        $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $field = isset($params["field"]) ? addText($params["field"]) : "";
+        $objectId = isset($params["id"]) ? addText($params["id"]) : "";
+        $objectType = isset($params["object"]) ? addText($params["object"]) : "";
+        
+        $SAVEDATA = array();
+        switch ($field)
+        {
+            case "CAMEMIS_TYPE":
+                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                break;
+            default:
+                $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
+                break;
+        }
+
+        
+        if ($objectId)
+        {
+            switch ($field)
+            {
+                case "DELETE":
+                    self::dbAccess()->delete("t_student_preschooltype", "ID='" . $objectId . "'");
+                    break;
+                default:
+                    $SAVEDATA["" . $field . ""] = addText($newValue);
+                    $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
+                    self::dbAccess()->update("t_student_preschooltype", $SAVEDATA, $WHERE);
+                    break;
+            }
+        }
+        else
+        {
+            $SAVEDATA["" . $field . ""] = addText($newValue);
+            $SAVEDATA["PRESTUDENT"] = $studentId;
+            $SAVEDATA["OBJECT_TYPE"] = $objectType;
+            $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+            $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
+
+            self::dbAccess()->insert('t_student_preschooltype', $SAVEDATA);
+
+            $objectId = self::dbAccess()->lastInsertId();
+        }
+
+        $SUCCESS_DATA = array();
+        $SUCCESS_DATA["success"] = true;
+
+        $facette = self::dbAccess()->fetchRow("SELECT * FROM t_student_preschooltype WHERE ID='" . $objectId . "'");
+
+        switch ($field)
+        {
+            case "DELETE":
+                $SUCCESS_DATA["DELETE"] = true;
+                break;
+            default:
+                $SUCCESS_DATA["DELETE"] = false;
+                $SUCCESS_DATA["ID"] = $facette->ID;
+                $SUCCESS_DATA["CAMEMIS_TYPE"] = $facette->CAMEMIS_TYPE;
+                $SUCCESS_DATA["DESCRIPTION"] = $facette->DESCRIPTION;
+                break;
+        }
+        return $SUCCESS_DATA;
+    }
+    
+    public static function jsonListGridpreschool($params)
+    {
+
+        $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $objectType = isset($params["object"]) ? addText($params["object"]) : "";
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_preschooltype", array('*'));
+        $SQL->where("PRESTUDENT='" . $studentId . "'");
+        $SQL->where("OBJECT_TYPE='" . $objectType . "'");
+
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        $i = 0;
+        $data = array();
+        if ($result)
+        {
+
+            foreach ($result as $value)
+            {
+                switch($objectType){
+                    case "APPLICATION":
+                        $data[$i]["ID"] = $value->ID;
+                        $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
+                        if ($value->CAMEMIS_TYPE <> 0)
+                            $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;
+                        break;
+                    default:
+                        $data[$i]["ID"] = $value->ID;
+                        $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
+                        $data[$i]["SCORE"] = $value->SCORE;
+                        $data[$i]["LEVEL"] = $value->LEVEL;
+                        //$data[$i]["RESULT_DATE"] = getShowDate($value->RESULT_DATE);
+                        $data[$i]["RESULT_DATE"] = $value->RESULT_DATE;
+                        if ($value->CAMEMIS_TYPE <> 0)
+                            $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;
+                        break;
+                    
+                }
+                
+                $i++;
+            }
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $data
+        );
     }
 
 }

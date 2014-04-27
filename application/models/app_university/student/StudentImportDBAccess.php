@@ -164,7 +164,8 @@ class StudentImportDBAccess {
         ///
         $type = isset($params['type']) ? $params['type'] : '';
         $campus = isset($params['campus']) ? $params['campus'] : '';
-        $training= isset($params['trainingId']) ? $params['trainingId'] : '';
+        $training = isset($params['trainingId']) ? $params['trainingId'] : '';
+        $subjectExam = "";
         if ($type == 'ENROLL') {
             $facette = ExaminationDBAccess::findAcademicById($campus);
             $arr["type"] = 6;
@@ -178,7 +179,7 @@ class StudentImportDBAccess {
         $i = 0;
         if ($result)
             foreach ($result as $value) {
-                
+
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["STATUS"] = getStatus($value->STATUS);
                 $data[$i]["STUDENT_SCHOOL_ID"] = setShowText($value->STUDENT_SCHOOL_ID);
@@ -187,30 +188,33 @@ class StudentImportDBAccess {
 
                 //@veasna
                 $data[$i]['ENROLLMENT_STATUS'] = $this->checkStudentById($value->ID) ? YES : NO;
-               
+
                 if ($value->TRAINING) {
-                    $data[$i]["CAMPUS_NAME"] = $this->getTraining($value->TRAINING)->NAME; 
-                } else {       
+                    $data[$i]["CAMPUS_NAME"] = $this->getTraining($value->TRAINING)->NAME;
+                } else {
                     $data[$i]["CAMPUS_NAME"] = $this->getAcademic($value->CAMPUS_ID)->NAME;
                 }
 
                 //@veasna
                 if ($value->TYPE == 'ENROLL') {
 
-                    $studentExamCodeObject = StudentExaminationDBAccess::findStudentExamCode($value->ID, '6', $facette->SCHOOL_YEAR);
-                    $data[$i]["CANDIDATE_CODE"] = $studentExamCodeObject ? $studentExamCodeObject[0]->EXAM_CODE : '';
+                    $facette = ExaminationDBAccess::findAcademicById($value->CAMPUS_ID);
+                    if ($facette) {
+                        $studentExamCodeObject = StudentExaminationDBAccess::findStudentExamCode($value->ID, '6', $facette->SCHOOL_YEAR);
+                        $data[$i]["CANDIDATE_CODE"] = $studentExamCodeObject ? $studentExamCodeObject[0]->EXAM_CODE : '';
 
-                    if ($subjectExam) {
-                        foreach ($subjectExam as $subject) {
+                        if ($subjectExam) {
+                            foreach ($subjectExam as $subject) {
 
-                            $objectRsult = StudentExaminationDBAccess::getStudentExam($value->ID, $subject->GUID);
-                            $data[$i][$subject->EXM_ID] = $objectRsult ? (($objectRsult->POINTS) ? $objectRsult->POINTS : '---') : '---';
+                                $objectRsult = StudentExaminationDBAccess::getStudentExam($value->ID, $subject->GUID);
+                                $data[$i][$subject->EXM_ID] = $objectRsult ? (($objectRsult->POINTS) ? $objectRsult->POINTS : '---') : '---';
+                            }
                         }
-                    }
-                    if ($value->ENROLL_AVG >= $value->ENROLL_EXAM_EXPECTED_SCORE) {
-                        $data[$i]['RESULT'] = 'PASS';
-                    } else {
-                        $data[$i]['RESULT'] = 'FALL';
+                        if ($value->ENROLL_AVG >= $value->ENROLL_EXAM_EXPECTED_SCORE) {
+                            $data[$i]['RESULT'] = 'PASS';
+                        } else {
+                            $data[$i]['RESULT'] = 'FALL';
+                        }
                     }
                 }
 
@@ -277,7 +281,7 @@ class StudentImportDBAccess {
         $xls->setOutputEncoding('UTF-8');
         $xls->read($_FILES["xlsfile"]['tmp_name']);
 
-        for ($iCol = 1; $iCol <= $xls->sheets[0]['numCols']; $iCol++) {
+        for ($iCol = 1; $iCol < $xls->sheets[0]['numCols']; $iCol++) {
             $field = $xls->sheets[0]['cells'][1][$iCol];
             switch ($field) {
                 case "STUDENT_SCHOOL_ID":
@@ -396,20 +400,20 @@ class StudentImportDBAccess {
                 default:
                     $IMPORT_DATA['FIRSTNAME'] = addText($FIRSTNAME);
                     $IMPORT_DATA['LASTNAME'] = addText($LASTNAME);
-                    $IMPORT_DATA['FIRSTNAME_LATIN'] = addText($FIRSTNAME_LATIN);
-                    $IMPORT_DATA['LASTNAME_LATIN'] = addText($LASTNAME_LATIN);
+                    $IMPORT_DATA['FIRSTNAME_LATIN'] = setImportChartset($FIRSTNAME_LATIN);
+                    $IMPORT_DATA['LASTNAME_LATIN'] = setImportChartset($LASTNAME_LATIN);
                     break;
             }
 
             $IMPORT_DATA['GENDER'] = addText($GENDER);
-            $IMPORT_DATA['BIRTH_PLACE'] = addText($BIRTH_PLACE);
-            $IMPORT_DATA['EMAIL'] = addText($EMAIL);
-            $IMPORT_DATA['PHONE'] = addText($PHONE);
-            $IMPORT_DATA['ADDRESS'] = addText($ADDRESS);
-            $IMPORT_DATA['COUNTRY'] = addText($COUNTRY);
-            $IMPORT_DATA['COUNTRY_PROVINCE'] = addText($COUNTRY_PROVINCE);
-            $IMPORT_DATA['TOWN_CITY'] = addText($TOWN_CITY);
-            $IMPORT_DATA['POSTCODE_ZIPCODE'] = addText($POSTCODE_ZIPCODE);
+            $IMPORT_DATA['BIRTH_PLACE'] = setImportChartset($BIRTH_PLACE);
+            $IMPORT_DATA['EMAIL'] = setImportChartset($EMAIL);
+            $IMPORT_DATA['PHONE'] = setImportChartset($PHONE);
+            $IMPORT_DATA['ADDRESS'] = setImportChartset($ADDRESS);
+            $IMPORT_DATA['COUNTRY'] = setImportChartset($COUNTRY);
+            $IMPORT_DATA['COUNTRY_PROVINCE'] = setImportChartset($COUNTRY_PROVINCE);
+            $IMPORT_DATA['TOWN_CITY'] = setImportChartset($TOWN_CITY);
+            $IMPORT_DATA['POSTCODE_ZIPCODE'] = setImportChartset($POSTCODE_ZIPCODE);
             $IMPORT_DATA['STUDENT_SCHOOL_ID'] = addText($STUDENT_SCHOOL_ID);
 
             if (isset($DATE_BIRTH)) {
@@ -542,7 +546,6 @@ class StudentImportDBAccess {
 
             $importCount = 0;
             if ($result)
-            
                 foreach ($result as $value) {
 
                     $check = $this->checkStudentBySchoolId($value->STUDENT_SCHOOL_ID);
@@ -552,7 +555,7 @@ class StudentImportDBAccess {
                         if (Zend_Registry::get('SCHOOL')->SET_DEFAULT_PASSWORD) {
                             $STUDENT_DATA['PASSWORD'] = md5("123-D99A6718-9D2A-8538-8610-E048177BECD5");
                         }
-                        
+
                         $STUDENT_DATA["ID"] = $value->ID;
                         $STUDENT_DATA["CODE"] = $value->CODE;
                         $STUDENT_DATA["LOGINNAME"] = $value->CODE;
@@ -776,7 +779,6 @@ class StudentImportDBAccess {
 
     //@ THORN Visal
     protected function checkPreschoolBySchoolId($schoolId) {
-
         $SQL = self::dbAccess()->select()
                 ->from("t_student_preschool", array("C" => "COUNT(*)"))
                 ->where("STUDENT_SCHOOL_ID = '" . $schoolId . "'");
@@ -811,22 +813,9 @@ class StudentImportDBAccess {
                         $STUDENT_DATA['EMAIL'] = $value->EMAIL;
                         $STUDENT_DATA['PHONE'] = $value->PHONE;
                         $STUDENT_DATA['ADDRESS'] = $value->ADDRESS;
-                        
+
                         $GETDATA['PRESTUDENT'] = $STUDENT_DATA['ID'];
                         $GETDATA['OBJECT_TYPE'] = "REFERENCE";
-                        $GETDATA['CREATED_DATE'] = getCurrentDBDateTime();
-                        $GETDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-                        $GETAPPDATA['PRESTUDENT'] = $STUDENT_DATA['ID'];
-                        $GETAPPDATA['OBJECT_TYPE'] = "APPLICATION";
-                        $GETAPPDATA['CREATED_DATE'] = getCurrentDBDateTime();
-                        $GETAPPDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-                        $GETTESTDATA['PRESTUDENT'] = $STUDENT_DATA['ID'];
-                        $GETTESTDATA['OBJECT_TYPE'] = "TESTING";
-                        $GETTESTDATA['CREATED_DATE'] = getCurrentDBDateTime();
-                        $GETTESTDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-            
-                        self::dbAccess()->insert('t_student_preschooltype', $GETTESTDATA);
-                        self::dbAccess()->insert('t_student_preschooltype', $GETAPPDATA);
                         self::dbAccess()->insert('t_student_preschooltype', $GETDATA);
                         self::dbAccess()->insert('t_student_preschool', $STUDENT_DATA);
                         $this->deleteStudentFromImport($value->ID);

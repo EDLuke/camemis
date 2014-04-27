@@ -63,11 +63,45 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addReadField("name: 'START_DATE'");
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'COMPANY_NAME'");
+                $OBJECT_GRID->addReadField("name: 'POSITION'");
+                $OBJECT_GRID->addReadField("name: 'START_SALARY'");
+                $OBJECT_GRID->addReadField("name: 'END_SALARY'");
+                $OBJECT_GRID->addReadField("name: 'ORGANIZATION_TYPE'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
                 
                 $OBJECT_GRID->addColumn(columnProperties(START_DATE,"START_DATE",150,checkColHidden(1,$columndata)));
                 $OBJECT_GRID->addColumn(columnProperties(END_DATE,"END_DATE",150,checkColHidden(2,$columndata)));
                 $OBJECT_GRID->addColumn(columnProperties(COMPANY_NAME,"COMPANY_NAME",150,checkColHidden(3,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(POSITION,"POSITION",150,checkColHidden(4,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(START_SALARY,"START_SALARY",150,checkColHidden(5,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(END_SALARY,"END_SALARY",150,checkColHidden(6,$columndata)));
+                ////////////////////////////////////////////////////// ORGANIZATION CAMBOBOX IN GRID
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".ORGANIZATION_TYPE."</b>',
+                    dataIndex: 'ORGANIZATION_TYPE',
+                    width: 150,
+                    align: 'left',
+                    editor: new Ext.form.ComboBox({
+                        triggerAction:'all'
+                        ,mode:'local'
+                        ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:".CamemisTypeDBAccess::comboxCamemisType('ORGANIZATION_TYPE')."
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                                replaceValue = combo.getValue();
+                                var newDisplay = record.get('chooseDisplay');
+                                combo.setValue(newDisplay);
+                                camboValue = replaceValue;
+                            }
+                        }
+                    })
+                ");
                 break;
                 
             case "PROFESSION":
@@ -75,33 +109,35 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'COURSE'");
                 $OBJECT_GRID->addReadField("name: 'INSTITUTION_NAME'");
+                $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
             
-                $OBJECT_GRID->addColumn(columnProperties(START_DATE,"START_DATE",150,checkColHidden(4,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(END_DATE,"END_DATE",150,checkColHidden(5,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(COURSE,"COURSE",150,checkColHidden(6,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(INSTITUTION_NAME,"INSTITUTION_NAME",150,checkColHidden(14,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(START_DATE,"START_DATE",150,checkColHidden(1,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(END_DATE,"END_DATE",150,checkColHidden(2,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(COURSE,"COURSE",150,checkColHidden(3,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(INSTITUTION_NAME,"INSTITUTION_NAME",150,checkColHidden(4,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(5,$columndata)));
                 break;
                 
             case "EMERCP":
                 $OBJECT_GRID->addReadField("name: 'NAME'");
-                $OBJECT_GRID->addReadField("name: 'OCCUPATION'");
                 $OBJECT_GRID->addReadField("name: 'PHONE'");
                 $OBJECT_GRID->addReadField("name: 'EMAIL'");
-                $OBJECT_GRID->addReadField("name: 'RELATIONSHIP'");
                 $OBJECT_GRID->addReadField("name: 'ADDRESS'");
                 $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
+                $OBJECT_GRID->addReadField("name: 'OCCUPATION'");
+                $OBJECT_GRID->addReadField("name: 'RELATIONSHIP'");
                 $OBJECT_GRID->addReadField("name: 'ETHNICITY'");
                 $OBJECT_GRID->addReadField("name: 'NATIONALITY'");
+                $OBJECT_GRID->addReadField("name: 'EMERGENCY_CONTACT'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
                 
                 $OBJECT_GRID->addColumn(columnProperties(NAME,"NAME",150,checkColHidden(1,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(PHONE,"PHONE",150,checkColHidden(3,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(EMAIL,"EMAIL",150,checkColHidden(4,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(ADDRESS,"ADDRESS",150,checkColHidden(6,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(DATE_BIRTH,"DATE_BIRTH",150,checkColHidden(7,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(PARENT_GUARDIAN_EMPLOYMENT_INFORMATION,"OCCUPATION",150,checkColHidden(7,$columndata)));
-                
+                $OBJECT_GRID->addColumn(columnProperties(PHONE,"PHONE",150,checkColHidden(2,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(EMAIL,"EMAIL",150,checkColHidden(3,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(ADDRESS,"ADDRESS",150,checkColHidden(4,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(DATE_BIRTH,"DATE_BIRTH",150,checkColHidden(5,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(PARENT_GUARDIAN_EMPLOYMENT_INFORMATION,"OCCUPATION",150,checkColHidden(6,$columndata)));
                 ////////////////////////////////////////////////////// RELATIONSHIP CAMBOBOX IN GRID
                 $OBJECT_GRID->addColumn("
                     header: '<b>".PARENT_GUARDIAN_RELATIONSHIP."</b>',
@@ -215,14 +251,43 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
             case "EDUBACK":
                 $OBJECT_GRID->addReadField("name: 'ACADEMIC_YEAR'");
                 $OBJECT_GRID->addReadField("name: 'INSTITUTION_NAME'");
+                $OBJECT_GRID->addReadField("name: 'MAJOR_TYPE'");
                 $OBJECT_GRID->addReadField("name: 'MAJOR'");
                 $OBJECT_GRID->addReadField("name: 'QUALIFICATION_DEGREE'");
-                $OBJECT_GRID->addReadField("name: 'CITY_PROVINCE'");
+                $OBJECT_GRID->addReadField("name: 'COUNTRY'");
                 $OBJECT_GRID->addReadField("name: 'CERTIFICATE_NUMBER'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
                 
                 $OBJECT_GRID->addColumn(columnProperties(ACADEMIC_YEAR,"ACADEMIC_YEAR",150,checkColHidden(1,$columndata)));
                 $OBJECT_GRID->addColumn(columnProperties(INSTITUTION_NAME,"INSTITUTION_NAME",150,checkColHidden(2,$columndata)));
+                /////////////////////////////////////////////////////////// MAJOR TYPE CAMBOBOX IN GRID
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".MAJOR_TYPE."</b>',
+                    dataIndex: 'MAJOR_TYPE',
+                    width: 150,
+                    align: 'left',
+                    editor: new Ext.form.ComboBox({
+                        triggerAction:'all'
+                        ,mode:'local'
+                        ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:".CamemisTypeDBAccess::comboxCamemisType('MAJOR_TYPE',1)."
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                                replaceValue = combo.getValue();
+                                var newDisplay = record.get('chooseDisplay');
+                                combo.setValue(newDisplay);
+                                camboValue = replaceValue;
+                            }
+                        }
+                    })
+                ");
+                
                 /////////////////////////////////////////////////////////// MAJOR CAMBOBOX IN GRID
                 $OBJECT_GRID->addColumn("
                     header: '<b>".MAJOR."</b>',
@@ -308,14 +373,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addColumn(columnProperties(CERTIFICATE_NUMBER,"CERTIFICATE_NUMBER",150,checkColHidden(6,$columndata)));
                 break;
             case "PUBLICATION":
-                $OBJECT_GRID->addReadField("name: 'ACADEMIC_YEAR'");
+                $OBJECT_GRID->addReadField("name: 'START_DATE'");
+                $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'PUBLICATION_TITLE'");
                 $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
                 
-                $OBJECT_GRID->addColumn(columnProperties(YEAR,"ACADEMIC_YEAR",150,checkColHidden(15,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(TITLE,"PUBLICATION_TITLE",150,checkColHidden(16,$columndata)));
-                $OBJECT_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(17,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(START_DATE,"START_DATE",150,checkColHidden(1,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(END_DATE,"END_DATE",150,checkColHidden(2,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(TITLE,"PUBLICATION_TITLE",150,checkColHidden(3,$columndata)));
+                $OBJECT_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(4,$columndata)));
                 break;
         }
         
@@ -357,6 +424,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                         ,START_DATE:''
                         ,END_DATE:''
                         ,INSTITUTION_NAME:''
+                        ,MAJOR_TYPE:''
                         ,MAJOR:''
                         ,QUALIFICATION_DEGREE:''
                         ,CITY_PROVINCE:''
@@ -374,6 +442,10 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                         ,DESCRIPTION:''
                         ,COMPANY_NAME:''
                         ,COURSE:''
+                        ,POSITION:''
+                        ,ORGANIZATION_TYPE:''
+                        ,START_SALARY:''
+                        ,END_SALARY:''
                     };
                     Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
                 }

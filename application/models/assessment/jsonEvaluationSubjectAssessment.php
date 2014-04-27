@@ -9,13 +9,11 @@ require_once 'models/assessment/EvaluationSubjectAssessment.php';
 
 class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-    public function setParams($params)
-    {
+    public function setParams($params) {
         if (isset($params["start"]))
             $this->start = $params["start"];
 
@@ -48,29 +46,38 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
         if (isset($params["globalSearch"]))
             $this->globalSearch = $params["globalSearch"];
+
+        if (isset($params["id"])) {
+            $this->studentId = $params["id"];
+        }
+
+        if (isset($params["field"]))
+            $this->actionField = $params["field"];
+
+        if (isset($params["newValue"]))
+            $this->actionValue = $params["newValue"];
+
+        if (isset($params["section"]))
+            $this->section = $params["section"];
     }
 
-    public function jsonSaveStudentScoreSubjectAssignment($params)
-    {
+    public function jsonSaveStudentScoreSubjectAssignment($params) {
         $this->setParams($params);
     }
 
-    public function jsonListResultStudentsSubjectAssignment($params)
-    {
+    public function jsonListResultStudentsSubjectAssignment($params) {
         $this->setParams($params);
         print_r($this->getListResultStudentsSubjectAssignment());
     }
 
-    public function jsonSubjectMonthResult($encrypParams)
-    {
+    public function jsonSubjectMonthResult($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getSubjectMonthResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -82,16 +89,14 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectTermResult($encrypParams)
-    {
+    public function jsonSubjectTermResult($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getSubjectTermResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -103,16 +108,14 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectYearResult($encrypParams)
-    {
+    public function jsonSubjectYearResult($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getSubjectYearResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -121,6 +124,28 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             "success" => true
             , "totalCount" => sizeof($data)
             , "rows" => $a
+        );
+    }
+
+    public function jsonActionStudentSubjectAssessment($encrypParams) {
+
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+        $this->actionStudentSubjectAssessment();
+
+        return array(
+            "success" => true
+        );
+    }
+
+    public function jsonActionPublishSubjectAssessment($encrypParams) {
+
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+        $this->actionPublishSubjectAssessment();
+
+        return array(
+            "success" => true
         );
     }
 
