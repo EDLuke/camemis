@@ -153,31 +153,19 @@ class SQLEvaluationStudentAssignment {
 
     public static function getImplodeQuerySubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include)
     {
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student_assignment'), array("*"));
-        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array());
-        $SQL->where("A.CLASS_ID = '" . $classId . "'");
-        $SQL->where("A.SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
 
-        if ($assignmentId)
-        {
-            $SQL->where("A.ASSIGNMENT_ID = '" . $assignmentId . "'");
-        }
+        $object = (object) array(
+                    "studentId" => $studentId
+                    , "classId" => $classId
+                    , "subjectId" => $subjectId
+                    , "assignmentId" => $assignmentId
+                    , "term" => $term
+                    , "month" => $month
+                    , "year" => $year
+                    , "include_in_evaluation" => $include
+        );
 
-        if ($month)
-            $SQL->where("A.MONTH = '" . $month . "'");
-
-        if ($year)
-            $SQL->where("A.YEAR = '" . $year . "'");
-
-        if ($term)
-            $SQL->where("A.TERM = '" . $term . "'");
-
-        $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $include . "'");
-
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
+        $result = self::getQueryStudentSubjectAssignments($object);
 
         $data = array();
 
@@ -190,6 +178,50 @@ class SQLEvaluationStudentAssignment {
         }
 
         return $data ? implode("|", $data) : "---";
+    }
+
+    public static function getQueryStudentSubjectAssignments($object)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_student_assignment'), array("*"));
+        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
+        $SQL->where("A.CLASS_ID = '" . $object->classId . "'");
+        $SQL->where("A.SUBJECT_ID = '" . $object->subjectId . "'");
+        $SQL->where("A.STUDENT_ID = '" . $object->studentId . "'");
+
+        if (isset($object->assignmentId))
+        {
+            if ($object->assignmentId)
+                $SQL->where("A.ASSIGNMENT_ID = '" . $object->assignmentId . "'");
+        }
+
+        if (isset($object->month))
+        {
+            if ($object->month)
+                $SQL->where("A.MONTH = '" . $object->month . "'");
+        }
+
+        if (isset($object->year))
+        {
+            if ($object->year)
+                $SQL->where("A.YEAR = '" . $object->year . "'");
+        }
+
+        if (isset($object->term))
+        {
+            if ($object->term)
+                $SQL->where("A.TERM = '" . $object->term . "'");
+        }
+
+
+        if (isset($object->include_in_evaluation))
+        {
+            if ($object->include_in_evaluation)
+                $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $object->include_in_evaluation . "'");
+        }
+
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchAll($SQL);
     }
 
 }

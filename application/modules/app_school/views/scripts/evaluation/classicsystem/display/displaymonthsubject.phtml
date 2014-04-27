@@ -19,8 +19,10 @@ $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 
 $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+
 $academicObject = AcademicDBAccess::findGradeFromId($this->classId);
-$studentObject = StudentDBAccess::findStudentFromId($this->studentId);
+$studentObject = StudentDBAccess::findStudentFromId($studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
 
@@ -31,13 +33,13 @@ var behaviorValue;
 Ext.onReady(function() {
 
     function textNormal(v, p, record, rowIndex){
-        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:normal; height:15px; padding: 5px;color:#333 !important;\">{0}</div>'
+        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:normal; height:15px; padding: 5px;color:#555 !important;\">{0}</div>'
             ,v
         );
     }
 
     function textBold(v, p, record, rowIndex){
-        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:normal; height:15px; padding: 5px;color:#333 !important;\">{0}</div>'
+        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:bold; height:15px; padding: 5px;color:#1861A5 !important;\">{0}</div>'
             ,v
         );
     }
@@ -79,7 +81,7 @@ Ext.onReady(function() {
     $setParams .= "&classId=".$academicObject->ID."";
     $setParams .= "&monthyear=".$this->monthyear."";
     $setParams .= "&subjectId=".$this->subjectId."";
-    $setParams .= "&studentId=".$this->studentId."";
+    $setParams .= "&studentId=".$studentId."";
     
     $OBJECT_GRID->baseParams = "
         start:0
@@ -104,8 +106,8 @@ Ext.onReady(function() {
             $viewport .= ",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
         $viewport .= "}]";
     $viewport .= "});";
-echo $viewport;
-?>
+    echo $viewport;
+    ?>
 });
 </script>
 <?

@@ -4,27 +4,33 @@ class URLEncryption {
 
     public $isEmbeddedParams = true;
 
-    public function encrypt($pData) {
+    public function encrypt($pData)
+    {
 
         //$newpData = "&" . $pData . "&";
         return $this->base64url_encode($pData);
     }
 
-    public function decrypt($pData) {
+    public function decrypt($pData)
+    {
         return $this->base64url_decode($pData);
     }
 
-    private function base64url_encode($data) {
+    private function base64url_encode($data)
+    {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
-    private function base64url_decode($data) {
+    private function base64url_decode($data)
+    {
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
     }
 
-    function parseEncryptedGET($pData) {
+    function parseEncryptedGET($pData)
+    {
 
-        if ($this->isEmbeddedParams) {
+        if ($this->isEmbeddedParams)
+        {
             $str = $this->decrypt($pData);
             if (isset($_GET["setId"]))
                 $str .= "&setId=" . trim($_GET["setId"]);
@@ -78,7 +84,8 @@ class URLEncryption {
                 $str .= "&choosedate=" . trim($_GET["choosedate"]);
             if (isset($_GET["eventDay"]))
                 $str .= "&eventDay=" . trim($_GET["eventDay"]);
-        } else {
+        } else
+        {
             $str = $this->decrypt($pData);
         }
 
@@ -90,15 +97,18 @@ class URLEncryption {
         parse_str($newStr, $_GET);
     }
 
-    function parseEncryptedPOST($pData) {
+    function parseEncryptedPOST($pData)
+    {
         parse_str($this->decrypt($pData), $_POST);
     }
 
-    function encryptedGet($pGETString) {
+    function encryptedGet($pGETString)
+    {
         return $this->encrypt($pGETString);
     }
 
-    function createEncryptedPOST($pPOSTString) {
+    function createEncryptedPOST($pPOSTString)
+    {
         return $this->encrypt($pPOSTString);
     }
 

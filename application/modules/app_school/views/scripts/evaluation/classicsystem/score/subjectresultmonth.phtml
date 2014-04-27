@@ -301,7 +301,7 @@ Ext.onReady(function() {
     $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
     $SHOW_DETAIL .=",disabled:false";
     $SHOW_DETAIL .=",handler: function(){";
-    $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaysemestersubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
+    $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaymonthsubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
     $SHOW_DETAIL .="}";
     $SHOW_DETAIL .="}";
     
