@@ -181,17 +181,16 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, hidden:".checkColHidden(3, $columndata).", renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
-    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndata).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
             $OBJECT_GRID->addColumn("
                 header: '<b>".SCORE."</b>'
                 , width: 100
-                , hidden:".checkColHidden(5, $columndata)."
                 , sortable: true
                 , align:'right'
                 , renderer:cssScore
