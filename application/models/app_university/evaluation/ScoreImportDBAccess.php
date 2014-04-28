@@ -45,8 +45,8 @@ class ScoreImportDBAccess extends StudentAssignmentDBAccess {
                 $params['newValue'] = str_replace(",", ".", $SCORE);
                 $params['field'] = 'SCORE';
 
-                $this->jsonSaveStudentScoreSubjectAssignment($params);
-                if ($this->jsonSaveStudentScoreSubjectAssignment($params)) {
+                $this->jsonActionStudentScoreSubjectAssignment($params);
+                if ($this->jsonActionStudentScoreSubjectAssignment($params)) {
                     $params['studentId'] = $students->ID;
                     $params['name'] = $COMMENT;
                     $this->jsonActionTeacherAssignmentComment($params);

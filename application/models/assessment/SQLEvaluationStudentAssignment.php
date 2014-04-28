@@ -224,6 +224,11 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
+    public static function setActionStudentScoreSubjectAssignment()
+    {
+        
+    }
+
 }
 
 ?>

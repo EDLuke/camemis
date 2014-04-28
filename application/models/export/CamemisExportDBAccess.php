@@ -164,33 +164,7 @@ abstract class CamemisExportDBAccess {
 
         return (object) $data;
     }
-
-    public static function colFilter()
-    {
-        $this->EXCEL->getActiveSheet()
-                ->getStyleByColumnAndRow($col, $row)
-                ->applyFromArray(array(
-                    'fill' => array(
-                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                        'color' => array('rgb' => $bgColor ? $bgColor : "FFFFFF")
-        )));
-        /*
-        foreach ($this->EXCEL->getActiveSheet()->getRowIterator() as $row)
-        {
-            if ($this->EXCEL->getActiveSheet()->getRowDimension($row->getRowIndex())->getVisible())
-            {
-                echo '    Row number - ', $row->getRowIndex(), ' ';
-                echo $this->EXCEL->getActiveSheet()->getCell(
-                        'C' . $row->getRowIndex()
-                )->getValue(), ' ';
-                echo $objPHPExcel->getActiveSheet()->getCell(
-                        'D' . $row->getRowIndex()
-                )->getFormattedValue(), ' ';
-                echo EOL;
-            }
-        }
-        */
-    }
+    
 
     public function setHeaderInformation()
     {

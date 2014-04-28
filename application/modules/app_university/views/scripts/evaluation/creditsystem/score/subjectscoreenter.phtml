@@ -304,7 +304,7 @@ Ext.onReady(function() {
     $setParams .="&term=".$SEMESTER_NAME."";
 
     $OBJECT_GRID->setSaveParams("
-        cmd: 'jsonSaveStudentScoreSubjectAssignment'
+        cmd: 'jsonActionStudentScoreSubjectAssignment'
         ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
         ,setnewValue:setnewValue
     ");

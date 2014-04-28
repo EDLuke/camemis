@@ -109,7 +109,7 @@ class StudentAssignmentDBAccess {
     //Parameter: $scoreInput, studentId, $academicId, $subjectId
     //$assignmentId, $subjectId, $date
     ////////////////////////////////////////////////////////////////////////////
-    public function jsonSaveStudentScoreSubjectAssignment($encrypParams) {
+    public function jsonActionStudentScoreSubjectAssignment($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 

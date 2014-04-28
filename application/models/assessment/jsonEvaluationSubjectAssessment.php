@@ -85,9 +85,15 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSaveStudentScoreSubjectAssignment($params)
+    public function jsonActionStudentScoreSubjectAssignment($encrypParams)
     {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
+        $this->actionStudentScoreSubjectAssignment();
+
+        return array(
+            "success" => true
+        );
     }
 
     public function jsonListResultStudentsSubjectAssignment($params)

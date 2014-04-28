@@ -706,6 +706,26 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $result;
     }
 
+    public function actionStudentScoreSubjectAssignment()
+    {
+        $object = (object) array(
+                    "studentId" => $this->studentId
+                    , "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "term" => $this->term
+                    , "assignmentId" => $this->assignmentId
+                    , "actionField" => $this->actionField
+                    , "actionValue" => $this->actionValue
+                    , "coeffValue" => $this->getAssignmentCoeff()
+                    , "include_in_valuation" => $this->getAssignmentInCludeEvaluation()
+                    , "educationSystem" => $this->getEducationSystem()
+        );
+        SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($object);
+    }
+
 }
 
 ?>
