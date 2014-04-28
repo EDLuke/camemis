@@ -4,7 +4,7 @@
 // @Kaom Vibolrith Senior Software Developer
 // Date: 26.01.2010
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'Zend/Controller/Action.php';
 
 class ErrorController extends Zend_Controller_Action {
