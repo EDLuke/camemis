@@ -215,11 +215,13 @@ class StudentSearchDBAccess {
 
         if ($this->globalSearch)
         {
-            $SQL->where('STUDENT.NAME LIKE ?', "" . $this->globalSearch . "%");
-            $SQL->orWhere('STUDENT.FIRSTNAME LIKE ?', "" . $this->globalSearch . "%");
-            $SQL->orWhere('STUDENT.LASTNAME LIKE ?', "" . $this->globalSearch . "%");
-            $SQL->orWhere('STUDENT.CODE LIKE ?', "" . strtoupper($this->globalSearch) . "%");
-            $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "" . strtoupper($this->globalSearch) . "%");
+            $SQL->where('STUDENT.NAME LIKE ?', "%" . $this->globalSearch . "%");
+            $SQL->orWhere('STUDENT.FIRSTNAME LIKE ?', "%" . $this->globalSearch . "%");
+            $SQL->orWhere('STUDENT.LASTNAME LIKE ?', "%" . $this->globalSearch . "%");
+            $SQL->orWhere('STUDENT.FIRSTNAME_LATIN LIKE ?', "%" . $this->globalSearch . "%");
+            $SQL->orWhere('STUDENT.LASTNAME_LATIN LIKE ?', "%" . $this->globalSearch . "%");
+            $SQL->orWhere('STUDENT.CODE LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
+            $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
         }
 
         $SQL->group('STUDENT.ID');
