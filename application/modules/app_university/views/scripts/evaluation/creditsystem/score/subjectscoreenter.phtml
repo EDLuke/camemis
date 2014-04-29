@@ -31,8 +31,6 @@ $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $academicO
 $CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
 $SEMESTER_NAME = $TERM_NAME;
 
-$SET_TITLE = isset($_GET["title"])?$_GET["title"]." &raquo; ".displaySchoolTerm($SEMESTER_NAME)."":"";
-
 $setParams = "";
 $setParams .= "&classId=".$this->academicId."";
 $setParams .= "&subjectId=".$this->subjectId."";
@@ -104,25 +102,6 @@ Ext.onReady(function() {
 
     <?
     $js = "";
-        $js .="function actionTeacherComments(btn,text){";
-            $js .="if(btn=='ok'){";
-                $js .="Ext.Ajax.request({";
-                    $js .="url: '/evaluation/jsonsave/'";
-                    $js .=",method: 'POST'";
-                    $js .=",params:{";
-                        $js .="cmd: 'jsonActionTeacherAssignmentComment'";
-                        $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
-                        $js .=",studentId:chooseId";
-                        $js .=",name:text";
-                    $js .="}";
-                    $js .=",success: function(response, options) {";
-                        $js .="Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();";
-                    $js .="}";
-                $js .="});";
-            $js .="}";
-        $js .="}";
-    $js .="";
-
     $js .="function deleteAll(btn){";
         $js .="Ext.Ajax.request({";
             $js .="url: '/evaluation/jsonsave/'";
@@ -245,7 +224,16 @@ Ext.onReady(function() {
             break;
     }
 
-    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, renderer:cssText, sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
+    $OBJECT_GRID->addColumn("
+        header: '<b>".TEACHER_COMMENTS."</b>'
+        , width: 200
+        , sortable: false
+        , align:'center'
+        , dataIndex: 'TEACHER_COMMENTS'
+        , editor: new Ext.form.TextArea({
+            
+        })
+    ");
 
     $OBJECT_GRID->baseParams = "
         start:0
@@ -354,63 +342,6 @@ Ext.onReady(function() {
             ,items:<?=$VIEWPORT?>
         }]
     });
-
-    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
-    if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
-        var record = grid.store.getAt(rowIndex);
-        chooseId = grid.store.getAt(rowIndex).data.ID;
-        chooseStudent = grid.store.getAt(rowIndex).data.STUDENT;
-        score = grid.store.getAt(rowIndex).data.SCORE;
-
-        if(score){
-            var status = false;
-        }else{
-            var status = true;
-        }
-        if(columnIndex==1){
-            <?
-            $CONTEXTMENU_ITEMS = Array();
-            $TEACHER_COMMENT ="{";
-            $TEACHER_COMMENT .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
-            $TEACHER_COMMENT .=",iconCls: 'icon-comment_edit'";
-            $TEACHER_COMMENT .=",disabled:status";
-            $TEACHER_COMMENT .=",handler: function(){";
-                $TEACHER_COMMENT .= "Ext.MessageBox.show({";
-                    $TEACHER_COMMENT .= "title:chooseStudent,";
-                    $TEACHER_COMMENT .= "msg: '".TEACHER_COMMENTS.":',";
-                    $TEACHER_COMMENT .= "width:350,value:grid.store.getAt(rowIndex).data.TEACHER_COMMENTS,";
-                    $TEACHER_COMMENT .= "buttons: Ext.MessageBox.OKCANCEL,";
-                    $TEACHER_COMMENT .= "multiline: true,";
-                    $TEACHER_COMMENT .= "fn: actionTeacherComments,";
-                $TEACHER_COMMENT .= "});";
-            $TEACHER_COMMENT .="}";
-            $TEACHER_COMMENT .="}";
-            $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENT;
-
-            $DELETE_SCORE ="{";
-            $DELETE_SCORE .="text: '".SCORE." &raquo; ' + record.data.STUDENT";
-            $DELETE_SCORE .=",iconCls: 'icon-delete'";
-            $DELETE_SCORE .=",disabled:status";
-            $DELETE_SCORE .=",handler: function(){";
-            $DELETE_SCORE .="Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . DELETE_THIS_ITEM . "', deleteSingle);";
-            $DELETE_SCORE .="}";
-            $DELETE_SCORE .="}";
-            $CONTEXTMENU_ITEMS[] = $DELETE_SCORE;
-
-            $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
-            $html ="";
-            $html ."if (columnIndex ==1){";
-                $html .="var contextMenu = new Ext.menu.Menu({";
-                    $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
-                $html .="});";
-                $html .="event.stopEvent();";
-                $html .="contextMenu.showAt(event.xy);";
-            $html ."}";
-            echo $html;
-        ?>
-        }
-    });
-    if (parent.Ext.getCmp('CLICK_OPEN_PAGE')) parent.Ext.getCmp('CLICK_OPEN_PAGE').setTitle('<?=$SET_TITLE?>');
 });
 </script>
 <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">

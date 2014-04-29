@@ -93,6 +93,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
         return array(
             "success" => true
+            , "SCHORE_DATE" => $this->countTeacherScoreDate()
         );
     }
 
