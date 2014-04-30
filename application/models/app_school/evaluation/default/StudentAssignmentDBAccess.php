@@ -288,7 +288,7 @@ class StudentAssignmentDBAccess {
      * List Teacher score assignment...
      * ********************************************************************** */
 
-    public function jsonListStudentsScoreEnter($encrypParams, $isJson = true)
+    public function jsonListStudentsTeacherEnterScore($encrypParams, $isJson = true)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);

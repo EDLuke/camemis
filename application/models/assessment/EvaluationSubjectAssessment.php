@@ -26,20 +26,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     const SCORE_TYPE_NUMBER = 1;
     const SCORE_TYPE_CHAR = 2;
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
     }
 
-    protected function listStudentsData()
-    {
+    protected function listStudentsData() {
+
         $data = array();
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
 
                 $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
@@ -48,6 +45,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
                 $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
                 $data[$i]["CODE"] = $value->CODE;
+                $data[$i]["GENDER"] = getGenderName($value->GENDER);
                 $data[$i]["STUDENT"] = getFullName($value->FIRSTNAME, $value->LASTNAME);
                 $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
                 $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
@@ -60,8 +58,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentSubjectAssignments()
-    {
+    public function getListStudentSubjectAssignments() {
 
         $data = array();
 
@@ -78,11 +75,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
         $entries = SQLEvaluationStudentAssignment::getQueryStudentSubjectAssignments($object);
 
-        if ($entries)
-        {
+        if ($entries) {
             $i = 0;
-            foreach ($entries as $value)
-            {
+            foreach ($entries as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["ASSIGNMENT"] = setShowText($value->ASSIGNMENT);
                 $data[$i]["POINTS"] = $value->POINTS;
@@ -99,25 +94,21 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // MONTH CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectMonthResult()
-    {
+    public function getSubjectMonthResult() {
 
         $data = array();
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
 
             $scoreList = $this->getScoreListSubjectMonthResult();
 
             $data = $this->listStudentsData();
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
 
                 $studentId = $value->ID;
 
-                switch ($this->getSubjectScoreType())
-                {
+                switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->averageMonthSubjectResult($studentId);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
@@ -131,10 +122,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                if ($this->getCurrentClassAssignments())
-                {
-                    foreach ($this->getCurrentClassAssignments() as $v)
-                    {
+                if ($this->getCurrentClassAssignments()) {
+                    foreach ($this->getCurrentClassAssignments() as $v) {
                         $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($studentId, $v->ASSIGNMENT_ID);
                     }
                 }
@@ -149,24 +138,20 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // TERM CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectTermResult()
-    {
+    public function getSubjectTermResult() {
         $data = array();
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
 
             $scoreList = $this->getScoreListSubjectTermResult($this->term);
 
             $data = $this->listStudentsData();
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
 
                 $studentId = $value->ID;
 
-                switch ($this->getSubjectScoreType())
-                {
+                switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->calculatedAverageTermSubjectResult($studentId, $this->term);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
@@ -182,8 +167,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                if ($this->isDisplayMonthResult())
-                {
+                if ($this->isDisplayMonthResult()) {
                     $data[$i]["ASSIGNMENT_MONTH"] = $this->getImplodeSubjectAssignmentByAllMonths($studentId);
                 }
 
@@ -200,31 +184,26 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // YEAR CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectYearResult()
-    {
+    public function getSubjectYearResult() {
         $data = array();
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
 
             $scoreList = $this->getScoreListSubjectYearResult();
 
             $data = $this->listStudentsData();
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
 
                 $studentId = $value->ID;
 
-                switch ($this->getSubjectScoreType())
-                {
+                switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->calculatedAverageYearSubjectResult($studentId);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
 
-                        switch ($this->getTermNumber())
-                        {
+                        switch ($this->getTermNumber()) {
                             case 1:
                                 $data[$i]["FIRST_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($studentId, "FIRST_TERM");
                                 $data[$i]["SECOND_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($studentId, "SECOND_TERM");
@@ -247,8 +226,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                     case self::SCORE_CHAR:
 
-                        switch ($this->getTermNumber())
-                        {
+                        switch ($this->getTermNumber()) {
                             case 1:
                                 $data[$i]["FIRST_TERM_RESULT"] = $this->getSubjectTermAssessment($studentId, "FIRST_TERM")->LETTER_GRADE_CHAR;
                                 $data[$i]["SECOND_TERM_RESULT"] = $this->getSubjectTermAssessment($studentId, "SECOND_TERM")->LETTER_GRADE_CHAR;
@@ -278,8 +256,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function averageMonthSubjectResult($studentId)
-    {
+    public function averageMonthSubjectResult($studentId) {
 
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult(
                         $studentId
@@ -292,8 +269,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function averageAllMonthsSubjectResult($studentId)
-    {
+    public function averageAllMonthsSubjectResult($studentId) {
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult(
                         $studentId
                         , $this->classId
@@ -305,71 +281,49 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function calculatedAverageTermSubjectResult($studentId, $term)
-    {
+    public function calculatedAverageTermSubjectResult($studentId, $term) {
 
         $TERM_RESULT = $this->averageTermSubjectResult($studentId, $term);
 
-        if ($this->isDisplayMonthResult())
-        {
+        if ($this->isDisplayMonthResult()) {
             $MONTH_RESULT = $this->averageAllMonthsSubjectResult($studentId);
 
-            if ($MONTH_RESULT && !$TERM_RESULT)
-            {
+            if ($MONTH_RESULT && !$TERM_RESULT) {
                 $OUTPUT = $MONTH_RESULT;
-            }
-            elseif (!$MONTH_RESULT && $TERM_RESULT)
-            {
+            } elseif (!$MONTH_RESULT && $TERM_RESULT) {
                 $OUTPUT = $TERM_RESULT;
-            }
-            elseif ($MONTH_RESULT && $TERM_RESULT)
-            {
+            } elseif ($MONTH_RESULT && $TERM_RESULT) {
                 $OUTPUT = ($MONTH_RESULT + $TERM_RESULT) / 2;
-            }
-            else
-            {
+            } else {
                 $OUTPUT = 0;
             }
-        }
-        else
-        {
+        } else {
             $OUTPUT = $TERM_RESULT;
         }
 
         return displayRound($OUTPUT);
     }
 
-    public function calculatedAverageYearSubjectResult($studentId)
-    {
+    public function calculatedAverageYearSubjectResult($studentId) {
 
-        switch ($this->getTermNumber())
-        {
+        switch ($this->getTermNumber()) {
             case 1:
                 $FIRST = $this->calculatedAverageTermSubjectResult($studentId, "FIRST_TERM");
                 $SECOND = $this->calculatedAverageTermSubjectResult($studentId, "SECOND_TERM");
                 $THIRD = $this->calculatedAverageTermSubjectResult($studentId, "THIRD_TERM");
 
-                if ($FIRST && !$SECOND && !$THIRD)
-                {
+                if ($FIRST && !$SECOND && !$THIRD) {
                     $OUTPUT = $FIRST;
-                }
-                elseif (!$FIRST && $SECOND && !$THIRD)
-                {
+                } elseif (!$FIRST && $SECOND && !$THIRD) {
                     $OUTPUT = $SECOND;
-                }
-                elseif (!$FIRST && !$SECOND && $THIRD)
-                {
+                } elseif (!$FIRST && !$SECOND && $THIRD) {
                     $OUTPUT = $THIRD;
-                }
-                elseif ($FIRST && $SECOND && $THIRD)
-                {
+                } elseif ($FIRST && $SECOND && $THIRD) {
 
                     $NUMERATOR = $this->getFirstTermCoeff() * $FIRST + $this->getSecondTermCoeff() * $SECOND + $this->getThirdTermCoeff() * $THIRD;
                     $DEVISOR = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
                     $OUTPUT = ($NUMERATOR / $DEVISOR);
-                }
-                else
-                {
+                } else {
                     $OUTPUT = 0;
                 }
                 break;
@@ -379,31 +333,20 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $THIRD = $this->calculatedAverageTermSubjectResult($studentId, "THIRD_QUARTER");
                 $FOURTH = $this->calculatedAverageTermSubjectResult($studentId, "FOURTH_QUARTER");
 
-                if ($FIRST && !$SECOND && !$THIRD && !$FOURTH)
-                {
+                if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
                     $OUTPUT = $FIRST;
-                }
-                elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH)
-                {
+                } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
                     $OUTPUT = $SECOND;
-                }
-                elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH)
-                {
+                } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
                     $OUTPUT = $THIRD;
-                }
-                elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH)
-                {
+                } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
                     $OUTPUT = $FOURTH;
-                }
-                elseif ($FIRST && $SECOND && $THIRD && $FOURTH)
-                {
+                } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
 
                     $NUMERATOR = $this->getFirstQuarterCoeff() * $FIRST + $this->getSecondQuarterCoeff() * $SECOND + $this->getThirdQuarterCoeff() * $THIRD + $this->getFourthQuarterCoeff() * $FOURTH;
                     $DEVISOR = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
                     $OUTPUT = ($NUMERATOR / $DEVISOR);
-                }
-                else
-                {
+                } else {
                     $OUTPUT = 0;
                 }
                 break;
@@ -411,23 +354,16 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $FIRST = $this->calculatedAverageTermSubjectResult($studentId, "FIRST_SEMESTER");
                 $SECOND = $this->calculatedAverageTermSubjectResult($studentId, "SECOND_SEMESTER");
 
-                if ($FIRST && !$SECOND)
-                {
+                if ($FIRST && !$SECOND) {
                     $OUTPUT = $FIRST;
-                }
-                elseif (!$FIRST && $SECOND)
-                {
+                } elseif (!$FIRST && $SECOND) {
                     $OUTPUT = $SECOND;
-                }
-                elseif ($FIRST && $SECOND)
-                {
+                } elseif ($FIRST && $SECOND) {
 
                     $NUMERATOR = $this->getFirstSemesterCoeff() * $FIRST + $this->getSecondSemesterCoeff() * $SECOND;
                     $DEVISOR = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
                     $OUTPUT = ($NUMERATOR / $DEVISOR);
-                }
-                else
-                {
+                } else {
                     $OUTPUT = 0;
                 }
 
@@ -437,8 +373,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return displayRound($OUTPUT);
     }
 
-    public function averageTermSubjectResult($studentId, $term)
-    {
+    public function averageTermSubjectResult($studentId, $term) {
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult(
                         $studentId
                         , $this->classId
@@ -450,8 +385,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function averageTermSubjectAssignmentByAllMonths($studentId)
-    {
+    public function averageTermSubjectAssignmentByAllMonths($studentId) {
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult(
                         $studentId
                         , $this->classId
@@ -463,8 +397,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function getImplodeMonthSubjectAssignment($studentId, $assignmentId)
-    {
+    public function getImplodeMonthSubjectAssignment($studentId, $assignmentId) {
 
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment(
                         $studentId
@@ -478,8 +411,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function getImplodeSubjectAssignmentByAllMonths($studentId)
-    {
+    public function getImplodeSubjectAssignmentByAllMonths($studentId) {
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment(
                         $studentId
                         , $this->classId
@@ -492,8 +424,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    public function getImplodeSubjectAssignmentByTerm($studentId)
-    {
+    public function getImplodeSubjectAssignmentByTerm($studentId) {
 
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment(
                         $studentId
@@ -507,14 +438,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
     }
 
-    protected function getScoreListSubjectMonthResult()
-    {
+    protected function getScoreListSubjectMonthResult() {
 
         $data = Array();
-        if ($this->listClassStudents())
-        {
-            foreach ($this->listClassStudents() as $value)
-            {
+        if ($this->listClassStudents()) {
+            foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
                 $data[] = $this->averageMonthSubjectResult($studentId);
             }
@@ -522,14 +450,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    protected function getScoreListSubjectTermResult($term)
-    {
+    protected function getScoreListSubjectTermResult($term) {
 
         $data = Array();
-        if ($this->listClassStudents())
-        {
-            foreach ($this->listClassStudents() as $value)
-            {
+        if ($this->listClassStudents()) {
+            foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
                 $data[] = $this->calculatedAverageTermSubjectResult($studentId, $term);
             }
@@ -537,8 +462,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getSubjectMonthAssessment($studentId)
-    {
+    public function getSubjectMonthAssessment($studentId) {
 
         $object = (object) array(
                     "studentId" => $studentId
@@ -554,14 +478,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
     }
 
-    protected function getScoreListSubjectYearResult()
-    {
+    protected function getScoreListSubjectYearResult() {
 
         $data = Array();
-        if ($this->listClassStudents())
-        {
-            foreach ($this->listClassStudents() as $value)
-            {
+        if ($this->listClassStudents()) {
+            foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
                 $data[] = $this->calculatedAverageYearSubjectResult($studentId);
             }
@@ -569,8 +490,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getSubjectTermAssessment($studentId, $term)
-    {
+    public function getSubjectTermAssessment($studentId, $term) {
 
         $object = (object) array(
                     "studentId" => $studentId
@@ -586,8 +506,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
     }
 
-    public function getSubjectYearAssessment($studentId)
-    {
+    public function getSubjectYearAssessment($studentId) {
 
         $object = (object) array(
                     "studentId" => $studentId
@@ -603,8 +522,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
     }
 
-    public function actionStudentSubjectAssessment()
-    {
+    public function actionStudentSubjectAssessment() {
 
         $object = (object) array(
                     "studentId" => $this->studentId
@@ -624,8 +542,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($object);
     }
 
-    public function actionPublishSubjectAssessment()
-    {
+    public function actionPublishSubjectAssessment() {
 
         $data = array(
             "classId" => $this->classId
@@ -640,8 +557,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             , "educationSystem" => $this->getEducationSystem()
         );
 
-        switch ($this->getSection())
-        {
+        switch ($this->getSection()) {
             case "MONTH":
                 $result = $this->getSubjectMonthResult();
                 break;
@@ -655,15 +571,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 break;
         }
 
-        for ($i = 0; $i <= count($result); $i++)
-        {
+        for ($i = 0; $i <= count($result); $i++) {
 
             $data["studentId"] = isset($result[$i]["ID"]) ? $result[$i]["ID"] : "";
             $data["actionRank"] = isset($result[$i]["RANK"]) ? $result[$i]["RANK"] : "";
             $data["assessmentId"] = isset($result[$i]["ASSESSMENT_ID"]) ? $result[$i]["ASSESSMENT_ID"] : "";
 
-            switch ($this->getSubjectScoreType())
-            {
+            switch ($this->getSubjectScoreType()) {
                 case self::SCORE_NUMBER:
                     $data["subjectValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
                     break;
@@ -676,15 +590,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
     }
 
-    public function getSubjectValue()
-    {
+    public function getSubjectValue() {
 
         $result = "";
-        switch ($this->getSubjectScoreType())
-        {
+        switch ($this->getSubjectScoreType()) {
             case self::SCORE_NUMBER:
-                switch ($this->getSection())
-                {
+                switch ($this->getSection()) {
                     case "MONTH":
                         $result = $this->averageMonthSubjectResult($this->studentId);
                         break;
@@ -706,8 +617,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $result;
     }
 
-    public function actionStudentScoreSubjectAssignment()
-    {
+    public function actionStudentScoreSubjectAssignment() {
         $object = (object) array(
                     "studentId" => $this->studentId
                     , "classId" => $this->classId
@@ -727,8 +637,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($object);
     }
 
-    public function countTeacherScoreDate()
-    {
+    public function countTeacherScoreDate() {
+        
         $object = (object) array(
                     "classId" => $this->classId
                     , "subjectId" => $this->subjectId
@@ -738,6 +648,37 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
 
         return SQLEvaluationStudentAssignment::getCountTeacherScoreDate($object);
+    }
+
+    public function getListStudentsTeacherEnterScore() {
+
+        $object = (object) array(
+                    "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "date" => $this->date
+                    , "assignmentId" => $this->assignmentId
+        );
+
+        $data = array();
+
+        if ($this->listClassStudents()) {
+
+            $data = $this->listStudentsData();
+            $i = 0;
+            foreach ($this->listClassStudents() as $value) {
+
+                $object->studentId = $value->ID;
+                $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($object);
+
+                $data[$i]["SCORE"] = $facette ? $facette->POINTS : "";
+                $data[$i]["TEACHER_COMMENTS"] = $facette ? $facette->TEACHER_COMMENTS : "";
+
+                $i++;
+            }
+        }
+
+        return $data;
     }
 
 }

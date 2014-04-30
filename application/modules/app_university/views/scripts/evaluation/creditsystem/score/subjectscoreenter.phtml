@@ -44,7 +44,7 @@ $params["academicId"] = $this->academicId;
 $params["subjectId"] = $this->subjectId;
 
 $checkScore = new StudentAssignmentDBAccess();
-$score = $checkScore->jsonListStudentsScoreEnter($params, false);
+$score = $checkScore->jsonListStudentsTeacherEnterScore($params, false);
 $option = "false";
 $sum = 0;
 if($score){
@@ -238,7 +238,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentsScoreEnter'
+        ,cmd: 'jsonListStudentsTeacherEnterScore'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
 
