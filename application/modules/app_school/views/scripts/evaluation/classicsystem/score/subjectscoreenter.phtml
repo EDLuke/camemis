@@ -47,7 +47,7 @@ $params["classId"] = $this->classId;
 $params["subjectId"] = $this->subjectId;
 
 $checkScore = new StudentAssignmentDBAccess();
-$score = $checkScore->jsonListStudentsTeacherEnterScore($params, false);
+$score = $checkScore->jsonListStudentsTeacherScoreEnter($params, false);
 $option = "false";
 $sum = 0;
 if($score){
@@ -110,7 +110,7 @@ Ext.onReady(function() {
             $js .="url: '/evaluation/jsonsave/'";
             $js .=",method: 'POST'";
             $js .=",params:{";
-                $js .="cmd: 'jsonActionDeleteAllScoresAssignment'";
+                $js .="cmd: 'jsonActionDeleteAllStudentsTeacherScoreEnter'";
                 $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
             $js .="}";
             $js .=",success: function() {";
@@ -127,7 +127,7 @@ Ext.onReady(function() {
                 $js .="url: '/evaluation/jsonsave/'";
                 $js .=",method: 'POST'";
                 $js .=",params:{";
-                    $js .="cmd: 'jsonActionDeleteSingleScore'";
+                    $js .="cmd: 'jsonActionDeleteOneStudentTeacherScoreEnter'";
                     $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
                     $js .=",studentId:chooseId";
                 $js .="}";
@@ -242,7 +242,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentsTeacherEnterScore'
+        ,cmd: 'jsonListStudentsTeacherScoreEnter'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     
@@ -261,9 +261,9 @@ Ext.onReady(function() {
     ");
     $OBJECT_GRID->addTBarItems("tbar.add('-');");
     $OBJECT_GRID->addTBarItems("tbar.add('<b>".getShowDate($this->date)." (".displaySchoolTerm($SEMESTER_NAME).")</b>');");
-    $OBJECT_GRID->addTBarItems("tbar.add('-');");
+    
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             text: '" . REMOVE_ALL . "'
             ,disabled: false
             ,iconCls:'icon-delete'
@@ -272,11 +272,31 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    $OBJECT_GRID->addTBarItems("tbar.add('-');");
-    //Import...
-    ////////////////////////////////////////////////////////////////////////////
+    
     $OBJECT_GRID->addTBarItems("
         tbar.add([{
+            text: '".REMOVE."'
+            ,id:'REMOVE'
+            ,disabled:true
+            ,iconCls:'icon-delete'
+            ,scope:this
+            ,handler: function(){
+                var rc = this.getSelectionModel().getSelectedCell();
+                if (rc){
+                    var record = this.getStore().getAt(rc[0]);
+                    if (record){
+                        chooseId = record.data.ID;
+                        Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . DELETE_THIS_ITEM . "', deleteSingle);
+                    }
+                }else{
+                    ".camemisPage::alertPleaseSelect()."
+                }
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
             text: '" . IMPORT . "'
             ,disabled: false
             ,iconCls:'icon-list-items'
@@ -291,11 +311,11 @@ Ext.onReady(function() {
             }]
         }]);
     ");
-    ////////////////////////////////////////////////////////////////////////////
+
     $setParams .="&term=".$SEMESTER_NAME."";
     
     $OBJECT_GRID->setSaveParams("
-        cmd: 'jsonActionStudentScoreSubjectAssignment'
+        cmd: 'jsonActionTeacherScoreEnter'
         ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
         ,setnewValue:setnewValue
     ");
@@ -344,6 +364,10 @@ Ext.onReady(function() {
             ,border: false
             ,items:<?=$VIEWPORT?>
         }]
+    });
+    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+    grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        Ext.getCmp('REMOVE').enable();
     });
 });
 </script>

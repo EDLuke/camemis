@@ -617,7 +617,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $result;
     }
 
-    public function actionStudentScoreSubjectAssignment() {
+    public function actionTeacherScoreEnter() {
         $object = (object) array(
                     "studentId" => $this->studentId
                     , "classId" => $this->classId
@@ -638,7 +638,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function countTeacherScoreDate() {
-        
+
         $object = (object) array(
                     "classId" => $this->classId
                     , "subjectId" => $this->subjectId
@@ -650,7 +650,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentAssignment::getCountTeacherScoreDate($object);
     }
 
-    public function getListStudentsTeacherEnterScore() {
+    public function getListStudentsTeacherScoreEnter() {
 
         $object = (object) array(
                     "classId" => $this->classId
@@ -679,6 +679,28 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
 
         return $data;
+    }
+
+    public function actionDeleteAllStudentsTeacherScoreEnter() {
+
+        $object = (object) array(
+                    "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+        );
+
+        SQLEvaluationStudentAssignment::getActionDeleteAllStudentsTeacherScoreEnter();
+    }
+
+    public function actionDeleteOneStudentTeacherScoreEnter($object) {
+
+        error_log("classId: " . $this->classId . " subjectId: " . $this->subjectId . " assignmentId: " . $this->assignmentId . " studentId: " . $this->studentId . " date: " . $this->date);
+
+
+        $object = (object) array(
+                    "classId" => $this->classId
+                    , "subjectId" => $this->subjectId
+        );
+        SQLEvaluationStudentAssignment::getActionDeleteOneStudentTeacherScoreEnter($object);
     }
 
 }

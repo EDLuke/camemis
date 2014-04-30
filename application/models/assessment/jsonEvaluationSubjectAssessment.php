@@ -80,10 +80,10 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonActionStudentScoreSubjectAssignment($encrypParams) {
+    public function jsonActionTeacherScoreEnter($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
-        $this->actionStudentScoreSubjectAssignment();
+        $this->actionTeacherScoreEnter();
 
         return array(
             "success" => true
@@ -176,11 +176,11 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonListStudentsTeacherEnterScore($encrypParams) {
+    public function jsonListStudentsTeacherScoreEnter($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getListStudentsTeacherEnterScore();
+        $data = $this->getListStudentsTeacherScoreEnter();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -192,6 +192,29 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             "success" => true
             , "totalCount" => sizeof($data)
             , "rows" => $a
+        );
+    }
+
+    public function jsonActionDeleteOneStudentTeacherScoreEnter($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+        
+        $this->actionDeleteOneStudentTeacherScoreEnter();
+        
+        return array(
+            "success" => true
+        );
+    }
+
+    public function jsonActionDeleteAllStudentsTeacherScoreEnter($encrypParams) {
+        
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+
+        $this->actionDeleteAllStudentsTeacherScoreEnter();
+
+        return array(
+            "success" => true
         );
     }
 

@@ -8,18 +8,15 @@
 
 class SQLEvaluationStudentAssignment {
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return false::dbAccess()->select();
     }
 
-    public static function getScoreSubjectAssignment($object)
-    {
+    public static function getScoreSubjectAssignment($object) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_assignment", array("*"))
                 ->where("CLASS_ID = '" . $object->classId . "'")
@@ -31,8 +28,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getAverageSubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include)
-    {
+    public static function getAverageSubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("AVG(POINTS) AS AVG"))
                 ->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array())
@@ -59,8 +55,7 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->AVG : "";
     }
 
-    public static function getListStudentAssignmentScoreDate($studentId, $classId, $subjectId, $term, $month, $year, $include)
-    {
+    public static function getListStudentAssignmentScoreDate($studentId, $classId, $subjectId, $term, $month, $year, $include) {
         $SELECTION_A = array("ASSIGNMENT_ID");
 
         $SELECTION_B = array(
@@ -94,8 +89,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function calculatedAverageSubjectResult($studentId, $classId, $subjectId, $term, $month, $year, $include)
-    {
+    public static function calculatedAverageSubjectResult($studentId, $classId, $subjectId, $term, $month, $year, $include) {
         $SUM_VALUE = "";
         $SUM_COEFF_VALUE = "";
         $output = "";
@@ -109,10 +103,8 @@ class SQLEvaluationStudentAssignment {
                         , $year
                         , $include);
 
-        if ($enties)
-        {
-            foreach ($enties as $value)
-            {
+        if ($enties) {
+            foreach ($enties as $value) {
 
                 $_VALUE = self::getAverageSubjectAssignment(
                                 $studentId
@@ -131,27 +123,20 @@ class SQLEvaluationStudentAssignment {
             }
         }
 
-        if (is_numeric($SUM_COEFF_VALUE))
-        {
-            if ($SUM_COEFF_VALUE)
-            {
+        if (is_numeric($SUM_COEFF_VALUE)) {
+            if ($SUM_COEFF_VALUE) {
                 $output = displayRound($SUM_VALUE / $SUM_COEFF_VALUE);
-            }
-            else
-            {
+            } else {
                 $output = 0;
             }
-        }
-        else
-        {
+        } else {
             $output = 0;
         }
 
         return $output;
     }
 
-    public static function getImplodeQuerySubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include)
-    {
+    public static function getImplodeQuerySubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include) {
 
         $object = (object) array(
                     "studentId" => $studentId
@@ -168,10 +153,8 @@ class SQLEvaluationStudentAssignment {
 
         $data = array();
 
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
                 $data[] = $value->POINTS;
             }
         }
@@ -179,8 +162,7 @@ class SQLEvaluationStudentAssignment {
         return $data ? implode("|", $data) : "---";
     }
 
-    public static function getQueryStudentSubjectAssignments($object)
-    {
+    public static function getQueryStudentSubjectAssignments($object) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
@@ -188,33 +170,28 @@ class SQLEvaluationStudentAssignment {
         $SQL->where("A.SUBJECT_ID = '" . $object->subjectId . "'");
         $SQL->where("A.STUDENT_ID = '" . $object->studentId . "'");
 
-        if (isset($object->assignmentId))
-        {
+        if (isset($object->assignmentId)) {
             if ($object->assignmentId)
                 $SQL->where("A.ASSIGNMENT_ID = '" . $object->assignmentId . "'");
         }
 
-        if (isset($object->month))
-        {
+        if (isset($object->month)) {
             if ($object->month)
                 $SQL->where("A.MONTH = '" . $object->month . "'");
         }
 
-        if (isset($object->year))
-        {
+        if (isset($object->year)) {
             if ($object->year)
                 $SQL->where("A.YEAR = '" . $object->year . "'");
         }
 
-        if (isset($object->term))
-        {
+        if (isset($object->term)) {
             if ($object->term)
                 $SQL->where("A.TERM = '" . $object->term . "'");
         }
 
 
-        if (isset($object->include_in_evaluation))
-        {
+        if (isset($object->include_in_evaluation)) {
             if ($object->include_in_evaluation)
                 $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $object->include_in_evaluation . "'");
         }
@@ -223,21 +200,18 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function setActionStudentScoreSubjectAssignment($object)
-    {
+    public static function setActionStudentScoreSubjectAssignment($object) {
 
         $facette = self::getScoreSubjectAssignment($object);
 
-        if ($facette)
-        {
+        if ($facette) {
             $WHERE[] = "STUDENT_ID = '" . $object->studentId . "'";
             $WHERE[] = "CLASS_ID = '" . $object->classId . "'";
             $WHERE[] = "SUBJECT_ID = '" . $object->subjectId . "'";
             $WHERE[] = "ASSIGNMENT_ID = '" . $object->assignmentId . "'";
             $WHERE[] = "SCORE_DATE = '" . $object->date . "'";
 
-            switch ($object->actionField)
-            {
+            switch ($object->actionField) {
                 case "SCORE":
                     $UPDATE_DATA['POINTS'] = $object->actionValue;
                     break;
@@ -250,12 +224,9 @@ class SQLEvaluationStudentAssignment {
             $UPDATE_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
             self::dbAccess()->update('t_student_assignment', $UPDATE_DATA, $WHERE);
-        }
-        else
-        {
+        } else {
 
-            switch ($object->actionField)
-            {
+            switch ($object->actionField) {
                 case "SCORE":
                     $INSERT_DATA['POINTS'] = $object->actionValue;
                     break;
@@ -286,8 +257,7 @@ class SQLEvaluationStudentAssignment {
         }
     }
 
-    public static function getCountTeacherScoreDate($object)
-    {
+    public static function getCountTeacherScoreDate($object) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array("C" => "COUNT(*)"))
                 ->where("CLASS_ID = '" . $object->classId . "'")
@@ -300,12 +270,10 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->C : 0;
     }
 
-    public static function addStudentScoreDate($object)
-    {
+    public static function addStudentScoreDate($object) {
         $count = self::getCountTeacherScoreDate($object);
 
-        if (!$count)
-        {
+        if (!$count) {
             $INSERT_DATA['CLASS_ID'] = $object->classId;
             $INSERT_DATA['SUBJECT_ID'] = $object->subjectId;
             $INSERT_DATA['ASSIGNMENT_ID'] = $object->assignmentId;
@@ -315,6 +283,13 @@ class SQLEvaluationStudentAssignment {
         }
     }
 
+    public static function getActionDeleteAllStudentsTeacherScoreEnter($object){
+        
+    }
+    
+    public static function getActionDeleteOneStudentTeacherScoreEnter($object){
+        
+    }
 }
 
 ?>

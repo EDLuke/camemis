@@ -240,7 +240,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteAllScoresSubject',academicId: '".$this->academicId."',subjectId: '".$this->subjectId."'}
+                        ,params: {cmd:'jsonActionDeleteAllStudentsTeacherScoreEnter',academicId: '".$this->academicId."',subjectId: '".$this->subjectId."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }

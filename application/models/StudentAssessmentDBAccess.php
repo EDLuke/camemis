@@ -142,7 +142,7 @@ class StudentAssessmentDBAccess {
         $this->subjectId = $subjectId;
     }
 
-    public function actionTeacherEnterScore()
+    public function actionTeacherScoreEnter()
     {
         $this->classId;
     }

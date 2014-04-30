@@ -52,7 +52,7 @@
     $scoreinfo=$schoolname."\n".$schoolyear."\n".$classname."\n".$teacher."\n".$subject;
  
     $managementscore = new StudentAssignmentDBAccess();
-    $results = $managementscore->jsonListStudentsTeacherEnterScore($params, false);
+    $results = $managementscore->jsonListStudentsTeacherScoreEnter($params, false);
     $filds[0] = "NA";
     $showfilds[0] = "N°";
     $i = 1;

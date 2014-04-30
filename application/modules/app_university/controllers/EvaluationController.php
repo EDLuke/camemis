@@ -619,9 +619,9 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonSubjectYearResult($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsTeacherEnterScore":
+            case "jsonListStudentsTeacherScoreEnter":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
-                $jsondata = $DB_ACCESS->jsonListStudentsTeacherEnterScore($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonListStudentsTeacherScoreEnter($this->REQUEST->getPost());
                 break;
 
             case "jsonLoadTeacherScoreInputDate":
@@ -680,22 +680,19 @@ class EvaluationController extends Zend_Controller_Action {
     public function jsonsaveAction() {
 
         switch ($this->REQUEST->getPost('cmd')) {
-
-            case "jsonActionStudentScoreSubjectAssignment":
+            
+            case "jsonActionDeleteAllStudentsTeacherScoreEnter":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
-                $jsondata = $DB_ACCESS->jsonActionStudentScoreSubjectAssignment($this->REQUEST->getPost());
-                break;
-
-            case "jsonActionDeleteAllScoresAssignment":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionDeleteAllScoresAssignment($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonActionDeleteAllStudentsTeacherScoreEnter($this->REQUEST->getPost());
                 break;
 
             case "jsonAcitonModifyDate":
                 $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonAcitonModifyDate($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionDeleteSingleScore":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionDeleteSingleScore($this->REQUEST->getPost());
+            case "jsonActionDeleteOneStudentTeacherScoreEnter":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionDeleteOneStudentTeacherScoreEnter($this->REQUEST->getPost());
                 break;
 
             case "jsonActionStudenLearningResult":
@@ -718,11 +715,7 @@ class EvaluationController extends Zend_Controller_Action {
             case "jsonActionStudentClassPerformance":
                 $jsondata = $this->DB_CLASS_PERFORMANCE->jsonActionStudentClassPerformance($this->REQUEST->getPost());
                 break;
-
-            case "jsonActionDeleteAllScoresSubject":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionDeleteAllScoresSubject($this->REQUEST->getPost());
-                break;
-
+            
             case "jsonActionPublishSubjectAssessment":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
                 $jsondata = $DB_ACCESS->jsonActionPublishSubjectAssessment($this->REQUEST->getPost());
