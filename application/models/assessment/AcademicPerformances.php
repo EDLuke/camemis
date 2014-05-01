@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 require_once 'models/assessment/AssessmentProperties.php';
+require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 require_once 'models/assessment/SQLAcademicPerformances.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAccess.php";
 
@@ -20,8 +21,6 @@ class AcademicPerformances extends AssessmentProperties {
     const NO_SCHOOLYEAR_ID = false;
     const SCORE_NUMBER = 1;
     const SCORE_CHAR = 2;
-    const INCLUDE_IN_MONTH = 1;
-    const INCLUDE_IN_TERM = 2;
     const SCORE_TYPE_NUMBER = 1;
     const SCORE_TYPE_CHAR = 2;
 
@@ -66,6 +65,15 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
+        $object = (object) array(
+                    "academicId" => $this->academicId
+                    , "term" => $this->term
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "section" => $this->getSection()
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
         if ($this->listClassStudents())
         {
 
@@ -74,7 +82,9 @@ class AcademicPerformances extends AssessmentProperties {
             $i = 0;
             foreach ($this->listClassStudents() as $value)
             {
-                $studentId = $value->ID;
+
+                $object->studentId = $value->ID;
+
                 $data[$i]["RANK"] = "----";
                 $data[$i]["AVERAGE_TOTAL"] = "----";
                 $data[$i]["ASSESSMENT_TOTAL"] = "----";
@@ -83,7 +93,11 @@ class AcademicPerformances extends AssessmentProperties {
                 {
                     foreach ($this->getListSubjects() as $v)
                     {
-                        $data[$i][$v->SUBJECT_ID] = "----";
+                        if ($v->SUBJECT_ID)
+                        {
+                            $object->subjectId = $v->SUBJECT_ID;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object)->SUBJECT_VALUE;
+                        }
                     }
                 }
 
@@ -99,6 +113,12 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
+        $object = (object) array(
+                    "academicId" => $this->academicId
+                    , "term" => $this->term
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
         if ($this->listClassStudents())
         {
 
@@ -116,7 +136,14 @@ class AcademicPerformances extends AssessmentProperties {
                 {
                     foreach ($this->getListSubjects() as $v)
                     {
-                        $data[$i][$v->SUBJECT_ID] = "----";
+                        if ($v->SUBJECT_ID)
+                        {
+                            if ($v->SUBJECT_ID)
+                            {
+                                $object->subjectId = $v->SUBJECT_ID;
+                                $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object)->SUBJECT_VALUE;
+                            }
+                        }
                     }
                 }
 

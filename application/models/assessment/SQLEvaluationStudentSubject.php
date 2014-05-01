@@ -48,9 +48,7 @@ class SQLEvaluationStudentSubject {
                             $SQL->where("A.MONTH = '" . $object->month . "'");
 
                         if ($object->year)
-                        {
                             $SQL->where("A.YEAR = '" . $object->year . "'");
-                        }
                         break;
                     case "TERM":
                     case "QUARTER":
@@ -60,9 +58,7 @@ class SQLEvaluationStudentSubject {
                         break;
                     case "YEAR":
                         if ($object->year)
-                        {
                             $SQL->where("A.YEAR = '" . $object->year . "'");
-                        }
                         break;
                 }
 
@@ -235,7 +231,7 @@ class SQLEvaluationStudentSubject {
             "CLASS_ID='" . $object->academicId . "'"
             , "SUBJECT_ID='" . $object->subjectId . "'")
         );
-        
+
         self::dbAccess()->delete('t_student_assignment'
                 , array(
             "CLASS_ID='" . $object->academicId . "'"

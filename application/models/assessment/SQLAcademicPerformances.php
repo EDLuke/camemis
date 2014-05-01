@@ -6,6 +6,8 @@
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
+require_once 'models/assessment/SQLAcademicPerformances.php';
+
 class SQLAcademicPerformances {
 
     public static function dbAccess()
