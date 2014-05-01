@@ -788,7 +788,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         SQLEvaluationStudentAssignment::getActionDeleteAllStudentsTeacherScoreEnter();
     }
 
-    public function actionDeleteOneStudentTeacherScoreEnter($object)
+    public function actionDeleteOneStudentTeacherScoreEnter()
     {
 
         $object = (object) array(
@@ -799,6 +799,16 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "studentId" => $this->studentId
         );
         SQLEvaluationStudentAssignment::getActionDeleteOneStudentTeacherScoreEnter($object);
+    }
+
+    public function actionDeleteSubjectScoreAssessment()
+    {
+        $object = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+        );
+        
+        SQLEvaluationStudentSubject::getActionDeleteSubjectScoreAssessment($object);
     }
 
 }

@@ -21,6 +21,7 @@ require_once 'models/app_school/evaluation/default/StudentSubjectAssessment.php'
 require_once 'models/app_school/evaluation/default/StudentTraditionalPerformance.php';
 
 require_once 'models/assessment/jsonEvaluationSubjectAssessment.php';
+require_once 'models/assessment/jsonAcademicPerformances.php';
 
 class EvaluationController extends Zend_Controller_Action {
 
@@ -717,15 +718,18 @@ class EvaluationController extends Zend_Controller_Action {
                 break;
 
             case "jsonListStudentsMonthClassPerformance":
-                $jsondata = $this->DB_CLASS_PERFORMANCE->jsonListStudentsMonthClassPerformance($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonAcademicPerformances();
+                $jsondata = $DB_ACCESS->jsonListStudentsMonthClassPerformance($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsSemesterClassPerformance":
-                $jsondata = $this->DB_CLASS_PERFORMANCE->jsonListStudentsSemesterClassPerformance($this->REQUEST->getPost());
+            case "jsonListStudentsTermClassPerformance":
+                $DB_ACCESS = new jsonAcademicPerformances();
+                $jsondata = $DB_ACCESS->jsonListStudentsTermClassPerformance($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsYearClassPerformance":
-                $jsondata = $this->DB_CLASS_PERFORMANCE->jsonListStudentsYearClassPerformance($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonAcademicPerformances();
+                $jsondata = $DB_ACCESS->jsonListStudentsYearClassPerformance($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsSubjectAssessment":
@@ -797,6 +801,11 @@ class EvaluationController extends Zend_Controller_Action {
             case "jsonActionPublishSubjectAssessment":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
                 $jsondata = $DB_ACCESS->jsonActionPublishSubjectAssessment($this->REQUEST->getPost());
+                break;
+
+            case "jsonActionDeleteSubjectScoreAssessment":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionDeleteSubjectScoreAssessment($this->REQUEST->getPost());
                 break;
         }
 

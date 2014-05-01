@@ -48,7 +48,7 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
         return $this->traditionalMonthResultClassPerformance();
     }
 
-    public function jsonListStudentsSemesterClassPerformance($encrypParams) {
+    public function jsonListStudentsTermClassPerformance($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 

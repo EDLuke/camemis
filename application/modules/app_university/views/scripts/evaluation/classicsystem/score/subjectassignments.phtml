@@ -234,7 +234,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteScoreSubject',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
+                        ,params: {cmd:'jsonActionDeleteSubjectScoreAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }
