@@ -17,12 +17,6 @@ $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
-$STUDENT_ASSIGNMENT->subjectId = $this->subjectId;
-$STUDENT_ASSIGNMENT->academicId = $academicId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
