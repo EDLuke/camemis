@@ -20,19 +20,19 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT->classId = $this->classId;
+$STUDENT_ASSIGNMENT->academicId = $this->academicId;
 $STUDENT_ASSIGNMENT->term = $this->term;
 $entries = $STUDENT_ASSIGNMENT->listSubjects();
 
 $setParams = "";
-$setParams .= "&classId=".$this->classId."";
+$setParams .= "&academicId=".$this->academicId."";
 $setParams .= "&term=".$this->term."";
 $setParams .= "&section=2";
 

@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
@@ -38,7 +38,7 @@ class DisplayItem{
         
         $result = "";
         $result .= "&studentId=".$this->studentObject->ID."";
-        $result .= "&classId=".$this->academicObject->ID."";
+        $result .= "&academicId=".$this->academicObject->ID."";
         
         switch ($type) {
             case "FIRST_SEMESTER":
@@ -312,7 +312,7 @@ $DISPLAY_ITEM = new DisplayItem(
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
 
         $defaultParams = "";
-        $defaultParams .= "&classId=".$academicObject->ID."";
+        $defaultParams .= "&academicId=".$academicObject->ID."";
         $defaultParams .= "&studentId=".$studentId."";
         
         ////////////////////////////////////////////////////////////////////////

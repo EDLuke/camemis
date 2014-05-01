@@ -19,7 +19,7 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
@@ -186,11 +186,11 @@ Ext.onReady(function() {
         start:0
         ,limit:100
         ,cmd: 'jsonListStudentsYearClassPerformance'
-        ,camIds: '".$this->urlEncryp->encryptedGet("&classId=".$this->classId."&section=3")."'
+        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
     ";
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentClassPerformance'
-        ,camIds: '".$this->urlEncryp->encryptedGet("&classId=".$this->classId."&section=3")."'
+        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
     ");
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
@@ -231,7 +231,7 @@ Ext.onReady(function() {
     $GRADEBOOK .=",iconCls: 'icon-book'";
     $GRADEBOOK .=",disabled:false";
     $GRADEBOOK .=",handler: function(){";
-    $GRADEBOOK .="openWinIFrame(record.data.STUDENT,'/evaluation/gradebooktraditional/?camIds=".$this->urlEncryp->encryptedGet("&classId=".$this->classId."")."&studentId=' + record.data.ID, percentWidth(70),percentHeight(85));";
+    $GRADEBOOK .="openWinIFrame(record.data.STUDENT,'/evaluation/gradebooktraditional/?camIds=".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."")."&studentId=' + record.data.ID, percentWidth(70),percentHeight(85));";
     $GRADEBOOK .="}";
     $GRADEBOOK .="}";
     

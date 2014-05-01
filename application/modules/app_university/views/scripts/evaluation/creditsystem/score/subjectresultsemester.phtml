@@ -21,13 +21,10 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 $term = isset($_GET["term"])?$_GET["term"]:"";
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
 
-$STUDENT_ASSIGNMENT->subjectId = $subjectId;
-$STUDENT_ASSIGNMENT->classId = $this->classId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -37,7 +34,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
 $setParams .="&subjectId=".$this->subjectId."";
-$setParams .="&classId=".$this->academicId."";
+$setParams .="&academicId=".$academicId."";
 $setParams .="&term=".$term."";
 
 switch($term){

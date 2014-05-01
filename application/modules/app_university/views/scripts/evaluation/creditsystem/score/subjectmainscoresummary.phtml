@@ -13,7 +13,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}

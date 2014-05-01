@@ -16,10 +16,10 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
 $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
-$academicObject = AcademicDBAccess::findGradeFromId($classId);
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
@@ -105,7 +105,7 @@ $COMBO_ITEMS = "[{".CamemisField::Combo('COMO_MONTH','COMO_MONTH',$STORE_ITEMS, 
         $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer:cssAssessment, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
         $setParams = "";
-        $setParams .= "&classId=".$academicObject->ID."";
+        $setParams .= "&academicId=".$academicObject->ID."";
         $setParams .= "&section=1";
         $setParams .= "&studentId=".$studentObject->ID."";
 

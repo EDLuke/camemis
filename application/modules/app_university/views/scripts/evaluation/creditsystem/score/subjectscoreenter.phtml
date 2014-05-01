@@ -25,14 +25,14 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 if(!$academicObject) {header("Location: /main/permission/");}
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
-$subjectObject = SubjectDBAccess::findSubjectClass($this->subjectId, $academicObject->ID);
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicObject->ID);
 ////////////////////////////////////////////////////////////////////////////////
 $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $academicObject->ID);
 $CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
 $SEMESTER_NAME = $TERM_NAME;
 
 $setParams = "";
-$setParams .= "&classId=".$this->academicId."";
+$setParams .= "&academicId=".$this->academicId."";
 $setParams .= "&subjectId=".$this->subjectId."";
 $setParams .= "&assignmentId=".$this->assignmentId."";
 $setParams .= "&date=".$this->date."";

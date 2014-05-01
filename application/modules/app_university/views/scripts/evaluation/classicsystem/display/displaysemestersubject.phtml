@@ -20,7 +20,7 @@ $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
 $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
@@ -67,7 +67,7 @@ Ext.onReady(function() {
     ");
 
     $setParams = "";
-    $setParams .= "&classId=".$academicObject->ID."";
+    $setParams .= "&academicId=".$academicObject->ID."";
     $setParams .= "&term=".$this->term."";
     $setParams .= "&subjectId=".$this->subjectId."";
     $setParams .= "&studentId=".$studentObject->ID."";

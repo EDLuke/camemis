@@ -1304,7 +1304,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function findSubjectClass($subjectId, $academicId)
+    public static function getAcademicSubject($subjectId, $academicId)
     {
 
         $SELECTION_B = array(

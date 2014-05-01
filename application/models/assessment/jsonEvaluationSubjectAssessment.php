@@ -32,8 +32,8 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         if (isset($params["term"]))
             $this->term = $params["term"];
 
-        if (isset($params["classId"]))
-            $this->classId = $params["classId"];
+        if (isset($params["academicId"]))
+            $this->academicId = $params["academicId"];
 
         if (isset($params["studentId"]))
             $this->studentId = $params["studentId"];
@@ -89,11 +89,6 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             "success" => true
             , "SCHORE_DATE" => $this->countTeacherScoreDate()
         );
-    }
-
-    public function jsonListResultStudentsSubjectAssignment($params) {
-        $this->setParams($params);
-        print_r($this->getListResultStudentsSubjectAssignment());
     }
 
     public function jsonSubjectMonthResult($encrypParams) {

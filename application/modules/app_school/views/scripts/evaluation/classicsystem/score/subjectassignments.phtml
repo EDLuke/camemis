@@ -13,6 +13,8 @@ require_once setUserLoacalization();
 require_once 'models/app_school/assignment/AssignmentDBAccess.php';
 require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
 
+$academicId = isset($_GET["classId"])?$_GET["classId"]:"";
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
@@ -21,10 +23,10 @@ $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
 $STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 $STUDENT_ASSIGNMENT->subjectId = $this->subjectId;
-$STUDENT_ASSIGNMENT->classId = $this->classId;
+$STUDENT_ASSIGNMENT->academicId = $academicId;
 $STUDENT_ASSIGNMENT->classObject = $academicObject;
 
 $subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
@@ -38,7 +40,7 @@ $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHO
 
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
-$setParams .= "&classId=".$this->classId."";
+$setParams .= "&academicId=".$academicId."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){
@@ -237,7 +239,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteAllStudentsTeacherScoreEnter',classId: '".$this->classId."',subjectId: '".$this->subjectId."'}
+                        ,params: {cmd:'jsonActionDeleteScoreSubject',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }
@@ -249,11 +251,9 @@ Ext.onReady(function() {
 
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAssignmentsBySubjctClass'
-        ,classId: '".$this->classId."'
-        ,subjectId: '".$this->subjectId."'
-        ,includeInEvaluation:1
-        ,displayDate:1
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
+    
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();

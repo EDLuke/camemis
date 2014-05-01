@@ -33,7 +33,7 @@ class SQLEvaluationStudentSubject {
                 $SQL->joinInner(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
                 $SQL->where("A.STUDENT_ID = '" . $object->studentId . "'");
                 $SQL->where("A.SUBJECT_ID = '" . $object->subjectId . "'");
-                $SQL->where("A.CLASS_ID = '" . $object->classId . "'");
+                $SQL->where("A.CLASS_ID = '" . $object->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $object->schoolyearId . "'");
 
                 switch ($object->section) {
@@ -82,7 +82,7 @@ class SQLEvaluationStudentSubject {
         $SQL->from("t_student_subject_assessment", array("C" => "COUNT(*)"));
         $SQL->where("STUDENT_ID = '" . $object->studentId . "'");
         $SQL->where("SUBJECT_ID = '" . $object->subjectId . "'");
-        $SQL->where("CLASS_ID = '" . $object->classId . "'");
+        $SQL->where("CLASS_ID = '" . $object->academicId . "'");
         $SQL->where("SCHOOLYEAR_ID = '" . $object->schoolyearId . "'");
 
         switch ($object->section) {
@@ -123,7 +123,7 @@ class SQLEvaluationStudentSubject {
                 if (self::checkStudentSubjectEvaluation($object)) {
 
                     $WHERE[] = "STUDENT_ID = '" . $object->studentId . "'";
-                    $WHERE[] = "CLASS_ID = '" . $object->classId . "'";
+                    $WHERE[] = "CLASS_ID = '" . $object->academicId . "'";
                     $WHERE[] = "SUBJECT_ID = '" . $object->subjectId . "'";
                     $WHERE[] = "SCHOOLYEAR_ID = '" . $object->schoolyearId . "'";
 
@@ -168,7 +168,7 @@ class SQLEvaluationStudentSubject {
 
                     $INSERT_DATA["STUDENT_ID"] = $object->studentId;
                     $INSERT_DATA["SUBJECT_ID"] = $object->subjectId;
-                    $INSERT_DATA["CLASS_ID"] = $object->classId;
+                    $INSERT_DATA["CLASS_ID"] = $object->academicId;
                     $INSERT_DATA["SCHOOLYEAR_ID"] = $object->schoolyearId;
 
                     if ($object->month)

@@ -9,7 +9,7 @@ if ($_POST){
     
     $subjectId = isset($_POST["subjectId"])?$_POST["subjectId"]:"";
     $studentId = isset($_POST["id"])?$_POST["id"]:"";
-    $classId = isset($_POST["classId"])?$_POST["classId"]:"";
+    $academicId = isset($_POST["academicId"])?$_POST["academicId"]:"";
     $monthyear = isset($_POST["monthyear"])?$_POST["monthyear"]:"";
     $section = isset($_POST["section"])?$_POST["section"]:"";
     $term = isset($_POST["term"])?$_POST["term"]:"";
@@ -27,7 +27,7 @@ if ($_POST){
     
     $section = isset($_GET['section'])?$_GET['section']:"";
     $subjectId = isset($_GET['subjectId'])?$_GET['subjectId']:"";
-    $classId = $this->classId;
+    $academicId = $this->academicId;
     $monthyear = $this->monthyear;
     $studentId = $this->studentId;
     $term = $this->term;
@@ -36,8 +36,8 @@ if ($_POST){
 if($subjectId){
     
     $useObject = StudentSubjectAssessment::getInstance();
-    $academicObject = AcademicDBAccess::findGradeFromId($classId);
-    $useObject->classId = $academicObject->ID;
+    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+    $useObject->academicId = $academicObject->ID;
     $useObject->section = $section;
     $useObject->term = $term;
     if($monthyear){
@@ -48,8 +48,8 @@ if($subjectId){
     
 }else{
     $useObject = StudentTraditionalPerformance::getInstance();
-    $academicObject = AcademicDBAccess::findGradeFromId($classId);
-    $useObject->classId = $academicObject->ID;
+    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+    $useObject->academicId = $academicObject->ID;
     $useObject->studentId = $studentId;
     $useObject->section = $section;
     $useObject->term = $term;
@@ -126,7 +126,7 @@ switch(UserAuth::getUserType()){
         //]]>
     </script> 
     <input type="hidden" name="id" value="<?=$this->studentId?>">
-    <input type="hidden" name="classId" value="<?=$this->classId;?>">  
+    <input type="hidden" name="academicId" value="<?=$this->academicId;?>">  
     <input type="hidden" name="term" value="<?=$this->term;?>">  
     <input type="hidden" name="section" value="<?=$section;?>">  
     <input type="hidden" name="monthyear" value="<?=$this->monthyear;?>">  

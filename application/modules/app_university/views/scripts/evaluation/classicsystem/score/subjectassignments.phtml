@@ -242,7 +242,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteAllStudentsTeacherScoreEnter',academicId: '".$this->academicId."',subjectId: '".$this->subjectId."'}
+                        ,params: {cmd:'jsonActionDeleteScoreSubject',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }
@@ -251,14 +251,12 @@ Ext.onReady(function() {
             });
         }
     ");
-    
+
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAssignmentsBySubjctClass'
-        ,academicId: '".$this->academicId."'
-        ,subjectId: '".$this->subjectId."'
-        ,includeInEvaluation:1
-        ,displayDate:1
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
+    
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();

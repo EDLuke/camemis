@@ -54,7 +54,7 @@ class EvaluationController extends Zend_Controller_Action {
 
         $this->setId = null;
         $this->schoolyearId = null;
-        $this->classId = null;
+        $this->academicId = null;
         $this->assignmentId = null;
         $this->date = null;
         $this->term = null;
@@ -81,9 +81,9 @@ class EvaluationController extends Zend_Controller_Action {
         if ($this->_getParam('monthyear'))
             $this->monthyear = $this->_getParam('monthyear');
 
-        if ($this->_getParam('classId')) {
-            $this->classId = $this->_getParam('classId');
-            $this->classObject = AcademicDBAccess::findGradeFromId($this->classId);
+        if ($this->_getParam('academicId')) {
+            $this->academicId = $this->_getParam('academicId');
+            $this->classObject = AcademicDBAccess::findGradeFromId($this->academicId);
             if ($this->classObject) {
                 $this->gradeId = $this->classObject->GRADE_ID;
                 $this->schoolyearId = $this->classObject->SCHOOL_YEAR;
@@ -123,7 +123,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function classassignmentAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->assignmentId = $this->assignmentId;
 
         if ($this->classObject->EDUCATION_SYSTEM) {
@@ -135,7 +135,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function gradeboookAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
 
         if ($this->classObject) {
@@ -149,14 +149,14 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function gradebookchartAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->_helper->viewRenderer('classicsystem/display/gradebookchart');
     }
 
     public function gradebookmonthAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->_helper->viewRenderer('classicsystem/display/gradebookmonth');
     }
@@ -170,9 +170,9 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectassignmentsAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->URL_CLASS_ASSIGNMENT = UTILES::createUrl('evaluation/classassignment', array(
-                    "subjectId" => $this->subjectId, "classId" => $this->classId)
+                    "subjectId" => $this->subjectId, "academicId" => $this->academicId)
         );
         $this->view->camIds .= "&subjectId=" . $this->subjectId . "";
 
@@ -205,7 +205,7 @@ class EvaluationController extends Zend_Controller_Action {
         }
 
         $this->view->date = $this->date;
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
         $this->view->subjectObject = $this->subjectObject;
 
@@ -216,7 +216,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectmainscoresummaryAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         if ($this->classObject->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer('creditsystem/score/subjectmainscoresummary');
@@ -227,7 +227,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectscoreenterexportAction() {
         $this->view->type = $this->type;
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->assignmentId = $this->assignmentId;
         $this->view->date = $this->date;
         $this->view->subjectId = $this->subjectId;
@@ -246,7 +246,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function importassignmentxlsAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         $this->view->assignmentId = $this->assignmentId;
         $this->view->date = $this->date;
@@ -265,7 +265,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function jsonimportAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         $this->view->assignmentId = $this->assignmentId;
         $this->view->date = $this->date;
@@ -294,7 +294,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectresultmonthmainAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         if ($this->classObject->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer('creditsystem/score/subjectresultmonthmain');
@@ -305,7 +305,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectresultmonthAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
 
         if ($this->classObject->EDUCATION_SYSTEM) {
@@ -317,7 +317,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectresultsemesterAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         if ($this->classObject->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer('creditsystem/score/subjectresultsemester');
@@ -328,7 +328,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectresultyearAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         if ($this->classObject->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer('creditsystem/score/subjectresultyear');
@@ -339,7 +339,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function subjectscoresummaryAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
 
         if ($this->classObject->EDUCATION_SYSTEM) {
@@ -351,10 +351,10 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function gradebooktraditionalAction() {
 
-        $this->classId = $this->classObject->GUID;
+        $this->academicId = $this->classObject->GUID;
 
         $this->view->facette = $this->classObject;
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
 
         $this->_helper->viewRenderer('classicsystem/display/gradebookmain');
@@ -362,7 +362,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function gradebookcreditAction() {
         $this->view->schoolyearId = $this->schoolyearId;
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->_helper->viewRenderer('creditsystem/display/gradebookmain');
     }
@@ -370,7 +370,7 @@ class EvaluationController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     public function displayyearsubjectAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->subjectId = $this->subjectId;
 
@@ -379,7 +379,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function displaysemestersubjectAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->subjectId = $this->subjectId;
         $this->view->term = $this->term;
@@ -389,7 +389,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function displaymonthsubjectAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->term = $this->term;
         $this->view->subjectId = $this->subjectId;
@@ -399,7 +399,7 @@ class EvaluationController extends Zend_Controller_Action {
     }
 
     public function settingbehaviorAction() {
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->term = $this->term;
         $this->view->section = $this->section;
@@ -408,15 +408,15 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function performancemaincreditAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
 
         $this->view->URL_PERFORMANCE_YEAR = $this->UTILES->buildURL('evaluation/performanceyearcredit', array(
-            "classId" => $this->classId)
+            "academicId" => $this->academicId)
         );
 
         $this->view->URL_PERFORMANCE_SEMESTER = $this->UTILES->buildURL('evaluation/performancesemestercredit', array(
-            "classId" => $this->classId,
+            "academicId" => $this->academicId,
             "semester" => $this->term)
         );
 
@@ -425,32 +425,32 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function performanceyearcreditAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
         $this->_helper->viewRenderer('classicsystem/performance/credit/displayyearsubject');
     }
 
     public function performancesemestercreditAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
         $this->_helper->viewRenderer('classicsystem/performance/credit/displaysemestersubject');
     }
 
     public function performancemaintraditionalAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
         $this->_helper->viewRenderer('classicsystem/performance/index');
     }
 
     public function performanceyeartraditionalAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
 
         $this->view->URL_TEACHER_COMMENT = UTILES::createUrl('evaluation/teachercomment', array(
-                    "&classId" => $this->classId)
+                    "&academicId" => $this->academicId)
         );
 
         $this->_helper->viewRenderer('classicsystem/performance/displayyear');
@@ -458,11 +458,11 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function performancesemestertraditionalAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
 
         $this->view->URL_TEACHER_COMMENT = UTILES::createUrl('evaluation/teachercomment', array(
-                    "&classId" => $this->classId)
+                    "&academicId" => $this->academicId)
         );
 
         $this->_helper->viewRenderer('classicsystem/performance/displaysemester');
@@ -470,18 +470,18 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function performancemonthtraditionalmainAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
         $this->_helper->viewRenderer('classicsystem/performance/displaymonthmain');
     }
 
     public function performancemonthtraditionalAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
 
         $this->view->URL_TEACHER_COMMENT = UTILES::createUrl('evaluation/teachercomment', array(
-                    "&classId" => $this->classId)
+                    "&academicId" => $this->academicId)
         );
 
         $this->_helper->viewRenderer('classicsystem/performance/displaymonth');
@@ -495,12 +495,12 @@ class EvaluationController extends Zend_Controller_Action {
             switch ($this->classObject->EDUCATION_SYSTEM) {
                 case 1:
                     $CLASS_PERFORMENCES = $this->UTILES->buildURL('evaluation/performancemaincredit', array(
-                        "classId" => $this->classId)
+                        "academicId" => $this->academicId)
                     );
                     break;
                 default:
                     $CLASS_PERFORMENCES = $this->UTILES->buildURL('evaluation/performancemaintraditional', array(
-                        "classId" => $this->classId)
+                        "academicId" => $this->academicId)
                     );
                     break;
             }
@@ -511,7 +511,7 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function teachercommentAction() {
 
-        $this->view->classId = $this->classId;
+        $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->subjectId = $this->subjectId;
         $this->view->term = $this->term;
@@ -522,7 +522,7 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSubjectHomework() {
 
         return $this->UTILES->buildURL('homework', array(
-                    "classId" => $this->classId,
+                    "academicId" => $this->academicId,
                     "subjectId" => $this->subjectId)
         );
     }
@@ -530,7 +530,7 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSubjectAssignments() {
 
         return $this->UTILES->buildURL('evaluation/subjectassignments', array(
-                    "classId" => $this->classId,
+                    "academicId" => $this->academicId,
                     "subjectId" => $this->subjectId)
         );
     }
@@ -538,28 +538,28 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSubjectAssinments() {
 
         return UTILES::createUrl('evaluation/subjectassignments', array(
-                    "classId" => $this->classId, "subjectId" => $this->subjectId)
+                    "academicId" => $this->academicId, "subjectId" => $this->subjectId)
         );
     }
 
     public function setUrlSubjectMainScoreSummary() {
 
         return UTILES::createUrl('evaluation/subjectmainscoresummary', array(
-                    "classId" => $this->classId, "subjectId" => $this->subjectId)
+                    "academicId" => $this->academicId, "subjectId" => $this->subjectId)
         );
     }
 
     public function setUrlSubjectScoreImport() {
 
         return UTILES::createUrl('evaluation/importassignments', array(
-                    "classId" => $this->classId, "subjectId" => $this->subjectId)
+                    "academicId" => $this->academicId, "subjectId" => $this->subjectId)
         );
     }
 
     public function setUrlFirstScoreSubject() {
 
         return $this->UTILES->buildURL('evaluation/firstscoresubject', array(
-                    "classId" => $this->classId,
+                    "academicId" => $this->academicId,
                     "subjectId" => $this->subjectId)
         );
     }
@@ -567,7 +567,7 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSecondScoreSubject() {
 
         return $this->UTILES->buildURL('evaluation/secondscoresubject', array(
-                    "classId" => $this->classId,
+                    "academicId" => $this->academicId,
                     "subjectId" => $this->subjectId)
         );
     }
@@ -575,7 +575,7 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSubjectScoreExport() {
 
         return $this->UTILES->buildURL('evaluation/exportassignments', array(
-                    "classId" => $this->classId,
+                    "academicId" => $this->academicId,
                     "subjectId" => $this->subjectId)
         );
     }

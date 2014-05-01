@@ -91,7 +91,7 @@ class StudentAssignmentDBAccess {
 
         if ($this->subjectId && $this->getClassObject())
         {
-            return SubjectDBAccess::findSubjectClass($this->subjectId, $this->classId);
+            return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->classId);
         }
     }
 
@@ -119,7 +119,7 @@ class StudentAssignmentDBAccess {
     public function listAssignmentsByClass()
     {
 
-        return $this->DB_ASSIGNMENT->getListAssignmentsForAssessment($this->classId, $this->subjectId);
+        return $this->DB_ASSIGNMENT->getListAssignmentsToAcademic($this->classId, $this->subjectId);
     }
 
     ////////////////////////////////////////////////////////////////////////////

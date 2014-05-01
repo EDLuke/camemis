@@ -85,7 +85,7 @@ Ext.onReady(function() {
                         ,isUpload: true
                         ,headers: {'Content-type':'multipart/form-data'}
                         ,method: 'POST'
-                        ,params:{cmd: 'importassignmentXLS',classId:'<?=$this->classId?>',assignmentId:'<?=$this->assignmentId?>',date:'<?=$this->date?>',subjectId:'<?=$this->subjectId?>'}
+                        ,params:{cmd: 'importassignmentXLS',academicId:'<?=$this->academicId?>',assignmentId:'<?=$this->assignmentId?>',date:'<?=$this->date?>',subjectId:'<?=$this->subjectId?>'}
                         ,form: fp.getForm().getEl().dom
                         ,waitMsg: 'Uploading your file...'
                         ,success: function(response, options) {
@@ -96,7 +96,7 @@ Ext.onReady(function() {
                                 ,fn: function(btn){
                                     Ext.MessageBox.hide.defer(1500, Ext.MessageBox); 
                                     if (btn == 'ok'){ 
-                                        window.parent.window.location='/evaluation/subjectscoreenter/?schoolyearId=<?=$this->schoolyearId?>&title=<?=$this->title?>&classId=<?=$this->classId;?>&assignmentId=<?=$this->assignmentId?>&date=<?=$this->date?>&subjectId=<?=$this->subjectId?>&teacherId=<?=$this->teacherId?>';
+                                        window.parent.window.location='/evaluation/subjectscoreenter/?schoolyearId=<?=$this->schoolyearId?>&title=<?=$this->title?>&academicId=<?=$this->academicId;?>&assignmentId=<?=$this->assignmentId?>&date=<?=$this->date?>&subjectId=<?=$this->subjectId?>&teacherId=<?=$this->teacherId?>';
                                     }              
                                 }
                             });

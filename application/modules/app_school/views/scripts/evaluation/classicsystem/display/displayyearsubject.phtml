@@ -26,7 +26,7 @@ $columndataSecond = Utiles::getGridColumnData("SECOND_LIST_ID");
 
 $title = isset($_GET['title'])?$_GET['title']:'---';
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($this->studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
@@ -76,7 +76,7 @@ Ext.onReady(function() {
     ");
 
     $setFirstParams = "";
-    $setFirstParams .= "&classId=".$academicObject->ID."";
+    $setFirstParams .= "&academicId=".$academicObject->ID."";
     $setFirstParams .= "&term=FIRST_SEMESTER";
     $setFirstParams .= "&subjectId=".$this->subjectId."";
     $setFirstParams .= "&studentId=".$this->studentId."";
@@ -121,7 +121,7 @@ Ext.onReady(function() {
     ");
 
     $setSecondParams = "";
-    $setSecondParams .= "&classId=".$academicObject->ID."";
+    $setSecondParams .= "&academicId=".$academicObject->ID."";
     $setSecondParams .= "&term=SECOND_SEMESTER";
     $setSecondParams .= "&subjectId=".$this->subjectId."";
     $setSecondParams .= "&studentId=".$this->studentId."";

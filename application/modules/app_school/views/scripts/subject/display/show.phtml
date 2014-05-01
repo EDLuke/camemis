@@ -15,7 +15,7 @@ $field = isset($_GET["field"])?strtoupper(addText($_GET["field"])):"";
 $object = isset($_GET["object"]) ? $_GET["object"] : "";
 
 $academicObject = AcademicDBAccess::findGradeFromId($classId);
-$subjectObject = SubjectDBAccess::findSubjectClass($objectId, $classId);
+$subjectObject = SubjectDBAccess::getAcademicSubject($objectId, $classId);
 $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 function checkTeacherSchedule($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();
@@ -66,7 +66,7 @@ if ($_POST){
     $object = isset($_POST["object"])?addText($_POST["object"]):"";
     //$objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
     
-    $subjectObject = SubjectDBAccess::findSubjectClass($objectId, $classId);
+    $subjectObject = SubjectDBAccess::getAcademicSubject($objectId, $classId);
 
     if($subjectObject){
        

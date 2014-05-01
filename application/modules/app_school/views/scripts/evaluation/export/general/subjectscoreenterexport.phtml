@@ -12,7 +12,7 @@
     require_once 'models/app_school/staff/StaffDBAccess.php'; 
     $exportToExcel = new CamemisExportToExcel();  
  
-    $params["classId"] = $this->classId;
+    $params["academicId"] = $this->academicId;
     $params["subjectId"] = $this->subjectId;
     $params["assignmentId"] = $this->assignmentId;
     $params["teacherId"] = $this->teacherId;
@@ -26,8 +26,8 @@
     $SchoolAdress=$schoolObject->ADDRESS;
     $schoolInfo= $SchoolName."\n".$SchoolAdress;
     //score info
-    $facette = AcademicDBAccess::findGradeFromId($this->classId);
-    $subjectObject = SubjectDBAccess::findSubjectClass($this->subjectId, $facette->ID);
+    $facette = AcademicDBAccess::findGradeFromId($this->academicId);
+    $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $facette->ID);
     
     if (!$facette) {header("Location: /main/permission/");}
     //school year

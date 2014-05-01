@@ -58,7 +58,7 @@ class StudentAssessmentDBAccess {
 
     public function getSubject()
     {
-        return SubjectDBAccess::findSubjectClass($this->subjectId, $this->classId);
+        return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->classId);
     }
 
     public function getSubjectScoreType()

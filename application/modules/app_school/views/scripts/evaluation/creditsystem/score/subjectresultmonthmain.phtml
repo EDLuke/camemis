@@ -21,7 +21,7 @@ $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -30,7 +30,7 @@ $monthList = AcademicDBAccess::getAcademicMonthList($academicObject->ID);
 $data = array();
 if($monthList){
     foreach($monthList as $key=>$value){
-        $setParams = "&section=1&subjectId=".$this->subjectId."&classId=".$this->classId."&monthyear=".$key."_".$value."";
+        $setParams = "&section=1&subjectId=".$this->subjectId."&academicId=".$this->academicId."&monthyear=".$key."_".$value."";
         $ITEMS = "{";
             $ITEMS .= "title:'".constant($key)." ".$value."'";
             $ITEMS .= ",id:'".$key."_".$value."'";

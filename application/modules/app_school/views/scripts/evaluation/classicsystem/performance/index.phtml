@@ -15,7 +15,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
@@ -33,7 +33,7 @@ $DISPLAY_ERROR = "{
 }";
 
 $setParams = "";
-$setParams .= "&classId=".$this->classId."";
+$setParams .= "&academicId=".$this->academicId."";
 ?>
 <script>
     
