@@ -19,7 +19,6 @@ $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
-
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);

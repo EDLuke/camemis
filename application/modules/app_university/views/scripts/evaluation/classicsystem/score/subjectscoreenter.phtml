@@ -13,14 +13,14 @@ require_once 'models/app_university/AcademicDateDBAccess.php';
 require_once 'models/app_university/assignment/AssignmentDBAccess.php';
 require_once 'models/app_university/academic/AcademicDBAccess.php';
 require_once setUserLoacalization();
-require_once 'models/app_university/evaluation/default/StudentAssignmentDBAccess.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
 $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
@@ -31,41 +31,18 @@ $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $academicO
 $CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
 $SEMESTER_NAME = $TERM_NAME;
 
-$SET_TITLE = isset($_GET["title"])?$_GET["title"]." &raquo; ".displaySchoolTerm($SEMESTER_NAME)."":"";
-
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
-$setParams .= "&academicId=".$this->academicId."";
+$setParams .= "&academicId=".$academicId."";
 $setParams .= "&assignmentId=".$this->assignmentId."";
 $setParams .= "&date=".$this->date."";
-
-/* @soda */
-$params["assignmentId"] = $this->assignmentId;
-$params["date"] = $this->date;
-$params["academicId"] = $this->academicId;
-$params["subjectId"] = $this->subjectId;
-
-$checkScore = new StudentAssignmentDBAccess();
-$score = $checkScore->jsonListStudentsTeacherScoreEnter($params, false);
-$option = "false";
-$sum = 0;
-if($score){
-    foreach($score as $value){
-        $sum+= $value['SCORE']; 
-    }
-    if($sum == 0){
-        $option = "false";
-    }else{
-        $option = "true";
-    }
-}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 if($CHECK_STATUS){
     $SQL = UserAuth::dbAccess()->select();
     $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-    $SQL->where("ACADEMIC_ID = '" . $this->academicId . "'");
+    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
     $SQL->where("SUBJECT_ID = '" . $this->subjectId . "'");
     $SQL->where("TERM = '" . $TERM_NAME . "'");
     //error_log($SQL);
