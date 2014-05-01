@@ -11,9 +11,6 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_school/assignment/AssignmentDBAccess.php';
-require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
-
-$academicId = isset($_GET["classId"])?$_GET["classId"]:"";
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
@@ -21,15 +18,8 @@ $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
-$academicObject = AcademicDBAccess::findGradeFromId($academicId);
-
-$STUDENT_ASSIGNMENT->subjectId = $this->subjectId;
-$STUDENT_ASSIGNMENT->academicId = $academicId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId,$this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -40,7 +30,7 @@ $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHO
 
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
-$setParams .= "&academicId=".$academicId."";
+$setParams .= "&academicId=".$this->academicId."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){

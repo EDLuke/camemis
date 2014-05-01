@@ -11,7 +11,6 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_school/assignment/AssignmentDBAccess.php';
-require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
@@ -20,11 +19,11 @@ $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
 if(!$academicObject) { header("Location: /main/permission/");exit;}
 
-$STUDENT_ASSIGNMENT = new StudentAssignmentDBAccess($this->academicId, $this->subjectId, false);
-
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId,$this->academicId);
+
 if(!$subjectObject) {
     header("Location: /main/permission/");exit;
 }
