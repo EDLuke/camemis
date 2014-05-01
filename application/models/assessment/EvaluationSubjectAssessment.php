@@ -112,6 +112,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             $scoreList = $this->getScoreListSubjectMonthResult();
 
             $data = $this->listStudentsData();
+            
             $i = 0;
             foreach ($this->listClassStudents() as $value)
             {

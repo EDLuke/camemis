@@ -96,7 +96,7 @@ class StudentAssignmentDBAccess {
 
     public function listSubjects() {
 
-        return GradeSubjectDBAccess::getAllEvaluationSubjects($this->academicId, $this->term);
+        return GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
     }
 
     public function listAssignmentsByClass() {

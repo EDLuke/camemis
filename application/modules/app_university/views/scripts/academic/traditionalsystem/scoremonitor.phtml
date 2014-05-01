@@ -23,7 +23,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 if(!$academicObject) {header("Location: /main/permission/");}
 if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");}
 
-$ENTRIES = GradeSubjectDBAccess::getAllEvaluationSubjects($academicId,false);
+$ENTRIES = GradeSubjectDBAccess::getListSubjectsToAcademic($academicId,false);
 
 $setParams = "";
 $setParams .= "&academicId=".$academicId."";

@@ -215,6 +215,11 @@ abstract class AssessmentProperties {
         }
     }
 
+    public function getListSubjects()
+    {
+        return GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
+    }
+
     public function getFirstSemesterCoeff()
     {
         return $this->getCurrentClass()->SEMESTER1_WEIGHTING ? $this->getCurrentClass()->SEMESTER1_WEIGHTING : 1;

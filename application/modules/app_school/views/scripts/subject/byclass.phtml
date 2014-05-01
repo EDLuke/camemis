@@ -18,7 +18,7 @@ $SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):Zend_Registry::get('USER')->ID;
 
-$ENTRIES = GradeSubjectDBAccess::getAllEvaluationSubjects($classId,false);
+$ENTRIES = GradeSubjectDBAccess::getListSubjectsToAcademic($classId,false);
 
 function checkTeacherSchedule($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();

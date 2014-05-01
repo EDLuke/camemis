@@ -66,22 +66,16 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
-                    "studentId" => $this->studentId
-                    , "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-        );
-
-        $entries = SQLAcademicPerformances::getSQLListStudentsMonthClassPerformance($object);
-
-        if ($entries)
+        if ($this->listClassStudents())
         {
+
+            $data = $this->listStudentsData();
+
             $i = 0;
-            foreach ($entries as $value)
+            foreach ($this->listClassStudents() as $value)
             {
-                $data[$i]["ID"] = $value->ID;
+                $studentId = $value->ID;
+
 
                 $i++;
             }
@@ -95,20 +89,16 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
-                    "studentId" => $this->studentId
-                    , "academicId" => $this->academicId
-                    , "term" => $this->term
-        );
-
-        $entries = SQLAcademicPerformances::getSQLListStudentsTermClassPerformance($object);
-
-        if ($entries)
+        if ($this->listClassStudents())
         {
+
+            $data = $this->listStudentsData();
+
             $i = 0;
-            foreach ($entries as $value)
+            foreach ($this->listClassStudents() as $value)
             {
-                $data[$i]["ID"] = $value->ID;
+                $studentId = $value->ID;
+
 
                 $i++;
             }
@@ -122,20 +112,16 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
-                    "studentId" => $this->studentId
-                    , "academicId" => $this->academicId
-                    , "term" => $this->term
-        );
-
-        $entries = SQLAcademicPerformances::getSQLListStudentsYearClassPerformance($object);
-
-        if ($entries)
+        if ($this->listClassStudents())
         {
+
+            $data = $this->listStudentsData();
+
             $i = 0;
-            foreach ($entries as $value)
+            foreach ($this->listClassStudents() as $value)
             {
-                $data[$i]["ID"] = $value->ID;
+                $studentId = $value->ID;
+
 
                 $i++;
             }

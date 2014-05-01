@@ -90,7 +90,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         return self::sqlAssignedSubjectsByGrade($params);
     }
 
-    public static function getAllEvaluationSubjects($academicId, $term = false)
+    public static function getListSubjectsToAcademic($academicId, $term = false)
     {
 
         $result = "";

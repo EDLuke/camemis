@@ -9,7 +9,6 @@ require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_school/evaluation/default/StudentSubjectAssessment.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -31,13 +30,7 @@ $setParams .= "&section=1";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT->academicId = $this->academicId;
-$entries = $STUDENT_ASSIGNMENT->listSubjects();
-
-$columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
-
-//monthyear
+$entries = GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
 
 ?>
 
@@ -134,12 +127,12 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150,hidden:".checkColHidden(3, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150,renderer: cssDefault, dataIndex: 'STUDENT'");
     
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,hidden:".checkColHidden(4, $columndata).", sortable: true, renderer: cssRang, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,hidden:".checkColHidden(5, $columndata).", sortable: true, renderer: cssAverage, dataIndex: 'AVERAGE_TOTAL'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssRang, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssAverage, dataIndex: 'AVERAGE_TOTAL'");
     
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
@@ -149,7 +142,6 @@ Ext.onReady(function() {
              $OBJECT_GRID->addColumn("
                 header: '<b>".ASSESSMENT."</b>'
                 , width: 130
-                , hidden:".checkColHidden(6, $columndata)."
                 , align: 'right'
                 , sortable: true
                 , dataIndex: 'ASSESSMENT_TOTAL'
@@ -161,7 +153,6 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("
                 header: '<b>".ASSESSMENT."</b>'
                 , width: 120
-                , hidden:".checkColHidden(6, $columndata)."
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'ASSESSMENT_TOTAL'
@@ -172,7 +163,8 @@ Ext.onReady(function() {
     
     if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addColumn("header: '<b>".$value->SUBJECT_SHORT."</b>', align: 'right', width: 100,hidden:".checkColHidden(7, $columndata).", renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
+            $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
         }
     }
     
