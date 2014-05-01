@@ -75,7 +75,17 @@ class AcademicPerformances extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value)
             {
                 $studentId = $value->ID;
+                $data[$i]["RANK"] = "----";
+                $data[$i]["AVERAGE_TOTAL"] = "----";
+                $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
+                if ($this->getListSubjects())
+                {
+                    foreach ($this->getListSubjects() as $v)
+                    {
+                        $data[$i][$v->SUBJECT_ID] = "----";
+                    }
+                }
 
                 $i++;
             }
@@ -98,7 +108,17 @@ class AcademicPerformances extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value)
             {
                 $studentId = $value->ID;
+                $data[$i]["RANK"] = "----";
+                $data[$i]["AVERAGE_TOTAL"] = "----";
+                $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
+                if ($this->getListSubjects())
+                {
+                    foreach ($this->getListSubjects() as $v)
+                    {
+                        $data[$i][$v->SUBJECT_ID] = "----";
+                    }
+                }
 
                 $i++;
             }
@@ -121,7 +141,37 @@ class AcademicPerformances extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value)
             {
                 $studentId = $value->ID;
+                $data[$i]["RANK"] = "----";
+                $data[$i]["AVERAGE_TOTAL"] = "----";
+                $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
+                switch ($this->getTermNumber())
+                {
+                    case 1:
+                        $data[$i]["ASSESSMENT_FIRST_TERM"] = "----";
+                        $data[$i]["ASSESSMENT_SECOND_TERM"] = "----";
+                        $data[$i]["ASSESSMENT_THIRD_TERM"] = "----";
+                        $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                        $data[$i]["SECOND_TERM_RESULT"] = "----";
+                        $data[$i]["THIRD_TERM_RESULT"] = "----";
+                        break;
+                    case 2:
+                        $data[$i]["ASSESSMENT_FIRST_QUARTER"] = "----";
+                        $data[$i]["ASSESSMENT_SECOND_QUARTER"] = "----";
+                        $data[$i]["ASSESSMENT_THIRD_QUARTER"] = "----";
+                        $data[$i]["ASSESSMENT_FOURTH_QUARTER"] = "----";
+                        $data[$i]["FIRST_QUARTER_RESULT"] = "----";
+                        $data[$i]["SECOND_QUARTER_RESULT"] = "----";
+                        $data[$i]["THIRD_QUARTER_RESULT"] = "----";
+                        $data[$i]["FOURTH_QUARTER_RESULT"] = "----";
+                        break;
+                    default:
+                        $data[$i]["ASSESSMENT_FIRST_SEMESTER"] = "----";
+                        $data[$i]["ASSESSMENT_SECOND_SEMESTER"] = "----";
+                        $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                        $data[$i]["SECOND_SEMESTER_RESULT"] = "----";
+                        break;
+                }
 
                 $i++;
             }

@@ -118,7 +118,9 @@ Ext.onReady(function() {
     
     if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addReadField("name: '".$value->SUBJECT_ID."'");   
+            if($value->SUBJECT_ID){
+                $OBJECT_GRID->addReadField("name: '".$value->SUBJECT_ID."'");
+            }
         }
     }
     
@@ -163,8 +165,10 @@ Ext.onReady(function() {
     
     if($entries){
         foreach($entries as $value){
-            $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-            $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            if($value->SUBJECT_ID){
+                $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            }
         }
     }
     
