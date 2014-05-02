@@ -85,7 +85,10 @@ class StudentAdvisoryDBAccess {
 
         $name = isset($params["name"]) ? addText($params["name"]) : "";
         $advisoryId = isset($params["advisoryId"]) ? addText($params["advisoryId"]) : "";
-
+        
+        $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "";
+        $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
+        
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_advisory'), array("*", "CONCAT(A.NAME,' ( Ref:',A.ID,')') AS ADVISORY_NAME"));
         $SQL->joinLeft(array('B' => 't_camemis_type'), 'A.ADVISORY_TYPE=B.ID', array('NAME AS ADVISORY_TYPE'));
@@ -111,6 +114,14 @@ class StudentAdvisoryDBAccess {
 
         if ($advisoryId)
             $SQL->where("A.ADVISORY_TYPE = " . $advisoryId . "");
+            
+        if($campusId && $schoolyearId){
+            $objectSchoolyear = AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
+            if($objectSchoolyear){
+                $SQL->where("A.ADVISED_DATE >= '" . $objectSchoolyear->SCHOOLYEAR_START . "'");
+                $SQL->where("A.ADVISED_DATE <= '" . $objectSchoolyear->SCHOOLYEAR_END . "'");
+            }
+        }
 
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);

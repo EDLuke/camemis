@@ -208,6 +208,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $SQL .= " ,A.STATUS AS STATUS";
         $SQL .= " ,A.STUDENT_ID AS STUDENT_ID";
         $SQL .= " ,A.SUBJECT_ID AS SUBJECT_ID";
+        $SQL .= " ,T.NAME AS ABSENCE_NAME";
 
         //@soda
         $SQL .= " ,B.STUDENT_SCHOOL_ID AS STUDENT_SCHOOL_ID";
@@ -248,6 +249,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $SQL .= " FROM t_student_attendance AS A";
         $SQL .= " LEFT JOIN t_student AS B ON A.STUDENT_ID=B.ID";
+        $SQL .= " LEFT JOIN t_absent_type AS T ON A.ABSENT_TYPE=T.ID";
         switch (strtoupper($target))
         {
             case "GENERAL":
@@ -305,11 +307,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
             $SQL .= " AND A.STUDENT_ID = '" . $studentId . "'";
         if ($term)
             $SQL .= " AND A.TERM = '" . $term . "'";
-        if ($globalSearch)
-        {
-            $SQL .= " AND ((B.FIRSTNAME like '" . $globalSearch . "%') ";
-            $SQL .= " ) ";
-        }
+        
 
         if ($searchAbsencetype)
             $SQL .= " AND A.ABSENT_TYPE = " . $searchAbsencetype . "";
@@ -339,6 +337,15 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
             case "TRAINING":
                 $SQL .= " AND A.TRAINING_ID<>0";
                 break;
+        }
+        
+        if ($globalSearch)
+        {
+            $SQL .= " AND ((B.FIRSTNAME like '" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.LASTNAME like '" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.CODE like '" . $globalSearch . "%')) ";
+            $SQL .= " OR ((T.NAME like '" . $globalSearch . "%')) ";
+            
         }
 
         //error_log($SQL);

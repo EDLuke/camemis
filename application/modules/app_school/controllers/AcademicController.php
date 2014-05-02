@@ -688,6 +688,21 @@ class AcademicController extends Zend_Controller_Action {
     {
         $this->_helper->viewRenderer("filter/studentlist");
     }
+    
+    public function studentattendancefilterAction()
+    {
+        $this->_helper->viewRenderer("filter/studentattendancelist");
+    }
+
+    public function studentdisciplinefilterAction()
+    {
+        $this->_helper->viewRenderer("filter/studentdisciplinelist");
+    }
+    
+    public function studentadvisoryfilterAction()
+    {
+        $this->_helper->viewRenderer("filter/studentadvisorylist");
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     public function jsonloadAction()
