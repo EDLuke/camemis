@@ -193,7 +193,7 @@ class AcademicPerformances extends AssessmentProperties {
 
     protected function getScoreListClassPerformance($object) {
 
-        $data = Array();
+        $data = array();
         if ($this->listClassStudents()) {
             foreach ($this->listClassStudents() as $value) {
                 $object->studentId = $value->ID;
@@ -201,6 +201,23 @@ class AcademicPerformances extends AssessmentProperties {
             }
         }
         return $data;
+    }
+
+    public function setActionStudentClassPerformance() {
+
+        $object = (object) array(
+                    "academicId" => $this->academicId
+                    , "studentId" => $this->studentId
+                    , "actionField" => $this->actionField
+                    , "actionValue" => $this->actionValue
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "term" => $this->term
+                    , "section" => $this->getSection()
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
+        SQLAcademicPerformances::getActionStudentClassPerformance($object);
     }
 
 }

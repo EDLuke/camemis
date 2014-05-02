@@ -441,7 +441,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     protected function getScoreListSubjectMonthResult() {
 
-        $data = Array();
+        $data = array();
         if ($this->listClassStudents()) {
             foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
@@ -453,7 +453,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     protected function getScoreListSubjectTermResult($term) {
 
-        $data = Array();
+        $data = array();
         if ($this->listClassStudents()) {
             foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
@@ -481,7 +481,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     protected function getScoreListSubjectYearResult() {
 
-        $data = Array();
+        $data = array();
         if ($this->listClassStudents()) {
             foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
@@ -535,7 +535,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "year" => $this->getYear()
                     , "term" => $this->term
                     , "assessmentId" => $this->actionValue
-                    , "subjectValue" => $this->getSubjectValue()
+                    , "actionValue" => $this->getSubjectValue()
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "educationSystem" => $this->getEducationSystem()
         );
@@ -580,10 +580,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
             switch ($this->getSubjectScoreType()) {
                 case self::SCORE_NUMBER:
-                    $data["subjectValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
+                    $data["actionValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
                     break;
                 case self::SCORE_CHAR:
-                    $data["subjectValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
+                    $data["actionValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
                     break;
             }
 

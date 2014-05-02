@@ -805,7 +805,8 @@ class EvaluationController extends Zend_Controller_Action {
                 break;
 
             case "jsonActionStudentClassPerformance":
-                $jsondata = $this->DB_CLASS_PERFORMANCE->jsonActionStudentClassPerformance($this->REQUEST->getPost());
+                $DB_ACCESS = new jsonAcademicPerformances();
+                $jsondata = $DB_ACCESS->jsonActionStudentClassPerformance($this->REQUEST->getPost());
                 break;
 
             case "jsonActionPublishSubjectAssessment":

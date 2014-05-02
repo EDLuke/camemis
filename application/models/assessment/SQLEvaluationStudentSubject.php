@@ -25,8 +25,8 @@ class SQLEvaluationStudentSubject {
 
         if (isset($object->studentId)) {
             if ($object->studentId) {
-                $SELECTION_A = Array('SUBJECT_VALUE', 'RANK', 'ASSESSMENT_ID', 'TEACHER_COMMENT');
-                $SELECTION_B = Array('DESCRIPTION', 'LETTER_GRADE');
+                $SELECTION_A = array('SUBJECT_VALUE', 'RANK', 'ASSESSMENT_ID', 'TEACHER_COMMENT');
+                $SELECTION_B = array('DESCRIPTION', 'LETTER_GRADE');
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_subject_assessment"), $SELECTION_A);
@@ -139,16 +139,11 @@ class SQLEvaluationStudentSubject {
                     }
                     $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
 
-                    if (isset($object->subjectValue)) {
-                        if ($object->subjectValue)
-                            $UPDATE_DATA["SUBJECT_VALUE"] = $object->subjectValue;
+                    if (isset($object->actionValue)) {
+                        if ($object->actionValue)
+                            $UPDATE_DATA["SUBJECT_VALUE"] = $object->actionValue;
                     }
-
-                    if (isset($object->actionType)) {
-                        if ($object->actionType)
-                            $UPDATE_DATA["ACTION_TYPE"] = $object->actionType;
-                    }
-
+                    
                     if (isset($object->assessmentId))
                         $UPDATE_DATA["ASSESSMENT_ID"] = $object->assessmentId;
 
@@ -185,11 +180,8 @@ class SQLEvaluationStudentSubject {
                     if (isset($object->actionRank))
                         $INSERT_DATA["RANK"] = $object->actionRank;
 
-                    if (isset($object->subjectValue))
-                        $INSERT_DATA["SUBJECT_VALUE"] = $object->subjectValue;
-
-                    if (isset($object->actionType))
-                        $INSERT_DATA["SUBJECT_VALUE"] = $object->actionType;
+                    if (isset($object->actionValue))
+                        $INSERT_DATA["SUBJECT_VALUE"] = $object->actionValue;
 
                     if (isset($object->assessmentId))
                         $INSERT_DATA["ASSESSMENT_ID"] = $object->assessmentId;
