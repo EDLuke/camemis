@@ -110,6 +110,7 @@ class CamemisEvaluationDBAccess {
             $objectId = self::dbAccess()->lastInsertId();   
         }else{
             $WHERE[] = "ID = '" . $objectId . "'";
+
             self::dbAccess()->update('t_evaluation_answer', $SAVEDATA, $WHERE);
         }
         
@@ -121,6 +122,7 @@ class CamemisEvaluationDBAccess {
     
     public function jsonRemoveEvaluationAnswer($Id) {
         self::dbAccess()->delete('t_evaluation_answer', array("ID='" . $Id . "'"));
+        self::dbAccess()->delete('t_evaluation_answer', array("PARENT='" . $Id . "'"));
         
         return array(
             "success" => true
@@ -264,7 +266,7 @@ class CamemisEvaluationDBAccess {
     public static function sqlLoadAllEvaluationQuestion($params) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_evaluation_question'), array('A.ID','A.NAME AS QUESTION_NAME','DESCRIPTION'));
-        $SQL->joinLeft(array('B' => 't_evaluation_answer'), 'B.PARENT=A.ANSWERID', array('B.NAME AS ANSWER_NAME'));
+        $SQL->joinLeft(array('B' => 't_evaluation_answer'), 'B.PARENT=A.ANSWERID AND B.PARENT<>0', array('B.NAME AS ANSWER_NAME'));
         
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);    
@@ -300,6 +302,130 @@ class CamemisEvaluationDBAccess {
             , "totalCount" => sizeof($data)
             , "rows" => $a
         );    
+    }
+    
+    public static function sqlLoadEvaluationQuestionByTopic($params) {
+        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_camemis_evaluation_question'), array('*'));
+        $SQL->joinLeft(array('B' => 't_evaluation_question'), 'B.ID=A.QUESTION_ID', array('B.NAME AS QUESTION_NAME','DESCRIPTION'));
+        $SQL->joinLeft(array('C' => 't_evaluation_answer'), 'C.PARENT=B.ANSWERID', array('C.NAME AS ANSWER_NAME'));
+        
+        $SQL->where("A.TOPIC_ID='" . $objectId . "'");
+        //error_log($SQL);
+        return self::dbAccess()->fetchAll($SQL);    
+    }
+    
+    public static function jsonLoadEvaluationQuestionByTopic($params) {
+        $start = isset($params["start"]) ? $params["start"] : "0";
+        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        
+        $data = array();
+        $i = 0;
+        
+        $result = self::sqlLoadEvaluationQuestionByTopic($params);
+        if($result){
+            foreach ($result as $value){
+                $data[$i]["ID"] = $value->ID;
+                $data[$i]["QUESTION_NAME"] = setShowText($value->QUESTION_NAME);
+                $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
+                $data[$i]["ANSWER_NAME"] = setShowText($value->ANSWER_NAME); 
+                
+                $i++;  
+            }
+        }
+        
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $a
+        );    
+    }
+    
+    public static function sqlLoadUnassignedQuestionToTopic($params) {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_evaluation_question'), array('A.ID','A.NAME AS QUESTION_NAME','DESCRIPTION'));
+        
+        //error_log($SQL);
+        return self::dbAccess()->fetchAll($SQL);    
+    }
+    
+    public static function checkAssignedQuestionToTopic($topicId, $questionId) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_camemis_evaluation_question", array("C" => "COUNT(*)"));
+        $SQL->where("TOPIC_ID = '" . $topicId . "'");
+        $SQL->where("QUESTION_ID = '" . $questionId . "'");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+    
+    public static function jsonLoadUnassignedQuestionToTopic($params) {
+        $start = isset($params["start"]) ? $params["start"] : "0";
+        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        
+        $data = array();
+        $i = 0;
+        
+        $result = self::sqlLoadUnassignedQuestionToTopic($params);
+        if($result){
+            foreach ($result as $value){
+                $questionAssigned = self::checkAssignedQuestionToTopic($objectId, $value->ID);
+                if (!$questionAssigned) {
+                    $data[$i]["ID"] = $value->ID;
+                    $data[$i]["QUESTION_NAME"] = setShowText($value->QUESTION_NAME);
+                    $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION); 
+                    
+                    $i++; 
+                } 
+            }
+        }
+        
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $a
+        );    
+    }
+    
+    public static function jsonActionAddQuestionToTopic($params) {
+    
+        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
+        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectedCount = 0;
+
+        if ($selectionIds) {
+            $selectedQuestion = explode(",", $selectionIds);
+            if ($selectedQuestion) {
+                foreach ($selectedQuestion as $questionId) {
+                    $SAVEDATA['TOPIC_ID'] = $objectId;
+                    $SAVEDATA['QUESTION_ID'] = $questionId;
+
+                    self::dbAccess()->insert('t_camemis_evaluation_question', $SAVEDATA);
+                    ++$selectedCount;
+                }
+            }
+        }
+
+        return array(
+            "success" => true
+            , 'selectedCount' => $selectedCount
+        );
     }
     
     //////////////////////////////////////////////////////////////////////////////
