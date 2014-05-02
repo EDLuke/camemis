@@ -32,7 +32,24 @@ $entries = GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $t
 $setParams = "";
 $setParams .= "&academicId=".$this->academicId."";
 $setParams .= "&term=".$this->term."";
-$setParams .= "&section=2";
+
+switch($this->term){
+    case "FIRST_SEMESTER":
+    case "SECOND_SEMESTER":
+        $setParams .="&section=2";
+    break;
+    case "FIRST_TERM":
+    case "SECOND_TERM":
+    case "THIRD_TERM":
+        $setParams .="&section=4";
+    break;
+    case "FIRST_QUARTER":
+    case "SECOND_QUARTER":
+    case "THIRD_QUARTER":
+    case "FOURTH_QUARTER":
+        $setParams .="&section=5";
+    break;
+}
 
 ?>
 

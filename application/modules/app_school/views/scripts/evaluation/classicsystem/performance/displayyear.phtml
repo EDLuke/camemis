@@ -17,8 +17,6 @@ $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
-
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
