@@ -1,9 +1,9 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
+// Date: 01.05.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
@@ -13,8 +13,6 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
 $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
@@ -22,13 +20,10 @@ $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 $term = isset($_GET["term"])?$_GET["term"]:"";
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
 
-$STUDENT_ASSIGNMENT->subjectId = $subjectId;
-$STUDENT_ASSIGNMENT->classId = $this->classId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
+$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -38,7 +33,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
 $setParams .="&subjectId=".$this->subjectId."";
-$setParams .="&classId=".$this->classId."";
+$setParams .="&academicId=".$academicId."";
 $setParams .="&term=".$term."";
 
 switch($term){

@@ -22,7 +22,7 @@ class SQLEvaluationStudentAssignment {
     {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_assignment", array("*"))
-                ->where("CLASS_ID = '" . $object->classId . "'")
+                ->where("CLASS_ID = '" . $object->academicId . "'")
                 ->where("SUBJECT_ID = '" . $object->subjectId . "'")
                 ->where("STUDENT_ID = '" . $object->studentId . "'")
                 ->where("ASSIGNMENT_ID = '" . $object->assignmentId . "'")
@@ -31,12 +31,12 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getAverageSubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include)
+    public static function getAverageSubjectAssignment($studentId, $academicId, $subjectId, $assignmentId, $term, $month, $year, $include)
     {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("AVG(POINTS) AS AVG"))
                 ->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array())
-                ->where("A.CLASS_ID = '" . $classId . "'")
+                ->where("A.CLASS_ID = '" . $academicId . "'")
                 ->where("A.SUBJECT_ID = '" . $subjectId . "'")
                 ->where("A.STUDENT_ID = '" . $studentId . "'")
                 ->where("A.ASSIGNMENT_ID = '" . $assignmentId . "'")
@@ -59,7 +59,7 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->AVG : "";
     }
 
-    public static function getListStudentAssignmentScoreDate($studentId, $classId, $subjectId, $term, $month, $year, $include)
+    public static function getListStudentAssignmentScoreDate($studentId, $academicId, $subjectId, $term, $month, $year, $include)
     {
         $SELECTION_A = array("ASSIGNMENT_ID");
 
@@ -72,7 +72,7 @@ class SQLEvaluationStudentAssignment {
         $SQL->distinct();
         $SQL->from(array('A' => "t_student_assignment"), $SELECTION_A)
                 ->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', $SELECTION_B)
-                ->where("A.CLASS_ID = '" . $classId . "'")
+                ->where("A.CLASS_ID = '" . $academicId . "'")
                 ->where("A.SUBJECT_ID = '" . $subjectId . "'");
 
         $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
@@ -94,7 +94,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function calculatedAverageSubjectResult($studentId, $classId, $subjectId, $term, $month, $year, $include)
+    public static function calculatedAverageSubjectResult($studentId, $academicId, $subjectId, $term, $month, $year, $include)
     {
         $SUM_VALUE = "";
         $SUM_COEFF_VALUE = "";
@@ -102,7 +102,7 @@ class SQLEvaluationStudentAssignment {
 
         $enties = self::getListStudentAssignmentScoreDate(
                         $studentId
-                        , $classId
+                        , $academicId
                         , $subjectId
                         , $term
                         , $month
@@ -116,7 +116,7 @@ class SQLEvaluationStudentAssignment {
 
                 $_VALUE = self::getAverageSubjectAssignment(
                                 $studentId
-                                , $classId
+                                , $academicId
                                 , $subjectId
                                 , $value->ASSIGNMENT_ID
                                 , $term
@@ -150,12 +150,12 @@ class SQLEvaluationStudentAssignment {
         return $output;
     }
 
-    public static function getImplodeQuerySubjectAssignment($studentId, $classId, $subjectId, $assignmentId, $term, $month, $year, $include)
+    public static function getImplodeQuerySubjectAssignment($studentId, $academicId, $subjectId, $assignmentId, $term, $month, $year, $include)
     {
 
         $object = (object) array(
                     "studentId" => $studentId
-                    , "classId" => $classId
+                    , "academicId" => $academicId
                     , "subjectId" => $subjectId
                     , "assignmentId" => $assignmentId
                     , "term" => $term
@@ -184,7 +184,7 @@ class SQLEvaluationStudentAssignment {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
-        $SQL->where("A.CLASS_ID = '" . $object->classId . "'");
+        $SQL->where("A.CLASS_ID = '" . $object->academicId . "'");
         $SQL->where("A.SUBJECT_ID = '" . $object->subjectId . "'");
         $SQL->where("A.STUDENT_ID = '" . $object->studentId . "'");
 
@@ -231,7 +231,7 @@ class SQLEvaluationStudentAssignment {
         if ($facette)
         {
             $WHERE[] = "STUDENT_ID = '" . $object->studentId . "'";
-            $WHERE[] = "CLASS_ID = '" . $object->classId . "'";
+            $WHERE[] = "CLASS_ID = '" . $object->academicId . "'";
             $WHERE[] = "SUBJECT_ID = '" . $object->subjectId . "'";
             $WHERE[] = "ASSIGNMENT_ID = '" . $object->assignmentId . "'";
             $WHERE[] = "SCORE_DATE = '" . $object->date . "'";
@@ -265,7 +265,7 @@ class SQLEvaluationStudentAssignment {
             }
 
             $INSERT_DATA['STUDENT_ID'] = $object->studentId;
-            $INSERT_DATA['CLASS_ID'] = $object->classId;
+            $INSERT_DATA['CLASS_ID'] = $object->academicId;
             $INSERT_DATA['SUBJECT_ID'] = $object->subjectId;
             $INSERT_DATA['ASSIGNMENT_ID'] = $object->assignmentId;
             $INSERT_DATA['TERM'] = $object->term;
@@ -290,7 +290,7 @@ class SQLEvaluationStudentAssignment {
     {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array("C" => "COUNT(*)"))
-                ->where("CLASS_ID = '" . $object->classId . "'")
+                ->where("CLASS_ID = '" . $object->academicId . "'")
                 ->where("SUBJECT_ID = '" . $object->subjectId . "'")
                 ->where("TERM = '" . $object->term . "'")
                 ->where("ASSIGNMENT_ID = '" . $object->assignmentId . "'")
@@ -306,13 +306,40 @@ class SQLEvaluationStudentAssignment {
 
         if (!$count)
         {
-            $INSERT_DATA['CLASS_ID'] = $object->classId;
+            $INSERT_DATA['CLASS_ID'] = $object->academicId;
             $INSERT_DATA['SUBJECT_ID'] = $object->subjectId;
             $INSERT_DATA['ASSIGNMENT_ID'] = $object->assignmentId;
             $INSERT_DATA['SCORE_INPUT_DATE'] = $object->date;
             $INSERT_DATA['TERM'] = $object->term;
             self::dbAccess()->insert("t_student_score_date", $INSERT_DATA);
         }
+    }
+
+    public static function getActionDeleteAllStudentsTeacherScoreEnter($object)
+    {
+        self::dbAccess()->delete('t_student_assignment'
+                , array(
+            "CLASS_ID='" . $object->academicId . "'"
+            , "SUBJECT_ID='" . $object->subjectId . "'"
+            , "ASSIGNMENT_ID='" . $object->assignmentId . "'"
+            , "TERM='" . $object->term . "'"
+            , "SCORE_DATE='" . $object->date . "'"
+                )
+        );
+    }
+
+    public static function getActionDeleteOneStudentTeacherScoreEnter($object)
+    {
+        self::dbAccess()->delete('t_student_assignment'
+                , array(
+            "STUDENT_ID='" . $object->studentId . "'"
+            , "CLASS_ID='" . $object->academicId . "'"
+            , "SUBJECT_ID='" . $object->subjectId . "'"
+            , "ASSIGNMENT_ID='" . $object->assignmentId . "'"
+            , "TERM='" . $object->term . "'"
+            , "SCORE_DATE='" . $object->date . "'"
+                )
+        );
     }
 
 }

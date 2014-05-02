@@ -13,21 +13,14 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
 $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 $term = isset($_GET["term"])?$_GET["term"]:"";
+
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-
-$STUDENT_ASSIGNMENT->subjectId = $subjectId;
-$STUDENT_ASSIGNMENT->academicId = $this->academicId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -37,7 +30,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
 $setParams .="&subjectId=".$this->subjectId."";
-$setParams .="&classId=".$this->academicId."";
+$setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 
 switch($term){
@@ -263,28 +256,11 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add('-',[{
+        tbar.add([{
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
-                Ext.MessageBox.show({
-                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                    progressText: 'Saving...',
-                    width:300,
-                    wait:true,
-                    waitConfig: {interval:200},
-                    icon:'ext-mb-download'
-                });
-                Ext.Ajax.request({
-                    url:'/evaluation/jsonsave/'
-                    ,method: 'POST'
-                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds:'".$this->urlEncryp->encryptedGet($setParams)."'}
-                    ,success: function(response, options) {
-                        var jsonData = Ext.util.JSON.decode(response.responseText);
-                        Ext.MessageBox.hide();
-                    }
-                    ,failure: function(response, options) {}
-                });
+                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
             }
         }]);
     ");

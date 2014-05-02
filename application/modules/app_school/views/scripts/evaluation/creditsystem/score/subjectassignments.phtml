@@ -11,7 +11,6 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_school/assignment/AssignmentDBAccess.php';
-require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
@@ -19,12 +18,12 @@ $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
 if(!$academicObject) { header("Location: /main/permission/");exit;}
 
-$STUDENT_ASSIGNMENT = new StudentAssignmentDBAccess($this->classId, $this->subjectId, false);
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId,$this->academicId);
 
-$subjectObject = SubjectDBAccess::findSubjectClass($this->subjectId,$this->classId);
 if(!$subjectObject) {
     header("Location: /main/permission/");exit;
 }
@@ -36,7 +35,7 @@ $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHO
 
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
-$setParams .= "&classId=".$this->classId."";
+$setParams .= "&academicId=".$this->academicId."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){
@@ -240,7 +239,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteAllScoresSubject',classId: '".$this->classId."',subjectId: '".$this->subjectId."'}
+                        ,params: {cmd:'jsonActionDeleteSubjectScoreAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }
@@ -252,11 +251,9 @@ Ext.onReady(function() {
 
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAssignmentsBySubjctClass'
-        ,classId: '".$this->classId."'
-        ,subjectId: '".$this->subjectId."'
-        ,includeInEvaluation:1
-        ,displayDate:1
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
+    
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();

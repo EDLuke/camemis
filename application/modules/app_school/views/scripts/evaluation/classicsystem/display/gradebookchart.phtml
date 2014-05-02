@@ -19,13 +19,13 @@ $term = isset($_GET["term"])?$_GET["term"]:"";
 $monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
-$academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($this->studentId);
 
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
 
-$STUDENT_ASSIGNMENT->classId = $academicObject->ID;
-$STUDENT_ASSESSMENT->classId = $academicObject->ID;
+$STUDENT_ASSIGNMENT->academicId = $academicObject->ID;
+$STUDENT_ASSESSMENT->academicId = $academicObject->ID;
 $STUDENT_ASSESSMENT->section = $section;
 $STUDENT_ASSESSMENT->term = $term;
 

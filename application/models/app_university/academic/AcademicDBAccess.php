@@ -1471,7 +1471,7 @@ class AcademicDBAccess {
         self::dbAccess()->fetchRow($SQL);
     }
 
-    public function checkTeacherEnterScore($teacherId, $gradeId, $term, $startDate, $endDate) {
+    public function checkTeacherScoreEnter($teacherId, $gradeId, $term, $startDate, $endDate) {
 
         $SQL1 = "SELECT DISTINCT A.SUBJECT_ID";
         $SQL1 .= " FROM t_student_assignment AS A";
@@ -1521,7 +1521,7 @@ class AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonCheckTeacherEnterScore($params) {
+    public function jsonCheckTeacherScoreEnter($params) {
 
         $start = isset($params["start"]) ? $params["start"] : "0";
         $limit = isset($params["limit"]) ? $params["limit"] : "50";
@@ -1553,7 +1553,7 @@ class AcademicDBAccess {
         if ($result) {
             foreach ($result as $value) {
 
-                $COUNT_SUBJECTS_SCORE = $this->checkTeacherEnterScore(
+                $COUNT_SUBJECTS_SCORE = $this->checkTeacherScoreEnter(
                         $value->TEACHER_ID
                         , $gradeId
                         , $term

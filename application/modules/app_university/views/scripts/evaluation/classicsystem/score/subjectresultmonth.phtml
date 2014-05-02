@@ -13,13 +13,13 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $DB_ASSIGNMENT = AssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
 
 $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
+
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
@@ -27,15 +27,11 @@ if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 $monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 
-$STUDENT_ASSIGNMENT->subjectId = $subjectObject->ID;
-$STUDENT_ASSIGNMENT->classId = $academicObject->ID;
-$STUDENT_ASSIGNMENT->classObject = $academicObject; 
-
-$entries = $STUDENT_ASSIGNMENT->listAssignmentsByClass();
+$entries = AssignmentDBAccess::getListAssignmentsToAcademic($this->academicId, $this->subjectId);
 
 $setParams = "";
 $setParams .="&subjectId=".$subjectObject->ID."";
-$setParams .="&classId=".$academicObject->ID."";
+$setParams .="&academicId=".$academicObject->ID."";
 $setParams .="&monthyear=".$monthyear."";
 $setParams .="&section=1";
 

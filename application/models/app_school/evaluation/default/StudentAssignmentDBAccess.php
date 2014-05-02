@@ -91,7 +91,7 @@ class StudentAssignmentDBAccess {
 
         if ($this->subjectId && $this->getClassObject())
         {
-            return SubjectDBAccess::findSubjectClass($this->subjectId, $this->classId);
+            return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->classId);
         }
     }
 
@@ -113,13 +113,13 @@ class StudentAssignmentDBAccess {
     public function listSubjects()
     {
 
-        return GradeSubjectDBAccess::getAllEvaluationSubjects($this->classId, $this->term);
+        return GradeSubjectDBAccess::getListSubjectsToAcademic($this->classId, $this->term);
     }
 
     public function listAssignmentsByClass()
     {
 
-        return $this->DB_ASSIGNMENT->getListAssignmentsForAssessment($this->classId, $this->subjectId);
+        return $this->DB_ASSIGNMENT->getListAssignmentsToAcademic($this->classId, $this->subjectId);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ class StudentAssignmentDBAccess {
     //Parameter: $scoreInput, studentId, $classId, $subjectId
     //$assignmentId, $subjectId, $date
     ////////////////////////////////////////////////////////////////////////////
-    public function jsonActionStudentScoreSubjectAssignment($encrypParams)
+    public function jsonActionTeacherScoreEnter($encrypParams)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -288,7 +288,7 @@ class StudentAssignmentDBAccess {
      * List Teacher score assignment...
      * ********************************************************************** */
 
-    public function jsonListStudentsScoreEnter($encrypParams, $isJson = true)
+    public function jsonListStudentsTeacherScoreEnter($encrypParams, $isJson = true)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -504,7 +504,7 @@ class StudentAssignmentDBAccess {
         }
     }
 
-    public function jsonActionDeleteSingleScore($encrypParams)
+    public function jsonActionDeleteOneStudentTeacherScoreEnter($encrypParams)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -610,53 +610,53 @@ class StudentAssignmentDBAccess {
         }
     }
 
-    public function jsonActionDeleteAllScoresAssignment($encrypParams)
-    {
-
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-
-        $date = isset($params["date"]) ? $params["date"] : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
-
-        $WHERE_A = Array();
-        $WHERE_A[] = self::dbAccess()->quoteInto('ASSIGNMENT_ID = ?', $assignmentId);
-        $WHERE_A[] = self::dbAccess()->quoteInto('SUBJECT_ID = ?', $subjectId);
-        $WHERE_A[] = self::dbAccess()->quoteInto('CLASS_ID = ?', $classId);
-        $WHERE_A[] = self::dbAccess()->quoteInto('SCORE_DATE = ?', $date);
-        self::dbAccess()->delete('t_student_assignment', $WHERE_A);
-
-        $WHERE_B = Array();
-        $WHERE_B[] = self::dbAccess()->quoteInto('ASSIGNMENT_ID = ?', $assignmentId);
-        $WHERE_B[] = self::dbAccess()->quoteInto('SUBJECT_ID = ?', $subjectId);
-        $WHERE_B[] = self::dbAccess()->quoteInto('CLASS_ID = ?', $classId);
-        $WHERE_B[] = self::dbAccess()->quoteInto('SCORE_INPUT_DATE = ?', $date);
-        self::dbAccess()->delete('t_student_score_date', $WHERE_B);
-
-        return Array("success" => true);
-    }
-
-    public function jsonActionDeleteAllScoresSubject($encrypParams)
-    {
-
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-
-        $WHERE = Array();
-        $WHERE[] = "CLASS_ID ='" . $classId . "'";
-        $WHERE[] = "SUBJECT_ID ='" . $subjectId . "'";
-
-        self::dbAccess()->delete('t_student_assignment', $WHERE);
-        self::dbAccess()->delete('t_student_subject_assessment', $WHERE);
-        self::dbAccess()->delete('t_student_score_date', $WHERE);
-
-        return Array(
-            "success" => true
-        );
-    }
+//    public function jsonActionDeleteAllStudentsTeacherScoreEnter($encrypParams)
+//    {
+//
+//        $params = Utiles::setPostDecrypteParams($encrypParams);
+//
+//        $date = isset($params["date"]) ? $params["date"] : "";
+//        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+//        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+//        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
+//
+//        $WHERE_A = Array();
+//        $WHERE_A[] = self::dbAccess()->quoteInto('ASSIGNMENT_ID = ?', $assignmentId);
+//        $WHERE_A[] = self::dbAccess()->quoteInto('SUBJECT_ID = ?', $subjectId);
+//        $WHERE_A[] = self::dbAccess()->quoteInto('CLASS_ID = ?', $classId);
+//        $WHERE_A[] = self::dbAccess()->quoteInto('SCORE_DATE = ?', $date);
+//        self::dbAccess()->delete('t_student_assignment', $WHERE_A);
+//
+//        $WHERE_B = Array();
+//        $WHERE_B[] = self::dbAccess()->quoteInto('ASSIGNMENT_ID = ?', $assignmentId);
+//        $WHERE_B[] = self::dbAccess()->quoteInto('SUBJECT_ID = ?', $subjectId);
+//        $WHERE_B[] = self::dbAccess()->quoteInto('CLASS_ID = ?', $classId);
+//        $WHERE_B[] = self::dbAccess()->quoteInto('SCORE_INPUT_DATE = ?', $date);
+//        self::dbAccess()->delete('t_student_score_date', $WHERE_B);
+//
+//        return Array("success" => true);
+//    }
+//
+//    public function jsonActionDeleteAllStudentsTeacherScoreEnter($encrypParams)
+//    {
+//
+//        $params = Utiles::setPostDecrypteParams($encrypParams);
+//
+//        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+//        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+//
+//        $WHERE = Array();
+//        $WHERE[] = "CLASS_ID ='" . $classId . "'";
+//        $WHERE[] = "SUBJECT_ID ='" . $subjectId . "'";
+//
+//        self::dbAccess()->delete('t_student_assignment', $WHERE);
+//        self::dbAccess()->delete('t_student_subject_assessment', $WHERE);
+//        self::dbAccess()->delete('t_student_score_date', $WHERE);
+//
+//        return Array(
+//            "success" => true
+//        );
+//    }
 
     public function getAllAssignmentsInScoreInputDate($subjectId = false, $assignmentId = false, $term = false, $setIncludeInValuation = false, $studentId = false)
     {

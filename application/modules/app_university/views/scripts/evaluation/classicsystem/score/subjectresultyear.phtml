@@ -17,15 +17,8 @@ $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-
-$STUDENT_ASSIGNMENT->subjectId = $this->subjectId;
-$STUDENT_ASSIGNMENT->academicId = $this->academicId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -37,7 +30,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
 $setParams .="&subjectId=".$this->subjectId."";
-$setParams .="&classId=".$academicObject->ID."";
+$setParams .="&academicId=".$academicObject->ID."";
 $setParams .="&section=3";
 
 ?>

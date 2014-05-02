@@ -11,7 +11,6 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_university/assignment/AssignmentDBAccess.php';
-require_once 'models/app_university/evaluation/default/StudentAssignmentDBAccess.php';
  
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
@@ -19,15 +18,8 @@ $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-
-$STUDENT_ASSIGNMENT->subjectId = $this->subjectId;
-$STUDENT_ASSIGNMENT->academicId = $this->academicId;
-$STUDENT_ASSIGNMENT->classObject = $academicObject;
-
-$subjectObject = $STUDENT_ASSIGNMENT->getClassSubject();
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId,$this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -242,7 +234,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url:'/evaluation/jsonsave/'
                         ,method: 'POST'
-                        ,params: {cmd:'jsonActionDeleteAllScoresSubject',academicId: '".$this->academicId."',subjectId: '".$this->subjectId."'}
+                        ,params: {cmd:'jsonActionDeleteSubjectScoreAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
                         ,success: function(response, options) {
                             window.location.href='".$_SERVER["REQUEST_URI"]."';
                         }
@@ -251,14 +243,12 @@ Ext.onReady(function() {
             });
         }
     ");
-    
+
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAssignmentsBySubjctClass'
-        ,academicId: '".$this->academicId."'
-        ,subjectId: '".$this->subjectId."'
-        ,includeInEvaluation:1
-        ,displayDate:1
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
+    
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();

@@ -89,7 +89,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         return self::sqlAssignedSubjectsByGrade($params);
     }
 
-    public static function getAllEvaluationSubjects($academicId, $term = false)
+    public static function getListSubjectsToAcademic($academicId, $term = false)
     {
 
         $result = "";
@@ -105,6 +105,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             );
             $SELECT_C = array(
                 "INCLUDE_IN_EVALUATION"
+                ,"COEFF_VALUE"
             );
             $SQL = self::dbAccess()->select();
             $SQL->distinct();

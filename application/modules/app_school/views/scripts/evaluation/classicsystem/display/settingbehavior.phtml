@@ -95,7 +95,7 @@ Ext.onReady(function() {
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
 
     $setParams = "";
-    $setParams .= "&classId=".$this->classId."";
+    $setParams .= "&academicId=".$this->academicId."";
     $setParams .= "&section=".$this->section."";
     $setParams .= "&term=".$this->term."";
     $setParams .= "&studentId=".$this->studentId."";
@@ -111,7 +111,7 @@ Ext.onReady(function() {
     ");
 
     $OBJECT_FORM->setonEmbeddedEvents("
-        window.parent.location='/evaluation/gradebooktraditional/?camIds=".$this->urlEncryp->encryptedGet("studentId=".$this->studentId."&classId=".$this->classId."")."';
+        window.parent.location='/evaluation/gradebooktraditional/?camIds=".$this->urlEncryp->encryptedGet("studentId=".$this->studentId."&academicId=".$this->academicId."")."';
     ");
 
     $OBJECT_FORM->bodyStyle = "padding:0px";

@@ -9,7 +9,6 @@ require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/evaluation/default/StudentSubjectAssessment.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -31,9 +30,7 @@ $setParams .= "&section=1";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT->academicId = $this->academicId;
-$entries = $STUDENT_ASSIGNMENT->listSubjects();
+$entries = GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
 
 ?>
 
@@ -121,7 +118,9 @@ Ext.onReady(function() {
     
     if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addReadField("name: '".$value->SUBJECT_ID."'");   
+            if($value->SUBJECT_ID){
+                $OBJECT_GRID->addReadField("name: '".$value->SUBJECT_ID."'");
+            }
         }
     }
     
@@ -166,7 +165,10 @@ Ext.onReady(function() {
     
     if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addColumn("header: '<b>".$value->SUBJECT_SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            if($value->SUBJECT_ID){
+                $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            }
         }
     }
     

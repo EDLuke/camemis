@@ -940,8 +940,8 @@ class AcademicController extends Zend_Controller_Action {
             case "jsonLoadScoreDeadLine":
                 $jsondata = $this->DB_GRADE->jsonLoadScoreDeadLine($this->REQUEST->getPost());
                 break;
-            case "jsonCheckTeacherEnterScore":
-                $jsondata = $this->DB_GRADE->jsonCheckTeacherEnterScore($this->REQUEST->getPost());
+            case "jsonCheckTeacherScoreEnter":
+                $jsondata = $this->DB_GRADE->jsonCheckTeacherScoreEnter($this->REQUEST->getPost());
                 break;
             case "jsonInstructorsByClass":
                 $jsondata = AcademicDBAccess::jsonInstructorsByClass($this->REQUEST->getPost());

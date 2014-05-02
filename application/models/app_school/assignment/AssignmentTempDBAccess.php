@@ -9,33 +9,38 @@
 require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
-require_once 'include/Common.inc.php';  
+require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
 class AssignmentTempDBAccess {
 
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->DB_ACCESS = Zend_Registry::get('DB_ACCESS');
         $this->SELECT = $this->DB_ACCESS->select();
         $this->_TOSTRING = $this->SELECT->__toString();
     }
 
-    public static function findAssignmentTempFromId($Id) {
+    public static function findAssignmentTempFromId($Id)
+    {
 
         $query = self::dbAccess()->select();
         $query->from('t_assignment_temp', '*');
@@ -44,13 +49,15 @@ class AssignmentTempDBAccess {
         return self::dbAccess()->fetchRow($query);
     }
 
-    public function getAssignmentTempDataFromId($Id) {
+    public function getAssignmentTempDataFromId($Id)
+    {
 
         $result = self::findAssignmentTempFromId($Id);
 
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
 
             $data["EDUCATION_TYPE"] = $result->EDUCATION_TYPE;
             $data["SHORT"] = $result->SHORT;
@@ -67,16 +74,20 @@ class AssignmentTempDBAccess {
         return $data;
     }
 
-    public function jsonLoadAssignmentTemp($Id) {
+    public function jsonLoadAssignmentTemp($Id)
+    {
 
         $result = self::findAssignmentTempFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => $this->getAssignmentTempDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -85,7 +96,8 @@ class AssignmentTempDBAccess {
         return $o;
     }
 
-    public function jsonSaveAssignmentTemp($params) {
+    public function jsonSaveAssignmentTemp($params)
+    {
 
         $SAVEDATA = array();
 
@@ -109,13 +121,17 @@ class AssignmentTempDBAccess {
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA["EVALUATION_TYPE"] = addText($params["EVALUATION_TYPE"]);
 
-        if (isset($params["WEIGHTING"])) {
+        if (isset($params["WEIGHTING"]))
+        {
             $SAVEDATA["WEIGHTING"] = $params["WEIGHTING"];
-        } else {
+        }
+        else
+        {
             $SAVEDATA["WEIGHTING"] = 1;
         }
 
-        switch (strtoupper($params["target"])) {
+        switch (strtoupper($params["target"]))
+        {
             case "TRAINING":
                 $SAVEDATA["TRAINING"] = 1;
                 break;
@@ -124,7 +140,8 @@ class AssignmentTempDBAccess {
         if (isset($params["INCLUDE_IN_EVALUATION"]))
             $SAVEDATA["INCLUDE_IN_EVALUATION"] = $params["INCLUDE_IN_EVALUATION"];
 
-        switch ($objectId) {
+        switch ($objectId)
+        {
             case "new":
                 $CHECK = self::findLastId();
                 if (!$CHECK)
@@ -144,7 +161,8 @@ class AssignmentTempDBAccess {
         );
     }
 
-    public function getSQLAssignmentTemp($params) {
+    public function getSQLAssignmentTemp($params)
+    {
 
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : "";
@@ -152,7 +170,8 @@ class AssignmentTempDBAccess {
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-        if ($academicObject) {
+        if ($academicObject)
+        {
             $educationType = $academicObject->QUALIFICATION_TYPE;
         }
 
@@ -173,7 +192,8 @@ class AssignmentTempDBAccess {
         if ($educationType)
             $SQL->where("A.EDUCATION_TYPE='" . $educationType . "'");
 
-        switch (strtoupper($target)) {
+        switch (strtoupper($target))
+        {
             case "GENERAL":
                 $SQL->where("A.TRAINING='0'");
                 break;
@@ -187,26 +207,34 @@ class AssignmentTempDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function jsonTreeAllAssignmentTemp($params) {
+    public function jsonTreeAllAssignmentTemp($params)
+    {
 
         $data = array();
 
-        if (substr($params["node"], 8)) {
+        if (substr($params["node"], 8))
+        {
             $node = str_replace('CAMEMIS_', '', $params["node"]);
-        } else {
+        }
+        else
+        {
             $node = $params["node"];
         }
 
         $target = isset($params["target"]) ? addText($params["target"]) : "";
 
-        if (strtoupper($target) == "GENERAL") {
+        if (strtoupper($target) == "GENERAL")
+        {
 
             $result = self::dbAccess()->fetchAll("SELECT * FROM t_camemis_type WHERE OBJECT_TYPE='QUALIFICATION_TYPE' AND PARENT<>0");
 
-            if ($node == 0) {
+            if ($node == 0)
+            {
                 $i = 0;
-                if ($result) {
-                    foreach ($result as $value) {
+                if ($result)
+                {
+                    foreach ($result as $value)
+                    {
                         $data[$i]['id'] = "CAMEMIS_" . $value->ID;
                         $data[$i]['type'] = "qualification";
                         $data[$i]['show'] = false;
@@ -218,27 +246,35 @@ class AssignmentTempDBAccess {
                         $i++;
                     }
                 }
-            } else {
+            }
+            else
+            {
 
                 $sarchParam["educationType"] = $node;
                 $sarchParam["subjectId"] = 'xxxx';
                 $result = $this->getSQLAssignmentTemp($sarchParam);
 
                 $i = 0;
-                if ($result) {
-                    foreach ($result as $value) {
+                if ($result)
+                {
+                    foreach ($result as $value)
+                    {
 
                         $data[$i]['leaf'] = true;
                         $data[$i]['id'] = $node . "_" . $value->ID;
                         $data[$i]['assignmentId'] = $value->ID;
                         $data[$i]['cls'] = "nodeTextBlue";
-                        if ($value->EVALUATION_TYPE) {
+                        if ($value->EVALUATION_TYPE)
+                        {
                             $data[$i]['text'] = stripslashes($value->NAME) . " (" . $value->COEFF_VALUE . "%)";
-                        } else {
+                        }
+                        else
+                        {
                             $data[$i]['text'] = stripslashes($value->NAME) . " (" . $value->COEFF_VALUE . ")";
                         }
 
-                        switch ($value->INCLUDE_IN_EVALUATION) {
+                        switch ($value->INCLUDE_IN_EVALUATION)
+                        {
                             case 1:
                                 $data[$i]['iconCls'] = "icon-flag_blue";
                                 break;
@@ -256,20 +292,24 @@ class AssignmentTempDBAccess {
             }
         }
 
-        if (strtoupper($target) == "TRAINING") {
+        if (strtoupper($target) == "TRAINING")
+        {
             $sarchParam["target"] = $target;
             $sarchParam["subjectId"] = "xxxx";
             $result = $this->getSQLAssignmentTemp($sarchParam);
 
             $i = 0;
-            if ($result) {
-                foreach ($result as $value) {
+            if ($result)
+            {
+                foreach ($result as $value)
+                {
 
                     $data[$i]['leaf'] = true;
                     $data[$i]['id'] = $node . "_" . $value->ID;
                     $data[$i]['assignmentId'] = $value->ID;
                     $data[$i]['text'] = stripslashes($value->NAME);
-                    switch ($value->INCLUDE_IN_EVALUATION) {
+                    switch ($value->INCLUDE_IN_EVALUATION)
+                    {
                         case 1:
                             $data[$i]['iconCls'] = "icon-flag_blue";
                             break;
@@ -280,9 +320,12 @@ class AssignmentTempDBAccess {
                             $data[$i]['iconCls'] = "icon-flag_white";
                             break;
                     }
-                    if ($value->EVALUATION_TYPE) {
+                    if ($value->EVALUATION_TYPE)
+                    {
                         $data[$i]['text'] = stripslashes($value->NAME) . " (" . $value->COEFF_VALUE . "%)";
-                    } else {
+                    }
+                    else
+                    {
                         $data[$i]['text'] = stripslashes($value->NAME) . " (" . $value->COEFF_VALUE . ")";
                     }
                     $i++;
@@ -293,7 +336,8 @@ class AssignmentTempDBAccess {
         return $data;
     }
 
-    public function jsonRemoveAssignmentTemp($Id) {
+    public function jsonRemoveAssignmentTemp($Id)
+    {
 
         $condition = array(
             'ID = ? ' => $Id
@@ -307,15 +351,18 @@ class AssignmentTempDBAccess {
         );
     }
 
-    public function jsonListAssignmentTemp($params) {
+    public function jsonListAssignmentTemp($params)
+    {
 
         $data = array();
         $result = $this->getSQLAssignmentTemp($params);
 
-        if ($result) {
+        if ($result)
+        {
 
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $j = $i + 1;
                 $data[$i]["ID"] = $value->ID;
@@ -323,9 +370,12 @@ class AssignmentTempDBAccess {
 
                 $qualificationObject = CamemisTypeDBAccess::findObjectFromId($value->EDUCATION_TYPE);
 
-                if ($qualificationObject) {
+                if ($qualificationObject)
+                {
                     $data[$i]["EDUCATION_TYPE"] = $qualificationObject->NAME;
-                } else {
+                }
+                else
+                {
                     $data[$i]["EDUCATION_TYPE"] = "---";
                 }
 
@@ -340,7 +390,8 @@ class AssignmentTempDBAccess {
         );
     }
 
-    public function jsonAddAssignmentToSubject($params) {
+    public function jsonAddAssignmentToSubject($params)
+    {
 
         $selectionIds = $params["selectionIds"];
 
@@ -348,8 +399,10 @@ class AssignmentTempDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-        if ($academicObject) {
-            switch ($academicObject->OBJECT_TYPE) {
+        if ($academicObject)
+        {
+            switch ($academicObject->OBJECT_TYPE)
+            {
                 case "SCHOOLYEAR":
                     $classId = 0;
                     $gradeId = $academicObject->GRADE_ID;
@@ -363,21 +416,27 @@ class AssignmentTempDBAccess {
                     $used_in_class = 1;
                     break;
             }
-        } else {
+        }
+        else
+        {
             exit("No academicObject....");
         }
 
         $selectedCount = 0;
-        if ($selectionIds != "") {
+        if ($selectionIds != "")
+        {
             $selectedAssignmentIds = explode(",", $selectionIds);
 
-            if ($selectedAssignmentIds) {
-                foreach ($selectedAssignmentIds as $Id) {
+            if ($selectedAssignmentIds)
+            {
+                foreach ($selectedAssignmentIds as $Id)
+                {
 
                     $facette = self::findAssignmentTempFromId($Id);
                     $CHECK = self::checkExistAssignmentTemp($Id, $subjectId, $classId, $gradeId, $schoolyearId);
 
-                    if (!$CHECK && $facette) {
+                    if (!$CHECK && $facette)
+                    {
                         $SAVEDATA["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
                         $SAVEDATA["SORTKEY"] = $facette->SORTKEY;
                         $SAVEDATA["NAME"] = $facette->NAME;
@@ -394,7 +453,8 @@ class AssignmentTempDBAccess {
                         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
                         $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
-                        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
+                        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+                        {
                             $SAVEDATA['STATUS'] = 1;
                         }
 
@@ -410,7 +470,8 @@ class AssignmentTempDBAccess {
         return array("success" => true, 'selectedCount' => $selectedCount);
     }
 
-    protected static function findLastId() {
+    protected static function findLastId()
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment_temp", array("C" => "COUNT(*)"));
         $SQL->order('ID DESC');
@@ -420,14 +481,18 @@ class AssignmentTempDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkExistAssignmentTemp($tempId, $subjectId, $classId, $gradeId, $schoolyearId) {
+    public static function checkExistAssignmentTemp($tempId, $subjectId, $classId, $gradeId, $schoolyearId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", array("C" => "COUNT(*)"));
 
-        if ($classId) {
+        if ($classId)
+        {
             $SQL->where("CLASS='" . $classId . "'");
             $SQL->where("USED_IN_CLASS='1'");
-        } else {
+        }
+        else
+        {
             $SQL->where("USED_IN_CLASS='0'");
         }
 
@@ -439,7 +504,9 @@ class AssignmentTempDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
-    public static function getAllScoreDate($assignmentId, $trainingId, $subjectId) {
+
+    public static function getAllScoreDate($assignmentId, $trainingId, $subjectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array('*'));
@@ -450,7 +517,9 @@ class AssignmentTempDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
-    public static function findAssignmentTempFromIdTraining($Id) {
+
+    public static function findAssignmentTempFromIdTraining($Id)
+    {
 
         $query = self::dbAccess()->select();
         $query->from('t_student_training_assignment', '*');
@@ -458,8 +527,10 @@ class AssignmentTempDBAccess {
         //echo $query->__toString();
         return self::dbAccess()->fetchRow($query);
     }
-    public function jsonTreeAssignmentsBySubjctTraining($params) {
-        
+
+    public function jsonTreeAssignmentsBySubjctTraining($params)
+    {
+
         $data = Array();
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
@@ -469,44 +540,56 @@ class AssignmentTempDBAccess {
 
         //$classObject = AcademicDBAccess::findGradeFromId($classId);
         $classObject = TrainingDBAccess::findTrainingFromId($trainingId);
-        
+
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
-        if ($classObject && $subjectObject) {
+        if ($classObject && $subjectObject)
+        {
             $trainingId = $classObject->ID;
             $subjectId = $subjectObject->ID;
-        } else {
+        }
+        else
+        {
             return $data;
         }
 
-        $facette = self::findAssignmentTempFromId($node);   
-        $entries=array();
-        if ($facette) {             
+        $facette = self::findAssignmentTempFromId($node);
+        $entries = array();
+        if ($facette)
+        {
             $entries = $this->getAllScoreDate($node, $trainingId, $subjectId);
-        } else {
-            
+        }
+        else
+        {
+
             $searchParams["subjectId"] = $subjectId;
             $searchParams["trainingId"] = $trainingId;
             //$searchParams["term"] = $node;
-            
-            if ($includeInEvaluation) {
+
+            if ($includeInEvaluation)
+            {
                 $searchParams["includeInEvaluation"] = 1;
             }
             $entries = self::getAllAssignmentQuery($searchParams);
         }
 
-        if ($entries) { 
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $value) {
-                 
-                if (!$facette) {
+            foreach ($entries as $value)
+            {
+
+                if (!$facette)
+                {
 
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "";
                     $data[$i]['text'] = "" . $value->NAME . "";
                     $data[$i]['leaf'] = false;
                     $data[$i]['isClick'] = true;
                     $data[$i]['iconCls'] = "icon-flag_blue";
-                } else { 
-                         
+                }
+                else
+                {
+
                     $data[$i]['cls'] = "nodeTextBlue";
                     $facette = self::findAssignmentTempFromId($node);
                     $data[$i]['leaf'] = true;
@@ -515,157 +598,90 @@ class AssignmentTempDBAccess {
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "_" . $value->SCORE_INPUT_DATE;
                     $data[$i]['text'] = "" . $facette->NAME;
                     $data[$i]['text'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
-                    $data[$i]['iconCls'] = "icon-date_edit";      
+                    $data[$i]['iconCls'] = "icon-date_edit";
                 }
                 $i++;
             }
         }
         return $data;
     }
-     public function getAllAssignmentQuery($params) {
 
-        /*$subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
-        $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-        $includeInEvaluation = isset($params["includeInEvaluation"]) ? $params["includeInEvaluation"] : "";
-        //$academicObject = AcademicDBAccess::findGradeFromId($academicId);
-        $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
+    public function getAllAssignmentQuery($params)
+    {
 
-       /* if ($academicObject) {
-
-            if ($academicObject->EDUCATION_SYSTEM) {
-                $classId = "";
-                $schoolyearId = $academicObject->SCHOOL_YEAR;
-                $USED_IN_CLASS = 0;
-            } else {
-                switch ($academicObject->OBJECT_TYPE) {
-                    case "CLASS":
-                        $classId = $academicObject->ID;
-                        $gradeId = $academicObject->GRADE_ID;
-                        $schoolyearId = $academicObject->SCHOOL_YEAR;
-                        $USED_IN_CLASS = 1;
-                        break;
-                    case "SCHOOLYEAR":
-                        $classId = "";
-                        $gradeId = $academicObject->GRADE_ID;
-                        $schoolyearId = $academicObject->SCHOOL_YEAR;
-                        $USED_IN_CLASS = 0;
-                        break;
-                }
-            }
-        }  */
-
-       /* if ($subjectObject) {
-            $subjectId = $subjectObject->ID;
-        }
-        
-        $SELECTION_A = array(
-            "SORTKEY"
-            , "ID AS ASSIGNMENT_ID"
-            , "NAME"
-            , "SHORT"
-           
-            , "SUBJECT_ID"
-           
-            , "INCLUDE_IN_EVALUATION"
-            , "COEFF_VALUE"
-           
-            , "EVALUATION_TYPE"
-            
-        );
-        $SELECTION_B = array(
-            "ID AS SUBJECT_ID"
-            , "NAME AS SUBJECT_NAME"
-        );
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_assignment_temp'), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_subject'), 'A.SUBJECT_ID=B.ID', $SELECTION_B);
-        if ($trainingId)
-            $SQL->where("A.TRAINING = '" . $trainingId . "'");
-        if ($subjectId)
-            $SQL->where("A.SUBJECT_ID = '" . $subjectId . "'");
-       
-        if ($includeInEvaluation) {
-            $SQL->where("A.INCLUDE_IN_EVALUATION >0");
-        }
-
-        //$SQL->where("A.USED_IN_CLASS = '" . $USED_IN_CLASS . "'");
-        //$SQL->where("A.STATUS = '1'");
-        $SQL->order('A.SORTKEY DESC');
-
-        error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);     */
-        
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
-        switch ($facette->OBJECT_TYPE) {
-            case "TERM":               
-                $trainingTermId = $facette->ID;            
+        switch ($facette->OBJECT_TYPE)
+        {
+            case "TERM":
+                $trainingTermId = $facette->ID;
                 break;
-            case "CLASS":  
-                $trainingTermId = $facette->TERM; 
+            case "CLASS":
+                $trainingTermId = $facette->TERM;
                 break;
-        }   
+        }
         $trainingSubject = TrainingSubjectDBAccess::getInstance();
-        $trainingSubjectObject = $trainingSubject->getTrainingSubject($trainingTermId, $subjectId); 
-        $node = $trainingSubjectObject?$trainingSubjectObject->ID:0;
-               
+        $trainingSubjectObject = $trainingSubject->getTrainingSubject($trainingTermId, $subjectId);
+        $node = $trainingSubjectObject ? $trainingSubjectObject->ID : 0;
+
         $SQL = "";
         $SQL .= " SELECT ";
         $SQL .= " A.ID AS ASSIGNMENT_ID, A.NAME AS NAME,B.SUBJECT AS SUBJECT, B.OBJECT_TYPE AS OBJECT_TYPE, B.ID AS RUL_ID";
-        $SQL .= " FROM t_assignment_temp AS A";   
-        $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.ASSIGNMENT";   
+        $SQL .= " FROM t_assignment_temp AS A";
+        $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.ASSIGNMENT";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND B.PROGRAM='" . $facette->PROGRAM . "'";
-        
+
         if ($subjectId)
-        $SQL .= " AND B.SUBJECT='" . $subjectId . "'";
-        
-        switch ($facette->OBJECT_TYPE) {
-            case "TERM":               
-                $SQL .= " AND B.TERM='" . $facette->ID . "'";              
+            $SQL .= " AND B.SUBJECT='" . $subjectId . "'";
+
+        switch ($facette->OBJECT_TYPE)
+        {
+            case "TERM":
+                $SQL .= " AND B.TERM='" . $facette->ID . "'";
                 break;
-            case "CLASS":  
-                $SQL .= " AND B.TERM='" . $facette->TERM . "'"; 
+            case "CLASS":
+                $SQL .= " AND B.TERM='" . $facette->TERM . "'";
                 break;
-        }         
-        
+        }
+
         $SQL .= " AND B.PARENT='" . $node . "'";
         //error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);    
-        
+        return self::dbAccess()->fetchAll($SQL);
     }
-    public static function findAssignmentJoinCategory($Id=false) {    
-      
+
+    public static function findAssignmentJoinCategory($Id = false)
+    {
+
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $assignment = isset($params["assignmentId"]) ? $params["assignmentId"] : "";    
+        $assignment = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
         $SQL = "";
         $SQL .= " SELECT ";
         $SQL .= " A.ID AS ASSIGNMENT_ID, A.NAME AS NAME,B.INCLUDE_IN_EVALUATION AS INCLUDE_IN_EVALUATION,B.SUBJECT AS SUBJECT, B.OBJECT_TYPE AS OBJECT_TYPE, B.ID AS RUL_ID";
-        $SQL .= " FROM t_assignment_temp AS A";   
-        $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.ASSIGNMENT";   
+        $SQL .= " FROM t_assignment_temp AS A";
+        $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.ASSIGNMENT";
         $SQL .= " WHERE";
-        $SQL .= " B.SUBJECT = '".$subjectId."'";
-        $SQL .= " AND B.ASSIGNMENT = '".$assignment."'";
+        $SQL .= " B.SUBJECT = '" . $subjectId . "'";
+        $SQL .= " AND B.ASSIGNMENT = '" . $assignment . "'";
         //error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);     
-    } 
-    
-    public function getListAssignmentsForAssessmentTraining($trainingId, $subjectId) {
+        return self::dbAccess()->fetchAll($SQL);
+    }
+
+    public function getListAssignmentsForAssessmentTraining($trainingId, $subjectId)
+    {
 
         $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($trainingObject && $subjectObject) {
+        if ($trainingObject && $subjectObject)
+        {
             $searchParams["trainingId"] = $trainingObject->ID;
             $searchParams["subjectId"] = $subjectObject->ID;
             return $this->getAllAssignmentQuery($searchParams);
         }
     }
-    
+
 }
 
 ?>

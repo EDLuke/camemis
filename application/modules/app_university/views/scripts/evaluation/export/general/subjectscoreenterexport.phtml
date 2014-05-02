@@ -27,7 +27,7 @@
     $schoolInfo= $SchoolName."\n".$SchoolAdress;
     //score info
     $facette = AcademicDBAccess::findGradeFromId($this->academicId);
-    $subjectObject = SubjectDBAccess::findSubjectClass($this->subjectId, $facette->ID);
+    $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $facette->ID);
     
     if (!$facette) {header("Location: /main/permission/");}
     //school year
@@ -52,7 +52,7 @@
     $scoreinfo=$schoolname."\n".$schoolyear."\n".$classname."\n".$teacher."\n".$subject;
  
     $managementscore = new StudentAssignmentDBAccess();
-    $results = $managementscore->jsonListStudentsScoreEnter($params, false);
+    $results = $managementscore->jsonListStudentsTeacherScoreEnter($params, false);
     $filds[0] = "NA";
     $showfilds[0] = "N°";
     $i = 1;
