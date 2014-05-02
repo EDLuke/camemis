@@ -106,6 +106,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             );
             $SELECT_C = array(
                 "INCLUDE_IN_EVALUATION"
+                ,"COEFF_VALUE"
             );
             $SQL = self::dbAccess()->select();
             $SQL->distinct();
