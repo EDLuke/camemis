@@ -18,7 +18,7 @@ class SQLAcademicPerformances {
         return false::dbAccess()->select();
     }
 
-    public static function getSQLAverageStudentClassPerformance($object) {
+    public static function getSQLAverageStudentClassPerformance($stdClass) {
 
         $SELECTION_A = array("SUM(A.SUBJECT_VALUE*B.COEFF_VALUE) AS SUM_VALUE");
         $SELECTION_B = array("IF( B.COEFF_VALUE =0, B.COEFF_VALUE =1, B.COEFF_VALUE )", "SUM(B.COEFF_VALUE) AS SUM_COEFF");
@@ -26,27 +26,27 @@ class SQLAcademicPerformances {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_subject_assessment'), $SELECTION_A);
         $SQL->joinLeft(array('B' => "t_grade_subject"), 'A.SUBJECT_ID=B.SUBJECT', $SELECTION_B);
-        $SQL->where('A.CLASS_ID = ?', $object->academicId);
-        $SQL->where('A.STUDENT_ID = ?', $object->studentId);
+        $SQL->where('A.CLASS_ID = ?', $stdClass->academicId);
+        $SQL->where('A.STUDENT_ID = ?', $stdClass->studentId);
         $SQL->where('B.SCORE_TYPE = ?', 1);
 
-        switch ($object->section) {
+        switch ($stdClass->section) {
             case "MONTH":
-                if ($object->month)
-                    $SQL->where("A.MONTH = '" . $object->month . "'");
+                if ($stdClass->month)
+                    $SQL->where("A.MONTH = '" . $stdClass->month . "'");
 
-                if ($object->year)
-                    $SQL->where("A.YEAR = '" . $object->year . "'");
+                if ($stdClass->year)
+                    $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                 break;
             case "TERM":
             case "QUARTER":
             case "SEMESTER":
-                if ($object->term)
-                    $SQL->where("A.TERM = '" . $object->term . "'");
+                if ($stdClass->term)
+                    $SQL->where("A.TERM = '" . $stdClass->term . "'");
                 break;
             case "YEAR":
-                if ($object->year)
-                    $SQL->where("A.YEAR = '" . $object->year . "'");
+                if ($stdClass->year)
+                    $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                 break;
         }
 
@@ -65,46 +65,46 @@ class SQLAcademicPerformances {
         return $output;
     }
 
-    public static function getCallStudentAcademicPerformance($object) {
+    public static function getCallStudentAcademicPerformance($stdClass) {
 
         $data["LETTER_GRADE_NUMBER"] = "";
         $data["LETTER_GRADE_CHAR"] = "";
         $data["LEARNING_VALUE"] = "";
         $data["ASSESSMENT_ID"] = "";
 
-        if (isset($object->studentId)) {
-            if ($object->studentId) {
+        if (isset($stdClass->studentId)) {
+            if ($stdClass->studentId) {
                 $SELECTION_A = array('LEARNING_VALUE', 'RANK', 'ASSESSMENT_ID', 'TEACHER_COMMENT');
                 $SELECTION_B = array('DESCRIPTION', 'LETTER_GRADE');
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_learning_performance"), $SELECTION_A);
                 $SQL->joinInner(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
-                $SQL->where("A.STUDENT_ID = '" . $object->studentId . "'");
-                $SQL->where("A.CLASS_ID = '" . $object->academicId . "'");
-                $SQL->where("A.SCHOOLYEAR_ID = '" . $object->schoolyearId . "'");
+                $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+                $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
+                $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                switch ($object->section) {
+                switch ($stdClass->section) {
                     case "MONTH":
-                        if ($object->month)
-                            $SQL->where("A.MONTH = '" . $object->month . "'");
+                        if ($stdClass->month)
+                            $SQL->where("A.MONTH = '" . $stdClass->month . "'");
 
-                        if ($object->year)
-                            $SQL->where("A.YEAR = '" . $object->year . "'");
+                        if ($stdClass->year)
+                            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                         break;
                     case "TERM":
                     case "QUARTER":
                     case "SEMESTER":
-                        if ($object->term)
-                            $SQL->where("A.TERM = '" . $object->term . "'");
+                        if ($stdClass->term)
+                            $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         break;
                     case "YEAR":
-                        if ($object->year)
-                            $SQL->where("A.YEAR = '" . $object->year . "'");
+                        if ($stdClass->year)
+                            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                         break;
                 }
 
-                $SQL->where("A.SECTION = '" . $object->section . "'");
+                $SQL->where("A.SECTION = '" . $stdClass->section . "'");
                 $SQL->group("B.ID");
 
                 //error_log($SQL->__toString());
@@ -121,60 +121,60 @@ class SQLAcademicPerformances {
         return (object) $data;
     }
 
-    public static function checkStudentClassPerformance($object) {
+    public static function checkStudentClassPerformance($stdClass) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_learning_performance", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT_ID = '" . $object->studentId . "'");
-        $SQL->where("CLASS_ID = '" . $object->academicId . "'");
-        $SQL->where("SCHOOLYEAR_ID = '" . $object->schoolyearId . "'");
+        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
+        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
+        $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-        switch ($object->section) {
+        switch ($stdClass->section) {
             case "MONTH":
-                if ($object->month)
-                    $SQL->where("MONTH = '" . $object->month . "'");
+                if ($stdClass->month)
+                    $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if ($object->year) {
-                    $SQL->where("YEAR = '" . $object->year . "'");
+                if ($stdClass->year) {
+                    $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
             case "TERM":
             case "QUARTER":
             case "SEMESTER":
-                if ($object->term)
-                    $SQL->where("TERM = '" . $object->term . "'");
+                if ($stdClass->term)
+                    $SQL->where("TERM = '" . $stdClass->term . "'");
                 break;
             case "YEAR":
-                if ($object->year) {
-                    $SQL->where("YEAR = '" . $object->year . "'");
+                if ($stdClass->year) {
+                    $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
         }
 
-        $SQL->where("SECTION = '" . $object->section . "'");
+        $SQL->where("SECTION = '" . $stdClass->section . "'");
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
 
-    public static function getActionStudentClassPerformance($object) {
+    public static function getActionStudentClassPerformance($stdClass) {
 
-        if (self::checkStudentClassPerformance($object)) {
+        if (self::checkStudentClassPerformance($stdClass)) {
 
-            $WHERE[] = "STUDENT_ID = '" . $object->studentId . "'";
-            $WHERE[] = "CLASS_ID = '" . $object->academicId . "'";
-            $WHERE[] = "SCHOOLYEAR_ID = '" . $object->schoolyearId . "'";
+            $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
+            $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
+            $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
 
-            switch ($object->section) {
+            switch ($stdClass->section) {
                 case "MONTH":
-                    $WHERE[] = "MONTH = '" . $object->month . "'";
-                    $WHERE[] = "YEAR = '" . $object->year . "'";
+                    $WHERE[] = "MONTH = '" . $stdClass->month . "'";
+                    $WHERE[] = "YEAR = '" . $stdClass->year . "'";
                     break;
                 case "TERM":
                 case "QUARTER":
                 case "SEMESTER":
-                    $WHERE[] = "TERM = '" . $object->term . "'";
+                    $WHERE[] = "TERM = '" . $stdClass->term . "'";
                     break;
                 case "YEAR":
                     $WHERE[] = "SECTION = 'YEAR'";
@@ -182,11 +182,11 @@ class SQLAcademicPerformances {
             }
             $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
 
-            switch ($object->actionField) {
+            switch ($stdClass->actionField) {
                 case "ASSESSMENT_TOTAL":
-                    $facette = self::getCallStudentAcademicPerformance($object);
-                    $UPDATE_DATA["ASSESSMENT_ID"] = $object->actionValue;
-                    $UPDATE_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($object);
+                    $facette = self::getCallStudentAcademicPerformance($stdClass);
+                    $UPDATE_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
+                    $UPDATE_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($stdClass);
                     $UPDATE_DATA["RANK"] = $facette->RANK;
                     break;
                 case "AVERAGE_TOTAL":
@@ -198,30 +198,30 @@ class SQLAcademicPerformances {
             self::dbAccess()->update('t_student_learning_performance', $UPDATE_DATA, $WHERE);
         } else {
 
-            $INSERT_DATA["STUDENT_ID"] = $object->studentId;
-            $INSERT_DATA["CLASS_ID"] = $object->academicId;
-            $INSERT_DATA["SCHOOLYEAR_ID"] = $object->schoolyearId;
+            $INSERT_DATA["STUDENT_ID"] = $stdClass->studentId;
+            $INSERT_DATA["CLASS_ID"] = $stdClass->academicId;
+            $INSERT_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
 
-            if ($object->month)
-                $INSERT_DATA["MONTH"] = $object->month;
+            if ($stdClass->month)
+                $INSERT_DATA["MONTH"] = $stdClass->month;
 
-            if ($object->year)
-                $INSERT_DATA["YEAR"] = $object->year;
+            if ($stdClass->year)
+                $INSERT_DATA["YEAR"] = $stdClass->year;
 
-            if ($object->term)
-                $INSERT_DATA["TERM"] = $object->term;
+            if ($stdClass->term)
+                $INSERT_DATA["TERM"] = $stdClass->term;
 
-            if ($object->section)
-                $INSERT_DATA["SECTION"] = $object->section;
+            if ($stdClass->section)
+                $INSERT_DATA["SECTION"] = $stdClass->section;
 
-            if ($object->educationSystem)
-                $INSERT_DATA["EDUCATION_SYSTEM"] = $object->educationSystem;
+            if ($stdClass->educationSystem)
+                $INSERT_DATA["EDUCATION_SYSTEM"] = $stdClass->educationSystem;
 
-            switch ($object->actionField) {
+            switch ($stdClass->actionField) {
                 case "ASSESSMENT_TOTAL":
-                    $facette = self::getCallStudentAcademicPerformance($object);
-                    $INSERT_DATA["ASSESSMENT_ID"] = $object->actionValue;
-                    $INSERT_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($object);
+                    $facette = self::getCallStudentAcademicPerformance($stdClass);
+                    $INSERT_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
+                    $INSERT_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($stdClass);
                     $INSERT_DATA["RANK"] = $facette->RANK;
                     break;
                 case "AVERAGE_TOTAL":

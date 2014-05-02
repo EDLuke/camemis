@@ -62,7 +62,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $this->studentId
                     , "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -73,7 +73,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        $entries = SQLEvaluationStudentAssignment::getQueryStudentSubjectAssignments($object);
+        $entries = SQLEvaluationStudentAssignment::getQueryStudentSubjectAssignments($stdClass);
 
         if ($entries) {
             $i = 0;
@@ -465,7 +465,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getSubjectMonthAssessment($studentId) {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $studentId
                     , "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -476,7 +476,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
     protected function getScoreListSubjectYearResult() {
@@ -493,7 +493,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getSubjectTermAssessment($studentId, $term) {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $studentId
                     , "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -504,12 +504,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
     public function getSubjectYearAssessment($studentId) {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $studentId
                     , "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -520,12 +520,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object);
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
     public function actionStudentSubjectAssessment() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $this->studentId
                     , "academicId" => $this->academicId
                     , "section" => $this->getSection()
@@ -540,7 +540,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "educationSystem" => $this->getEducationSystem()
         );
 
-        return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($object);
+        return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
     }
 
     public function actionPublishSubjectAssessment() {
@@ -619,7 +619,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function actionTeacherScoreEnter() {
-        $object = (object) array(
+        $stdClass = (object) array(
                     "studentId" => $this->studentId
                     , "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -635,12 +635,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "include_in_valuation" => $this->getAssignmentInCludeEvaluation()
                     , "educationSystem" => $this->getEducationSystem()
         );
-        SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($object);
+        SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
     }
 
     public function countTeacherScoreDate() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
                     , "term" => $this->term
@@ -648,12 +648,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "assignmentId" => $this->assignmentId
         );
 
-        return SQLEvaluationStudentAssignment::getCountTeacherScoreDate($object);
+        return SQLEvaluationStudentAssignment::getCountTeacherScoreDate($stdClass);
     }
 
     public function getListStudentsTeacherScoreEnter() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
                     , "term" => $this->term
@@ -669,8 +669,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             $i = 0;
             foreach ($this->listClassStudents() as $value) {
 
-                $object->studentId = $value->ID;
-                $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($object);
+                $stdClass->studentId = $value->ID;
+                $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
 
                 $data[$i]["SCORE"] = $facette ? $facette->POINTS : "";
                 $data[$i]["TEACHER_COMMENTS"] = $facette ? $facette->TEACHER_COMMENTS : "";
@@ -684,7 +684,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function actionDeleteAllStudentsTeacherScoreEnter() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
         );
@@ -694,23 +694,23 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function actionDeleteOneStudentTeacherScoreEnter() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
                     , "assignmentId" => $this->assignmentId
                     , "date" => $this->date
                     , "studentId" => $this->studentId
         );
-        SQLEvaluationStudentAssignment::getActionDeleteOneStudentTeacherScoreEnter($object);
+        SQLEvaluationStudentAssignment::getActionDeleteOneStudentTeacherScoreEnter($stdClass);
     }
 
     public function actionDeleteSubjectScoreAssessment() {
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
         );
 
-        SQLEvaluationStudentSubject::getActionDeleteSubjectScoreAssessment($object);
+        SQLEvaluationStudentSubject::getActionDeleteSubjectScoreAssessment($stdClass);
     }
 
 }

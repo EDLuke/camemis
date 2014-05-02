@@ -60,7 +60,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "term" => $this->term
                     , "month" => $this->getMonth()
@@ -72,23 +72,23 @@ class AcademicPerformances extends AssessmentProperties {
         if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
-            $scoreList = $this->getScoreListClassPerformance($object);
+            $scoreList = $this->getScoreListClassPerformance($stdClass);
 
             $i = 0;
             foreach ($this->listClassStudents() as $value) {
 
-                $object->studentId = $value->ID;
+                $stdClass->studentId = $value->ID;
 
-                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($object);
+                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
-                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($object)->LETTER_GRADE_NUMBER;
+                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
-                            $object->subjectId = $v->SUBJECT_ID;
-                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object)->SUBJECT_VALUE;
+                            $stdClass->subjectId = $v->SUBJECT_ID;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
                     }
                 }
@@ -104,7 +104,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         $data = array();
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "term" => $this->term
                     , "section" => $this->getSection()
@@ -114,23 +114,23 @@ class AcademicPerformances extends AssessmentProperties {
         if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
-            $scoreList = $this->getScoreListClassPerformance($object);
+            $scoreList = $this->getScoreListClassPerformance($stdClass);
 
             $i = 0;
             foreach ($this->listClassStudents() as $value) {
 
-                $object->studentId = $value->ID;
+                $stdClass->studentId = $value->ID;
 
-                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($object);
+                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
-                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($object)->LETTER_GRADE_NUMBER;
+                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
-                            $object->subjectId = $v->SUBJECT_ID;
-                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($object)->SUBJECT_VALUE;
+                            $stdClass->subjectId = $v->SUBJECT_ID;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
                     }
                 }
@@ -191,13 +191,13 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    protected function getScoreListClassPerformance($object) {
+    protected function getScoreListClassPerformance($stdClass) {
 
         $data = array();
         if ($this->listClassStudents()) {
             foreach ($this->listClassStudents() as $value) {
-                $object->studentId = $value->ID;
-                $data[] = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($object);
+                $stdClass->studentId = $value->ID;
+                $data[] = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
             }
         }
         return $data;
@@ -205,7 +205,7 @@ class AcademicPerformances extends AssessmentProperties {
 
     public function setActionStudentClassPerformance() {
 
-        $object = (object) array(
+        $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "studentId" => $this->studentId
                     , "actionField" => $this->actionField
@@ -214,10 +214,11 @@ class AcademicPerformances extends AssessmentProperties {
                     , "year" => $this->getYear()
                     , "term" => $this->term
                     , "section" => $this->getSection()
+                    , "educationSystem" => $this->getEducationSystem()
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        SQLAcademicPerformances::getActionStudentClassPerformance($object);
+        SQLAcademicPerformances::getActionStudentClassPerformance($stdClass);
     }
 
 }
