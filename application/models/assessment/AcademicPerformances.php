@@ -24,17 +24,34 @@ class AcademicPerformances extends AssessmentProperties {
     const SCORE_TYPE_NUMBER = 1;
     const SCORE_TYPE_CHAR = 2;
 
-    function __construct() {
+    /**
+     * Formular for year result of performance
+     */
+    const AVG_S1 = 1;
+    const AVG_S2 = 2;
+    const AVG_T1 = 1;
+    const AVG_T2 = 2;
+    const AVG_T3 = 3;
+    const AVG_Q1 = 1;
+    const AVG_Q2 = 2;
+    const AVG_Q3 = 3;
+    const AVG_Q4 = 4;
+
+    function __construct()
+    {
         parent::__construct();
     }
 
-    protected function listStudentsData() {
+    protected function listStudentsData()
+    {
 
         $data = array();
 
-        if ($this->listClassStudents()) {
+        if ($this->listClassStudents())
+        {
             $i = 0;
-            foreach ($this->listClassStudents() as $value) {
+            foreach ($this->listClassStudents() as $value)
+            {
                 $studentId = $value->ID;
 
                 $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
@@ -56,7 +73,8 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsMonthClassPerformance() {
+    public function getListStudentsMonthClassPerformance()
+    {
 
         $data = array();
 
@@ -69,13 +87,15 @@ class AcademicPerformances extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        if ($this->listClassStudents()) {
+        if ($this->listClassStudents())
+        {
 
             $data = $this->listStudentsData();
             $scoreList = $this->getScoreListClassPerformance($stdClass);
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value) {
+            foreach ($this->listClassStudents() as $value)
+            {
 
                 $stdClass->studentId = $value->ID;
 
@@ -84,9 +104,12 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
-                if ($this->getListSubjects()) {
-                    foreach ($this->getListSubjects() as $v) {
-                        if ($v->SUBJECT_ID) {
+                if ($this->getListSubjects())
+                {
+                    foreach ($this->getListSubjects() as $v)
+                    {
+                        if ($v->SUBJECT_ID)
+                        {
                             $stdClass->subjectId = $v->SUBJECT_ID;
                             $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
@@ -100,7 +123,8 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsTermClassPerformance() {
+    public function getListStudentsTermClassPerformance()
+    {
 
         $data = array();
 
@@ -111,13 +135,15 @@ class AcademicPerformances extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        if ($this->listClassStudents()) {
+        if ($this->listClassStudents())
+        {
 
             $data = $this->listStudentsData();
             $scoreList = $this->getScoreListClassPerformance($stdClass);
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value) {
+            foreach ($this->listClassStudents() as $value)
+            {
 
                 $stdClass->studentId = $value->ID;
 
@@ -126,9 +152,12 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
-                if ($this->getListSubjects()) {
-                    foreach ($this->getListSubjects() as $v) {
-                        if ($v->SUBJECT_ID) {
+                if ($this->getListSubjects())
+                {
+                    foreach ($this->getListSubjects() as $v)
+                    {
+                        if ($v->SUBJECT_ID)
+                        {
                             $stdClass->subjectId = $v->SUBJECT_ID;
                             $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
@@ -142,45 +171,105 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsYearClassPerformance() {
+    public function getListStudentsYearClassPerformance()
+    {
 
         $data = array();
 
-        if ($this->listClassStudents()) {
+        if ($this->listClassStudents())
+        {
 
             $data = $this->listStudentsData();
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value) {
+            foreach ($this->listClassStudents() as $value)
+            {
                 $studentId = $value->ID;
                 $data[$i]["RANK"] = "----";
                 $data[$i]["AVERAGE_TOTAL"] = "----";
                 $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
-                switch ($this->getTermNumber()) {
+                switch ($this->getTermNumber())
+                {
                     case 1:
-                        $data[$i]["ASSESSMENT_FIRST_TERM"] = "----";
-                        $data[$i]["ASSESSMENT_SECOND_TERM"] = "----";
-                        $data[$i]["ASSESSMENT_THIRD_TERM"] = "----";
-                        $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
-                        $data[$i]["SECOND_TERM_RESULT"] = "----";
-                        $data[$i]["THIRD_TERM_RESULT"] = "----";
+
+                        switch ($this->getSettingYearResult())
+                        {
+                            case self::AVG_T1:
+                                $data[$i]["ASSESSMENT_FIRST_TERM"] = "----";
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_T2:
+                                $data[$i]["ASSESSMENT_SECOND_TERM"] = "----";
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_T3:
+                                $data[$i]["ASSESSMENT_THIRD_TERM"] = "----";
+                                $data[$i]["THIRD_SEMESTER_RESULT"] = "----";
+                                break;
+                            default:
+                                $data[$i]["ASSESSMENT_FIRST_TERM"] = "----";
+                                $data[$i]["ASSESSMENT_SECOND_TERM"] = "----";
+                                $data[$i]["ASSESSMENT_THIRD_TERM"] = "----";
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                                $data[$i]["SECOND_TERM_RESULT"] = "----";
+                                $data[$i]["THIRD_TERM_RESULT"] = "----";
+                                break;
+                        }
+
                         break;
                     case 2:
-                        $data[$i]["ASSESSMENT_FIRST_QUARTER"] = "----";
-                        $data[$i]["ASSESSMENT_SECOND_QUARTER"] = "----";
-                        $data[$i]["ASSESSMENT_THIRD_QUARTER"] = "----";
-                        $data[$i]["ASSESSMENT_FOURTH_QUARTER"] = "----";
-                        $data[$i]["FIRST_QUARTER_RESULT"] = "----";
-                        $data[$i]["SECOND_QUARTER_RESULT"] = "----";
-                        $data[$i]["THIRD_QUARTER_RESULT"] = "----";
-                        $data[$i]["FOURTH_QUARTER_RESULT"] = "----";
+
+                        switch ($this->getSettingYearResult())
+                        {
+                            case self::AVG_Q1:
+                                $data[$i]["ASSESSMENT_FIRST_QUARTER"] = "----";
+                                $data[$i]["FIRST_QUARTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_Q2:
+                                $data[$i]["ASSESSMENT_SECOND_QUARTER"] = "----";
+                                $data[$i]["SECOND_QUARTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_Q3:
+                                $data[$i]["ASSESSMENT_THIRD_QUARTER"] = "----";
+                                $data[$i]["THIRD_QUARTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_Q4:
+                                $data[$i]["ASSESSMENT_FOURTH_QUARTER"] = "----";
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = "----";
+                                break;
+                            default:
+                                $data[$i]["ASSESSMENT_FIRST_QUARTER"] = "----";
+                                $data[$i]["ASSESSMENT_SECOND_QUARTER"] = "----";
+                                $data[$i]["ASSESSMENT_THIRD_QUARTER"] = "----";
+                                $data[$i]["ASSESSMENT_FOURTH_QUARTER"] = "----";
+                                $data[$i]["FIRST_QUARTER_RESULT"] = "----";
+                                $data[$i]["SECOND_QUARTER_RESULT"] = "----";
+                                $data[$i]["THIRD_QUARTER_RESULT"] = "----";
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = "----";
+                                break;
+                        }
+
                         break;
                     default:
-                        $data[$i]["ASSESSMENT_FIRST_SEMESTER"] = "----";
-                        $data[$i]["ASSESSMENT_SECOND_SEMESTER"] = "----";
-                        $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
-                        $data[$i]["SECOND_SEMESTER_RESULT"] = "----";
+
+                        switch ($this->getSettingYearResult())
+                        {
+                            case self::AVG_S1:
+                                $data[$i]["ASSESSMENT_FIRST_SEMESTER"] = "----";
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                                break;
+                            case self::AVG_S2:
+                                $data[$i]["ASSESSMENT_SECOND_SEMESTER"] = "----";
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = "----";
+                                break;
+                            default:
+                                $data[$i]["ASSESSMENT_FIRST_SEMESTER"] = "----";
+                                $data[$i]["ASSESSMENT_SECOND_SEMESTER"] = "----";
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = "----";
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = "----";
+                                break;
+                        }
                         break;
                 }
 
@@ -191,11 +280,14 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    protected function getScoreListClassPerformance($stdClass) {
+    protected function getScoreListClassPerformance($stdClass)
+    {
 
         $data = array();
-        if ($this->listClassStudents()) {
-            foreach ($this->listClassStudents() as $value) {
+        if ($this->listClassStudents())
+        {
+            foreach ($this->listClassStudents() as $value)
+            {
                 $stdClass->studentId = $value->ID;
                 $data[] = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
             }
@@ -203,7 +295,8 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function setActionStudentClassPerformance() {
+    public function setActionStudentClassPerformance()
+    {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId

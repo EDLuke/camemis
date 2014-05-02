@@ -265,6 +265,16 @@ abstract class AssessmentProperties {
         return $this->getCurrentClass()->QUARTER4_WEIGHTING ? $this->getCurrentClass()->QUARTER4_WEIGHTING : 1;
     }
 
+    public function getSettingYearResult()
+    {
+        return $this->getCurrentClass()->YEAR_RESULT;
+    }
+
+    public function getSettingYearTermResult()
+    {
+        return $this->getSubject()->AVERAGE_FROM_SEMESTER;
+    }
+
 }
 
 ?>

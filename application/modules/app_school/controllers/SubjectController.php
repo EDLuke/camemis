@@ -164,26 +164,6 @@ class SubjectController extends Zend_Controller_Action {
 		$this->_helper->viewRenderer("default/general/show");
 	}
 
-	public function showsecondaryAction() {
-
-		//UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING_READ_RIGHT");
-
-		$this->view->facette = $this->subjectObject;
-		$this->view->objectId = $this->objectId;
-		$this->view->objectData = $this->objectData;
-		$this->view->db_subject = $this->DB_SUBJECT;
-	}
-
-	public function showprimaryAction() {
-
-		//UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING_READ_RIGHT");
-
-		$this->view->facette = $this->subjectObject;
-		$this->view->objectId = $this->objectId;
-		$this->view->objectData = $this->objectData;
-		$this->view->db_subject = $this->DB_SUBJECT;
-	}
-
 	public function trainingsubjectAction() {
 
 		//UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING_READ_RIGHT");
