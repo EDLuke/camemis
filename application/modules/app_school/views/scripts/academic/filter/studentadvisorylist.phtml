@@ -15,7 +15,6 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
 
 $gradeId = "";
 $campusId = "";
@@ -83,11 +82,11 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ADVISED_BY'");
     $OBJECT_GRID->addReadField("name: 'STUDENT'");
     ////////////////////////////////////
-    $OBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>',hidden:".checkColHidden(1, $columndata).", align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'ADVISORY_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'STUDENT'");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISORY_TYPE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'ADVISORY_TYPE'");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_DATE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'ADVISED_DATE'");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_BY . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'ADVISED_BY'");
+    $OBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>',hidden:".checkColHidden(1, $columndata).", align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'ADVISORY_NAME', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'STUDENT', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISORY_TYPE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'ADVISORY_TYPE', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_DATE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'ADVISED_DATE', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_BY . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'ADVISED_BY', filter:{}");
     ////////////////////////////////////////////////////////////////////////////
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         $OBJECT_GRID->addTBarItems("
@@ -126,9 +125,9 @@ Ext.onReady(function() {
     $OBJECT_GRID->addTBarItems("tbar.add('->');");
     $OBJECT_GRID->isQuickySearch = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
-    $OBJECT_GRID->isGroupingView = true;
+    //$OBJECT_GRID->isGroupingView = true;
     $OBJECT_GRID->isFilterRow = true;
-    $OBJECT_GRID->groupField = "ADVISORY_NAME";
+    //$OBJECT_GRID->groupField = "ADVISORY_NAME";
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->loadMask = true;
@@ -170,7 +169,7 @@ Ext.onReady(function() {
                 ,minSize:300
                 ,maxSize:300
                 ,layout: 'fit'
-                ,items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=<?=$this->urlEncryp->encryptedGet($params)?>'})]
+                ,items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentadvisory/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
             },{
                	collapsible: false
                 ,id: 'center'
