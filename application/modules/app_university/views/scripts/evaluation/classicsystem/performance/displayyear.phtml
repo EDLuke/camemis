@@ -1,9 +1,9 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
+// Date: 02.05.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
@@ -102,33 +102,25 @@ Ext.onReady(function() {
             }
         })
     ";
+    
     ////////////////////////////////////////////////////////////////////////////
     $OBJECT_GRID->addReadField("name: 'CODE'");
     $OBJECT_GRID->addReadField("name: 'STUDENT'");   
     $OBJECT_GRID->addReadField("name: 'RANK'");  
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
-    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'"); 
     $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");  
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");  
     
     switch($TERM_NUMBER){
         case 1:
-            
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_FIRST_TERM'");  
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_SECOND_TERM'");
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_THIRD_TERM'");
-            $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");   
+            $OBJECT_GRID->addReadField("name: 'FIRST_TERM_RESULT'");   
             $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'"); 
             $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'"); 
     
             break;
         case 2:
-            
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_FIRST_QUARTER'");  
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_SECOND_QUARTER'");
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_THIRD_QUARTER'");
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_FOURTH_QUARTER'");
             $OBJECT_GRID->addReadField("name: 'FIRST_QUARTER_RESULT'");   
             $OBJECT_GRID->addReadField("name: 'SECOND_QUARTER_RESULT'"); 
             $OBJECT_GRID->addReadField("name: 'THIRD_QUARTER_RESULT'"); 
@@ -136,10 +128,65 @@ Ext.onReady(function() {
             
             break;
         default:
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_FIRST_SEMESTER'");  
-            $OBJECT_GRID->addReadField("name: 'ASSESSMENT_SECOND_SEMESTER'");
             $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");   
             $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER_RESULT'"); 
+            break;
+    }
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssRang, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssAverage, dataIndex: 'AVERAGE_TOTAL'");
+    
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+        case 'INSTRUCTOR':
+        case 'TEACHER':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".ASSESSMENT."</b>'
+                , width: 130
+                , align: 'right'
+                , sortable: true
+                , dataIndex: 'ASSESSMENT_TOTAL'
+                , renderer:cssAssessmentYear
+                , editor: ".$comboEditor."
+            ");
+            break;
+         case 'STUDENT':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".ASSESSMENT."</b>'
+                , width: 120
+                , align: 'center'
+                , sortable: true
+                , dataIndex: 'ASSESSMENT_TOTAL'
+                , renderer:cssAssessmentYear
+            ");
+            break;  
+    }
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'THIRD_TERM_RESULT'");
+            break;
+        case 2:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssAverage, dataIndex: 'FOURTH_QUARTER_RESULT'");
+            break;
+        default:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssAverage, dataIndex: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssAverage, dataIndex: 'SECOND_SEMESTER_RESULT'");
             break;
     }
     

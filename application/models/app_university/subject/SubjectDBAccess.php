@@ -1318,6 +1318,7 @@ class SubjectDBAccess {
             , "EVALUATION"
             , "GOALS"
             , "COEFF_VALUE"
+            , "AVERAGE_FROM_SEMESTER"
         );
 
         $SELECTION_C = array(
@@ -1332,8 +1333,8 @@ class SubjectDBAccess {
         $SQL->from(array('A' => "t_schedule"), array());
         $SQL->joinLeft(array('B' => "t_grade_subject"), 'A.SUBJECT_ID=B.SUBJECT', $SELECTION_B);
         $SQL->joinLeft(array('C' => "t_subject"), 'A.SUBJECT_ID=C.ID', $SELECTION_C);
-        $SQL->where('B.CLASS = ?', $academicId);
-        $SQL->where('B.SUBJECT = ?', $subjectId);
+        $SQL->where('A.ACADEMIC_ID = ?', $academicId);
+        $SQL->where('A.SUBJECT_ID = ?', $subjectId);
         $SQL->group("A.SUBJECT_ID");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
