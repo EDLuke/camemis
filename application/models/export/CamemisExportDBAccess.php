@@ -15,6 +15,7 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/DaySc
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/ScheduleDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentPreschoolDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAttendanceDBAccess.php";
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php";//@Visal
 
 error_reporting(E_ALL);
 
@@ -29,6 +30,7 @@ abstract class CamemisExportDBAccess {
         $this->DB_STUDENT_SEARCH = new StudentSearchDBAccess();
         $this->DB_STUDENT_PRESCHOOL = StudentPreschoolDBAccess::getInstance(); //@Visal
         $this->DB_STUDENT_ATTENDANCE = StudentAttendanceDBAccess::getInstance(); //@veasna
+        $this->DB_STUDENT_STATUS = StudentStatusDBAccess::getInstance(); //@Visal
         $this->DB_STAFF = StaffDBAccess::getInstance();
         $this->DB_DAYSCHEDULE = DayScheduleDBAccess::getInstance();
         $this->DB_WEEKSCHEDULE = ScheduleDBAccess::getInstance();
@@ -62,6 +64,11 @@ abstract class CamemisExportDBAccess {
     public function getFileStudentAttendance()
     {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentattendancelist.xls";
+    }
+    //@Visal
+    public function getFileStudentStatus()
+    {
+        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentstatuslist.xls";
     }
 
     public function getFileStaffAttendance()
@@ -164,7 +171,33 @@ abstract class CamemisExportDBAccess {
 
         return (object) $data;
     }
-    
+
+    public static function colFilter()
+    {
+        $this->EXCEL->getActiveSheet()
+                ->getStyleByColumnAndRow($col, $row)
+                ->applyFromArray(array(
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'color' => array('rgb' => $bgColor ? $bgColor : "FFFFFF")
+        )));
+        /*
+        foreach ($this->EXCEL->getActiveSheet()->getRowIterator() as $row)
+        {
+            if ($this->EXCEL->getActiveSheet()->getRowDimension($row->getRowIndex())->getVisible())
+            {
+                echo '    Row number - ', $row->getRowIndex(), ' ';
+                echo $this->EXCEL->getActiveSheet()->getCell(
+                        'C' . $row->getRowIndex()
+                )->getValue(), ' ';
+                echo $objPHPExcel->getActiveSheet()->getCell(
+                        'D' . $row->getRowIndex()
+                )->getFormattedValue(), ' ';
+                echo EOL;
+            }
+        }
+        */
+    }
 
     public function setHeaderInformation()
     {
