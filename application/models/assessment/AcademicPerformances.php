@@ -91,7 +91,11 @@ class AcademicPerformances extends AssessmentProperties {
         {
 
             $data = $this->listStudentsData();
-            $scoreList = $this->getScoreListClassPerformance($stdClass);
+
+            $scoreList = SQLAcademicPerformances::scoreListClassPerformance(
+                            $this->listClassStudents()
+                            , $stdClass
+            );
 
             $i = 0;
             foreach ($this->listClassStudents() as $value)
@@ -101,7 +105,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
-                $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
+                $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
                 if ($this->getListSubjects())
@@ -139,7 +143,11 @@ class AcademicPerformances extends AssessmentProperties {
         {
 
             $data = $this->listStudentsData();
-            $scoreList = $this->getScoreListClassPerformance($stdClass);
+
+            $scoreList = SQLAcademicPerformances::scoreListClassPerformance(
+                            $this->listClassStudents()
+                            , $stdClass
+            );
 
             $i = 0;
             foreach ($this->listClassStudents() as $value)
@@ -149,7 +157,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
-                $data[$i]["AVERAGE_TOTAL"] = $AVERAGE;
+                $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
                 if ($this->getListSubjects())
@@ -187,13 +195,16 @@ class AcademicPerformances extends AssessmentProperties {
 
             $data = $this->listStudentsData();
 
+            $scoreList = $this->getScoreListYearClassPerformance($stdClass);
+
             $i = 0;
             foreach ($this->listClassStudents() as $value)
             {
                 $stdClass->studentId = $value->ID;
 
-                $data[$i]["RANK"] = "----";
-                $data[$i]["AVERAGE_TOTAL"] = $this->getAverageYearStudentClassPerformance($stdClass);
+                $AVERAGE = $this->getAverageYearStudentClassPerformance($stdClass);
+                $data[$i]["RANK"] = $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
+                $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
                 switch ($this->getTermNumber())
@@ -313,22 +324,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         return $data;
     }
-
-    protected function getScoreListClassPerformance($stdClass)
-    {
-
-        $data = array();
-        if ($this->listClassStudents())
-        {
-            foreach ($this->listClassStudents() as $value)
-            {
-                $stdClass->studentId = $value->ID;
-                $data[] = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
-            }
-        }
-        return $data;
-    }
-
+    
     public function getAverageYearStudentClassPerformance($stdClass)
     {
         $output = "---";
@@ -511,6 +507,7 @@ class AcademicPerformances extends AssessmentProperties {
                     , "section" => $this->getSection()
                     , "educationSystem" => $this->getEducationSystem()
                     , "schoolyearId" => $this->getSchoolyearId()
+                    , "listStudents" => $this->listClassStudents()
         );
 
         SQLAcademicPerformances::getActionStudentClassPerformance($stdClass);

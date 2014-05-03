@@ -148,7 +148,6 @@ Ext.onReady(function() {
                 $i=0;
                 foreach($scoresEntries as $value){
                     $j = $i+1;
-                    //error_log($value);
                     $gradingObject = AssessmentConfig::getSQLGradingScale(trim($value), 2, $campusObject->QUALIFICATION_TYPE, false);
                     if($gradingObject && trim($value)){
                         $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".trim($value)."'}";

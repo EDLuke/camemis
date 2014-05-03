@@ -102,11 +102,12 @@ Ext.onReady(function() {
                 ,form: formObject.getForm().getEl().dom
                 ,success: function(response, options) {
                     jsonData = Ext.util.JSON.decode(response.responseText);
-                    gridObject.getStore().setBaseParam('CODE',fieldValue.CODE);
-                    gridObject.getStore().setBaseParam('STUDENT_SCHOOL_ID',fieldValue.STUDENT_SCHOOL_ID);
-                    gridObject.getStore().setBaseParam('GENDER',fieldValue.GENDER);
-                    gridObject.getStore().setBaseParam('FIRSTNAME',fieldValue.FIRSTNAME);
-                    gridObject.getStore().setBaseParam('LASTNAME',fieldValue.LASTNAME);
+                    var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                    for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                        if(myform.getForm().getEl().dom[i].value){
+                            Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                        }
+                    }
                     gridObject.getStore().loadData(jsonData);
                     myMask.hide();
                 }

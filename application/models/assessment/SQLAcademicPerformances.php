@@ -66,10 +66,10 @@ class SQLAcademicPerformances {
     public static function getCallStudentAcademicPerformance($stdClass)
     {
 
-        $data["LETTER_GRADE_NUMBER"] = "";
-        $data["LETTER_GRADE_CHAR"] = "";
-        $data["LEARNING_VALUE"] = "";
-        $data["ASSESSMENT_ID"] = "";
+        $data["LETTER_GRADE_NUMBER"] = "---";
+        $data["LETTER_GRADE_CHAR"] = "---";
+        $data["LEARNING_VALUE"] = "---";
+        $data["ASSESSMENT_ID"] = "---";
 
         if (isset($stdClass->studentId))
         {
@@ -165,6 +165,20 @@ class SQLAcademicPerformances {
         return $result ? $result->C : 0;
     }
 
+    public static function scoreListClassPerformance($listStudents, $stdClass)
+    {
+        $data = array();
+        if ($listStudents)
+        {
+            foreach ($listStudents as $value)
+            {
+                $stdClass->studentId = $value->ID;
+                $data[] = self::getSQLAverageStudentClassPerformance($stdClass);
+            }
+        }
+        return $data;
+    }
+
     public static function getActionStudentClassPerformance($stdClass)
     {
 
@@ -195,10 +209,14 @@ class SQLAcademicPerformances {
             switch ($stdClass->actionField)
             {
                 case "ASSESSMENT_TOTAL":
-                    $facette = self::getCallStudentAcademicPerformance($stdClass);
+
+                    $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
+                    $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
+
                     $UPDATE_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
-                    $UPDATE_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($stdClass);
-                    $UPDATE_DATA["RANK"] = $facette->RANK;
+                    $UPDATE_DATA["LEARNING_VALUE"] = $AVERAGE;
+                    $UPDATE_DATA["RANK"] = $RANK ? $RANK : "";
+
                     break;
                 case "AVERAGE_TOTAL":
                     break;
@@ -233,10 +251,14 @@ class SQLAcademicPerformances {
             switch ($stdClass->actionField)
             {
                 case "ASSESSMENT_TOTAL":
-                    $facette = self::getCallStudentAcademicPerformance($stdClass);
+
+                    $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
+                    $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
+
                     $INSERT_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
-                    $INSERT_DATA["LEARNING_VALUE"] = self::getSQLAverageStudentClassPerformance($stdClass);
-                    $INSERT_DATA["RANK"] = $facette->RANK;
+                    $INSERT_DATA["LEARNING_VALUE"] = $AVERAGE;
+                    $INSERT_DATA["RANK"] = $RANK ? $RANK : "";
+
                     break;
                 case "AVERAGE_TOTAL":
                     break;
