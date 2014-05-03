@@ -7,19 +7,22 @@
 ///////////////////////////////////////////////////////////
 require_once("Zend/Loader.php");
 
-function setUserLoacalization() {
+function setUserLoacalization()
+{
 
     $file = 'localization/Localization.php';
 
     return $file;
 }
 
-function getNumberFormat($value) {
+function getNumberFormat($value)
+{
     $locale = new Zend_Locale('de_AT');
     return Zend_Locale_Format::toInteger($value, array('locale' => $locale));
 }
 
-function createpassword() {
+function createpassword()
+{
     $string1 = "aeiou";
     $string2 = "bcdfghklmnpqrstvwyz";
     $string3 = "123456789";
@@ -36,7 +39,8 @@ function createpassword() {
     return $passwort;
 }
 
-function randomPrefix($length) {
+function randomPrefix($length)
+{
     $random = "";
     srand((double) microtime() * 1000000);
 
@@ -44,29 +48,35 @@ function randomPrefix($length) {
     $data .= "aBCdefghijklmn123opq45rs67tuv89wxyz";
     $data .= "0FGH45OP89";
 
-    for ($i = 0; $i < $length; $i++) {
+    for ($i = 0; $i < $length; $i++)
+    {
         $random .= substr($data, (rand() % (strlen($data))), 1);
     }
 
     return $random;
 }
 
-function arrayMin(array $array) {
+function arrayMin(array $array)
+{
     sort($array, SORT_NUMERIC);
     $v = each($array);
     return $v['value'];
 }
 
-function arrayMax(array $array) {
+function arrayMax(array $array)
+{
     sort($array, SORT_NUMERIC);
     return end($array);
 }
 
-function getNumber($value) {
+function getNumber($value)
+{
 
-    if (Zend_Registry::get('SCHOOL')->DECIMAL_PLACES) {
+    if (Zend_Registry::get('SCHOOL')->DECIMAL_PLACES)
+    {
 
-        switch (Zend_Registry::get('SCHOOL')->DECIMAL_PLACES) {
+        switch (Zend_Registry::get('SCHOOL')->DECIMAL_PLACES)
+        {
             case 1:
                 $result = substr($value, 0, -3);
                 break;
@@ -77,27 +87,35 @@ function getNumber($value) {
                 $result = $value;
                 break;
         }
-    } else {
+    }
+    else
+    {
         $result = isset($value) ? $value : 0;
     }
 
     return $result;
 }
 
-function getSystemDateFormat() {
+function getSystemDateFormat()
+{
 
-    if (Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT) {
+    if (Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT)
+    {
         return Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT;
-    } else {
+    }
+    else
+    {
         return "dd.MM.yyyy";
     }
 }
 
-function setExtDatafieldFormat() {
+function setExtDatafieldFormat()
+{
 
     $format = "d.m.Y";
 
-    switch (getSystemDateFormat()) {
+    switch (getSystemDateFormat())
+    {
 
         case "DD.MM.YYYY": $format = "d.m.Y";
             break;
@@ -119,26 +137,31 @@ function setExtDatafieldFormat() {
     return $format;
 }
 
-function showNewlineText($value) {
+function showNewlineText($value)
+{
     return preg_replace("#\r\n|\n|\r#", '<br />', $value);
 }
 
-function setLocalText($value) {
+function setLocalText($value)
+{
     $clear = "*";
     //$clear = "";
     return addslashes($value . $clear);
 }
 
-function camemisId() {
+function camemisId()
+{
 
     return randomPrefix(35);
 }
 
-function generateGuid() {
+function generateGuid()
+{
     return randomPrefix(35);
 }
 
-function createCodeExam() {
+function createCodeExam()
+{
 
     mt_srand((double) microtime() * 100000);
     $charid = strtoupper(md5(uniqid(rand(), true)));
@@ -154,7 +177,8 @@ function createCodeExam() {
     return $uuid3;
 }
 
-function createCode() {
+function createCode()
+{
 
     mt_srand((double) microtime() * 100000);
     $charid = strtoupper(md5(uniqid(rand(), true)));
@@ -170,7 +194,8 @@ function createCode() {
     return $uuid3;
 }
 
-function sourceCode() {
+function sourceCode()
+{
 
     mt_srand((double) microtime() * 100000);
     $charid = strtoupper(md5(uniqid(rand(), true)));
@@ -186,22 +211,29 @@ function sourceCode() {
     return $uuid3;
 }
 
-function setDevision($a, $b) {
-    if ($b > 0) {
+function setDevision($a, $b)
+{
+    if ($b > 0)
+    {
         return $a / $b;
-    } else {
+    }
+    else
+    {
         return $a;
     }
 }
 
-function getCurrentTimestamp() {
+function getCurrentTimestamp()
+{
 
     $date = new Zend_Date();
     return $date->get(Zend_Date::TIMESTAMP);
 }
 
-function getDate2TSP($date) {
-    if ($date) {
+function getDate2TSP($date)
+{
+    if ($date)
+    {
         list($y, $m, $d) = explode("-", $date);
         $Date = new Zend_Date(array('year' => $y, 'month' => $m, 'day' => $d));
         return $Date->get(Zend_Date::TIMESTAMP);
@@ -209,23 +241,29 @@ function getDate2TSP($date) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function getMonthFromDate($date) {
-    if ($date) {
+function getMonthFromDate($date)
+{
+    if ($date)
+    {
         $explode = explode("-", $date);
         return isset($explode[1]) ? $explode[1] : "";
     }
 }
 
-function getYearFromDate($date) {
-    if ($date) {
+function getYearFromDate($date)
+{
+    if ($date)
+    {
         $explode = explode("-", $date);
         return isset($explode[0]) ? $explode[0] : "";
     }
 }
 
-function getMonthNameByNumber($value) {
+function getMonthNameByNumber($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
         case "1":
             return "JANUARY";
         case "2":
@@ -253,12 +291,17 @@ function getMonthNameByNumber($value) {
     }
 }
 
-function getMonthNrByName($value) {
+function getMonthNrByName($value)
+{
 
-    if (is_numeric($value)) {
+    if (is_numeric($value))
+    {
         return $value;
-    } else {
-        switch (strtoupper($value)) {
+    }
+    else
+    {
+        switch (strtoupper($value))
+        {
             case "JANUARY":
                 return 1;
             case "FEBRUARY":
@@ -288,11 +331,15 @@ function getMonthNrByName($value) {
 }
 
 //JULY_2013
-function getMonthNumberFromMonthYear($str) {
-    if ($str) {
+function getMonthNumberFromMonthYear($str)
+{
+    if ($str)
+    {
         $explode = explode("_", $str);
-        if (isset($explode[0])) {
-            switch ($explode[0]) {
+        if (isset($explode[0]))
+        {
+            switch ($explode[0])
+            {
                 case "JANUARY":
                     return '01';
                 case "FEBRUARY":
@@ -322,67 +369,80 @@ function getMonthNumberFromMonthYear($str) {
     }
 }
 
-function getYearFromMonthYear($str) {
-    if ($str) {
+function getYearFromMonthYear($str)
+{
+    if ($str)
+    {
         $explode = explode("_", $str);
         return isset($explode[1]) ? $explode[1] : "";
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function getCurrentDBDate() {
+function getCurrentDBDate()
+{
 
     $date = new Zend_Date();
     return $date->toString('YYYY-MM-dd');
 }
 
-function getCurrentYear() {
+function getCurrentYear()
+{
 
     $date = new Zend_Date();
     return $date->toString('YYYY');
 }
 
-function showCurrentDBDate() {
+function showCurrentDBDate()
+{
 
     $date = date('d.m.Y');
     return setDate2DB($date);
 }
 
-function showCurrentDate() {
+function showCurrentDate()
+{
 
     $date = date('d.m.Y H:i:s');
     return $date->toString(getSystemDateFormat());
 }
 
-function getCurrentDBDateTime() {
+function getCurrentDBDateTime()
+{
 
     $date = new Zend_Date();
     return $date->toString('YYYY-MM-dd HH:mm:ss');
 }
 
-function getCurrentDBDateTimeActiveStatus() {
+function getCurrentDBDateTimeActiveStatus()
+{
 
     $date = new Zend_Date();
     return $date->toString('MM/dd/YYYY');
 }
 
 //@Sea Peng 14.11.2013
-function getCurrentShortDay() {
+function getCurrentShortDay()
+{
     return getWEEKDAY(getCurrentDBDateTime());
 }
 
-function getCurrentTime() {
+function getCurrentTime()
+{
     $date = date("H:i");
     return $date;
 }
 
-function firstUppercase($text) {
+function firstUppercase($text)
+{
     return ucfirst(strtolower($text));
 }
 
-function setDate2DB($date) {
+function setDate2DB($date)
+{
 
-    switch (strtoupper(getSystemDateFormat())) {
+    switch (strtoupper(getSystemDateFormat()))
+    {
 
         case "DD.MM.YYYY":
             if (strpos($date, ".") > 0)
@@ -410,44 +470,55 @@ function setDate2DB($date) {
 
             break;
     }
-    if (isset($d) && isset($m) && isset($y)) {
+    if (isset($d) && isset($m) && isset($y))
+    {
         return $y . "-" . $m . "-" . $d;
     }
 }
 
-function setCalendarDate2DB($date) {
+function setCalendarDate2DB($date)
+{
     if (strpos($date, "-") > 0)
         list($m, $d, $y) = explode("-", $date);
-    if (isset($d) && isset($m) && isset($y)) {
+    if (isset($d) && isset($m) && isset($y))
+    {
         return $y . "-" . $m . "-" . $d;
     }
 }
 
-function getNumberYear($date) {
+function getNumberYear($date)
+{
     $Date = new Zend_Date($date);
     return $Date->toString('Y');
 }
 
-function getNumberMonth($date) {
+function getNumberMonth($date)
+{
     $Date = new Zend_Date($date);
     return $Date->toString('M');
 }
 
-function setDatetime2DB($date) {
+function setDatetime2DB($date)
+{
 
-    if ($date) {
-        if (Zend_Date::isDate($date)) {
+    if ($date)
+    {
+        if (Zend_Date::isDate($date))
+        {
             $Date = new Zend_Date($date);
             return $Date->toString('YYYY-MM-dd HH:mm:ss');
         }
     }
 }
 
-function getShowDateTime($datetime) {
+function getShowDateTime($datetime)
+{
 
-    if ($datetime != "0000-00-00 00:00:00") {
+    if ($datetime != "0000-00-00 00:00:00")
+    {
 
-        switch (getSystemDateFormat()) {
+        switch (getSystemDateFormat())
+        {
             case "DD.MM.YYYY": $format = "dd.MM.yyyy HH:mm:ss";
                 break;
             case "DD-MM-YYYY": $format = "dd-MM-yyyy HH:mm:ss";
@@ -466,16 +537,22 @@ function getShowDateTime($datetime) {
         $locale = new Zend_Locale('de_AT');
         $Date = new Zend_Date($datetime, false, $locale);
         return $Date->toString("" . $format);
-    } else {
+    }
+    else
+    {
         return "---";
     }
 }
 
-function getShowDate($value) {
+function getShowDate($value)
+{
 
-    if ($value) {
-        if ($value != "0000-00-00") {
-            switch (getSystemDateFormat()) {
+    if ($value)
+    {
+        if ($value != "0000-00-00")
+        {
+            switch (getSystemDateFormat())
+            {
                 case "DD.MM.YYYY": $format = "dd.MM.yyyy";
                     break;
                 case "DD-MM-YYYY": $format = "dd-MM-yyyy";
@@ -494,17 +571,23 @@ function getShowDate($value) {
             $locale = new Zend_Locale('de_AT');
             $Date = new Zend_Date($value, false, $locale);
             return $Date->toString("" . $format);
-        } else {
+        }
+        else
+        {
             return "---";
         }
-    } else {
+    }
+    else
+    {
         return "---";
     }
 }
 
-function getShortdayName($value) {
+function getShortdayName($value)
+{
     $name = "---";
-    switch ($value) {
+    switch ($value)
+    {
         case 'MO':
             $name = MONDAY;
             break;
@@ -531,13 +614,15 @@ function getShortdayName($value) {
     return $name;
 }
 
-function getWEEKDAY($newDate) {
+function getWEEKDAY($newDate)
+{
 
     //2013-06-04
     $date = new Zend_Date(strtotime($newDate));
     $WEEKDAY_DIGIT = $date->toString(Zend_Date::WEEKDAY_DIGIT);
 
-    switch ($WEEKDAY_DIGIT) {
+    switch ($WEEKDAY_DIGIT)
+    {
         case '1':
             $shortDay = "MO";
             break;
@@ -564,23 +649,29 @@ function getWEEKDAY($newDate) {
     return $shortDay;
 }
 
-function getFeeType($value) {
-    switch ($value) {
+function getFeeType($value)
+{
+    switch ($value)
+    {
         case "SCHOOL": return setICONV(SCHOOL_ENROLLMENT_FEES);
         case "COURSE": return setICONV(COURSE_ENROLLMENT_FEES);
     }
 }
 
-function getScoreType($value) {
-    switch ($value) {
+function getScoreType($value)
+{
+    switch ($value)
+    {
         case 1: return setICONV(SCORE_ON_NUMBER);
         case 2: return setICONV(SCORE_ON_ALPHABET);
         case 0: return "?";
     }
 }
 
-function getSMSPriorityName($value) {
-    switch ($value) {
+function getSMSPriorityName($value)
+{
+    switch ($value)
+    {
         case 1: return setICONV(IMPORTANT);
         case 2: return setICONV(URGENT);
         case 3: return 'SOS';
@@ -588,25 +679,32 @@ function getSMSPriorityName($value) {
     }
 }
 
-function getVideoIcon() {
+function getVideoIcon()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/32/media_play.png' border='0'>";
 }
 
-function getCompletedIcon($value) {
-    switch ($value) {
+function getCompletedIcon($value)
+{
+    switch ($value)
+    {
         case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/green.png' border='0'>";
         case 0: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/red.png' border='0'>";
     }
 }
 
-function getTransferAssessmentIcon($value) {
-    switch ($value) {
+function getTransferAssessmentIcon($value)
+{
+    switch ($value)
+    {
         case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user1_into.png' border='0'>";
     }
 }
 
-function getSMSPriorityIcon($value) {
-    switch ($value) {
+function getSMSPriorityIcon($value)
+{
+    switch ($value)
+    {
         case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/24/nav_plain_green.png' border='0'>";
         case 2: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/24/nav_plain_yellow.png' border='0'>";
         case 3: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/24/nav_plain_red.png' border='0'>";
@@ -614,24 +712,30 @@ function getSMSPriorityIcon($value) {
     }
 }
 
-function getGenderName($value) {
-    switch ($value) {
+function getGenderName($value)
+{
+    switch ($value)
+    {
         case 1: return MALE;
         case 2: return FEMALE;
         case 0: return "---";
     }
 }
 
-function getStaffType($value) {
-    switch ($value) {
+function getStaffType($value)
+{
+    switch ($value)
+    {
         case 1: return INSTRUCTOR;
         case 2: return TEACHER;
     }
 }
 
-function displaySchoolTerm($value) {
+function displaySchoolTerm($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
         case 'FIRST_SEMESTER': return setICONV(FIRST_SEMESTER);
         case 'SECOND_SEMESTER': return setICONV(SECOND_SEMESTER);
         case 'FIRST_TRIMESTER': return setICONV(FIRST_TRIMESTER);
@@ -650,26 +754,32 @@ function displaySchoolTerm($value) {
     }
 }
 
-function getStatus($value) {
+function getStatus($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
         case 1: return ENABLED;
         case 0: return DISABLED;
     }
 }
 
-function getActive($value) {
+function getActive($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
 
         case 1: return YES;
         case 0: return NO;
     }
 }
 
-function getJobType($value) {
+function getJobType($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
 
         case "1": return FULL_TIME_JOB;
         case "2": return PART_TIME_JOB;
@@ -677,9 +787,11 @@ function getJobType($value) {
     }
 }
 
-function getJobTypeICONV($value) {
+function getJobTypeICONV($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
 
         case "1": return setICONV(FULL_TIME_JOB);
         case "2": return setICONV(PART_TIME_JOB);
@@ -687,9 +799,11 @@ function getJobTypeICONV($value) {
     }
 }
 
-function getTermNumberShort($value) {
+function getTermNumberShort($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
 
         case "1": return TWO_SEMESTERS;
         case "2": return THREE_ITEMS;
@@ -700,8 +814,10 @@ function getTermNumberShort($value) {
     }
 }
 
-function getPriority($value) {
-    switch ($value) {
+function getPriority($value)
+{
+    switch ($value)
+    {
         case "1": return NORMAL;
         case "2": return IMPORTANT;
         case "3": return WITH_CONFIRMATION;
@@ -709,33 +825,41 @@ function getPriority($value) {
     }
 }
 
-function getOnOff($value) {
-    switch ($value) {
+function getOnOff($value)
+{
+    switch ($value)
+    {
         case "0": return OFF;
         case "1": return ON;
     }
 }
 
-function dataIds($entries) {
+function dataIds($entries)
+{
     $data = array();
     if ($entries)
-        foreach ($entries as $value) {
+        foreach ($entries as $value)
+        {
             $data[$value] = utf8_decode($value);
         }
 
     return $data;
 }
 
-function checkAvailable($all = array(), $selected = array()) {
+function checkAvailable($all = array(), $selected = array())
+{
     $tempdata = dataIds($selected);
 
     $data = array();
 
     if ($all)
-        foreach ($all as $value) {
-            if (!in_array($value["ID"], $selected)) {
+        foreach ($all as $value)
+        {
+            if (!in_array($value["ID"], $selected))
+            {
 
-                if (!in_array($value["ID"], $tempdata)) {
+                if (!in_array($value["ID"], $tempdata))
+                {
                     $data[$value["ID"]] = $value["ID"];
                 }
             }
@@ -743,42 +867,58 @@ function checkAvailable($all = array(), $selected = array()) {
     return $data;
 }
 
-function setAddition($value) {
-    if ($value == "" || $value == "null") {
+function setAddition($value)
+{
+    if ($value == "" || $value == "null")
+    {
         return "&nbsp;";
-    } else {
+    }
+    else
+    {
         return "&nbsp;<b>(" . $value . ")</b>";
     }
 }
 
-function setShowTextExtjs($text) {
-    if (isUTF8($text)) {
+function setShowTextExtjs($text)
+{
+    if (isUTF8($text))
+    {
         return $text ? htmlspecialchars_decode(addslashes(trim($text))) : "";
-    } else {
+    }
+    else
+    {
         return "?";
     }
 }
 
-function setShowText($text) {
-    if (isUTF8($text)) {
+function setShowText($text)
+{
+    if (isUTF8($text))
+    {
         return $text ? htmlspecialchars_decode(stripslashes(trim($text))) : "";
-    } else {
+    }
+    else
+    {
         return "?";
     }
 }
 
-function addText($text) {
+function addText($text)
+{
     return addslashes(htmlspecialchars($text));
 }
 
-function explodeData($explodestr) {
+function explodeData($explodestr)
+{
 
     $data = array();
 
-    if ($explodestr) {
+    if ($explodestr)
+    {
         $explode = explode(",", $explodestr);
         if ($explode)
-            foreach ($explode as $value) {
+            foreach ($explode as $value)
+            {
                 $data[$value] = $value;
             }
     }
@@ -786,69 +926,86 @@ function explodeData($explodestr) {
     return $data;
 }
 
-function iconNoEntry() {
+function iconNoEntry()
+{
 
     return setICONV(NOT_ASSIGNED);
 }
 
-function iconTeachingSession() {
+function iconTeachingSession()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/note_information.png' border='0'>";
 }
 
-function iconError() {
+function iconError()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/warning.png' border='0'>";
 }
 
-function iconOk() {
+function iconOk()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/tick.png' border='0'>";
 }
 
-function iconKeyStop() {
+function iconKeyStop()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/key_stop.png' border='0'>";
 }
 
-function iconKeyAdd() {
+function iconKeyAdd()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/key_add.png' border='0'>";
 }
 
-function iconNew() {
+function iconNew()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/new.png' border='0'>";
 }
 
-function iconClock() {
+function iconClock()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/clock_break.png' border='0'>";
 }
 
-function iconNoWorkingDay() {
+function iconNoWorkingDay()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/noworkingday.png' border='0'>";
 }
 
-function iconRuby() {
+function iconRuby()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/ruby.png' border='0'>";
 }
 
-function iconSubstitute() {
+function iconSubstitute()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/substitute.png' border='0'>";
 }
 
-function iconStar() {
+function iconStar()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/star.png' border='0'>";
 }
 
-function iconAddItem() {
+function iconAddItem()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/add.png' border='0'>";
 }
 
-function iconCardUserInfo() {
+function iconCardUserInfo()
+{
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/card_user_info.png' border='0'>";
 }
 
-function iconComment($v) {
+function iconComment($v)
+{
     return $v ? "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/comment.png' border='0'>" : "";
 }
 
-function iconFiletype($extension) {
-    switch ($extension) {
+function iconFiletype($extension)
+{
+    switch ($extension)
+    {
         case 1 :
             return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/image.png' border='0'>";
 
@@ -872,7 +1029,8 @@ function iconFiletype($extension) {
     }
 }
 
-function iconReplyStatus($status) {
+function iconReplyStatus($status)
+{
 
     if ($status == 1)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/email_edit.png' border='0'>";
@@ -880,7 +1038,8 @@ function iconReplyStatus($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/email.png' border='0'>";
 }
 
-function iconIncludeValuation($status) {
+function iconIncludeValuation($status)
+{
 
     if ($status == 1)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/accept.png' border='0'>";
@@ -888,7 +1047,8 @@ function iconIncludeValuation($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/cross.png' border='0'>";
 }
 
-function iconStatus($status) {
+function iconStatus($status)
+{
 
     if ($status == 1)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/green.png' border='0'>";
@@ -896,12 +1056,14 @@ function iconStatus($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/red.png' border='0'>";
 }
 
-function iconWarning() {
+function iconWarning()
+{
 
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/warning.png' border='0'>";
 }
 
-function iconImportStatus($status) {
+function iconImportStatus($status)
+{
 
     if ($status >= 1)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/warning.png' border='0'>";
@@ -909,7 +1071,8 @@ function iconImportStatus($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/tick.png' border='0'>";
 }
 
-function iconRemoveStatus($status) {
+function iconRemoveStatus($status)
+{
 
     if ($status >= 1)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/link.png' border='0'>";
@@ -917,7 +1080,8 @@ function iconRemoveStatus($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/link_delete.png' border='0'>";
 }
 
-function iconSMSServices($status) {
+function iconSMSServices($status)
+{
 
     if ($status > 0)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/tick.png' border='0'>";
@@ -925,7 +1089,8 @@ function iconSMSServices($status) {
         return "---";
 }
 
-function iconInSchedule($status) {
+function iconInSchedule($status)
+{
 
     if ($status == 0)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/date_edit.png' border='0'>";
@@ -933,7 +1098,8 @@ function iconInSchedule($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/date_link.png' border='0'>";
 }
 
-function iconAssignedStatus($status) {
+function iconAssignedStatus($status)
+{
 
     if ($status == 0)
         return "---";
@@ -941,9 +1107,11 @@ function iconAssignedStatus($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/accept.png' border='0'>";
 }
 
-function iconTeacherInClassSchedule($value) {
+function iconTeacherInClassSchedule($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
         case 1:
             return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user_go.png' border='0'>";
 
@@ -955,12 +1123,14 @@ function iconTeacherInClassSchedule($value) {
     }
 }
 
-function iconScheduleEvent() {
+function iconScheduleEvent()
+{
 
     return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/date-time.png' border='0'>";
 }
 
-function iconYESNO($status) {
+function iconYESNO($status)
+{
 
     if ($status > 0)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/tick.png' border='0'>";
@@ -968,7 +1138,8 @@ function iconYESNO($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/cross.png' border='0'>";
 }
 
-function iconHasSubstitute($status) {
+function iconHasSubstitute($status)
+{
 
     if ($status > 0)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/tick.png' border='0'>";
@@ -976,7 +1147,8 @@ function iconHasSubstitute($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/cross.png' border='0'>";
 }
 
-function iconTeacherInClass($status) {
+function iconTeacherInClass($status)
+{
 
     if ($status > 0)
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user.png' border='0'>";
@@ -984,22 +1156,27 @@ function iconTeacherInClass($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user_cross.png' border='0'>";
 }
 
-function callPercent($pts_possible, $pts_received) {
+function callPercent($pts_possible, $pts_received)
+{
     $percent = 0;
     if ($pts_received)
         $percent = round((100 / $pts_possible) * $pts_received, 2);
     return $percent;
 }
 
-function timeStrToSecond($timeStr) {
+function timeStrToSecond($timeStr)
+{
     // time string: 7:45
     $result = 0;
-    if ($timeStr != "") {
+    if ($timeStr != "")
+    {
         $timeArr = explode(":", $timeStr);
 
-        if ($timeArr) {
+        if ($timeArr)
+        {
             $HOUR = $timeArr[0];
-            if (isset($timeArr[1])) {
+            if (isset($timeArr[1]))
+            {
                 $MINUTES = substr($timeArr[1], 0, 2);
                 $SECOND = 0;
                 $result = $HOUR * 60 * 60 + $MINUTES * 60 + $SECOND;
@@ -1009,26 +1186,36 @@ function timeStrToSecond($timeStr) {
     return $result;
 }
 
-function secondToHour($seconds) {
+function secondToHour($seconds)
+{
     $hours = floor($seconds / 3600);
     $minutes = floor(($seconds - ($hours * 3600)) / 60);
     $seconds = round($seconds - ($hours * 3600) - ($minutes * 60), 0);
 
-    if ($hours <= 9) {
+    if ($hours <= 9)
+    {
         $strHours = "0" . $hours;
-    } else {
+    }
+    else
+    {
         $strHours = $hours;
     }
 
-    if ($minutes <= 9) {
+    if ($minutes <= 9)
+    {
         $strMinutes = "0" . $minutes;
-    } else {
+    }
+    else
+    {
         $strMinutes = $minutes;
     }
 
-    if ($seconds <= 9) {
+    if ($seconds <= 9)
+    {
         $strSeconds = "0" . $seconds;
-    } else {
+    }
+    else
+    {
         $strSeconds = $seconds;
     }
     return "$strHours:$strMinutes";
@@ -1039,7 +1226,8 @@ function secondToHour($seconds) {
  * $string = iconv("TIS-620","UTF-8",$string);
  *
  */
-function setICONV($value) {
+function setICONV($value)
+{
 
     //    switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
     //        case "THAI":
@@ -1053,7 +1241,8 @@ function setICONV($value) {
     return $value;
 }
 
-function setImportChartset($string) {
+function setImportChartset($string)
+{
 
     $searchArray = array(
         "\xed"
@@ -1087,7 +1276,8 @@ function setImportChartset($string) {
         , iconv("ISO-8859-1", "UTF-8", "\xe2")
     );
 
-    switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
+    switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
+    {
 
         case "VIETNAMESE":
             return trim(str_replace($searchArray, $replaceArray, $string));
@@ -1103,9 +1293,11 @@ function setImportChartset($string) {
     }
 }
 
-function setChartset($string) {
+function setChartset($string)
+{
 
-    switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
+    switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
+    {
 
         case "THAI":
             return utf8_decode(iconv("ISO-8859-1", "UTF-8", $string));
@@ -1115,7 +1307,8 @@ function setChartset($string) {
     }
 }
 
-function setBR($html) {
+function setBR($html)
+{
 
     $html1 = str_replace("\r", "<br>", $html);
     $html2 = str_replace("\n", "<br>", $html1);
@@ -1124,7 +1317,8 @@ function setBR($html) {
     return $html3;
 }
 
-function getTimeBlockName($endtime_block_morning, $endtime_block_afternoon, $value) {
+function getTimeBlockName($endtime_block_morning, $endtime_block_afternoon, $value)
+{
 
     if ($value <= $endtime_block_morning)
         return setICONV(MORNING);
@@ -1134,15 +1328,19 @@ function getTimeBlockName($endtime_block_morning, $endtime_block_afternoon, $val
         return setICONV(EVENING);
 }
 
-function findNameGradingTerm($value) {
-    switch ($value) {
+function findNameGradingTerm($value)
+{
+    switch ($value)
+    {
         case 'FIRST_SEMESTER': return FIRST_SEMESTER;
         case 'SECOND_SEMESTER': return SECOND_SEMESTER;
     }
 }
 
-function listGradingTerm($value) {
-    switch ($value) {
+function listGradingTerm($value)
+{
+    switch ($value)
+    {
         case 1:
             $data = array(
                 'FIRST_SEMESTER' => FIRST_SEMESTER
@@ -1167,7 +1365,8 @@ function listGradingTerm($value) {
     return $data;
 }
 
-function setFormatDate($d, $delimiter = "-") {
+function setFormatDate($d, $delimiter = "-")
+{
     list($y, $m, $d) = explode($delimiter, $d);
 
     if (strlen($d) == 1)
@@ -1178,34 +1377,45 @@ function setFormatDate($d, $delimiter = "-") {
     return $y . "-" . $m . "-" . $d;
 }
 
-function setAverageRound($a, $b) {
-    if ($b) {
+function setAverageRound($a, $b)
+{
+    if ($b)
+    {
         return round($a / $b, Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
-    } else {
+    }
+    else
+    {
         return round($a / 1, Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
     }
 }
 
-function displayRound($a) {
+function displayRound($a)
+{
 
-    if (is_numeric($a)) {
+    if (is_numeric($a))
+    {
         return round($a, Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
-    } else {
+    }
+    else
+    {
         return "---";
     }
 }
 
-function writeTempFile($source, $data, $id, $path = 'temp/') {
+function writeTempFile($source, $data, $id, $path = 'temp/')
+{
 
     $filename = false;
 
-    if ($data && $source) {
+    if ($data && $source)
+    {
         $extension_test = explode(".", $source);
         $extension = array_pop($extension_test);
 
         $filename = $path . $id;
         $filename .= "." . $extension;
-        if (is_file($filename)) {
+        if (is_file($filename))
+        {
             unlink($filename);
         }
 
@@ -1216,25 +1426,32 @@ function writeTempFile($source, $data, $id, $path = 'temp/') {
     return $filename;
 }
 
-function setViewColor($color, $value) {
+function setViewColor($color, $value)
+{
 
     return "<span style=\"font:bold 11px tahoma, helvetica, sans-serif;color:" . $color . ";\">" . $value . "</span>";
 }
 
-function calculatedPercent($value, $total, $sign = true) {
+function calculatedPercent($value, $total, $sign = true)
+{
 
-    if ($value && $total && $value != '---' && $total != '---') {
+    if ($value && $total && $value != '---' && $total != '---')
+    {
         $calculated = ($value / $total) * 100;
         $result = round($calculated, Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
-    } else {
+    }
+    else
+    {
         $result = 0;
     }
 
     return $sign ? $result . " %" : $result;
 }
 
-function getUserActivityName($value) {
-    switch ($value) {
+function getUserActivityName($value)
+{
+    switch ($value)
+    {
         case "UPDATE": return setICONV(UPDATE);
         case "CREATE": return setICONV(CREATE);
         case "REMOVE": return setICONV(REMOVE);
@@ -1243,7 +1460,8 @@ function getUserActivityName($value) {
 
 /* THOU MORNG - 23.06.2011 */
 
-function arraySortByKeyDate($tab, $key) {
+function arraySortByKeyDate($tab, $key)
+{
     $compare = create_function('$a,$b', ' 
             $_date1 = isset($a["' . $key . '"])?$a["' . $key . '"]:"";
             $_date2 = isset($b["' . $key . '"])?$b["' . $key . '"]:"";
@@ -1257,7 +1475,8 @@ function arraySortByKeyDate($tab, $key) {
 
 /* THOU MORNG - 05.01.2011 */
 
-function arraySortByKeyFloat($tab, $key) {
+function arraySortByKeyFloat($tab, $key)
+{
     $compare = create_function('$a,$b', 'if ($a["' . $key . '"] == $b["' . $key . '"]) {return 0;}else {return ($a["' . $key . '"] > $b["' . $key . '"]) ? -1 : 1;}');
     usort($tab, $compare);
     return $tab;
@@ -1265,13 +1484,15 @@ function arraySortByKeyFloat($tab, $key) {
 
 /* THOU MORNG - 05.01.2011 */
 
-function arraySortByKeyString($tab, $key) {
+function arraySortByKeyString($tab, $key)
+{
     $compare = create_function('$a,$b', 'if ($a["' . $key . '"] == $b["' . $key . '"]){return 0;}else {return ($a["' . $key . '"] < $b["' . $key . '"]) ? -1 : 1;}');
     usort($tab, $compare);
     return $tab;
 }
 
-function setAddress($street = false, $town = false, $postcode = false, $province = false) {
+function setAddress($street = false, $town = false, $postcode = false, $province = false)
+{
     $address = "";
     if ($street && $street != '---')
         $address .= $street . " ";
@@ -1285,14 +1506,16 @@ function setAddress($street = false, $town = false, $postcode = false, $province
     return $address ? $address : "---";
 }
 
-function checkNumericType($value) {
+function checkNumericType($value)
+{
     if (is_numeric($value))
         return $value;
     else
         return "---";
 }
 
-function is_char($chr) {
+function is_char($chr)
+{
     if (!$chr)
         return false;
     else
@@ -1300,14 +1523,19 @@ function is_char($chr) {
 }
 
 //VIK: 27.07.2011
-function deleteTemp() {
-    if (is_dir("./public/temp")) {
+function deleteTemp()
+{
+    if (is_dir("./public/temp"))
+    {
         chmod("public/temp", 777);
         $mydir = "public/temp/";
         $d = dir($mydir);
-        while ($file = $d->read()) {
-            if ($file != "..") {
-                if (isset($_SERVER["SERVER_ADDR"])) {
+        while ($file = $d->read())
+        {
+            if ($file != "..")
+            {
+                if (isset($_SERVER["SERVER_ADDR"]))
+                {
                     if ($_SERVER["SERVER_ADDR"] <> "127.0.0.1")
                         unlink("./public/temp/" . $file);
                     else
@@ -1317,7 +1545,8 @@ function deleteTemp() {
         }
         $d->close();
         return true;
-    } else {
+    } else
+    {
         return false;
     }
     return false;
@@ -1329,11 +1558,15 @@ function deleteTemp() {
  * @param $delimiter 
  * @return: the number in second 
  */
-function convertTimeInSecond($d, $delimiter = " ") {
+function convertTimeInSecond($d, $delimiter = " ")
+{
     $time = explode($delimiter, trim($d));
-    if (count($time) == 2) {
+    if (count($time) == 2)
+    {
         $time = explode(":", trim($time[1]));
-    } else {
+    }
+    else
+    {
         $time = explode(":", $d);
     }
     return $time[0] * 3600 + $time[1] * 60 + $time[2];
@@ -1346,13 +1579,15 @@ function convertTimeInSecond($d, $delimiter = " ") {
  * @param $delimiter
  * @return time format hh:mm:ss
  */
-function setFormatTime($t, $isForStartTime = true, $delimiter = "-") {
+function setFormatTime($t, $isForStartTime = true, $delimiter = "-")
+{
     $t = explode($delimiter, $t);
     $t = $isForStartTime ? trim($t[0]) : trim($t[1]);
     return $t . ":00";
 }
 
-function mround($number, $precision = 0) {
+function mround($number, $precision = 0)
+{
 
     $precision = ($precision == 0 ? 1 : $precision);
     $pow = pow(10, $precision);
@@ -1371,18 +1606,23 @@ function mround($number, $precision = 0) {
         return $ceil;
 }
 
-function timeDifference($date1, $date2) {
+function timeDifference($date1, $date2)
+{
 
     $date1 = strtotime($date1);
     $date2 = strtotime($date2);
-    if ($date2 < $date1) {
+    if ($date2 < $date1)
+    {
         return 1;
-    } else {
+    }
+    else
+    {
         return 0;
     }
 }
 
-function countDiffDate($date1, $date2) {
+function countDiffDate($date1, $date2)
+{
 
     $date1 = strtotime($date1);
     $date2 = strtotime($date2);
@@ -1391,14 +1631,16 @@ function countDiffDate($date1, $date2) {
     return $daysDiff;
 }
 
-function scaleImageFileToBlob($file) {
+function scaleImageFileToBlob($file)
+{
 
     $max_width = 300;
     $max_height = 300;
 
     list($width, $height, $image_type) = getimagesize($file);
 
-    switch ($image_type) {
+    switch ($image_type)
+    {
         case 1: $src = imagecreatefromgif($file);
             break;
         case 2: $src = imagecreatefromjpeg($file);
@@ -1411,13 +1653,18 @@ function scaleImageFileToBlob($file) {
     $x_ratio = $max_width / $width;
     $y_ratio = $max_height / $height;
 
-    if (($width <= $max_width) && ($height <= $max_height)) {
+    if (($width <= $max_width) && ($height <= $max_height))
+    {
         $tn_width = $width;
         $tn_height = $height;
-    } elseif (($x_ratio * $height) < $max_height) {
+    }
+    elseif (($x_ratio * $height) < $max_height)
+    {
         $tn_height = ceil($x_ratio * $height);
         $tn_width = $max_width;
-    } else {
+    }
+    else
+    {
         $tn_width = ceil($y_ratio * $width);
         $tn_height = $max_height;
     }
@@ -1425,7 +1672,8 @@ function scaleImageFileToBlob($file) {
     $tmp = imagecreatetruecolor($tn_width, $tn_height);
 
     /* Check if this image is PNG or GIF to preserve its transparency */
-    if (($image_type == 1) OR ( $image_type == 3)) {
+    if (($image_type == 1) OR ( $image_type == 3))
+    {
         imagealphablending($tmp, false);
         imagesavealpha($tmp, true);
         $transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
@@ -1441,7 +1689,8 @@ function scaleImageFileToBlob($file) {
      */
     ob_start();
 
-    switch ($image_type) {
+    switch ($image_type)
+    {
         case 1: imagegif($tmp);
             break;
         case 2: imagejpeg($tmp, NULL, 100);
@@ -1459,22 +1708,31 @@ function scaleImageFileToBlob($file) {
     return $final_image;
 }
 
-function getObjectStatus($object) {
+function getObjectStatus($object)
+{
 
-    if ($object) {
-        if ($object->STATUS) {
+    if ($object)
+    {
+        if ($object->STATUS)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
 
-function getFontColor($value) {
+function getFontColor($value)
+{
 
-    switch ($value) {
+    switch ($value)
+    {
         case "#000000":
         case "#993300":
         case "#333300":
@@ -1512,45 +1770,72 @@ function getFontColor($value) {
     }
 }
 
-function _format_bytes($a_bytes) {
+function _format_bytes($a_bytes)
+{
 
-    if (!$a_bytes) {
+    if (!$a_bytes)
+    {
         return $value = "";
-    } elseif ($a_bytes < 1024) {
+    }
+    elseif ($a_bytes < 1024)
+    {
         return $value = $a_bytes . ' B';
-    } elseif ($a_bytes < 1048576) {
+    }
+    elseif ($a_bytes < 1048576)
+    {
         return $value = round($a_bytes / 1024, 2) . ' KB';
-    } elseif ($a_bytes < 1073741824) {
+    }
+    elseif ($a_bytes < 1073741824)
+    {
         return $value = round($a_bytes / 1048576, 2) . ' MB';
-    } elseif ($a_bytes < 1099511627776) {
+    }
+    elseif ($a_bytes < 1099511627776)
+    {
         return $value = round($a_bytes / 1073741824, 2) . ' GB';
-    } elseif ($a_bytes < 1125899906842624) {
+    }
+    elseif ($a_bytes < 1125899906842624)
+    {
         return $value = round($a_bytes / 1099511627776, 2) . ' TB';
-    } elseif ($a_bytes < 1152921504606846976) {
+    }
+    elseif ($a_bytes < 1152921504606846976)
+    {
         return $value = round($a_bytes / 1125899906842624, 2) . ' PB';
-    } elseif ($a_bytes < 1180591620717411303424) {
+    }
+    elseif ($a_bytes < 1180591620717411303424)
+    {
         return $value = round($a_bytes / 1152921504606846976, 2) . ' EB';
-    } elseif ($a_bytes < 1208925819614629174706176) {
+    }
+    elseif ($a_bytes < 1208925819614629174706176)
+    {
         return $value = round($a_bytes / 1180591620717411303424, 2) . ' ZB';
-    } else {
+    }
+    else
+    {
         return $value = round($a_bytes / 1208925819614629174706176, 2) . ' YB';
     }
 
     return ($value) ? "(" . $value . ")" : "";
 }
 
-function setScoreFormat($value) {
+function setScoreFormat($value)
+{
 
-    if (is_numeric($value)) {
+    if (is_numeric($value))
+    {
         return number_format($value, 1, '.', '');
-    } else {
+    }
+    else
+    {
         return $value;
     }
 }
 
-function getFielTypeIcon($value) {
-    if ($value) {
-        switch ($value) {
+function getFielTypeIcon($value)
+{
+    if ($value)
+    {
+        switch ($value)
+        {
             case "application/msword":
                 return "icon-page_word";
             case "application/vnd.ms-word":
@@ -1570,12 +1855,15 @@ function getFielTypeIcon($value) {
             default:
                 return "icon-message_information";
         }
-    } else {
+    }
+    else
+    {
         return "icon-message_information";
     }
 }
 
-function checkPermittedFileFormat($file_extension) {
+function checkPermittedFileFormat($file_extension)
+{
 
     $mime_types = array(
         'txt' => 'text/plain',
@@ -1628,14 +1916,18 @@ function checkPermittedFileFormat($file_extension) {
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     );
 
-    if (array_key_exists($file_extension, $mime_types)) {
+    if (array_key_exists($file_extension, $mime_types))
+    {
         return true;
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
 
-function splitFile($filename) {
+function splitFile($filename)
+{
 
     $data = array();
 
@@ -1645,17 +1937,20 @@ function splitFile($filename) {
     $data["EXTENSION"] = $extension;
 }
 
-function getFileExtension($filename) {
+function getFileExtension($filename)
+{
     $i = explode('.', $filename);
     return strtolower(end($i));
 }
 
-function setDateToSecond($data) {
+function setDateToSecond($data)
+{
 
     return strtotime("" . $data . " 00:00:00");
 }
 
-function getMonthsBy2Date($date1, $date2) {
+function getMonthsBy2Date($date1, $date2)
+{
     //convert dates to UNIX timestamp
     $months = array();
     $time1 = strtotime($date1);
@@ -1664,9 +1959,11 @@ function getMonthsBy2Date($date1, $date2) {
 
     $months[] = array("month" => date('F', $time1), "year" => date('Y', $time1));
 
-    while ($time1 < $time2) {
+    while ($time1 < $time2)
+    {
         $time1 = strtotime(date('Y-m-d', $time1) . ' +1 month');
-        if (date('mY', $time1) != $tmp && ($time1 < $time2)) {
+        if (date('mY', $time1) != $tmp && ($time1 < $time2))
+        {
             $months[] = array("month" => date('F', $time1), "year" => date('Y', $time1));
         }
     }
@@ -1674,7 +1971,8 @@ function getMonthsBy2Date($date1, $date2) {
     return $months; //returns array of month names with year
 }
 
-function getMimeContentType($filename) {
+function getMimeContentType($filename)
+{
 
     $mime_types = array(
         'txt' => 'text/plain',
@@ -1726,34 +2024,43 @@ function getMimeContentType($filename) {
     );
 
     $ext = pathinfo($filename, PATHINFO_EXTENSION);
-    if (array_key_exists($ext, $mime_types)) {
+    if (array_key_exists($ext, $mime_types))
+    {
         return $mime_types [$ext];
-    } elseif (function_exists('finfo_open')) {
+    }
+    elseif (function_exists('finfo_open'))
+    {
         $finfo = finfo_open(FILEINFO_MIME);
         $mimetype = finfo_file($finfo, $filename);
         finfo_close($finfo);
         return $mimetype;
-    } else {
+    }
+    else
+    {
         return 'application/octet-stream';
     }
 }
 
 //Chuy Thong
 //29/06/2012
-function jsonCountGender($total) {
+function jsonCountGender($total)
+{
     $amount = 0;
     $sexcount = array();
-    if (isset($total['MALE']) && $total['MALE'] != 0) {
+    if (isset($total['MALE']) && $total['MALE'] != 0)
+    {
         $sexcount[] = array("'" . constant("MALE") . "'", $total['MALE']);
         $amount += $total['MALE'];
     }
 
-    if (isset($total['FEMALE']) && $total['FEMALE'] != 0) {
+    if (isset($total['FEMALE']) && $total['FEMALE'] != 0)
+    {
         $sexcount[] = array("'" . constant("FEMALE") . "'", $total['FEMALE']);
         $amount += $total['FEMALE'];
     }
 
-    if (isset($total['UNKNOWN']) && $total['UNKNOWN'] != 0) {
+    if (isset($total['UNKNOWN']) && $total['UNKNOWN'] != 0)
+    {
         $sexcount[] = array("'" . constant("UNKNOWN") . "'", $total['UNKNOWN']);
         $amount += $total['UNKNOWN'];
     }
@@ -1763,8 +2070,10 @@ function jsonCountGender($total) {
 }
 
 // Chuy Thong 01/07/2012
-function getStudentStatusConstant($student_status) {
-    switch ($student_status) {
+function getStudentStatusConstant($student_status)
+{
+    switch ($student_status)
+    {
         case 'POSTPONEMENT':
             return defined("POSTPONE_STUDENT") ? POSTPONE_STUDENT : '';
         case 'ABANDONMENT':
@@ -1777,11 +2086,13 @@ function getStudentStatusConstant($student_status) {
 }
 
 // Chuy Thong 02/07/2012
-function jsonBornYear($total) {
+function jsonBornYear($total)
+{
     $amount = 0;
     $count = array();
     ksort($total);
-    foreach ($total as $k => $v) {
+    foreach ($total as $k => $v)
+    {
         $count[] = array("'" . $k . "'", $v);
         $amount += $v;
     }
@@ -1789,12 +2100,14 @@ function jsonBornYear($total) {
     return $count;
 }
 
-function setDate2Time($date) {
+function setDate2Time($date)
+{
     //2009-02-01
     return strtotime($date);
 }
 
-function getDatesBetween2Dates($d1, $d2) {
+function getDatesBetween2Dates($d1, $d2)
+{
 
     $day = 86400;
     $format = 'Y-m-d';
@@ -1803,9 +2116,11 @@ function getDatesBetween2Dates($d1, $d2) {
 
     $days = array();
 
-    if ($d1 && $d2) {
+    if ($d1 && $d2)
+    {
         $numDays = round(($d2 - $d1) / $day) + 1;
-        for ($i = 0; $i < $numDays; $i++) {
+        for ($i = 0; $i < $numDays; $i++)
+        {
             $days[] = date($format, ($d1 + ($i * $day)));
         }
     }
@@ -1813,77 +2128,96 @@ function getDatesBetween2Dates($d1, $d2) {
     return $days;
 }
 
-function calculateTax($amount, $percentTax) {
+function calculateTax($amount, $percentTax)
+{
 
     $result = 0;
-    if ($amount && $percentTax) {
+    if ($amount && $percentTax)
+    {
         $result = getNumberFormat($amount * $percentTax / 100);
     }
 
     return $result;
 }
 
-function calculateTaxPlus($amount, $percentTax) {
+function calculateTaxPlus($amount, $percentTax)
+{
 
     $result = 0;
     $calculateTax = calculateTax($amount, $percentTax);
-    if ($amount) {
+    if ($amount)
+    {
         $result = getNumberFormat($amount + str2no($calculateTax));
     }
 
     return $result;
 }
 
-function calculateTaxMinus($amount, $percentTax) {
+function calculateTaxMinus($amount, $percentTax)
+{
 
     $result = 0;
     $calculateTax = calculateTax($amount, $percentTax);
-    if ($amount > $calculateTax) {
+    if ($amount > $calculateTax)
+    {
         $result = getNumberFormat($amount - str2no($calculateTax));
     }
 
     return $result;
 }
 
-function str2no($number) {
+function str2no($number)
+{
     $number = str_replace(".", "", addText($number));
     $number = str_replace(",", ".", addText($number));
     return is_numeric(addText($number)) ? addText($number) : "";
 }
 
-function calculateScholarship($amountValue, $percentValue) {
+function calculateScholarship($amountValue, $percentValue)
+{
 
     $result = 0;
-    if ($amountValue && $percentValue) {
+    if ($amountValue && $percentValue)
+    {
         $result = $amountValue * $percentValue / 100;
     }
 
     return $result;
 }
 
-function checkFuturDate($date) {
+function checkFuturDate($date)
+{
     $date = strtotime($date);
     $today = strtotime(getCurrentDBDate());
-    if ($date > $today) {
+    if ($date > $today)
+    {
         return false;
-    } elseif ($date < $today) {
+    }
+    elseif ($date < $today)
+    {
         return true;
     }
 }
 
-function isUTF8($string) {
+function isUTF8($string)
+{
 
-    if (mb_detect_encoding($string, 'UTF-8, ISO-8859-1') === 'UTF-8') {
+    if (mb_detect_encoding($string, 'UTF-8, ISO-8859-1') === 'UTF-8')
+    {
         return 1;
-    } else {
+    }
+    else
+    {
         return 0;
     }
 }
 
-function is_utf8($str) {
+function is_utf8($str)
+{
     $strlen = strlen($str);
     return $result = 1;
-    for ($i = 0; $i < $strlen; $i++) {
+    for ($i = 0; $i < $strlen; $i++)
+    {
         $ord = ord($str[$i]);
         if ($ord < 0x80)
             continue; // 0bbbbbbb
@@ -1896,18 +2230,21 @@ function is_utf8($str) {
         else
             return $result = 0; // ungültiges UTF-8-Zeichen
         for ($c = 0; $c < $n; $c++) // $n Folgebytes? // 10bbbbbb
-            if (++$i === $strlen || (ord($str[$i]) & 0xC0) !== 0x80) {
+            if (++$i === $strlen || (ord($str[$i]) & 0xC0) !== 0x80)
+            {
                 return $result = 0; // ungültiges UTF-8-Zeichen       
             }
     }
     return $result; // kein ungültiges UTF-8-Zeichen gefunden
 }
 
-function firstDayOfMonth() {
+function firstDayOfMonth()
+{
     return date("Y-m-d", mktime(0, 0, 0, date("m"), 1, date("Y")));
 }
 
-function lastDayOfMonth() {
+function lastDayOfMonth()
+{
     return date("Y-m-d", mktime(0, 0, 0, date("m") + 1, 0, date("Y")));
 }
 
@@ -1915,11 +2252,14 @@ function lastDayOfMonth() {
 //Remove duplicate array entries
 //$a = array(1, 5, 8, 'Michael', 5, 4, 9, 'Martin', 18, 12, 'Michael', 4, 12);
 ////////////////////////////////////////////////////////////////////////////////
-function removeDuplicates($array) {
+function removeDuplicates($array)
+{
     $counts = array_count_values($array);
 
-    foreach ($counts as $value => $counter) {
-        if ($counter > 1) {
+    foreach ($counts as $value => $counter)
+    {
+        if ($counter > 1)
+        {
             unset($counts[$value]);
         }
     }
@@ -1927,21 +2267,25 @@ function removeDuplicates($array) {
     return array_keys($counts);
 }
 
-function getFirstDayOfMonth($month, $year) {
+function getFirstDayOfMonth($month, $year)
+{
     return date('Y-m-d', mktime(0, 0, 0, $month, 1, $year));
 }
 
-function getLastDayOfMonth($month, $year) {
+function getLastDayOfMonth($month, $year)
+{
 
     return date('Y-m-d', mktime(0, 0, 0, $month, date('t', strtotime(getFirstDayOfMonth($month, $year))), $year));
 }
 
-function getDecimalPlaces() {
+function getDecimalPlaces()
+{
 
     return trim(Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
 }
 
-function number_is_between($number, $a, $b) {
+function number_is_between($number, $a, $b)
+{
     $min = min($a, $b);
     $max = max($a, $b);
     if ($number < $min)
@@ -1951,7 +2295,8 @@ function number_is_between($number, $a, $b) {
     return TRUE;
 }
 
-function floatArrayCountValues($digits) {
+function floatArrayCountValues($digits)
+{
 
     $newDigits = array();
     foreach ($digits as $key => $value)
@@ -1965,12 +2310,15 @@ function floatArrayCountValues($digits) {
     return array_count_values($newDigits);
 }
 
-function setEncryptId($valueId) {
+function setEncryptId($valueId)
+{
     $arr = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "c", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "C", "V", "W", "X", "Y", "Z");
     $str1 = "";
-    for ($i = 0; $i < strlen($valueId); $i++) {
+    for ($i = 0; $i < strlen($valueId); $i++)
+    {
         $str2 = "";
-        for ($j = 0; $j < 5; $j++) {
+        for ($j = 0; $j < 5; $j++)
+        {
             $r = rand(0, 50);
             $str2.=$arr[$r];
         }
@@ -1979,18 +2327,22 @@ function setEncryptId($valueId) {
     return strrev($str1);
 }
 
-function getDescryptId($EncryptId) {
+function getDescryptId($EncryptId)
+{
     $str1 = "";
     $str2 = "";
     $str1 = strrev($EncryptId);
-    for ($i = 0; $i < strlen($str1); $i+=6) {
+    for ($i = 0; $i < strlen($str1); $i+=6)
+    {
         $str2.=substr($str1, $i, 1);
     }
     return $str2;
 }
 
-function getColorIndex($color) {
-    switch ($color) {
+function getColorIndex($color)
+{
+    switch ($color)
+    {
         case "#000000":
             return 111;
         case "#800000":
@@ -2074,14 +2426,17 @@ function getColorIndex($color) {
     }
 }
 
-function current_age($birthdate) {
+function current_age($birthdate)
+{
     return( floor((time() - strtotime($birthdate)) / 31536000) );
 }
 
 // Converts array elements to a CSV string
-function csv($array) {
+function csv($array)
+{
     $csv = "";
-    for ($i = 0; $i < count($array); $i++) {
+    for ($i = 0; $i < count($array); $i++)
+    {
         $csv .= '"' . str_replace('"', '""', $array[$i]) . '"';
         if ($i < count($array) - 1)
             $csv .= ",";
@@ -2089,39 +2444,50 @@ function csv($array) {
     return $csv;
 }
 
-function displayNumberFormat($value) {
+function displayNumberFormat($value)
+{
 
-    switch (Zend_Registry::get('SCHOOL')->CAMEMIS_DATE_FORMAT) {
+    switch (Zend_Registry::get('SCHOOL')->CAMEMIS_DATE_FORMAT)
+    {
         case 0:
-            if (is_string($value)) {
+            if (is_string($value))
+            {
                 $result = $value;
             }
-            if (is_int($value)) {
+            if (is_int($value))
+            {
                 $result = $value;
             }
-            if (is_float($value)) {
+            if (is_float($value))
+            {
                 $result = str_replace(".", ".", (float) $value);
             }
             break;
         case 1:
-            if (is_string($value)) {
+            if (is_string($value))
+            {
                 $result = $value;
             }
-            if (is_int($value)) {
+            if (is_int($value))
+            {
                 $result = $value;
             }
-            if (is_float($value)) {
+            if (is_float($value))
+            {
                 $result = str_replace(".", ",", (float) $value);
             }
             break;
         default:
-            if (is_string($value)) {
+            if (is_string($value))
+            {
                 $result = $value;
             }
-            if (is_int($value)) {
+            if (is_int($value))
+            {
                 $result = $value;
             }
-            if (is_float($value)) {
+            if (is_float($value))
+            {
                 $result = str_replace(".", ".", (float) $value);
             }
             break;
@@ -2129,9 +2495,11 @@ function displayNumberFormat($value) {
     return $result;
 }
 
-function setDatetimeFormat($datetime) {
+function setDatetimeFormat($datetime)
+{
 
-    switch (getSystemDateFormat()) {
+    switch (getSystemDateFormat())
+    {
         case "DD.MM.YYYY": $format = "YYYY-MM-dd HH:mm:ss";
             break;
         case "DD-MM-YYYY": $format = "YYYY-MM-dd HH:mm:ss";
@@ -2152,11 +2520,14 @@ function setDatetimeFormat($datetime) {
     return $Date->toString("" . $format);
 }
 
-function showSeconds2Date($seconds) {
+function showSeconds2Date($seconds)
+{
 
-    if ($seconds) {
+    if ($seconds)
+    {
         $format = date('Y-m-d', $seconds);
-        switch (getSystemDateFormat()) {
+        switch (getSystemDateFormat())
+        {
             case "DD.MM.YYYY": $format = date('d.m.Y', $seconds);
                 break;
             case "DD-MM-YYYY": $format = date('d-m-Y', $seconds);
@@ -2172,18 +2543,23 @@ function showSeconds2Date($seconds) {
             default: $format = date('Y-m-d', $seconds);
                 break;
         }
-    } else {
+    }
+    else
+    {
         $format = "---";
     }
     return $format;
 }
 
-function checkColHidden($index, $data) {
+function checkColHidden($index, $data)
+{
     return isset($data[$index]) ? "true" : "false";
 }
 
-function getColorFromIndex($index) {
-    switch ($index) {
+function getColorFromIndex($index)
+{
+    switch ($index)
+    {
         case 0:
             return "#FF0000";
         case 1:
@@ -2259,18 +2635,23 @@ function getColorFromIndex($index) {
     }
 }
 
-function sortByOrder(&$array, $key) {
+function sortByOrder(&$array, $key)
+{
     $sorter = array();
     $ret = array();
     reset($array);
-    foreach ($array as $ii => $va) {
-        if (isset($va[$key])) {
+    foreach ($array as $ii => $va)
+    {
+        if (isset($va[$key]))
+        {
             $sorter[$ii] = $va[$key];
         }
     }
     asort($sorter);
-    foreach ($sorter as $ii => $va) {
-        if (isset($array[$ii])) {
+    foreach ($sorter as $ii => $va)
+    {
+        if (isset($array[$ii]))
+        {
             $ret[$ii] = $array[$ii];
         }
     }
@@ -2278,17 +2659,20 @@ function sortByOrder(&$array, $key) {
 }
 
 // find number of days between two dates
-function findDaysFrom2Dates($datetime1, $datetime2) {
+function findDaysFrom2Dates($datetime1, $datetime2)
+{
     $datetime1 = $datetime1 ? $datetime1 : time();
     $datediff = $now - $datetime2;
     return floor($datediff / (60 * 60 * 24));
 }
 
-function showFileSize($file) {
+function showFileSize($file)
+{
     $a = array("B", "KB", "MB", "GB", "TB", "PB");
     $pos = 0;
     $size = filesize($file);
-    while ($size >= 1024) {
+    while ($size >= 1024)
+    {
         $size /= 1024;
         $pos++;
     }
@@ -2296,25 +2680,31 @@ function showFileSize($file) {
     return $result;
 }
 
-function compressMultiSpacesToSingleSpace($inputstring) {
-    if (!(strpos($inputstring, '  ') === false)) {
+function compressMultiSpacesToSingleSpace($inputstring)
+{
+    if (!(strpos($inputstring, '  ') === false))
+    {
         $inputstring = str_replace('  ', ' ', $inputstring);
         $inputstring = compressMultiSpacesToSingleSpace($inputstring);
     }
     return $inputstring;
 }
 
-function get_file_name_extension($filenamestring) {
+function get_file_name_extension($filenamestring)
+{
     return substr(strrchr($filenamestring, '.'), 1);
 }
 
-function delete_directory($dirname) {
+function delete_directory($dirname)
+{
     if (is_dir($dirname))
         $dir_handle = opendir($dirname);
     if (!$dir_handle)
         return false;
-    while ($file = readdir($dir_handle)) {
-        if ($file != "." && $file != "..") {
+    while ($file = readdir($dir_handle))
+    {
+        if ($file != "." && $file != "..")
+        {
             if (!is_dir($dirname . "/" . $file))
                 unlink($dirname . "/" . $file);
             else
@@ -2326,42 +2716,57 @@ function delete_directory($dirname) {
     return true;
 }
 
-function delete_files($target) {
-    if (is_dir($target)) {
+function delete_files($target)
+{
+    if (is_dir($target))
+    {
         $files = glob($target . '*', GLOB_MARK); //GLOB_MARK adds a slash to directories returned
 
-        foreach ($files as $file) {
+        foreach ($files as $file)
+        {
             delete_files($file);
         }
 
         rmdir($target);
-    } elseif (is_file($target)) {
+    }
+    elseif (is_file($target))
+    {
         unlink($target);
     }
 }
 
-function getRealIpAddr() {
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
+function getRealIpAddr()
+{
+    if (!empty($_SERVER['HTTP_CLIENT_IP']))
+    {   //check ip from share internet
         $ip = $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
+    }
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+    {   //to check ip is pass from proxy
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else {
+    }
+    else
+    {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
     return $ip;
 }
 
-function getGroupAssoc($array, $key) {
+function getGroupAssoc($array, $key)
+{
     $data = array();
-    foreach ($array as $v) {
+    foreach ($array as $v)
+    {
         $data[$v[$key]][] = $v;
     }
     return $data;
 }
 
-function getMonthYearByDateStr($value) {
+function getMonthYearByDateStr($value)
+{
     $data = array();
-    if ($value) {
+    if ($value)
+    {
         $explode = explode('-', $value);
         $data["YEAR"] = isset($explode[0]) ? $explode[0] : "";
         $data["MONTH"] = isset($explode[1]) ? $explode[1] : "";
@@ -2370,27 +2775,38 @@ function getMonthYearByDateStr($value) {
     return (object) $data;
 }
 
-function getFullName($firstname, $lastname) {
-    if (!SchoolDBAccess::displayPersonNameInGrid()) {
+function getFullName($firstname, $lastname)
+{
+    if (!SchoolDBAccess::displayPersonNameInGrid())
+    {
         return setShowText($lastname) . " " . setShowText($firstname);
-    } else {
+    }
+    else
+    {
         return setShowText($firstname) . " " . setShowText($lastname);
     }
 }
 
-function getScoreRank($scoreList, $checkSchore) {
+function getScoreRank($scoreList, $checkSchore)
+{
 
     $position = 0;
     $result = count($scoreList);
 
-    if (is_numeric($checkSchore)) {
+    if (is_numeric($checkSchore))
+    {
 
-        if ($scoreList) {
+        if ($scoreList)
+        {
             rsort($scoreList);
-            if ($scoreList) {
-                foreach ($scoreList as $key => $value) {
-                    if ($key) {
-                        if ($value == $checkSchore) {
+            if ($scoreList)
+            {
+                foreach ($scoreList as $key => $value)
+                {
+                    if ($key)
+                    {
+                        if ($value == $checkSchore)
+                        {
                             $position = $key;
                             break;
                         }
@@ -2399,7 +2815,8 @@ function getScoreRank($scoreList, $checkSchore) {
             }
 
             $ranks = array(1);
-            for ($i = 1; $i < count($scoreList); $i++) {
+            for ($i = 1; $i < count($scoreList); $i++)
+            {
                 if ($scoreList[$i] != $scoreList[$i - 1])
                     $ranks[$i] = $i + 1;
                 else
@@ -2408,7 +2825,8 @@ function getScoreRank($scoreList, $checkSchore) {
 
             $result = isset($ranks[$position]) ? $ranks[$position] : count($scoreList);
         }
-    }else {
+    }else
+    {
         $result = "---";
     }
 
@@ -2418,11 +2836,14 @@ function getScoreRank($scoreList, $checkSchore) {
 ////////////////////////////////////////////////////////////////////////////////
 //Check and return duplicates array
 ////////////////////////////////////////////////////////////////////////////////
-function returndup($array) {
+function returndup($array)
+{
     $results = array();
     $duplicates = array();
-    foreach ($array as $item) {
-        if (in_array($item, $results)) {
+    foreach ($array as $item)
+    {
+        if (in_array($item, $results))
+        {
             $duplicates[] = $item;
         }
 

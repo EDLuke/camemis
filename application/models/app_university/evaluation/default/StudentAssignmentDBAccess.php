@@ -850,7 +850,7 @@ class StudentAssignmentDBAccess {
             }
         }
 
-        return setRound($result);
+        return displayRound($result);
     }
 
     protected function check100Percent($subjectId, $term, $assignmentId) {

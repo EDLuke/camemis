@@ -732,27 +732,27 @@ class StudentSubjectAssessment extends StudentAssignmentDBAccess {
             case 1:
                 if (is_numeric($AVG_FIRST_SEMSTER))
                 {
-                    $result = setRound(($AVG_FIRST_SEMSTER) / ($firstCoeff));
+                    $result = displayRound(($AVG_FIRST_SEMSTER) / ($firstCoeff));
                 }
                 break;
             case 2:
                 if (is_numeric($AVG_SECOND_SEMSTER))
                 {
-                    $result = setRound(($AVG_SECOND_SEMSTER) / ($secondCoeff));
+                    $result = displayRound(($AVG_SECOND_SEMSTER) / ($secondCoeff));
                 }
                 break;
             default:
                 if (is_numeric($AVG_FIRST_SEMSTER) && is_numeric($AVG_SECOND_SEMSTER))
                 {
-                    $result = setRound(($AVG_FIRST_SEMSTER + $AVG_SECOND_SEMSTER) / ($firstCoeff + $secondCoeff));
+                    $result = displayRound(($AVG_FIRST_SEMSTER + $AVG_SECOND_SEMSTER) / ($firstCoeff + $secondCoeff));
                 }
                 elseif (is_numeric($AVG_FIRST_SEMSTER) && !is_numeric($AVG_SECOND_SEMSTER))
                 {
-                    $result = setRound(($AVG_FIRST_SEMSTER) / ($firstCoeff));
+                    $result = displayRound(($AVG_FIRST_SEMSTER) / ($firstCoeff));
                 }
                 elseif (!is_numeric($AVG_FIRST_SEMSTER) && is_numeric($AVG_SECOND_SEMSTER))
                 {
-                    $result = setRound(($AVG_SECOND_SEMSTER) / ($secondCoeff));
+                    $result = displayRound(($AVG_SECOND_SEMSTER) / ($secondCoeff));
                 }
                 break;
         }

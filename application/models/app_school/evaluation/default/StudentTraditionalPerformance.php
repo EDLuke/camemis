@@ -363,7 +363,7 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
             }
         }
         if (is_numeric($sumAvg) && is_numeric($sumCoeff)) {
-            $result = setRound($sumAvg / $sumCoeff);
+            $result = displayRound($sumAvg / $sumCoeff);
         }
 
         return $result;
@@ -416,7 +416,7 @@ class StudentTraditionalPerformance extends StudentSubjectAssessment {
                         if (is_numeric($FIRST_SEMESTER) && is_numeric($SECOND_SEMESTER)) {
                             $COEFF = $COEFF_FS + $COEFF_SS;
                             if ($COEFF)
-                                $result = setRound(($FIRST_SEMESTER * $COEFF_FS + $SECOND_SEMESTER * $COEFF_SS) / $COEFF);
+                                $result = displayRound(($FIRST_SEMESTER * $COEFF_FS + $SECOND_SEMESTER * $COEFF_SS) / $COEFF);
                         } elseif (is_numeric($FIRST_SEMESTER) && !is_numeric($SECOND_SEMESTER)) {
                             $result = $FIRST_SEMESTER;
                         } elseif (!is_numeric($FIRST_SEMESTER) && is_numeric($SECOND_SEMESTER)) {

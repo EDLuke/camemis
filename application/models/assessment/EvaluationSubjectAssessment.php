@@ -27,6 +27,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     const SCORE_TYPE_CHAR = 2;
 
     /**
+     * Evaluation type: (number, percent)
+     */
+    const EVALUATION_TYPE_COEFF = 0;
+    const EVALUATION_TYPE_PERCENT = 1;
+
+    /**
      * Formular for year result of subject
      */
     const AVG_S1 = 1;

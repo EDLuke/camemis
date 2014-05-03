@@ -275,6 +275,11 @@ abstract class AssessmentProperties {
         return $this->getSubject()->AVERAGE_FROM_SEMESTER;
     }
 
+    public function getSettingEvaluationType()
+    {
+        return $this->getCurrentClass()->EVALUATION_TYPE;
+    }
+
 }
 
 ?>

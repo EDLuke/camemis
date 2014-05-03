@@ -1605,7 +1605,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             }
         }
 
-        return setRound($result);
+        return displayRound($result);
     }
     public function getAllAssignmentsInScoreInputDateTraining($subjectId = false, $assignmentId = false,  $setInclude = false) {
 
@@ -1925,7 +1925,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             }
         }
         if (is_numeric($sumAvg) && is_numeric($sumCoeff)) {
-            $result = setRound($sumAvg / $sumCoeff);
+            $result = displayRound($sumAvg / $sumCoeff);
         }
 
         return $result;
