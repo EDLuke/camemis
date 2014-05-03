@@ -195,7 +195,10 @@ class AcademicPerformances extends AssessmentProperties {
 
             $data = $this->listStudentsData();
 
-            $scoreList = $this->getScoreListYearClassPerformance($stdClass);
+            $scoreList = SQLAcademicPerformances::scoreListClassPerformance(
+                            $this->listClassStudents()
+                            , $stdClass
+            );
 
             $i = 0;
             foreach ($this->listClassStudents() as $value)
@@ -324,7 +327,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         return $data;
     }
-    
+
     public function getAverageYearStudentClassPerformance($stdClass)
     {
         $output = "---";

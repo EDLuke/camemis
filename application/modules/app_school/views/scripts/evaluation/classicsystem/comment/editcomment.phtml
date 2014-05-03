@@ -1,66 +1,123 @@
 <?
 require_once("Zend/Loader.php");
 require_once 'clients/CamemisPage.php';
-require_once 'models/app_school/academic/AcademicDBAccess.php';
-require_once 'models/app_school/subject/SubjectDBAccess.php';
+require_once 'models/assessment/SQLEvaluationStudentSubject.php';
+require_once 'models/assessment/SQLAcademicPerformances.php';
 require_once setUserLoacalization();
 
-if ($_POST){
+$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
+$studentId = isset($_GET["studentId"])?addText($_GET["studentId"]):"";
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
+$section = isset($_GET["section"])?addText($_GET["section"]):"";
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
+
+$stdClass = new stdClass;
+$stdClass->studentId = $studentId;
+$stdClass->academicId = $academicId;
+$stdClass->term = $term;
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+$stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
     
-    $subjectId = isset($_POST["subjectId"])?$_POST["subjectId"]:"";
-    $studentId = isset($_POST["id"])?$_POST["id"]:"";
-    $academicId = isset($_POST["academicId"])?$_POST["academicId"]:"";
-    $monthyear = isset($_POST["monthyear"])?$_POST["monthyear"]:"";
-    $section = isset($_POST["section"])?$_POST["section"]:"";
-    $term = isset($_POST["term"])?$_POST["term"]:"";
+if($monthyear){
     
-    if($subjectId){
-        $useObject = StudentSubjectAssessment::getInstance();
-        $useObject->jsonActionStudentSubjectAssessment($_POST,true);
-    }else{
-        $useObject = StudentTraditionalPerformance::getInstance();
-        $useObject->jsonActionStudentClassPerformance($_POST,true);
-    }
-    
-    header("Location: ".$_SERVER['REQUEST_URI']."");
-}else{
-    
-    $section = isset($_GET['section'])?$_GET['section']:"";
-    $subjectId = isset($_GET['subjectId'])?$_GET['subjectId']:"";
-    $academicId = $this->academicId;
-    $monthyear = $this->monthyear;
-    $studentId = $this->studentId;
-    $term = $this->term;
+    $year = getYearFromMonthYear($monthyear);
+    $month = getMonthNumberFromMonthYear($monthyear);
+}
+
+$stdClass->month = $month;
+$stdClass->year = $year;
+
+switch ($section)
+{
+    case 1:
+        $stdClass->section = "MONTH";
+        break;
+    case 2:
+        $stdClass->section = "SEMESTER";
+        break;
+    case 3:
+        $stdClass->section = "YEAR";
+        break;
+    case 4:
+        $stdClass->section = "TERM";
+        break;
+    case 5:
+        $stdClass->section = "QUARTER";
+        break;
 }
 
 if($subjectId){
     
-    $useObject = StudentSubjectAssessment::getInstance();
-    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-    $useObject->academicId = $academicObject->ID;
-    $useObject->section = $section;
-    $useObject->term = $term;
-    if($monthyear){
-        $useObject->month = getMonthNumberFromMonthYear($monthyear);
-        $useObject->year = getYearFromMonthYear($monthyear);
-    }
-    $facette = $useObject->getStudentSubjectAssessment($studentId, $subjectId,false);
+    $stdClass->subjectId = $subjectId;
+    $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     
 }else{
-    $useObject = StudentTraditionalPerformance::getInstance();
-    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-    $useObject->academicId = $academicObject->ID;
-    $useObject->studentId = $studentId;
-    $useObject->section = $section;
-    $useObject->term = $term;
-
-    if($monthyear){
-        $useObject->month = getMonthNumberFromMonthYear($monthyear);
-        $useObject->year = getYearFromMonthYear($monthyear);
-    }
-    $facette = $useObject->getStudentPerformance();
+    
+    $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
 }
+
 $TEACHER_COMMENT = $facette?$facette->TEACHER_COMMENT:"---";
+
+if ($_POST){
+    
+    $stdClass = new stdClass;
+    
+    $studentId = isset($_POST["studentId"])?addText($_POST["studentId"]):"";
+    $term = isset($_POST["term"])?addText($_POST["term"]):"";
+    $subjectId = isset($_POST["subjectId"])?addText($_POST["subjectId"]):"";
+    $monthyear = isset($_POST["monthyear"])?addText($_POST["monthyear"]):"";
+    $section = isset($_POST["section"])?addText($_POST["section"]):"";
+    $academicId = isset($_POST["academicId"])?addText($_POST["academicId"]):"";
+    
+    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+    $stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
+    
+    if($monthyear){
+        $year = getYearFromMonthYear($monthyear);
+        $month = getMonthNumberFromMonthYear($monthyear);
+    }
+    
+    $stdClass->month = $month;
+    $stdClass->year = $year;
+
+    switch ($section)
+    {
+        case 1:
+            $stdClass->section = "MONTH";
+        break;
+        case 2:
+            $stdClass->section = "SEMESTER";
+        break;
+        case 3:
+            $stdClass->section = "YEAR";
+        break;
+        case 4:
+            $stdClass->section = "TERM";
+        break;
+        case 5:
+            $stdClass->section = "QUARTER";
+        break;
+    }
+    
+    $stdClass->studentId = $studentId;
+    $stdClass->academicId = $academicId;
+    $stdClass->term = $term;
+    $stdClass->comment = isset($_POST["comment"])?addText($_POST["comment"]):"";
+    
+    if($subjectId){
+        $stdClass->subjectId = $subjectId;
+        SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+
+    }else{
+
+        SQLAcademicPerformances::getActionStudentClassPerformance($stdClass);
+    }
+
+    header("Location: ".$_SERVER['REQUEST_URI']."");
+    exit;
+}
 
 $SHOW_EDITOR = "";
 
@@ -114,9 +171,9 @@ switch(UserAuth::getUserType()){
 <link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
 </head>
 <body style='background:#e0e7f7;'>
-   <form action="" method="post">
-    <textarea id="comment" name="comment"><?=$TEACHER_COMMENT;?></textarea>
-    <script type="text/javascript">
+    <form action="" method="post">
+        <textarea id="comment" name="comment"><?=$TEACHER_COMMENT;?></textarea>
+        <script type="text/javascript">
         //<![CDATA[ 
         CKEDITOR.on('instanceReady',function(evt){
             var editor = evt.editor;
@@ -124,13 +181,13 @@ switch(UserAuth::getUserType()){
         });
         <?= $SHOW_EDITOR;?>
         //]]>
-    </script> 
-    <input type="hidden" name="id" value="<?=$this->studentId?>">
-    <input type="hidden" name="academicId" value="<?=$this->academicId;?>">  
-    <input type="hidden" name="term" value="<?=$this->term;?>">  
-    <input type="hidden" name="section" value="<?=$section;?>">  
-    <input type="hidden" name="monthyear" value="<?=$this->monthyear;?>">  
-    <input type="hidden" name="subjectId" value="<?=$this->subjectId;?>">      
+        </script> 
+        <input type="hidden" name="studentId" value="<?=$studentId?>">
+        <input type="hidden" name="academicId" value="<?=$academicId;?>">  
+        <input type="hidden" name="term" value="<?=$term;?>">  
+        <input type="hidden" name="section" value="<?=$section;?>">  
+        <input type="hidden" name="monthyear" value="<?=$monthyear;?>">  
+        <input type="hidden" name="subjectId" value="<?=$subjectId;?>">      
     </form>
 </body>
 </html>

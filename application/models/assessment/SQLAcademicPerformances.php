@@ -70,6 +70,7 @@ class SQLAcademicPerformances {
         $data["LETTER_GRADE_CHAR"] = "---";
         $data["LEARNING_VALUE"] = "---";
         $data["ASSESSMENT_ID"] = "---";
+        $data["TEACHER_COMMENT"] = "---";
 
         if (isset($stdClass->studentId))
         {
@@ -117,6 +118,7 @@ class SQLAcademicPerformances {
                     $data["LETTER_GRADE_CHAR"] = $result->LETTER_GRADE;
                     $data["LEARNING_VALUE"] = $result->LEARNING_VALUE;
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
+                    $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                 }
             }
         }

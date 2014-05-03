@@ -20,11 +20,11 @@ class SQLEvaluationStudentSubject {
 
     public static function getCallStudentSubjectEvaluation($stdClass)
     {
-
         $data["LETTER_GRADE_NUMBER"] = "---";
         $data["LETTER_GRADE_CHAR"] = "---";
         $data["SUBJECT_VALUE"] = "---";
         $data["ASSESSMENT_ID"] = "---";
+        $data["TEACHER_COMMENT"] = "---";
 
         if (isset($stdClass->studentId))
         {
@@ -72,6 +72,7 @@ class SQLEvaluationStudentSubject {
                     $data["LETTER_GRADE_NUMBER"] = $result->DESCRIPTION;
                     $data["LETTER_GRADE_CHAR"] = $result->LETTER_GRADE;
                     $data["SUBJECT_VALUE"] = $result->SUBJECT_VALUE;
+                    $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
                 }
             }
@@ -124,7 +125,6 @@ class SQLEvaluationStudentSubject {
 
     public static function setActionStudentSubjectEvaluation($stdClass)
     {
-
         if (isset($stdClass->studentId))
         {
             if ($stdClass->studentId)
@@ -170,6 +170,9 @@ class SQLEvaluationStudentSubject {
                             $UPDATE_DATA["RANK"] = $stdClass->actionRank;
                     }
 
+                    if (isset($stdClass->comment))
+                        $UPDATE_DATA["TEACHER_COMMENT"] = $stdClass->comment;
+
                     $UPDATE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
                     $UPDATE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
                     self::dbAccess()->update('t_student_subject_assessment', $UPDATE_DATA, $WHERE);
@@ -193,7 +196,7 @@ class SQLEvaluationStudentSubject {
                     if ($stdClass->section)
                         $INSERT_DATA["SECTION"] = $stdClass->section;
 
-                    if ($stdClass->educationSystem)
+                    if (isset($stdClass->educationSystem))
                         $INSERT_DATA["EDUCATION_SYSTEM"] = $stdClass->educationSystem;
 
                     if (isset($stdClass->actionRank))
@@ -204,6 +207,9 @@ class SQLEvaluationStudentSubject {
 
                     if (isset($stdClass->assessmentId))
                         $INSERT_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+
+                    if (isset($stdClass->comment))
+                        $INSERT_DATA["TEACHER_COMMENT"] = $stdClass->comment;
 
                     $INSERT_DATA["ACTION_TYPE"] = "ASSESSMENT";
                     $INSERT_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
