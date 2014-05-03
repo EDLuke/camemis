@@ -22,12 +22,9 @@ $stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
     
 if($monthyear){
     
-    $year = getYearFromMonthYear($monthyear);
-    $month = getMonthNumberFromMonthYear($monthyear);
+    $stdClass->month = getMonthNumberFromMonthYear($monthyear);
+    $stdClass->year = getYearFromMonthYear($monthyear);
 }
-
-$stdClass->month = $month;
-$stdClass->year = $year;
 
 switch ($section)
 {
@@ -75,13 +72,10 @@ if ($_POST){
     $stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
     
     if($monthyear){
-        $year = getYearFromMonthYear($monthyear);
-        $month = getMonthNumberFromMonthYear($monthyear);
+        $stdClass->month = getMonthNumberFromMonthYear($monthyear);
+        $stdClass->year = getYearFromMonthYear($monthyear);
     }
     
-    $stdClass->month = $month;
-    $stdClass->year = $year;
-
     switch ($section)
     {
         case 1:

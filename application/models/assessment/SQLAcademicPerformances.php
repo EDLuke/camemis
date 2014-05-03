@@ -208,20 +208,24 @@ class SQLAcademicPerformances {
             }
             $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
 
-            switch ($stdClass->actionField)
+            if (isset($stdClass->actionField))
             {
-                case "ASSESSMENT_TOTAL":
+                switch ($stdClass->actionField)
+                {
+                    case "ASSESSMENT_TOTAL":
 
-                    $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
-                    $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
+                        $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
+                        $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
 
-                    $UPDATE_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
-                    $UPDATE_DATA["LEARNING_VALUE"] = $AVERAGE;
-                    $UPDATE_DATA["RANK"] = $RANK ? $RANK : "";
+                        if (isset($stdClass->actionValue))
+                            $UPDATE_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
+                        $UPDATE_DATA["LEARNING_VALUE"] = $AVERAGE;
+                        $UPDATE_DATA["RANK"] = $RANK ? $RANK : "";
 
-                    break;
-                case "AVERAGE_TOTAL":
-                    break;
+                        break;
+                    case "AVERAGE_TOTAL":
+                        break;
+                }
             }
 
             $UPDATE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
@@ -235,35 +239,39 @@ class SQLAcademicPerformances {
             $INSERT_DATA["CLASS_ID"] = $stdClass->academicId;
             $INSERT_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
 
-            if ($stdClass->month)
+            if (isset($stdClass->month))
                 $INSERT_DATA["MONTH"] = $stdClass->month;
 
-            if ($stdClass->year)
+            if (isset($stdClass->year))
                 $INSERT_DATA["YEAR"] = $stdClass->year;
 
-            if ($stdClass->term)
+            if (isset($stdClass->term))
                 $INSERT_DATA["TERM"] = $stdClass->term;
 
             if ($stdClass->section)
                 $INSERT_DATA["SECTION"] = $stdClass->section;
 
-            if ($stdClass->educationSystem)
+            if (isset($stdClass->educationSystem))
                 $INSERT_DATA["EDUCATION_SYSTEM"] = $stdClass->educationSystem;
 
-            switch ($stdClass->actionField)
+            if (isset($stdClass->actionField))
             {
-                case "ASSESSMENT_TOTAL":
+                switch ($stdClass->actionField)
+                {
+                    case "ASSESSMENT_TOTAL":
 
-                    $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
-                    $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
+                        $AVERAGE = self::getSQLAverageStudentClassPerformance($stdClass);
+                        $RANK = getScoreRank(self::scoreListClassPerformance($stdClass->listStudents, $stdClass), $AVERAGE);
 
-                    $INSERT_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
-                    $INSERT_DATA["LEARNING_VALUE"] = $AVERAGE;
-                    $INSERT_DATA["RANK"] = $RANK ? $RANK : "";
+                        if (isset($stdClass->actionValue))
+                            $INSERT_DATA["ASSESSMENT_ID"] = $stdClass->actionValue;
+                        $INSERT_DATA["LEARNING_VALUE"] = $AVERAGE;
+                        $INSERT_DATA["RANK"] = $RANK ? $RANK : "";
 
-                    break;
-                case "AVERAGE_TOTAL":
-                    break;
+                        break;
+                    case "AVERAGE_TOTAL":
+                        break;
+                }
             }
 
             $INSERT_DATA["ACTION_TYPE"] = "ASSESSMENT";

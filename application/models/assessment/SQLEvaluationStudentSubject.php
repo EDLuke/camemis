@@ -57,7 +57,7 @@ class SQLEvaluationStudentSubject {
                             $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         break;
                     case "YEAR":
-                        if ($stdClass->year)
+                        if (isset($stdClass->year))
                             $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                         break;
                 }
@@ -184,13 +184,13 @@ class SQLEvaluationStudentSubject {
                     $INSERT_DATA["CLASS_ID"] = $stdClass->academicId;
                     $INSERT_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
 
-                    if ($stdClass->month)
+                    if (isset($stdClass->month))
                         $INSERT_DATA["MONTH"] = $stdClass->month;
 
-                    if ($stdClass->year)
+                    if (isset($stdClass->year))
                         $INSERT_DATA["YEAR"] = $stdClass->year;
 
-                    if ($stdClass->term)
+                    if (isset($stdClass->term))
                         $INSERT_DATA["TERM"] = $stdClass->term;
 
                     if ($stdClass->section)
