@@ -1289,7 +1289,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return $result ? $result->C : 0;
     }
    
-    public function jsonActionTeacherAssignmentCommentTraining($encrypParams) {
+    public function jsonActionContentTeacherScoreInputDateTraining($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 

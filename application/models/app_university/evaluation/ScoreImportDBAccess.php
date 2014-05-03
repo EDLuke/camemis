@@ -49,7 +49,7 @@ class ScoreImportDBAccess extends StudentAssignmentDBAccess {
                 if ($this->jsonActionTeacherScoreEnter($params)) {
                     $params['studentId'] = $students->ID;
                     $params['name'] = $COMMENT;
-                    $this->jsonActionTeacherAssignmentComment($params);
+                    $this->jsonActionContentTeacherScoreInputDate($params);
                 }
             }
         }

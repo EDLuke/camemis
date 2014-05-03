@@ -526,34 +526,9 @@ class StudentAssignmentDBAccess {
         return Array("success" => true);
     }
 
-    public function jsonActionTeacherAssignmentComment($encrypParams)
-    {
+    
 
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-
-        $comment = isset($params["name"]) ? addText($params["name"]) : "";
-        $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $date = isset($params["date"]) ? $params["date"] : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
-
-        $SAVEDATA['TEACHER_COMMENTS'] = addText($comment);
-
-        $WHERE = Array();
-        $WHERE[] = "STUDENT_ID = '" . $studentId . "'";
-        $WHERE[] = "CLASS_ID = '" . $classId . "'";
-        $WHERE[] = "SUBJECT_ID = '" . $subjectId . "'";
-        $WHERE[] = "ASSIGNMENT_ID = '" . $assignmentId . "'";
-        $WHERE[] = "SCORE_DATE = '" . $date . "'";
-        self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
-
-        return Array(
-            "success" => true
-        );
-    }
-
-    public function jsonAcitonModifyDate($encrypParams)
+    public function jsonAcitonSubjectAssignmentModifyScoreDate($encrypParams)
     {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
@@ -1036,22 +1011,8 @@ class StudentAssignmentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function jsonActionTeacherScoreInputDate($params)
-    {
 
-        $setId = isset($params["setId"]) ? $params["setId"] : "";
-
-        if (isset($params["CONTENT"]))
-            $SAVEDATA['CONTENT'] = addText($params["CONTENT"]);
-        $WHERE[] = "ID = '" . $setId . "'";
-        self::dbAccess()->update('t_student_score_date', $SAVEDATA, $WHERE);
-
-        return Array(
-            "success" => true
-        );
-    }
-
-    public function jsonLoadTeacherScoreInputDate($Id)
+    public function jsonLoadContentTeacherScoreInputDate($Id)
     {
 
         $facette = self::findScoreInputDate($Id);

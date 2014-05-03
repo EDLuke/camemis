@@ -886,6 +886,46 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         SQLEvaluationStudentSubject::getActionDeleteSubjectScoreAssessment($stdClass);
     }
 
+    public function acitonSubjectAssignmentModifyScoreDate()
+    {
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "setId" => $this->setId
+                    , "modify_date" => $this->modify_date
+        );
+        SQLEvaluationStudentAssignment::getAcitonSubjectAssignmentModifyScoreDate($stdClass);
+    }
+
+    public function actionContentTeacherScoreInputDate()
+    {
+        $stdClass = (object) array(
+                    "setId" => $this->setId
+                    , "content" => $this->content
+        );
+        SQLEvaluationStudentAssignment::getActionContentTeacherScoreInputDate($stdClass);
+    }
+
+    public function loadContentTeacherScoreInputDate()
+    {
+        $stdClass = (object) array(
+                    "setId" => $this->setId
+        );
+
+        $facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
+
+        $data = Array();
+
+        if ($facette)
+        {
+            $data["NAME"] = $facette->NAME;
+            $data["SHORT"] = $facette->SHORT;
+            $data["SCORE_INPUT_DATE"] = getShowDate($facette->SCORE_INPUT_DATE);
+        }
+
+        return $data;
+    }
+
 }
 
 ?>

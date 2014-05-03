@@ -342,6 +342,70 @@ class SQLEvaluationStudentAssignment {
         );
     }
 
+    public static function getAcitonSubjectAssignmentModifyScoreDate($stdClass)
+    {
+        $setIds = explode("_", $stdClass->setId);
+        $assignmentId = isset($setIds[0]) ? $setIds[0] : "";
+        $olddate = isset($setIds[1]) ? $setIds[1] : "";
+
+        $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate(
+                        $stdClass->modify_date
+                        , $stdClass->academicId);
+
+        $CHECK_ERROR = ($TERM_NAME == "TERM_ERROR") ? true : false;
+
+        $ACTION_ERROR = true;
+        if (!$CHECK_ERROR && $olddate)
+        {
+            $ACTION_ERROR = false;
+            $date = new DateTime($stdClass->modify_date);
+            $FIRST = "UPDATE t_student_assignment";
+            $FIRST .= " SET";
+            $FIRST .= " TERM='" . $TERM_NAME . "'";
+            $FIRST .= " ,SCORE_DATE='" . setDate2DB($stdClass->modify_date) . "'";
+            $FIRST .= " ,MONTH='" . $date->format('m') . "'";
+            $FIRST .= " ,YEAR='" . $date->format('Y') . "'";
+            $FIRST .= " WHERE";
+            $FIRST .= " ASSIGNMENT_ID = '" . $assignmentId . "'";
+            $FIRST .= " AND SUBJECT_ID = '" . $stdClass->subjectId . "'";
+            $FIRST .= " AND CLASS_ID = '" . $stdClass->academicId . "'";
+            $FIRST .= " AND SCORE_DATE = '" . $olddate . "'";
+            self::dbAccess()->query($FIRST);
+
+            $SECOND = "UPDATE t_student_score_date";
+            $SECOND .= " SET";
+            $SECOND .= " TERM='" . $TERM_NAME . "'";
+            $SECOND .= " ,SCORE_INPUT_DATE='" . setDate2DB($stdClass->modify_date) . "'";
+            $SECOND .= " WHERE";
+            $SECOND .= " ASSIGNMENT_ID = '" . $assignmentId . "'";
+            $SECOND .= " AND SUBJECT_ID = '" . $stdClass->subjectId . "'";
+            $SECOND .= " AND CLASS_ID = '" . $stdClass->academicId . "'";
+            $SECOND .= " AND SCORE_INPUT_DATE = '" . $olddate . "'";
+            self::dbAccess()->query($SECOND);
+        }
+    }
+
+    public static function getActionContentTeacherScoreInputDate($stdClass)
+    {
+
+        if ($this->setId && $this->content)
+        {
+            $SAVEDATA['CONTENT'] = $this->content;
+            $WHERE[] = "ID = '" . $this->setId . "'";
+            self::dbAccess()->update('t_student_score_date', $SAVEDATA, $WHERE);
+        }
+    }
+
+    public static function findScoreInputDate($stdClass)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => "t_student_score_date"), array("SCORE_INPUT_DATE"));
+        $SQL->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', array("SHORT", "NAME"));
+        $SQL->where("A.ID = '" . $stdClass->setId . "'");
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchRow($SQL);
+    }
+
 }
 
 ?>

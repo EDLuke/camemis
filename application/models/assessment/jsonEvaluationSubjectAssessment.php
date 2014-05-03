@@ -9,11 +9,13 @@ require_once 'models/assessment/EvaluationSubjectAssessment.php';
 
 class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
-    public function __construct() {
+    public function __construct()
+    {
         
     }
 
-    public function setParams($params) {
+    public function setParams($params)
+    {
         if (isset($params["start"]))
             $this->start = $params["start"];
 
@@ -26,11 +28,11 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         if (isset($params["monthyear"]))
             $this->monthyear = $params["monthyear"];
 
-        if (isset($params["score"]))
-            $this->score = $params["score"];
+        if (isset($params["setId"]))
+            $this->setId = $params["setId"];
 
         if (isset($params["term"]))
-            $this->term = $params["term"];
+            $this->term = addText($params["term"]);
 
         if (isset($params["academicId"]))
             $this->academicId = $params["academicId"];
@@ -45,30 +47,37 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             $this->assignmentId = $params["assignmentId"];
 
         if (isset($params["globalSearch"]))
-            $this->globalSearch = $params["globalSearch"];
+            $this->globalSearch = addText($params["globalSearch"]);
 
-        if (isset($params["id"])) {
+        if (isset($params["id"]))
             $this->studentId = $params["id"];
-        }
 
         if (isset($params["field"]))
-            $this->actionField = $params["field"];
+            $this->actionField = addText($params["field"]);
 
         if (isset($params["newValue"]))
-            $this->actionValue = $params["newValue"];
+            $this->actionValue = addText($params["newValue"]);
 
         if (isset($params["section"]))
             $this->section = $params["section"];
+
+        if (isset($params["MODIFY_DATE"]))
+            $this->modify_date = $params["MODIFY_DATE"];
+
+        if (isset($params["CONTENT"]))
+            $this->content = addText($params["CONTENT"]);
     }
 
-    public function jsonListStudentSubjectAssignments($encrypParams) {
+    public function jsonListStudentSubjectAssignments($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getListStudentSubjectAssignments();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -80,7 +89,8 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonActionTeacherScoreEnter($encrypParams) {
+    public function jsonActionTeacherScoreEnter($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
         $this->actionTeacherScoreEnter();
@@ -91,7 +101,8 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectMonthResult($encrypParams) {
+    public function jsonSubjectMonthResult($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
@@ -99,7 +110,8 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         $data = $this->getSubjectMonthResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -111,14 +123,16 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectTermResult($encrypParams) {
+    public function jsonSubjectTermResult($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getSubjectTermResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -130,14 +144,16 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectYearResult($encrypParams) {
+    public function jsonSubjectYearResult($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getSubjectYearResult();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -149,36 +165,36 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonActionStudentSubjectAssessment($encrypParams) {
+    public function jsonActionStudentSubjectAssessment($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
         $this->actionStudentSubjectAssessment();
 
-        return array(
-            "success" => true
-        );
+        return array("success" => true);
     }
 
-    public function jsonActionPublishSubjectAssessment($encrypParams) {
+    public function jsonActionPublishSubjectAssessment($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
         $this->actionPublishSubjectAssessment();
 
-        return array(
-            "success" => true
-        );
+        return array("success" => true);
     }
 
-    public function jsonListStudentsTeacherScoreEnter($encrypParams) {
+    public function jsonListStudentsTeacherScoreEnter($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getListStudentsTeacherScoreEnter();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -190,37 +206,62 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonActionDeleteOneStudentTeacherScoreEnter($encrypParams) {
+    public function jsonActionDeleteOneStudentTeacherScoreEnter($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $this->actionDeleteOneStudentTeacherScoreEnter();
 
-        return array(
-            "success" => true
-        );
+        return array("success" => true);
     }
 
-    public function jsonActionDeleteAllStudentsTeacherScoreEnter($encrypParams) {
+    public function jsonActionDeleteAllStudentsTeacherScoreEnter($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $this->actionDeleteAllStudentsTeacherScoreEnter();
 
-        return array(
-            "success" => true
-        );
+        return array("success" => true);
     }
 
-    public function jsonActionDeleteSubjectScoreAssessment($encrypParams) {
+    public function jsonActionDeleteSubjectScoreAssessment($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $this->actionDeleteSubjectScoreAssessment();
 
-        return array(
+        return array("success" => true);
+    }
+
+    public function jsonAcitonSubjectAssignmentModifyScoreDate($encrypParams)
+    {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+
+        $this->acitonSubjectAssignmentModifyScoreDate();
+
+        return array("success" => true);
+    }
+
+    public function jsonActionContentTeacherScoreInputDate($params)
+    {
+        $this->setParams($params);
+        $this->actionContentTeacherScoreInputDate();
+
+        return array("success" => true);
+    }
+
+    public function jsonLoadContentTeacherScoreInputDate($params)
+    {
+        $this->setParams($params);
+        
+        return Array(
             "success" => true
+            , "data" => $this->loadContentTeacherScoreInputDate()
         );
     }
 

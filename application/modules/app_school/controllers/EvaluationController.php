@@ -614,8 +614,9 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonListStudentsTeacherScoreEnter($this->REQUEST->getPost());
                 break;
 
-            case "jsonLoadTeacherScoreInputDate":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonLoadTeacherScoreInputDate($this->REQUEST->getPost('setId'));
+            case "jsonLoadContentTeacherScoreInputDate":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonLoadContentTeacherScoreInputDate($this->REQUEST->getPost());
                 break;
 
             case "jsonLoadStudentLearningResult":
@@ -679,8 +680,9 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonActionDeleteAllStudentsTeacherScoreEnter($this->REQUEST->getPost());
                 break;
 
-            case "jsonAcitonModifyDate":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonAcitonModifyDate($this->REQUEST->getPost());
+            case "jsonAcitonSubjectAssignmentModifyScoreDate":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonAcitonSubjectAssignmentModifyScoreDate($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteOneStudentTeacherScoreEnter":
@@ -692,14 +694,11 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = StudentSubjectAssessment::jsonActionStudenLearningResult($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionTeacherScoreInputDate":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionTeacherScoreInputDate($this->REQUEST->getPost());
+            case "jsonActionContentTeacherScoreInputDate":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionContentTeacherScoreInputDate($this->REQUEST->getPost());
                 break;
-
-            case "jsonActionTeacherAssignmentComment":
-                $jsondata = $this->DB_STUDENT_ASSIGNMENT->jsonActionTeacherAssignmentComment($this->REQUEST->getPost());
-                break;
-
+            
             case "jsonActionStudentSubjectAssessment":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
                 $jsondata = $DB_ACCESS->jsonActionStudentSubjectAssessment($this->REQUEST->getPost());

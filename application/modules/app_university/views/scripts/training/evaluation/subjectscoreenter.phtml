@@ -109,7 +109,7 @@ Ext.onReady(function() {
                     $js .="url: '/training/jsonsave/'";
                     $js .=",method: 'POST'";
                     $js .=",params:{";
-                        $js .="cmd: 'jsonActionTeacherAssignmentCommentTraining'";
+                        $js .="cmd: 'jsonActionContentTeacherScoreInputDateTraining'";
                         $js .=",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
                         $js .=",studentId:chooseId";
                         $js .=",name:text";
@@ -179,7 +179,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'GENDER'");
-    //$OBJECT_GRID->addReadField("name: 'ASSIGNMENT_'");
+
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
     
      switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -195,12 +195,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssText, width: 200, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    /*if($ENTRIES_ASSIGNMENT){ 
-        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-            $OBJECT_GRID->addColumn("header: '<b>" .$value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer:cssFirst, width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-        }
-    } */      
-      
+    
      switch($subjectObject->SCORE_TYPE){         
         case 1:      
             $OBJECT_GRID->addColumn("
@@ -291,16 +286,7 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    /*$OBJECT_GRID->setAftereditCallback("
-        //e.record.set('SCORE',jsonData.SCORE);
-        if(jsonData.SCHORE_DATE==1){
-            window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID').root.reload();
-            window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID').getRootNode().expand(true, false);
-        }
-        
-        //XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');    
-    ");  */
-   
+    
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
         myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID');

@@ -361,7 +361,7 @@ Ext.onReady(function() {
                                         ,success: function(response, options) {
                                             window.location.href='<?=$_SERVER["REQUEST_URI"]?>';
                                         }
-                                        ,params: {cmd:'jsonAcitonModifyDate',camIds:'<?=$this->urlEncryp->encryptedGet($setParams)?>',setId:node.id}
+                                        ,params: {cmd:'jsonAcitonSubjectAssignmentModifyScoreDate',camIds:'<?=$this->urlEncryp->encryptedGet($setParams)?>',setId:node.id}
                                     });
                                 }
                             }]
