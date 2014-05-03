@@ -413,7 +413,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
         if ($lastname)
             $SQL->where("A.LASTNAME like '" . $lastname . "%'");
 
-        $SQL->order("B.STATUS_ID DESC");
+        $SQL .= "ORDER BY B.STATUS_ID DESC";
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
