@@ -696,7 +696,7 @@ class AssignmentDBAccess {
                     $facette = self::findAssignmentFromId($node);
                     $data[$i]['leaf'] = true;
                     $data[$i]['isClick'] = true;
-                    $data[$i]['setId'] = $value->ASSIGNMENT_ID;
+                    $data[$i]['setId'] = $value->ID;
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "_" . $value->SCORE_INPUT_DATE;
                     $data[$i]['text'] = "" . $facette->NAME;
                     $data[$i]['text'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
