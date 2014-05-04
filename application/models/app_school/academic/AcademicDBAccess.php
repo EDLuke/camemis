@@ -919,10 +919,14 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearObject->DISTRIBUTION_VALUE;
-                    $FIRST_SAVEDATA["DISPLAY_MONTH_RESULT"] = $schoolyearObject->DISPLAY_MONTH_RESULT;
-                    $FIRST_SAVEDATA["DISPLAY_FIRST_RESULT"] = $schoolyearObject->DISPLAY_FIRST_RESULT;
-                    $FIRST_SAVEDATA["DISPLAY_SECOND_RESULT"] = $schoolyearObject->DISPLAY_SECOND_RESULT;
-                    $FIRST_SAVEDATA["DISPLAY_YEAR_RESULT"] = $schoolyearObject->DISPLAY_YEAR_RESULT;
+                    
+                    $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
+                    $FIRST_SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearObject->DISPLAY_FIRST_RESULT;
+                    $FIRST_SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearObject->DISPLAY_SECOND_RESULT;
+                    $FIRST_SAVEDATA['DISPLAY_THIRD_RESULT'] = $schoolyearObject->DISPLAY_THIRD_RESULT;
+                    $FIRST_SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearObject->DISPLAY_FOURTH_RESULT;
+                    $FIRST_SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearObject->DISPLAY_YEAR_RESULT;
+                    
                     $FIRST_SAVEDATA["SCHOOLYEAR_START"] = $schoolyearObject->SCHOOLYEAR_START;
                     $FIRST_SAVEDATA["SCHOOLYEAR_END"] = $schoolyearObject->SCHOOLYEAR_END;
                     $FIRST_SAVEDATA["SEMESTER1_START"] = $schoolyearObject->SEMESTER1_START;
@@ -1010,10 +1014,14 @@ class AcademicDBAccess {
                     $SAVEDATA["YEAR_RESULT"] = $schoolyearsubjectObject->YEAR_RESULT;
                     $SAVEDATA["EVALUATION_TYPE"] = $schoolyearsubjectObject->EVALUATION_TYPE;
                     $SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearsubjectObject->DISTRIBUTION_VALUE;
-                    $SAVEDATA["DISPLAY_MONTH_RESULT"] = $schoolyearsubjectObject->DISPLAY_MONTH_RESULT;
-                    $SAVEDATA["DISPLAY_FIRST_RESULT"] = $schoolyearsubjectObject->DISPLAY_FIRST_RESULT;
-                    $SAVEDATA["DISPLAY_SECOND_RESULT"] = $schoolyearsubjectObject->DISPLAY_SECOND_RESULT;
-                    $SAVEDATA["DISPLAY_YEAR_RESULT"] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
+                    
+                    $SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_MONTH_RESULT;
+                    $SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearsubjectObject->DISPLAY_FIRST_RESULT;
+                    $SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearsubjectObject->DISPLAY_SECOND_RESULT;
+                    $SAVEDATA['DISPLAY_THIRD_RESULT'] = $schoolyearsubjectObject->DISPLAY_THIRD_RESULT;
+                    $SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_FOURTH_RESULT;
+                    $SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
+                    
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["MO"] = $schoolyearsubjectObject->MO;
                     $SAVEDATA["TU"] = $schoolyearsubjectObject->TU;

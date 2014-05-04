@@ -32,6 +32,7 @@ class DisplayItem{
         $this->studentObject = $studentObject;
         $this->academicObject = $academicObject;
         $this->urlEnryp = $urlEnryp;
+        
     }
     
     public function getParams($type){
@@ -135,6 +136,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_TERM_RESULT;
                 
                 $SECOND_TERM_RESULT = "{
@@ -142,6 +145,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
                 
                 $THIRD_TERM_RESULT = "{
@@ -149,6 +154,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
                 $PENEL_ITEMS[] = $THIRD_TERM_RESULT;
                 
                 break;
@@ -158,6 +165,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_QUARTER_RESULT;
                 
                 $SECOND_QUARTER_RESULT = "{
@@ -165,6 +174,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_QUARTER_RESULT;
                 
                 $THIRD_QUARTER_RESULT = "{
@@ -179,6 +190,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
                 $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
                 break;
             default:
@@ -187,6 +200,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
                 
                 $SECOND_SEMESTER_RESULT = "{
@@ -194,16 +209,20 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
                 break;
         }
         
-        $YEAR_RESULT = "{
-            title: '".YEAR_RESULT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: ''})]
-        }";
-        $PENEL_ITEMS[] = $YEAR_RESULT;
+        if($this->academicObject->DISPLAY_YEAR_RESULT){
+            $DISPLAY_YEAR_RESULT = "{
+                title: '".YEAR_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: ''})]
+            }";
+            $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
+        }
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         
@@ -238,6 +257,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_TERM_RESULT;
                 
                 $SECOND_TERM_RESULT = "{
@@ -245,6 +266,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
                 
                 $THIRD_TERM_RESULT = "{
@@ -261,6 +284,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_QUARTER_RESULT;
                 
                 $SECOND_QUARTER_RESULT = "{
@@ -268,6 +293,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_QUARTER_RESULT;
                 
                 $THIRD_QUARTER_RESULT = "{
@@ -275,6 +302,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
                 $PENEL_ITEMS[] = $THIRD_QUARTER_RESULT;
                 
                 $FOURTH_QUARTER_RESULT = "{
@@ -282,6 +311,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FOURTH_RESULT)
                 $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
                 break;
             default:
@@ -290,6 +321,8 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
                 
                 $SECOND_SEMESTER_RESULT = "{
@@ -297,16 +330,20 @@ class DisplayItem{
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: ''})]
                 }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
                 break;
         }
         
-        $YEAR_RESULT = "{
-            title: '".YEAR_RESULT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: ''})]
-        }";
-        $PENEL_ITEMS[] = $YEAR_RESULT;
+        if($this->academicObject->DISPLAY_YEAR_RESULT){
+            $DISPLAY_YEAR_RESULT = "{
+                title: '".YEAR_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: ''})]
+            }";
+            $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
+        }
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         
@@ -380,7 +417,10 @@ class DisplayItem{
         
         $PENEL_ITEMS = Array();
         
-        $PENEL_ITEMS[] = $this->getViewportMonthlyLearningResult();
+        if($this->academicObject->DISPLAY_MONTH_RESULT){
+            $PENEL_ITEMS[] = $this->getViewportMonthlyLearningResult();
+        }
+        
         $PENEL_ITEMS[] = $this->getViewportLearningOutcomes();
         $PENEL_ITEMS[] = $this->getViewportTeacherCommentLearningResult();
         
