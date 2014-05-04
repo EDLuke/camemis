@@ -194,11 +194,12 @@ class DisplayItem{
                 break;
         }
         
+        $yearParmas = $this->getParams();
         if($this->academicObject->DISPLAY_YEAR_RESULT){
             $DISPLAY_YEAR_RESULT = "{
                 title: '".YEAR_RESULT."'
                 ,layout: 'fit'
-                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: ''})]
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: '/evaluation/displayyearsubject/?camIds=".$this->__urlEnryp->encryptedGet($yearParmas)."'})]
             }";
             $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
         }
