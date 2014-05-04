@@ -388,10 +388,10 @@ class SQLEvaluationStudentAssignment {
     public static function getActionContentTeacherScoreInputDate($stdClass)
     {
 
-        if ($this->setId && $this->content)
+        if ($stdClass->setId && $stdClass->content)
         {
-            $SAVEDATA['CONTENT'] = $this->content;
-            $WHERE[] = "ID = '" . $this->setId . "'";
+            $SAVEDATA['CONTENT'] = $stdClass->content;
+            $WHERE[] = "ID = '" . $stdClass->setId . "'";
             self::dbAccess()->update('t_student_score_date', $SAVEDATA, $WHERE);
         }
     }
@@ -399,7 +399,7 @@ class SQLEvaluationStudentAssignment {
     public static function findScoreInputDate($stdClass)
     {
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => "t_student_score_date"), array("SCORE_INPUT_DATE"));
+        $SQL->from(array('A' => "t_student_score_date"), array("SCORE_INPUT_DATE", "CONTENT"));
         $SQL->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', array("SHORT", "NAME"));
         $SQL->where("A.ID = '" . $stdClass->setId . "'");
         //error_log($SQL->__toString());

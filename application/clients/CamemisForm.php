@@ -51,123 +51,151 @@ class CamemisForm {
     public $isEmbeddedGrid = false;
     protected $embeddedGridId = null;
 
-    public function __construct($object, $subobject = false) {
+    public function __construct($object, $subobject = false)
+    {
         $this->object = $object;
         $this->subobject = $subobject;
         $this->utiles = Utiles::getInstance();
     }
 
-    public function getObjectId() {
+    public function getObjectId()
+    {
 
         return strtoupper($this->object) . "_ID";
     }
 
-    public function getObjectName() {
+    public function getObjectName()
+    {
 
         return "FORM_" . strtoupper($this->object);
     }
 
-    public function getObjectXType() {
+    public function getObjectXType()
+    {
         return strtoupper($this->object . "_XTYPE");
     }
 
-    public function addObjectItems($value) {
+    public function addObjectItems($value)
+    {
         $this->items[] = "{" . $value . "}";
         return $this->items;
     }
 
-    public function addTbarItems($value) {
+    public function addTbarItems($value)
+    {
         $this->tbaritems[] = "'-',{" . $value . "}";
         return $this->tbaritems;
     }
 
-    protected function setObjectItems() {
+    protected function setObjectItems()
+    {
         return implode(",", $this->items);
     }
 
-    protected function setTBarItems() {
+    protected function setTBarItems()
+    {
         return implode(",", $this->tbaritems);
     }
 
-    public function setSaveParams($value) {
+    public function setSaveParams($value)
+    {
         return $this->saveparams = $value;
     }
 
-    public function setCallback($value) {
+    public function setCallback($value)
+    {
         return $this->callback = $value;
     }
 
-    public function setLoadParams($value) {
+    public function setLoadParams($value)
+    {
         return $this->loadparams = $value;
     }
 
-    public function setReleaseParams($value) {
+    public function setReleaseParams($value)
+    {
         return $this->releaseparams = $value;
     }
 
-    public function setSendParams($value) {
+    public function setSendParams($value)
+    {
         return $this->sendparams = $value;
     }
 
-    public function setReplyParams($value) {
+    public function setReplyParams($value)
+    {
         return $this->Replyparams = $value;
     }
 
-    public function setRemoveParams($value) {
+    public function setRemoveParams($value)
+    {
         return $this->removeparams = $value;
     }
 
-    public function setOnEmbeddedEvents($value) {
+    public function setOnEmbeddedEvents($value)
+    {
         return $this->onEmbeddedEvents = $value;
     }
 
-    public function setOnEmbeddedReleaseEvents($value) {
+    public function setOnEmbeddedReleaseEvents($value)
+    {
         return $this->onEmbeddedReleaseEvents = $value;
     }
 
-    public function setOnEmbeddedSendEvents($value) {
+    public function setOnEmbeddedSendEvents($value)
+    {
         return $this->onEmbeddedSendEvents = $value;
     }
 
-    public function setOnEmbeddedReplyEvents($value) {
+    public function setOnEmbeddedReplyEvents($value)
+    {
         return $this->onEmbeddedReplyEvents = $value;
     }
 
-    public function setOnEmbeddedRemoveEvents($value) {
+    public function setOnEmbeddedRemoveEvents($value)
+    {
         return $this->onEmbeddedRemoveEvents = $value;
     }
 
-    public function setBodyStyle($value) {
+    public function setBodyStyle($value)
+    {
         return $this->bodyStyle = $value;
     }
 
-    public function setSearchGridParams($value) {
+    public function setSearchGridParams($value)
+    {
         return $this->searchGridParams = $value;
     }
 
-    public function setEmbeddedGridId($value) {
+    public function setEmbeddedGridId($value)
+    {
         return $this->embeddedGridId = $value;
     }
 
-    public function setLoadUrl($value) {
+    public function setLoadUrl($value)
+    {
         return $this->loadUrl = $value;
     }
 
-    public function setSaveUrl($value) {
+    public function setSaveUrl($value)
+    {
         return $this->saveUrl = $value;
     }
 
-    protected function saveURL() {
+    protected function saveURL()
+    {
 
         return "'" . $this->saveUrl . "'";
     }
 
-    protected function loadURL() {
+    protected function loadURL()
+    {
 
         return "'" . $this->loadUrl . "'";
     }
 
-    public function renderJS() {
+    public function renderJS()
+    {
         $js = "";
         $js .= "Ext.namespace('FORM');";
         $js .= "" . $this->getObjectName() . " = Ext.extend(Ext.form.FormPanel, {";
@@ -188,13 +216,18 @@ class CamemisForm {
         $js .= "," . $this->showError() . "";
         $js .= "," . $this->onEmbeddedEvents() . "";
 
-        if ($this->isObjectSend) {
+        if ($this->isObjectSend)
+        {
             $js .= "," . $this->onSetObjectSend() . "";
             $js .= "," . $this->onActionSetSend() . "";
-        } elseif ($this->isObjectReply) {
+        }
+        elseif ($this->isObjectReply)
+        {
             $js .= "," . $this->onSetObjectReply() . "";
             $js .= "," . $this->onActionSetReply() . "";
-        } else {
+        }
+        else
+        {
             $js .= "," . $this->onSetObjectReleaseOn() . "";
             $js .= "," . $this->onSetObjectReleaseOff() . "";
             $js .= "," . $this->onActionSetRelease() . "";
@@ -210,7 +243,8 @@ class CamemisForm {
         return print compressMultiSpacesToSingleSpace($js);
     }
 
-    protected function initComponent() {
+    protected function initComponent()
+    {
         $js = "";
         $js .= "initComponent: function(){";
         $js .= "Ext.apply(this, {";
@@ -225,7 +259,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onRender() {
+    protected function onRender()
+    {
         $js = "";
         $js .= "onRender:function() {";
         $js .= "" . $this->getObjectName() . ".superclass.onRender.apply(this, arguments);";
@@ -236,7 +271,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onLoad() {
+    protected function onLoad()
+    {
         $js = "";
         $js .= "onLoad:function(){";
         $js .= "this.load({";
@@ -251,7 +287,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onReset() {
+    protected function onReset()
+    {
         $js = "";
         $js .= "onReset:function(){";
         $js .= "this.getForm().reset();";
@@ -259,14 +296,16 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSubmit() {
+    protected function onSubmit()
+    {
         $js = "";
         $js .= "onSubmit:function(){";
 
         $js .="var selids = '';";
         $js .= "var isValid = this.getForm().isValid();";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
             var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
             for( var i = 0; i < sels.length; i++ ) {
@@ -281,7 +320,9 @@ class CamemisForm {
             " . $this->getFormSubmit() . "
             }
             ";
-        } else {
+        }
+        else
+        {
             $js .="
             if (isValid == false){
             " . $this->msgSubmitError() . "
@@ -295,17 +336,22 @@ class CamemisForm {
         return $js;
     }
 
-    protected function setKeys() {
+    protected function setKeys()
+    {
         $js = "";
-        if ($this->onEmbeddedEvents != "") {
+        if ($this->onEmbeddedEvents != "")
+        {
             $js .= "this.onEmbeddedEvents";
-        } else {
+        }
+        else
+        {
             $js .= "this.onSubmit";
         }
         return $js;
     }
 
-    protected function onSuccess() {
+    protected function onSuccess()
+    {
         $js = "";
         $js .= "onSuccess:function(form, action) {";
         $js .= "" . $this->onEmbeddedEvents . "";
@@ -314,7 +360,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onFailure() {
+    protected function onFailure()
+    {
         $js = "";
         $js .= "onFailure:function(form, action) {";
         //$js .= "this.showError(action.result.error || action.response.responseText);";
@@ -322,7 +369,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function showError() {
+    protected function showError()
+    {
         $js = "";
         $js .= "showError:function(msg, title) {";
         $js .= "title = title || 'Error';";
@@ -338,7 +386,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onEmbeddedEvents() {
+    protected function onEmbeddedEvents()
+    {
         $js = "";
         $js .= "onEmbeddedEvents: function() {";
         $js .= "" . $this->onEmbeddedEvents . "";
@@ -346,7 +395,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSetObjectReleaseOn() {
+    protected function onSetObjectReleaseOn()
+    {
         $js = "";
         $js .= "onSetObjectReleaseOn: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -366,7 +416,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSetObjectReleaseOff() {
+    protected function onSetObjectReleaseOff()
+    {
         $js = "";
         $js .= "onSetObjectReleaseOff: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -386,13 +437,15 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSetObjectSend() {
+    protected function onSetObjectSend()
+    {
         $js = "";
         $js .= "onSetObjectSend: function () {";
         $js .="var selids = '';";
         $js .= "var isValid = this.getForm().isValid();";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
             var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
             for( var i = 0; i < sels.length; i++ ) {
@@ -407,7 +460,9 @@ class CamemisForm {
             Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . SEND_MESSAGE . "', this.onActionSetSend);
             }
             ";
-        } else {
+        }
+        else
+        {
             $js .="
             if (isValid == false){
             " . $this->msgSubmitError() . "
@@ -421,7 +476,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSetObjectReply() {
+    protected function onSetObjectReply()
+    {
         $js = "";
         $js .= "onSetObjectReply: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -441,7 +497,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onSetObjectRemove() {
+    protected function onSetObjectRemove()
+    {
         $js = "";
         $js .= "onSetObjectRemove: function () {";
         $js .= "Ext.MessageBox.confirm('<b>" . CONFIRMATION . "</b>', '" . DELETE_THIS_ITEM . "', this.onActionSetRemove);";
@@ -450,7 +507,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onActionSetRelease() {
+    protected function onActionSetRelease()
+    {
         $js = "";
         $js .= "onActionSetRelease: function (btn) {";
         $js .= "if (btn == 'yes'){";
@@ -468,13 +526,16 @@ class CamemisForm {
         $js .= ",success: function (result) {";
         $js .= "jsonData = Ext.util.JSON.decode(result.responseText);";
         $js .= "if (jsonData) {";
-        if ($this->releaseError) {
+        if ($this->releaseError)
+        {
             $js .= "if (jsonData.error == true){";
             $js .= "" . $this->msgShowError() . "";
             $js .= "}else{";
             $js .= "" . $this->onEmbeddedReleaseEvents . "";
             $js .= "}";
-        } else {
+        }
+        else
+        {
             $js .= "" . $this->onEmbeddedReleaseEvents . "";
         }
         $js .= "}";
@@ -486,12 +547,14 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onActionSetSend() {
+    protected function onActionSetSend()
+    {
         $js = "";
         $js .= "onActionSetSend: function (btn) {";
         $js .= "if (btn == 'yes'){";
         $js .="var selids = '';";
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
             var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
 
@@ -506,9 +569,12 @@ class CamemisForm {
         $js .= "url: " . $this->saveURL() . "";
         $js .= ",scope:this";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .= ",params:{" . $this->sendparams . ", selids: selids}";
-        } else {
+        }
+        else
+        {
             $js .= ",params:{" . $this->sendparams . "}";
         }
 
@@ -520,7 +586,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onActionSetReply() {
+    protected function onActionSetReply()
+    {
         $js = "";
         $js .= "onActionSetReply: function (btn) {";
         $js .= "if (btn == 'yes'){";
@@ -536,7 +603,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function onActionSetRemove() {
+    protected function onActionSetRemove()
+    {
         $js = "";
         $js .= "onActionSetRemove: function (btn) {";
         $js .= "if (btn == 'yes'){";
@@ -559,7 +627,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function setObjectDefaultOnLoad() {
+    protected function setObjectDefaultOnLoad()
+    {
 
         $js = "
         this.load({
@@ -575,7 +644,8 @@ class CamemisForm {
         return $this->isObjectDefaultOnLoad ? $js : "";
     }
 
-    protected function onKeys() {
+    protected function onKeys()
+    {
         $js = "";
         $js .= "
         key: [13]
@@ -586,41 +656,49 @@ class CamemisForm {
         return $this->isKeys ? $js : "";
     }
 
-    public function ExtgetCmp() {
+    public function ExtgetCmp()
+    {
         return "Ext.getCmp('" . $this->getObjectId() . "')";
     }
 
-    protected function releaseButtonHide() {
+    protected function releaseButtonHide()
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').disable():'';";
         return $js;
     }
 
-    protected function releaseButtonShow() {
+    protected function releaseButtonShow()
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').enable():'';";
         return $js;
     }
 
-    protected function saveButtonHide() {
+    protected function saveButtonHide()
+    {
         $js = "Ext.getCmp('SAVE_ID')?Ext.getCmp('SAVE_ID').disable():'';";
         return $js;
     }
 
-    protected function saveButtonShow() {
+    protected function saveButtonShow()
+    {
         $js = "Ext.getCmp('SAVE_ID')?Ext.getCmp('SAVE_ID').enable():'';";
         return $js;
     }
 
-    protected function releaseSetText($text) {
+    protected function releaseSetText($text)
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').setText('" . $text . "'):'';";
         return $js;
     }
 
-    protected function releaseSetIcon($icon) {
+    protected function releaseSetIcon($icon)
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').setIconClass('" . $icon . "'):'';";
         return $js;
     }
 
-    protected function buttonsReleaseStatus() {
+    protected function buttonsReleaseStatus()
+    {
         $js = "
         if (action.result.data.STATUS == 1){
         " . $this->saveButtonHide() . "
@@ -637,7 +715,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function msgShowError() {
+    protected function msgShowError()
+    {
         $js = "";
         $js .= "Ext.Msg.show({";
         $js .= "title:'" . WARNING . "'";
@@ -650,7 +729,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function msgSubmitError() {
+    protected function msgSubmitError()
+    {
 
         $js = "Ext.Msg.show({";
         $js .= "title:'<b>" . CANNOT_SAVE . "</b>'";
@@ -664,7 +744,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function msgSubmitGridSeletionError() {
+    protected function msgSubmitGridSeletionError()
+    {
 
         $js = "Ext.Msg.show({";
         $js .= "title:'<b>" . CANNOT_SAVE . "</b>'";
@@ -678,7 +759,8 @@ class CamemisForm {
         return $js;
     }
 
-    protected function getFormSubmit() {
+    protected function getFormSubmit()
+    {
 
         $js = "this.getForm().submit({";
         $js .= "url: " . $this->saveURL() . "";
@@ -686,9 +768,12 @@ class CamemisForm {
         $js .= ",success:this.onSuccess";
         $js .= ",failure:this.onFailure";
         //$js .= ",waitMsg: '".ACTION_SUCCESSFULLY_SAVED."...'";
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .= ",params:{" . $this->saveparams . ", selids: selids}";
-        } else {
+        }
+        else
+        {
             $js .= ",params:{" . $this->saveparams . "}";
         }
         $js .= "});";

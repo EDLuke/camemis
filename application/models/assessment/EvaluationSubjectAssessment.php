@@ -914,12 +914,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
         $facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
 
-        $data = Array();
+        $data = array();
 
         if ($facette)
         {
-            $data["NAME"] = $facette->NAME;
-            $data["SHORT"] = $facette->SHORT;
+            $data["NAME"] = setShowText($facette->NAME);
+            $data["SHORT"] = setShowText($facette->SHORT);
+            $data["CONTENT"] = setShowText($facette->CONTENT);
             $data["SCORE_INPUT_DATE"] = getShowDate($facette->SCORE_INPUT_DATE);
         }
 
