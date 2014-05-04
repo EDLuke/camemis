@@ -1,121 +1,94 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
+// Date: 04.05.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisTree.php';
-require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
 require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$OBJECT_GRID = new CamemisGrid("STUDENT_EVALUATION", "LIST");
-$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
-
-$columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
-
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
-
-$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-$studentObject = StudentDBAccess::findStudentFromId($studentId);
-
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
 if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
 
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$studentObject = StudentDBAccess::findStudentFromId($this->studentId);
+$OBJECT_GRID = new CamemisGrid("EVALUATION", "MONTHLY");
+$OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
 ?>
 <script>
-var behaviorValue;
-Ext.onReady(function() {
+    Ext.onReady(function() {
+        function cssText(value, metadata, record){
+            var name = record.data.NAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 2px;background:#FFF;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
 
-    function textNormal(v, p, record, rowIndex){
-        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:normal; height:15px; padding: 5px;color:#555 !important;\">{0}</div>'
-            ,v
-        );
-    }
+        $OBJECT_GRID->addReadField("name: 'SHORT'");
+        $OBJECT_GRID->addReadField("name: 'NAME'");
+        $OBJECT_GRID->addReadField("name: 'RANK'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_VALUE'");
+        $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
 
-    function textBold(v, p, record, rowIndex){
-        return String.format('<div class=\"x-grid3-cell-inner\" style=\"white-space:normal; font-weight:bold; height:15px; padding: 5px;color:#1861A5 !important;\">{0}</div>'
-            ,v
-        );
-    }
+        $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
+        $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssText, align: 'center', sortable: true, dataIndex: 'RANK'");
+        $OBJECT_GRID->addColumn("header: '<b>".VALUE."</b>', width: 120, renderer:cssText, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
+        $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', width: 120, renderer:cssText, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
 
-    <?
-    $OBJECT_GRID->addReadField("name: 'ASSIGNMENT'");
-    $OBJECT_GRID->addReadField("name: 'POINTS'");
-    $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
-    $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
-    $OBJECT_GRID->addReadField("name: 'STYLE_COLOR'");
-    $OBJECT_GRID->addReadField("name: 'STYLE_COLOR_FONT'");
+        $setParams = "";
+        $setParams .= "&academicId=".$academicObject->ID."";
+        $setParams .= "&section=1";
+        $setParams .= "&studentId=".$this->studentId."";
 
-    $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT."</b>', width: 200, renderer: textBold, dataIndex: 'ASSIGNMENT'");
-    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', align: 'left', width: 150, renderer:textNormal, dataIndex: 'CREATED_DATE'");
-    $OBJECT_GRID->addColumn("header: '<b>".POINTS."</b>', align: 'left', width: 100, renderer:textBold, dataIndex: 'POINTS'");
-    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', align: 'left', width:250, renderer:textNormal, dataIndex: 'TEACHER_COMMENTS'");
-    
-    $OBJECT_GRID->addTBarItems("
-        tbar.add([{
-            text: '" . REFRESH . "'
-            ,iconCls:'icon-reload'
-            ,handler: function(){
-                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
-            }
-        }]);
-    ");
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+            ,cmd: 'jsonLoadStudentAllSubjectAssessment'
+        ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . REFRESH . "'
+                ,iconCls:'icon-reload'
+                ,handler: function(){
+                    Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                }
+            }]);
+        ");
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
 
-    $setParams = "";
-    $setParams .= "&academicId=".$academicObject->ID."";
-    $setParams .= "&term=".$this->term."";
-    $setParams .= "&subjectId=".$this->subjectId."";
-    $setParams .= "&studentId=".$studentObject->ID."";
-    
-    switch($term){
-        case "FIRST_SEMESTER":
-        case "SECOND_SEMESTER":
-            $setParams .="&section=2";
-        break;
-        case "FIRST_TERM":
-        case "SECOND_TERM":
-        case "THIRD_TERM":
-            $setParams .="&section=4";
-        break;
-        case "FIRST_QUARTER":
-        case "SECOND_QUARTER":
-        case "THIRD_QUARTER":
-        case "FOURTH_QUARTER":
-            $setParams .="&section=5";
-        break;
-    }
-
-    $OBJECT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,cmd: 'jsonListStudentSubjectAssignments'
-        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
-    ";
-
-    $OBJECT_GRID->loadMask = false;
-    $OBJECT_GRID->isGroupingView = true;
-    $OBJECT_GRID->groupField = "ASSIGNMENT";
-    $OBJECT_GRID->forceFit = "false";
-    $OBJECT_GRID->renderJS();
-
-    $viewport = "";
-    $viewport .= "viewport = new Ext.Viewport({";
-        $viewport .= "layout: 'fit'";
-        $viewport .= ",border: false";
-        $viewport .= ",items:[{";
-            $viewport .= "layout:'fit'";
-            $viewport .= ",border: false";
-            $viewport .= ",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
-        $viewport .= "}]";
-    $viewport .= "});";
-    echo $viewport;
-?>
-});
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype()?>'}]
+            }]
+        });
+    });
 </script>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();

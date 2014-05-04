@@ -31,62 +31,21 @@ class DisplayItem{
         
         $this->studentObject = $studentObject;
         $this->academicObject = $academicObject;
-        $this->urlEnryp = $urlEnryp;
+        $this->__urlEnryp = $urlEnryp;
         
     }
     
-    public function getParams($type){
+    public function getParams(){
         
         $result = "";
         $result .= "&studentId=".$this->studentObject->ID."";
         $result .= "&academicId=".$this->academicObject->ID."";
-        
-        switch ($type) {
-            case "FIRST_SEMESTER":
-                $result .= "&section=2";
-                $result .= "&term=FIRST_SEMESTER";
-                break;
-            case "SECOND_SEMESTER":
-                $result .= "&section=2";
-                $result .= "&term=SECOND_SEMESTER";
-                break;
-            case "FIRST_TERM":
-                $result .= "&section=4";
-                $result .= "&term=FIRST_TERM";
-                break;
-            case "SECOND_TERM":
-                $result .= "&section=4";
-                $result .= "&term=SECOND_TERM";
-                break;
-            case "THIRD_TERM":
-                $result .= "&section=4";
-                $result .= "&term=THIRD_TERM";
-                break;
-            case "FIRST_QUARTER":
-                $result .= "&section=5";
-                $result .= "&term=FIRST_QUARTER";
-                break;
-            case "SECOND_QUARTER":
-                $result .= "&section=5";
-                $result .= "&term=SECOND_QUARTER";
-                break;
-            case "THIRD_QUARTER":
-                $result .= "&section=5";
-                $result .= "&term=THIRD_QUARTER";
-                break;
-            case "FOURTH_QUARTER":
-                $result .= "&section=5";
-                $result .= "&term=FOURTH_QUARTER";
-                break;
-            case "YEAR":
-                $result .= "&section=3";
-                break;
-        }
-        
         return $result;
     }
     
     public function getDisplayMonthlyLearningResult(){
+        
+        $setParams = $this->getParams();
         
         $monthList = AcademicDBAccess::getAcademicMonthList($this->academicObject->ID);
         
@@ -97,7 +56,7 @@ class DisplayItem{
                 $item = "{
                     title: '".constant($key)." (".$value.")'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/gradebookmonth/?camIds=".$this->__urlEnryp->encryptedGet($setParams)."'})]
                 }";
                 $PENEL_ITEMS[] = $item;
             }
@@ -131,28 +90,34 @@ class DisplayItem{
         
         switch($termNumber){
             case 1:
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_TERM";
                 $FIRST_TERM_RESULT = "{
                     title: '".FIRST_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_TERM_RESULT;
                 
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_TERM";
                 $SECOND_TERM_RESULT = "{
                     title: '".SECOND_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
                 
+                $thirdParmas = $this->getParams();
+                $thirdParmas .= "&term=THIRD_TERM";
                 $THIRD_TERM_RESULT = "{
                     title: '".THIRD_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($thirdParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_THIRD_RESULT)
@@ -160,54 +125,68 @@ class DisplayItem{
                 
                 break;
             case 2:
+                
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_QUARTER";
                 $FIRST_QUARTER_RESULT = "{
                     title: '".FIRST_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_QUARTER_RESULT;
                 
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_QUARTER";
                 $SECOND_QUARTER_RESULT = "{
                     title: '".SECOND_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
                 $PENEL_ITEMS[] = $SECOND_QUARTER_RESULT;
                 
+                $thirdParmas = $this->getParams();
+                $thirdParmas .= "&term=THIRD_QUARTER";
                 $THIRD_QUARTER_RESULT = "{
                     title: '".THIRD_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($thirdParmas)."'})]
                 }";
                 $PENEL_ITEMS[] = $THIRD_QUARTER_RESULT;
                 
+                $fourthParmas = $this->getParams();
+                $fourthParmas .= "&term=FOURTH_QUARTER";
                 $FOURTH_QUARTER_RESULT = "{
                     title: '".FOURTH_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($fourthParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_THIRD_RESULT)
                 $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
                 break;
             default:
+                
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_SEMESTER";
                 $FIRST_SEMESTER_RESULT = "{
                     title: '".FIRST_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
                 
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_SEMESTER";
                 $SECOND_SEMESTER_RESULT = "{
                     title: '".SECOND_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
@@ -246,6 +225,7 @@ class DisplayItem{
     
     public function getDisplayTeacherCommentLearningResult(){
         
+        $setParams = $this->getParams();
         $termNumber = AcademicDBAccess::findAcademicTerm($this->academicObject->SCHOOL_YEAR);
         
         $PENEL_ITEMS = Array();
@@ -255,7 +235,7 @@ class DisplayItem{
                 $FIRST_TERM_RESULT = "{
                     title: '".FIRST_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
@@ -264,7 +244,7 @@ class DisplayItem{
                 $SECOND_TERM_RESULT = "{
                     title: '".SECOND_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
@@ -273,7 +253,7 @@ class DisplayItem{
                 $THIRD_TERM_RESULT = "{
                     title: '".THIRD_TERM_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_COMMENT', url: ''})]
                 }";
                 $PENEL_ITEMS[] = $THIRD_TERM_RESULT;
                 
@@ -282,7 +262,7 @@ class DisplayItem{
                 $FIRST_QUARTER_RESULT = "{
                     title: '".FIRST_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
@@ -291,7 +271,7 @@ class DisplayItem{
                 $SECOND_QUARTER_RESULT = "{
                     title: '".SECOND_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
@@ -300,7 +280,7 @@ class DisplayItem{
                 $THIRD_QUARTER_RESULT = "{
                     title: '".THIRD_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_THIRD_RESULT)
@@ -309,7 +289,7 @@ class DisplayItem{
                 $FOURTH_QUARTER_RESULT = "{
                     title: '".FOURTH_QUARTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FOURTH_RESULT)
@@ -319,7 +299,7 @@ class DisplayItem{
                 $FIRST_SEMESTER_RESULT = "{
                     title: '".FIRST_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
@@ -328,7 +308,7 @@ class DisplayItem{
                 $SECOND_SEMESTER_RESULT = "{
                     title: '".SECOND_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_COMMENT', url: ''})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
@@ -340,7 +320,7 @@ class DisplayItem{
             $DISPLAY_YEAR_RESULT = "{
                 title: '".YEAR_RESULT."'
                 ,layout: 'fit'
-                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: ''})]
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_COMMENT', url: ''})]
             }";
             $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
         }
