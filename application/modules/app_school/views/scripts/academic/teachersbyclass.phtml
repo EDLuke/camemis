@@ -75,7 +75,7 @@ if(!$academicObject) {header("Location: /main/permission/");}
                 return ((v === 0 || v > 1) ? '".TOTAL.": ' + v +'' : '".TOTAL.": 1');
             }
         ");
-        $OBJECT_GRID->addColumn("header: '<b>".TERM."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:120, dataIndex: 'TERM'");
+        //$OBJECT_GRID->addColumn("header: '<b>".TERM."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:120, dataIndex: 'TERM'");
         $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'PHONE'");
         $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', align:'left', menuDisabled : true, sortable: true, width:170, dataIndex: 'EMAIL'");
 
