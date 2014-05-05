@@ -78,6 +78,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
         $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
         $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
 
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
             case "VIETNAMESE": $width = 125;break;
@@ -88,6 +89,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 150, dataIndex: 'CODE'");  
         $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'FULL_NAME'");
         $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,  renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+    
 
         switch (strtoupper($personType)) {
             case "STAFF":
