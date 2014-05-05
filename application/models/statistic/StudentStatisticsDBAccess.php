@@ -454,6 +454,76 @@ class StudentStatisticsDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //STUDENT DISCIPLINE
     ////////////////////////////////////////////////////////////////////////////
+    ////@veasna
+    public static function getCountStudentDiscipline($params){
+        
+        $disciplineType = isset($params['disciplineType'])?$params['disciplineType']:'';
+        $campusId = isset($params['campusId'])?$params['campusId']:'';
+        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
+        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
+        $MONTH = isset($params['MONTH'])?$params['MONTH']:'';
+        $YEAR = isset($params['YEAR'])?$params['YEAR']:'';
+        
+        $SQL = self::dbAccess()->select();    
+        $SQL->from(array("A"=>"t_discipline"), array("TOTAL" => "COUNT(*)"));
+        $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'B.STUDENT=A.STUDENT_ID', array(''));
+        if($disciplineType)
+            $SQL->where("A.DISCIPLINE_TYPE = ?",$disciplineType);
+        if($campusId)
+            $SQL->where("B.CAMPUS = ?",$campusId);
+        if($gradeId)
+            $SQL->where("B.GRADE = ?",$gradeId);
+        if($schoolyearId)
+            $SQL->where("B.SCHOOL_YEAR = ?",$schoolyearId);
+        if($MONTH)
+            $SQL->where("MONTH(A.CREATED_DATE) = ?",$MONTH);
+        if($YEAR)
+            $SQL->where("YEAR(A.CREATED_DATE) = ?",$YEAR);
+        $result = self::dbAccess()->fetchRow($SQL);
+    
+        return $result?$result->TOTAL:0;
+    }
+    
+    public static function getDataStudentDiscipline($params)
+    {
+        $disciplineTypeEntries = CamemisTypeDBAccess::getCamemisType("DISCIPLINE_TYPE_STUDENT", false);
+        $MONTHS = array(
+                    '01' => JANUARY, '02' => FEBRUARY, '03' => MARCH, '04' => APRIL
+                    , '05' => MAY, '06' => JUNE, '07' => JULY, '08' => AUGUST
+                    , '09' => SEPTEMBER, '10' => OCTOBER, '11' => NOVEMBER, '12' => DECEMBER
+                    );
+        $DATASET = "[";
+        $i = 0;
+       
+        foreach ($disciplineTypeEntries as $disciplineObject)
+        
+        {
+            $params['disciplineType']=$disciplineObject->ID;
+            $RESULT = "[";
+            $j = 0;
+            foreach ($MONTHS as $key => $value)
+            {
+                $params['MONTH']=$key;
+                $RESULT .=$j ? "," : "";
+                $RESULT .= "{'x':'" . $value . "'";
+                $RESULT .= ",'y':" . self::getCountStudentDiscipline($params) . "}";
+                $j++;
+            }
+            
+            $RESULT .= "]";
+            $DATASET .=$i ? "," : "";
+            $DATASET .= "{'key' : '" . $disciplineObject->NAME . "','values':" . $RESULT . "}";
+            $i++;
+        }
+        $DATASET .= "]";
+
+        return $DATASET;
+
+    }
+    ////
+    
+    
+    
     public static function getDataSetStudentDiscipline($objectType, $studentId)
     {
 
@@ -631,10 +701,17 @@ class StudentStatisticsDBAccess {
 
     public static function getSqlStudentDisciplineByMonthType($month, $year, $disciplineType, $studentId)
     {
-
+        $campusId = isset($params['campusId'])?$params['campusId']:'';
+        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
+        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
+        $month = isset($params['MONTH'])?$params['MONTH']:'';
+        $year = isset($params['YEAR'])?$params['YEAR']:'';
+        $disciplineType = isset($params['disciplineType'])?$params['disciplineType']:'';
+        $studentId = isset($params['studentId'])?$params['studentId']:'';
+        
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_discipline'), array("C" => "COUNT(*)"));
-        $SQL->joinLeft(array('B' => 't_camemis_type'), 'A.DISCIPLINE_TYPE=B.ID', array());
+        $SQL->joinLeft(array('B' => 't_camemis_type'), 'A.DISCIPLINE_TYPE=B.ID', array(''));
 
         if ($month)
             $SQL->where("MONTH(CREATED_DATE) = '" . $month . "'");
@@ -709,7 +786,74 @@ class StudentStatisticsDBAccess {
 
         return $DATASET;
     }
+    ////@veasna
+    public static function getCountStudentAttendance($params){
+        
+        $absenceType = isset($params['absenceType'])?$params['absenceType']:'';
+        $campusId = isset($params['campusId'])?$params['campusId']:'';
+        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
+        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
+        $MONTH = isset($params['MONTH'])?$params['MONTH']:'';
+        $YEAR = isset($params['YEAR'])?$params['YEAR']:'';
+        
+        $SQL = self::dbAccess()->select();    
+        $SQL->from(array("A"=>"t_student_attendance"), array("TOTAL" => "COUNT(*)"));
+        $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS_ID=B.ID', array(''));
+        if($absenceType)
+            $SQL->where("A.ABSENT_TYPE = ?",$absenceType);
+        if($campusId)
+            $SQL->where("B.CAMPUS_ID = ?",$campusId);
+        if($gradeId)
+            $SQL->where("B.GRADE_ID = ?",$gradeId);
+        if($schoolyearId)
+            $SQL->where("B.SCHOOL_YEAR = ?",$schoolyearId);
+        if($MONTH)
+            $SQL->where("MONTH(A.END_DATE) = ?",$MONTH);
+        if($YEAR)
+            $SQL->where("YEAR(A.END_DATE) = ?",$YEAR);
+        $result = self::dbAccess()->fetchRow($SQL);
+    
+        return $result?$result->TOTAL:0;
+    }
+    
+    public static function getDataAttendance($params)
+    {
+        $absentTypeEntries = AbsentTypeDBAccess::allAbsentType('STUDENT', false);
+        $MONTHS = array(
+                    '01' => JANUARY, '02' => FEBRUARY, '03' => MARCH, '04' => APRIL
+                    , '05' => MAY, '06' => JUNE, '07' => JULY, '08' => AUGUST
+                    , '09' => SEPTEMBER, '10' => OCTOBER, '11' => NOVEMBER, '12' => DECEMBER
+                    );
+        $DATASET = "[";
+        $i = 0;
+       
+        foreach ($absentTypeEntries as $absenceObject)
+        
+        {
+            $params['absenceType']=$absenceObject->ID;
+            $RESULT = "[";
+            $j = 0;
+            foreach ($MONTHS as $key => $value)
+            {
+                $params['MONTH']=$key;
+                $RESULT .=$j ? "," : "";
+                $RESULT .= "{'x':'" . $value . "'";
+                $RESULT .= ",'y':" . self::getCountStudentAttendance($params) . "}";
+                $j++;
+            }
+            
+            $RESULT .= "]";
+            $DATASET .=$i ? "," : "";
+            $DATASET .= "{'key' : '" . $absenceObject->NAME . "','color':'$absenceObject->COLOR','values':" . $RESULT . "}";
+            $i++;
+        }
+        $DATASET .= "]";
 
+        return $DATASET;
+
+    }
+    ////
+    
     ////////////////////////////////////////////////////////////////////////////
     //STUDENT ENROLLMENT TRADITIONAL....
     ////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,10 @@ $studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 $staffId = isset($_GET["staffId"])?$_GET["staffId"]:"";
 $personType = isset($_GET["personType"])?strtoupper($_GET["personType"]):""; //@Man
 
+$campusId = isset($_GET["campusId"])?$_GET["campusId"]:"";
+$gradeId = isset($_GET["gradeId"])?$_GET["gradeId"]:"";
+$schoolyearId = isset($_GET["schoolyearId"])?$_GET["schoolyearId"]:"";
+
 switch($personType){
     case "STUDENT":
         $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("WEEKLY", $studentId);
@@ -19,6 +23,14 @@ switch($personType){
                 break;
             case "YEARLY":
                 $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("YEARLY", $studentId);
+                break;
+             case "CAMPUS":
+                $params = array('campusId'=>$campusId,'schoolyearId'=>$schoolyearId);
+                $dataSet=StudentStatisticsDBAccess::getDataStudentDiscipline($params);
+                break;
+             case "GRADE":
+                $params = array('campusId'=>$campusId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId);
+                $dataSet = StudentStatisticsDBAccess::getDataStudentDiscipline($params);
                 break;
         }
         break;
