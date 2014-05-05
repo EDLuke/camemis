@@ -148,7 +148,6 @@ class StudentStatusExportDBAccess extends CamemisExportDBAccess {
         $this->setContent($entries,"CODE_ID","STUDENT");
         $this->EXCEL->getActiveSheet()->setTitle("" . STUDENT_STATUS . "");
         $this->WRITER->save($this->getFileStudentStatus());
-
         return array(
             "success" => true
         );
