@@ -31,6 +31,22 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
+        $entries = AbsentTypeDBAccess::allAbsentType('STAFF', 2);
+    
+        $data = array();
+        
+        if($entries){
+            $i = 0;
+            foreach($entries as $value){
+                $data[$i] = "[\"$value->ID\",\"$value->NAME\"]";
+                $i++;
+            }
+        }
+        
+        $ABSENT_TYPE_STORE = "[" . implode(",", $data) . "]";
+        $DETAIL_INFORMATION_ITEMS = "[";
+            $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Combo("ABSENT_TYPE", ATTENDANCE_TYPE, $ABSENT_TYPE_STORE,false, false, false)."}";
+        $DETAIL_INFORMATION_ITEMS .= "]";
         
         $DETAIL_INFORMATION = "
         {
@@ -45,10 +61,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 layout: 'form'
                 ,border: false
                 ,autoHeight:true
-                ,bodyStyle: 'background:#F9F9F9;padding:15px'
-                ,items:[
-                    {".CamemisField::comboAbsentTypes("STAFF", false,false, true)."}
-                ]
+                ,bodyStyle: 'background:#F9F9F9;padding:10px'
+                ,items:$DETAIL_INFORMATION_ITEMS
             }]
         }";
         
