@@ -2949,7 +2949,7 @@ class CamemisField {
     }
 
     static function ComboSchoolTerm($fieldLabel, $readOnly = false, $width = false) {
-        $store = "[[0, '2xSemester'],[1, '3xTerm'],[2, '4xQuarter']]";
+        $store = "[[0, '".TWO_SEMESTERS."'],[1, '".THREE_ITEMS."'],[2, '".FOUR_QUARTERS."']]";
         $js = "";
         $js .= "xtype: 'combo'";
         $js .= ",id: 'TERM_NUMBER_ID'";
