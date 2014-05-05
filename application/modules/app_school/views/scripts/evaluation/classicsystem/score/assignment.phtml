@@ -21,8 +21,10 @@ $OBJECT_FORM->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_FORM->setSaveUrl('/evaluation/jsonsave/');
 
 $setId = isset($_GET["setId"])?$_GET["setId"]:"";
+$stdClass = new stdClass();
+$stdClass->setId = $setId;
+$facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
 
-$facette = StudentAssignmentDBAccess::findScoreInputDate($setId);
 if(!$facette) {header("Location: /main/permission/");}
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
