@@ -39,14 +39,16 @@ Ext.onReady(function() {
     }
 
     <?
-    $OBJECT_GRID->addReadField("name: 'SHORT'");
-    $OBJECT_GRID->addReadField("name: 'NAME'");
+    $OBJECT_GRID->addReadField("name: 'SUBJECT_SHORT'");
+    $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+    $OBJECT_GRID->addReadField("name: 'ASSIGNMENT'");
     $OBJECT_GRID->addReadField("name: 'RANK'");
     $OBJECT_GRID->addReadField("name: 'SUBJECT_VALUE'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
 
-    $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SHORT'");
-    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SUBJECT_SHORT'");
+    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'SUBJECT_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'ASSIGNMENT'");
     $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssText, align: 'center', sortable: true, dataIndex: 'RANK'");
     $OBJECT_GRID->addColumn("header: '<b>".VALUE."</b>', width: 120, renderer:cssText, align: 'right', sortable: true, dataIndex: 'SUBJECT_VALUE'");
     $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', width: 120, renderer:cssText, align: 'right', sortable: true, dataIndex: 'ASSESSMENT'");
@@ -75,7 +77,7 @@ Ext.onReady(function() {
 
     $OBJECT_GRID->loadMask = false;
     $OBJECT_GRID->isGroupingView = true;
-    $OBJECT_GRID->groupField = "ASSIGNMENT";
+    $OBJECT_GRID->groupField = "SUBJECT_NAME";
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->renderJS();
 
