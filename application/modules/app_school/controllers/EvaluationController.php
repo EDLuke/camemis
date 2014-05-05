@@ -803,6 +803,11 @@ class EvaluationController extends Zend_Controller_Action {
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
                 $jsondata = $DB_ACCESS->jsonActionDeleteSubjectScoreAssessment($this->REQUEST->getPost());
                 break;
+            
+            case "jsonActionTeacherScoreEnter":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonActionTeacherScoreEnter($this->REQUEST->getPost());
+                break;
         }
 
         if (isset($jsondata))
