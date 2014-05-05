@@ -335,11 +335,10 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL .= " FROM t_discipline AS A";
         $SQL .= " LEFT JOIN " . $table . " AS B ON A." . $chooseId . "=B.ID";
         $SQL .= " LEFT JOIN t_camemis_type AS C ON C.ID=A.DISCIPLINE_TYPE";
-        if($campusId && $schoolyearId){
-            $objectSchoolyear = AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
-            if(!$objectSchoolyear->EDUCATION_SYSTEM)
+        if($campusId || $gradeId || $schoolyearId){ ////@veasna
             $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID ";
         }
+       
         $SQL .= " WHERE 1=1";
 
         $SQL .= " AND C.OBJECT_TYPE = '" . $DISCIPLINE_TYPE . "'";
@@ -367,12 +366,16 @@ class DisciplineDBAccess extends StudentDBAccess {
             $SQL .= " AND A.INFRACTION_DATE >= '" . setDate2DB($startDate) . "' AND A.INFRACTION_DATE <= '" . setDate2DB($endDate) . "'";
         }
         
-        ////
-        if($campusId && $schoolyearId){
-            $objectSchoolyear = AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
-            if($objectSchoolyear){
-                $SQL .=" AND A.ENABLED_DATE >= '" . $objectSchoolyear->SCHOOLYEAR_START . "'";
-                $SQL .=" AND A.ENABLED_DATE <= '" . $objectSchoolyear->SCHOOLYEAR_END . "'";
+        ////@veasna
+        if($campusId || $gradeId || $schoolyearId){
+            if($campusId){
+                $SQL .= " AND D.CAMPUS = '".$campusId."'";      
+            }
+            if($gradeId){
+                $SQL .= " AND D.GRADE = '".$gradeId."'";    
+            }
+            if($schoolyearId){
+                $SQL .= " AND D.SCHOOL_YEAR = '".$schoolyearId."'";
             }
         }
         ////
