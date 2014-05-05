@@ -56,7 +56,7 @@ class DisplayItem{
                 $item = "{
                     title: '".constant($key)." (".$value.")'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/gradebookmonth/?camIds=".$this->__urlEnryp->encryptedGet($setParams)."'})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/displaymonthsubject/?camIds=".$this->__urlEnryp->encryptedGet($setParams)."'})]
                 }";
                 $PENEL_ITEMS[] = $item;
             }

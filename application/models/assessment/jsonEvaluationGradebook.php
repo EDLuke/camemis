@@ -42,12 +42,6 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
             $this->studentId = $params["id"];
         }
 
-        if (isset($params["field"]))
-            $this->actionField = $params["field"];
-
-        if (isset($params["newValue"]))
-            $this->actionValue = $params["newValue"];
-
         if (isset($params["section"]))
             $this->section = $params["section"];
     }
@@ -55,7 +49,7 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
     public function jsonStudentGradebookMonth($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
-
+        $data = array();
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
@@ -72,7 +66,7 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
     public function jsonStudentGradebookTerm($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
-
+        $data = array();
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
@@ -90,6 +84,7 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
+        $data = array();
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
