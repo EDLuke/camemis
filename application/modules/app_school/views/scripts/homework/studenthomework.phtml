@@ -119,8 +119,18 @@ Ext.onReady(function() {
         ,items:[{
             layout: 'form'
             ,border: false
-            ,bodyStyle: 'padding:10px' 
-            ,items: [{".CamemisField::Box("NAME", HOMEWORK_NAME, $this->facette->NAME)."}]
+            ,bodyStyle: 'padding:10px'
+            ,items: [{             
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'padding:10px' 
+                ,items: [{".CamemisField::Box("SUBJECT", SUBJECT, $this->facette->SUBJECT_NAME)."}]
+            },{
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'padding:10px'
+                ,items: [{".CamemisField::Box("NAME", HOMEWORK_NAME, $this->facette->NAME)."}]
+            }]            
         }]
     }";
     
