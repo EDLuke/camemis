@@ -66,7 +66,6 @@ class DisplayItem{
         
         $js = "";
         $js .= "layout:'fit'";
-        $js .= ",title:'".MONTHLY_RESULT."'";
         $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
         $js .= ",border: false";
         $js .= ",items:[{";
@@ -208,7 +207,6 @@ class DisplayItem{
         
         $js = "";
         $js .= "layout:'fit'";
-        $js .= ",title:'".LEARNING_OUTCOMES."'";
         $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
         $js .= ",border: false";
         $js .= ",items:[{";
@@ -335,7 +333,6 @@ class DisplayItem{
         
         $js = "";
         $js .= "layout:'fit'";
-        $js .= ",title:'".TEACHER_COMMENTS."'";
         $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
         $js .= ",border: false";
         $js .= ",items:[{";
@@ -355,7 +352,9 @@ class DisplayItem{
         
         $js = "{";
             $js .= "layout:'fit'";
-            $js .= ",title:''";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".MONTHLY_RESULT."'";
             $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
@@ -371,7 +370,9 @@ class DisplayItem{
         
         $js = "{";
             $js .= "layout:'fit'";
-            $js .= ",title:''";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".LEARNING_OUTCOMES."'";
             $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
@@ -387,7 +388,9 @@ class DisplayItem{
         
         $js = "{";
             $js .= "layout:'fit'";
-            $js .= ",title:''";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".TEACHER_COMMENTS."'";
             $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
