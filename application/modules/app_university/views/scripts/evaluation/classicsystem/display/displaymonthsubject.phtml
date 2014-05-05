@@ -76,13 +76,12 @@ Ext.onReady(function() {
     $setParams = "";
     $setParams .= "&academicId=".$academicObject->ID."";
     $setParams .= "&monthyear=".$this->monthyear."";
-    $setParams .= "&subjectId=".$this->subjectId."";
     $setParams .= "&studentId=".$this->studentId."";
 
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentSubjectAssignments'
+        ,cmd: 'jsonStudentGradebookMonth'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
 

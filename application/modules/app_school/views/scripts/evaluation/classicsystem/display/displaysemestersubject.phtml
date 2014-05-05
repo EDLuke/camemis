@@ -55,14 +55,14 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
         $setParams = "";
         $setParams .= "&academicId=".$academicObject->ID."";
-        $setParams .= "&section=1";
+        $setParams .= "&term=".$this->term."";
         $setParams .= "&studentId=".$this->studentId."";
 
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
             ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
-            ,cmd: 'jsonLoadStudentAllSubjectAssessment'
+            ,cmd: 'jsonStudentGradebookTerm'
         ";
         
         $OBJECT_GRID->addTBarItems("
