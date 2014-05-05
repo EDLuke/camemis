@@ -10,8 +10,9 @@ require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'models/app_university/student/StudentDBAccess.php';
 require_once 'models/app_university/student/StudentAcademicDBAccess.php';
-require_once 'models/app_university/PersonStatusDBAccess.php';
 require_once 'models/app_university/student/StudentStatusDBAccess.php';
+require_once 'models/app_university/student/StudentSearchDBAccess.php';
+require_once 'models/app_university/PersonStatusDBAccess.php';
 require_once 'models/app_university/academic/AcademicDBAccess.php';
 require_once 'models/app_university/training/TrainingDBAccess.php';
 require_once 'include/Common.inc.php';
@@ -21,22 +22,25 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function jsonLoadStudentStatus($Id) {
+    public static function jsonLoadStudentStatus($Id)
+    {
 
         $facette = self::findStudentStatus($Id);
 
         $data = array();
 
-        if ($facette) {
-
+        if ($facette)
+        {
             $data["ID"] = $facette->ID;
             $data["STATUS"] = $facette->STATUS;
             $data["STUDENT_STATUS"] = $facette->STUDENT_STATUS;
@@ -49,7 +53,8 @@ class StudentStatusDBAccess extends StudentDBAccess {
         );
     }
 
-    public static function jsonLoadLastStudentStatus($studentId) {
+    public static function jsonLoadLastStudentStatus($studentId)
+    {
 
         return array(
             "success" => true
@@ -58,12 +63,24 @@ class StudentStatusDBAccess extends StudentDBAccess {
     }
 
     // Thong
-    public static function jsonStudentStatus() {
+    public static function jsonStudentStatus()
+    {
 
         //
     }
 
-    public static function findIdStudentStatus($studentId) {
+    public static function findStudentStatus($Id)
+    {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_status", array('*'));
+        $SQL->where("STUDENT = '" . $Id . "'");
+        //echo $SQL->__toString();
+        return self::dbAccess()->fetchRow($SQL);
+    }
+
+    public static function findIdStudentStatus($studentId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_status'));
         $SQL->joinLeft(array('B' => 't_person_status'), 'B.ID=A.STATUS_ID', array('B.NAME', 'B.SHORT'));
@@ -73,16 +90,8 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return $stmt->fetch();
     }
 
-    public static function findStudentStatus($Id) {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_status", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
-        //echo $SQL->__toString();
-        return self::dbAccess()->fetchRow($SQL);
-    }
-
-    public static function findStatusByStudent($studentId, $status) {
+    public static function findStatusByStudent($studentId, $status)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_status", array('*'));
@@ -95,19 +104,24 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function checkFuturDate($date) {
+    public static function checkFuturDate($date)
+    {
 
         $date = strtotime($date);
         $today = strtotime(getCurrentDBDate());
 
-        if ($date > $today) {
+        if ($date > $today)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static function removeStudentStatus($Id) {
+    public static function removeStudentStatus($Id)
+    {
         self::dbAccess()->delete('t_student_status', array("ID='" . $Id . "'"));
 
         return array(
@@ -116,11 +130,13 @@ class StudentStatusDBAccess extends StudentDBAccess {
         );
     }
 
-    public static function jsonStatusByStudent() {
+    public static function jsonStatusByStudent()
+    {
         
     }
 
-    public static function updateStudentStatus($studentId) {
+    public static function updateStudentStatus($studentId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'));
         $SQL->joinLeft(array('B' => 't_student_status'), 'A.ID=B.STUDENT', array('B.STATUS'));
@@ -131,7 +147,8 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return $stmt->fetch();
     }
 
-    public static function jsonActionSaveLastStudentStatus($params) {
+    public static function jsonActionSaveLastStudentStatus($params)
+    {
 
         $statusId = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
 
@@ -145,15 +162,16 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
         $studentStatusObject = self::getSQLCurrentStudentStatus($studentId);
 
-        if ($startDate && $endDate) {
+        if ($startDate && $endDate)
+        {
             $CAL_POST_START_DATE = strtotime($startDate);
             $CAL_POST_END_DATE = strtotime($endDate);
             $POST_START_DATE = $startDate;
             $POST_END_DATE = $endDate;
         }
 
-        if ($singleDate) {
-
+        if ($startDate && !$endDate)
+        {
             $CAL_POST_START_DATE = $CAL_SINGLE_DATE;
             $CAL_POST_END_DATE = "";
             $POST_START_DATE = $singleDate;
@@ -164,21 +182,34 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $CAL_CURRENT_START_DATE = strtotime($studentStatusObject->LAST_START_DATE);
         $CAL_CURRENT_END_DATE = strtotime($studentStatusObject->LAST_END_DATE);
 
-        if (!$CAL_CURRENT_START_DATE && !$CAL_CURRENT_END_DATE) {
+        if (!$CAL_CURRENT_START_DATE && !$CAL_CURRENT_END_DATE)
+        {
             $ACTION = "INSERT";
-        } elseif ($CAL_CURRENT_START_DATE && $CAL_CURRENT_END_DATE) {
-            if ($CAL_POST_START_DATE > $CAL_CURRENT_START_DATE && $CAL_POST_START_DATE < $CAL_CURRENT_END_DATE) {
+        }
+        elseif ($CAL_CURRENT_START_DATE && $CAL_CURRENT_END_DATE)
+        {
+            if ($CAL_POST_START_DATE > $CAL_CURRENT_START_DATE && $CAL_POST_START_DATE < $CAL_CURRENT_END_DATE)
+            {
                 $ACTION = "UPDATE";
-            } else {
+            }
+            else
+            {
                 $ACTION = "INSERT";
             }
-        } elseif ($CAL_CURRENT_START_DATE && !$CAL_CURRENT_END_DATE) {
-            if ($CAL_POST_START_DATE < $CAL_CURRENT_START_DATE) {
+        }
+        elseif ($CAL_CURRENT_START_DATE && !$CAL_CURRENT_END_DATE)
+        {
+            if ($CAL_POST_START_DATE < $CAL_CURRENT_START_DATE)
+            {
                 $ACTION = "UPDATE";
-            } else {
+            }
+            else
+            {
                 $ACTION = "INSERT";
             }
-        } else {
+        }
+        else
+        {
             $ACTION = "INSERT";
         }
 
@@ -187,7 +218,8 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $SAVEDATA ["END_DATE"] = $POST_END_DATE;
         $SAVEDATA ["STATUS_ID"] = $statusId;
 
-        switch ($ACTION) {
+        switch ($ACTION)
+        {
             case "INSERT":
                 $SAVEDATA ["CREATED_DATE"] = getCurrentDBDateTime();
                 $SAVEDATA ["CREATED_BY"] = Zend_Registry::get('USER')->CODE;
@@ -203,11 +235,13 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return array("success" => true);
     }
 
-    public static function getSQLCurrentStudentStatus($studentId) {
+    public static function getSQLCurrentStudentStatus($studentId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'), array(
             'A.STATUS AS STUDENT_STATUS'
+            , 'A.ID AS ID'
             , 'A.MODIFY_DATE AS STUDENT_MODIFY_DATE'
             , 'A.CREATED_DATE AS STUDENT_CREATED_DATE'
                 )
@@ -240,20 +274,24 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getCurrentStudentStatus($studentId) {
+    public static function getCurrentStudentStatus($studentId)
+    {
 
         $result = self::getSQLCurrentStudentStatus($studentId);
         $data = array();
 
-        if ($result) {
-            if ($result->LAST_STATUS) {
+        if ($result)
+        {
+            if ($result->LAST_STATUS)
+            {
                 $data['SHORT'] = $result->SHORT;
                 $data['NAME'] = $result->LAST_STATUS;
                 $data['COLOR'] = $result->COLOR;
                 $data['COLOR_FONT'] = getFontColor($result->COLOR);
                 $DATE_FROM = DATE_FROM . ": " . getShowDate($result->LAST_START_DATE);
                 $DATE_TO = DATE_TO . ": " . getShowDate($result->LAST_END_DATE);
-                switch ($result->DISPLAY_DATE) {
+                switch ($result->DISPLAY_DATE)
+                {
                     case 1:
                         $data['DATE'] = $DATE_FROM;
                         break;
@@ -264,14 +302,19 @@ class StudentStatusDBAccess extends StudentDBAccess {
                         $data['DATE'] = $DATE_FROM;
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 $data['SHORT'] = $result->STUDENT_STATUS ? ACTIVE : NO_ACTIVE;
                 $data['NAME'] = $result->STUDENT_STATUS ? ACTIVE : NO_ACTIVE;
                 $data['COLOR'] = $result->STUDENT_STATUS ? '#53aae0' : '#de5243';
                 $data['COLOR_FONT'] = $result->STUDENT_STATUS ? "#FFF" : "#FFF";
-                if ($result->STUDENT_MODIFY_DATE == "0000-00-00 00:00:00") {
+                if ($result->STUDENT_MODIFY_DATE == "0000-00-00 00:00:00")
+                {
                     $data['DATE'] = getShowDateTime($result->STUDENT_CREATED_DATE);
-                } else {
+                }
+                else
+                {
                     $data['DATE'] = getShowDateTime($result->STUDENT_MODIFY_DATE);
                 }
             }
@@ -280,8 +323,8 @@ class StudentStatusDBAccess extends StudentDBAccess {
         return $data;
     }
 
-    ////
-    public static function getSqlStudentStatus($params) {
+    public static function getSqlStudentStatus($params)
+    {
 
         $studentSchoolId = isset($params["STUDENT_SCHOOL_ID"]) ? $params["STUDENT_SCHOOL_ID"] : "";
         $code = isset($params["CODE"]) ? $params["CODE"] : "";
@@ -337,11 +380,26 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
         $SQL->where("1=1");
 
-        if ($startDate && $endDate) {
+        if ($startDate && $endDate)
+        {
             $SQL->where("B.START_DATE BETWEEN '" . setDate2DB($startDate) . "' AND '" . setDate2DB($endDate) . "'");
         }
 
-        if ($globalSearch) {
+
+        if ($gender)
+            $SQL->where("A.GENDER='" . $gender . "'");
+        if ($studentstatusType)
+            $SQL->where("B.STATUS_ID='" . $studentstatusType . "'");
+        if ($studentId)
+            $SQL->where("B.STUDENT='" . $studentId . "'");
+
+        if ($firstname)
+            $SQL->where("A.FIRSTNAME like '" . $firstname . "%'");
+        if ($lastname)
+            $SQL->where("A.LASTNAME like '" . $lastname . "%'");
+            
+        if ($globalSearch)
+        {
 
             $SQL .= " AND ((A.NAME LIKE '" . $globalSearch . "%')";
             $SQL .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
@@ -356,24 +414,13 @@ class StudentStatusDBAccess extends StudentDBAccess {
         if ($studentSchoolId)
             $SQL .= " AND A.STUDENT_SCHOOL_ID LIKE '" . strtoupper($studentSchoolId) . "%' ";
 
-        if ($gender)
-            $SQL->where("A.GENDER='" . $gender . "'");
-        if ($studentstatusType)
-            $SQL->where("B.STATUS_ID='" . $studentstatusType . "'");
-        if ($studentId)
-            $SQL->where("B.STUDENT='" . $studentId . "'");
-
-        if ($firstname)
-            $SQL->where("A.FIRSTNAME like '" . $firstname . "%'");
-        if ($lastname)
-            $SQL->where("A.LASTNAME like '" . $lastname . "%'");
-
-        $SQL->order("B.STATUS_ID DESC");
+        $SQL .= "ORDER BY B.STATUS_ID DESC";
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonListStudentStatus($params, $isJson = true) {
+    public static function jsonListStudentStatus($params, $isJson = true)
+    {
 
         $start = isset($params["start"]) ? $params["start"] : "0";
         $limit = isset($params["limit"]) ? $params["limit"] : "50";
@@ -390,12 +437,11 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $born_year["UNKNOWN"] = 0;
 
         $i = 0;
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
 
-                $studentAcademicObject = StudentAcademicDBAccess::getCurrentStudentAcademic($value->STUDENT_ID);
-
-                $TRAINING_OBJECT = StudentSearchDBAccess::queryStudentTraining($value->STUDENT_ID);
                 $data[$i]["ID"] = $value->STUDENT_ID;
                 $data[$i]["CODE_ID"] = $value->STUDENT_CODE;
                 $data[$i]["STUDENT"] = $value->LASTNAME . " " . $value->FIRSTNAME;
@@ -413,24 +459,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
                 $data[$i]["EMAIL"] = $value->EMAIL;
                 $data[$i]["CREATED_DATE"] = $value->CREATED_DATE;
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
-                if ($TRAINING_OBJECT) {
-                    $o = array();
-                    $j = 0;
-                    foreach ($TRAINING_OBJECT as $v) {
-                        $o[$j] = $v->TRAINING_NAME;
-                        $j++;
-                    }
-                    $data[$i]["TRAINING_NAME"] = setShowText(implode(" | ", $o));
-                    $data[$i]["TRAINING_TERM"] = isset($TRAINING_OBJECT->TRAINING_TERM) ? $TRAINING_OBJECT->TRAINING_TERM : "---";
-                } else {
-                    $data[$i]["TRAINING_NAME"] = setShowText("---");
-                }
 
-                $data[$i]["SCHOOLYEAR_NAME"] = $studentAcademicObject->SCHOOLYEAR;
-                $data[$i]["CLASS_NAME"] = $studentAcademicObject->ACADEMIC;
+                $data[$i]["CURRENT_SCHOOLYEAR"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_SCHOOLYEAR;
+                $data[$i]["CURRENT_ACADEMIC"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_ACADEMIC;
+                $data[$i]["CURRENT_TRAINING_NAME"] = StudentSearchDBAccess::getCurrentTraining($value->STUDENT_ID);
 
                 $i++;
-                switch ($value->GENDER) {
+                switch ($value->GENDER)
+                {
                     case 1:
                         $total['MALE'] ++;
                         break;
@@ -441,12 +477,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
                         $total['UNKNOWN'] ++;
                 }
 
-                if ($value->BORN_YEAR) {
+                if ($value->BORN_YEAR)
+                {
                     if (isset($born_year[$value->BORN_YEAR]))
                         ++$born_year[$value->BORN_YEAR];
                     else
                         $born_year[$value->BORN_YEAR] = 1;
-                } else {
+                } else
+                {
                     ++$born_year["UNKNOWN"];
                 }
             }
@@ -456,12 +494,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $jsonbornyear = jsonBornYear($born_year);
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
@@ -469,12 +509,15 @@ class StudentStatusDBAccess extends StudentDBAccess {
                 , "bornYear" => $jsonbornyear
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
     }
 
-    public static function jsonSearchStudentStatus($params, $isJson = true) {
+    public static function jsonSearchStudentStatus($params, $isJson = true)
+    {
 
         $start = isset($params["start"]) ? $params["start"] : "0";
         $limit = isset($params["limit"]) ? $params["limit"] : "50";
@@ -491,8 +534,10 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
         $born_year = array();
         $born_year["UNKNOWN"] = 0;
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
 
                 $data[$i]["ID"] = $value->STUDENT_ID;
                 $data[$i]["CODE_ID"] = $value->STUDENT_CODE;
@@ -511,15 +556,27 @@ class StudentStatusDBAccess extends StudentDBAccess {
                 $data[$i]["EMAIL"] = $value->EMAIL;
                 $data[$i]["CREATED_DATE"] = $value->CREATED_DATE;
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
+                    $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
+                }
+                else
+                {
+                    $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
+                }
+                $data[$i]["START_DATE"] = getShowDate($value->START_DATE);
+                $data[$i]["END_DATE"] = getShowDate($value->END_DATE);
+                $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
                 $data[$i]["STUDENT_STATUS"] = setShowText($value->STATUS_ID);
-                
+
                 $data[$i]["CURRENT_SCHOOLYEAR"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_SCHOOLYEAR;
                 $data[$i]["CURRENT_ACADEMIC"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_ACADEMIC;
                 $data[$i]["CURRENT_TRAINING_NAME"] = StudentSearchDBAccess::getCurrentTraining($value->STUDENT_ID);
 
                 $i++;
 
-                switch ($value->GENDER) {
+                switch ($value->GENDER)
+                {
                     case 1:
                         $total['MALE'] ++;
                         break;
@@ -530,13 +587,16 @@ class StudentStatusDBAccess extends StudentDBAccess {
                         $total['UNKNOWN'] ++;
                 }
 
-                if (isset($value->BORN_YEAR)) {
-                    if ($value->BORN_YEAR) {
+                if (isset($value->BORN_YEAR))
+                {
+                    if ($value->BORN_YEAR)
+                    {
                         if (isset($born_year[$value->BORN_YEAR]))
                             ++$born_year[$value->BORN_YEAR];
                         else
                             $born_year[$value->BORN_YEAR] = 1;
-                    } else {
+                    } else
+                    {
                         ++$born_year["UNKNOWN"];
                     }
                 }
@@ -547,12 +607,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $jsonbornyear = jsonBornYear($born_year);
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
@@ -560,7 +622,9 @@ class StudentStatusDBAccess extends StudentDBAccess {
                 , "bornYear" => $jsonbornyear
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
     }
