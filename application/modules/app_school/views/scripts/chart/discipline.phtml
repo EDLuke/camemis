@@ -20,6 +20,12 @@ switch($personType){
             case "YEARLY":
                 $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("YEARLY", $studentId);
                 break;
+             case "CAMPUS":
+                $dataSet="";
+                break;
+             case "GRADE":
+                $dataSet="";
+                break;
         }
         break;
     case "STAFF":

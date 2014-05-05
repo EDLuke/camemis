@@ -280,6 +280,10 @@ class DisciplineDBAccess extends StudentDBAccess {
         $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : '';
         $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : '';
         $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : '';
+        $campusId = isset($params["campusId"]) ? $params["campusId"] : '';
+        $schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : '';
+        $gradeId = isset($params["gradeId"]) ? $params["gradeId"] : '';
+        $classId = isset($params["classId"]) ? $params["classId"] : '';
         //@Math Man 11.02.2014
         $personType = isset($params["personType"]) ? addText($params["personType"]) : '';
 
@@ -331,6 +335,11 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL .= " FROM t_discipline AS A";
         $SQL .= " LEFT JOIN " . $table . " AS B ON A." . $chooseId . "=B.ID";
         $SQL .= " LEFT JOIN t_camemis_type AS C ON C.ID=A.DISCIPLINE_TYPE";
+        if($campusId && $schoolyearId){
+            $objectSchoolyear = AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
+            if(!$objectSchoolyear->EDUCATION_SYSTEM)
+            $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID ";
+        }
         $SQL .= " WHERE 1=1";
 
         $SQL .= " AND C.OBJECT_TYPE = '" . $DISCIPLINE_TYPE . "'";
@@ -357,6 +366,16 @@ class DisciplineDBAccess extends StudentDBAccess {
         if ($startDate && $endDate) {
             $SQL .= " AND A.INFRACTION_DATE >= '" . setDate2DB($startDate) . "' AND A.INFRACTION_DATE <= '" . setDate2DB($endDate) . "'";
         }
+        
+        ////
+        if($campusId && $schoolyearId){
+            $objectSchoolyear = AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
+            if($objectSchoolyear){
+                $SQL .=" AND A.ENABLED_DATE >= '" . $objectSchoolyear->SCHOOLYEAR_START . "'";
+                $SQL .=" AND A.ENABLED_DATE <= '" . $objectSchoolyear->SCHOOLYEAR_END . "'";
+            }
+        }
+        ////
         if ($globalSearch) {
             $SQL .= " AND ((B.NAME LIKE '" . $globalSearch . "%')";
             $SQL .= " OR (B.FIRSTNAME LIKE '" . $globalSearch . "%')";

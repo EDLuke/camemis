@@ -341,10 +341,11 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         
         if ($globalSearch)
         {
-            $SQL .= " AND ((B.FIRSTNAME like '" . $globalSearch . "%')) ";
-            $SQL .= " OR ((B.LASTNAME like '" . $globalSearch . "%')) ";
-            $SQL .= " OR ((B.CODE like '" . $globalSearch . "%')) ";
-            $SQL .= " OR ((T.NAME like '" . $globalSearch . "%')) ";
+            $SQL .= " AND ((B.FIRSTNAME like '%" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.LASTNAME like '%" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.CODE like '%" . $globalSearch . "%')) ";
+            //$SQL .= " OR ((T.NAME like '%" . $globalSearch . "%')) ";
+            //$SQL .= " OR ((E.NAME like '%" . $globalSearch . "%')) ";
             
         }
 
@@ -416,7 +417,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
                     if ($absentType)
                     {
-                        $data[$i]["ABSENT_TYPE"] = $absentType->NAME;
+                        $data[$i]["ABSENT_TYPE"] = $value->ABSENCE_NAME;
                     }
                     else
                     {

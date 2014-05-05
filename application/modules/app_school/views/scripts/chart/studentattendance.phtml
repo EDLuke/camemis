@@ -3,8 +3,11 @@ require_once 'models/statistic/StudentStatisticsDBAccess.php';
 
 $objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+$campusId = isset($_GET["campusId"])?$_GET["campusId"]:"";
+$gradeId = isset($_GET["gradeId"])?$_GET["gradeId"]:"";
+$schoolyearId = isset($_GET["schoolyearId"])?$_GET["schoolyearId"]:"";
 $target =  isset($_GET["target"])?addText($_GET["target"]):"";
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
 
 $dataSet = StudentStatisticsDBAccess::getDataSetStudentAttendance("WEEKLY", $studentId, $academicId, $target);
 switch($objectType){
@@ -16,6 +19,13 @@ switch($objectType){
         break;
     case "YEARLY":
         $dataSet = StudentStatisticsDBAccess::getDataSetStudentAttendance("YEARLY", $studentId, $academicId, $target);
+    case "CAMPUS":
+        $params = array('campusId'=>$campusId,'schoolyearId'=>$schoolyearId);
+        $dataSet = StudentStatisticsDBAccess::getDataAttendance($params);
+        break;
+    case "GRADE":
+        $params = array('campusId'=>$campusId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId);
+        $dataSet = StudentStatisticsDBAccess::getDataAttendance($params);
         break;
 }
 
