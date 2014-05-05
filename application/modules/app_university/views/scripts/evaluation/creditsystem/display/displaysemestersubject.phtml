@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $studentId = isset($_GET["studentId"])?addText($_GET["studentId"]):"";
 $academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
-$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
@@ -60,14 +60,14 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
         $setParams = "";
         $setParams .= "&academicId=".$academicObject->ID."";
-        $setParams .= "&section=1";
+        $setParams .= "&term=".$term."";
         $setParams .= "&studentId=".$studentId."";
 
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
             ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
-            ,cmd: 'jsonLoadStudentAllSubjectAssessment'
+            ,cmd: 'jsonStudentGradebookTerm'
         ";
         
         $OBJECT_GRID->addTBarItems("
