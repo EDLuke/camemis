@@ -62,6 +62,23 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $setParams .= "&academicId=".$academicObject->ID."";
         $setParams .= "&term=".$term."";
         $setParams .= "&studentId=".$studentId."";
+        switch($term){
+            case "FIRST_SEMESTER":
+            case "SECOND_SEMESTER":
+                $setParams .="&section=2";
+            break;
+            case "FIRST_TERM":
+            case "SECOND_TERM":
+            case "THIRD_TERM":
+                $setParams .="&section=4";
+            break;
+            case "FIRST_QUARTER":
+            case "SECOND_QUARTER":
+            case "THIRD_QUARTER":
+            case "FOURTH_QUARTER":
+                $setParams .="&section=5";
+            break;
+        }
 
         $OBJECT_GRID->baseParams = "
             start:0

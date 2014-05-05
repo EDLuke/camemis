@@ -8,23 +8,29 @@
 
 class SQLEvaluationStudentSubject {
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return false::dbAccess()->select();
     }
 
-    public static function getCallStudentSubjectEvaluation($stdClass) {
+    public static function getCallStudentSubjectEvaluation($stdClass)
+    {
         $data["LETTER_GRADE_NUMBER"] = "---";
         $data["LETTER_GRADE_CHAR"] = "---";
         $data["SUBJECT_VALUE"] = "---";
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
+        $data["RANK"] = "---";
 
-        if (isset($stdClass->studentId)) {
-            if ($stdClass->studentId) {
+        if (isset($stdClass->studentId))
+        {
+            if ($stdClass->studentId)
+            {
                 $SELECTION_A = array('SUBJECT_VALUE', 'RANK', 'ASSESSMENT_ID', 'TEACHER_COMMENT');
                 $SELECTION_B = array('DESCRIPTION', 'LETTER_GRADE');
 
@@ -36,18 +42,19 @@ class SQLEvaluationStudentSubject {
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                switch ($stdClass->section) {
+                switch ($stdClass->section)
+                {
                     case "MONTH":
-                        if ($stdClass->month)
+                        if (isset($stdClass->month))
                             $SQL->where("A.MONTH = '" . $stdClass->month . "'");
 
-                        if ($stdClass->year)
+                        if (isset($stdClass->year))
                             $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                         break;
                     case "TERM":
                     case "QUARTER":
                     case "SEMESTER":
-                        if ($stdClass->term)
+                        if (isset($stdClass->term))
                             $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         break;
                     case "YEAR":
@@ -61,18 +68,23 @@ class SQLEvaluationStudentSubject {
 
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
-                if ($result) {
+                if ($result)
+                {
                     $data["LETTER_GRADE_NUMBER"] = $result->DESCRIPTION;
                     $data["LETTER_GRADE_CHAR"] = $result->LETTER_GRADE;
                     $data["SUBJECT_VALUE"] = $result->SUBJECT_VALUE;
                     $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
-                } else {
+                    $data["RANK"] = $result->RANK ? $result->RANK : "---";
+                }
+                else
+                {
                     $data["LETTER_GRADE_NUMBER"] = "---";
                     $data["LETTER_GRADE_CHAR"] = "---";
                     $data["SUBJECT_VALUE"] = "---";
                     $data["ASSESSMENT_ID"] = "---";
                     $data["TEACHER_COMMENT"] = "---";
+                    $data["RANK"] = "---";
                 }
             }
         }
@@ -80,7 +92,8 @@ class SQLEvaluationStudentSubject {
         return (object) $data;
     }
 
-    public static function checkStudentSubjectEvaluation($stdClass) {
+    public static function checkStudentSubjectEvaluation($stdClass)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_subject_assessment", array("C" => "COUNT(*)"));
@@ -89,25 +102,26 @@ class SQLEvaluationStudentSubject {
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-        switch ($stdClass->section) {
+        switch ($stdClass->section)
+        {
             case "MONTH":
-                if ($stdClass->month)
+                if (isset($stdClass->month))
                     $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if ($stdClass->year) {
+                if (isset($stdClass->year))
+                {
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
             case "TERM":
             case "QUARTER":
             case "SEMESTER":
-                if ($stdClass->term)
+                if (isset($stdClass->term))
                     $SQL->where("TERM = '" . $stdClass->term . "'");
                 break;
             case "YEAR":
-                if ($stdClass->year) {
+                if (isset($stdClass->year))
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
-                }
                 break;
         }
 
@@ -118,18 +132,23 @@ class SQLEvaluationStudentSubject {
         return $result ? $result->C : 0;
     }
 
-    public static function setActionStudentSubjectEvaluation($stdClass) {
-        if (isset($stdClass->studentId)) {
-            if ($stdClass->studentId) {
+    public static function setActionStudentSubjectEvaluation($stdClass)
+    {
+        if (isset($stdClass->studentId))
+        {
+            if ($stdClass->studentId)
+            {
 
-                if (self::checkStudentSubjectEvaluation($stdClass)) {
+                if (self::checkStudentSubjectEvaluation($stdClass))
+                {
 
                     $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
                     $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
                     $WHERE[] = "SUBJECT_ID = '" . $stdClass->subjectId . "'";
                     $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
 
-                    switch ($stdClass->section) {
+                    switch ($stdClass->section)
+                    {
                         case "MONTH":
                             $WHERE[] = "MONTH = '" . $stdClass->month . "'";
                             $WHERE[] = "YEAR = '" . $stdClass->year . "'";
@@ -145,7 +164,8 @@ class SQLEvaluationStudentSubject {
                     }
                     $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
 
-                    if (isset($stdClass->actionValue)) {
+                    if (isset($stdClass->actionValue))
+                    {
                         if ($stdClass->actionValue)
                             $UPDATE_DATA["SUBJECT_VALUE"] = $stdClass->actionValue;
                     }
@@ -153,7 +173,8 @@ class SQLEvaluationStudentSubject {
                     if (isset($stdClass->assessmentId))
                         $UPDATE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
 
-                    if (isset($stdClass->actionRank)) {
+                    if (isset($stdClass->actionRank))
+                    {
                         if ($stdClass->actionRank)
                             $UPDATE_DATA["RANK"] = $stdClass->actionRank;
                     }
@@ -164,7 +185,8 @@ class SQLEvaluationStudentSubject {
                     $UPDATE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
                     $UPDATE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
                     self::dbAccess()->update('t_student_subject_assessment', $UPDATE_DATA, $WHERE);
-                } else {
+                } else
+                {
 
                     $INSERT_DATA["STUDENT_ID"] = $stdClass->studentId;
                     $INSERT_DATA["SUBJECT_ID"] = $stdClass->subjectId;
@@ -208,7 +230,8 @@ class SQLEvaluationStudentSubject {
         }
     }
 
-    public static function getActionDeleteSubjectScoreAssessment($stdClass) {
+    public static function getActionDeleteSubjectScoreAssessment($stdClass)
+    {
         self::dbAccess()->delete('t_student_subject_assessment'
                 , array(
             "CLASS_ID='" . $stdClass->academicId . "'"

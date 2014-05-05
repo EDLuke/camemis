@@ -163,6 +163,7 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getQueryStudentSubjectAssignments($stdClass) {
+        
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
@@ -189,7 +190,6 @@ class SQLEvaluationStudentAssignment {
             if ($stdClass->term)
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
-
 
         if (isset($stdClass->include_in_evaluation)) {
             if ($stdClass->include_in_evaluation)

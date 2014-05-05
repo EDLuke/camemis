@@ -53,6 +53,7 @@ class DisplayItem{
         
         if($monthList){
             foreach($monthList as $key=>$value){
+                $setParams .= "&monthyear=".$key."_".$value;
                 $item = "{
                     title: '".constant($key)." (".$value.")'
                     ,layout: 'fit'
