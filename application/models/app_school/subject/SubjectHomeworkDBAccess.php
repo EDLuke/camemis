@@ -321,11 +321,17 @@ class SubjectHomeworkDBAccess {
             , "CONTENT AS CONTENT_STUDENT"
             , "CREATED_DATE AS CREATED_DATE"
             , "HOMEWORK_ID AS HOMEWORK_ID"                       
-        );         
-
+        ); 
+                
+        $SELECTION_C = array(
+            "ID AS SUBJECT_ID"
+            , "NAME AS SUBJECT_NAME"
+        ); 
+         
         $SQL = self::dbAccess()->select(); 
         $SQL->from(array('A' => 't_subject_homework'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_student_homework'), 'A.ID = B.HOMEWORK_ID', $SELECTION_B); 
+        $SQL->joinLeft(array('C' => 't_subject'), 'A.SUBJECT = C.ID', $SELECTION_C);
         $SQL->where('A.ID = ?', $Id); 
         return self::dbAccess()->fetchRow($SQL); 
     }
@@ -339,6 +345,7 @@ class SubjectHomeworkDBAccess {
             $data['END_DATE'] = getShowDate($facette->END_DATE);
             $data['NAME'] = setShowText($facette->NAME);
             $data['HOMEWORK_ID'] = setShowText($facette->HOMEWORK_ID);
+            $data['SUBJECT_NAME'] = setShowText($facette->SUBJECT_NAME);
             $o = array(
                 "success" => true
                 , "data" => $data
