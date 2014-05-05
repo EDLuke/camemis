@@ -93,11 +93,29 @@ Ext.onReady(function() {
         }]
     }
     ";
+    
+    
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,height: 570
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("template=SUBJECT_REPORT&count=3&objectId=".$this->objectId."")."'})]
+         
+    }
+    ";
+    
         
     $ITEMS = "[";
         $ITEMS .= $CREATEDATE;
         $ITEMS .= ",".$TITLE;
         $ITEMS .= ",".$CONTENT;
+        if($this->objectId)
+        $ITEMS .= ",".$ATTACHMENTS;
     $ITEMS .= "]";
 
     $formItems = "
