@@ -297,19 +297,23 @@ class DisplayItem{
                 $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
                 break;
             default:
+                $setFirstCommentParams = $this->getParams();
+                $setFirstCommentParams .= "&term=FIRST_SEMESTER";
                 $FIRST_SEMESTER_RESULT = "{
                     title: '".FIRST_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_COMMENT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setFirstCommentParams)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_FIRST_RESULT)
                 $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
                 
+                $setSecondCommentParams = $this->getParams();
+                $setSecondCommentParams .= "&term=SECOND_SEMESTER";
                 $SECOND_SEMESTER_RESULT = "{
                     title: '".SECOND_SEMESTER_RESULT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_COMMENT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setSecondCommentParams)."'})]
                 }";
                 
                 if($this->academicObject->DISPLAY_SECOND_RESULT)
@@ -318,10 +322,11 @@ class DisplayItem{
         }
         
         if($this->academicObject->DISPLAY_YEAR_RESULT){
+            $setYearCommentParams = $this->getParams();
             $DISPLAY_YEAR_RESULT = "{
                 title: '".YEAR_RESULT."'
                 ,layout: 'fit'
-                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_COMMENT', url: ''})]
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setYearCommentParams)."'})]
             }";
             $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
         }
@@ -351,7 +356,7 @@ class DisplayItem{
         $js = "{";
             $js .= "layout:'fit'";
             $js .= ",title:''";
-            $js .= ",style:'padding:3px 3px 3px 3px'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
             $js .= ",items:[{";
@@ -367,7 +372,7 @@ class DisplayItem{
         $js = "{";
             $js .= "layout:'fit'";
             $js .= ",title:''";
-            $js .= ",style:'padding:3px 3px 3px 3px'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
             $js .= ",items:[{";
@@ -383,7 +388,7 @@ class DisplayItem{
         $js = "{";
             $js .= "layout:'fit'";
             $js .= ",title:''";
-            $js .= ",style:'padding:3px 3px 3px 3px'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
             $js .= ",border: true";
             $js .= ",height:450";
             $js .= ",items:[{";
