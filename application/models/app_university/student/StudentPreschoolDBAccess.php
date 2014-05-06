@@ -63,6 +63,8 @@ class StudentPreschoolDBAccess {
             $data['STUDENT_ID'] = $result->ID;
             $data['FIRSTNAME'] = $result->FIRSTNAME;
             $data['LASTNAME'] = $result->LASTNAME;
+            $data['FIRSTNAME_LATIN'] = $result->FIRSTNAME_LATIN;
+            $data['LASTNAME_LATIN'] = $result->LASTNAME_LATIN;
             $data['PHONE'] = $result->PHONE;
             $data['ADDRESS'] = $result->ADDRESS;
             $data['EMAIL'] = $result->EMAIL;
@@ -228,6 +230,12 @@ class StudentPreschoolDBAccess {
 
         if (isset($params["LASTNAME"]))
             $SAVEDATA["LASTNAME"] = addText($params["LASTNAME"]);
+            
+        if (isset($params["FIRSTNAME_LATIN"]))
+            $SAVEDATA["FIRSTNAME_LATIN"] = addText($params["FIRSTNAME_LATIN"]);
+
+        if (isset($params["LASTNAME_LATIN"]))
+            $SAVEDATA["LASTNAME_LATIN"] = addText($params["LASTNAME_LATIN"]);
 
         if (isset($params["PHONE"]))
             $SAVEDATA["PHONE"] = addText($params["PHONE"]);
