@@ -76,15 +76,15 @@ class StudentAdvisoryDBAccess {
 
     public static function sqlSearchStudentAdvisory($params) {
 
-        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
-        $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : "";
 
-        $code = isset($params["code"]) ? addText($params["code"]) : "";
-        $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
-        $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
 
-        $name = isset($params["name"]) ? addText($params["name"]) : "";
-        $advisoryId = isset($params["advisoryId"]) ? addText($params["advisoryId"]) : "";
+        $name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
+        $advisoryId = isset($params["ADVISORY_TYPE"]) ? addText($params["ADVISORY_TYPE"]) : "";
         
         $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
@@ -127,7 +127,7 @@ class StudentAdvisoryDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonSearchStudentAdvisory($params) {
+    public static function jsonSearchStudentAdvisory($params, $isJson = true) {
         $start = isset($params["start"]) ? $params["start"] : "0";
         $limit = isset($params["limit"]) ? $params["limit"] : "50";
 
@@ -159,12 +159,21 @@ class StudentAdvisoryDBAccess {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-
-        return array(
+       
+        $dataforjson = array(
             "success" => true
             , "totalCount" => sizeof($data)
             , "rows" => $a
         );
+        
+         if ($isJson)
+        {
+            return $dataforjson;
+        }
+        else
+        {
+            return $data;
+        }
     }
 
     public static function sqlStudentAdvisory($params) {
