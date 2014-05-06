@@ -104,7 +104,7 @@ Ext.onReady(function() {
             }]);
         ");    
     }
-     if($this->personType=='STAFF'){
+    if($this->personType=='STAFF'){
          $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100                                                               
@@ -119,6 +119,7 @@ Ext.onReady(function() {
             ,camIds:'".$this->urlEncryp->encryptedGet("studentId=".$this->studentId."&personType=".$this->personType)."'                  
         "; 
     }
+     
     $OBJECT_GRID->addTBarItems("tbar.add('->');");
     $OBJECT_GRID->isQuickySearch = true;   
     $OBJECT_GRID->isGroupingView = true;
