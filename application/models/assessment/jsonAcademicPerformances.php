@@ -91,6 +91,7 @@ class jsonAcademicPerformances extends AcademicPerformances {
     }
 
     public function jsonListStudentsYearClassPerformance($encrypParams) {
+        
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 

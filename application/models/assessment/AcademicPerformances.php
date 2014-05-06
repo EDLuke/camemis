@@ -189,7 +189,7 @@ class AcademicPerformances extends AssessmentProperties {
                     , "section" => $this->getSection()
                     , "schoolyearId" => $this->getSchoolyearId()
         );
-
+        
         if ($this->listClassStudents())
         {
 
