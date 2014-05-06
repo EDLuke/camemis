@@ -62,6 +62,54 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
         function renderText(value,record){
             return '<div style=\"font-weight:normal; color:#000000; padding: 5px; height:15px;background:#FFFFFF;\">' + value + '</div>';
         }
+        
+        //@ Visal
+        function myAjaxRequest(formObject, gridObject){
+            var fieldValue = formObject.getForm().getFieldValues();
+            if(plsEnterKey(fieldValue)){
+                <?=CamemisPage::alertPleaseSelect(NOTES,PLS_ENTER_KEYWORD)?>
+            }else{
+                var myMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS <?=LOADING?></b>', msgCls:'x-mask-loading-camemis'});
+                myMask.show();
+                Ext.Ajax.request({
+                    url: '/advisory/jsonload'
+                    ,method: 'POST'
+                    ,params:{cmd:'jsonSearchStudentAdvisory'}
+                    ,form: formObject.getForm().getEl().dom
+                    ,success: function(response, options) {
+                        jsonData = Ext.util.JSON.decode(response.responseText);
+                        gridObject.getStore().setBaseParam('CODE',fieldValue.CODE);
+                        //gridObject.getStore().setBaseParam('STUDENT_SCHOOL_ID',fieldValue.STUDENT_SCHOOL_ID);
+                        //gridObject.getStore().setBaseParam('GENDER',fieldValue.GENDER);
+                        gridObject.getStore().setBaseParam('FIRSTNAME',fieldValue.FIRSTNAME);
+                        gridObject.getStore().setBaseParam('LASTNAME',fieldValue.LASTNAME);
+                        gridObject.getStore().loadData(jsonData);
+                        myMask.hide();
+                    }
+                });
+            }
+        }
+
+        function plsEnterKey(obj){
+            var s;
+            if(obj.LASTNAME || obj.FIRSTNAME
+                || obj.CODE || obj.START_DATE
+                || obj.END_DATE || obj.NAME || obj.ADVISORY_TYPE
+            ){
+                s = 0;
+            }else{
+                s = 1;
+            }
+            return s;
+        }
+        
+        function keyEnter(){
+            //Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+            var formObject = Ext.getCmp('<?=$OBJECT_FORM->getObjectId()?>');
+            var gridObject = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+            myAjaxRequest(formObject, gridObject);
+        }
+        
         <?
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
@@ -78,41 +126,10 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
             ,formBind:true
             ,iconCls:'icon-magnifier'
             ,scope:this
-            ,handler:function(){
-                Ext.getCmp('center').getLayout().setActiveItem(0);
-                var _startDate = this.getForm().findField('START_DATE').getValue(); 
-                if(_startDate){
-                    startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
-                }else{
-                    startDate = '';
-                }
-                
-                var _endDate = this.getForm().findField('END_DATE').getValue(); 
-                if(_endDate){
-                    endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
-                }else{
-                    endDate = ''; 
-                }
-                
-                lastname = this.getForm().findField('LASTNAME').getValue();
-                firstname = this.getForm().findField('FIRSTNAME').getValue();
-                code = this.getForm().findField('CODE').getValue();
-                name = this.getForm().findField('NAME').getValue();
-                advisoryId = this.getForm().findField('ADVISORY_TYPE').getValue();
-                
-                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
-                    start:0
-                    ,limit:100
-                    ,cmd: 'jsonSearchStudentAdvisory'
-                    ,code: code
-                    ,firstname: firstname
-                    ,lastname: lastname
-                    ,endDate: endDate
-                    ,startDate: startDate
-                    ,name: name
-                    ,advisoryId: advisoryId
-                };
-                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            ,handler: function(){
+                var formObject = Ext.getCmp('".$OBJECT_FORM->getObjectId()."');
+                var gridObject = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
+                myAjaxRequest(formObject, gridObject);
             }
         ");
         
@@ -188,6 +205,8 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
         $OBJECT_FORM->isKeys = true;
         $OBJECT_FORM->renderJS();
         
+        //////////////////////////////
+        
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'ADVISORY_NAME'");
         $OBJECT_GRID->addReadField("name: 'ADVISORY_TYPE'");
@@ -211,13 +230,44 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
             tbar.add('->');
         ");
         
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,timeout: 600000
+                        ,params:{cmd: 'jsonSearchStudentAdvisory',objectId:'ADVISORY_LIST_ID'}
+                        ,form: myForm.getEl().dom
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openstudentadvisory/'
+                        }
+                    });
+                }
+            }]);
+        ");
+        
         $OBJECT_GRID->loadMask = true;
         $OBJECT_GRID->isQuickySearch = true;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
         $OBJECT_GRID->isGroupingView = true;
         $OBJECT_GRID->groupField = "ADVISORY_NAME";
+        $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->forceFit = "false";
-        $OBJECT_GRID->renderJS();
+        $OBJECT_GRID->renderJS()
    
         ?>
 
@@ -241,6 +291,11 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
                     ,minSize: 350
                     ,maxSize: 350
                     ,layout: 'fit'
+                    ,keys:{
+                        key:[13]
+                        ,fn: keyEnter
+                        ,scope:this
+                    }
                     ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
                 },{
                     title: ''
