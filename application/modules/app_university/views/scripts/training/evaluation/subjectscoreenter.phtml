@@ -84,7 +84,7 @@ Ext.onReady(function() {
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:15px; background:#D1DDEF;">' + value + '</div>';
     }
     
-    function cssAverage(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';

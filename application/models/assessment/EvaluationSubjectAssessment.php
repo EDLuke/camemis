@@ -286,7 +286,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "month" => $this->getMonth()
                     , "year" => $this->getYear()
                     , "in_clude_in_evaluation" => self::INCLUDE_IN_MONTH
-                    , "evaluationType" => $this->evaluationType()
+                    , "evaluationType" => $this->getEvaluationType()
         );
 
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
@@ -302,7 +302,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "month" => self::NO_MONTH
                     , "year" => self::NO_YEAR
                     , "in_clude_in_evaluation" => self::INCLUDE_IN_MONTH
-                    , "evaluationType" => $this->evaluationType()
+                    , "evaluationType" => $this->getEvaluationType()
         );
 
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
@@ -462,7 +462,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "month" => self::NO_MONTH
                     , "year" => self::NO_YEAR
                     , "in_clude_in_evaluation" => self::INCLUDE_IN_TERM
-                    , "evaluationType" => $this->evaluationType()
+                    , "evaluationType" => $this->getEvaluationType()
         );
 
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
@@ -478,7 +478,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "month" => self::NO_MONTH
                     , "year" => self::NO_YEAR
                     , "in_clude_in_evaluation" => self::INCLUDE_IN_MONTH
-                    , "evaluationType" => $this->evaluationType()
+                    , "evaluationType" => $this->getEvaluationType()
         );
 
         return SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);

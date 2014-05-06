@@ -121,6 +121,8 @@ class SQLEvaluationStudentAssignment {
 
     public static function calulateNumberAverageSubjectResult($stdClass)
     {
+        $SUM_VALUE = 0;
+        $SUM_COEFF_VALUE = 0;
         $output = 0;
         $enties = self::getListStudentAssignmentScoreDate($stdClass);
 

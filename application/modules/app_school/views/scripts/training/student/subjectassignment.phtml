@@ -49,7 +49,7 @@ Ext.onReady(function() {
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#FFE5A6;">' + value + '</div>';
     }
     
-    function cssAverage(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:10px; background:#f46862;">' + value + '</div>';
@@ -93,7 +93,7 @@ Ext.onReady(function() {
         }
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssAverage, width: 80, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 80, dataIndex: 'AVERAGE'");
     
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->baseParams = "

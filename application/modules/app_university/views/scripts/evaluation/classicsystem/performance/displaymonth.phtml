@@ -56,28 +56,28 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#555;background:#FFF;">' + value + '</div>';
     }
     
-    function cssRang(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
     }
     
-    function cssAverage(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#FFFFC2;">' + value + '</div>';
     }
     
-    function cssAssessment(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
     }
     
-    function cssEvaluation(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
@@ -133,8 +133,8 @@ Ext.onReady(function() {
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
     
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssRang, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssAverage, dataIndex: 'AVERAGE_TOTAL'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL'");
     
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
@@ -147,7 +147,7 @@ Ext.onReady(function() {
                 , align: 'right'
                 , sortable: true
                 , dataIndex: 'ASSESSMENT_TOTAL'
-                , renderer:cssAssessment  
+                , renderer:cssDefault  
                 , editor: ".$comboEditor."
             ");
             break;
@@ -158,7 +158,7 @@ Ext.onReady(function() {
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'ASSESSMENT_TOTAL'
-                , renderer:cssAssessment
+                , renderer:cssDefault
             ");
         break;  
     }
@@ -167,7 +167,7 @@ Ext.onReady(function() {
         foreach($entries as $value){
             if($value->SUBJECT_ID){
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssDefault, dataIndex: '".$value->SUBJECT_ID."'");
             }
         }
     }

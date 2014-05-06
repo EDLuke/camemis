@@ -63,19 +63,19 @@ Ext.onReady(function() {
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#FFE5A6;">' + value + '</div>';
     }
     
-    function cssAverage(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
     }
     
-    function cssRang(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
     }
     
-    function cssEvaluation(value, metadata, record){
+    function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
@@ -123,12 +123,12 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 210, dataIndex: 'STUDENT'");
    
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 100, sortable: true, renderer: cssRang, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssAverage, width: 110, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 100, sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'AVERAGE'");
     
      if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addColumn("header: '<b>".$value->NAME."</b>', align: 'center', width: 100, renderer: cssEvaluation, dataIndex: '".$value->SUBJECT_ID."'");
+            $OBJECT_GRID->addColumn("header: '<b>".$value->NAME."</b>', align: 'center', width: 100, renderer: cssDefault, dataIndex: '".$value->SUBJECT_ID."'");
         }
     } 
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
