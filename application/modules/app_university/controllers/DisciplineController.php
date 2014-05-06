@@ -128,7 +128,7 @@ class DisciplineController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->trainingId = $this->trainingId;
-
+        $this->view->personType = $this->personType;
         $this->view->URL_SHOWITEM = $this->UTILES->buildURL('discipline/showitem', array());
         $this->view->URL_NEW_SHOWITEM = $this->UTILES->buildURL('discipline/showitem'
                 , array(
@@ -144,7 +144,7 @@ class DisciplineController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
         $this->view->trainingId = $this->trainingId;
-
+        $this->view->personType = $this->personType;
         $this->view->URL_SHOWITEM = $this->UTILES->buildURL('discipline/showitem', array());
         $this->view->URL_NEW_SHOWITEM = $this->UTILES->buildURL('discipline/showitem'
                 , array(
