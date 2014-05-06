@@ -27,6 +27,8 @@ if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 $monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 
+$TITLE = diplayNameMonthYear($monthyear);
+
 $entries = AssignmentDBAccess::getListAssignmentsToAcademic($this->academicId, $this->subjectId);
 
 $setParams = "";
@@ -201,7 +203,7 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-','<b>".$TITLE."</b>','-',{
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){

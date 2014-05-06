@@ -86,28 +86,32 @@ class SQLAcademicPerformances {
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                switch ($stdClass->section)
+                if (isset($stdClass->section))
                 {
-                    case "MONTH":
-                        if ($stdClass->month)
-                            $SQL->where("A.MONTH = '" . $stdClass->month . "'");
+                    switch ($stdClass->section)
+                    {
+                        case "MONTH":
+                            if ($stdClass->month)
+                                $SQL->where("A.MONTH = '" . $stdClass->month . "'");
 
-                        if ($stdClass->year)
-                            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
-                        break;
-                    case "TERM":
-                    case "QUARTER":
-                    case "SEMESTER":
-                        if ($stdClass->term)
-                            $SQL->where("A.TERM = '" . $stdClass->term . "'");
-                        break;
-                    case "YEAR":
-                        if ($stdClass->year)
-                            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
-                        break;
+                            if ($stdClass->year)
+                                $SQL->where("A.YEAR = '" . $stdClass->year . "'");
+                            break;
+                        case "TERM":
+                        case "QUARTER":
+                        case "SEMESTER":
+                            if ($stdClass->term)
+                                $SQL->where("A.TERM = '" . $stdClass->term . "'");
+                            break;
+                        case "YEAR":
+                            if ($stdClass->year)
+                                $SQL->where("A.YEAR = '" . $stdClass->year . "'");
+                            break;
+                    }
+                    
+                    $SQL->where("A.SECTION = '" . $stdClass->section . "'");
                 }
 
-                $SQL->where("A.SECTION = '" . $stdClass->section . "'");
                 $SQL->group("B.ID");
 
                 //error_log($SQL->__toString());

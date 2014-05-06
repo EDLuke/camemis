@@ -25,6 +25,7 @@ class SQLEvaluationStudentSubject {
         $data["SUBJECT_VALUE"] = "---";
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
+        $data["RANK"] = "---";
 
         if (isset($stdClass->studentId))
         {
@@ -44,16 +45,16 @@ class SQLEvaluationStudentSubject {
                 switch ($stdClass->section)
                 {
                     case "MONTH":
-                        if ($stdClass->month)
+                        if (isset($stdClass->month))
                             $SQL->where("A.MONTH = '" . $stdClass->month . "'");
 
-                        if ($stdClass->year)
+                        if (isset($stdClass->year))
                             $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                         break;
                     case "TERM":
                     case "QUARTER":
                     case "SEMESTER":
-                        if ($stdClass->term)
+                        if (isset($stdClass->term))
                             $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         break;
                     case "YEAR":
@@ -74,6 +75,16 @@ class SQLEvaluationStudentSubject {
                     $data["SUBJECT_VALUE"] = $result->SUBJECT_VALUE;
                     $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
+                    $data["RANK"] = $result->RANK ? $result->RANK : "---";
+                }
+                else
+                {
+                    $data["LETTER_GRADE_NUMBER"] = "---";
+                    $data["LETTER_GRADE_CHAR"] = "---";
+                    $data["SUBJECT_VALUE"] = "---";
+                    $data["ASSESSMENT_ID"] = "---";
+                    $data["TEACHER_COMMENT"] = "---";
+                    $data["RANK"] = "---";
                 }
             }
         }
@@ -94,10 +105,10 @@ class SQLEvaluationStudentSubject {
         switch ($stdClass->section)
         {
             case "MONTH":
-                if ($stdClass->month)
+                if (isset($stdClass->month))
                     $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if ($stdClass->year)
+                if (isset($stdClass->year))
                 {
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
@@ -105,14 +116,12 @@ class SQLEvaluationStudentSubject {
             case "TERM":
             case "QUARTER":
             case "SEMESTER":
-                if ($stdClass->term)
+                if (isset($stdClass->term))
                     $SQL->where("TERM = '" . $stdClass->term . "'");
                 break;
             case "YEAR":
-                if ($stdClass->year)
-                {
+                if (isset($stdClass->year))
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
-                }
                 break;
         }
 
