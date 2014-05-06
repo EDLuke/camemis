@@ -14,6 +14,7 @@ require_once 'models/export/StudentAttendanceExportDBAccess.php';
 require_once 'models/export/StudentPreschoolExportDBAccess.php';
 require_once 'models/export/StudentDisciplineExportDBAccess.php';//@veasna
 require_once 'models/export/StudentStatusExportDBAccess.php';//@Visal
+require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
 
 class ExportController extends Zend_Controller_Action {
 
@@ -28,6 +29,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STAFF_EXCEL = new StaffExportDBAccess($this->_getParam('objectId'));
         $this->STUDENT_ATTENDANCE_EXCEL = new StudentAttendanceExportDBAccess($this->_getParam('gridId'));
         $this->STUDENT_STATUS_EXCEL = new StudentStatusExportDBAccess($this->_getParam('objectId'));//@Visal
+        $this->STUDENT_ADVISORY_EXCEL = new StudentAdvisoryExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_DISCIPLINE_EXCEL = new StudentDisciplineExportDBAccess($this->_getParam('objectId'));//@veasna
         
 
@@ -129,7 +131,12 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
-
+    
+    public function openstudentadvisoryAction()
+    {
+         
+    }
+    //
     public function jsonexcelAction()
     {
 
@@ -156,6 +163,9 @@ class ExportController extends Zend_Controller_Action {
             //@Visal
             case "jsonSearchStudentStatus":
                 $jsondata = $this->STUDENT_STATUS_EXCEL->jsonSearchStudentStatus($this->REQUEST->getPost());
+                break;
+            case "jsonSearchStudentAdvisory":
+                $jsondata = $this->STUDENT_ADVISORY_EXCEL->jsonSearchStudentAdvisory($this->REQUEST->getPost());
                 break;
             //@veasna
             case "jsonSearchStaffAttendance":
