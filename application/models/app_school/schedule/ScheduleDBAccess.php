@@ -942,10 +942,15 @@ class ScheduleDBAccess {
         $start = $params["start"] ? $params["start"] : "0";
         $limit = $params["limit"] ? $params["limit"] : "50";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : '';
+        $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $facette = self::findScheduleFromGuId($scheduleId);
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
+        if($globalSearch){
+            $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
+            $SQL->Orwhere("A.SHORT LIKE '" . $globalSearch . "%'");
+        }
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $CHECK_DATA = $this->checkUseRooms($facette);
