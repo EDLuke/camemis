@@ -235,6 +235,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $TESTING_GRID->addReadField("name: 'SCORE'");
         $TESTING_GRID->addReadField("name: 'DESCRIPTION'");
         $TESTING_GRID->addReadField("name: 'LEVEL'");
+        $TESTING_GRID->addReadField("name: 'STATUS'");
         $TESTING_GRID->addReadField("name: 'RESULT_DATE'");
         $TESTING_GRID->addReadField("name: 'DELETE'");
         
@@ -269,6 +270,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
         $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(4,$columndata)));
         $TESTING_GRID->addColumn(columnDate(RESULT_DATE,"RESULT_DATE",150,checkColHidden(5,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(4,$columndata)));
         
         $TESTING_GRID->addColumn("
             xtype: 'checkboxcolumn'
@@ -304,6 +306,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,SCORE:''
                         ,LEVEL:''
                         ,RESULT_DATE:''
+                        ,STATUS:''
                         ,DESCRIPTION:''
                     };
                     Ext.getCmp('".$TESTING_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
@@ -497,8 +500,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,items: [
                     {".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, true, false, false, 250)."}
                     ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, true, false, false, 250)."}
-                    ,{".CamemisField::Textfield("FIRSTNAME_LATIN","FIRSTNAME_LATIN",FIRSTNAME_LATIN, false, false)."}
-                    ,{".CamemisField::Textfield("LASTNAME_LATIN","LASTNAME_LATIN",LASTNAME_LATIN, false, false)."}
                     ,{".CamemisField::ComboGender(GENDER, false, false, 250)."}
                     ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, false)."}
                 ]
