@@ -101,7 +101,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if (UserAuth::getACLTutorPermint("SCORES_MANAGEMENT"))
         $PANEL_ITEMS[] = "" . $ASSESSMENT . "";
         
-        $disciplineParams = "target=general&classId=".$classObject->ID."";
+        $disciplineParams = "target=general&personType=STAFF&classId=".$classObject->ID."";
         $DISCIPLINE_INFORMATION = "{
             title: '".DISCIPLINE_INFORMATION."'
             ,layout: 'fit'

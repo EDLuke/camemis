@@ -385,6 +385,19 @@ class StudentStatusDBAccess extends StudentDBAccess {
             $SQL->where("B.START_DATE BETWEEN '" . setDate2DB($startDate) . "' AND '" . setDate2DB($endDate) . "'");
         }
 
+
+        if ($gender)
+            $SQL->where("A.GENDER='" . $gender . "'");
+        if ($studentstatusType)
+            $SQL->where("B.STATUS_ID='" . $studentstatusType . "'");
+        if ($studentId)
+            $SQL->where("B.STUDENT='" . $studentId . "'");
+
+        if ($firstname)
+            $SQL->where("A.FIRSTNAME like '" . $firstname . "%'");
+        if ($lastname)
+            $SQL->where("A.LASTNAME like '" . $lastname . "%'");
+            
         if ($globalSearch)
         {
 
@@ -400,18 +413,6 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
         if ($studentSchoolId)
             $SQL .= " AND A.STUDENT_SCHOOL_ID LIKE '" . strtoupper($studentSchoolId) . "%' ";
-
-        if ($gender)
-            $SQL->where("A.GENDER='" . $gender . "'");
-        if ($studentstatusType)
-            $SQL->where("B.STATUS_ID='" . $studentstatusType . "'");
-        if ($studentId)
-            $SQL->where("B.STUDENT='" . $studentId . "'");
-
-        if ($firstname)
-            $SQL->where("A.FIRSTNAME like '" . $firstname . "%'");
-        if ($lastname)
-            $SQL->where("A.LASTNAME like '" . $lastname . "%'");
 
         $SQL .= "ORDER BY B.STATUS_ID DESC";
         //error_log($SQL);

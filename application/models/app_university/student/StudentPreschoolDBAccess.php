@@ -541,6 +541,7 @@ class StudentPreschoolDBAccess {
                         $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
                         $data[$i]["SCORE"] = $value->SCORE;
                         $data[$i]["LEVEL"] = $value->LEVEL;
+                        $data[$i]["STATUS"] = $value->STATUS;
                         //$data[$i]["RESULT_DATE"] = getShowDate($value->RESULT_DATE);
                         $data[$i]["RESULT_DATE"] = $value->RESULT_DATE;
                         if ($value->CAMEMIS_TYPE <> 0)

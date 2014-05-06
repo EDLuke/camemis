@@ -269,7 +269,8 @@ class DisciplineDBAccess extends StudentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getAllDisciplineQuery($params) {
+    public function getAllDisciplineQuery($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : '';        //@veasna  
@@ -299,8 +300,8 @@ class DisciplineDBAccess extends StudentDBAccess {
                 break;
             default:
                 $SCHOOL_ID = "STUDENT_SCHOOL_ID";
-                $table = "t_student";
-                $studentId = isset($params["STUDENT_ID"]) ? addText($params["STUDENT_ID"]) : '';
+                $table = "t_student"; 
+                $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : '';
                 $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : '';
                 $disciplineType = isset($params["DISCIPLINE_TYPE_STUDENT"]) ? addText($params["DISCIPLINE_TYPE_STUDENT"]) : '';
                 $DISCIPLINE_TYPE = "DISCIPLINE_TYPE_STUDENT";
@@ -335,6 +336,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL .= " FROM t_discipline AS A";
         $SQL .= " LEFT JOIN " . $table . " AS B ON A." . $chooseId . "=B.ID";
         $SQL .= " LEFT JOIN t_camemis_type AS C ON C.ID=A.DISCIPLINE_TYPE";
+        $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID";
         if($campusId || $gradeId || $schoolyearId){ ////@veasna
             $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID ";
         }
@@ -359,6 +361,8 @@ class DisciplineDBAccess extends StudentDBAccess {
             $SQL .= " AND E.ACADEMIC_TYPE = '" . $academictype . "'";
         if ($studentId)
             $SQL .= " AND A." . $chooseId . " = '" . $studentId . "'";
+        if ($classId)
+            $SQL .= " AND D.CLASS = '" . $classId . "'";
         if ($disciplineType)
             $SQL .= " AND A.DISCIPLINE_TYPE = " . $disciplineType . "";
 
