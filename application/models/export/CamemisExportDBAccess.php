@@ -70,6 +70,10 @@ abstract class CamemisExportDBAccess {
     {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentstatuslist.xls";
     }
+    public function getFileStudentAvisory()
+    {
+        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentadvisory.xls";
+    }
 
     public function getFileStaffAttendance()
     {
