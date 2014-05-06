@@ -62,9 +62,7 @@ class StudentPreschoolDBAccess {
         if ($result) {
             $data['STUDENT_ID'] = $result->ID;
             $data['FIRSTNAME'] = $result->FIRSTNAME;
-            $data['FIRSTNAME_LATIN'] = $result->FIRSTNAME_LATIN;
             $data['LASTNAME'] = $result->LASTNAME;
-            $data['LASTNAME_LATIN'] = $result->LASTNAME_LATIN;
             $data['PHONE'] = $result->PHONE;
             $data['ADDRESS'] = $result->ADDRESS;
             $data['EMAIL'] = $result->EMAIL;
@@ -230,12 +228,6 @@ class StudentPreschoolDBAccess {
 
         if (isset($params["LASTNAME"]))
             $SAVEDATA["LASTNAME"] = addText($params["LASTNAME"]);
-            
-        if (isset($params["FIRSTNAME_LATIN"]))
-            $SAVEDATA["FIRSTNAME_LATIN"] = addText($params["FIRSTNAME_LATIN"]);
-
-        if (isset($params["LASTNAME_LATIN"]))
-            $SAVEDATA["LASTNAME_LATIN"] = addText($params["LASTNAME_LATIN"]);
 
         if (isset($params["PHONE"]))
             $SAVEDATA["PHONE"] = addText($params["PHONE"]);
@@ -549,6 +541,7 @@ class StudentPreschoolDBAccess {
                         $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
                         $data[$i]["SCORE"] = $value->SCORE;
                         $data[$i]["LEVEL"] = $value->LEVEL;
+                        $data[$i]["STATUS"] = $value->STATUS;
                         //$data[$i]["RESULT_DATE"] = getShowDate($value->RESULT_DATE);
                         $data[$i]["RESULT_DATE"] = $value->RESULT_DATE;
                         if ($value->CAMEMIS_TYPE <> 0)
