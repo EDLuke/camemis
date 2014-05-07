@@ -109,7 +109,7 @@ class EvaluationGradebook extends AssessmentProperties {
                     $data[$i]["SUBJECT_VALUE"] = $this->getSubjectValue($stdClass);
                     $data[$i]["RANK"] = $this->getSubjectRank($stdClass);
                     $data[$i]["ASSESSMENT"] = $this->getSubjectAssessment($stdClass);
-                    
+
                     $i++;
                 }
             }
@@ -127,7 +127,7 @@ class EvaluationGradebook extends AssessmentProperties {
                     , "section" => $this->getSection()
                     , "schoolyearId" => $this->getSchoolyearId()
         );
-        
+
         $data = $this->listSubjectsData();
 
         if ($this->getListSubjects())
@@ -142,7 +142,7 @@ class EvaluationGradebook extends AssessmentProperties {
                     $data[$i]["SUBJECT_VALUE"] = $this->getSubjectValue($stdClass);
                     $data[$i]["RANK"] = $this->getSubjectRank($stdClass);
                     $data[$i]["ASSESSMENT"] = $this->getSubjectAssessment($stdClass);
-                    
+
                     $i++;
                 }
             }

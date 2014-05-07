@@ -300,6 +300,28 @@ class SQLEvaluationStudentAssignment {
         }
     }
 
+    public static function checkExistStudentSubjectAssignment($stdClass)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_assignment", array("C" => "COUNT(*)"));
+        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
+        $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
+        
+        if (isset($stdClass->month))
+            $SQL->where("MONTH = '" . $stdClass->month . "'");
+
+        if (isset($stdClass->year))
+            $SQL->where("YEAR = '" . $stdClass->year . "'");
+
+        if (isset($stdClass->term))
+            $SQL->where("TERM = '" . $stdClass->term . "'");
+        
+        $SQL->group("SUBJECT_ID");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
     public static function getCountTeacherScoreDate($stdClass)
     {
         $SQL = self::dbAccess()->select();
