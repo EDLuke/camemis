@@ -337,6 +337,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL .= " LEFT JOIN " . $table . " AS B ON A." . $chooseId . "=B.ID";
         $SQL .= " LEFT JOIN t_camemis_type AS C ON C.ID=A.DISCIPLINE_TYPE";
         $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID";
+        
         if($campusId || $gradeId || $schoolyearId){ ////@veasna
             $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID ";
         }

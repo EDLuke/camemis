@@ -97,6 +97,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,layout: 'fit'
             ,items:[new Ext.ux.IFrameComponent({ id: 'ASSESSMENT', url: '/academic/scoremonitor/?camIds=".$this->urlEncryp->encryptedGet($assessmentParams)."'})]
         }";
+      
         
         if (UserAuth::getACLTutorPermint("SCORES_MANAGEMENT"))
         $PANEL_ITEMS[] = "" . $ASSESSMENT . "";

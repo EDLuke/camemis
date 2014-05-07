@@ -526,8 +526,6 @@ class StudentAssignmentDBAccess {
         return Array("success" => true);
     }
 
-    
-
     public function jsonAcitonSubjectAssignmentModifyScoreDate($encrypParams)
     {
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -1010,7 +1008,6 @@ class StudentAssignmentDBAccess {
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
-
 
     public function jsonLoadContentTeacherScoreInputDate($Id)
     {

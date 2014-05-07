@@ -108,6 +108,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_INFORMATION', url: '/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'})]
         }";
         
+        
         if (UserAuth::getACLTutorPermint("STUDENT_DISCIPLINE"))
         $PANEL_ITEMS[] = "" . $DISCIPLINE_INFORMATION . "";
         

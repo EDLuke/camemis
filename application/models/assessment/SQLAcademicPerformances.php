@@ -43,7 +43,7 @@ class SQLAcademicPerformances {
 
         if (!isset($stdClass->month) && !isset($stdClass->year))
         {
-            if ($stdClass->term)
+            if (isset($stdClass->term))
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
 
@@ -108,7 +108,7 @@ class SQLAcademicPerformances {
                                 $SQL->where("A.YEAR = '" . $stdClass->year . "'");
                             break;
                     }
-                    
+
                     $SQL->where("A.SECTION = '" . $stdClass->section . "'");
                 }
 
