@@ -13,27 +13,22 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAcces
 
 class EvaluationGradebook extends AssessmentProperties {
 
-    const SCORE_TYPE_NUMBER = 1;
-    const SCORE_TYPE_CHAR = 2;
+    CONST SCORE_TYPE_NUMBER = 1;
+    CONST SCORE_TYPE_CHAR = 2;
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
     }
 
-    protected function listSubjectsData()
-    {
+    protected function listSubjectsData() {
 
         $data = array();
 
-        if ($this->getListSubjects())
-        {
+        if ($this->getListSubjects()) {
             $i = 0;
-            foreach ($this->getListSubjects() as $value)
-            {
+            foreach ($this->getListSubjects() as $value) {
 
-                if ($value->SUBJECT_ID)
-                {
+                if ($value->SUBJECT_ID) {
                     $subjectId = $value->SUBJECT_ID;
                     $data[$i]["SUBJECT_SHORT"] = $value->SUBJECT_SHORT;
                     $data[$i]["SUBJECT_NAME"] = $value->SUBJECT_NAME;
@@ -46,8 +41,7 @@ class EvaluationGradebook extends AssessmentProperties {
         return $data;
     }
 
-    public function getStudentGradebookMonth()
-    {
+    public function getStudentGradebookMonth() {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId
@@ -62,13 +56,10 @@ class EvaluationGradebook extends AssessmentProperties {
         $data = $this->listSubjectsData();
 
 
-        if ($this->getListSubjects())
-        {
+        if ($this->getListSubjects()) {
             $i = 0;
-            foreach ($this->getListSubjects() as $value)
-            {
-                if ($value->SUBJECT_ID)
-                {
+            foreach ($this->getListSubjects() as $value) {
+                if ($value->SUBJECT_ID) {
                     $this->subjectId = $value->SUBJECT_ID;
                     $stdClass->subjectId = $value->SUBJECT_ID;
                     $data[$i]["ASSIGNMENT"] = $this->getImplodeStudentAssignments($stdClass);
@@ -84,8 +75,7 @@ class EvaluationGradebook extends AssessmentProperties {
         return $data;
     }
 
-    public function getStudentGradebookTerm()
-    {
+    public function getStudentGradebookTerm() {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId
@@ -97,13 +87,10 @@ class EvaluationGradebook extends AssessmentProperties {
 
         $data = $this->listSubjectsData();
 
-        if ($this->getListSubjects())
-        {
+        if ($this->getListSubjects()) {
             $i = 0;
-            foreach ($this->getListSubjects() as $value)
-            {
-                if ($value->SUBJECT_ID)
-                {
+            foreach ($this->getListSubjects() as $value) {
+                if ($value->SUBJECT_ID) {
                     $this->subjectId = $value->SUBJECT_ID;
                     $stdClass->subjectId = $value->SUBJECT_ID;
                     $data[$i]["SUBJECT_VALUE"] = $this->getSubjectValue($stdClass);
@@ -118,8 +105,7 @@ class EvaluationGradebook extends AssessmentProperties {
         return $data;
     }
 
-    public function getStudentGradebookYear()
-    {
+    public function getStudentGradebookYear() {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId
@@ -130,13 +116,10 @@ class EvaluationGradebook extends AssessmentProperties {
 
         $data = $this->listSubjectsData();
 
-        if ($this->getListSubjects())
-        {
+        if ($this->getListSubjects()) {
             $i = 0;
-            foreach ($this->getListSubjects() as $value)
-            {
-                if ($value->SUBJECT_ID)
-                {
+            foreach ($this->getListSubjects() as $value) {
+                if ($value->SUBJECT_ID) {
                     $this->subjectId = $value->SUBJECT_ID;
                     $stdClass->subjectId = $value->SUBJECT_ID;
                     $data[$i]["SUBJECT_VALUE"] = $this->getSubjectValue($stdClass);
@@ -151,16 +134,13 @@ class EvaluationGradebook extends AssessmentProperties {
         return $data;
     }
 
-    public function getImplodeStudentAssignments($stdClass)
-    {
+    public function getImplodeStudentAssignments($stdClass) {
         $entries = SQLEvaluationStudentAssignment::getQueryStudentSubjectAssignments($stdClass);
 
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $data[] = $value->POINTS;
             }
         }
@@ -168,25 +148,21 @@ class EvaluationGradebook extends AssessmentProperties {
         return $data ? implode("|", $data) : "---";
     }
 
-    public function getSubjectValue($stdClass)
-    {
+    public function getSubjectValue($stdClass) {
 
         $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
         return $facette->SUBJECT_VALUE;
     }
 
-    public function getSubjectRank($stdClass)
-    {
+    public function getSubjectRank($stdClass) {
         $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
         return $facette->RANK;
     }
 
-    public function getSubjectAssessment($stdClass)
-    {
+    public function getSubjectAssessment($stdClass) {
         $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
 
-        switch ($this->getSubjectScoreType())
-        {
+        switch ($this->getSubjectScoreType()) {
             case self::SCORE_TYPE_NUMBER:
                 return $facette->LETTER_GRADE_NUMBER;
             case self::SCORE_TYPE_CHAR:

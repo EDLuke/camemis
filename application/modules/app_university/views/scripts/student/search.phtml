@@ -36,27 +36,20 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $columndata = Utiles::getGridColumnData("STUDENT_SEARCH_ID");
 
 ?>
-
 <style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
 
-    .ux-icon-combo-icon {
-        background-repeat: no-repeat;
-        background-position: 0 50%;
-        width: 18px;
-        height: 14px;
-    }
-    .ux-icon-combo-input {
-        padding-left: 25px;
-    }
-    .x-form-field-wrap .ux-icon-combo-icon {
-        top: 3px;
-        left: 5px;
-    }
-    .ux-icon-combo-item {
-        background-repeat: no-repeat ! important;
-        background-position: 3px 50% ! important;
-        padding-left: 24px ! important;
-    }
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
 </style>
 
 <script>
@@ -351,7 +344,7 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
 
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'center', hidden:".checkColHidden(3, $columndata).", width: 120, renderer: cssText, sortable: true, dataIndex: 'STUDENT_SCHOOL_ID',filter:{}");
 
@@ -426,10 +419,10 @@ Ext.onReady(function() {
 
     $OBJECT_GRID->loadMask = true;
     $OBJECT_GRID->isPagingToolbar = true;
-    //$OBJECT_GRID->isQuickySearch = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = false;
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->setUserColumn = true;
+    $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->renderJS();
     ?>
     viewport = new Ext.Viewport({

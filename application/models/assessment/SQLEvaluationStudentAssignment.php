@@ -281,26 +281,34 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function checkExistStudentSubjectAssignment($stdClass) {
-        
+
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_assignment", array("C" => "COUNT(*)"));
-        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
-        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
+        $SQL->from(array('A' => 't_student_assignment'), array("C" => "COUNT(*)"));
+        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
+        $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
+        $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
 
-        if (isset($stdClass->month))
+        if (isset($stdClass->month)) {
             if ($stdClass->month)
-                $SQL->where("MONTH = '" . $stdClass->month . "'");
+                $SQL->where("A.MONTH = '" . $stdClass->month . "'");
+        }
 
-        if (isset($stdClass->year))
+        if (isset($stdClass->year)) {
             if ($stdClass->year)
-                $SQL->where("YEAR = '" . $stdClass->year . "'");
+                $SQL->where("A.YEAR = '" . $stdClass->year . "'");
+        }
 
-        if (isset($stdClass->term))
+        if (isset($stdClass->term)) {
             if ($stdClass->term)
-                $SQL->where("TERM = '" . $stdClass->term . "'");
+                $SQL->where("A.TERM = '" . $stdClass->term . "'");
+        }
 
-        $SQL->group("SUBJECT_ID");
+        if (isset($stdClass->include_in_evaluation)) {
+            if ($stdClass->include_in_evaluation)
+                $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
+        }
 
+        $SQL->group("A.SUBJECT_ID");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

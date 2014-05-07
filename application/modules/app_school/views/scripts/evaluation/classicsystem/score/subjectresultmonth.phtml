@@ -39,6 +39,21 @@ $setParams .="&section=1";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
 <script>
 Ext.onReady(function() {
     
@@ -87,13 +102,13 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK'");
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE'");
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
             
             ////////////////////////////////////////////////////////////////////
             $comboEditor = "
@@ -236,6 +251,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->renderJS();
     
     ?>

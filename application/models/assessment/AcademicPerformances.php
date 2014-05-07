@@ -13,45 +13,41 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAcces
 
 class AcademicPerformances extends AssessmentProperties {
 
-    const NO_MONTH = false;
-    const NO_YEAR = false;
-    const NO_TERM = false;
-    const NO_ASSIGNMENT = false;
-    const NO_SECTION = false;
-    const NO_SCHOOLYEAR_ID = false;
-    const SCORE_NUMBER = 1;
-    const SCORE_CHAR = 2;
-    const SCORE_TYPE_NUMBER = 1;
-    const SCORE_TYPE_CHAR = 2;
+    CONST NO_MONTH = false;
+    CONST NO_YEAR = false;
+    CONST NO_TERM = false;
+    CONST NO_ASSIGNMENT = false;
+    CONST NO_SECTION = false;
+    CONST NO_SCHOOLYEAR_ID = false;
+    CONST SCORE_NUMBER = 1;
+    CONST SCORE_CHAR = 2;
+    CONST SCORE_TYPE_NUMBER = 1;
+    CONST SCORE_TYPE_CHAR = 2;
 
     /**
      * Formular for year result of performance
      */
-    const AVG_S1 = 1;
-    const AVG_S2 = 2;
-    const AVG_T1 = 1;
-    const AVG_T2 = 2;
-    const AVG_T3 = 3;
-    const AVG_Q1 = 1;
-    const AVG_Q2 = 2;
-    const AVG_Q3 = 3;
-    const AVG_Q4 = 4;
+    CONST AVG_S1 = 1;
+    CONST AVG_S2 = 2;
+    CONST AVG_T1 = 1;
+    CONST AVG_T2 = 2;
+    CONST AVG_T3 = 3;
+    CONST AVG_Q1 = 1;
+    CONST AVG_Q2 = 2;
+    CONST AVG_Q3 = 3;
+    CONST AVG_Q4 = 4;
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
     }
 
-    protected function listStudentsData()
-    {
+    protected function listStudentsData() {
 
         $data = array();
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
                 $studentId = $value->ID;
 
                 $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
@@ -73,8 +69,7 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsMonthClassPerformance()
-    {
+    public function getListStudentsMonthClassPerformance() {
 
         $data = array();
 
@@ -87,8 +82,7 @@ class AcademicPerformances extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
 
@@ -98,8 +92,7 @@ class AcademicPerformances extends AssessmentProperties {
             );
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
 
@@ -108,12 +101,9 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
-                if ($this->getListSubjects())
-                {
-                    foreach ($this->getListSubjects() as $v)
-                    {
-                        if ($v->SUBJECT_ID)
-                        {
+                if ($this->getListSubjects()) {
+                    foreach ($this->getListSubjects() as $v) {
+                        if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
                             $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
@@ -127,8 +117,7 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsTermClassPerformance()
-    {
+    public function getListStudentsTermClassPerformance() {
 
         $data = array();
 
@@ -139,8 +128,7 @@ class AcademicPerformances extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
         );
 
-        if ($this->listClassStudents())
-        {
+        if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
 
@@ -150,8 +138,7 @@ class AcademicPerformances extends AssessmentProperties {
             );
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
 
@@ -160,12 +147,9 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
 
-                if ($this->getListSubjects())
-                {
-                    foreach ($this->getListSubjects() as $v)
-                    {
-                        if ($v->SUBJECT_ID)
-                        {
+                if ($this->getListSubjects()) {
+                    foreach ($this->getListSubjects() as $v) {
+                        if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
                             $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
@@ -179,8 +163,7 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getListStudentsYearClassPerformance()
-    {
+    public function getListStudentsYearClassPerformance() {
 
         $data = array();
 
@@ -189,9 +172,8 @@ class AcademicPerformances extends AssessmentProperties {
                     , "section" => $this->getSection()
                     , "schoolyearId" => $this->getSchoolyearId()
         );
-        
-        if ($this->listClassStudents())
-        {
+
+        if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
 
@@ -201,8 +183,7 @@ class AcademicPerformances extends AssessmentProperties {
             );
 
             $i = 0;
-            foreach ($this->listClassStudents() as $value)
-            {
+            foreach ($this->listClassStudents() as $value) {
                 $stdClass->studentId = $value->ID;
 
                 $AVERAGE = $this->getAverageYearStudentClassPerformance($stdClass);
@@ -210,12 +191,10 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT_TOTAL"] = "----";
 
-                switch ($this->getTermNumber())
-                {
+                switch ($this->getTermNumber()) {
                     case 1:
 
-                        switch ($this->getSettingYearResult())
-                        {
+                        switch ($this->getSettingYearResult()) {
                             case self::AVG_T1:
                                 $stdClass->term = "FIRST_TERM";
                                 $RESULT = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -250,8 +229,7 @@ class AcademicPerformances extends AssessmentProperties {
                         break;
                     case 2:
 
-                        switch ($this->getSettingYearResult())
-                        {
+                        switch ($this->getSettingYearResult()) {
                             case self::AVG_Q1:
                                 $stdClass->term = "FIRST_QUARTER";
                                 $RESULT = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -296,8 +274,7 @@ class AcademicPerformances extends AssessmentProperties {
                         break;
                     default:
 
-                        switch ($this->getSettingYearResult())
-                        {
+                        switch ($this->getSettingYearResult()) {
                             case self::AVG_S1:
                                 $stdClass->term = "FIRST_SEMESTER";
                                 $RESULT = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -328,16 +305,13 @@ class AcademicPerformances extends AssessmentProperties {
         return $data;
     }
 
-    public function getAverageYearStudentClassPerformance($stdClass)
-    {
+    public function getAverageYearStudentClassPerformance($stdClass) {
         $output = "---";
 
-        switch ($this->getTermNumber())
-        {
+        switch ($this->getTermNumber()) {
             case 1:
 
-                switch ($this->getSettingYearResult())
-                {
+                switch ($this->getSettingYearResult()) {
                     case self::AVG_T1:
                         $stdClass->term = "FIRST_TERM";
                         $output = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -360,23 +334,19 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "THIRD_TERM";
                         $THIRD = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
 
-                        if ($FIRST && !$SECOND && !$THIRD)
-                        {
+                        if ($FIRST && !$SECOND && !$THIRD) {
                             $output = $FIRST;
                         }
 
-                        if (!$FIRST && $SECOND && !$THIRD)
-                        {
+                        if (!$FIRST && $SECOND && !$THIRD) {
                             $output = $SECOND;
                         }
 
-                        if (!$FIRST && !$SECOND && $THIRD)
-                        {
+                        if (!$FIRST && !$SECOND && $THIRD) {
                             $output = $THIRD;
                         }
 
-                        if ($FIRST && $SECOND && $THIRD)
-                        {
+                        if ($FIRST && $SECOND && $THIRD) {
                             $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
                             $output = displayRound($SUM_VALUE / $SUM_COEFF);
@@ -388,8 +358,7 @@ class AcademicPerformances extends AssessmentProperties {
                 break;
             case 2:
 
-                switch ($this->getSettingYearResult())
-                {
+                switch ($this->getSettingYearResult()) {
                     case self::AVG_Q1:
                         $stdClass->term = "FIRST_QUARTER";
                         $output = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -420,28 +389,23 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "FOURTH_QUARTER";
                         $FOURTH = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
 
-                        if ($FIRST && !$SECOND && !$THIRD && !$FOURTH)
-                        {
+                        if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
                             $output = $FIRST;
                         }
 
-                        if (!$FIRST && $SECOND && !$THIRD && !$FOURTH)
-                        {
+                        if (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
                             $output = $SECOND;
                         }
 
-                        if (!$FIRST && !$SECOND && $THIRD && !$FOURTH)
-                        {
+                        if (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
                             $output = $THIRD;
                         }
 
-                        if (!$FIRST && !$SECOND && !$THIRD && $FOURTH)
-                        {
+                        if (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
                             $output = $FOURTH;
                         }
 
-                        if ($FIRST && $SECOND && $THIRD && $FOURTH)
-                        {
+                        if ($FIRST && $SECOND && $THIRD && $FOURTH) {
                             $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
                             $output = displayRound($SUM_VALUE / $SUM_COEFF);
@@ -453,8 +417,7 @@ class AcademicPerformances extends AssessmentProperties {
                 break;
             default:
 
-                switch ($this->getSettingYearResult())
-                {
+                switch ($this->getSettingYearResult()) {
                     case self::AVG_S1:
                         $stdClass->term = "FIRST_SEMESTER";
                         $output = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
@@ -470,19 +433,16 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "SECOND_SEMESTER";
                         $SECOND = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
 
-                        if ($FIRST && !$SECOND)
-                        {
+                        if ($FIRST && !$SECOND) {
                             $RESULT = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                             $output = $RESULT;
                         }
-                        if (!$FIRST && $SECOND)
-                        {
+                        if (!$FIRST && $SECOND) {
                             $RESULT = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                             $output = $RESULT;
                         }
 
-                        if ($FIRST && $SECOND)
-                        {
+                        if ($FIRST && $SECOND) {
                             $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
                             $output = displayRound($SUM_VALUE / $SUM_COEFF);
@@ -496,8 +456,7 @@ class AcademicPerformances extends AssessmentProperties {
         return $output;
     }
 
-    public function setActionStudentClassPerformance()
-    {
+    public function setActionStudentClassPerformance() {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId

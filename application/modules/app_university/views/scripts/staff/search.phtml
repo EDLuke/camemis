@@ -33,6 +33,21 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $columndata = Utiles::getGridColumnData("STAFF_SEARCH_ID")
 
 ?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
 <script>
 
 Ext.apply(Ext.form.VTypes, {
@@ -295,30 +310,30 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
 
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE',filter:{}");
 
     if(!SchoolDBAccess::displayPersonNameInGrid()){
 
-        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120,hidden:".checkColHidden(3, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
-        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120,hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120,hidden:".checkColHidden(3, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120,hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME',filter:{}");
 
-        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
-        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
+        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN',filter:{}");
 
     }else{
 
-        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120,hidden:".checkColHidden(3, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120,hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120,hidden:".checkColHidden(3, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120,hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME',filter:{}");
 
-        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
-        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
+        $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120,hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN',filter:{}");
     }
 
-    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100,hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: false, dataIndex: 'GENDER'");
-    $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150,hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: false, dataIndex: 'PHONE'");
-    $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: false, dataIndex: 'EMAIL'");
-    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150,hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100,hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: false, dataIndex: 'GENDER',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150,hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: false, dataIndex: 'PHONE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: false, dataIndex: 'EMAIL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150,hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE',filter:{}");
 
     $OBJECT_GRID->baseParams = "
         start:0
@@ -367,6 +382,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->setUserColumn = true;
+    $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->renderJS();
 
     ////////////////////////////////////////////////////////////////////////////

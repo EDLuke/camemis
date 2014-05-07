@@ -345,7 +345,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $TERM_RESULT = $this->averageTermSubjectResult($stdClass, false);
 
         if ($this->isDisplayMonthResult()) {
-            
+
             $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
             $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass);
 
@@ -558,9 +558,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     public function averageTermSubjectResult($stdClass, $withFormat = false) {
 
         $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
-        
+
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
-        
+
         if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             
