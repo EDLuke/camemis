@@ -884,14 +884,32 @@ class CamemisGrid {
         $str3 = substr($str1, 0, $str2);
         return substr(trim($str3), 1, -1);
     }
-
+   ///@veasna 
+    protected function findUserTestColunmName($str)
+    {
+        $str1 = ltrim($str,"{");
+        $str2 = rtrim($str1, "}");
+        $arr3 = explode(",",$str2);
+        
+        for ($i=0;$i<count($arr3);$i++){
+            $tmparr = explode(":",$arr3[$i]);
+            
+            if(trim($tmparr[0])=="dataIndex"){
+                $str4=$tmparr[1];   
+                break;  
+            }
+            $i++;
+        }
+        return trim(str_replace("'","",$str4));
+    }
+    ///
     public function setUserGridColumns()
     {
 
         $data = array();
         foreach ($this->columns as $value)
         {
-            $data[] = $this->findUserColunmName($value);
+            $data[] = $this->findUserTestColunmName($value);
         }
         Utiles::setGridColumnData(strtoupper($this->getObjectId()), false, implode(",", $data));
     }

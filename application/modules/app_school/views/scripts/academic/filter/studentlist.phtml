@@ -199,7 +199,7 @@ Ext.onReady(function() {
         $OBJECT_GRID->addTBarItems("
             tbar.add([{
                 text: '" . EXPORT_TO_EXCEL . "'
-                ,disabled:true
+                //,disabled:true
                 ,id: 'EXPORT_TO_EXCEL'
                 ,iconCls:'icon-page_excel'
                 ,handler: function(){
@@ -215,7 +215,14 @@ Ext.onReady(function() {
                         url: '/export/jsonexcel/'
                         ,method: 'POST'
                         ,timeout: 600000
-                        ,params:{cmd: 'studentSearch',objectId:'STUDENT_SEARCH_ID'}
+                        ,params:{cmd: 'studentSearch'
+                                ,objectId:'".$OBJECT_GRID->getObjectId()."'
+                                ,displayCurrentAcademic:2
+                                ,campusId: '".$campusId."'  
+                                ,gradeId: '".$gradeId."'  
+                                ,schoolyearId: '".$schoolyearId."'  
+                                ,classId: '".$classId."'
+                                }
                         ,success: function(response, options) {
                             Ext.MessageBox.hide();
                             window.location='/export/openstudentlist/'
@@ -231,6 +238,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isPagingToolbar = true;
     $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->forceFit = "false";
     
     $OBJECT_GRID->baseParams = "
