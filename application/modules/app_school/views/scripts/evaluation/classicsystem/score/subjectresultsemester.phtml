@@ -115,7 +115,7 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, hidden:".checkColHidden(3, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
