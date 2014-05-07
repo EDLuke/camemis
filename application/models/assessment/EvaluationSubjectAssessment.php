@@ -13,18 +13,18 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAcces
 
 class EvaluationSubjectAssessment extends AssessmentProperties {
 
-    const NO_MONTH = false;
-    const NO_YEAR = false;
-    const NO_TERM = false;
-    const NO_ASSIGNMENT = false;
-    const NO_SECTION = false;
-    const NO_SCHOOLYEAR_ID = false;
-    const SCORE_NUMBER = 1;
-    const SCORE_CHAR = 2;
-    const INCLUDE_IN_MONTH = 1;
-    const INCLUDE_IN_TERM = 2;
-    const SCORE_TYPE_NUMBER = 1;
-    const SCORE_TYPE_CHAR = 2;
+    CONST NO_MONTH = false;
+    CONST NO_YEAR = false;
+    CONST NO_TERM = false;
+    CONST NO_ASSIGNMENT = false;
+    CONST NO_SECTION = false;
+    CONST NO_SCHOOLYEAR_ID = false;
+    CONST SCORE_NUMBER = 1;
+    CONST SCORE_CHAR = 2;
+    CONST INCLUDE_IN_MONTH = 1;
+    CONST INCLUDE_IN_TERM = 2;
+    CONST SCORE_TYPE_NUMBER = 1;
+    CONST SCORE_TYPE_CHAR = 2;
 
     /**
      * Evaluation type: (number, percent)
@@ -35,15 +35,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     /**
      * Formular for year result of subject
      */
-    const AVG_S1 = 1;
-    const AVG_S2 = 2;
-    const AVG_T1 = 1;
-    const AVG_T2 = 2;
-    const AVG_T3 = 3;
-    const AVG_Q1 = 1;
-    const AVG_Q2 = 2;
-    const AVG_Q3 = 3;
-    const AVG_Q4 = 4;
+    CONST AVG_S1 = 1;
+    CONST AVG_S2 = 2;
+    CONST AVG_T1 = 1;
+    CONST AVG_T2 = 2;
+    CONST AVG_T3 = 3;
+    CONST AVG_Q1 = 1;
+    CONST AVG_Q2 = 2;
+    CONST AVG_Q3 = 3;
+    CONST AVG_Q4 = 4;
+    CONST WITH_FORMAT = true;
+    CONST WITHOUT_FORMAT = false;
 
     function __construct() {
         parent::__construct();
@@ -142,7 +144,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $AVERAGE = $this->averageMonthSubjectResult($stdClass);
+                        $AVERAGE = $this->averageMonthSubjectResult($stdClass, sef::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($stdClass)->LETTER_GRADE_NUMBER;
@@ -198,7 +200,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass, sef::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass);
@@ -256,34 +258,34 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $AVERAGE = $this->calculatedAverageYearSubjectResult($stdClass);
+                        $AVERAGE = $this->calculatedAverageYearSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
 
                         switch ($this->getTermNumber()) {
                             case 1:
                                 $stdClass->term = "FIRST_TERM";
-                                $data[$i]["FIRST_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["FIRST_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "SECOND_TERM";
-                                $data[$i]["SECOND_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($studentId);
+                                $data[$i]["SECOND_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "THIRD_TERM";
-                                $data[$i]["THIRD_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($studentId);
+                                $data[$i]["THIRD_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 break;
                             case 2:
                                 $stdClass->term = "FIRST_QUARTER";
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "SECOND_QUARTER";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "THIRD_QUARTER";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "FOURTH_QUARTER";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 break;
                             default:
                                 $stdClass->term = "FIRST_SEMESTER";
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 $stdClass->term = "SECOND_SEMESTER";
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass);
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                                 break;
                         }
 
@@ -332,7 +334,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public function calculatedAverageTermSubjectResult($stdClass) {
+    public function calculatedAverageTermSubjectResult($stdClass, $withFormat = false) {
 
         $TERM_RESULT = $this->averageTermSubjectResult($stdClass, false);
 
@@ -352,12 +354,16 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             $result = $TERM_RESULT;
         }
 
-        $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
+        if ($withFormat) {
+            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
 
-        if (!$COUNT) {
-            $output = "---";
+            if (!$COUNT) {
+                $output = "---";
+            } else {
+                $output = displayRound($result);
+            }
         } else {
-            $output = displayRound($result);
+            $output = $result;
         }
 
         return $output;
@@ -371,23 +377,23 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_T1:
                         $stdClass->term = "FIRST_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_T2:
                         $stdClass->term = "SECOND_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_T3:
                         $stdClass->term = "THIRD_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     default:
                         $stdClass->term = "FIRST_TERM";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "SECOND_TERM";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "THIRD_TERM";
-                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
 
                         if ($FIRST && !$SECOND && !$THIRD) {
                             $result = $FIRST;
@@ -412,29 +418,29 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_Q1:
                         $stdClass->term = "FIRST_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_Q2:
                         $stdClass->term = "SECOND_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_Q3:
                         $stdClass->term = "THIRD_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_Q4:
                         $stdClass->term = "FOURTH_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     default:
                         $stdClass->term = "FIRST_QUARTER";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "SECOND_QUARTER";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "THIRD_QUARTER";
-                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "FOURTH_QUARTER";
-                        $FOURTH = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $FOURTH = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
 
                         if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
                             $result = $FIRST;
@@ -461,17 +467,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_S1:
                         $stdClass->term = "FIRST_SEMESTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     case self::AVG_S2:
                         $stdClass->term = "SECOND_SEMESTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         break;
                     default:
                         $stdClass->term = "FIRST_SEMESTER";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
                         $stdClass->term = "SECOND_SEMESTER";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass);
+                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
 
                         if ($FIRST && !$SECOND) {
                             $result = $FIRST;
@@ -505,11 +511,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function averageMonthSubjectResult($stdClass, $displayZero = true) {
+    public function averageMonthSubjectResult($stdClass, $withFormat = false) {
 
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 
-        if ($displayZero) {
+        if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             if (!$COUNT) {
                 $output = "---";
@@ -523,11 +529,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function averageAllMonthsSubjectResult($stdClass, $displayZero = true) {
+    public function averageAllMonthsSubjectResult($stdClass, $withFormat = false) {
 
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 
-        if ($displayZero) {
+        if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             if (!$COUNT) {
                 $output = "---";
@@ -541,11 +547,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function averageTermSubjectResult($stdClass, $displayZero = true) {
+    public function averageTermSubjectResult($stdClass, $withFormat = false) {
 
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 
-        if ($displayZero) {
+        if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             if (!$COUNT) {
                 $output = "---";
