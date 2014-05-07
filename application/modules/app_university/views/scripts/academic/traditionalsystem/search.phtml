@@ -66,7 +66,7 @@ Ext.onReady(function() {
     ");
     
     $OBJECT_TREE->setBaseParams("
-    	cmd: 'treeReportTraditionalAcademic'
+        cmd: 'treeReportTraditionalAcademic'
         ,schoolyearId:'".$currentSchoolyearId."'
     ");
 
@@ -88,7 +88,7 @@ Ext.onReady(function() {
                 ,split: true
             }
             ,items: [{
-               	region:'west'
+                   region:'west'
                 ,margins: '3 0 3 3'
                 ,cmargins: '3 3 3 3'
                 ,width:350
@@ -97,7 +97,7 @@ Ext.onReady(function() {
                 ,layout: 'fit'
                 ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
             },{
-               	collapsible: false
+                   collapsible: false
                 ,id: 'center'
                 ,region:'center'
                 ,margins: '3 3 3 0'
@@ -137,19 +137,19 @@ Ext.onReady(function() {
                         $js .= "text: '".STUDENT_ATTENDANCE."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                             $js .= ",handler: function(){";
-                                $js .= "clickOpenPage('center','".STUDENT_ATTENDANCE." &raquo; ' + node.text,'/main/permission/');";
+                                $js .= "clickOpenPage('center','".STUDENT_ATTENDANCE." &raquo; ' + node.text,'/academic/studentattendancefilter/?objectId=' + node.attributes.id);";
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".STUDENT_DISCIPLINE."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                             $js .= ",handler: function(){";
-                                $js .= "clickOpenPage('center','".STUDENT_DISCIPLINE." &raquo; ' + node.text,'/main/permission/');";
+                                $js .= "clickOpenPage('center','".STUDENT_DISCIPLINE." &raquo; ' + node.text,'/academic/studentdisciplinefilter/?objectId=' + node.attributes.id+'&personType=STUDENT');";
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".STUDENT_ADVISORY."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                             $js .= ",handler: function(){";
-                                $js .= "clickOpenPage('center','".STUDENT_ADVISORY." &raquo; ' + node.text,'/main/permission/');";
+                                $js .= "clickOpenPage('center','".STUDENT_ADVISORY." &raquo; ' + node.text,'/academic/studentadvisoryfilter/?objectId=' + node.attributes.id);";
                         $js .= "}";
                     $js .= "}]";
                 $js .= "},{";

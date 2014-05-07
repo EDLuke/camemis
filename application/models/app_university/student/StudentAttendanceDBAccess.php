@@ -318,6 +318,16 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                 $SQL .= " AND A.TRAINING_ID<>0";
                 break;
         }
+        
+        if ($globalSearch)
+        {
+            $SQL .= " AND ((B.FIRSTNAME like '%" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.LASTNAME like '%" . $globalSearch . "%')) ";
+            $SQL .= " OR ((B.CODE like '%" . $globalSearch . "%')) ";
+            //$SQL .= " OR ((T.NAME like '%" . $globalSearch . "%')) ";
+            //$SQL .= " OR ((E.NAME like '%" . $globalSearch . "%')) ";
+            
+        }
 
         //error_log($SQL);
         $SQL .= " ORDER BY B.FIRSTNAME";
