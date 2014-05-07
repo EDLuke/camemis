@@ -152,14 +152,16 @@ Ext.onReady(function() {
        
         $OBJECT_FORM->setonEmbeddedEvents("
             window.parent.Ext.getCmp('SUBJECTREPORT_LIST_ID').store.reload();
-            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            var result = Ext.util.JSON.decode(action.response.responseText); 
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
         ");
         if($this->objectId != ""){
             $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
             $OBJECT_FORM->setRemoveParams("cmd: 'jsonDeleteSubjectTeachingReport',objectId: '".$this->objectId."'");
-            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents(" 
                 window.parent.Ext.getCmp('SUBJECTREPORT_LIST_ID').store.reload();
-                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);                        
             ");
         }
     }
