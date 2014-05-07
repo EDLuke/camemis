@@ -796,7 +796,7 @@ class CamemisGrid {
         $str3 = substr($str1, 0, $str2);
         return substr(trim($str3), 1, -1);
     }
-
+   
     public function setUserGridColumns() {
 
         $data = array();
