@@ -144,7 +144,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $AVERAGE = $this->averageMonthSubjectResult($stdClass, sef::WITH_FORMAT);
+                        $AVERAGE = $this->averageMonthSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($stdClass)->LETTER_GRADE_NUMBER;
@@ -200,11 +200,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass, sef::WITH_FORMAT);
+                        $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
-                        $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass);
-                        $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass);
+                        $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass, self::WITH_FORMAT);
+                        $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($stdClass)->LETTER_GRADE_NUMBER;
                         $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($stdClass)->LETTER_GRADE_NUMBER;
                         break;
