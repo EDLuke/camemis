@@ -161,12 +161,12 @@ class EvaluationGradebook extends AssessmentProperties {
 
     public function getSubjectAssessment($stdClass) {
         $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-
+        
         switch ($this->getSubjectScoreType()) {
             case self::SCORE_TYPE_NUMBER:
-                return $facette->LETTER_GRADE_NUMBER;
+                return $facette->LETTER_GRADE_NUMBER?$facette->LETTER_GRADE_NUMBER:"---";
             case self::SCORE_TYPE_CHAR:
-                return $facette->LETTER_GRADE_CHAR;
+                return $facette->LETTER_GRADE_CHAR?$facette->LETTER_GRADE_CHAR:"---";
         }
     }
 

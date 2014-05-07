@@ -218,11 +218,38 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add('-',[{
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
                 Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '" . PUBLISH_SCORE . "'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url:'/evaluation/jsonsave/'
+                    ,method: 'POST'
+                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds:'".$this->urlEncryp->encryptedGet($setParams)."'}
+                    ,success: function(response, options) {
+                        var jsonData = Ext.util.JSON.decode(response.responseText);
+                        Ext.MessageBox.hide();
+                    }
+                    ,failure: function(response, options) {}
+                });
             }
         }]);
     ");

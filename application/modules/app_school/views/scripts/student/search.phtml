@@ -340,7 +340,7 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
 
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'center', hidden:".checkColHidden(3, $columndata).", width: 120, renderer: cssText, sortable: true, dataIndex: 'STUDENT_SCHOOL_ID',filter:{}");
 

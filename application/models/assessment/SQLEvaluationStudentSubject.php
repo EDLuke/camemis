@@ -26,7 +26,7 @@ class SQLEvaluationStudentSubject {
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
         $data["RANK"] = "---";
-
+        
         if (isset($stdClass->studentId))
         {
             if ($stdClass->studentId)
@@ -36,7 +36,7 @@ class SQLEvaluationStudentSubject {
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_subject_assessment"), $SELECTION_A);
-                $SQL->joinInner(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
+                $SQL->joinLeft(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
                 $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
                 $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
