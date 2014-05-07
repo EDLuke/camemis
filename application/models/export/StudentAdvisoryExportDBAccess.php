@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
-require_once 'models/app_school/student/StudentAdvisoryDBAccess.php';
+//require_once 'models/app_school/student/StudentAdvisoryDBAccess.php';
 
 class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
 
@@ -17,7 +17,7 @@ class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
     
     function __construct($objectId)
     {
-        $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance();
+        
         $this->objectId = $objectId;
         parent::__construct();
     }

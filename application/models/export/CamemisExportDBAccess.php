@@ -16,6 +16,7 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/Sched
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentPreschoolDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAttendanceDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php";//@Visal
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php";//@Visal
 
 error_reporting(E_ALL);
 
@@ -34,6 +35,7 @@ abstract class CamemisExportDBAccess {
         $this->DB_STAFF = StaffDBAccess::getInstance();
         $this->DB_DAYSCHEDULE = DayScheduleDBAccess::getInstance();
         $this->DB_WEEKSCHEDULE = ScheduleDBAccess::getInstance();
+        $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance();//@Visal
     }
 
     public function getFileStaffList()
