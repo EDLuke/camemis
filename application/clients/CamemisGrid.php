@@ -800,6 +800,9 @@ class CamemisGrid {
     public function setUserGridColumns() {
 
         $data = array();
+        
+        $CHECK = "";
+        
         foreach ($this->columns as $value) {
             $CHECK = trim(str_replace(",filter:", "", $this->findUserColunmName($value)));
             if (strpos($CHECK, "eturn") !== false) {
