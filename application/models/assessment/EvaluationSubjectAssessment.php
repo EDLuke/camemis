@@ -142,8 +142,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->averageMonthSubjectResult($studentId);
-                        $data[$i]["RANK"] = $AVERAGE ? getScoreRank($scoreList, $AVERAGE) : "---";
-                        $data[$i]["AVERAGE"] = $this->displayAverage($studentId, $AVERAGE);
+                        $data[$i]["RANK"] = getScoreRank($scoreList, $this->displayRank_AND_Average($studentId, $AVERAGE));
+                        $data[$i]["AVERAGE"] = $this->displayRank_AND_Average($studentId, $AVERAGE);
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($studentId)->LETTER_GRADE_NUMBER;
                         $data[$i]["ASSESSMENT_ID"] = $this->getSubjectMonthAssessment($studentId)->LETTER_GRADE_NUMBER;
                         break;
@@ -191,8 +191,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->calculatedAverageTermSubjectResult($studentId, $this->term);
-                        $data[$i]["RANK"] = $AVERAGE ? getScoreRank($scoreList, $AVERAGE) : "---";
-                        $data[$i]["AVERAGE"] = $this->displayAverage($studentId, $AVERAGE);
+                        $data[$i]["RANK"] = getScoreRank($scoreList, $this->displayRank_AND_Average($studentId, $AVERAGE));
+                        $data[$i]["AVERAGE"] = $this->displayRank_AND_Average($studentId, $AVERAGE);
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($studentId);
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($studentId, $this->term);
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($studentId, $this->term)->LETTER_GRADE_NUMBER;
@@ -242,8 +242,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 {
                     case self::SCORE_NUMBER:
                         $AVERAGE = $this->calculatedAverageYearSubjectResult($studentId);
-                        $data[$i]["RANK"] = $AVERAGE ? getScoreRank($scoreList, $AVERAGE) : "---";
-                        $data[$i]["AVERAGE"] = $this->displayAverage($studentId, $AVERAGE);
+                        $data[$i]["RANK"] = getScoreRank($scoreList, $this->displayRank_AND_Average($studentId, $AVERAGE));
+                        $data[$i]["AVERAGE"] = $this->displayRank_AND_Average($studentId, $AVERAGE);
 
                         switch ($this->getTermNumber())
                         {
@@ -949,7 +949,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function displayAverage($studentId, $average)
+    public function displayRank_AND_Average($studentId, $average)
     {
         $stdClass = (object) array(
                     "studentId" => $studentId
