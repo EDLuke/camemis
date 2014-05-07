@@ -41,6 +41,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 <script>
 Ext.onReady(function() {
         
+    Ext.Ajax.timeout = 600000;
+    
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
