@@ -805,6 +805,7 @@ class CamemisGrid {
         
         foreach ($this->columns as $value) {
             $CHECK = trim(str_replace(",filter:", "", $this->findUserColunmName($value)));
+            
             if (strpos($CHECK, "eturn") !== false) {
                 $CHECK = "";
             }
@@ -812,9 +813,9 @@ class CamemisGrid {
             if (strripos($CHECK, "'") !== false) {
                 $CHECK = substr($CHECK, 0, -1);
             }
-
+            
             if ($CHECK) {
-                $data[] = $this->findUserColunmName($CHECK);
+                $data[] = $CHECK;
             }
         }
         Utiles::setGridColumnData(strtoupper($this->getObjectId()), false, implode(",", $data));
