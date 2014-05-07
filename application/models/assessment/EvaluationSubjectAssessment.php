@@ -659,6 +659,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "assessmentId" => $this->actionValue
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "educationSystem" => $this->getEducationSystem()
+                    , "evaluationType" => $this->getSettingEvaluationType()
         );
 
         $stdClass = $defaultObject;
@@ -679,6 +680,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             , "term" => $this->term
             , "actionField" => "SUBJECT_VALUE"
             , "schoolyearId" => $this->getSchoolyearId()
+            , "evaluationType" => $this->getSettingEvaluationType()
             , "educationSystem" => $this->getEducationSystem()
         );
 
@@ -756,6 +758,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "actionField" => $this->actionField
                     , "actionValue" => $this->actionValue
                     , "coeffValue" => $this->getAssignmentCoeff()
+                    , "evaluationType" => $this->getSettingEvaluationType()
                     , "include_in_valuation" => $this->getAssignmentInCludeEvaluation()
                     , "educationSystem" => $this->getEducationSystem()
         );
@@ -824,6 +827,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "assignmentId" => $this->assignmentId
                     , "date" => $this->date
                     , "studentId" => $this->studentId
+                    , "evaluationType" => $this->getSettingEvaluationType()
         );
         SQLEvaluationStudentAssignment::getActionDeleteOneStudentTeacherScoreEnter($stdClass);
     }

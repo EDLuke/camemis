@@ -100,6 +100,7 @@ class SQLEvaluationStudentAssignment {
         if ($enties) {
             foreach ($enties as $value) {
 
+                $stdClass->assignmentId = $value->ASSIGNMENT_ID;
                 $_VALUE = self::getAverageSubjectAssignment($stdClass);
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
@@ -120,6 +121,7 @@ class SQLEvaluationStudentAssignment {
         if ($enties) {
             foreach ($enties as $value) {
 
+                $stdClass->assignmentId = $value->ASSIGNMENT_ID;
                 $_VALUE = self::getAverageSubjectAssignment($stdClass);
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
@@ -277,7 +279,7 @@ class SQLEvaluationStudentAssignment {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
-    
+
     public static function checkExistStudentSubjectAssignment($stdClass) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_assignment", array("C" => "COUNT(*)"));
