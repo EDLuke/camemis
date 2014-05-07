@@ -203,8 +203,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
+
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass, self::WITH_FORMAT);
+
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::WITH_FORMAT);
+
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($stdClass)->LETTER_GRADE_NUMBER;
                         $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($stdClass)->LETTER_GRADE_NUMBER;
                         break;
@@ -215,9 +218,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 if ($this->isDisplayMonthResult()) {
+                    $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
                     $data[$i]["ASSIGNMENT_MONTH"] = $this->getImplodeSubjectAssignmentByAllMonths($stdClass);
                 }
 
+                $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
                 $data[$i]["ASSIGNMENT_TERM"] = $this->getImplodeSubjectAssignmentByTerm($stdClass);
 
 
@@ -336,9 +341,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function calculatedAverageTermSubjectResult($stdClass, $withFormat = false) {
 
+        $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
         $TERM_RESULT = $this->averageTermSubjectResult($stdClass, false);
 
         if ($this->isDisplayMonthResult()) {
+            
+            $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
             $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass);
 
             if ($MONTH_RESULT && !$TERM_RESULT) {
@@ -549,10 +557,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function averageTermSubjectResult($stdClass, $withFormat = false) {
 
+        $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
+        
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
-
+        
         if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
+            
             if (!$COUNT) {
                 $output = "---";
             } else {
@@ -567,6 +578,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function averageTermSubjectAssignmentByAllMonths($stdClass) {
 
+        $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
         $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 

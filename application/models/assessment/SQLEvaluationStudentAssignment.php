@@ -281,6 +281,7 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function checkExistStudentSubjectAssignment($stdClass) {
+        
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_assignment", array("C" => "COUNT(*)"));
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
