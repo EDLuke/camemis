@@ -1152,6 +1152,7 @@ class Utiles {
 
             foreach ($explode as $key => $value)
             {
+                
                 $p = strpos($value, "^");
                 $i = substr($value, 1, $p - 1);
                 if (preg_match('/hidden/i', $value, $matches))

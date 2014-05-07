@@ -82,11 +82,11 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ADVISED_BY'");
     $OBJECT_GRID->addReadField("name: 'STUDENT'");
     ////////////////////////////////////
-    $OBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>',hidden:".checkColHidden(1, $columndata).", align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'ADVISORY_NAME', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'STUDENT', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISORY_TYPE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'ADVISORY_TYPE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_DATE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'ADVISED_DATE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_BY . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'ADVISED_BY', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>',hidden:".checkColHidden(1, $columndata).", align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'ADVISORY_NAME',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISORY_TYPE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'ADVISORY_TYPE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_DATE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'ADVISED_DATE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_BY . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'ADVISED_BY',filter:{}");
     ////////////////////////////////////////////////////////////////////////////
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         $OBJECT_GRID->addTBarItems("

@@ -96,7 +96,7 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'CODE'
-        , filter:{}
+        ,filter:{}
     ");
     
     $OBJECT_GRID->addColumn("
@@ -107,7 +107,7 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'STUDENT_SCHOOL_ID'
-        , filter:{}
+        ,filter:{}
     ");
     
     $OBJECT_GRID->addColumn("
@@ -118,7 +118,7 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'FIRSTNAME'
-        , filter:{}
+        ,filter:{}
     ");
     
     $OBJECT_GRID->addColumn("
@@ -129,7 +129,7 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'LASTNAME'
-        , filter:{}
+        ,filter:{}
     ");
     
     $OBJECT_GRID->addColumn("
@@ -169,7 +169,7 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'DATE_BIRTH'
-        , filter:{}
+        ,filter:{}
     ");
     
     $OBJECT_GRID->addColumn("
@@ -180,19 +180,19 @@ Ext.onReady(function() {
         , renderer: cssText
         , sortable: true
         , dataIndex: 'AGE'
-        , filter:{}
+        ,filter:{}
     ");
     
-    $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, align:'center', hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'PHONE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, align:'center', hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: true, dataIndex: 'EMAIL', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, align:'center', hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'PHONE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, align:'center', hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: true, dataIndex: 'EMAIL',filter:{}");
     
-    $OBJECT_GRID->addColumn("header: '<b>".CAMPUS."</b>', width: 170, align:'center', hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_CAMPUS', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_GRADE."</b>', width: 120, align:'center', hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_GRADE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 120, align:'center', hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_CLASS', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CAMPUS."</b>', width: 170, align:'center', hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_CAMPUS',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_GRADE."</b>', width: 120, align:'center', hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_GRADE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 120, align:'center', hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_CLASS',filter:{}");
     
-    $OBJECT_GRID->addColumn("header: '<b>".NATIONALITY."</b>', width: 150, align:'center', hidden:".checkColHidden(13, $columndata).", renderer: cssText, sortable: true, dataIndex: 'NATIONALITY', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".RELIGION."</b>', width: 150, align:'center', hidden:".checkColHidden(14, $columndata).", renderer: cssText, sortable: true, dataIndex: 'RELIGION', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".ETHNIC_GROUPS."</b>', width: 150, align:'center', hidden:".checkColHidden(15, $columndata).", renderer: cssText, sortable: true, dataIndex: 'ETHNIC_GROUPS', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".NATIONALITY."</b>', width: 150, align:'center', hidden:".checkColHidden(13, $columndata).", renderer: cssText, sortable: true, dataIndex: 'NATIONALITY',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".RELIGION."</b>', width: 150, align:'center', hidden:".checkColHidden(14, $columndata).", renderer: cssText, sortable: true, dataIndex: 'RELIGION',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".ETHNIC_GROUPS."</b>', width: 150, align:'center', hidden:".checkColHidden(15, $columndata).", renderer: cssText, sortable: true, dataIndex: 'ETHNIC_GROUPS',filter:{}");
     
     ////////////////////////////////////////////////////////////////////////////
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
@@ -231,6 +231,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isPagingToolbar = true;
     $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->forceFit = "false";
     
     $OBJECT_GRID->baseParams = "

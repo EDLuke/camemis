@@ -96,18 +96,18 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
     $OBJECT_GRID->addReadField("name: 'CURRENT_TRAINING_NAME'");
     ////////////////////////////////////
-    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'DISCIPLINE_TYPE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80,hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CODE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 180,hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FULL_NAME', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100,hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'GENDER', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'INFRACTION_DATE', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'DISCIPLINE_TYPE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80,hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CODE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 180,hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100,hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'GENDER',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'INFRACTION_DATE',filter:{}");
 
     switch (strtoupper($personType)) {
         case "STUDENT":
-            $OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'PUNISHMENT_TYPE', filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'PUNISHMENT_TYPE',filter:{}");
             
-            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,hidden:".checkColHidden(7, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC', filter:{}");
-            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 160,hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR', filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,hidden:".checkColHidden(7, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 160,hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR',filter:{}");
        
             break;
     }

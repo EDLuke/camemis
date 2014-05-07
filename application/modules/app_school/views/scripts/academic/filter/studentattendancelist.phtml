@@ -103,15 +103,15 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
     $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
     ////////////////////////////////////
-    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderTextBold, sortable: true, dataIndex: 'STUDENT', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 130, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'ABSENT_TYPE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'START_DATE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>' , align:'center', hidden:".checkColHidden(5, $columndata).", width: 60, renderer: renderText, sortable: true, dataIndex: 'COUNT_DATE', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME', filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".DESCRIPTION."</b>', width: 150, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'DESCRIPTION', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderTextBold, sortable: true, dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 130, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'ABSENT_TYPE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'START_DATE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>' , align:'center', hidden:".checkColHidden(5, $columndata).", width: 60, renderer: renderText, sortable: true, dataIndex: 'COUNT_DATE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".DESCRIPTION."</b>', width: 150, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'DESCRIPTION',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 160, hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'SCHOOLYEAR_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CLASS_NAME', filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CLASS_NAME',filter:{}");
 
     $OBJECT_GRID->baseParams = "
         start:0
