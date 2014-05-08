@@ -234,6 +234,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                 ,allowBlank: true
             }
             ,{".CamemisField::comboCamemisTypes("APPLICATION_TYPE", TYPE, false,150, false)."}
+            ,{".CamemisField::comboCamemisTypes("DEGREE_TYPE", DEGREE_TYPE, false,150, false)."}
+            ,{".CamemisField::comboCamemisTypes("APPLICATION_STATUS", STATUS, false,150, false)."}
             ]
         ");
         
@@ -304,15 +306,21 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
         $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
         $OBJECT_GRID->addReadField("name: 'OBJECT_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'DEGREE_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'APPLICATION_STATUS'");
         
         
         $OBJECT_GRID->addColumn("header: '<b>" . FULL_NAME . "</b>', align:'left', width: 150,hidden:".checkColHidden(1, $columndata).", dataIndex: 'STUDENT_NAME'");
         $OBJECT_GRID->addColumn("header: '<b>" . GENDER . "</b>', align:'left', width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'GENDER'");
         $OBJECT_GRID->addColumn("header: '<b>" . TYPE . "</b>', align:'left', width: 120,hidden:".checkColHidden(3, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
         $OBJECT_GRID->addColumn("header: '<b>" . SCORE . "</b>', align:'left', width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'SCORE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'DESCRIPTION'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(6, $columndata).", dataIndex: 'CREATED_DATE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(7, $columndata).", dataIndex: 'CREATED_BY'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DEGREE_TYPE . "</b>', align:'left', width: 100,hidden:".checkColHidden(5, $columndata).", dataIndex: 'DEGREE_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(6, $columndata).", dataIndex: 'DESCRIPTION'");
+        $OBJECT_GRID->addColumn("header: '<b>" . STATUS . "</b>', align:'left', width: 100,hidden:".checkColHidden(7, $columndata).", dataIndex: 'APPLICATION_STATUS'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(8, $columndata).", dataIndex: 'CREATED_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(9, $columndata).", dataIndex: 'CREATED_BY'");
+        
+        
         
         //if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         $OBJECT_GRID->addTBarItems("
@@ -460,6 +468,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(5, false);
                     myGrid.getColumnModel().setHidden(6, false);
                     myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, false);
+                    myGrid.getColumnModel().setHidden(9, false);
                     break;
                     
                 case 'TESTING':
@@ -470,9 +480,11 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('REFERENCE_TYPE_ID').hide();
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, false);
-                    myGrid.getColumnModel().setHidden(5, false);
+                    myGrid.getColumnModel().setHidden(5, true);
                     myGrid.getColumnModel().setHidden(6, false);
-                    myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(8, false);
+                    myGrid.getColumnModel().setHidden(9, false);
                     break
                     
                 case 'REFERENCE':
@@ -483,9 +495,11 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('REFERENCE_TYPE_ID').show();
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, true);
-                    myGrid.getColumnModel().setHidden(5, false);
-                    myGrid.getColumnModel().setHidden(6, true);
+                    myGrid.getColumnModel().setHidden(5, true);
+                    myGrid.getColumnModel().setHidden(6, false);
                     myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(8, true);
+                    myGrid.getColumnModel().setHidden(9, true);
                     break
                 
                 default:
@@ -496,9 +510,11 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     Ext.getCmp('REFERENCE_TYPE_ID').hide();
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, true);
-                    myGrid.getColumnModel().setHidden(5, false);
-                    myGrid.getColumnModel().setHidden(6, true);
+                    myGrid.getColumnModel().setHidden(5, true);
+                    myGrid.getColumnModel().setHidden(6, false);
                     myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(8, true);
+                    myGrid.getColumnModel().setHidden(9, true);
                     break;
             }
         });

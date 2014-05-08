@@ -125,6 +125,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
         $APPLICATION_GRID->addReadField("name: 'CAMEMIS_TYPE'");
+        $APPLICATION_GRID->addReadField("name: 'DEGREE_TYPE'");
+        $APPLICATION_GRID->addReadField("name: 'APPLICATION_STATUS'");
         $APPLICATION_GRID->addReadField("name: 'DESCRIPTION'");
         $APPLICATION_GRID->addReadField("name: 'DELETE'");
         
@@ -155,7 +157,61 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             })
         ");
         
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".DEGREE_TYPE."</b>',
+            dataIndex: 'DEGREE_TYPE',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('DEGREE_TYPE')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        camboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
         $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(2,$columndata)));
+        
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".STATUS."</b>',
+            dataIndex: 'APPLICATION_STATUS',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('APPLICATION_STATUS')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        camboValue = replaceValue;
+                    }
+                }
+            })
+        ");
         
         $APPLICATION_GRID->addColumn("
             xtype: 'checkboxcolumn'
@@ -188,7 +244,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,handler: function(){
                     data = {
                         CAMEMIS_TYPE:''
+                        ,DEGREE_TYPE:''
                         ,DESCRIPTION:''
+                        ,APPLICATION_STATUS:''
                     };
                     Ext.getCmp('".$APPLICATION_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
                 }
