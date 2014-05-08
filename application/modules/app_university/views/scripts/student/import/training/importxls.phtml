@@ -404,7 +404,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $formItems .= "
             ,{".CamemisField::Hidden("CHOOSE_TRAINING",false)."}
             ,{".CamemisField::Hidden("CHOOSE_TRAINING_TYPE",false)."}
-            ,{".CamemisField::Trigger("CHOOSE_TRAINING_NAME",TRAINING_PROGRAMS,$triggerOnClickTraining, true, false, false)."}
+            ,{".CamemisField::Trigger("CHOOSE_TRAINING_NAME",TRAINING_PROGRAMS,$triggerOnClickTraining, false, false, false)."}
         ";
         $formItems.= ",{".CamemisField::Datefield('CREATED_DATE',CREATED_DATE,false)."}";
         $formItems .= "]";
