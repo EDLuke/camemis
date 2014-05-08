@@ -1783,6 +1783,10 @@ class StaffDBAccess {
                     $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
                     $data[$i]["LASTNAME"] = $value->LASTNAME;
                     $data[$i]["TEACHER_NAME"] = $value->TEACHER_NAME . " (" . $value->TEACHER_CODE . ")";
+                    if($value->PHONE)
+                    $data[$i]["TEACHER_NAME"] .= "-".PHONE.": ".$value->PHONE;
+                    if($value->EMAIL)
+                    $data[$i]["TEACHER_NAME"] .= "-".EMAIL.": ".$value->EMAIL;
                     $data[$i]["FULL_NAME"] = $value->FULL_NAME;
                     $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
                     $data[$i]["LASTNAME_LATIN"] = $value->LASTNAME_LATIN;

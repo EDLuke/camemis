@@ -64,6 +64,21 @@ public function renderAdditionalItem ($item) {
 
 $DISPLAY_ITEM = new DisplayItem();
 ?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
 <script>
 <?
 camemisPage::ExtformVTypes();
@@ -188,10 +203,10 @@ Ext.onReady(function() {
     $STAFF_TO_GRID->addReadField("name: 'STATUS_KEY'");
 
     $STAFF_TO_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStaffTo).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $STAFF_TO_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffTo).", dataIndex: 'CODE'");
-    $STAFF_TO_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME'");
-    $STAFF_TO_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    $STAFF_TO_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+    $STAFF_TO_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffTo).", dataIndex: 'CODE',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'GENDER',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
 
     $STAFF_TO_GRID->baseParams = "
         start:0
@@ -235,6 +250,7 @@ Ext.onReady(function() {
     $STAFF_TO_GRID->isCheckboxSelect = true;
     $STAFF_TO_GRID->forceFit = "false";
     $STAFF_TO_GRID->isObjectDefaultOnLoad = true;
+    $STAFF_TO_GRID->isFilterRow = true;
     $STAFF_TO_GRID->renderJS();
     ////////////////////////////////////////////
 
