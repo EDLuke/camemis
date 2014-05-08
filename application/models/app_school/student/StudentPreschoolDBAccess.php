@@ -294,6 +294,8 @@ class StudentPreschoolDBAccess {
         $address = isset($params["ADDRESS"]) ? addText($params["ADDRESS"]) : "";
         $phone = isset($params["PHONE"]) ? addText($params["PHONE"]) : "";
         $email = isset($params["EMAIL"]) ? addText($params["EMAIL"]) : "";
+        $applicationStatus = isset($params["APPLICATION_STATUS"]) ? addText($params["APPLICATION_STATUS"]) : "";
+        $degree = isset($params["DEGREE_TYPE"]) ? addText($params["DEGREE_TYPE"]) : "";
         $dob = isset($params["DATE_BIRTH"]) ? addText($params["DATE_BIRTH"]) : "";
         $informationType = isset($params["INFORMATION_TYPE"]) ? addText($params["INFORMATION_TYPE"]) : "";
         $infoType = isset($params["infoType"]) ? addText($params["infoType"]) : "";
@@ -316,9 +318,11 @@ class StudentPreschoolDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_preschool'), array('*'));
-        $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE'));
+        $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
         $SQL->joinLeft(array('C' => 't_camemis_type'), 'B.CAMEMIS_TYPE = C.ID', array('NAME AS CAM_NAME', 'OBJECT_TYPE'));
         $SQL->joinLeft(array('D' => 't_members'), 'B.CREATED_BY = D.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
+        $SQL->joinLeft(array('E' => 't_camemis_type'), 'B.DEGREE_TYPE = E.ID', array('NAME AS DEGRE_NAME', 'OBJECT_TYPE'));
+        $SQL->joinLeft(array('F' => 't_camemis_type'), 'B.APPLICATION_STATUS = F.ID', array('NAME AS APPLICATION_STATUS', 'OBJECT_TYPE'));
         
         
         if ($startDate and $endDate) {
@@ -350,6 +354,12 @@ class StudentPreschoolDBAccess {
             
         if ($email)
             $SQL->where("A.EMAIL LIKE '" . $email . "%'");
+            
+        if ($degree)
+            $SQL->where("B.DEGREE_TYPE LIKE '" . $degree . "%'");
+            
+        if ($applicationStatus)
+            $SQL->where("B.APPLICATION_STATUS LIKE '" . $applicationStatus . "%'");
         
         if ($cametype)
                 $SQL->where("B.CAMEMIS_TYPE = '" . $cametype . "'");
@@ -407,6 +417,8 @@ class StudentPreschoolDBAccess {
                 
                 
                 $data[$i]['CAMEMIS_TYPE'] = $value->CAM_NAME;
+                $data[$i]['DEGREE_TYPE'] = $value->DEGRE_NAME;
+                $data[$i]['APPLICATION_STATUS'] = $value->APPLICATION_STATUS;
                 $data[$i]['DESCRIPTION'] = $value->PRESCHOOLTYPE_DES;
 
                 $data[$i]['CREATED_DATE'] = getShowDate($value->CREATED_DATE);
@@ -461,6 +473,12 @@ class StudentPreschoolDBAccess {
         switch ($field)
         {
             case "CAMEMIS_TYPE":
+                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                break;
+            case "DEGREE_TYPE":
+                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                break;
+            case "APPLICATION_STATUS":
                 $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
                 break;
             default:
@@ -541,6 +559,10 @@ class StudentPreschoolDBAccess {
                     case "APPLICATION":
                         $data[$i]["ID"] = $value->ID;
                         $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
+                        if ($value->APPLICATION_STATUS <> 0)
+                            $data[$i]["APPLICATION_STATUS"] = CamemisTypeDBAccess::findObjectFromId($value->APPLICATION_STATUS)->NAME;
+                        if ($value->DEGREE_TYPE <> 0)
+                            $data[$i]["DEGREE_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->DEGREE_TYPE)->NAME;
                         if ($value->CAMEMIS_TYPE <> 0)
                             $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;
                         break;
