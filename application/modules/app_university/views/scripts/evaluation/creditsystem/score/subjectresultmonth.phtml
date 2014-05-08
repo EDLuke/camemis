@@ -26,6 +26,14 @@ $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new EvaluationSubjectAssessment();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setMonthYear($monthyear);
+$evaluation->actionDefaultStudentSubjectAssessment("MONTH");
+////////////////////////////////////////////////////////////////////////////////
+
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 $monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";

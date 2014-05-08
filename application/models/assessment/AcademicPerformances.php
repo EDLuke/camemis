@@ -99,7 +99,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
+                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
 
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
@@ -145,7 +145,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentClassPerformance($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE_TOTAL"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->LETTER_GRADE_NUMBER;
+                $data[$i]["ASSESSMENT_TOTAL"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
 
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {

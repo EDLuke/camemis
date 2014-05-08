@@ -11,6 +11,8 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $DB_ASSIGNMENT = AssignmentDBAccess::getInstance();
 
@@ -19,13 +21,19 @@ $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
-
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new EvaluationSubjectAssessment();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setMonthYear($monthyear);
+$evaluation->actionDefaultStudentSubjectAssessment("MONTH");
+////////////////////////////////////////////////////////////////////////////////
+
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
-$monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 
 $TITLE = diplayNameMonthYear($monthyear);
 

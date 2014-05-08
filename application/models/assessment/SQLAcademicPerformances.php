@@ -66,8 +66,8 @@ class SQLAcademicPerformances {
     public static function getCallStudentAcademicPerformance($stdClass)
     {
 
-        $data["LETTER_GRADE_NUMBER"] = "---";
-        $data["LETTER_GRADE_CHAR"] = "---";
+        $data["GRADING"] = "---";
+        $data["GRADING"] = "---";
         $data["LEARNING_VALUE"] = "---";
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
@@ -118,8 +118,8 @@ class SQLAcademicPerformances {
                 $result = self::dbAccess()->fetchRow($SQL);
                 if ($result)
                 {
-                    $data["LETTER_GRADE_NUMBER"] = $result->DESCRIPTION;
-                    $data["LETTER_GRADE_CHAR"] = $result->LETTER_GRADE;
+                    $data["GRADING"] = $result->DESCRIPTION;
+                    $data["GRADING"] = $result->LETTER_GRADE;
                     $data["LEARNING_VALUE"] = $result->LEARNING_VALUE;
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
                     $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;

@@ -164,9 +164,9 @@ class EvaluationGradebook extends AssessmentProperties {
         
         switch ($this->getSubjectScoreType()) {
             case self::SCORE_TYPE_NUMBER:
-                return $facette->LETTER_GRADE_NUMBER?$facette->LETTER_GRADE_NUMBER:"---";
+                return $facette->GRADING?$facette->GRADING:"---";
             case self::SCORE_TYPE_CHAR:
-                return $facette->LETTER_GRADE_CHAR?$facette->LETTER_GRADE_CHAR:"---";
+                return $facette->GRADING?$facette->GRADING:"---";
         }
     }
 

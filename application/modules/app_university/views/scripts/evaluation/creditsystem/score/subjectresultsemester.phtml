@@ -19,12 +19,38 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 $term = isset($_GET["term"])?$_GET["term"]:"";
+switch($term){
+    case "FIRST_SEMESTER":
+    case "SECOND_SEMESTER":
+        $section ="2";
+    break;
+    case "FIRST_TERM":
+    case "SECOND_TERM":
+    case "THIRD_TERM":
+        $section ="4";
+    break;
+    case "FIRST_QUARTER":
+    case "SECOND_QUARTER":
+    case "THIRD_QUARTER":
+    case "FOURTH_QUARTER":
+        $section ="5";
+    break;
+}
 
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new EvaluationSubjectAssessment();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setTerm($term);
+$evaluation->setSection($section);
+$evaluation->actionDefaultStudentSubjectAssessment("TERM");
+////////////////////////////////////////////////////////////////////////////////
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
@@ -34,24 +60,7 @@ $setParams = "";
 $setParams .="&subjectId=".$this->subjectId."";
 $setParams .="&academicId=".$academicId."";
 $setParams .="&term=".$term."";
-
-switch($term){
-    case "FIRST_SEMESTER":
-    case "SECOND_SEMESTER":
-        $setParams .="&section=2";
-    break;
-    case "FIRST_TERM":
-    case "SECOND_TERM":
-    case "THIRD_TERM":
-        $setParams .="&section=4";
-    break;
-    case "FIRST_QUARTER":
-    case "SECOND_QUARTER":
-    case "THIRD_QUARTER":
-    case "FOURTH_QUARTER":
-        $setParams .="&section=5";
-    break;
-}
+$setParams .="&section=".$section."";
 
 ?>
 <style>
