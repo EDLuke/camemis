@@ -106,6 +106,8 @@ class StudentImportDBAccess {
         if ($type) { //@ THORN Visal
             //@veasna
             $SQL .= " AND A.TYPE ='" . $type . "'";
+        }else{
+            $SQL .= " AND A.TYPE <> 'ENROLL'";    
         }
 
         if ($campus)
