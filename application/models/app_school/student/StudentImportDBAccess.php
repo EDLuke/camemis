@@ -106,6 +106,8 @@ class StudentImportDBAccess {
         if ($type) { //@ THORN Visal
             //@veasna
             $SQL .= " AND A.TYPE ='" . $type . "'";
+        }else{
+            $SQL .= " AND A.TYPE <> 'ENROLL'";    
         }
 
         if ($campus)
@@ -389,7 +391,7 @@ class StudentImportDBAccess {
             $IMPORT_DATA['ID'] = generateGuid();
             $IMPORT_DATA['CODE'] = createCode();
             $IMPORT_DATA['ACADEMIC_TYPE'] = addText($ACADEMIC_TYPE);
-
+        
             switch (UserAuth::systemLanguage()) {
                 case "VIETNAMESE":
                     $IMPORT_DATA['FIRSTNAME'] = setImportChartset($FIRSTNAME);
