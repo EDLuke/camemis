@@ -64,6 +64,21 @@ public function renderAdditionalItem ($item) {
 
 $DISPLAY_ITEM = new DisplayItem();
 ?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
 <script>
 <?
 camemisPage::ExtformVTypes();
@@ -151,12 +166,38 @@ Ext.onReady(function() {
     $STAFF_FROM_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $STAFF_FROM_GRID->addReadField("name: 'FULL_NAME'");
     $STAFF_FROM_GRID->addReadField("name: 'STATUS_KEY'");
+    $STAFF_FROM_GRID->addReadField("name: 'USER_ROLE'");
 
     $STAFF_FROM_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStaffFrom).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $STAFF_FROM_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffFrom).", dataIndex: 'CODE'");
-    $STAFF_FROM_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME'");
-    $STAFF_FROM_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    $STAFF_FROM_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+    $STAFF_FROM_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffFrom).", dataIndex: 'CODE',filter:{}");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STAFF_FROM_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100, hidden:".checkColHidden(4, $columndataStaffFrom)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".USER_ROLE."</b>', width: 150, hidden:".checkColHidden(6, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'USER_ROLE',filter:{}");
 
     $STAFF_FROM_GRID->baseParams = "
         start:0
@@ -172,6 +213,7 @@ Ext.onReady(function() {
     $STAFF_FROM_GRID->isQuickySearch = true;
     $STAFF_FROM_GRID->forceFit = "false";
     $STAFF_FROM_GRID->isObjectDefaultOnLoad = true;
+    $STAFF_FROM_GRID->isFilterRow = true;
     $STAFF_FROM_GRID->renderJS();
     ////////////////////////////////////////////
 
@@ -186,12 +228,38 @@ Ext.onReady(function() {
     $STAFF_TO_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $STAFF_TO_GRID->addReadField("name: 'FULL_NAME'");
     $STAFF_TO_GRID->addReadField("name: 'STATUS_KEY'");
+    $STAFF_TO_GRID->addReadField("name: 'USER_ROLE'");
 
     $STAFF_TO_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStaffTo).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     $STAFF_TO_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffTo).", dataIndex: 'CODE',filter:{}");
     $STAFF_TO_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
-    $STAFF_TO_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'GENDER',filter:{}");
+    $STAFF_TO_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100, hidden:".checkColHidden(4, $columndataStaffTo)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
     $STAFF_TO_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".USER_ROLE."</b>', width: 150, hidden:".checkColHidden(6, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'USER_ROLE',filter:{}");
 
     $STAFF_TO_GRID->baseParams = "
         start:0
@@ -252,10 +320,35 @@ Ext.onReady(function() {
     $STUDENT_GRID->addReadField("name: 'STATUS_KEY'");
 
     $STUDENT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStudent).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $STUDENT_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStudent).", dataIndex: 'CODE'");
-    $STUDENT_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME'");
-    $STUDENT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    $STUDENT_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+    $STUDENT_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStudent).", dataIndex: 'CODE',filter:{}");
+    $STUDENT_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STUDENT_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100
+        , hidden:".checkColHidden(4, $columndataStudent)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
+    $STUDENT_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
 
     $STUDENT_GRID->baseParams = "
         start:0
@@ -299,6 +392,7 @@ Ext.onReady(function() {
     $STUDENT_GRID->isCheckboxSelect = true;
     $STUDENT_GRID->forceFit = "false";
     $STUDENT_GRID->isObjectDefaultOnLoad = true;
+    $STUDENT_GRID->isFilterRow = true;
     $STUDENT_GRID->renderJS();
     ////////////////////////////////////////////
 
@@ -401,13 +495,13 @@ Ext.onReady(function() {
                             text: '".STAFF."'
                             ,iconCls:'icon-user_add'
                             ,handler: function(){
-                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STAFF_TO_GRID->getObjectXType()."', percentWidth(70), percentHeight(80));
+                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STAFF_TO_GRID->getObjectXType()."', percentWidth(80), percentHeight(80));
                             }
                         },{
                             text: '".STUDENT."'
                             ,iconCls:'icon-user_add'
                             ,handler: function(){
-                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STUDENT_GRID->getObjectXType()."', percentWidth(70), percentHeight(80));
+                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STUDENT_GRID->getObjectXType()."', percentWidth(80), percentHeight(80));
                             }
                         }]
                     }";

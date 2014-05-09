@@ -634,6 +634,7 @@ class LetterDBAccess {
 		$objectId = isset($params["objectId"]) ? $params["objectId"] : "";
 		$personType = isset($params["personType"]) ? addText($params["personType"]) : "";
 		$type = isset($params["type"]) ? addText($params["type"]) : "";
+        
 
 		$data = array();
 		$i = 0;
@@ -643,7 +644,9 @@ class LetterDBAccess {
 			$result = $DB_STAFF->queryAllStaffs($params);
 			$chooseId = "STAFF_ID";
 		} else {
-			$result = StudentSearchDBAccess::queryAllStudents($params);
+            $studentObject = new StudentSearchDBAccess();
+            $studentObject->globalSearch=isset($params["query"]) ? trim($params["query"]) : false;
+			$result = $studentObject->queryAllStudents($params);
 			$chooseId = "STUDENT_ID";
 		}
 
@@ -665,8 +668,9 @@ class LetterDBAccess {
 
 					if ($personType == "staff") {
 						$STATUS_DATA = StaffStatusDBAccess::getCurrentStaffStatus($value->$chooseId);
+                        $data[$i]["USER_ROLE"] = $value->USER_ROLE;
 					} else {
-						$STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->$chooseId);
+						$STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->ID);
 					}
 
 					$data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";

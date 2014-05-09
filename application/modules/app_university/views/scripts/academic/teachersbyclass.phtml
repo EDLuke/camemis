@@ -58,8 +58,8 @@ if(!$academicObject) {header("Location: /main/permission/");}
         $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', align:'left', menuDisabled : true, sortable: true, width:200, dataIndex: 'SUBJECT'");
         //$OBJECT_GRID->addColumn("header: '<b>".GRADE_CLASS."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'CLASS_NAME'");
         //$OBJECT_GRID->addColumn("header: '<b>".TERM."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:120, dataIndex: 'TERM'");
-        //$OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'PHONE'");
-        //$OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', align:'left', menuDisabled : true, sortable: true, width:170, dataIndex: 'EMAIL'");
+        $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'PHONE'");
+        $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', align:'left', menuDisabled : true, sortable: true, width:170, dataIndex: 'EMAIL'");
 
         $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->isGroupingView = true;
