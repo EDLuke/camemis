@@ -523,7 +523,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
         switch ($this->getTermNumber()) {
             case 1:
-
+                $stdClass->section = "TERM";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_T1:
                         $stdClass->term = "FIRST_TERM";
@@ -572,7 +572,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 break;
             case 2:
-
+                $stdClass->section = "QUARTER";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_Q1:
                         $stdClass->term = "FIRST_QUARTER";
@@ -652,7 +652,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                         $stdClass->term = "SECOND_SEMESTER";
                         $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-                        $SECOND_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
 
                         if ($FIRST_VALUE && !$SECOND_VALUE) {
                             $result = $FIRST_VALUE;
