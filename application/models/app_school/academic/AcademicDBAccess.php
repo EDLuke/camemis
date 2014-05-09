@@ -103,6 +103,7 @@ class AcademicDBAccess {
 
             $data["CODE"] = $facette->CODE;
             $data["STATUS"] = $facette->STATUS;
+            $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
 
             if ($facette->EDUCATION_SYSTEM) {
                 $data["EDUCATION_SYSTEM_NAME"] = NUMBER_CREDIT;
@@ -488,6 +489,9 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_THIRD_RESULT'] = isset($params["DISPLAY_THIRD_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
+        
+        if (isset($params["EVALUATION_OPTION"]))
+            $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
 
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -919,14 +923,14 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearObject->DISTRIBUTION_VALUE;
-                    
+
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearObject->DISPLAY_FIRST_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearObject->DISPLAY_SECOND_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_THIRD_RESULT'] = $schoolyearObject->DISPLAY_THIRD_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearObject->DISPLAY_FOURTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearObject->DISPLAY_YEAR_RESULT;
-                    
+
                     $FIRST_SAVEDATA["SCHOOLYEAR_START"] = $schoolyearObject->SCHOOLYEAR_START;
                     $FIRST_SAVEDATA["SCHOOLYEAR_END"] = $schoolyearObject->SCHOOLYEAR_END;
                     $FIRST_SAVEDATA["SEMESTER1_START"] = $schoolyearObject->SEMESTER1_START;
@@ -946,7 +950,8 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["SEMESTER1_WEIGHTING"] = $schoolyearObject->SEMESTER1_WEIGHTING;
                     $FIRST_SAVEDATA["SEMESTER2_WEIGHTING"] = $schoolyearObject->SEMESTER2_WEIGHTING;
-
+                    $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
+                    
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
                 }
@@ -1014,13 +1019,14 @@ class AcademicDBAccess {
                     $SAVEDATA["YEAR_RESULT"] = $schoolyearsubjectObject->YEAR_RESULT;
                     $SAVEDATA["EVALUATION_TYPE"] = $schoolyearsubjectObject->EVALUATION_TYPE;
                     $SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearsubjectObject->DISTRIBUTION_VALUE;
-                    
+
                     $SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_MONTH_RESULT;
                     $SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearsubjectObject->DISPLAY_FIRST_RESULT;
                     $SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearsubjectObject->DISPLAY_SECOND_RESULT;
                     $SAVEDATA['DISPLAY_THIRD_RESULT'] = $schoolyearsubjectObject->DISPLAY_THIRD_RESULT;
                     $SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_FOURTH_RESULT;
                     $SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
+                    $SAVEDATA["EVALUATION_OPTION"] = $schoolyearsubjectObject->EVALUATION_OPTION;
                     
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["MO"] = $schoolyearsubjectObject->MO;

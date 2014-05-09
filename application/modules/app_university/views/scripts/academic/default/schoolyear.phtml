@@ -285,7 +285,7 @@ $viewportItem = new ViewportItem(
                 layout:'fit'
                 ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
                 ,border: false
-                ,autoHeight: true
+                ,height:200
                 ,items:[{
                     xtype: 'tabpanel'
                     ,tabPosition: 'top'
@@ -310,7 +310,9 @@ $viewportItem = new ViewportItem(
                             ,bodyStyle: 'padding:15px'
                             ,items:[
                                 {".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, false, false,false)."}
-                                ,{".CamemisField::Numberfield("DISTRIBUTION_VALUE","DISTRIBUTION_VALUE", DISTRIBUTION, false,false, false, $HIDDEN, false)."}  
+                                ,{".CamemisField::Numberfield("DISTRIBUTION_VALUE","DISTRIBUTION_VALUE", DISTRIBUTION, false,false, false, $HIDDEN, false)."}
+                                ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, true)."}
+                                ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
                             ]
                         }]
                     },{

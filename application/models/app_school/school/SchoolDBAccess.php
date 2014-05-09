@@ -199,7 +199,7 @@ class SchoolDBAccess {
 
         if (isset($params["SUBJECT_DISPLAY"]))
             $SAVEDATA['SUBJECT_DISPLAY'] = addText($params["SUBJECT_DISPLAY"]);
-            
+
         if (isset($params["ROOM_DISPLAY"]))
             $SAVEDATA['ROOM_DISPLAY'] = addText($params["ROOM_DISPLAY"]);
 
@@ -320,8 +320,9 @@ class SchoolDBAccess {
                 $DATA_WORKINGDAY[$value] = $value;
             }
         }
-        
-        if ($DATA_WORKINGDAY) $SAVEDATA['WORKING_DAYS'] = implode(',', $DATA_WORKINGDAY);
+
+        if ($DATA_WORKINGDAY)
+            $SAVEDATA['WORKING_DAYS'] = implode(',', $DATA_WORKINGDAY);
 
         $SAVEDATA['SET_DEFAULT_PASSWORD'] = isset($params["SET_DEFAULT_PASSWORD"]) ? 1 : 0;
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();

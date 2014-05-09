@@ -198,7 +198,7 @@ class SchoolDBAccess {
 
         if (isset($params["SUBJECT_DISPLAY"]))
             $SAVEDATA['SUBJECT_DISPLAY'] = addText($params["SUBJECT_DISPLAY"]);
-            
+
         if (isset($params["ROOM_DISPLAY"]))
             $SAVEDATA['ROOM_DISPLAY'] = addText($params["ROOM_DISPLAY"]);
 
