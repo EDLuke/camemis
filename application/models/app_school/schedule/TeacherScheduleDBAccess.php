@@ -526,7 +526,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         $SQL->distinct();
         $SQL->from(array('A' => 't_schedule'), $SELECT_DATA);
         $SQL->joinLeft(array('B' => 't_subject'), 'A.SUBJECT_ID=B.ID', array());
-        $SQL->joinLeft(array('C' => 't_staff'), 'A.TEACHER_ID=C.ID', array());
+        $SQL->joinLeft(array('C' => 't_staff'), 'A.TEACHER_ID=C.ID', array("FIRSTNAME","LASTNAME"));
         $SQL->joinLeft(array('D' => 't_room'), 'A.ROOM_ID=D.ID', array());
         $SQL->joinLeft(array('E' => 't_grade'), 'A.ACADEMIC_ID=E.ID', array("NAME AS ACADEMIC_NAME"));
 
@@ -536,11 +536,8 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         if ($teacherId)
             $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
 
-        //$SQL->where("A.START_DATE<='" . $startDate . "'");
-        //$SQL->where("A.END_DATE>='" . $endDate . "'");
-        
-        $SQL->where("A.START_DATE<='" . $startDate . "'");
-        $SQL->where("A.END_DATE>='" . $endDate . "'");
+        $SQL->where("A.START_DATE<='" . $endDate . "'");
+        $SQL->where("A.END_DATE>='" . $startDate . "'");
 
         switch (strtoupper($academicType)) {
             case "GENERAL":
@@ -632,7 +629,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                         $data[$i]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);
                         $data[$i]["CLASS"] = $value->ACADEMIC_NAME;
                         $data[$i]["TERM"] = displaySchoolTerm($value->TERM);
-                        $data[$i]["TIME"] = secondToHour($value->START_TIME) . " " . secondToHour($value->END_TIME);
+                        $data[$i]["HOURS"] = ($value->END_TIME-$value->START_TIME)/3600;
                     }
                 }
             }
