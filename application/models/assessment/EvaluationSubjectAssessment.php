@@ -735,12 +735,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function getImplodeSubjectAssignmentByAllMonths($stdClass) {
-
+        $stdClass->assignmentId = self::NO_ASSIGNMENT;
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
     }
 
     public function getImplodeSubjectAssignmentByTerm($stdClass) {
-
+        $stdClass->assignmentId = self::NO_ASSIGNMENT;
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
     }
 
