@@ -627,7 +627,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                         $data[$i]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);
                         $data[$i]["CLASS"] = $value->ACADEMIC_NAME;
                         $data[$i]["TERM"] = displaySchoolTerm($value->TERM);
-                        $data[$i]["TIME"] = secondToHour($value->START_TIME) . " " . secondToHour($value->END_TIME);
+                        $data[$i]["HOURS"] = ($value->END_TIME-$value->START_TIME)/3600;
                         
                         $i++;
                     }
