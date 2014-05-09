@@ -91,6 +91,9 @@ class SQLEvaluationStudentSubject {
                 $SQL->where("A.SECTION = '" . $stdClass->section . "'");
                 $SQL->group("B.ID");
 
+                if($stdClass->section == "YEAR"){
+                    error_log($SQL->__toString());
+                }
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
                 if ($result) {

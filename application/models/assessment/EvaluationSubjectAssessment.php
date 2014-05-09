@@ -269,6 +269,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
 
+                $AVERAGE = $this->calculatedAverageYearSubjectResult($stdClass);
+                $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
+                $data[$i]["AVERAGE"] = $AVERAGE;
+
                 switch ($this->getTermNumber()) {
                     case 1:
                         $stdClass->section = "TERM";
@@ -441,7 +445,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-
+                
                 switch ($this->getTermNumber()) {
                     case 1:
                         $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
@@ -460,11 +464,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                $data[$i]["ASSESSMENT"] = "";
+                $data[$i]["ASSESSMENT"] = $facette->GRADING;
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-                        $data[$i]["RANK"] = "";
-                        $data[$i]["AVERAGE"] = "";
+                        $data[$i]["RANK"] = $facette->RANK;
+                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
                         break;
                 }
 
@@ -523,33 +527,41 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_T1:
                         $stdClass->term = "FIRST_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_T2:
                         $stdClass->term = "SECOND_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_T3:
                         $stdClass->term = "THIRD_TERM";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
                         $stdClass->term = "FIRST_TERM";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
+                        
                         $stdClass->term = "SECOND_TERM";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
+                        
                         $stdClass->term = "THIRD_TERM";
-                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : 0;
 
-                        if ($FIRST && !$SECOND && !$THIRD) {
-                            $result = $FIRST;
-                        } elseif (!$FIRST && $SECOND && !$THIRD) {
-                            $result = $SECOND;
-                        } elseif (!$FIRST && !$SECOND && $THIRD) {
-                            $result = $THIRD;
-                        } elseif ($FIRST && $SECOND && $THIRD) {
+                        if ($FIRST_VALUE && !$SECOND_VALUE && !$THIRD_VALUE) {
+                            $result = $FIRST_VALUE;
+                        } elseif (!$FIRST_VALUE && $SECOND_VALUE && !$THIRD_VALUE) {
+                            $result = $SECOND_VALUE;
+                        } elseif (!$FIRST_VALUE && !$SECOND_VALUE && $THIRD_VALUE) {
+                            $result = $THIRD_VALUE;
+                        } elseif ($FIRST_VALUE && $SECOND_VALUE && $THIRD_VALUE) {
 
-                            $NUMERATOR = $this->getFirstTermCoeff() * $FIRST + $this->getSecondTermCoeff() * $SECOND + $this->getThirdTermCoeff() * $THIRD;
+                            $NUMERATOR = $this->getFirstTermCoeff() * $FIRST_VALUE + $this->getSecondTermCoeff() * $SECOND_VALUE + $this->getThirdTermCoeff() * $THIRD_VALUE;
                             $DEVISOR = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
                             $result = ($NUMERATOR / $DEVISOR);
                         } else {
@@ -564,41 +576,52 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_Q1:
                         $stdClass->term = "FIRST_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q2:
                         $stdClass->term = "SECOND_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q3:
                         $stdClass->term = "THIRD_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q4:
                         $stdClass->term = "FOURTH_QUARTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
                         $stdClass->term = "FIRST_QUARTER";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
+                        
                         $stdClass->term = "SECOND_QUARTER";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
+                        
                         $stdClass->term = "THIRD_QUARTER";
-                        $THIRD = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : 0;
+                        
                         $stdClass->term = "FOURTH_QUARTER";
-                        $FOURTH = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $FOURTH = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $FOURTH_VALUE = is_numeric($FOURTH->SUBJECT_VALUE) ? $FOURTH->SUBJECT_VALUE : 0;
 
-                        if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
-                            $result = $FIRST;
-                        } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
-                            $result = $SECOND;
-                        } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
-                            $result = $THIRD;
-                        } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
-                            $result = $FOURTH;
-                        } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
+                        if ($FIRST_VALUE && !$SECOND_VALUE && !$THIRD_VALUE && !$FOURTH_VALUE) {
+                            $result = $FIRST_VALUE;
+                        } elseif (!$FIRST_VALUE && $SECOND_VALUE && !$THIRD_VALUE && !$FOURTH_VALUE) {
+                            $result = $SECOND_VALUE;
+                        } elseif (!$FIRST_VALUE && !$SECOND_VALUE && $THIRD_VALUE && !$FOURTH_VALUE) {
+                            $result = $THIRD_VALUE;
+                        } elseif (!$FIRST_VALUE && !$SECOND_VALUE && !$THIRD_VALUE && $FOURTH_VALUE) {
+                            $result = $FOURTH_VALUE;
+                        } elseif ($FIRST_VALUE && $SECOND_VALUE && $THIRD_VALUE && $FOURTH_VALUE) {
 
-                            $NUMERATOR = $this->getFirstQuarterCoeff() * $FIRST + $this->getSecondQuarterCoeff() * $SECOND + $this->getThirdQuarterCoeff() * $THIRD + $this->getFourthQuarterCoeff() * $FOURTH;
+                            $NUMERATOR = $this->getFirstQuarterCoeff() * $FIRST_VALUE + $this->getSecondQuarterCoeff() * $SECOND_VALUE + $this->getThirdQuarterCoeff() * $THIRD_VALUE + $this->getFourthQuarterCoeff() * $FOURTH_VALUE;
                             $DEVISOR = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
                             $result = ($NUMERATOR / $DEVISOR);
                         } else {
@@ -609,29 +632,34 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 break;
             default:
-
+                $stdClass->section = "SEMESTER";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_S1:
                         $stdClass->term = "FIRST_SEMESTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_S2:
                         $stdClass->term = "SECOND_SEMESTER";
-                        $result = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $object = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
+
                         $stdClass->term = "FIRST_SEMESTER";
-                        $FIRST = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
+
                         $stdClass->term = "SECOND_SEMESTER";
-                        $SECOND = $this->calculatedAverageTermSubjectResult($stdClass, self::WITHOUT_FORMAT);
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $SECOND_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
 
-                        if ($FIRST && !$SECOND) {
-                            $result = $FIRST;
-                        } elseif (!$FIRST && $SECOND) {
-                            $result = $SECOND;
-                        } elseif ($FIRST && $SECOND) {
-
-                            $NUMERATOR = $this->getFirstSemesterCoeff() * $FIRST + $this->getSecondSemesterCoeff() * $SECOND;
+                        if ($FIRST_VALUE && !$SECOND_VALUE) {
+                            $result = $FIRST_VALUE;
+                        } elseif (!$FIRST_VALUE && $SECOND_VALUE) {
+                            $result = $SECOND_VALUE;
+                        } elseif ($FIRST_VALUE && $SECOND_VALUE) {
+                            $NUMERATOR = $this->getFirstSemesterCoeff() * $FIRST_VALUE + $this->getSecondSemesterCoeff() * $SECOND_VALUE;
                             $DEVISOR = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
                             $result = ($NUMERATOR / $DEVISOR);
                         } else {
