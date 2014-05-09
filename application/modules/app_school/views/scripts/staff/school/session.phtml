@@ -297,6 +297,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 }]
             }]
         });
+        
+        store = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store;
+        store.reload();
+        store.on('load', function(ds){ 
+            Ext.getCmp('TOTAL').update('<b><?=TOTAL?>: '+ ds.getTotalCount() +'</b>');
+        });
+                                
    });
 </script>
 <?
