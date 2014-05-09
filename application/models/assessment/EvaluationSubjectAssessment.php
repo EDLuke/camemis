@@ -1123,8 +1123,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 default:
                                     $stdClass->firstResult = isset($entries[$i]["FIRST_SEMESTER_RESULT"]) ? $entries[$i]["FIRST_SEMESTER_RESULT"] : "";
                                     $stdClass->secondResult = isset($entries[$i]["SECOND_SEMESTER_RESULT"]) ? $entries[$i]["SECOND_SEMESTER_RESULT"] : "";
-
-                                    error_log($stdClass->firstResult . " #### " . $stdClass->secondResult);
                                     break;
                             }
                             break;
