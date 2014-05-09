@@ -213,8 +213,9 @@ Ext.onReady(function() {
     if($academicObject->DISPLAY_MONTH_RESULT){
         if($subjectObject->SCORE_TYPE == 1){
             $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'MONTH_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_MONTH'");
         }
+        
+        $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_MONTH'");
     }
     
     $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".constant($term).")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_TERM'");

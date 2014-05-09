@@ -208,7 +208,7 @@ class SQLEvaluationStudentAssignment {
                 $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
         }
 
-        error_log($SQL->__toString());
+        //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
