@@ -180,56 +180,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getDisplaySubjectMonthResult() {
-
-        $data = array();
-
-        $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "subjectId" => $this->subjectId
-                    , "scoreType" => $this->getSubjectScoreType()
-                    , "term" => $this->term
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "section" => $this->getSection()
-                    , "in_clude_in_evaluation" => self::INCLUDE_IN_MONTH
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "evaluationType" => $this->getSettingEvaluationType()
-        );
-
-        if ($this->listClassStudents()) {
-
-            $data = $this->listStudentsData();
-
-            $i = 0;
-            foreach ($this->listClassStudents() as $value) {
-
-                $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-
-                switch ($this->getSubjectScoreType()) {
-                    case self::SCORE_NUMBER:
-                        $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
-                        break;
-                }
-
-                $data[$i]["ASSESSMENT"] = $facette->GRADING;
-
-                if ($this->getCurrentClassAssignments()) {
-                    foreach ($this->getCurrentClassAssignments() as $v) {
-                        $stdClass->assignmentId = $v->ASSIGNMENT_ID;
-                        $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass);
-                    }
-                }
-
-                $i++;
-            }
-        }
-
-        return $data;
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // TERM CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
@@ -267,6 +217,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass, self::WITH_FORMAT);
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         break;
+                    case self::SCORE_CHAR:
+                        $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
+                        break;
                 }
 
                 if ($this->getSubjectTermAssessment($stdClass))
@@ -279,56 +232,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
                 $data[$i]["ASSIGNMENT_TERM"] = $this->getImplodeSubjectAssignmentByTerm($stdClass);
-
-                $i++;
-            }
-        }
-
-        return $data;
-    }
-
-    public function getDisplaySubjectTermResult() {
-        $data = array();
-
-        $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "subjectId" => $this->subjectId
-                    , "scoreType" => $this->getSubjectScoreType()
-                    , "term" => $this->term
-                    , "month" => self::NO_MONTH
-                    , "year" => self::NO_YEAR
-                    , "section" => "SEMESTER"
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "evaluationType" => $this->getSettingEvaluationType()
-        );
-
-        if ($this->listClassStudents()) {
-
-            $data = $this->listStudentsData();
-            $i = 0;
-            foreach ($this->listClassStudents() as $value) {
-
-                $stdClass->studentId = $value->ID;
-
-                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-
-                switch ($this->getSubjectScoreType()) {
-                    case self::SCORE_NUMBER:
-                        $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
-                        $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
-                        $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
-                        break;
-                }
-
-                $data[$i]["ASSESSMENT"] = $facette->GRADING;
-
-                if ($this->isDisplayMonthResult()) {
-                    $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
-                }
-
-                $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
-
 
                 $i++;
             }
@@ -366,72 +269,148 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
 
-                switch ($this->getSubjectScoreType()) {
-                    case self::SCORE_NUMBER:
-                        $AVERAGE = $this->calculatedAverageYearSubjectResult($stdClass, self::WITH_FORMAT);
-                        $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
-                        $data[$i]["AVERAGE"] = $AVERAGE;
-
-                        switch ($this->getTermNumber()) {
-                            case 1:
-                                $stdClass->term = "FIRST_TERM";
-                                $data[$i]["FIRST_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "SECOND_TERM";
-                                $data[$i]["SECOND_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "THIRD_TERM";
-                                $data[$i]["THIRD_TERM_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                break;
-                            case 2:
-                                $stdClass->term = "FIRST_QUARTER";
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "SECOND_QUARTER";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "THIRD_QUARTER";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "FOURTH_QUARTER";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                break;
-                            default:
-                                $stdClass->term = "FIRST_SEMESTER";
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                $stdClass->term = "SECOND_SEMESTER";
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
-                                break;
-                        }
-
+                switch ($this->getTermNumber()) {
+                    case 1:
+                        $stdClass->section = "TERM";
+                        $stdClass->term = "FIRST_TERM";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["FIRST_TERM_RESULT"] = $FIRST->SUBJECT_VALUE;
+                        $stdClass->term = "SECOND_TERM";
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["SECOND_TERM_RESULT"] = $SECOND->SUBJECT_VALUE;
+                        $stdClass->term = "THIRD_TERM";
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["THIRD_TERM_RESULT"] = $THIRD->SUBJECT_VALUE;
                         break;
-                    case self::SCORE_CHAR:
-
-                        switch ($this->getTermNumber()) {
-                            case 1:
-                                $stdClass->term = "FIRST_TERM";
-                                $data[$i]["FIRST_TERM_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "SECOND_TERM";
-                                $data[$i]["SECOND_TERM_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "THIRD_TERM";
-                                $data[$i]["THIRD_TERM_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                break;
-                            case 2:
-                                $stdClass->term = "FIRST_QUARTER";
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "SECOND_QUARTER";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "THIRD_QUARTER";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "FOURTH_QUARTER";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                break;
-                            default:
-                                $stdClass->term = "FIRST_SEMESTER";
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                $stdClass->term = "SECOND_SEMESTER";
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
-                                break;
-                        }
+                    case 2:
+                        $stdClass->section = "QUARTER";
+                        $stdClass->term = "FIRST_QUARTER";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["FIRST_QUARTER_RESULT"] = $FIRST->SUBJECT_VALUE;
+                        $stdClass->term = "SECOND_QUARTER";
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["SECOND_QUARTER_RESULT"] = $SECOND->SUBJECT_VALUE;
+                        $stdClass->term = "THIRD_QUARTER";
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["FOURTH_QUARTER_RESULT"] = $THIRD->SUBJECT_VALUE;
+                        $stdClass->term = "FOURTH_QUARTER";
+                        $FOURTH = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["FOURTH_QUARTER_RESULT"] = $FOURTH->SUBJECT_VALUE;
+                        break;
+                    default:
+                        $stdClass->section = "SEMESTER";
+                        $stdClass->term = "FIRST_SEMESTER";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["FIRST_SEMESTER_RESULT"] = $FIRST->SUBJECT_VALUE;
+                        $stdClass->term = "SECOND_SEMESTER";
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                        $data[$i]["SECOND_SEMESTER_RESULT"] = $SECOND->SUBJECT_VALUE;
                         break;
                 }
 
                 $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($stdClass)->ASSESSMENT_ID;
+                $i++;
+            }
+        }
+
+        return $data;
+    }
+
+    public function getDisplaySubjectMonthResult() {
+
+        $data = array();
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "term" => $this->term
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "section" => $this->getSection()
+                    , "in_clude_in_evaluation" => self::INCLUDE_IN_MONTH
+                    , "schoolyearId" => $this->getSchoolyearId()
+                    , "evaluationType" => $this->getSettingEvaluationType()
+        );
+
+        if ($this->listClassStudents()) {
+
+            $data = $this->listStudentsData();
+
+            $i = 0;
+            foreach ($this->listClassStudents() as $value) {
+
+                $stdClass->studentId = $value->ID;
+                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+
+                switch ($this->getSubjectScoreType()) {
+                    case self::SCORE_NUMBER:
+                        $data[$i]["RANK"] = $facette->RANK;
+                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                        break;
+                    case self::SCORE_CHAR:
+                        $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($stdClass)->GRADING;
+                        break;
+                }
+
+                $data[$i]["ASSESSMENT"] = $facette->GRADING;
+
+                if ($this->getCurrentClassAssignments()) {
+                    foreach ($this->getCurrentClassAssignments() as $v) {
+                        $stdClass->assignmentId = $v->ASSIGNMENT_ID;
+                        $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass);
+                    }
+                }
+
+                $i++;
+            }
+        }
+
+        return $data;
+    }
+
+    public function getDisplaySubjectTermResult() {
+        $data = array();
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "term" => $this->term
+                    , "month" => self::NO_MONTH
+                    , "year" => self::NO_YEAR
+                    , "section" => "SEMESTER"
+                    , "schoolyearId" => $this->getSchoolyearId()
+                    , "evaluationType" => $this->getSettingEvaluationType()
+        );
+
+        if ($this->listClassStudents()) {
+
+            $data = $this->listStudentsData();
+            $i = 0;
+            foreach ($this->listClassStudents() as $value) {
+
+                $stdClass->studentId = $value->ID;
+                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+
+                switch ($this->getSubjectScoreType()) {
+                    case self::SCORE_NUMBER:
+                        $data[$i]["RANK"] = $facette->RANK;
+                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                        $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
+                        $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
+                        break;
+                }
+
+                $data[$i]["ASSESSMENT"] = $facette->GRADING;
+
+                if ($this->isDisplayMonthResult()) {
+                    $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
+                }
+
+                $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
+
+
                 $i++;
             }
         }
@@ -461,72 +440,31 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
+                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
 
+                switch ($this->getTermNumber()) {
+                    case 1:
+                        $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
+                        $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
+                        $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                        break;
+                    case 2:
+                        $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
+                        $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
+                        $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
+                        $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
+                        break;
+                    default:
+                        $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
+                        $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                        break;
+                }
+
+                $data[$i]["ASSESSMENT"] = "";
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
-
                         $data[$i]["RANK"] = "";
                         $data[$i]["AVERAGE"] = "";
-
-                        switch ($this->getTermNumber()) {
-                            case 1:
-                                $stdClass->term = "FIRST_TERM";
-                                $data[$i]["FIRST_TERM_RESULT"] = "";
-                                $stdClass->term = "SECOND_TERM";
-                                $data[$i]["SECOND_TERM_RESULT"] = "";
-                                $stdClass->term = "THIRD_TERM";
-                                $data[$i]["THIRD_TERM_RESULT"] = "";
-                                break;
-                            case 2:
-                                $stdClass->term = "FIRST_QUARTER";
-                                $data[$i]["FIRST_QUARTER_RESULT"] = "";
-                                $stdClass->term = "SECOND_QUARTER";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = "";
-                                $stdClass->term = "THIRD_QUARTER";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = "";
-                                $stdClass->term = "FOURTH_QUARTER";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = "";
-                                break;
-                            default:
-                                $stdClass->term = "FIRST_SEMESTER";
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = "";
-                                $stdClass->term = "SECOND_SEMESTER";
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = "";
-                                break;
-                        }
-
-                        $data[$i]["ASSESSMENT"] = "";
-                        break;
-                    case self::SCORE_CHAR:
-
-                        switch ($this->getTermNumber()) {
-                            case 1:
-                                $stdClass->term = "FIRST_TERM";
-                                $data[$i]["FIRST_TERM_RESULT"] = "";
-                                $stdClass->term = "SECOND_TERM";
-                                $data[$i]["SECOND_TERM_RESULT"] = "";
-                                $stdClass->term = "THIRD_TERM";
-                                $data[$i]["THIRD_TERM_RESULT"] = "";
-                                break;
-                            case 2:
-                                $stdClass->term = "FIRST_QUARTER";
-                                $data[$i]["FIRST_QUARTER_RESULT"] = "";
-                                $stdClass->term = "SECOND_QUARTER";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = "";
-                                $stdClass->term = "THIRD_QUARTER";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = "";
-                                $stdClass->term = "FOURTH_QUARTER";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = "";
-                                break;
-                            default:
-                                $stdClass->term = "FIRST_SEMESTER";
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = "";
-                                $stdClass->term = "SECOND_SEMESTER";
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = "";
-                                break;
-                        }
-                        $data[$i]["ASSESSMENT"] = "";
-
                         break;
                 }
 
@@ -1142,9 +1080,18 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $studentId = isset($entries[$i]["ID"]) ? $entries[$i]["ID"] : "";
 
                 if ($studentId) {
-                    $actionValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
+
                     $actionRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
                     $assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
+
+                    switch ($this->getSubjectScoreType()) {
+                        case self::SCORE_NUMBER:
+                            $actionValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
+                            break;
+                        case self::SCORE_CHAR:
+                            $actionValue = isset($entries[$i]["ASSESSMENT"]) ? $entries[$i]["ASSESSMENT"] : "";
+                            break;
+                    }
 
                     $stdClass->studentId = $studentId;
                     $stdClass->actionRank = $actionRank;
@@ -1176,6 +1123,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 default:
                                     $stdClass->firstResult = isset($entries[$i]["FIRST_SEMESTER_RESULT"]) ? $entries[$i]["FIRST_SEMESTER_RESULT"] : "";
                                     $stdClass->secondResult = isset($entries[$i]["SECOND_SEMESTER_RESULT"]) ? $entries[$i]["SECOND_SEMESTER_RESULT"] : "";
+
+                                    error_log($stdClass->firstResult . " #### " . $stdClass->secondResult);
                                     break;
                             }
                             break;

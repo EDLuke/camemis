@@ -178,7 +178,7 @@ class SQLEvaluationStudentAssignment {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
-        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
+        $SQL->joinLeft(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array('NAME AS ASSIGNMENT'));
         $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
         $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
@@ -208,7 +208,7 @@ class SQLEvaluationStudentAssignment {
                 $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
         }
 
-        //error_log($SQL->__toString());
+        error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
