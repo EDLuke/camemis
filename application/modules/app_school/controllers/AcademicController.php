@@ -23,11 +23,9 @@ class AcademicController extends Zend_Controller_Action {
     protected $objectId;
     protected $roleAdmin = array("SYSTEM");
 
-    public function init()
-    {
+    public function init() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -39,8 +37,7 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds'))
-        {
+        if ($this->_getParam('camIds')) {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
@@ -92,18 +89,15 @@ class AcademicController extends Zend_Controller_Action {
         if ($this->_getParam('studentId'))
             $this->studentId = $this->_getParam('studentId');
 
-        if ($this->_getParam('objectId'))
-        {
+        if ($this->_getParam('objectId')) {
 
             $this->objectId = $this->_getParam('objectId');
             $this->objectData = $this->DB_GRADE->getGradeDataFromId($this->objectId);
             $this->facette = AcademicDBAccess::findGradeFromId($this->objectId);
 
-            if ($this->facette)
-            {
+            if ($this->facette) {
 
-                switch ($this->facette->OBJECT_TYPE)
-                {
+                switch ($this->facette->OBJECT_TYPE) {
                     case "CAMPUS":
 
                         $this->campusId = $this->facette->ID;
@@ -143,26 +137,22 @@ class AcademicController extends Zend_Controller_Action {
         }
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         
     }
 
     //@veasna
-    public function creditinformationdashbaordAction()
-    {
+    public function creditinformationdashbaordAction() {
 
         $this->_helper->viewRenderer("creditsystem/crediteinformation/dashbaord");
     }
 
-    public function creditinformationAction()
-    {
+    public function creditinformationAction() {
 
         $this->_helper->viewRenderer("creditsystem/crediteinformation/creditlist");
     }
 
-    public function showcreditinformationAction()
-    {
+    public function showcreditinformationAction() {
         $this->view->studentSubjectId = $this->studentSubjectId;
         $this->view->studentSubjectObject = StudentCreditInformationDBAccess::getStudentSchoolYearSubjectById($this->studentSubjectId);
         $this->_helper->viewRenderer("creditsystem/crediteinformation/showcreditinformation");
@@ -170,117 +160,95 @@ class AcademicController extends Zend_Controller_Action {
 
     //
 
-    public function schoolyearscheduletabsAction()
-    {
+    public function schoolyearscheduletabsAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $facette = AcademicDBAccess::findGradeFromId($this->academicId);
-        if ($facette->EDUCATION_SYSTEM)
-        {
+        if ($facette->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer("creditsystem/scheduletabs");
-        }
-        else
-        {
+        } else {
             $this->_helper->viewRenderer("traditionalsystem/scheduletabs");
         }
     }
 
-    public function schoolyearscheduleAction()
-    {
+    public function schoolyearscheduleAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $facette = AcademicDBAccess::findGradeFromId($this->academicId);
-        if ($facette->EDUCATION_SYSTEM)
-        {
+        if ($facette->EDUCATION_SYSTEM) {
             $this->_helper->viewRenderer("creditsystem/schedule");
-        }
-        else
-        {
+        } else {
             $this->_helper->viewRenderer("traditionalsystem/schedule");
         }
     }
 
-    public function addparentfolderAction()
-    {
+    public function addparentfolderAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function creditassessmenttabsAction()
-    {
+    public function creditassessmenttabsAction() {
         $this->_helper->viewRenderer("creditsystem/creditassessmenttabs");
     }
 
-    public function addcampusAction()
-    {
+    public function addcampusAction() {
 
         $this->view->objectId = $this->objectId;
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
-        if ($this->objectId != 'new')
-        {
+        if ($this->objectId != 'new') {
             $this->_redirect("/academic/editcampus/?objectId=" . $this->objectId . "");
         }
     }
 
-    public function addgradeAction()
-    {
+    public function addgradeAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function addclassAction()
-    {
+    public function addclassAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function addsubjectAction()
-    {
+    public function addsubjectAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = AcademicDBAccess::findGradeFromId($this->parentId);
         $this->view->parentId = $this->parentId;
     }
 
-    public function addgroupAction()
-    {
+    public function addgroupAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = AcademicDBAccess::findGradeFromId($this->parentId);
         $this->view->parentId = $this->parentId;
     }
 
-    public function addschoolyearAction()
-    {
+    public function addschoolyearAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->parentId = $this->parentId;
         Zend_Registry::set('TERM_NUMBER', $this->_getParam('term_number'));
     }
 
-    public function datesettingAction()
-    {
+    public function datesettingAction() {
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette;
         $this->view->target = $this->target;
         $this->_helper->viewRenderer("default/datesetting");
     }
 
-    public function permissionscoreAction()
-    {
+    public function permissionscoreAction() {
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette;
         $this->_helper->viewRenderer("traditionalsystem/permissionscore");
     }
 
-    public function editfolderAction()
-    {
+    public function editfolderAction() {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function listsubjectsAction()
-    {
+    public function listsubjectsAction() {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function editcampusAction()
-    {
+    public function editcampusAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
 
@@ -291,8 +259,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->URL_CAMPUS_SCHEDULE = $this->UTILES->buildURL("schedule/campusschedule", array("classId" => $this->objectId));
     }
 
-    public function editgradeAction()
-    {
+    public function editgradeAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
 
@@ -303,8 +270,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->URL_CAMPUS_SCHEDULE = $this->UTILES->buildURL("schedule/campusschedule", array("classId" => $this->objectId));
     }
 
-    public function editschoolyearAction()
-    {
+    public function editschoolyearAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
 
@@ -318,20 +284,17 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("default/schoolyear");
     }
 
-    public function enrollmentbyclassAction()
-    {
+    public function enrollmentbyclassAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = $this->facette;
     }
 
-    public function enrollmentbysubjectgroupAction()
-    {
+    public function enrollmentbysubjectgroupAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = $this->facette;
     }
 
-    public function enrollmentbyyearAction()
-    {
+    public function enrollmentbyyearAction() {
 
         $this->view->isCurrentYear = $this->isCurrentYear;
         $this->view->facette = $this->facette;
@@ -344,26 +307,22 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->classesComboData = $this->DB_GRADE->classesComboData($this->objectId);
     }
 
-    public function teacherscoreAction()
-    {
+    public function teacherscoreAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function studentexemptionsubjectAction()
-    {
+    public function studentexemptionsubjectAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function studentselectedsubjectAction()
-    {
+    public function studentselectedsubjectAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function editclassAction()
-    {
+    public function editclassAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = $this->facette;
@@ -372,8 +331,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->status = isset($this->facette) ? $this->facette->STATUS : 0;
     }
 
-    public function editsubjectAction()
-    {
+    public function editsubjectAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = $this->facette;
@@ -382,8 +340,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->status = isset($this->facette) ? $this->facette->STATUS : 0;
     }
 
-    public function editgroupAction()
-    {
+    public function editgroupAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = $this->facette;
@@ -392,8 +349,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->status = isset($this->facette) ? $this->facette->STATUS : 0;
     }
 
-    public function gradesubjectsAction()
-    {
+    public function gradesubjectsAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->classId = $this->classId;
@@ -414,8 +370,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->URL_ASSIGNMENT = $this->UTILES->buildURL('assignment', array());
     }
 
-    public function classsubjectsAction()
-    {
+    public function classsubjectsAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette; //added by @sor veasna
@@ -432,48 +387,40 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->URL_ASSIGNMENT = $this->UTILES->buildURL('assignment', array());
     }
 
-    public function additionalinformationAction()
-    {
+    public function additionalinformationAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->objectId = $this->objectId;
     }
 
-    public function traditionalsystemsearchAction()
-    {
+    public function traditionalsystemsearchAction() {
         $this->_helper->viewRenderer("traditionalsystem/search");
     }
 
-    public function creditsystemmainAction()
-    {
+    public function creditsystemmainAction() {
         $this->_helper->viewRenderer("creditsystem/index");
     }
 
-    public function creditsystemsearchAction()
-    {
+    public function creditsystemsearchAction() {
         $this->_helper->viewRenderer("creditsystem/search");
     }
 
-    public function creditsystemsettingAction()
-    {
+    public function creditsystemsettingAction() {
         $this->_helper->viewRenderer("creditsystem/setting");
     }
 
-    public function creditsystemscoremanagementAction()
-    {
+    public function creditsystemscoremanagementAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("creditsystem/scoremanagement");
     }
 
-    public function creditenrolledstudentAction()
-    {
+    public function creditenrolledstudentAction() {
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette;
         $this->_helper->viewRenderer("creditsystem/enrolledstudent");
     }
 
-    public function creditsubjectassignmentAction()
-    {
+    public function creditsubjectassignmentAction() {
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette;
         $this->view->URL_ASSIGNMENT_SHOWITEM = $this->UTILES->buildURL(
@@ -483,16 +430,14 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("creditsystem/subjectassignment");
     }
 
-    public function creditassignedteacherAction()
-    {
+    public function creditassignedteacherAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette;
         $this->_helper->viewRenderer("creditsystem/assignedteacher");
     }
 
-    public function creditprerequisiteAction()
-    {
+    public function creditprerequisiteAction() {
         $this->view->objectId = $this->objectId;
         $this->view->studentId = $this->studentId;
         $this->view->facette = $this->facette;
@@ -502,12 +447,10 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     // Students by Class
     ////////////////////////////////////////////////////////////////////////////
-    public function studentsbyclassAction()
-    {
+    public function studentsbyclassAction() {
 
         $USER_TYPE = UserAuth::getUserType();
-        switch (Zend_Registry::get('ADDITIONAL_ROLE'))
-        {
+        switch (Zend_Registry::get('ADDITIONAL_ROLE')) {
             case 1:
                 $USER_TYPE = "INSTRUCTOR";
                 break;
@@ -516,8 +459,7 @@ class AcademicController extends Zend_Controller_Action {
                 break;
         }
 
-        switch ($USER_TYPE)
-        {
+        switch ($USER_TYPE) {
             case "SUPERADMIN":
             case "ADMIN":
                 $this->_redirect("/academic/studentlistadmin/?objectId=" . $this->objectId . "");
@@ -532,22 +474,19 @@ class AcademicController extends Zend_Controller_Action {
         }
     }
 
-    public function scoremanagementAction()
-    {
+    public function scoremanagementAction() {
 
         $this->_helper->viewRenderer("traditionalsystem/scoremanagement");
     }
 
-    public function scoremonitorAction()
-    {
+    public function scoremonitorAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->classId = $this->classId;
         $this->_helper->viewRenderer("traditionalsystem/scoremonitor");
     }
 
-    public function studentlistadminAction()
-    {
+    public function studentlistadminAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
 
@@ -556,8 +495,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->objectId = $this->objectId;
     }
 
-    public function studentlistteacherAction()
-    {
+    public function studentlistteacherAction() {
 
         $this->view->facette = $this->facette;
         $this->view->isCurrentYear = $this->isCurrentYear;
@@ -579,8 +517,7 @@ class AcademicController extends Zend_Controller_Action {
         );
     }
 
-    public function studentlistAction()
-    {
+    public function studentlistAction() {
 
         $this->view->facette = $this->facette;
         $this->view->objectId = $this->objectId;
@@ -590,20 +527,17 @@ class AcademicController extends Zend_Controller_Action {
     //@soda
     ////////////////////////////////////////////////////////////////////////////
 
-    public function exportAction()
-    {
+    public function exportAction() {
         $this->view->classId = $this->classId;
         $this->_helper->viewRenderer("export/index");
     }
 
-    public function exportteacherAction()
-    {
+    public function exportteacherAction() {
         $this->view->gradeId = $this->gradeId;
         $this->_helper->viewRenderer("export/exportteacher");
     }
 
-    public function listsubjectAction()
-    {
+    public function listsubjectAction() {
         $this->view->objectId = $this->objectId;
         $this->view->gradeId = $this->gradeId;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -614,8 +548,7 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     // Teachers by Grade and School Year...
     ////////////////////////////////////////////////////////////////////////////
-    public function teachersbyyearAction()
-    {
+    public function teachersbyyearAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->objectId = $this->objectId;
@@ -627,19 +560,16 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     // Teachers by Class
     ////////////////////////////////////////////////////////////////////////////
-    public function teachersbyclassAction()
-    {
+    public function teachersbyclassAction() {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function teacherclassmainAction()
-    {
+    public function teacherclassmainAction() {
         $this->view->objectId = $this->objectId;
     }
 
-    public function teacherchangeAction()
-    {
+    public function teacherchangeAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
 
@@ -651,14 +581,12 @@ class AcademicController extends Zend_Controller_Action {
     ///////////////////////////////////////////////////////
     // Grading Method...
     ///////////////////////////////////////////////////////
-    public function gradingmethodAction()
-    {
+    public function gradingmethodAction() {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function evaluationAction()
-    {
+    public function evaluationAction() {
 
         $this->view->objectId = $this->objectId;
     }
@@ -666,16 +594,14 @@ class AcademicController extends Zend_Controller_Action {
     ///////////////////////////////////////////////////////
     // Teachers...
     ///////////////////////////////////////////////////////
-    public function subjectteachersAction()
-    {
+    public function subjectteachersAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->isCurrentYear = $this->isCurrentYear;
         $this->view->objectId = $this->objectId;
     }
 
-    public function studentsubclassAction()
-    {
+    public function studentsubclassAction() {
         $this->view->objectId = $this->objectId;
         $this->view->facette = AcademicDBAccess::findGradeFromId($this->objectId);
         $this->_helper->viewRenderer("traditionalsystem/studentsubclass");
@@ -684,32 +610,26 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     // STUDENT FILTER...
     ////////////////////////////////////////////////////////////////////////////
-    public function studentfilterAction()
-    {
+    public function studentfilterAction() {
         $this->_helper->viewRenderer("filter/studentlist");
     }
-    
-    public function studentattendancefilterAction()
-    {
+
+    public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/studentattendancelist");
     }
 
-    public function studentdisciplinefilterAction()
-    {
+    public function studentdisciplinefilterAction() {
         $this->_helper->viewRenderer("filter/studentdisciplinelist");
     }
-    
-    public function studentadvisoryfilterAction()
-    {
+
+    public function studentadvisoryfilterAction() {
         $this->_helper->viewRenderer("filter/studentadvisorylist");
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function jsonloadAction()
-    {
+    public function jsonloadAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "loadObject":
                 $jsondata = $this->DB_GRADE->loadGradeFromId($this->REQUEST->getPost('objectId'));
@@ -776,11 +696,9 @@ class AcademicController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction()
-    {
+    public function jsonsaveAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "updateObject":
                 $jsondata = $this->DB_GRADE->updateGrade($this->REQUEST->getPost());
@@ -864,11 +782,9 @@ class AcademicController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction()
-    {
+    public function jsontreeAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "getTreeTraditionalEducationSystem":
                 $jsondata = $this->DB_GRADE_ACADEMIC->getTreeTraditionalEducationSystem($this->REQUEST->getPost());
@@ -915,8 +831,7 @@ class AcademicController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata)
-    {
+    public function setJSON($jsondata) {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

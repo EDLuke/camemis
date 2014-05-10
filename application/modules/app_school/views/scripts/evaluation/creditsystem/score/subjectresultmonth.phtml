@@ -31,12 +31,12 @@ $evaluation = new EvaluationSubjectAssessment();
 $evaluation->setAcademicId($academicObject->ID);
 $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
 $evaluation->setMonthYear($monthyear);
+$evaluation->setSection(1);
 $evaluation->actionDefaultStudentSubjectAssessment("MONTH");
 ////////////////////////////////////////////////////////////////////////////////
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
-$monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 $TITLE = diplayNameMonthYear($monthyear);
 
 $entries = AssignmentDBAccess::getListAssignmentsToAcademic($academicId, $this->subjectId);
@@ -114,8 +114,6 @@ Ext.onReady(function() {
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
             
             ////////////////////////////////////////////////////////////////////
             $comboEditor = "
@@ -139,6 +137,8 @@ Ext.onReady(function() {
                     }
                 })
             ";
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
             ////////////////////////////////////////////////////////////////////
             break;
         case 2:

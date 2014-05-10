@@ -387,33 +387,6 @@ class AdminField {
         return $js;
     }
 
-    static function UploadExcelField($name, $fieldLabel, $readOnly = false, $allowBlank = false) {
-        $readOnly = $readOnly ? "true" : "false";
-        if ($allowBlank) {
-            $emptyText = "";
-            $allowBlank = "false";
-        } else {
-            $emptyText = "";
-            $allowBlank = "true";
-        }
-
-        $allowBlank = $allowBlank ? "false" : "true";
-
-        $js = "";
-        $js .= "xtype: 'fileuploadfield'";
-        $js .= ",id: '" . $name . "_ID'";
-        $js .= ",emptyText: 'Please choose...'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",name: '" . $name . "'";
-        $js .= ",buttonText: ''";
-        $js .= ",buttonCfg: {";
-        $js .= "iconCls: 'icon-page_white_excel'";
-        $js .= "}";
-        $js .= ",width:300";
-
-        return $js;
-    }
-
     static function Uploadfield($name, $fieldLabel, $readOnly = false, $allowBlank = false) {
         $readOnly = $readOnly ? "true" : "false";
         if ($allowBlank) {

@@ -120,8 +120,6 @@ Ext.onReady(function() {
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
             ////////////////////////////////////////////////////////////////////
             $comboEditor = "
                 new Ext.form.ComboBox({
@@ -144,6 +142,8 @@ Ext.onReady(function() {
                     }
                 })
             ";
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
             ////////////////////////////////////////////////////////////////////
             break;
         case 2:

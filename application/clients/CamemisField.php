@@ -1096,35 +1096,6 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboMarried($fieldLabel, $width = false) {
-        $store = "[
-            [1, '" . SINGLE . "'],
-            [2, '" . MARRIED . "'],
-            [3, '" . DIVORCED . "']
-            ]";
-
-        $js = "";
-        $js .= "xtype: 'combo'";
-        $js .= ",id: 'MARRIED_ID'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",mode: 'local'";
-        $js .= ",triggerAction: 'all'";
-        $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-        $js .= ",store: " . $store . "";
-        $js .= ",name: 'MARRIED'";
-        $js .= ",editable:false";
-        $js .= ",hiddenName: 'MARRIED'";
-        if ($width)
-            $js .= ",width:" . $width;
-        else
-            $js .= ",width:250";
-
-        if ($fieldLabel == "")
-            $js .= ",hideLabel: true";
-
-        return $js;
-    }
-
     static function ComboSendStatus($fieldLabel, $width = false) {
         $store = "[
             [1, '" . ALL_TEXT . "'],
@@ -1148,32 +1119,6 @@ class CamemisField {
             $js .= ",width: " . $width . "";
         else
             $js .= ",width:250";
-        if ($fieldLabel == "")
-            $js .= ",hideLabel: true";
-
-        return $js;
-    }
-
-    static function ComboSkin($fieldLabel) {
-        $store = "[
-            ['BLUE', '" . CAMEMIS_SKINS_BLUE . "']
-            ,['GRAY', '" . CAMEMIS_SKINS_GRAY . "']
-            ,['UBUNTU', '" . CAMEMIS_SKINS_UBUNTU . "']
-            ,['SLATE', '" . CAMEMIS_SKINS_SLATE . "']
-            ]";
-
-        $js = "";
-        $js .= "xtype: 'combo'";
-        $js .= ",id: 'SKIN_ID'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",mode: 'local'";
-        $js .= ",triggerAction: 'all'";
-        $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-        $js .= ",store: " . $store . "";
-        $js .= ",name: 'SKIN'";
-        $js .= ",hiddenName: 'SKIN'";
-        $js .= ",width:250";
-
         if ($fieldLabel == "")
             $js .= ",hideLabel: true";
 
@@ -1269,34 +1214,7 @@ class CamemisField {
             $js .= ",hideLabel: true";
         return $js;
     }
-
-    static function UploadExcelField($name, $fieldLabel, $readOnly = false, $allowBlank = false) {
-        $readOnly = $readOnly ? "true" : "false";
-        if ($allowBlank) {
-            $emptyText = "";
-            $allowBlank = "false";
-        } else {
-            $emptyText = "";
-            $allowBlank = "true";
-        }
-
-        $allowBlank = $allowBlank ? "false" : "true";
-
-        $js = "";
-        $js .= "xtype: 'fileuploadfield'";
-        $js .= ",id: '" . $name . "_ID'";
-        $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",name: '" . $name . "'";
-        $js .= ",buttonText: ''";
-        $js .= ",buttonCfg: {";
-        $js .= "iconCls: 'icon-page_white_excel'";
-        $js .= "}";
-        $js .= ",width:250";
-
-        return $js;
-    }
-
+    
     static function Uploadfield($name, $fieldLabel) {
 
         $js = "";
@@ -1469,36 +1387,7 @@ class CamemisField {
 
         return $js;
     }
-
-    static function CampusSuperBox($fieldLabel, $value = false) {
-
-        $store = BuildData::superboxCampus();
-
-        $js = "";
-        $js .= "xtype: 'superboxselect'";
-        $js .= ",id: 'SUPERBOX_CAMPUS_ID'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",mode: 'local'";
-        $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-        $js .= ",store: new Ext.data.SimpleStore({fields: ['id', 'name'],data: " . $store . "})";
-        $js .= ",displayField: 'name'";
-        $js .= ",valueField: 'id'";
-        $js .= ",width:250";
-        $js .= ",allowBlank:false";
-        $js .= ",classField: 'cls'";
-        $js .= ",styleField: 'style'";
-        $js .= ",extraItemCls: 'x-flag'";
-        $js .= ",extraItemStyle: 'border-width:2px'";
-        $js .= ",stackItems: true";
-
-        if ($value)
-            $js .= ",value: '" . $value . "'";
-        if ($fieldLabel == "")
-            $js .= ",hideLabel: true";
-
-        return $js;
-    }
-
+    
     static function ComboInfractionType($fieldLabel, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataInfractionType();
@@ -1552,49 +1441,6 @@ class CamemisField {
         $js .= ",hiddenName: 'PRIORITY'";
         $js .= ",width:250";
         $js .= ",allowBlank:false";
-
-        if ($fieldLabel == "")
-            $js .= ",hideLabel: true";
-
-        return $js;
-    }
-
-    static function ComboSystemLanguage($fieldLabel, $hidden = false) {
-        $store = "[
-            ['ENGLISH', 'English'],
-            ['BURMESE', '" . BURMESE . "'],
-            //['CHINESE_TRADITIONAL', '" . CHINESE_TRADITIONAL . "'],
-            ['CHINESE_SIMPLIFIED', '" . CHINESE_SIMPLIFIED . "'],
-            ['FILIPINO', '" . FILIPINO . "'],
-            ['FRANCE', '" . FRANCE . "'],
-            ['GERMAN', '" . GERMAN . "'],
-            ['KHMER', '" . KHMER . "'],
-            ['INDONESIAN', '" . INDONESIAN . "'],
-            ['LAO', '" . LAO . "'],
-            //['SPANISH', '" . SPANISH . "'],
-            ['THAI', '" . THAI . "'],
-            ['VIETNAMESE', '" . VIETNAMESE . "']
-            ]";
-
-        $js = "";
-        $js .= "xtype: 'combo'";
-        $js .= ",id: 'LANGUAGE_ID'";
-        $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        $js .= ",mode: 'local'";
-
-        if ($hidden) {
-            $js .= ",hidden: true";
-        }
-
-        $js .= ",editable:false";
-        $js .= ",triggerAction: 'all'";
-        $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
-        $js .= ",store: " . $store . "";
-        $js .= ",name: 'SYSTEM_LANGUAGE'";
-        $js .= ",hiddenName: 'SYSTEM_LANGUAGE'";
-        $js .= ",width:250";
-
-        //$js .= ",allowBlank:false";
 
         if ($fieldLabel == "")
             $js .= ",hideLabel: true";
@@ -1718,6 +1564,7 @@ class CamemisField {
 
         return $js;
     }
+
     ////
     static function comboMajor($disabled = false, $hidden = false, $width = false) {
 
@@ -1751,8 +1598,8 @@ class CamemisField {
 
         return $js;
     }
-    
-     static function comboQualitycationDegree($disabled = false, $hidden = false, $width = false) {
+
+    static function comboQualitycationDegree($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllQualitycationDegree();
 
@@ -1784,6 +1631,7 @@ class CamemisField {
 
         return $js;
     }
+
     ////
 
     static function comboEthnic($disabled = false, $hidden = false, $width = false) {
@@ -2949,7 +2797,7 @@ class CamemisField {
     }
 
     static function ComboSchoolTerm($fieldLabel, $readOnly = false, $width = false) {
-        $store = "[[0, '".TWO_SEMESTERS."'],[1, '".THREE_ITEMS."'],[2, '".FOUR_QUARTERS."']]";
+        $store = "[[0, '" . TWO_SEMESTERS . "'],[1, '" . THREE_ITEMS . "'],[2, '" . FOUR_QUARTERS . "']]";
         $js = "";
         $js .= "xtype: 'combo'";
         $js .= ",id: 'TERM_NUMBER_ID'";

@@ -64,7 +64,9 @@ class AcademicDBAccess {
                     } else {
                         $data["NAME"] = "---";
                     }
-                    $this->updateAllSchoolyearChildren($academicObject);
+
+                    self::updateAllSchoolyearChildren($academicObject);
+
                     break;
                 case "SUBCLASS":
                     $subjectObject = SubjectDBAccess::findSubjectFromId($academicObject->SUBJECT_ID);
@@ -547,7 +549,7 @@ class AcademicDBAccess {
                 self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);
 
                 $facette = self::findGradeFromId($academicObject->ID);
-                $this->updateAllSchoolyearChildren($facette);
+                self::updateAllSchoolyearChildren($facette);
 
                 break;
 
@@ -584,7 +586,8 @@ class AcademicDBAccess {
                 self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);
 
                 $facette = self::findGradeFromId($academicObject->ID);
-                $this->updateAllSchoolyearSubjectChildren($facette);
+                self::updateAllSchoolyearSubjectChildren($facette);
+
                 break;
         }
 
@@ -607,19 +610,6 @@ class AcademicDBAccess {
             return $facette->NAME;
         }
         return "";
-    }
-
-    public function getSchoolYearByStudentIdSchoolYearId($studentId, $schoolYearId) {
-
-        $SQL = "";
-        $SQL .= " SELECT *";
-        $SQL .= " FROM t_grade AS A";
-        $SQL .= " LEFT JOIN t_student_schoolyear AS B ON B.SCHOOL_YEAR=A.SCHOOL_YEAR";
-        $SQL .= " WHERE 1=1";
-        $SQL .= " AND B.STUDENT='" . $studentId . "'";
-        $SQL .= " AND A.SCHOOL_YEAR='" . $schoolYearId . "'";
-
-        return self::dbAccess()->fetchRow($SQL);
     }
 
     protected function sqlEnrolledStudents($schoolyearId, $gradeId, $academicId, $gender) {
@@ -881,7 +871,7 @@ class AcademicDBAccess {
         }
     }
 
-    protected function updateAllSchoolyearChildren($schoolyearObject) {
+    public static function updateAllSchoolyearChildren($schoolyearObject) {
 
         if (isset($schoolyearObject->ID)) {
             $FIRST_SQL = self::dbAccess()->select();
@@ -986,7 +976,7 @@ class AcademicDBAccess {
         }
     }
 
-    protected function updateAllSchoolyearSubjectChildren($schoolyearsubjectObject) {
+    public static function updateAllSchoolyearSubjectChildren($schoolyearsubjectObject) {
 
         if (isset($schoolyearsubjectObject->ID)) {
             $SQL = self::dbAccess()->select();
@@ -1098,34 +1088,6 @@ class AcademicDBAccess {
         $SQL = "SELECT COUNT(*) AS C FROM t_academicdate";
         $SQL .= " WHERE (START<=DATE(NOW()) AND END>=DATE(NOW()))";
         $SQL .= " AND ID='" . $facette->SCHOOL_YEAR . "'";
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
-    }
-
-    public function checkAddScoreForFS($Id) {
-
-        $SQL = "SELECT COUNT(*) AS C FROM t_grade";
-        $SQL .= " WHERE (FIRST_SCORE_START<=DATE(NOW()) AND FIRST_SCORE_END>=DATE(NOW()))";
-        $SQL .= " AND ID='" . $Id . "'";
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
-    }
-
-    public function checkAddScoreForSS($Id) {
-
-        $SQL = "SELECT COUNT(*) AS C FROM t_grade";
-        $SQL .= " WHERE (SECOND_SCORE_START<=DATE(NOW()) AND SECOND_SCORE_END>=DATE(NOW()))";
-        $SQL .= " AND ID='" . $Id . "'";
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
-    }
-
-    public function checkAddEvaluationForYEAR($Id) {
-
-        $SQL = "SELECT COUNT(*) AS C FROM t_grade";
-        $SQL .= " WHERE (YEAR_SCORE_START<=DATE(NOW()) AND YEAR_SCORE_END>=DATE(NOW()))";
-        $SQL .= " AND ID='" . $Id . "'";
-        //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1296,33 +1258,13 @@ class AcademicDBAccess {
 
         ///
         $facette = self::findGradeFromId($objectId);
-        $this->updateAllSchoolyearChildren($facette);
+        self::updateAllSchoolyearChildren($facette);
+
         if ($errors) {
             return array("success" => false, "errors" => $errors);
         } else {
             return array("success" => true, "errors" => $errors);
         }
-    }
-
-    public function findAcademicFromSchoolyear($params) {
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : "";
-        $gradeId = isset($params['gradeId']) ? $params['gradeId'] : "";
-
-        $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
-
-        $selectColumns = array('FIRST_SCORE_START', 'FIRST_SCORE_END', 'SECOND_SCORE_START', 'SECOND_SCORE_END', 'YEAR_SCORE_START', 'YEAR_SCORE_END');
-        $select = $DB_ACCESS->select();
-        $select->distinct();
-        $select->from("t_grade", $selectColumns);
-
-        $select->where("SCHOOL_YEAR = ?", $schoolyearId);
-        $select->where("GRADE_ID = ?", $gradeId);
-        //echo $this->SELECT->__toString();
-        $stmt = $DB_ACCESS->query($select);
-
-        $result = $stmt->fetch();
-
-        return isset($result) ? $result : null;
     }
 
     public function jsonLoadScoreDeadLine($params) {

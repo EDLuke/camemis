@@ -257,6 +257,65 @@ Ext.onReady(function() {
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();
 
+    ////////////////////////////////////////////////////////////////////////////
+    $VIEWPORT_ITEMS = Array();
+    $TEACHER_ENTER_SCORE = "{
+        title: '".TEACHER_ENTER_SCORE."'
+        ,layout:'fit'
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                region:'west'
+                ,id: 'WEST_ID'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 350
+                ,minSize: 350
+                ,maxSize: 350
+                ,layout: 'fit'
+                ,items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]
+            },{
+                collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'
+                    }]
+                }]
+            }]
+        }]
+    }";
+    
+    if(!$academicObject->EVALUATION_OPTION)
+    $VIEWPORT_ITEMS[] = $TEACHER_ENTER_SCORE;
+    
+    $SUBJECT_ASSESSMENT = "{
+        title: '".SUBJECT_ASSESSMENT."'
+        ,layout:'fit'
+        ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ASSESSMENT', url: '/evaluation/subjectmainscoresummary/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+    }";
+    
+    $VIEWPORT_ITEMS[] = $SUBJECT_ASSESSMENT;
+    
+    $DISPLAY_VIEWPORT_ITEMS = implode(",",$VIEWPORT_ITEMS);
+    ////////////////////////////////////////////////////////////////////////////
+    
     ?>
     var fp = new Ext.FormPanel({
         labelAlign: 'left'
@@ -278,6 +337,7 @@ Ext.onReady(function() {
             ,format:'<?=setExtDatafieldFormat()?>'
         }]
     });
+    
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
@@ -291,58 +351,13 @@ Ext.onReady(function() {
                 ,plain:true
                 ,activeTab: 0
                 ,enableTabScroll:true
-                ,items:[{
-                    title: '<?=TEACHER_ENTER_SCORE?>'
-                    ,layout:'fit'
-                    ,items:[{
-                        layout:'border'
-                        ,border: false
-                        ,defaults: {
-                            collapsible: true
-                            ,split: true
-                        }
-                        ,items: [{
-                            region:'west'
-                            ,id: 'WEST_ID'
-                            ,margins: '3 0 3 3'
-                            ,cmargins: '3 3 3 3'
-                            ,width: 350
-                            ,minSize: 350
-                            ,maxSize: 350
-                            ,layout: 'fit'
-                            ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
-                        },{
-                            collapsible: false
-                            ,id: 'center'
-                            ,region:'center'
-                            ,margins: '3 3 3 0'
-                            ,layout: 'card'
-                            ,activeItem: 0
-                            ,items: [{
-                                border: false
-                                ,layout: 'anchor'
-                                ,bodyStyle: 'background:#FFFFFF; padding:25px;'
-                                ,items: [{
-                                    title: ''
-                                    ,height:60
-                                    ,width:500
-                                    ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
-                                    ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
-                                }]
-                            }]
-                        }]
-                    }]
-                },{
-                    title: '<?=SUBJECT_ASSESSMENT?>'
-                    ,layout:'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ASSESSMENT', url: '/evaluation/subjectmainscoresummary/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>'})]
-                }]
+                ,items:[<?=$DISPLAY_VIEWPORT_ITEMS;?>]
             }]
         }]
     });
 
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-    myTree.on('click', function(node, event){
+    if (myTree) myTree.on('click', function(node, event){
 
         if(node.isLeaf()){
             var contextMenu = new Ext.menu.Menu({

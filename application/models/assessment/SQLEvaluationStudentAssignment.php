@@ -8,8 +8,8 @@
 
 class SQLEvaluationStudentAssignment {
 
-    const EVALUATION_TYPE_NUMBER = 0;
-    const EVALUATION_TYPE_PERCENT = 1;
+    CONST EVALUATION_TYPE_NUMBER = 0;
+    CONST EVALUATION_TYPE_PERCENT = 1;
 
     public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
