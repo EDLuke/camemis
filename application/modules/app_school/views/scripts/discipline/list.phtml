@@ -119,9 +119,74 @@ Ext.onReady(function() {
             ,camIds:'".$this->urlEncryp->encryptedGet("studentId=".$this->studentId."&personType=".$this->personType)."'                  
         "; 
     }
+
+    $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'REFRESH_ID'
+                ,text: '".RESET."'
+                ,iconCls:'icon-arrow_undo'
+                ,scope:this
+                ,handler: function(){
+                   Ext.getCmp('START_DATE').setValue(''); 
+                   Ext.getCmp('END_DATE').setValue('');
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE','');
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',''); 
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',['<b>".START_DATE."<b>',{
+            xtype: 'buttongroup'
+           ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            }]
+        }]);
+    "); 
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['<b>".END_DATE."<b>',{
+            xtype: 'buttongroup'
+           ,items:[{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'FIND_ID'
+            ,text: '".FIND."'
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                if(Ext.getCmp('END_DATE').getValue())
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                if(Ext.getCmp('END_DATE').getValue())
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();   
+            }
+        }]);
+    "); 
      
     $OBJECT_GRID->addTBarItems("tbar.add('->');");
-    $OBJECT_GRID->isQuickySearch = true;   
+    //$OBJECT_GRID->isQuickySearch = true;   
     $OBJECT_GRID->isGroupingView = true;
     $OBJECT_GRID->groupField = "DISCIPLINE_TYPE";
     $OBJECT_GRID->forceFit = "false";

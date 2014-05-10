@@ -35,7 +35,29 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>
 <script>
-    
+    Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+    });
     Ext.onReady(function() {
 
         <?
@@ -76,6 +98,71 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,trainingId:'".$this->trainingId."'
             ,cmd: 'jsonStudentAttendanceMonth'
         ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'REFRESH_ID'
+                ,text: '".RESET."'
+                ,iconCls:'icon-arrow_undo'
+                ,scope:this
+                ,handler: function(){
+                   Ext.getCmp('START_DATE').setValue(''); 
+                   Ext.getCmp('END_DATE').setValue('');
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE','');
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',''); 
+                   Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-',['<b>".START_DATE."<b>',{
+                xtype: 'buttongroup'
+               ,items:[{
+                    name: 'START_DATE'
+                    ,hidden: false
+                    ,width: 150
+                    ,xtype: 'datefield'
+                    ,id: 'START_DATE'
+                    ,vtype: 'daterange'
+                    ,endDateField: 'END_DATE'
+                    ,format: '" . setExtDatafieldFormat() . "'
+                    ,allowBlank: true
+                }]
+            }]);
+        "); 
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['<b>".END_DATE."<b>',{
+                xtype: 'buttongroup'
+               ,items:[{
+                    name: 'END_DATE'
+                    ,hidden: false
+                    ,width: 150
+                    ,xtype: 'datefield'
+                    ,id: 'END_DATE'
+                    ,vtype: 'daterange'
+                    ,format: '" . setExtDatafieldFormat() . "'
+                    ,startDateField: 'START_DATE'
+                    ,allowBlank: true
+                }]
+            }]);
+        ");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'FIND_ID'
+                ,text: '".FIND."'
+                ,iconCls:'icon-magnifier'
+                ,scope:this
+                ,handler: function(){
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();   
+                }
+            }]);
+        "); 
         
         $OBJECT_GRID->isGroupingView = true;
         $OBJECT_GRID->groupField = "ABSENT_TYPE";
