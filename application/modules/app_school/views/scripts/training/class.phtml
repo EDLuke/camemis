@@ -161,26 +161,17 @@ Ext.onReady(function() {
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
     
     $OBJECT_FORM->setonEmbeddedEvents("
-        ".camemisPage::setRequestURI()."
-        
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
         myTree = window.parent.Ext.getCmp('TRAINING_TREE_ID');
-        myNode = myTree.getNodeById('".$this->facette->PARENT."');
-        myNode.reload();
-        myNode.expand(true, false);
-        //myNode.setText(action.result.text);
+        myTree.root.reload();
+        ".camemisPage::setRequestURI()."
     ");
 
     $OBJECT_FORM->setOnEmbeddedReleaseEvents("
-        
-        ".camemisPage::setRequestURI()."
-        
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
         myTree = window.parent.Ext.getCmp('TRAINING_TREE_ID');
-        myNode = myTree.getNodeById('".$this->facette->PARENT."');
-        myNode.reload();
-        myNode.expand(true, false);
-        myNode.setText(action.result.text);
+        myTree.root.reload();
+        ".camemisPage::setRequestURI()."
     ");
     
     $OBJECT_FORM->setOnEmbeddedRemoveEvents("
