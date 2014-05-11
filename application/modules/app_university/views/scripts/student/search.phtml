@@ -322,7 +322,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
     $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
     $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
-    $OBJECT_GRID->addReadField("name: 'CURRENT_TRAINING_NAME'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_COURSE'");
     $OBJECT_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
     $OBJECT_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
     $OBJECT_GRID->addReadField("name: 'LASTNAME_LATIN'");
@@ -371,7 +371,7 @@ Ext.onReady(function() {
 
     $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(13, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 150, hidden:".checkColHidden(14, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150, hidden:".checkColHidden(15, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_TRAINING_NAME',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150, hidden:".checkColHidden(15, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_COURSE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(16, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE',filter:{}");
 
     $OBJECT_GRID->addColumn("header: '<b>".NATIONALITY."</b>', width: 150, hidden:".checkColHidden(17, $columndata).", renderer: cssText, sortable: true, dataIndex: 'NATIONALITY',filter:{}");
@@ -386,8 +386,36 @@ Ext.onReady(function() {
     ";
 
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
+        
         $OBJECT_GRID->addTBarItems("
-            tbar.add([{
+            tbar.add('-',[{
+                text: '" . GENERATE . "'
+                ,iconCls:'icon-cog_go'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    Ext.Ajax.request({
+                        url:'/student/jsonsave/'
+                        ,method: 'POST'
+                        ,params: {cmd: 'jsonSetCurrentStudentAcademic'}
+                        ,success: function(response, options) {
+                            
+                            Ext.MessageBox.hide();
+                        }
+                        ,failure: function(response, options) {}
+                    });
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-',[{
                 text: '" . EXPORT_TO_EXCEL . "'
                 ,id: 'EXPORT_TO_EXCEL'
                 ,iconCls:'icon-page_excel'

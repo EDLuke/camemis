@@ -48,7 +48,7 @@ class StudentStatusExportDBAccess extends CamemisExportDBAccess {
                     $CONST_NAME = CURRENT_CLASS;
                     $colWidth = 20;
                     break;
-                case "CURRENT_TRAINING_NAME":
+                case "CURRENT_COURSE":
                     $CONST_NAME = CURRENT_TERM;
                     $colWidth = 30;
                     break;

@@ -237,7 +237,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_STATUS_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'STATUS'");
         $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
         $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
-        $OBJECT_GRID->addReadField("name: 'CURRENT_TRAINING_NAME'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_COURSE'");
         $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'PHONE'");
@@ -249,7 +249,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_STATUS_LIST_ID");
         $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
         $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 150, hidden:".checkColHidden(5, $columndata).",renderer: renderText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
         $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(6, $columndata).",renderer: renderText, sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
-        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', width: 150, hidden:".checkColHidden(7, $columndata).",sortable: true, dataIndex: 'CURRENT_TRAINING_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', width: 150, hidden:".checkColHidden(7, $columndata).",sortable: true, dataIndex: 'CURRENT_COURSE'");
         $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: false, dataIndex: 'PHONE'");
         $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: renderText, sortable: false, dataIndex: 'EMAIL'");
         

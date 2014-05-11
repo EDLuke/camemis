@@ -62,6 +62,9 @@ tr.filter-row-header .filter-row-icon input {
 </style>
 <script>
 Ext.onReady(function() {
+    
+    Ext.Ajax.timeout = 600000;
+    
     function cssText(value, metadata, record){
         return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
     }
@@ -243,7 +246,7 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->baseParams = "
         start:0
-        ,limit:1000
+        ,limit:100
         ,displayCurrentAcademic:2
         ,cmd: 'searchStudent'
         ,campusId: '".$campusId."'  

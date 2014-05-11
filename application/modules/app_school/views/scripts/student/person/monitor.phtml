@@ -16,6 +16,10 @@ require_once 'utiles/Utiles.php';
 require_once 'clients/CamemisViewport.php';
 require_once setUserLoacalization();
 
+////////////////////////////////////////////////////////////////////////////////
+StudentDBAccess::setCurrentStudentAcademic($this->objectId, false);
+////////////////////////////////////////////////////////////////////////////////
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $OBJECT_TREE = new CamemisTree("STUDENT_MONITOR", "LIST");

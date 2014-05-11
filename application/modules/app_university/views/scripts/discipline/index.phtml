@@ -264,7 +264,7 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'GENDER'");
         $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
         $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
-        $OBJECT_GRID->addReadField("name: 'CURRENT_TRAINING_NAME'");
+        $OBJECT_GRID->addReadField("name: 'CURRENT_COURSE'");
 
         $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', renderer: renderText, width: 150,hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'DISCIPLINE_TYPE'");
         $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80,hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CODE'");
@@ -281,7 +281,7 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
                 }
 
                 if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
-                    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_TRAINING_NAME'");
+                    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150,hidden:".checkColHidden(9, $columndata).", renderer: renderText, align: 'center', sortable: true, dataIndex: 'CURRENT_COURSE'");
                 }
                 break;
         }

@@ -63,7 +63,7 @@ class StudentDisciplineExportDBAccess extends CamemisExportDBAccess {
                     $CONST_NAME = CURRENT_SCHOOL_YEAR;
                     $colWidth = 40;
                     break;
-                case "CURRENT_TRAINING_NAME":
+                case "CURRENT_COURSE":
                     $CONST_NAME = CURRENT_TERM;
                     $colWidth = 30;
                     break;

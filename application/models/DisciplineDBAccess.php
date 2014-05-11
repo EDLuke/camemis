@@ -445,7 +445,7 @@ class DisciplineDBAccess extends StudentDBAccess {
 
                         $data[$i]["CURRENT_SCHOOLYEAR"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_SCHOOLYEAR;
                         $data[$i]["CURRENT_ACADEMIC"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_ACADEMIC;
-                        $data[$i]["CURRENT_TRAINING_NAME"] = StudentSearchDBAccess::getCurrentTraining($value->STUDENT_ID);
+                        $data[$i]["CURRENT_COURSE"] = StudentSearchDBAccess::getCurrentTraining($value->STUDENT_ID);
                         break;
                 }
 

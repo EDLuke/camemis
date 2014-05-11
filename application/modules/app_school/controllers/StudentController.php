@@ -853,6 +853,10 @@ class StudentController extends Zend_Controller_Action {
             case "actionStudent2ClassSectionTraditional":
                 $jsondata = StudentDBAccess::actionStudent2ClassSectionTraditional($this->REQUEST->getPost());
                 break;
+
+            case "jsonSetCurrentStudentAcademic":
+                $jsondata = StudentDBAccess::setCurrentStudentAcademic(false, true);
+                break;
         }
 
         if (isset($jsondata))
