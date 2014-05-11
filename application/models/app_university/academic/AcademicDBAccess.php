@@ -487,10 +487,12 @@ class AcademicDBAccess {
             $SAVEDATA['YEAR_RESULT'] = $params["YEAR_RESULT"];
 
         $SAVEDATA['USE_OF_GROUPS'] = isset($params["USE_OF_GROUPS"]) ? 1 : 0;
+
         $SAVEDATA['DISPLAY_MONTH_RESULT'] = isset($params["DISPLAY_MONTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_FIRST_RESULT'] = isset($params["DISPLAY_FIRST_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_SECOND_RESULT'] = isset($params["DISPLAY_SECOND_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_THIRD_RESULT'] = isset($params["DISPLAY_THIRD_RESULT"]) ? 1 : 0;
+        $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
 
         if (isset($params["EVALUATION_OPTION"]))
