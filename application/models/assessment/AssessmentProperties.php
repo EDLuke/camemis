@@ -229,7 +229,7 @@ abstract class AssessmentProperties {
     public function getSettingEvaluationType() {
         return $this->getCurrentClass()->EVALUATION_TYPE;
     }
-    
+
     public function getSettingEvaluationOption() {
         return $this->getCurrentClass()->EVALUATION_OPTION;
     }

@@ -727,14 +727,15 @@ class EvaluationController extends Zend_Controller_Action {
                 $DB_ACCESS = new jsonAcademicPerformances();
                 $jsondata = $DB_ACCESS->jsonListStudentsYearClassPerformance($this->REQUEST->getPost());
                 break;
-            ////////////////////////////////////////////////////////////////////
-            //CREDIT SYSTEM...
-            case "jsonLoadStudentCreditAllSubjectAssessment":
-                require_once 'models/app_school/evaluation/default/StudentCreditPerformance.php';
-                $DB_PERFORMANCE = StudentCreditPerformance::getInstance();
-                $jsondata = $DB_PERFORMANCE->jsonLoadStudentCreditAllSubjectAssessment($this->REQUEST->getPost());
-                break;
-            ////////////////////////////////////////////////////////////////////
+            
+//            ////////////////////////////////////////////////////////////////////
+//            //CREDIT SYSTEM...
+//            case "jsonLoadStudentCreditAllSubjectAssessment":
+//                require_once 'models/app_school/evaluation/default/StudentCreditPerformance.php';
+//                $DB_PERFORMANCE = StudentCreditPerformance::getInstance();
+//                $jsondata = $DB_PERFORMANCE->jsonLoadStudentCreditAllSubjectAssessment($this->REQUEST->getPost());
+//                break;
+//            ////////////////////////////////////////////////////////////////////
         }
 
         if (isset($jsondata))

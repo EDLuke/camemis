@@ -13,16 +13,11 @@ require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once 'models/app_school/assignment/AssignmentTempDBAccess.php';
-//require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
 
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-/*$OBJECT_TREE = new CamemisTree("TRAINING", "LIST");  
-$OBJECT_TREE->setURL('/training/jsontree/');
-$OBJECT_TREE->setSaveUrl('/training/jsonsave/');
-*/ 
 $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
@@ -76,18 +71,7 @@ Ext.onReady(function() {
             });
         }
     "); 
-   /* if($this->facette->OBJECT_TYPE == "TERM"){
-        $OBJECT_TREE->setBaseParams("
-            cmd: 'jsonTreeAssignedSubjectsByTraining'
-            ,trainingId: '".$this->objectId."'
-        ");
-        
-    }else{
-        $OBJECT_TREE->setBaseParams("
-            cmd: 'jsonTreeAssignedSubjectsByTraining'
-            ,trainingId: '".$this->objectId."' 
-        ");
-    } */
+   
     $OBJECT_TREE->isTreeExpand = true; 
     $OBJECT_TREE->renderJS();
     

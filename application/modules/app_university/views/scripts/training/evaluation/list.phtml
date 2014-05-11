@@ -12,17 +12,12 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/assignment/AssignmentTempDBAccess.php';
-//require_once 'models/app_school/evaluation/default/StudentAssignmentDBAccess.php';
+require_once 'models/assessment/EvaluationSubjectAssessment.php';
 
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-/*$OBJECT_TREE = new CamemisTree("TRAINING", "LIST");  
-$OBJECT_TREE->setURL('/training/jsontree/');
-$OBJECT_TREE->setSaveUrl('/training/jsonsave/');
-*/ 
 $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
@@ -153,7 +148,6 @@ Ext.onReady(function() {
                 Ext.getCmp('center').getLayout().setActiveItem(0);
                 var dateMenu = new Ext.menu.DateMenu({
                     handler: function(dp, date){
-                        //clickOpenPage('center','', '<?=$this->URL_SUBJECT_SCORE_ENTER;?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                          clickOpenPage('center','', '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                
                     }

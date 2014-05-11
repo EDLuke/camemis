@@ -8,7 +8,7 @@ require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/evaluation/default/StudentAssignmentDBAccess.php';
+require_once 'models/assessment/EvaluationSubjectAssessment.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -18,9 +18,9 @@ $SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):Zend_Registry::get('USER')->ID;
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT->academicId = $academicId;
-$ENTRIES = $STUDENT_ASSIGNMENT->listSubjects();
+$assessment = new EvaluationSubjectAssessment();
+$assessment->academicId = $academicId;
+$ENTRIES = $assessment->getListSubjects();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -59,9 +59,9 @@ Ext.onReady(function() {
     if($ENTRIES){
         $i=0;
         foreach($ENTRIES as $value){
-            if($value->ID){
+            if($value->SUBJECT_ID){
                 $CHECK = $SUBJECT_TEACHER_ACCESS->checkAssignedSubjectTeacherClass(
-                        $value->ID
+                        $value->SUBJECT_ID
                         , $teacherId
                         , $academicId
                         , false);
@@ -70,17 +70,17 @@ Ext.onReady(function() {
                     case "STUDENT":
                     case "ADMIN":
                     case "SUPERADMIN":
-                        $DATA[$i] = $value->ID;
+                        $DATA[$i] = $value->SUBJECT_ID;
                         $STORE_SUBJECT .= $i?",":"";
-                        $STORE_SUBJECT .= "['" . $value->ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
+                        $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
                         $i++;
                     break;
                     case "TEACHER":
                     case "INSTRUCTOR":   
-                            $DATA[$i] = $value->ID;
-                            $STORE_SUBJECT .= $i?",":"";
-                            $STORE_SUBJECT .= "['" . $value->ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
-                            $i++;
+                        $DATA[$i] = $value->SUBJECT_ID;
+                        $STORE_SUBJECT .= $i?",":"";
+                        $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
+                        $i++;
                     break;
                 }   
             } 

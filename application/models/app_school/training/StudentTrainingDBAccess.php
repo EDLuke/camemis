@@ -12,7 +12,7 @@ require_once 'models/app_school/training/TrainingDBAccess.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
 require_once 'models/app_school/finance/StudentFeeDBAccess.php';
 require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
-require_once 'models/app_school/evaluation/default/AssessmentConfig.php';
+require_once 'models/assessment/AssessmentConfig.php';
 require_once setUserLoacalization();
 
 class StudentTrainingDBAccess extends TrainingDBAccess {

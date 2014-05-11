@@ -8,7 +8,7 @@ require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/evaluation/default/StudentAssignmentDBAccess.php';
+require_once 'models/assessment/EvaluationSubjectAssessment.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -17,9 +17,9 @@ $SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
 $academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 
-$STUDENT_ASSIGNMENT = StudentAssignmentDBAccess::getInstance();
-$STUDENT_ASSIGNMENT->academicId = $academicId;
-$ENTRIES = $STUDENT_ASSIGNMENT->listSubjects();
+$assessment = new EvaluationSubjectAssessment();
+$assessment->academicId = $academicId;
+$ENTRIES = $assessment->getListSubjects();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

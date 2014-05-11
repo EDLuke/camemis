@@ -14,8 +14,6 @@ require_once 'models/app_school/academic/AcademicDBAccess.php';
 require_once 'models/app_school/AcademicDateDBAccess.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
 require_once 'models/app_school/student/StudentStatusDBAccess.php'; //@veasna
-require_once 'models/app_school/evaluation/default/StudentSubjectAssessment.php'; //@veasna
-require_once 'models/app_school/assignment/AssignmentDBAccess.php'; //@veasna
 
 require_once setUserLoacalization();
 
