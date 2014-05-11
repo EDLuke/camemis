@@ -25,12 +25,14 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
 ////////////////////////////////////////////////////////////////////////////////
-$evaluation = new EvaluationSubjectAssessment();
-$evaluation->setAcademicId($academicObject->ID);
-$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
-$evaluation->setMonthYear($monthyear);
-$evaluation->setSection(1);
-$evaluation->actionDefaultStudentSubjectAssessment("MONTH");
+if(!$academicObject->EVALUATION_OPTION){
+    $evaluation = new EvaluationSubjectAssessment();
+    $evaluation->setAcademicId($academicObject->ID);
+    $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+    $evaluation->setMonthYear($monthyear);
+    $evaluation->setSection(1);
+    $evaluation->actionDefaultStudentSubjectAssessment("MONTH");
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
@@ -91,11 +93,14 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     
-    if($entries){
-        foreach($entries as $value){
-            $OBJECT_GRID->addReadField("name: '".$value->ASSIGNMENT_ID."'");
+    if(!$academicObject->EVALUATION_OPTION){
+        if($entries){
+            foreach($entries as $value){
+                $OBJECT_GRID->addReadField("name: '".$value->ASSIGNMENT_ID."'");
+            }
         }
     }
+    
     $OBJECT_GRID->addReadField("name: 'RANG'");
     
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
@@ -185,9 +190,11 @@ Ext.onReady(function() {
         , editor: ".$comboEditor."
     ");
     
-    if($entries){
-        foreach($entries as $value){
-            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->SHORT)."</b>', width: 120, align: 'right', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+    if(!$academicObject->EVALUATION_OPTION){
+        if($entries){
+            foreach($entries as $value){
+                $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->SHORT)."</b>', width: 120, align: 'right', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+            }
         }
     }
     
@@ -201,32 +208,32 @@ Ext.onReady(function() {
         }]);
     ");
     
-    $OBJECT_GRID->addTBarItems("
-        tbar.add('-',[{
-            text: '" . PUBLISH_SCORE . "'
-            ,iconCls:'icon-lightning_add'
-            ,handler: function(){
-                Ext.MessageBox.show({
-                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                    progressText: 'Saving...',
-                    width:300,
-                    wait:true,
-                    waitConfig: {interval:200},
-                    icon:'ext-mb-download'
-                });
-                Ext.Ajax.request({
-                    url:'/evaluation/jsonsave/'
-                    ,method: 'POST'
-                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
-                    ,success: function(response, options) {
-                        var jsonData = Ext.util.JSON.decode(response.responseText);
-                        Ext.MessageBox.hide();
-                    }
-                    ,failure: function(response, options) {}
-                });
-            }
-        }]);
-    ");
+//    $OBJECT_GRID->addTBarItems("
+//        tbar.add('-',[{
+//            text: '" . PUBLISH_SCORE . "'
+//            ,iconCls:'icon-lightning_add'
+//            ,handler: function(){
+//                Ext.MessageBox.show({
+//                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+//                    progressText: 'Saving...',
+//                    width:300,
+//                    wait:true,
+//                    waitConfig: {interval:200},
+//                    icon:'ext-mb-download'
+//                });
+//                Ext.Ajax.request({
+//                    url:'/evaluation/jsonsave/'
+//                    ,method: 'POST'
+//                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
+//                    ,success: function(response, options) {
+//                        var jsonData = Ext.util.JSON.decode(response.responseText);
+//                        Ext.MessageBox.hide();
+//                    }
+//                    ,failure: function(response, options) {}
+//                });
+//            }
+//        }]);
+//    ");
     
     $OBJECT_GRID->baseParams = "
         start:0

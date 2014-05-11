@@ -308,7 +308,13 @@ class SQLEvaluationStudentAssignment {
                 $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
         }
 
+        if (isset($stdClass->subjectId)) {
+            if ($stdClass->subjectId)
+                $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
+        }
+        
         $SQL->group("A.SUBJECT_ID");
+        
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

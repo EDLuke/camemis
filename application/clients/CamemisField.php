@@ -1009,8 +1009,10 @@ class CamemisField {
         if ($disabled) {
             $js .= ",disabled: true";
         }
-        if ($value)
+        if ($value){
+            $js .= ",inputValue: '" . $value . "'";
             $js .= ",value: '" . $value . "'";
+        }
         if ($checked)
             $js .= ",checked: true";
 

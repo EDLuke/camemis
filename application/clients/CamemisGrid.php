@@ -796,26 +796,26 @@ class CamemisGrid {
         $str3 = substr($str1, 0, $str2);
         return substr(trim($str3), 1, -1);
     }
-   
+
     public function setUserGridColumns() {
 
         $data = array();
-        
-        $CHECK = "";
-        
+
+        $CHECK_STR = "";
+
         foreach ($this->columns as $value) {
-            $CHECK = trim(str_replace(",filter:", "", $this->findUserColunmName($value)));
-            
-            if (strpos($CHECK, "eturn") !== false) {
-                $CHECK = "";
+            $CHECK_STR = trim(str_replace(",filter:", "", $this->findUserColunmName($value)));
+
+            if (strpos($CHECK_STR, "eturn") !== false) {
+                $CHECK_STR = "";
             }
 
-            if (strripos($CHECK, "'") !== false) {
-                $CHECK = substr($CHECK, 0, -1);
+            if (strripos($CHECK_STR, "'") !== false) {
+                $CHECK_STR = substr($CHECK_STR, 0, -1);
             }
-            
-            if ($CHECK) {
-                $data[] = $CHECK;
+
+            if ($CHECK_STR) {
+                $data[] = $CHECK_STR;
             }
         }
         Utiles::setGridColumnData(strtoupper($this->getObjectId()), false, implode(",", $data));
