@@ -1762,20 +1762,6 @@ function jsonCountGender($total) {
     return $sexcount;
 }
 
-// Chuy Thong 01/07/2012
-function getStudentStatusConstant($student_status) {
-    switch ($student_status) {
-        case 'POSTPONEMENT':
-            return defined("POSTPONE_STUDENT") ? POSTPONE_STUDENT : '';
-        case 'ABANDONMENT':
-            return defined("ABANDONED_STUDENT") ? ABANDONED_STUDENT : '';
-        case 'EXPEL':
-            return defined("EXPELLED_STUDENT") ? EXPELLED_STUDENT : '';
-        default:
-            return $student_status;
-    }
-}
-
 // Chuy Thong 02/07/2012
 function jsonBornYear($total) {
     $amount = 0;

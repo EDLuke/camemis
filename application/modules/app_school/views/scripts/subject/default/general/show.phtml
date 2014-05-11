@@ -44,55 +44,6 @@ if($scoreType == 1){
     $HIDDEN_ADDITIONAL_EVALUATION = "false";
     $HIDDEN_EVALUATION_IN_COMMENT = "true";
 }
-    
-switch($subjectType){
-    case "0":
-        $HIDDEN_SCORE_TYPE = "false";
-        $HIDDEN_EVALUATION_TYPE_SELECTIVE_SUBJECT = "true";
-        $HIDDEN_TEMPLATE = "false";
-        $HIDDEN_EVALUATION_SETTINGS = "false";
-    break;
-
-    case "1":
-        $HIDDEN_SCORE_TYPE = "false";
-        $HIDDEN_EVALUATION_TYPE_SELECTIVE_SUBJECT = "true";
-        $HIDDEN_TEMPLATE = "false";
-        $HIDDEN_EVALUATION_SETTINGS = "false";
-    break;
-
-    case "2":
-        $HIDDEN_SCORE_TYPE = "true";
-        $HIDDEN_EVALUATION_TYPE_SELECTIVE_SUBJECT = "false";
-        $HIDDEN_TEMPLATE = "true";
-        $HIDDEN_EVALUATION_SETTINGS = "false";
-    break;
-
-    case "3":
-        $HIDDEN_SCORE_TYPE = "true";
-        $HIDDEN_EVALUATION_TYPE_SELECTIVE_SUBJECT = "false";
-        $HIDDEN_TEMPLATE = "true";
-        $HIDDEN_EVALUATION_SETTINGS = "false";
-    break;
-
-    case "4":
-        $HIDDEN_SCORE_TYPE = "true";
-        $HIDDEN_EVALUATION_TYPE_SELECTIVE_SUBJECT = "true";
-        $HIDDEN_TEMPLATE = "true";
-        $HIDDEN_EVALUATION_SETTINGS = "true";
-    break;
-}
-
-switch($educationType){
-    case 1:
-        $HIDDEN_NATIONAL_EXAM = "true";
-        break;
-    case 2:
-        $HIDDEN_NATIONAL_EXAM = "true";
-        break;
-    case 3:
-        $HIDDEN_NATIONAL_EXAM = "false";
-        break;
-}
 
 $removeStatus = true;
 if ($this->facette) {
@@ -504,27 +455,27 @@ Ext.onReady(function() {
         
         subjectType = Ext.getCmp('SUBJECT_TYPE_ID').getValue();
         
-        if(subjectType == 0){
-            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-            Ext.getCmp('EVALUATION_SETTINGS').hide();
-        }else if(subjectType == 1){
-            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-            Ext.getCmp('EVALUATION_SETTINGS').show();
-        }else if(subjectType == 2){
-            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
-            Ext.getCmp('EVALUATION_SETTINGS').hide();
-        }else if(subjectType == 3){
-            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
-            Ext.getCmp('EVALUATION_SETTINGS').show();
-        }else if(subjectType == 4){
-            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-            Ext.getCmp('EVALUATION_SETTINGS').hide();
-            Ext.getCmp('MAX_POSSIBLE_SCORE').hide();
-            Ext.getCmp('COEFFICIENT_SETTING').hide();
-            Ext.getCmp('ADDITIONAL_EVALUATION').hide();
-            Ext.getCmp('EVALUATION_SETTINGS').hide();
-            Ext.getCmp('EVALUATION_IN_COMMENT').hide();
-        }
+//        if(subjectType == 0){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//        }else if(subjectType == 1){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').show();
+//        }else if(subjectType == 2){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//        }else if(subjectType == 3){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
+//            Ext.getCmp('EVALUATION_SETTINGS').show();
+//        }else if(subjectType == 4){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//            Ext.getCmp('MAX_POSSIBLE_SCORE').hide();
+//            Ext.getCmp('COEFFICIENT_SETTING').hide();
+//            Ext.getCmp('ADDITIONAL_EVALUATION').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//            Ext.getCmp('EVALUATION_IN_COMMENT').hide();
+//        }
     });
     
     var tree = Ext.getCmp('<?=$PREREQUISITE_TREE->getObjectId()?>');
