@@ -27,12 +27,12 @@ $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
 ////////////////////////////////////////////////////////////////////////////////
+$evaluation = new EvaluationSubjectAssessment();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setMonthYear($monthyear);
+$evaluation->setSection(1);
 if(!$academicObject->EVALUATION_OPTION){
-    $evaluation = new EvaluationSubjectAssessment();
-    $evaluation->setAcademicId($academicObject->ID);
-    $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
-    $evaluation->setMonthYear($monthyear);
-    $evaluation->setSection(1);
     $evaluation->actionDefaultStudentSubjectAssessment("MONTH");
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,8 +142,27 @@ Ext.onReady(function() {
                     }
                 })
             ";
+            
             $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
+            if(!$academicObject->EVALUATION_OPTION){
+                $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
+            }else{
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".AVERAGE."</b>'
+                    , width: 100
+                    , sortable: true
+                    , align:'right'
+                    , renderer:cssDefault
+                    , dataIndex: 'AVERAGE'
+                    , editor: new Ext.form.NumberField({
+                        allowBlank: false
+                        ,minValue: 0
+                        ,maxValue: '".$evaluation->getSubjectScoreMax()."'
+                        ,name: 'AVERAGE'   
+                    })
+                ");
+            }
+            
             ////////////////////////////////////////////////////////////////////
             break;
         case 2:
