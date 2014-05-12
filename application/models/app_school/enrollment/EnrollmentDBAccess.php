@@ -233,6 +233,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                             self::addStudentHistoryAcademic($par);
 
                             $SAVEDATA["CLASS"] = $academicObject->ID;
+                            $SAVEDATA["CAMPUS"] = $academicObject->CAMPUS_ID;
+                            $SAVEDATA["GRADE"] = $academicObject->GRADE_ID;
                             $WHERE['STUDENT = ?'] = $studentId;
                             $WHERE['GRADE = ?'] = $gradeLeftId;
                             $WHERE['SCHOOL_YEAR = ?'] = $schoolyearId;
