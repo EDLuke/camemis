@@ -47,6 +47,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     CONST WITH_FORMAT = true;
     CONST WITHOUT_FORMAT = false;
 
+    /**
+     * Evaluation option
+     */
+    CONST EVALUATION_OF_ASSIGNMENT = 0;
+    CONST EVALUATION_OF_SUBJECT = 1;
+
     function __construct() {
         parent::__construct();
     }
@@ -359,10 +365,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
 
-                if ($this->getCurrentClassAssignments()) {
-                    foreach ($this->getCurrentClassAssignments() as $v) {
-                        $stdClass->assignmentId = $v->ASSIGNMENT_ID;
-                        $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass);
+                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
+                    if ($this->getCurrentClassAssignments()) {
+                        foreach ($this->getCurrentClassAssignments() as $v) {
+                            $stdClass->assignmentId = $v->ASSIGNMENT_ID;
+                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass);
+                        }
                     }
                 }
 
@@ -397,23 +405,34 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
 
-                switch ($this->getSubjectScoreType()) {
-                    case self::SCORE_NUMBER:
-                        $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
-                        $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
-                        $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
+                switch ($this->getSettingEvaluationOption()) {
+                    case self::EVALUATION_OF_ASSIGNMENT:
+                        switch ($this->getSubjectScoreType()) {
+                            case self::SCORE_NUMBER:
+                                $data[$i]["RANK"] = $facette->RANK;
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
+                                $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
+                                break;
+                        }
+
+                        if ($this->isDisplayMonthResult()) {
+                            $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
+                        }
+
+                        $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
+                        break;
+                    case self::EVALUATION_OF_SUBJECT:
+                        switch ($this->getSubjectScoreType()) {
+                            case self::SCORE_NUMBER:
+                                $data[$i]["RANK"] = $facette->RANK;
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                break;
+                        }
                         break;
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
-
-                if ($this->isDisplayMonthResult()) {
-                    $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
-                }
-
-                $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
-
 
                 $i++;
             }
@@ -446,31 +465,43 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
 
-                switch ($this->getTermNumber()) {
-                    case 1:
-                        $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
-                        $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                switch ($this->getSettingEvaluationOption()) {
+                    case self::EVALUATION_OF_ASSIGNMENT:
+                        switch ($this->getSubjectScoreType()) {
+                            case self::SCORE_NUMBER:
+                                $data[$i]["RANK"] = $facette->RANK;
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                break;
+                        }
+                        switch ($this->getTermNumber()) {
+                            case 1:
+                                $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
+                                $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                                break;
+                            case 2:
+                                $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
+                                $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
+                                break;
+                            default:
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                                break;
+                        }
                         break;
-                    case 2:
-                        $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
-                        $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
-                        $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
-                        break;
-                    default:
-                        $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                    case self::EVALUATION_OF_SUBJECT:
+                        switch ($this->getSubjectScoreType()) {
+                            case self::SCORE_NUMBER:
+                                $data[$i]["RANK"] = $facette->RANK;
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                break;
+                        }
                         break;
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
-                switch ($this->getSubjectScoreType()) {
-                    case self::SCORE_NUMBER:
-                        $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
-                        break;
-                }
 
                 $i++;
             }
@@ -847,7 +878,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 break;
             case "ASSESSMENT":
                 $defaultObject->assessmentId = $this->actionValue;
-                if (!$this->getSettingEvaluationOption) {
+
+                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
                     if ($this->getSubjectValue($defaultObject))
                         $stdClass->mappingValue = $this->getSubjectValue($defaultObject);
                 }
