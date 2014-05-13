@@ -109,7 +109,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
-                
+
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
@@ -129,8 +129,9 @@ class AcademicPerformances extends AssessmentProperties {
 
         return $data;
     }
+
     ////////////////////////////////////////////////////////////////////////////
-    
+
     public function getListStudentsMonthAcademicPerformance() {
 
         $data = array();
@@ -238,7 +239,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
-                
+
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;

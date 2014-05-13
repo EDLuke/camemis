@@ -9,13 +9,11 @@ require_once 'models/assessment/EvaluationGradebook.php';
 
 class jsonEvaluationGradebook extends EvaluationGradebook {
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-    public function setParams($params)
-    {
+    public function setParams($params) {
         if (isset($params["start"]))
             $this->start = $params["start"];
 
@@ -47,16 +45,14 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
             $this->section = $params["section"];
     }
 
-    public function jsonStudentGradebookMonth($encrypParams)
-    {
+    public function jsonStudentGradebookMonth($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getStudentGradebookMonth();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -68,16 +64,14 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
         );
     }
 
-    public function jsonStudentGradebookTerm($encrypParams)
-    {
+    public function jsonStudentGradebookTerm($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getStudentGradebookTerm();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -89,16 +83,14 @@ class jsonEvaluationGradebook extends EvaluationGradebook {
         );
     }
 
-    public function jsonStudentGradebookYear($encrypParams)
-    {
+    public function jsonStudentGradebookYear($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
         $data = $this->getStudentGradebookYear();
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }

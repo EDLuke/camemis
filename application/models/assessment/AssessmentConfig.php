@@ -31,7 +31,7 @@ class AssessmentConfig {
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '" . $scoreType . "'");
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
-        
+
         if ($all) {
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchAll($SQL);
@@ -131,7 +131,7 @@ class AssessmentConfig {
         }else {
             $result = "---";
         }
-        
+
         return $result;
     }
 
