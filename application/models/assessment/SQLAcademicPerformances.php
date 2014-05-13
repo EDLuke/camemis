@@ -105,10 +105,6 @@ class SQLAcademicPerformances {
                             if ($stdClass->term)
                                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
                             break;
-                        case "YEAR":
-                            if ($stdClass->year)
-                                $SQL->where("A.YEAR = '" . $stdClass->year . "'");
-                            break;
                     }
 
                     $SQL->where("A.SECTION = '" . $stdClass->section . "'");
@@ -157,11 +153,6 @@ class SQLAcademicPerformances {
             case "SEMESTER":
                 if ($stdClass->term)
                     $SQL->where("TERM = '" . $stdClass->term . "'");
-                break;
-            case "YEAR":
-                if ($stdClass->year) {
-                    $SQL->where("YEAR = '" . $stdClass->year . "'");
-                }
                 break;
         }
 
