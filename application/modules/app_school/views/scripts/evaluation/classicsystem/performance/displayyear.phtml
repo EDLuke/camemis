@@ -22,6 +22,15 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new AcademicPerformances();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSection(3);
+if(!$academicObject->EVALUATION_OPTION){
+    $evaluation->actionDefaultStudentAcademicPerformance("YEAR");
+}
+////////////////////////////////////////////////////////////////////////////////
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>

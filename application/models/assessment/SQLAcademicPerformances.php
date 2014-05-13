@@ -61,13 +61,26 @@ class SQLAcademicPerformances {
 
         $data["GRADING"] = "---";
         $data["RANK"] = "---";
-        $data["LEARNING_VALUE"] = "---";
+        $data["TOTAL_RESULT"] = "---";
+        $data["FIRST_RESULT"] = "---";
+        $data["SECOND_RESULT"] = "---";
+        $data["THIRD_RESULT"] = "---";
+        $data["FOURTH_RESULT"] = "---";
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
 
         if (isset($stdClass->studentId)) {
             if ($stdClass->studentId) {
-                $SELECTION_A = array('LEARNING_VALUE', 'RANK', 'ASSESSMENT_ID', 'TEACHER_COMMENT');
+                $SELECTION_A = array(
+                    'RANK'
+                    , 'ASSESSMENT_ID'
+                    , 'TOTAL_RESULT'
+                    , 'FIRST_RESULT'
+                    , 'SECOND_RESULT'
+                    , 'THIRD_RESULT'
+                    , 'FOURTH_RESULT'
+                    , 'TEACHER_COMMENT'
+                );
                 $SELECTION_B = array('DESCRIPTION');
 
                 $SQL = self::dbAccess()->select();
@@ -106,9 +119,13 @@ class SQLAcademicPerformances {
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
                 if ($result) {
-                    $data["GRADING"] = $result->DESCRIPTION;
-                    $data["RANK"] = $result->RANK;
-                    $data["LEARNING_VALUE"] = $result->LEARNING_VALUE;
+                    $data["GRADING"] = $result->DESCRIPTION?$result->DESCRIPTION:"---";
+                    $data["RANK"] = $result->RANK?$result->RANK:"---";
+                    $data["TOTAL_RESULT"] = $result->TOTAL_RESULT?$result->TOTAL_RESULT:"---";
+                    $data["FIRST_RESULT"] = $result->FIRST_RESULT?$result->FIRST_RESULT:"---";
+                    $data["SECOND_RESULT"] = $result->SECOND_RESULT?$result->SECOND_RESULT:"---";
+                    $data["THIRD_RESULT"] = $result->THIRD_RESULT?$result->THIRD_RESULT:"---";
+                    $data["FOURTH_RESULT"] = $result->FOURTH_RESULT?$result->FOURTH_RESULT:"---";
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
                     $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                 }
@@ -169,15 +186,31 @@ class SQLAcademicPerformances {
     public static function getActionStudentAcademicPerformance($stdClass) {
 
         if (isset($stdClass->average)) {
-            $SAVE_DATA["LEARNING_VALUE"] = $stdClass->average;
+            $SAVE_DATA["TOTAL_RESULT"] = $stdClass->average;
         }
-        
+
         if (isset($stdClass->assessmentId)) {
             $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
         }
-        
+
         if (isset($stdClass->rank)) {
             $SAVE_DATA["RANK"] = $stdClass->rank;
+        }
+
+        if (isset($stdClass->firstResult)) {
+            $SAVE_DATA["FIRST_RESULT"] = $stdClass->firstResult;
+        }
+
+        if (isset($stdClass->secondResult)) {
+            $SAVE_DATA["SECOND_RESULT"] = $stdClass->secondResult;
+        }
+
+        if (isset($stdClass->thirdResult)) {
+            $SAVE_DATA["THIRD_RESULT"] = $stdClass->thirdResult;
+        }
+
+        if (isset($stdClass->fourthResult)) {
+            $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
         }
 
         if (self::checkStudentAcademicPerformance($stdClass)) {
@@ -200,7 +233,7 @@ class SQLAcademicPerformances {
                     $WHERE[] = "SECTION = 'YEAR'";
                     break;
             }
-            
+
             $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
 
             $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();

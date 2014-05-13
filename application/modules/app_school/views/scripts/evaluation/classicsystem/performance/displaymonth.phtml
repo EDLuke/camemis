@@ -23,6 +23,16 @@ if(!$academicObject) {header("Location: /main/permission/");}
 
 $monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new AcademicPerformances();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setMonthYear($monthyear);
+$evaluation->setSection(1);
+if(!$academicObject->EVALUATION_OPTION){
+    $evaluation->actionDefaultStudentAcademicPerformance("MONTH");
+}
+////////////////////////////////////////////////////////////////////////////////
+
 $setParams = "";
 $setParams .= "&monthyear=".$monthyear."";
 $setParams .= "&academicId=".$this->academicId."";
