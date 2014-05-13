@@ -195,7 +195,7 @@ class SQLEvaluationStudentSubject {
 
         if (isset($stdClass->fourthResult))
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
-        
+
         if (isset($stdClass->studentId)) {
             if ($stdClass->studentId) {
 

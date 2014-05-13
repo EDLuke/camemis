@@ -205,7 +205,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass);
-                $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
+                $data[$i]["RANK"] = $this->displayRank($AVERAGE, $scoreList);
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
 
@@ -385,7 +385,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
 
                 $AVERAGE = $this->getAverageYearStudentAcademicPerformance($stdClass);
-                $RANK = getScoreRank($scoreList, $AVERAGE);
+                $RANK = $this->displayRank($AVERAGE, $scoreList);
                 $data[$i]["RANK"] = $RANK ? $RANK : "---";
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT"] = "----";

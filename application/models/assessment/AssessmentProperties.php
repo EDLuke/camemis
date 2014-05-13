@@ -234,6 +234,14 @@ abstract class AssessmentProperties {
         return $this->getCurrentClass()->EVALUATION_OPTION;
     }
 
+    public function displayRank($average, $scoreList) {
+        return is_int($average) ? getScoreRank($scoreList, $average) : "---";
+    }
+
+    public function getSettingQualificationType() {
+        return AcademicDBAccess::findGradeFromId($this->getCurrentClass()->CAMPUS_ID)->QUALIFICATION_TYPE;
+    }
+
 }
 
 ?>

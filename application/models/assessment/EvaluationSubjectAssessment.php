@@ -697,23 +697,21 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         switch ($this->getSettingEvaluationOption()) {
             case self::EVALUATION_OF_ASSIGNMENT:
                 $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignmentByYear($stdClass);
-
-                if (!$COUNT) {
-                    $output = "---";
-                } else {
-                    if ($result == 0) {
-                        $output = 0;
-                    } else {
-                        $output = displayRound($result);
-                    }
-                }
-
                 break;
             case self::EVALUATION_OF_SUBJECT:
-                $output = displayRound($result);
+                $COUNT = SQLEvaluationStudentSubject::checkStudentSubjectEvaluation($stdClass);
                 break;
         }
 
+        if (!$COUNT) {
+            $output = "---";
+        } else {
+            if ($result == 0) {
+                $output = 0;
+            } else {
+                $output = displayRound($result);
+            }
+        }
         return $output;
     }
 
@@ -878,11 +876,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $defaultObject->average = $this->actionValue;
                 break;
             case "ASSESSMENT":
+
                 $defaultObject->assessmentId = $this->actionValue;
+                switch ($this->getSubjectScoreType()) {
+                    case self::SCORE_TYPE_CHAR:
+                        $defaultObject->mappingValue = AssessmentConfig::makeGrade($this->actionValue, "LETTER_GRADE");
+                        break;
+                }
 
                 if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
                     if ($this->getSubjectValue($defaultObject))
-                        $stdClass->mappingValue = $this->getSubjectValue($defaultObject);
+                        $defaultObject->mappingValue = $this->getSubjectValue($defaultObject);
                 }
                 break;
         }
@@ -1155,25 +1159,26 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 if ($studentId) {
 
-                    $actionRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
-                    $assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
-
+                    $stdClass->actionRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
+                    
                     switch ($this->getSubjectScoreType()) {
                         case self::SCORE_NUMBER:
-                            $mappingValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
+                            $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
+                            $stdClass->mappingValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
                             break;
                         case self::SCORE_CHAR:
-                            $mappingValue = isset($entries[$i]["ASSESSMENT"]) ? $entries[$i]["ASSESSMENT"] : "";
+                            switch ($type) {
+                                case "MONTH":
+                                case "TERM":
+                                    $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
+                                    $stdClass->mappingValue = isset($entries[$i]["ASSESSMENT"]) ? $entries[$i]["ASSESSMENT"] : "";
+                                    break;
+                            }
                             break;
                     }
 
                     $stdClass->studentId = $studentId;
-                    $stdClass->actionRank = $actionRank;
-                    $stdClass->assessmentId = $assessmentId;
-                    $stdClass->mappingValue = $mappingValue;
                     $stdClass->section = $section;
-
-                    error_log($stdClass->mappingValue . " Kaom");
 
                     switch ($type) {
                         case "TERM":

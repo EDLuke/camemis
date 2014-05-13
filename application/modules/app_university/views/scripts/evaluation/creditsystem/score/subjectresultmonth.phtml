@@ -1,15 +1,17 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
+// Date: 01.05.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
+
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $DB_ASSIGNMENT = AssignmentDBAccess::getInstance();
@@ -18,11 +20,8 @@ $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
-
-$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
-
-$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
@@ -39,13 +38,12 @@ if(!$academicObject->EVALUATION_OPTION){
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
-$monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
 $TITLE = diplayNameMonthYear($monthyear);
 
-$entries = AssignmentDBAccess::getListAssignmentsToAcademic($academicId, $this->subjectId);
+$entries = AssignmentDBAccess::getListAssignmentsToAcademic($this->academicId, $this->subjectId);
 
 $setParams = "";
-$setParams .="&subjectId=".$subjectObject->ID."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$academicObject->ID."";
 $setParams .="&monthyear=".$monthyear."";
 $setParams .="&section=1";
@@ -91,12 +89,14 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
     $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'STUDENT'");   
     $OBJECT_GRID->addReadField("name: 'RANK'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
-    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     
     if(!$academicObject->EVALUATION_OPTION){
@@ -115,12 +115,12 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
+    
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            
             ////////////////////////////////////////////////////////////////////
             $comboEditor = "
                 new Ext.form.ComboBox({
@@ -144,25 +144,6 @@ Ext.onReady(function() {
                 })
             ";
             
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
-            if(!$academicObject->EVALUATION_OPTION){
-                $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
-            }else{
-                $OBJECT_GRID->addColumn("
-                    header: '<b>".AVERAGE."</b>'
-                    , width: 100
-                    , sortable: true
-                    , align:'right'
-                    , renderer:cssDefault
-                    , dataIndex: 'AVERAGE'
-                    , editor: new Ext.form.NumberField({
-                        allowBlank: false
-                        ,minValue: 0
-                        ,maxValue: '".$evaluation->getSubjectScoreMax()."'
-                        ,name: 'AVERAGE'   
-                    })
-                ");
-            }
             ////////////////////////////////////////////////////////////////////
             break;
         case 2:
@@ -174,7 +155,6 @@ Ext.onReady(function() {
                 $i=0;
                 foreach($scoresEntries as $value){
                     $j = $i+1;
-                    //error_log($value);
                     $gradingObject = AssessmentConfig::getSQLGradingScale(trim($value), 2, $campusObject->QUALIFICATION_TYPE, false);
                     if($gradingObject && trim($value)){
                         $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".trim($value)."'}";
@@ -206,6 +186,7 @@ Ext.onReady(function() {
                     }
                 })
             ";
+            
             ////////////////////////////////////////////////////////////////////
             break;
     }
@@ -218,7 +199,30 @@ Ext.onReady(function() {
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
         , editor: ".$comboEditor."
+        ,filter:{}
     ");
+    
+    if($subjectObject->SCORE_TYPE == 1){
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+        if(!$academicObject->EVALUATION_OPTION){
+            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
+        }else{
+            $OBJECT_GRID->addColumn("
+                header: '<b>".AVERAGE."</b>'
+                , width: 100
+                , sortable: true
+                , align:'right'
+                , renderer:cssDefault
+                , dataIndex: 'AVERAGE'
+                , editor: new Ext.form.NumberField({
+                    allowBlank: false
+                    ,minValue: 0
+                    ,maxValue: '".$evaluation->getSubjectScoreMax()."'
+                    ,name: 'AVERAGE'   
+                })
+            ");
+        }
+    }
     
     if(!$academicObject->EVALUATION_OPTION){
         if($entries){
@@ -301,16 +305,19 @@ Ext.onReady(function() {
     });
     
     <?
-    $SHOW_DETAIL ="{";
-    $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
-    $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
-    $SHOW_DETAIL .=",disabled:false";
-    $SHOW_DETAIL .=",handler: function(){";
-    $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaysemestersubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
-    $SHOW_DETAIL .="}";
-    $SHOW_DETAIL .="}";
     
-    $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+    if(!$academicObject->EVALUATION_OPTION){
+        $SHOW_DETAIL ="{";
+        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
+        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
+        $SHOW_DETAIL .=",disabled:false";
+        $SHOW_DETAIL .=",handler: function(){";
+        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaymonthsubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
+        $SHOW_DETAIL .="}";
+        $SHOW_DETAIL .="}";
+
+        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+    }
     
     $TEACHER_COMMENTS ="{";
     $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";

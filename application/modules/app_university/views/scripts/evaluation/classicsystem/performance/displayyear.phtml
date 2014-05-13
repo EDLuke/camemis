@@ -26,9 +26,7 @@ if(!$academicObject) {header("Location: /main/permission/");}
 $evaluation = new AcademicPerformances();
 $evaluation->setAcademicId($academicObject->ID);
 $evaluation->setSection(3);
-if(!$academicObject->EVALUATION_OPTION){
-    $evaluation->actionDefaultStudentAcademicPerformance("YEAR");
-}
+$evaluation->actionDefaultStudentAcademicPerformance("YEAR");
 ////////////////////////////////////////////////////////////////////////////////
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
