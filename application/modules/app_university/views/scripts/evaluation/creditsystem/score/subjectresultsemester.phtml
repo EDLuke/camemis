@@ -233,47 +233,47 @@ Ext.onReady(function() {
     ");
     
     if($academicObject->DISPLAY_MONTH_RESULT){
-        if($subjectObject->SCORE_TYPE == 1){
-            $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'MONTH_RESULT'");
-        }
+        
         if(!$academicObject->EVALUATION_OPTION){
+            if($subjectObject->SCORE_TYPE == 1){
+                $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'MONTH_RESULT'");
+            }
             $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_MONTH'");
         }
     }
         
     if(!$academicObject->EVALUATION_OPTION){
         $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".constant($term).")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_TERM'");
-    }
-    
-    if($subjectObject->SCORE_TYPE == 1){
-        switch($term){
-            case "FIRST_SEMESTER":
-                $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "SECOND_SEMESTER":
-                $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "FIRST_TERM":
-                $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "SECOND_TERM":
-                $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "THIRD_TERM":
-                $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "FIRST_QUARTER":
-                $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "SECOND_QUARTER":
-                $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "THIRD_QUARTER":
-                $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
-            case "FOURTH_QUARTER":
-                $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
-                break;
+        if($subjectObject->SCORE_TYPE == 1){
+            switch($term){
+                case "FIRST_SEMESTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "SECOND_SEMESTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "FIRST_TERM":
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "SECOND_TERM":
+                    $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "THIRD_TERM":
+                    $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "FIRST_QUARTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "SECOND_QUARTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "THIRD_QUARTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+                case "FOURTH_QUARTER":
+                    $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'TERM_RESULT'");
+                    break;
+            }
         }
     }
     

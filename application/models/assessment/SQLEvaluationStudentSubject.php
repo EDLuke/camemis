@@ -161,9 +161,12 @@ class SQLEvaluationStudentSubject {
 
     public static function setActionStudentSubjectEvaluation($stdClass) {
 
-        if (isset($stdClass->actionValue)) {
-            if ($stdClass->actionValue)
-                $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->actionValue;
+        if (isset($stdClass->average)) {
+            $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
+        }
+
+        if (isset($stdClass->mappingValue)) {
+            $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->mappingValue;
         }
 
         if (isset($stdClass->assessmentId))

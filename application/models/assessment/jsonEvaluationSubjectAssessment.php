@@ -50,14 +50,14 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         if (isset($params["id"]))
             $this->studentId = $params["id"];
 
-        if (isset($params["field"]))
-            $this->actionField = addText($params["field"]);
-
         if (isset($params["newValue"]))
             $this->actionValue = addText($params["newValue"]);
 
         if (isset($params["section"]))
             $this->section = $params["section"];
+        
+        if (isset($params["field"]))
+            $this->actionField = $params["field"];
 
         if (isset($params["MODIFY_DATE"]))
             $this->modify_date = $params["MODIFY_DATE"];

@@ -202,7 +202,7 @@ class CamemisGrid {
     public function renderJS() {
 
         $js = "";
-
+        $js .= "var replaceValue;";
         $js .= "Ext.ns('Extensive.grid');";
         $js .= $this->setCellRenderers();
         $js .= "Ext.namespace('GRID');";

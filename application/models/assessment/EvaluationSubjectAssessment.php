@@ -686,7 +686,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function averageMonthSubjectResult($stdClass, $withFormat = false) {
-        
+
         $COUNT = "";
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 
@@ -700,12 +700,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         } else {
             $output = $result;
         }
-        
+
         return $output;
     }
 
     public function averageAllMonthsSubjectResult($stdClass, $withFormat = false) {
-        
+
         $COUNT = "";
         $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
 
@@ -836,66 +836,77 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "month" => $this->getMonth()
                     , "year" => $this->getYear()
                     , "term" => $this->term
-                    , "assessmentId" => $this->actionValue
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "educationSystem" => $this->getEducationSystem()
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
+        switch ($this->actionField) {
+            case "AVERAGE":
+                $defaultObject->average = $this->actionValue;
+                break;
+            case "ASSESSMENT":
+                $defaultObject->assessmentId = $this->actionValue;
+                if (!$this->getSettingEvaluationOption) {
+                    if ($this->getSubjectValue($defaultObject))
+                        $stdClass->mappingValue = $this->getSubjectValue($defaultObject);
+                }
+                break;
+        }
+
         $stdClass = $defaultObject;
-        $stdClass->actionValue = $this->getSubjectValue($defaultObject);
 
         return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
     }
 
-    public function actionPublishSubjectAssessment() {
-
-        $data = array(
-            "academicId" => $this->academicId
-            , "section" => $this->getSection()
-            , "subjectId" => $this->subjectId
-            , "scoreType" => $this->getSubjectScoreType()
-            , "month" => $this->getMonth()
-            , "year" => $this->getYear()
-            , "term" => $this->term
-            , "actionField" => "SUBJECT_VALUE"
-            , "schoolyearId" => $this->getSchoolyearId()
-            , "evaluationType" => $this->getSettingEvaluationType()
-            , "educationSystem" => $this->getEducationSystem()
-        );
-
-        switch ($this->getSection()) {
-            case "MONTH":
-                $result = $this->getSubjectMonthResult();
-                break;
-            case "TERM":
-            case "QUARTER":
-            case "SEMESTER":
-                $result = $this->getSubjectTermResult();
-                break;
-            case "YEAR":
-                $result = $this->getSubjectYearResult();
-                break;
-        }
-
-        for ($i = 0; $i <= count($result); $i++) {
-
-            $data["studentId"] = isset($result[$i]["ID"]) ? $result[$i]["ID"] : "";
-            $data["actionRank"] = isset($result[$i]["RANK"]) ? $result[$i]["RANK"] : "";
-            $data["assessmentId"] = isset($result[$i]["ASSESSMENT_ID"]) ? $result[$i]["ASSESSMENT_ID"] : "";
-
-            switch ($this->getSubjectScoreType()) {
-                case self::SCORE_NUMBER:
-                    $data["actionValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
-                    break;
-                case self::SCORE_CHAR:
-                    $data["actionValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
-                    break;
-            }
-
-            SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation((object) $data);
-        }
-    }
+//    public function actionPublishSubjectAssessment() {
+//
+//        $data = array(
+//            "academicId" => $this->academicId
+//            , "section" => $this->getSection()
+//            , "subjectId" => $this->subjectId
+//            , "scoreType" => $this->getSubjectScoreType()
+//            , "month" => $this->getMonth()
+//            , "year" => $this->getYear()
+//            , "term" => $this->term
+//            , "actionField" => "SUBJECT_VALUE"
+//            , "schoolyearId" => $this->getSchoolyearId()
+//            , "evaluationType" => $this->getSettingEvaluationType()
+//            , "educationSystem" => $this->getEducationSystem()
+//        );
+//
+//        switch ($this->getSection()) {
+//            case "MONTH":
+//                $result = $this->getSubjectMonthResult();
+//                break;
+//            case "TERM":
+//            case "QUARTER":
+//            case "SEMESTER":
+//                $result = $this->getSubjectTermResult();
+//                break;
+//            case "YEAR":
+//                $result = $this->getSubjectYearResult();
+//                break;
+//        }
+//
+//        for ($i = 0; $i <= count($result); $i++) {
+//
+//            $data["studentId"] = isset($result[$i]["ID"]) ? $result[$i]["ID"] : "";
+//            $data["actionRank"] = isset($result[$i]["RANK"]) ? $result[$i]["RANK"] : "";
+//            $data["assessmentId"] = isset($result[$i]["ASSESSMENT_ID"]) ? $result[$i]["ASSESSMENT_ID"] : "";
+//
+//            switch ($this->getSubjectScoreType()) {
+//                case self::SCORE_NUMBER:
+//                    $data["actionValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
+//                    break;
+//                case self::SCORE_CHAR:
+//                    $data["actionValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
+//                    break;
+//            }
+//
+//            SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation((object) $data);
+//        }
+//    }
 
     public function getSubjectValue($stdClass) {
 
