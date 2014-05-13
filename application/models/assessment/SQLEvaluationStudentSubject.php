@@ -51,13 +51,17 @@ class SQLEvaluationStudentSubject {
                     , 'FOURTH_RESULT'
                 );
 
-                switch ($stdClass->scoreType) {
-                    case 1:
-                        $SELECTION_B = array('DESCRIPTION AS GRADING');
-                        break;
-                    case 2:
-                        $SELECTION_B = array('LETTER_GRADE AS GRADING');
-                        break;
+                if (isset($stdClass->scoreType)) {
+                    switch ($stdClass->scoreType) {
+                        case 1:
+                            $SELECTION_B = array('DESCRIPTION AS GRADING');
+                            break;
+                        case 2:
+                            $SELECTION_B = array('LETTER_GRADE AS GRADING');
+                            break;
+                    }
+                } else {
+                    $SELECTION_B = array('DESCRIPTION AS GRADING');
                 }
 
                 $SQL = self::dbAccess()->select();
@@ -96,8 +100,8 @@ class SQLEvaluationStudentSubject {
                 if ($result) {
                     $data = array(
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
-                        , 'RANK' => $result->RANK?$result->RANK:"---"
-                        , 'GRADING' => $result->GRADING?$result->GRADING:"---"
+                        , 'RANK' => $result->RANK ? $result->RANK : "---"
+                        , 'GRADING' => $result->GRADING ? $result->GRADING : "---"
                         , 'ASSESSMENT_ID' => $result->ASSESSMENT_ID
                         , 'TEACHER_COMMENT' => $result->TEACHER_COMMENT
                         , 'MONTH_RESULT' => $result->MONTH_RESULT

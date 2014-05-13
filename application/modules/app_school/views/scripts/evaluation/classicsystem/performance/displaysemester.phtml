@@ -21,33 +21,45 @@ $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
+switch($this->term){
+    case "FIRST_SEMESTER":
+    case "SECOND_SEMESTER":
+        $section ="2";
+    break;
+    case "FIRST_TERM":
+    case "SECOND_TERM":
+    case "THIRD_TERM":
+        $section ="4";
+    break;
+    case "FIRST_QUARTER":
+    case "SECOND_QUARTER":
+    case "THIRD_QUARTER":
+    case "FOURTH_QUARTER":
+        $section ="5";
+    break;
+}
+
+
 if(!$academicObject) {header("Location: /main/permission/");}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new AcademicPerformances();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setTerm($this->term);
+$evaluation->setSection($section);
+if(!$academicObject->EVALUATION_OPTION){
+    $evaluation->actionDefaultStudentAcademicPerformance("TERM");
+}
+////////////////////////////////////////////////////////////////////////////////
 
 $entries = GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
 
 $setParams = "";
 $setParams .= "&academicId=".$this->academicId."";
 $setParams .= "&term=".$this->term."";
-
-switch($this->term){
-    case "FIRST_SEMESTER":
-    case "SECOND_SEMESTER":
-        $setParams .="&section=2";
-    break;
-    case "FIRST_TERM":
-    case "SECOND_TERM":
-    case "THIRD_TERM":
-        $setParams .="&section=4";
-    break;
-    case "FIRST_QUARTER":
-    case "SECOND_QUARTER":
-    case "THIRD_QUARTER":
-    case "FOURTH_QUARTER":
-        $setParams .="&section=5";
-    break;
-}
+$setParams .="&section=".$section."";
 
 ?>
 <style>
@@ -194,11 +206,11 @@ Ext.onReady(function() {
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentsTermClassPerformance'
+        ,cmd: 'jsonListStudentsTermAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     $OBJECT_GRID->setSaveParams("
-        cmd: 'jsonActionStudentClassPerformance'
+        cmd: 'jsonActionStudentAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
     $OBJECT_GRID->setAftereditCallback("

@@ -713,19 +713,19 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonStudentGradebookYear($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsMonthClassPerformance":
+            case "jsonListStudentsMonthAcademicPerformance":
                 $DB_ACCESS = new jsonAcademicPerformances();
-                $jsondata = $DB_ACCESS->jsonListStudentsMonthClassPerformance($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonListStudentsMonthAcademicPerformance($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsTermClassPerformance":
+            case "jsonListStudentsTermAcademicPerformance":
                 $DB_ACCESS = new jsonAcademicPerformances();
-                $jsondata = $DB_ACCESS->jsonListStudentsTermClassPerformance($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonListStudentsTermAcademicPerformance($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsYearClassPerformance":
+            case "jsonListStudentsYearAcademicPerformance":
                 $DB_ACCESS = new jsonAcademicPerformances();
-                $jsondata = $DB_ACCESS->jsonListStudentsYearClassPerformance($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonListStudentsYearAcademicPerformance($this->REQUEST->getPost());
                 break;
             
 //            ////////////////////////////////////////////////////////////////////
@@ -773,9 +773,9 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonActionStudentSubjectAssessment($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionStudentClassPerformance":
+            case "jsonActionStudentAcademicPerformance":
                 $DB_ACCESS = new jsonAcademicPerformances();
-                $jsondata = $DB_ACCESS->jsonActionStudentClassPerformance($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonActionStudentAcademicPerformance($this->REQUEST->getPost());
                 break;
 
             case "jsonActionPublishSubjectAssessment":

@@ -52,11 +52,11 @@ class jsonAcademicPerformances extends AcademicPerformances {
             $this->section = $params["section"];
     }
 
-    public function jsonListStudentsMonthClassPerformance($encrypParams) {
+    public function jsonListStudentsMonthAcademicPerformance($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getListStudentsMonthClassPerformance();
+        $data = $this->getListStudentsMonthAcademicPerformance();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -71,11 +71,11 @@ class jsonAcademicPerformances extends AcademicPerformances {
         );
     }
 
-    public function jsonListStudentsTermClassPerformance($encrypParams) {
+    public function jsonListStudentsTermAcademicPerformance($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getListStudentsTermClassPerformance();
+        $data = $this->getDisplayListStudentsTermAcademicPerformance();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -90,12 +90,12 @@ class jsonAcademicPerformances extends AcademicPerformances {
         );
     }
 
-    public function jsonListStudentsYearClassPerformance($encrypParams) {
-        
+    public function jsonListStudentsYearAcademicPerformance($encrypParams) {
+
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getListStudentsYearClassPerformance();
+        $data = $this->getDisplayListStudentsYearAcademicPerformance();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -110,11 +110,11 @@ class jsonAcademicPerformances extends AcademicPerformances {
         );
     }
 
-    public function jsonActionStudentClassPerformance($encrypParams) {
+    public function jsonActionStudentAcademicPerformance($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $this->setActionStudentClassPerformance();
+        $this->setActionStudentAcademicPerformance();
 
         return array(
             "success" => true

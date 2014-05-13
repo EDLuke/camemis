@@ -177,12 +177,12 @@ Ext.onReady(function() {
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentsMonthClassPerformance'
+        ,cmd: 'jsonListStudentsMonthAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     
     $OBJECT_GRID->setSaveParams("
-        cmd: 'jsonActionStudentClassPerformance'
+        cmd: 'jsonActionStudentAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
     $OBJECT_GRID->setAftereditCallback("

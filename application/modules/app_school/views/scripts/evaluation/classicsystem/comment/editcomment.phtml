@@ -106,7 +106,7 @@ if ($_POST){
 
     }else{
 
-        SQLAcademicPerformances::getActionStudentClassPerformance($stdClass);
+        SQLAcademicPerformances::getActionStudentAcademicPerformance($stdClass);
     }
 
     header("Location: ".$_SERVER['REQUEST_URI']."");
