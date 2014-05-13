@@ -86,10 +86,6 @@ class SQLEvaluationStudentSubject {
                         if (isset($stdClass->term))
                             $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         break;
-                    case "YEAR":
-                        if (isset($stdClass->year))
-                            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
-                        break;
                 }
 
                 $SQL->where("A.SECTION = '" . $stdClass->section . "'");
@@ -146,10 +142,6 @@ class SQLEvaluationStudentSubject {
                 if (isset($stdClass->term))
                     $SQL->where("TERM = '" . $stdClass->term . "'");
                 break;
-            case "YEAR":
-                if (isset($stdClass->year))
-                    $SQL->where("YEAR = '" . $stdClass->year . "'");
-                break;
         }
 
         $SQL->where("SECTION = '" . $stdClass->section . "'");
@@ -203,7 +195,7 @@ class SQLEvaluationStudentSubject {
 
         if (isset($stdClass->fourthResult))
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
-
+        
         if (isset($stdClass->studentId)) {
             if ($stdClass->studentId) {
 
