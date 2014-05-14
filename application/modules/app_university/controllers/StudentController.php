@@ -455,7 +455,7 @@ class StudentController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
 
     public function traditionalstudentattendanceAction() {
-        UserAuth::actionPermint($this->_request, "STUDENT_ATTENDANCE");
+        //UserAuth::actionPermint($this->_request, "STUDENT_ATTENDANCE");
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
         $this->_helper->viewRenderer("person/traditionalsystem/attendance");

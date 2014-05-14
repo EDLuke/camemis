@@ -55,9 +55,9 @@ Ext.onReady(function() {
     $DATA = array();
     $STORE_SUBJECT = "[";
     if($ENTRIES){
-        $i=1;
+        $i=0;
         $DATA[0] = '';
-        $STORE_SUBJECT .= "['', 'All Subject', 'icon-application_form_magnify']";
+        //$STORE_SUBJECT .= "['', 'All Subject', 'icon-application_form_magnify']";
         foreach($ENTRIES as $value){
 
             if($value->SUBJECT_ID){ 
@@ -126,7 +126,7 @@ Ext.onReady(function() {
             ,id:'content'
             ,activeItem: 0
             ,border: false
-            ,tbar:[
+            ,tbar:['->','-',
                 '<b><?=SUBJECT?>:</b>',{
                 xtype: 'buttongroup' 
                 ,items:<?=$COMBO_SUBJECT;?>

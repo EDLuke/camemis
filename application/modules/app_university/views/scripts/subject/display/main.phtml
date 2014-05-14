@@ -14,6 +14,11 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $setId = isset($_GET["setId"])?$_GET["setId"]:"";
+$tmpArr = explode("-",$setId);
+$academicId = $tmpArr[0];
+$subjectId = $tmpArr[1]; 
+$objectGradeSubject=SubjectDBAccess::getAcademicSubject($subjectId, $academicId);
+$setParams = "target=ACADEMIC_SUBJECT&objectId=".$objectGradeSubject->GRADE_SUBJECT_ID."&academicId=".$academicId."";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -57,15 +62,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         }";
         $PENEL_ITEMS[] = $MATERIALS;
         
-        /*
         $ATTACHMENTS = "{
             title: '".ATTACHMENTS."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataeditor/?setId=".camemisId()."48b544b62de6f".$facette->ID."&object=WuykLjM1VqrQWr35mGZQnVq2M4fJj84AYm1&teacherId=".$objectGrade->TEACHER."'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
         }";
+       
         $PENEL_ITEMS[] = $ATTACHMENTS;
-        */
-        
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         
         $TBAR = "";

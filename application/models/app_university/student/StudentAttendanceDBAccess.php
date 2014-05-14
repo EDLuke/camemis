@@ -1182,7 +1182,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
-        $academicId= isset($params["classId"]) ? addText($params["classId"]) : "";
+        $academicId= isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
