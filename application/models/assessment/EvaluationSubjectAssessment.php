@@ -875,6 +875,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             case "AVERAGE":
                 $defaultObject->average = $this->actionValue;
                 break;
+            case "RANK":
+                $defaultObject->actionRank = $this->actionValue;
+                break;
             case "ASSESSMENT":
 
                 $defaultObject->assessmentId = $this->actionValue;

@@ -297,7 +297,6 @@ $viewportItem = new ViewportItem(
                         {".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
                         ,{".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, false, false,false)."}
-                        ,{".CamemisField::Numberfield("DISTRIBUTION_VALUE","DISTRIBUTION_VALUE", DISTRIBUTION, false,false, false, $HIDDEN, false)."}
                     ]
                 }]
             },{
@@ -337,7 +336,10 @@ $viewportItem = new ViewportItem(
                     ,border: false
                     ,autoHeight:true
                     ,bodyStyle: 'padding:15px'
-                    ,items:[{".CamemisField::Combo('YEAR_RESULT', YEAR_RESULT, $AVERAGE_STORE, false, false, false, false,false)."}]
+                    ,items:[
+                        {".CamemisField::Combo('YEAR_RESULT', YEAR_RESULT, $AVERAGE_STORE, false, false, false, false,false)."}
+                        ,{".CamemisField::Numberfield("DISTRIBUTION_VALUE","DISTRIBUTION_VALUE", DISTRIBUTION, false,false, false, $HIDDEN, false)."}
+                    ]
                 }]
             }]
         }

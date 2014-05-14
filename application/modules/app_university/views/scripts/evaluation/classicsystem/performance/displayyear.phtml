@@ -159,9 +159,6 @@ Ext.onReady(function() {
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
     
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
-    
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
         case "ADMIN":
@@ -175,6 +172,7 @@ Ext.onReady(function() {
                 , dataIndex: 'ASSESSMENT_TOTAL'
                 , renderer:cssDefault
                 , editor: ".$comboEditor."
+                ,filter:{}
             ");
             break;
          case 'STUDENT':
@@ -188,6 +186,25 @@ Ext.onReady(function() {
             ");
             break;  
     }
+    
+    if(!$academicObject->EVALUATION_OPTION){
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+    }else{
+        $OBJECT_GRID->addColumn("
+            header: '<b>".RANK."</b>'
+            , width: 120
+            , align: 'right'
+            , sortable: true
+            , dataIndex: 'RANK'
+            , renderer:cssDefault
+            , editor: new Ext.form.NumberField({
+                allowBlank: false
+                ,name: 'RANK'   
+            })
+            ,filter:{}
+        ");
+    }
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     switch($TERM_NUMBER){
         case 1:

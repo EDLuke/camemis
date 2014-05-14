@@ -219,6 +219,7 @@ Ext.onReady(function() {
                     allowBlank: false
                     ,name: 'RANK'   
                 })
+                ,filter:{}
             ");
             $OBJECT_GRID->addColumn("
                 header: '<b>".AVERAGE."</b>'
@@ -233,6 +234,7 @@ Ext.onReady(function() {
                     ,maxValue: '".$evaluation->getSubjectScoreMax()."'
                     ,name: 'AVERAGE'   
                 })
+                ,filter:{}
             ");
         }
     }

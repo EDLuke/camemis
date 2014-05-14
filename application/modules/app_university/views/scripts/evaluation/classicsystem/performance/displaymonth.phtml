@@ -78,30 +78,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#333;background:#FFF;">' + value + '</div>';
     }
     
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#FFFFC2;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
-    }
-    
     <?
     ////////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -148,12 +124,9 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
-    
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,renderer: cssDefault, dataIndex: 'CODE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150,renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
@@ -181,6 +154,9 @@ Ext.onReady(function() {
             ");
         break;  
     }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     if($entries){
         foreach($entries as $value){
@@ -282,6 +258,7 @@ Ext.onReady(function() {
         echo $js;
     }
     ?>
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?
