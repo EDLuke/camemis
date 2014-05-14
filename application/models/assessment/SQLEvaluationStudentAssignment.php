@@ -207,7 +207,7 @@ class SQLEvaluationStudentAssignment {
             if ($stdClass->include_in_evaluation)
                 $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
         }
-        
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -312,9 +312,9 @@ class SQLEvaluationStudentAssignment {
             if ($stdClass->subjectId)
                 $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
         }
-        
+
         $SQL->group("A.SUBJECT_ID");
-        
+
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -347,15 +347,15 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getActionDeleteAllStudentsTeacherScoreEnter($stdClass) {
-        self::dbAccess()->delete('t_student_assignment'
-                , array(
-            "CLASS_ID='" . $stdClass->academicId . "'"
-            , "SUBJECT_ID='" . $stdClass->subjectId . "'"
-            , "ASSIGNMENT_ID='" . $stdClass->assignmentId . "'"
-            , "TERM='" . $stdClass->term . "'"
-            , "SCORE_DATE='" . $stdClass->date . "'"
-                )
-        );
+
+        $data["CLASS_ID"] = $stdClass->academicId;
+        $data["SUBJECT_ID"] = $stdClass->subjectId;
+        $data["ASSIGNMENT_ID"] = $stdClass->assignmentId;
+        if ($stdClass->term)
+            $data["TERM"] = $stdClass->term;
+        $data["SCORE_DATE"] = $stdClass->date;
+
+        self::dbAccess()->delete('t_student_assignment', $data);
     }
 
     public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
