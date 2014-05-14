@@ -1045,9 +1045,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "date" => $this->date
+                    , "assignmentId" => $this->assignmentId
         );
 
-        SQLEvaluationStudentAssignment::getActionDeleteAllStudentsTeacherScoreEnter();
+        SQLEvaluationStudentAssignment::getActionDeleteAllStudentsTeacherScoreEnter($stdClass);
     }
 
     public function actionDeleteOneStudentTeacherScoreEnter() {
@@ -1163,7 +1166,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 if ($studentId) {
 
                     $stdClass->actionRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
-                    
+
                     switch ($this->getSubjectScoreType()) {
                         case self::SCORE_NUMBER:
                             $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
