@@ -23,8 +23,6 @@ if(!$this->facette) {header("Location: /main/permission/");}
 
 $teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER.$this->objectId;
 $homework_id = $this->facette->HOMEWORK_ID;
-/*if($homework_id == ''){$files = 'upload';$HEIGHT = 350;}
-else{$files = 'download';$HEIGHT = 155;}*/
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -97,17 +95,7 @@ Ext.onReady(function() {
         }]
     }
     ";
-    
-    switch(UserAuth::getUserType()){
-        case "TEACHER":
-        case "INSTRUCTOR":
-            $HEIGHT = $HEIGHT;
-        break;
-        default:
-            $HEIGHT = 400;
-        break;
-    }
-    
+   
     $ATTACHMENTS = "
     {
         title: '".ATTACHMENTS."'

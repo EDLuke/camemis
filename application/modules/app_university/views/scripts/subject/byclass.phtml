@@ -76,20 +76,20 @@ Ext.onReady(function() {
                         $i++;
                     break;
                     case "TEACHER":
-                    case "INSTRUCTOR":   
-                        $DATA[$i] = $value->SUBJECT_ID;
-                        $STORE_SUBJECT .= $i?",":"";
-                        $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
-                        $i++;
+                    case "INSTRUCTOR": 
+                            $DATA[$i] = $value->SUBJECT_ID;
+                            $STORE_SUBJECT .= $i?",":"";
+                            $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
+                            $i++;
                     break;
                 }   
             } 
         }
         $objectId = isset($DATA[0])?$DATA[0]:0;
-        $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/subject/subjectdisplaymain/?setId=".$academicId."-=".$objectId."'})]";
+        $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/subject/subjectdisplaymain/?setId=".$academicId."-".$objectId."'})]";
     }else{
         $SHOW_LAYOUT = "{
-            title:'No data...'
+            title:'".STATUS."'
             ,layout: 'fit'
             ,border: false
             ,contentEl: 'initCenter'
@@ -100,7 +100,7 @@ Ext.onReady(function() {
     $COMBO_SUBJECT = "[{
         xtype:'combo'
         ,id:'COMO_SUBJECT_ID'
-        ,width:280
+        ,width:250
         ,fieldLabel:'IconCombo'
         ,store: new Ext.data.SimpleStore({
             fields: ['comboCode', 'comboName', 'comboIcon'],
@@ -112,7 +112,7 @@ Ext.onReady(function() {
         ,iconClsField: 'comboIcon'
         ,triggerAction: 'all'
         ,mode: 'local'
-        ,value:'".$subjectId."'
+        ,value:'".$objectId."'
     }]";
     
     ?>
@@ -124,7 +124,7 @@ Ext.onReady(function() {
             ,id:'content'
             ,activeItem: 0
             ,border: false
-            ,tbar:[
+            ,tbar:['->','-',
                 '<b><?=SUBJECT?>:</b>',{
                 xtype: 'buttongroup'
                 ,items:<?=$COMBO_SUBJECT;?>

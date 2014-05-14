@@ -16,6 +16,11 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $setId = isset($_GET["setId"])?$_GET["setId"]:"";
 
+$tmpArr = explode("-",$setId);
+$classId = $tmpArr[0];
+$subjectId = $tmpArr[1]; 
+$objectGradeSubject=SubjectDBAccess::getAcademicSubject($subjectId, $classId);
+$setParams = "target=ACADEMIC_SUBJECT&objectId=".$objectGradeSubject->GRADE_SUBJECT_ID."&academicId=".$classId."";
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
@@ -58,15 +63,10 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         }";
         $PENEL_ITEMS[] = $MATERIALS;
 
-        /*$ATTACHMENTS = "{
-            title: '".ATTACHMENTS."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataeditor/?objectId=".$setId."48b544b62de6f".$facette->ID."&object=WuykLjM1VqrQWr35mGZQnVq2M4fJj84AYm1'})]
-        }";*/
         $ATTACHMENTS = "{
             title: '".ATTACHMENTS."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataeditor/?objectId=".$setId."48b544b62de6f&object=WuykLjM1VqrQWr35mGZQnVq2M4fJj84AYm1'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
         }";
         $PENEL_ITEMS[] = $ATTACHMENTS;
 

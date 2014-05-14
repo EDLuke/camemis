@@ -3,19 +3,17 @@
 // @Sea Peng
 // Date: 16.07.2013
 ///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
-require_once 'clients/CamemisGrid.php';
-require_once 'clients/CamemisForm.php';
-require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
 require_once 'utiles/Utiles.php';
 require_once 'models/CAMEMISUploadDBAccess.php';
 require_once 'models/app_university/FileDBAccess.php';
-require_once 'models/UserAuth.php';
 require_once 'models/app_university/student/StudentAdvisoryDBAccess.php';
 require_once 'models/app_university/staff/StaffContractDBAccess.php';
+require_once 'models/app_university/student/StudentPreschoolDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -195,48 +193,46 @@ Ext.onReady(function() {
                     switch(UserAuth::getUserType()){
                     case "ADMIN":
                     case "SUPERADMIN":
-                        if(!$academicId){
-                            $js .=",tbar:[{";
-                            $js .="text: '".UPLOAD."'";
-                            $js .=",iconCls: 'icon-breakpoint_up'";
-                            $js .=",handler: function(){";
-                                $js .="win = new Ext.Window({";
-                                    $js .="title: '".UPLOAD."'";
-                                    $js .=",id: 'myWin'";
-                                    $js .=",width: 350";
-                                    $js .=",height: 150";
-                                    $js .=",modal: true";
-                                    $js .=",layout: 'fit'";
+                        $js .=",tbar:[{";
+                        $js .="text: '".UPLOAD."'";
+                        $js .=",iconCls: 'icon-breakpoint_up'";
+                        $js .=",handler: function(){";
+                            $js .="win = new Ext.Window({";
+                                $js .="title: '".UPLOAD."'";
+                                $js .=",id: 'myWin'";
+                                $js .=",width: 350";
+                                $js .=",height: 150";
+                                $js .=",modal: true";
+                                $js .=",layout: 'fit'";
+                                $js .=",items:[{";
+                                    $js .="layout: 'form'";
+                                    $js .=",border: false";
+                                    $js .=",bodyStyle: 'padding:10px'";
                                     $js .=",items:[{";
-                                        $js .="layout: 'form'";
+                                        $js .="xtype: 'form'";
+                                        $js .=",id: 'UPLOAD_FORM'";
                                         $js .=",border: false";
-                                        $js .=",bodyStyle: 'padding:10px'";
-                                        $js .=",items:[{";
-                                            $js .="xtype: 'form'";
-                                            $js .=",id: 'UPLOAD_FORM'";
-                                            $js .=",border: false";
-                                            $js .=",items: ".$ATTACHMENT_ITEMS."";
-                                        $js .="}]";
+                                        $js .=",items: ".$ATTACHMENT_ITEMS."";
                                     $js .="}]";
-                                    $js .=",tbar:[{";
-                                        $js .="tooltip:'".UPLOAD." (".ATTACHMENT.")'";
-                                        $js .=",iconCls: 'icon-breakpoint_up'";
-                                        $js .=",handler: function(){";
-                                            $js .="uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$template."', '".$academicId."');";
-                                        $js .="}";
-                                    $js .="}]";
-                                    $js .=",buttons:[{";
-                                        $js .="text: '".CLOSE."'";
-                                        $js .=",iconCls:'icon-close'";
-                                        $js .=",handler: function(){";
-                                            $js .="win.close();";
-                                        $js .="}";
-                                    $js .="}]";
-                                $js .="});";
-                                $js .="win.show();";
-                            $js .="}";
-                            $js .="}]";    
-                        }
+                                $js .="}]";
+                                $js .=",tbar:[{";
+                                    $js .="tooltip:'".UPLOAD." (".ATTACHMENT.")'";
+                                    $js .=",iconCls: 'icon-breakpoint_up'";
+                                    $js .=",handler: function(){";
+                                        $js .="uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$template."', '".$academicId."');";
+                                    $js .="}";
+                                $js .="}]";
+                                $js .=",buttons:[{";
+                                    $js .="text: '".CLOSE."'";
+                                    $js .=",iconCls:'icon-close'";
+                                    $js .=",handler: function(){";
+                                        $js .="win.close();";
+                                    $js .="}";
+                                $js .="}]";
+                            $js .="});";
+                            $js .="win.show();";
+                        $js .="}";
+                        $js .="}]"; 
                     break;
                     default:
                         $js .=",tbar:[{";
@@ -362,7 +358,7 @@ Ext.onReady(function() {
     height:135px;
     float:left;
     margin:5px;
-    background:#FFFFFF;
+    background:#FFF;
     padding-top:5px;
     }
 .file_box:hover{
