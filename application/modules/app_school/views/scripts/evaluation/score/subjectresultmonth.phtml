@@ -257,32 +257,29 @@ Ext.onReady(function() {
         }]);
     ");
     
-//    $OBJECT_GRID->addTBarItems("
-//        tbar.add('-',[{
-//            text: '" . PUBLISH_SCORE . "'
-//            ,iconCls:'icon-lightning_add'
-//            ,handler: function(){
-//                Ext.MessageBox.show({
-//                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-//                    progressText: 'Saving...',
-//                    width:300,
-//                    wait:true,
-//                    waitConfig: {interval:200},
-//                    icon:'ext-mb-download'
-//                });
-//                Ext.Ajax.request({
-//                    url:'/evaluation/jsonsave/'
-//                    ,method: 'POST'
-//                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
-//                    ,success: function(response, options) {
-//                        var jsonData = Ext.util.JSON.decode(response.responseText);
-//                        Ext.MessageBox.hide();
-//                    }
-//                    ,failure: function(response, options) {}
-//                });
-//            }
-//        }]);
-//    ");
+    if($academicObject->EVALUATION_OPTION){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-',{
+                text: '" . IMPORT . "'
+                ,disabled: false
+                ,iconCls:'icon-list-items'
+                ,menu:[{
+                    text: '" . EXCEL_TEMPLATE . "'
+                    ,iconCls:'icon-page_excel'
+                    ,disabled:true
+                    ,handler:function(){
+                        window.location='/evaluation/scoreexport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';
+                    }
+                },{
+                    text: '" . IMPORT . "'
+                    ,iconCls:'icon-database_copy'
+                    ,handler:function(){
+                        openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."', 450,300);
+                    }
+                }]
+            }]);
+        ");
+    }
     
     $OBJECT_GRID->baseParams = "
         start:0
