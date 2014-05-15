@@ -278,12 +278,13 @@ Ext.onReady(function() {
             ,iconCls:'icon-list-items'
             ,menu:[{
                 text: '" . EXCEL_TEMPLATE . "'
-                ,disabled: true
                 ,iconCls:'icon-page_excel'
             },{
                 text: '" . IMPORT . "'
-                ,disabled: true
                 ,iconCls:'icon-database_copy'
+                ,handler:function(){
+                    openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."', 450,300);
+                }
             }]
         }]);
     ");

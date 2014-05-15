@@ -1,9 +1,9 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
+// Date: 18.04.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
@@ -281,12 +281,13 @@ Ext.onReady(function() {
             ,iconCls:'icon-list-items'
             ,menu:[{
                 text: '" . EXCEL_TEMPLATE . "'
-                ,disabled: true
                 ,iconCls:'icon-page_excel'
             },{
                 text: '" . IMPORT . "'
-                ,disabled: true
                 ,iconCls:'icon-database_copy'
+                ,handler:function(){
+                    openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."', 450,300);
+                }
             }]
         }]);
     ");

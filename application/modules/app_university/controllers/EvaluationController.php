@@ -1,10 +1,9 @@
 <?php
-
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 21.12.2009
+// Date: 18.04.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
@@ -134,7 +133,7 @@ class EvaluationController extends Zend_Controller_Action {
 
         $this->_helper->viewRenderer('display/gradebookmain');
     }
-    
+
     public function gradebookmonthAction() {
 
         $this->view->academicId = $this->academicId;
@@ -179,7 +178,6 @@ class EvaluationController extends Zend_Controller_Action {
             $this->view->subjectId = $this->classObject->SUBJECT_ID;
         } else {
             $this->view->subjectId = $this->subjectId;
-            
         }
         $this->_helper->viewRenderer('score/subjectscoreenter');
         $this->view->date = $this->date;
@@ -421,6 +419,14 @@ class EvaluationController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('performance/displaymonth');
     }
 
+    public function scoreimportAction() {
+        $this->_helper->viewRenderer('importxls');
+    }
+
+    public function scoreimporttemplateAction() {
+        $this->_helper->viewRenderer('exportxls');
+    }
+    
     public function classperformancesAction() {
 
         //UserAuth::actionPermint($this->_request, "ACADEMIC_PERFORMANCES");
