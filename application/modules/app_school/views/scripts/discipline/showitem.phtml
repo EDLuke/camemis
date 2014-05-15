@@ -106,6 +106,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     start:0
                     ,limit:100
                     ,cmd: 'searchStudent'
+                    ,classId: '".$this->classId."'
                 ";
                 $OBJECT_GRID->isObjectDefaultOnLoad = false;
             break;

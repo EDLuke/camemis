@@ -89,17 +89,20 @@ Ext.onReady(function() {
         }]);
     ");
     
-    if(!$disabled){  
-     $disable_discipline=UserAuth::getACLValue("STUDENT_DISCIPLINE_EDIT_RIGHT")?"false":"true";  
+    if(!$disabled){ 
+      $disciplineParams = "&objectId=new&target=".$this->target."&classId=".$classId;    
+      $disable_discipline=UserAuth::getACLValue("STUDENT_DISCIPLINE_EDIT_RIGHT")?"false":"true";  
         $OBJECT_GRID->addTBarItems("
             tbar.add([{
                 id: 'ADD_ID'
                 ,text: '".DISCIPLINE."'
-                ,hidden:".$disable_discipline."
+                ,hiddend: '".$disable_discipline."'
                 ,iconCls:'icon-application_form_add'
                 ,scope:this
                 ,handler: function(){
-                   clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&objectId=new&target=".$this->target."'); 
+                   
+                   //clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&objectId=new&target=".$this->target."'); 
+                   clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'); 
                 }
             }]);
         ");    
