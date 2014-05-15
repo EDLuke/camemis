@@ -11,11 +11,9 @@ require_once setUserLoacalization();
 
 class ChartController extends Zend_Controller_Action {
 
-    public function init()
-    {
+    public function init() {
 
-        if (!UserAuth::mainidentify())
-        {
+        if (!UserAuth::mainidentify()) {
 
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -27,94 +25,76 @@ class ChartController extends Zend_Controller_Action {
 
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds'))
-        {
+        if ($this->_getParam('camIds')) {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         
     }
 
-    public function studentacademictraditionalAction()
-    {
+    public function studentacademictraditionalAction() {
         
     }
 
-    public function studentacademiccreditAction()
-    {
+    public function studentacademiccreditAction() {
         
     }
 
-    public function studentattendanceAction()
-    {
+    public function studentattendanceAction() {
         
     }
 
-    public function staffattendanceAction()
-    {
+    public function staffattendanceAction() {
         
     }
 
-    public function studentacademictrainingAction()
-    {
+    public function studentacademictrainingAction() {
         
     }
 
-    public function staffadministrationAction()
-    {
+    public function staffadministrationAction() {
         
     }
 
-    public function studentadvisoryAction()
-    {
+    public function studentadvisoryAction() {
         
     }
 
-    public function staffcontractAction()
-    {
+    public function staffcontractAction() {
         
     }
 
-    public function useronlineAction()
-    {
+    public function useronlineAction() {
         
     }
 
-    public function disciplineAction()
-    {
+    public function cumulativelineAction() {
         
     }
 
-    public function facilityAction()
-    {
+    public function facilityAction() {
         
     }
 
-    public function studentcreditinformationAction()
-    {
+    public function studentcreditinformationAction() {
         
     }
 
-    public function studentpreschoolAction()
-    {
+    public function studentpreschoolAction() {
         
     }
 
-    public function studenthealthAction()
-    {
+    public function studenthealthAction() {
         
     }
 
-    public function letterdashboardAction()
-    {
+    public function letterdashboardAction() {
         
     }
 
-    public function studenttraditionalmonthassessmentAction()
-    {
+    public function studenttraditionalmonthassessmentAction() {
         $this->_helper->viewRenderer("traditinalsystem/studentmonthassessment");
     }
 
