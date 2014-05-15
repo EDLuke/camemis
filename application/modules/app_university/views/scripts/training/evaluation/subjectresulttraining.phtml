@@ -1,0 +1,203 @@
+<?
+///////////////////////////////////////////////////////////
+// @chungveng
+// Date: 30-12-2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'models/app_university/training/StudentTrainingDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$STUDENT_ASSIGNMENT = StudentTrainingDBAccess::getInstance(); 
+
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl('/training/jsonload/');
+$OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+
+$subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
+$trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
+
+$STUDENT_ASSIGNMENT->subjectId = $subjectObject->ID;
+$STUDENT_ASSIGNMENT->trainingId = $trainingObject->ID;
+$STUDENT_ASSIGNMENT->trainingObject = $trainingObject; 
+
+$entries = $STUDENT_ASSIGNMENT->listAssignmentsByTraining();
+
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";  
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var monthyear = '';
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#FFFFC2;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 1px;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");   
+    $OBJECT_GRID->addReadField("name: 'RANK'");
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+    $OBJECT_GRID->addReadField("name: 'RANG'");
+    
+ 
+    if($entries){ 
+        foreach($entries as $value){
+            $OBJECT_GRID->addReadField("name: '".$value->ASSIGNMENT_ID."'");
+        }
+    }
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
+   
+    //if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 180, renderer: cssDefault, dataIndex: 'STUDENT'");
+    
+   
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE'");
+    
+    if($entries){     
+        foreach($entries as $value){    
+            //if ($value->INCLUDE_IN_EVALUATION == 1){
+               
+                $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+            //}
+        }
+    }   
+          
+   /* if($entries){
+        foreach($entries as $value){
+            if ($value->INCLUDE_IN_EVALUATION == 0 || $value->INCLUDE_IN_EVALUATION == 1){
+                $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->SHORT)."</b>', width: 130, align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+            }
+        }
+    } */
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '" . REFRESH . "'
+            ,iconCls:'icon-reload'
+            ,handler: function(){
+                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '" . PUBLISH_SCORE . "'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url:'/training/jsonsave/'
+                    ,method: 'POST'
+                    ,params: {cmd: 'jsonActionPublishSubjectAssessmentTraining',section:1,trainingId:'".$this->trainingId."',subjectId:'".$this->subjectId."'}
+                    ,success: function(response, options) {
+                        var jsonData = Ext.util.JSON.decode(response.responseText);
+                        Ext.MessageBox.hide();
+                    }
+                    ,failure: function(response, options) {}
+                });
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,trainingId:'".$trainingId."'
+        ,subjectId:'".$subjectId."'     
+        ,cmd:'jsonSubjectResultTraining'      
+    ";
+                                 
+    $OBJECT_GRID->setSaveParams("
+      cmd:'jsonActionStudentSubjectAssessmentTraining' 
+      ,subjectId:'".$subjectId."'
+      ,trainingId:'".$trainingId."'     
+    ");
+    $OBJECT_GRID->setAftereditCallback("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;      
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>   
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id:'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

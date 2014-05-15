@@ -1,0 +1,703 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ACADEMICDATE");
+$OBJECT_FORM->setLoadUrl('/academicdate/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academicdate/jsonsave/');
+
+$OBJECT_DATA = $this->objectData;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+if($this->facette){
+    if ($this->onlyShow){
+        $collapsed = "true";
+    }else{
+        $collapsed = "false";
+    }
+
+    $status = $this->facette->STATUS;
+    if ($status){
+        $removeStatus = false;
+    }else{
+        $removeStatus = true;
+    }
+}
+
+if ($status){
+    $DISABLED_SCHOOL_YEAR = "true";
+    
+    $DISABLED_FIRST_SEMESTER = "true";
+    $DISABLED_SECOND_SEMESTER = "true";
+    
+    $DISABLED_FIRST_TERM = "true";
+    $DISABLED_SECOND_TERM = "true";
+    $DISABLED_THIRD_TERM = "true";
+    
+    $DISABLED_FIRST_QUARTER = "true";
+    $DISABLED_SECOND_QUARTER = "true";
+    $DISABLED_THIRD_QUARTER = "true";
+    $DISABLED_FOURTH_QUARTER = "true";
+}else{
+    $DISABLED_SCHOOL_YEAR = "false";
+    
+    $DISABLED_FIRST_SEMESTER = "false";
+    $DISABLED_SECOND_SEMESTER = "false";
+    
+    $DISABLED_FIRST_TERM = "false";
+    $DISABLED_SECOND_TERM = "false";
+    $DISABLED_THIRD_TERM = "false";
+    
+    $DISABLED_FIRST_QUARTER = "false";
+    $DISABLED_SECOND_QUARTER = "false";
+    $DISABLED_THIRD_QUARTER = "false";
+    $DISABLED_FOURTH_QUARTER = "false";  
+}
+
+?>
+
+<script>
+var term = 1;
+<?
+camemisPage::ExtformVTypes();
+?>
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+    Ext.form.Field.prototype.msgTarget = 'side';
+    
+    function showWinDateline(actionType){
+            
+        switch(actionType){
+            case 1:
+                var title = '<?=SCHOOL_YEAR?>'
+                var startName = 'START';
+                var endName = 'END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["START"])?$OBJECT_DATA["START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["END"])?$OBJECT_DATA["END"]:"---";?>'
+                break;
+            case 12:
+                var title = '<?=FIRST_SEMESTER?>'
+                var startName = 'SEMESTER1_START';
+                var endName = 'SEMESTER1_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["SEMESTER1_START"])?$OBJECT_DATA["SEMESTER1_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["SEMESTER1_END"])?$OBJECT_DATA["SEMESTER1_END"]:"---";?>'
+                break;
+            case 22:
+                var title = '<?=SECOND_SEMESTER?>'
+                var startName = 'SEMESTER2_START';
+                var endName = 'SEMESTER2_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["SEMESTER2_START"])?$OBJECT_DATA["SEMESTER2_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["SEMESTER2_END"])?$OBJECT_DATA["SEMESTER2_END"]:"---";?>'
+                break;
+            case 13:
+                var title = '<?=FIRST_TERM?>'
+                var startName = 'TERM1_START';
+                var endName = 'TERM1_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["TERM1_START"])?$OBJECT_DATA["TERM1_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["TERM1_END"])?$OBJECT_DATA["TERM1_END"]:"---";?>'
+                break;
+            case 23:
+                var title = '<?=SECOND_TERM?>'
+                var startName = 'TERM2_START';
+                var endName = 'TERM2_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["TERM2_START"])?$OBJECT_DATA["TERM2_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["TERM2_END"])?$OBJECT_DATA["TERM2_END"]:"---";?>'
+                break;
+            case 33:
+                var title = '<?=THIRD_TERM?>'
+                var startName = 'TERM3_START';
+                var endName = 'TERM3_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["TERM3_START"])?$OBJECT_DATA["TERM3_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["TERM3_END"])?$OBJECT_DATA["TERM3_END"]:"---";?>'
+                break;
+            case 14:
+                var title = '<?=FIRST_QUARTER?>'
+                var startName = 'QUARTER1_START';
+                var endName = 'QUARTER1_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["QUARTER1_START"])?$OBJECT_DATA["QUARTER1_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["QUARTER1_END"])?$OBJECT_DATA["QUARTER1_END"]:"---";?>'
+                break;
+            case 24:
+                var title = '<?=SECOND_QUARTER?>'
+                var startName = 'QUARTER2_START';
+                var endName = 'QUARTER2_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["QUARTER2_START"])?$OBJECT_DATA["QUARTER2_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["QUARTER2_END"])?$OBJECT_DATA["QUARTER2_END"]:"---";?>'
+                break;
+            case 34:
+                var title = '<?=THIRD_QUARTER?>'
+                var startName = 'QUARTER3_START';
+                var endName = 'QUARTER3_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["QUARTER3_START"])?$OBJECT_DATA["QUARTER3_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["QUARTER3_END"])?$OBJECT_DATA["QUARTER3_END"]:"---";?>'
+                break;
+            case 44:
+                var title = '<?=FOURTH_QUARTER?>'
+                var startName = 'QUARTER4_START';
+                var endName = 'QUARTER4_END';
+                var valueStartDate = '<?=isset($OBJECT_DATA["QUARTER4_START"])?$OBJECT_DATA["QUARTER4_START"]:"---";?>'
+                var valueEndDate = '<?=isset($OBJECT_DATA["QUARTER4_END"])?$OBJECT_DATA["QUARTER4_END"]:"---";?>'
+                break;
+        }
+
+        myWin = new Ext.Window({
+            layout:'fit'
+            ,title: title
+            ,width: 400
+            ,height: 200
+            ,modal: true
+            ,closeAction:'hide'
+            ,plain: true
+            ,bodyStyle:'padding:5px' 
+            ,items: [{
+                xtype: 'form'
+                ,id: 'DATELINE_FORM'
+                ,labelAlign: 'left'
+                ,items:[{
+                    border: false
+                    ,layout: 'form'
+                    ,bodyStyle:'padding:10px'
+                    ,items:[{
+                        fieldLabel: '<?=START_DATE?>'
+                        ,name: startName
+                        ,xtype: 'datefield'
+                        ,id: startName
+                        ,anchor: '95%'
+                        ,value: valueStartDate
+                        ,format: '<?=setExtDatafieldFormat()?>'
+                        ,allowBlank: true   
+                    },{
+                        fieldLabel: '<?=END_DATE?>'
+                        ,name: endName
+                        ,xtype: 'datefield'
+                        ,id: endName
+                        ,anchor: '95%'
+                        ,value: valueEndDate
+                        ,format: '<?=setExtDatafieldFormat()?>'
+                        ,allowBlank: true   
+                    }]
+                }]
+            }]
+            ,buttons: [{
+                text:'<?=SAVE?>'
+                ,iconCls:'icon-disk'
+                ,handler: function(){
+                    Ext.getCmp('DATELINE_FORM').getForm().submit({
+                        url: '/academicdate/jsonsave/'
+                        ,scope:this
+                        ,success: function(result){
+                            <?=camemisPage::setRequestURI(false)?>
+                        }
+                        ,failure: function(result){}
+                        ,params:{
+                            cmd: 'actionDateline'
+                            ,objectId: '<?=$this->objectId;?>'
+                            ,actionType: actionType
+                        }
+                    });
+                }
+            },{
+                text:'<?=CLOSE?>'
+                ,iconCls:'icon-close'
+                ,handler: function(){
+                    myWin.close();
+                }
+            }]
+        });
+        myWin.show();
+    }
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'updateObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Textfield("NAME","NAME",NAME)."}
+                ,{".CamemisField::ComboSchoolTerm(false, true, false)."}
+                ,{" . CamemisField::Numberfield("SORT", "SORT", SORTKEY, false, false, false) . "}
+            ]
+        }]
+    }
+    ";
+    
+    if($this->facette){
+        if($this->facette->IS_CHILD){
+            $DISABLED_SCHOOL_YEAR = $this->facette->IS_CHILD?'true':'false';
+        }
+    }
+    
+    $SCHOOL_YEAR = "
+    {
+        title: '".SCHOOL_YEAR."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".SCHOOL_YEAR."'
+            ,disabled: ".$DISABLED_SCHOOL_YEAR."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(1);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("START",START_DATE,"".isset($OBJECT_DATA["START"])?$OBJECT_DATA["START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("END",END_DATE,"".isset($OBJECT_DATA["END"])?$OBJECT_DATA["END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $FIRST_SEMESTER = "
+    {
+        title: '".FIRST_SEMESTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".FIRST_SEMESTER."'
+            ,disabled: ".$DISABLED_FIRST_SEMESTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(12);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("SEMESTER1_START",START_DATE,"".isset($OBJECT_DATA["SEMESTER1_START"])?$OBJECT_DATA["SEMESTER1_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("SEMESTER1_END",END_DATE,"".isset($OBJECT_DATA["SEMESTER1_END"])?$OBJECT_DATA["SEMESTER1_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $SECOND_SEMESTER = "
+    {
+        title: '".SECOND_SEMESTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".SECOND_SEMESTER."'
+            ,disabled: ".$DISABLED_SECOND_SEMESTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(22);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("SEMESTER2_START",START_DATE,"<b>".isset($OBJECT_DATA["SEMESTER2_START"])?$OBJECT_DATA["SEMESTER2_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("SEMESTER2_END",END_DATE,"<b>".isset($OBJECT_DATA["SEMESTER2_END"])?$OBJECT_DATA["SEMESTER2_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $FIRST_TERM = "
+    {
+        title: '".FIRST_TERM."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".FIRST_TERM."'
+            ,disabled: ".$DISABLED_FIRST_TERM."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(13);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("TERM1_START",START_DATE,"<b>".isset($OBJECT_DATA["TERM1_START"])?$OBJECT_DATA["TERM1_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("TERM1_END",END_DATE,"<b>".isset($OBJECT_DATA["TERM1_END"])?$OBJECT_DATA["TERM1_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $SECOND_TERM = "
+    {
+        title: '".SECOND_TERM."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".SECOND_TERM."'
+            ,disabled: ".$DISABLED_SECOND_TERM."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(23);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("TERM2_START",START_DATE,"<b>".isset($OBJECT_DATA["TERM2_START"])?$OBJECT_DATA["TERM2_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("TERM2_END",END_DATE,"<b>".isset($OBJECT_DATA["TERM2_END"])?$OBJECT_DATA["TERM2_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $THIRD_TERM = "
+    {
+        title: '".THIRD_TERM."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".THIRD_TERM."'
+            ,disabled: ".$DISABLED_THIRD_TERM."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(33);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("TERM3_START",START_DATE,"<b>".isset($OBJECT_DATA["TERM3_START"])?$OBJECT_DATA["TERM3_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("TERM3_END",END_DATE,"<b>".isset($OBJECT_DATA["TERM3_END"])?$OBJECT_DATA["TERM3_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $FIRST_QUARTER = "
+    {
+        title: '".FIRST_QUARTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".FIRST_QUARTER."'
+            ,disabled: ".$DISABLED_FIRST_QUARTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(14);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("QUARTER1_START",START_DATE,"<b>".isset($OBJECT_DATA["QUARTER1_START"])?$OBJECT_DATA["QUARTER1_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("QUARTER1_END",END_DATE,"<b>".isset($OBJECT_DATA["QUARTER1_END"])?$OBJECT_DATA["QUARTER1_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $SECOND_QUARTER = "
+    {
+        title: '".SECOND_QUARTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".SECOND_QUARTER."'
+            ,disabled: ".$DISABLED_SECOND_QUARTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(24);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("QUARTER2_START",START_DATE,"<b>".isset($OBJECT_DATA["QUARTER2_START"])?$OBJECT_DATA["QUARTER2_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("QUARTER2_END",END_DATE,"<b>".isset($OBJECT_DATA["QUARTER2_END"])?$OBJECT_DATA["QUARTER2_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $THIRD_QUARTER = "
+    {
+        title: '".THIRD_QUARTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".THIRD_QUARTER."'
+            ,disabled: ".$DISABLED_THIRD_QUARTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(34);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("QUARTER3_START",START_DATE,"<b>".isset($OBJECT_DATA["QUARTER3_START"])?$OBJECT_DATA["QUARTER3_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("QUARTER3_END",END_DATE,"<b>".isset($OBJECT_DATA["QUARTER3_END"])?$OBJECT_DATA["QUARTER3_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $FOURTH_QUARTER = "
+    {
+        title: '".FOURTH_QUARTER."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,tbar:['->',{
+            text: '".FOURTH_QUARTER."'
+            ,disabled: ".$DISABLED_FOURTH_QUARTER."
+            ,iconCls:'icon-date_edit'
+            ,handler: function(){
+                showWinDateline(44);
+            }
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("QUARTER4_START",START_DATE,"<b>".isset($OBJECT_DATA["QUARTER4_START"])?$OBJECT_DATA["QUARTER4_START"]:"---"."")."
+            },{
+                ".CamemisField::Displayfield("QUARTER4_END",END_DATE,"<b>".isset($OBJECT_DATA["QUARTER4_END"])?$OBJECT_DATA["QUARTER4_END"]:"---"."")."
+            }]
+        }]
+    }
+    ";
+    
+    $CHOOSE_ITEMS = "[";
+    $CHOOSE_ITEMS .= $DETAIL_INFORMATION;
+    
+    $CHOOSE_ITEMS .= ",".$SCHOOL_YEAR;
+    switch ($this->facette->TERM_NUMBER) {
+        case 1:
+            $CHOOSE_ITEMS .= ",".$FIRST_TERM;
+            $CHOOSE_ITEMS .= ",".$SECOND_TERM;
+            $CHOOSE_ITEMS .= ",".$THIRD_TERM;
+            break;
+        case 2:
+            $CHOOSE_ITEMS .= ",".$FIRST_QUARTER;
+            $CHOOSE_ITEMS .= ",".$SECOND_QUARTER;
+            $CHOOSE_ITEMS .= ",".$THIRD_QUARTER;
+            $CHOOSE_ITEMS .= ",".$FOURTH_QUARTER; 
+            break;
+        default:
+            $CHOOSE_ITEMS .= ",".$FIRST_SEMESTER;
+            $CHOOSE_ITEMS .= ",".$SECOND_SEMESTER;       
+            break;    
+    }
+    
+    $CHOOSE_ITEMS .= "]";
+    
+    $FORM_ITEMS = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:10px'
+        ,items: ".$CHOOSE_ITEMS."
+    ";
+    
+    $OBJECT_FORM->addObjectItems($FORM_ITEMS);
+    
+    if($this->facette){
+        if (!$this->onlyShow){
+            $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+            ");
+        }
+
+        if(!$this->hasChildren){
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+        }
+    }
+    
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EXECUTE_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+            
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeObject'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 170;
+    $OBJECT_FORM->setonEmbeddedEvents("
+        window.parent.Ext.getCmp('TREE.ACADEMICDATE_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('TREE.ACADEMICDATE_LIST_ID').root.expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        window.parent.Ext.getCmp('TREE.ACADEMICDATE_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('TREE.ACADEMICDATE_LIST_ID').root.expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        window.parent.Ext.getCmp('TREE.ACADEMICDATE_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->renderJS();
+    
+    if($this->facette){
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'fit'";
+                $js .= ",title:''";
+                $js .= ",bodyStyle: 'padding:3px;background:".CamemisPage::userBgColor().";'";
+                $js .= ",border: false";
+                $js .= ",items:[{";
+                    $js .= "xtype: 'tabpanel'";
+                    $js .= ",plain:true";
+                    $js .= ",activeTab: 0";
+                    $js .= ",items:[{";
+                        $js .= "title: '".SCHOOL_YEAR."'";
+                        $js .= ",layout:'fit'/*,iconCls: 'icon-tabs'*/";
+                        $js .= ",items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]";
+                    $js .= "},{";
+                        $js .= "title: '".SCHOOL_EVENTS."'";
+                        $js .= ",layout:'fit'/*,iconCls: 'icon-tabs'*/";
+                        $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'SCHOOL_EVENTS', url: '".$this->URL_SCHOOL_EVENT."'})]";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+    }else{
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'fit'";
+                $js .= ",title:''";
+                $js .= ",bodyStyle: 'padding:3px;background:".CamemisPage::userBgColor().";'";
+                $js .= ",border: false";
+                $js .= ",items:[{";
+                    $js .= "xtype: 'tabpanel'";
+                    $js .= ",plain:true";
+                    $js .= ",activeTab: 0";
+                    $js .= ",items:[{";
+                        $js .= "title: '".SCHOOL_YEAR."'";
+                        $js .= ",layout:'fit'/*,iconCls: 'icon-tabs'*/";
+                        $js .= ",items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+    }
+    
+    echo $js;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

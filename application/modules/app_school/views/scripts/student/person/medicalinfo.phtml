@@ -1,0 +1,97 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+require_once 'models/HealthSettingDBAccess.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$entries = HealthSettingDBAccess:: sqlHealthSetting(false, false);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    .x-vr-tab-panel-bwrap {
+        background: none repeat scroll 0 0 <?=CamemisPage::userBgColor();?>;
+        border-left: 1px solid #99BBE8;
+        float: right;
+        padding: 3px;
+    }
+</style>
+<script>
+
+    Ext.onReady(function() {
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        //$params = "objectId=".$this->objectId."";
+
+        $PENEL_ITEMS = Array();
+
+        if($entries){
+            foreach($entries as $value){
+                $params = "objectId=".$this->objectId."";
+                $params .= "&settingId=".$value->ID."";
+                $params .= "&target=dynamic";
+                $url = "/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($params)."";
+                $item = "{
+                    title: '".setShowText($value->NAME)."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: '".$value->ID."', url: '".$url."'})]
+                }";
+                $PENEL_ITEMS[] = $item;
+            }
+        }
+        $params = "objectId=".$this->objectId."";
+        $paramsGrowthChart = $params;
+        $paramsGrowthChart .= "&target=growth_chart";
+        $PENEL_ITEMS[] = "{
+            title: 'Growth Chart'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'GROWTH_CHART', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsGrowthChart)."'})]
+        }";
+
+        $paramsMedicalVisit = $params;
+        $paramsMedicalVisit .= "&target=medical_visit";
+        $PENEL_ITEMS[] = "{
+            title: 'Medical Visit'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'MEDICAL_VISIT', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsMedicalVisit)."'})]
+        }";
+
+        $paramsBMI = $params;
+        $paramsBMI .= "&target=bmi";
+        $PENEL_ITEMS[] = "{
+            title: 'BMI'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'BMI', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsBMI)."'})]
+        }";
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'vrtabpanel'
+                ,activeTab: 0
+                ,tabMarginTop:100
+                ,enableTabScroll:true
+                ,defaults: {autoScroll:true}
+                ,items:<?=$CHOOSE_ITEMS?>
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

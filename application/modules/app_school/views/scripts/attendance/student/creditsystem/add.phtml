@@ -1,0 +1,202 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ATTENDANCE_TYPE");
+$OBJECT_FORM->setSaveUrl("/attendance/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/attendance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+Ext.onReady(function() {
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $entries = AbsentTypeDBAccess::allAbsentType('STUDENT', 2);
+    
+    $data = array();
+    
+    if($entries){
+        $i = 0;
+        foreach($entries as $value){
+            $data[$i] = "[\"$value->ID\",\"$value->NAME\"]";
+            $i++;
+        }
+    }
+    $ABSENT_TYPE_STORE = "[" . implode(",", $data) . "]";
+    $DETAIL_INFORMATION_ITEMS = "[";
+        $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Combo("ABSENT_TYPE", ATTENDANCE_TYPE, $ABSENT_TYPE_STORE,false, false, false)."}";
+    $DETAIL_INFORMATION_ITEMS .= "]";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,frame:false
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#F9F9F9;padding:10px'
+            ,items:$DETAIL_INFORMATION_ITEMS
+        }]
+    }";
+    
+    $ATTENDANCE_DATE = "
+    {
+        title: '".DATE."'
+        ,id:'DOUBLE_DATE_ID'
+        ,autoHeight: true
+        ,frame:false
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#F9F9F9;padding:10px'
+            ,items:[{
+                xtype:'datefield'
+                ,fieldLabel: '".START_DATE."'
+                ,name: 'START_DATE'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,width: 250
+                ,format: '".setExtDatafieldFormat()."'
+                ,allowBlank:false
+            },{
+                xtype:'datefield'
+                ,fieldLabel: '".END_DATE."'
+                ,name: 'END_DATE'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,startDateField: 'START_DATE'
+                ,width: 250
+                ,format: '".setExtDatafieldFormat()."'
+                ,allowBlank:false 
+            }]
+        }]
+    }";
+    $items = "
+        border: false
+        ,bodyStyle: 'padding:0px'
+        ,id: 'FORM_ITEMS'
+        ,items: [
+            " . $DETAIL_INFORMATION . " 
+            ,".$ATTENDANCE_DATE."
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActonBlockCreditStudentAttendance'
+        ,objectId: '".$this->objectId."'
+        ,studentId:'".$this->studentId."'
+        ,schoolyearId: '".$this->schoolyearId."'
+        ,target: 'general'
+        ,actionType:2
+    ");   
+    
+    /*$OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActonStudentAttendance'
+        ,objectId: '".$this->objectId."'
+        ,studentId:'".$this->studentId."'
+        ,target: 'general'
+        ,actionType:2
+    "); */   
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        if(window.parent.Ext.getCmp('ATTENDANCE_LIST_ID'))
+        window.parent.Ext.getCmp('ATTENDANCE_LIST_ID').store.reload();
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+    ");
+    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

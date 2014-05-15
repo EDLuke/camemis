@@ -1,0 +1,238 @@
+<?
+///////////////////////////////////////////////////////////
+// @chungveng
+// Date: 10.08.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'models/app_school/PersonStatusDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("STAFF");
+
+$OBJECT_FORM->setLoadUrl('/staff/jsonload/');
+$OBJECT_FORM->setSaveUrl('/staff/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+Ext.onReady(function() {
+   
+    Ext.QuickTips.init();
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $TYPE_ITEMS = "
+    {
+        title: '".STATUS."'
+        ,autoHeight: true
+        ,style: 'padding-bottom:5px'
+        ,bodyStyle: 'background:#FFF;padding:10px'
+        ,width: 500
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF;padding:3px'
+            ,items: [{".CamemisField::Combo("STAFF_STATUS", STATUS, PersonStatusDBAccess::allPersonStatusComboData('STAFF',true),false, false, false)."}]
+        }]
+    }
+    ";
+    
+    $SINGLE_START_DATE_ITEMS = "
+    {
+        title: '".DATE."'
+        ,hidden:true
+        ,id: 'SINGLE_START_DATE_ITEMS'
+        ,style: 'padding-bottom:5px'
+        ,bodyStyle: 'background:#FFF;padding:10px'
+        ,width: 500
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF;padding:3px'
+            ,items: [{
+                name: 'SINGLE_START_DATE'
+                ,width: 250
+                ,fieldLabel: '" . DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'SINGLE_START_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+                ,minValue: '".showCurrentDBDate()."'
+                ,value: '".showCurrentDBDate()."'
+            }]
+        }]
+    }
+    ";
+    
+    $DATE_ITEMS = "
+    {
+        title: '".DATE."'
+        ,hidden:true
+        ,id: 'DATE_ITEMS'
+        ,style: 'padding-bottom:5px'
+        ,bodyStyle: 'background:#FFF;padding:10px'
+        ,width: 500
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF;padding:3px'
+            ,items: [{
+                name: 'START_DATE'
+                ,width: 250
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+                ,minValue: '".showCurrentDBDate()."'
+                ,value: '".showCurrentDBDate()."'
+            },{
+                name: 'END_DATE'
+                ,width: 250
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+                ,value: ''
+            }]
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom:5px'
+        ,width: 500
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF;padding:3px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", false,200)."}]
+        }]
+    }
+    ";
+    
+    $ITEMS = "[";
+    $ITEMS .=$TYPE_ITEMS;
+    $ITEMS .=",".$SINGLE_START_DATE_ITEMS;
+    $ITEMS .=",".$DATE_ITEMS;
+    $ITEMS .=",".$DESCRIPTION;
+    $ITEMS .= "]";
+    $formItems = "
+        border: false
+        ,layout: 'form'
+        ,bodyStyle: 'padding:10px'
+        ,items: ".$ITEMS."
+    ";
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('CONTENT').getLayout().setActiveItem(0);}
+    ");
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActionSaveLastStaffStatus'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setonEmbeddedEvents("
+        window.parent.location='/staff/staff/?objectId=".$this->objectId."';
+    ");
+    
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id: 'content'
+            ,title: ''
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+    Ext.getCmp('STAFF_STATUS_ID').on('select', function() {
+        selected = Ext.getCmp('STAFF_STATUS_ID').getValue().split("|");
+        statusId = selected[0];
+        displayData = selected[1];
+        switch(displayData){
+            case '1':
+                Ext.getCmp('SINGLE_START_DATE_ITEMS').show();
+                Ext.getCmp('DATE_ITEMS').hide();
+                if(choosedId){
+                    if(statusId!=choosedId){
+                        Ext.getCmp('SINGLE_START_DATE').setValue('');
+                    }
+                }
+            break;
+            case '2':
+                Ext.getCmp('SINGLE_START_DATE_ITEMS').hide();
+                Ext.getCmp('DATE_ITEMS').show();
+            break;
+        }
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,134 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 31.08.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("FACILITY", "LIST");
+$OBJECT_TREE->setURL("/facility/jsontree/");
+$OBJECT_TREE->setSaveUrl("/facility/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $OBJECT_TREE->setBaseParams("
+        cmd:'jsonTreeAllFacilityType'
+    ");
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $OBJECT_TREE->addTBarItems("
+        id: 'ADD_ID'
+        ,scope:this
+        ,text:'".ADD_A_NEW_ITEM."'
+        ,tooltip:'".ADD_A_NEW_ITEM."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){
+            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_MANAGE_TYPE."&objectId=new&parentId=0');
+        }
+    ");
+    
+    $OBJECT_TREE->isTreeExpand=true; 
+    $OBJECT_TREE->renderJS();
+    
+    $VIEWPORT ="";
+    $VIEWPORT .="viewport = new Ext.Viewport({";
+        $VIEWPORT .="layout: 'fit'";
+        $VIEWPORT .=",border: false";
+        $VIEWPORT .=",items:[{";
+            $VIEWPORT .="layout:'border'";
+            $VIEWPORT .=",border: false";
+            $VIEWPORT .=",defaults: {";
+                $VIEWPORT .="collapsible: true";
+                $VIEWPORT .=",split: true";
+            $VIEWPORT .="}";
+            $VIEWPORT .=",items: [{";
+                   $VIEWPORT .="region:'west'";
+                   $VIEWPORT .=",title:''";
+                $VIEWPORT .=",margins: '3 0 3 3'";
+                $VIEWPORT .=",cmargins: '3 3 3 3'";
+                $VIEWPORT .=",width:350";
+                $VIEWPORT .=",minSize:350";
+                $VIEWPORT .=",maxSize:350";
+                $VIEWPORT .=",layout: 'fit'";
+                $VIEWPORT .=",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
+            $VIEWPORT .="},{";
+                   $VIEWPORT .="collapsible: false";
+                $VIEWPORT .=",id: 'center'";
+                $VIEWPORT .=",region:'center'";
+                $VIEWPORT .=",margins: '3 3 3 0'";
+                $VIEWPORT .=",layout: 'card'";
+                $VIEWPORT .=",activeItem: 0";
+                $VIEWPORT .=",items: [{";
+                    $VIEWPORT .="border: false";
+                    $VIEWPORT .=",layout: 'anchor'";
+                    $VIEWPORT .=",bodyStyle: 'background:#FFFFFF; padding:25px;'";
+                    $VIEWPORT .=",items: [{";
+                        $VIEWPORT .="title: ''";
+                        $VIEWPORT .=",height:60";
+                        $VIEWPORT .=",width:500";
+                        $VIEWPORT .=",bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'";
+                        $VIEWPORT .=",html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'";
+                    $VIEWPORT .="}]";
+                $VIEWPORT .="}]";
+            $VIEWPORT .="}]";
+        $VIEWPORT .="}]";
+    $VIEWPORT .="});";
+     
+    $JS_EVENT="";
+    $JS_EVENT.="var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+    $JS_EVENT.="myTree.on('click', function(node, e){";
+
+    $JS_EVENT.="parentId = node.attributes.parent;";
+
+    $JS_EVENT.="if(!node.isLeaf()){ ";
+    $JS_EVENT.="}else{   ";
+    $JS_EVENT.="} ";
+
+    $JS_EVENT.="var contextMenu = new Ext.menu.Menu({";
+     $JS_EVENT.="items: [{";
+         $JS_EVENT.="text: '".SHOW_DETAIL."' ";
+         $JS_EVENT.=",iconCls:'icon-application_form_magnify'";
+         $JS_EVENT.=",handler:function(){ ";
+             $JS_EVENT.="clickOpenPage('center','', '".$this->URL_SHOW_MANAGE_TYPE."&objectId='+node.id);";
+         $JS_EVENT.="} ";
+     $JS_EVENT.="},{";
+         $JS_EVENT.="text: '".ADD_A_NEW_ITEM."'";
+         $JS_EVENT.=",iconCls:'icon-application_form_add' ";
+         $JS_EVENT.=",handler: function(){";
+             $JS_EVENT.="clickOpenPage('center','', '".$this->URL_SHOW_MANAGE_TYPE."&objectId=new&parentId=' + node.id);";
+         $JS_EVENT.="}";
+     $JS_EVENT.="}]";
+    $JS_EVENT.="}); ";
+    $JS_EVENT.="e.stopEvent(); ";
+    $JS_EVENT.="contextMenu.showAt(e.xy); ";
+    $JS_EVENT.="});  ";
+
+    echo $VIEWPORT;
+    echo $JS_EVENT;
+    ?>
+    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

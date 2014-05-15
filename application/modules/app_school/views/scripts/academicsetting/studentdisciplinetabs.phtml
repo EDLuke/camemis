@@ -1,0 +1,81 @@
+<?
+///////////////////////////////////////////////////////////
+//@Chung veng 
+//Date: 16.12.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $TRADITIONAL_EDUCATION_SYSTEM = "{
+            title: '".TRADITIONAL_EDUCATION_SYSTEM."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION', url: '/discipline/?key=".camemisId()."&target=general'})]
+        }";
+        
+        if (UserAuth::displayRoleGeneralEducation())
+        $PENEL_ITEMS[] = $TRADITIONAL_EDUCATION_SYSTEM;
+        //@veasna
+        $CREDIT_EDUCATION_SYSTEM = "{
+            title: '".CREDIT_EDUCATION_SYSTEM."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'CREDIT_EDUCATION', url: '/discipline/?key=".camemisId()."&target=credit'})]
+        }";
+        $PENEL_ITEMS[] = $CREDIT_EDUCATION_SYSTEM;
+        ///
+        
+        $TRAINING_PROGRAMS = "{
+            title: '".TRAINING_PROGRAMS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url: '/discipline/?key=".camemisId()."&target=training'})]
+        }";
+        
+        if (UserAuth::displayRoleTrainingEducation())
+        $PENEL_ITEMS[] = $TRAINING_PROGRAMS;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

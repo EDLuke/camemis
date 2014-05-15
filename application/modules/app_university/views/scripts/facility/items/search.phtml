@@ -1,0 +1,237 @@
+<?
+///////////////////////////////////////////////////////////
+// @chungveng
+// Date: 11.26.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("FACILITY", "LIST");
+$OBJECT_GRID->setLoadUrl('/facility/jsonload/');
+$OBJECT_GRID->setSaveUrl('/facility/jsonsave/');
+
+$OBJECT_FORM = new CamemisForm("FACILITY");
+$OBJECT_FORM->setLoadUrl('/facility/jsonload/');
+$OBJECT_FORM->setSaveUrl('/facility/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    var startDate;
+    var endDate;   
+    var name='';
+    var barcode='';
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DATE."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        ");
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DETAIL_INFORMATION."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
+            ,width: 310
+            ,items:[
+                {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("BARCODE", "BARCODE", BARCODE, false, false, false, 150)."}
+            ]
+        ");
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:this.onEmbeddedEvents
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            var _startDate = this.getForm().findField('START_DATE').getValue();
+            var _endDate = this.getForm().findField('END_DATE').getValue();
+            var name = this.getForm().findField('NAME').getValue();
+            var barcode = this.getForm().findField('BARCODE').getValue();
+            if(_startDate){
+                startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
+            }else{
+                startDate = '';
+            }
+
+            if(_endDate){
+                endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
+            }else{
+                endDate = ''; 
+            }
+
+            var alertMsg = '';
+            alertMsg = alertMsg + ' || ".CODE_ID."<br/>' + 
+            alertMsg + ' || ".START_DATE."<br/>' + 
+            alertMsg + ' || ".NAME."<br/>' + 
+            alertMsg + ' || ".BARCODE."<br/>' + 
+            alertMsg + ' || ".END_DATE."<br/>' 
+            ;
+
+            if (_startDate || _endDate || name || barcode) {        
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonSearchFacility'
+                    ,startDate: startDate
+                    ,endDate: endDate
+                    ,name:name
+                    ,barcode:barcode
+                };
+            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.sortInfo = null;
+            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load(); 
+
+            } else {
+                Ext.Msg.show({
+                    title:'".STATUS."'
+                    ,width: '250'
+                    ,icon: Ext.MessageBox.QUESTION
+                    ,msg: '" . PLEASE_SELECT . " <br/><br/>'+ alertMsg
+                    ,buttons: Ext.Msg.OK
+                });  
+            }     
+        ");
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = true;
+        $OBJECT_FORM->renderJS();
+
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");  
+
+        $OBJECT_GRID->addReadField("name: 'NAME', type: 'string'");
+        $OBJECT_GRID->addReadField("name: 'QUANTITY'");
+        $OBJECT_GRID->addReadField("name: 'BARCODE'");
+        $OBJECT_GRID->addReadField("name: 'START_DATE'");
+        $OBJECT_GRID->addReadField("name: 'END_DATE'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', align:'center', width: 250, renderer: renderText, sortable: true, dataIndex: 'NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".BARCODE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'BARCODE'");
+        $OBJECT_GRID->addColumn("header: '<b>".QUANTITY."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'QUANTITY'");
+        $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'START_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
+      
+        $OBJECT_GRID->isGroupingView = false;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,id:'WEST_ID'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 350
+                    ,minSize: 350
+                    ,maxSize: 350
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+                },{
+                    collapsible: false
+                    ,title:'<?=SEARCH_RESULT;?>'
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,cmargins: '3 3 3 3'
+                    ,layout: 'fit'              
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]            
+                }]
+            }]
+        });           
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

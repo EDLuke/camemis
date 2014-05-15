@@ -1,0 +1,105 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+
+$SQL = "
+SELECT 
+DISTINCT 
+A.TRAINING AS TRAINING_ID
+, A.PROGRAM AS PROGRAM_ID
+, B.NAME AS TRAINING
+, C.START_DATE AS START_DATE 
+, C.END_DATE AS END_DATE 
+, D.NAME AS LEVEL 
+, E.NAME AS RROGRAM 
+FROM t_subject_teacher_training AS A 
+LEFT JOIN t_training AS B ON B.ID=A.TRAINING 
+LEFT JOIN t_training AS C ON C.ID=A.TERM 
+LEFT JOIN t_training AS D ON D.ID=A.LEVEL 
+LEFT JOIN t_training AS E ON E.ID=A.PROGRAM 
+WHERE 1=1 AND A.TEACHER='".$this->objectId."' AND E.NAME<>''
+ORDER BY C.START_DATE DESC
+";
+$entries = $DB_ACCESS->fetchAll($SQL);
+
+$DEFAULT_CLASS_ID = "";
+$DATA = array();
+$STORE_ITEMS = "[";
+if($entries){
+    $i=0;
+    foreach($entries as $value){
+        if($value->RROGRAM){
+            $DATA[$i] = $value->TRAINING_ID;
+            $STORE_ITEMS .= $i?",":"";
+            $name = $value->TRAINING." "."(".getShowDate($value->START_DATE)."-".getShowDate($value->END_DATE).")";
+            $STORE_ITEMS .= "[" . $value->TRAINING_ID . ", '" . $name . "']";
+        }
+        
+        $i++;
+    }
+    $DEFAULT_CLASS_ID = isset($DATA[0])?$DATA[0]:0;
+    $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'GRADE_CLASS', url: '/staff/trainingeducationdetail/?objectId=".$this->objectId."&trainingId=".$DEFAULT_CLASS_ID."'})]";
+}else{
+    $SHOW_LAYOUT = "{
+        title:'".STATUS."'
+        ,layout: 'fit'
+        ,border: false
+        ,contentEl: 'initCenter'
+    }";
+}
+$STORE_ITEMS .= "]";
+$COMBO_ITEMS = "[{".CamemisField::Combo('COMO_CLASS','ssss',$STORE_ITEMS, false,$DEFAULT_CLASS_ID,400,false)."}]";
+
+?>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout: 'card'
+            ,id:'content'
+            ,activeItem: 0
+            ,border: false
+            ,tbar:['<b><?=GRADE_CLASS?>:</b> ',{
+                xtype: 'buttongroup'
+                ,items:<?=$COMBO_ITEMS;?>
+            }]
+            ,items:<?=$SHOW_LAYOUT?>
+        }]
+    });
+    var combo = Ext.getCmp('COMO_CLASS_ID');
+    combo.on('select', function() {
+        clickOpenPage('content','','/staff/trainingeducationdetail/?objectId=<?=$this->objectId?>&trainingId='+combo.getValue());
+    });
+});
+</script>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError">No data available .</h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,377 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisPage.php';
+require_once 'models/app_university/student/StudentDBAccess.php';
+require_once 'models/app_university/finance/FeeDBAccess.php';
+require_once 'models/app_university/finance/StudentFeeDBAccess.php';
+require_once 'models/app_university/finance/StudentFeePrepaidDBAccess.php';
+require_once 'models/app_university/finance/IncomeDBAccess.php';
+require_once 'models/app_university/training/StudentTrainingDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$print=isset($_GET['printlast'])?$_GET['printlast']:'';
+$prepay=isset($_GET['feeprepay'])?$_GET['feeprepay']:'';
+if($prepay){
+$objectPrePay=StudentFeePrepaidDBAccess::findFeePrePaymentById($prepay);    
+}
+
+$studentObject = StudentDBAccess::findStudentFromId($this->objectId);
+
+$studentAcademic = StudentAcademicDBAccess::getCurrentStudentAcademic($this->objectId, false, false, false);
+$feeObject = FeeDBAccess::findFeeFromId($this->fee);
+
+$studentFeeObject = StudentFeeDBAccess::getStudentFee($this->objectId, $this->fee);
+
+$LIST_TRAININGS = StudentTrainingDBAccess::getCurrentTrainingsByStudent($this->objectId);
+
+$school = Zend_Registry::get('SCHOOL');
+
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+$SQL = $DB_ACCESS->select();
+$SQL->from("t_income", array('*'));
+$SQL->where("STUDENT = '" . $this->objectId . "'");
+if($prepay){
+$SQL->where("FEE_PREPAYMENT = '" . $prepay . "'");    
+}else{
+$SQL->where("FEE = '" . $this->fee . "'");
+}
+$SQL->where("PAYMENT_REMOVE = '0'");
+if($print){
+$SQL->order("TRANSACTION_NUMBER DESC"); 
+$SQL->limit('1'); 
+}
+$entries = $DB_ACCESS->fetchAll($SQL);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style type="text/css">
+	@media print 
+    {
+        .noPrint 
+        {
+            display:none;            
+           
+        }
+    }
+    table{
+        font-weight:bold; color:#333;
+        border-width: 0px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+    }
+    
+    table th.schoolHeader, table td.schoolHeader{
+        width:220px;
+        background-color:#FFF;
+        border-width: 0px;
+        padding: 6px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+    
+    table th.schoolBlock, table td.schoolBlock{
+        width:220px;
+        background-color:#FFF;
+        border-width: 0px;
+        padding: 6px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+    
+    table th.colHeader, table td.colHeader{
+        width:220px;
+        color:#000000;
+        background-color:#d7e3f3;
+        border-width: 1px;
+        padding: 5px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+
+    table th.colBlock, table td.colBlock{
+        width:220px;
+        background-color:#FFF;
+        border-width: 1px;
+        padding: 5px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+
+</style>
+<a href="JavaScript:window.print();" class="noPrint" style="margin: 5px;"><img class="x-menu-item-icon icon-printer" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" id="ext-gen184"></a>
+<div style='margin:8px;padding:8px;'>
+    <table>
+       
+        <tr>
+            <th colspan="2" class="schoolHeader"><?= $school->NAME; ?></th>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= ADDRESS ?></td>
+            <td class="schoolBlock"><?= $school->ADDRESS?$school->ADDRESS:"---" ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= EMAIL ?></td>
+            <td class="schoolBlock"><?= $school->EMAIL?$school->EMAIL:"---" ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= PHONE ?></td>
+            <td class="schoolBlock"><?= $school->PHONE?$school->PHONE:"---" ?></td>
+        </tr>
+    </table>
+</div>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <th colspan="2" class="colHeader"><?= PERSONAL_INFORMATION; ?></th>
+        </tr>
+        <?
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+        ?>
+            <tr>
+                <td class="colBlock"><?= LASTNAME ?></td>
+                <td class="colBlock"><?= $studentObject->LASTNAME ?></td>
+            </tr>
+            <tr>
+                <td class="colBlock"><?= FIRSTNAME ?></td>
+                <td class="colBlock"><?= $studentObject->FIRSTNAME ?></td>
+            </tr>
+        <?
+        }else{
+        ?>
+            <tr>
+                <td class="colBlock"><?= FIRSTNAME ?></td>
+                <td class="colBlock"><?= $studentObject->FIRSTNAME ?></td>
+            </tr>
+            <tr>
+                <td class="colBlock"><?= LASTNAME ?></td>
+                <td class="colBlock"><?= $studentObject->LASTNAME ?></td>
+            </tr>
+        <?
+        }
+        ?>
+        <tr>
+            <td class="colBlock"><?= GENDER ?></td>
+            <td class="colBlock"><?= getGenderName($studentObject->GENDER) ?></td>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= DATE_BIRTH ?></td>
+            <td class="colBlock"><?= getShowDate($studentObject->DATE_BIRTH) ?></td>
+        </tr>
+    </table>
+</div>
+    <?
+    if($feeObject->TYPE=="GENERAL_EDU"){
+        if($studentAcademic){
+            echo "<div style='margin:8px;padding:8px;'>";
+                echo "<table>";
+                
+               /* echo "<tr>";
+                    echo "<td class='colBlock'>".CAMPUS_INFORMATION."</td>";
+                    echo "<td class='colBlock'>".$studentAcademic->CAMPUS_NAME."</td>";
+                echo "</tr>";   */
+                
+                echo "<tr>";
+                    echo "<td class='colBlock'>".CURRENT_CLASS."</td>";
+                    echo "<td class='colBlock'>".$studentAcademic->ACADEMIC."</td>";
+                echo "</tr>";
+                echo "<tr>";
+                    echo "<td class='colBlock'>".CURRENT_SCHOOL_YEAR."</td>";
+                    echo "<td class='colBlock'>".$studentAcademic->SCHOOLYEAR."</td>";
+                echo "</tr>";
+    
+                echo "</table>"; 
+            echo "</div>";
+        }
+    }
+    
+    if($feeObject->TYPE=="COURSE"){
+        if($LIST_TRAININGS){
+            foreach($LIST_TRAININGS as $value){
+            
+                echo "<div style='margin:8px;padding:8px;'>";
+                    echo "<table>";
+                    
+                    echo "<tr>";
+                        echo "<td class='colBlock'>".PROGRAM."</td>";
+                        echo "<td class='colBlock'>".$value->PROGRAM_NAME."</td>";
+                    echo "</tr>";
+                    
+                    echo "<tr>";
+                        echo "<td class='colBlock'>".LEVEL."</td>";
+                        echo "<td class='colBlock'>".$value->LEVEL_NAME."</td>";
+                    echo "</tr>";
+
+                    echo "<tr>";
+                        echo "<td class='colBlock'>".TERM."</td>";
+                        echo "<td class='colBlock'>".$value->START_DATE." - ".$value->END_DATE."</td>";
+                    echo "</tr>";
+
+                    echo "<tr>";
+                        echo "<td class='colBlock'>".CURRENT_CLASS."</td>";
+                        echo "<td class='colBlock'>".$value->CLASS_NAME."</td>";
+                    echo "</tr>";
+                    
+                    echo "</table>"; 
+                echo "</div>";
+            }
+        }
+    }
+        
+?>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <th colspan="2" class="colHeader"><?= FEES; ?></th>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= FEE_NAME ?></td>
+            <td class="colBlock">(<?= $feeObject->CODE ?>) <?= $feeObject->NAME ?></td>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= AMOUNT ?></td>
+            <td class="colBlock"><?= displayNumberFormat($studentFeeObject->TOTAL_AMOUNT) ?> <?= Zend_Registry::get('SCHOOL')->CURRENCY ?></td>
+        </tr>
+    </table>
+</div>
+
+<?
+    if($prepay){
+?>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <th colspan="2" class="colHeader"><?= PREPAY_FEE; ?></th>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= FEE_NAME ?></td>
+            <td class="colBlock">(<?= $objectPrePay->CODE ?>) <?= $objectPrePay->FEE_NAME ?></td>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= AMOUNT ?></td>
+            <td class="colBlock"><?= displayNumberFormat($objectPrePay->AMOUNT) ?> <?= Zend_Registry::get('SCHOOL')->CURRENCY ?></td>
+        </tr>
+    </table>
+</div>
+<?        
+    }
+    if($entries)
+    foreach($entries as $value){
+		$TOTAL_PAY=$value->AMOUNT;//@veasna
+        echo "<div style='margin:8px;padding:8px;'>";
+            echo "<table>";
+                echo "<tr>";
+                    echo "<td class='colBlock'>".TRANSACTION_NUMBER."</td>";
+                    echo "<td class='colBlock'>".$value->TRANSACTION_NUMBER."</td>";
+                echo "</tr>";
+                echo "<tr>";
+                    echo "<td class='colBlock'>".TRANSACTION_DATE."</td>";
+                    echo "<td class='colBlock'>".getShowDateTime($value->CREATED_DATE)."</td>";
+                echo "</tr>";
+                    
+                
+                if($feeObject->SCHOLARSHIP_A || $feeObject->SCHOLARSHIP_B || $feeObject->SCHOLARSHIP_C || $feeObject->SCHOLARSHIP_D){
+                    $SCHOLARSHIP_INDEX = $value->SCHOLARSHIP_INDEX?$value->SCHOLARSHIP_INDEX:0;
+                    $SCHOLARSHIP_AMOUNT = $value->SCHOLARSHIP_AMOUNT?getNumberFormat($value->SCHOLARSHIP_AMOUNT):0;
+                    echo "<tr>";
+                        echo "<td class='colBlock'>".SCHOLARSHIP ." (".$SCHOLARSHIP_INDEX .")%</td>";
+                        echo "<td class='colBlock'>".displayNumberFormat($SCHOLARSHIP_AMOUNT) ." ". Zend_Registry::get('SCHOOL')->CURRENCY ."</td>";
+                    echo "</tr>";
+                }
+				
+				echo "<tr>";
+                    echo "<td class='colBlock'>".TRANSACTION_AMOUNT."</td>";
+                    echo "<td class='colBlock'>".displayNumberFormat($value->AMOUNT)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                echo "</tr>";
+				
+				//$veasna
+                if($value->SCHOLARSHIP_PERCENT){
+                echo "<tr>";
+                echo "<td class='colBlock'>".SCHOLARSHIP."(".$value->SCHOLARSHIP_PERCENT.")%</td>";
+                echo "<td class='colBlock'>".displayNumberFormat($value->SCHOLARSHIP_AMOUNT)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                echo "</tr>";
+                $FEE_UPDATE=$value->AMOUNT-$value->SCHOLARSHIP_AMOUNT;
+                }else{
+                
+                echo "<tr>";
+                echo "<td class='colBlock'>".DISCOUNT."(".$value->DISCOUNT_PERCENT.")%</td>";
+                echo "<td class='colBlock'>".displayNumberFormat($value->DISCOUNT)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                echo "</tr>";
+                $FEE_UPDATE=$value->AMOUNT-$value->DISCOUNT; 
+                }
+            
+                echo "<tr>";
+                echo "<td class='colBlock'>".AMOUNT."</td>";
+                echo "<td class='colBlock'>".displayNumberFormat($FEE_UPDATE)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                echo "</tr>";
+                if($value->FORMULAR_TAX){
+                    switch ($value->FORMULAR_TAX) {
+                        case 1:
+							$TAX_PERCEN=($value->AMOUNT_TAX*100)/$value->AMOUNT;
+                            $TOTAL_PAY=$value->AMOUNT+$value->AMOUNT_TAX;
+                            echo "<tr>";
+                            echo "<td class='colBlock'>".AMOUNT_TAX."(+".$TAX_PERCEN.")%</td>";
+                            echo "<td class='colBlock'>".displayNumberFormat($value->AMOUNT_TAX)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                            echo "</tr>"; 
+                            break;
+                        case 2:
+                            $TOTAL_PAY=$value->AMOUNT;
+							$TAX_PERCEN=($value->AMOUNT_TAX*100)/$value->AMOUNT;
+                            echo "<tr>";
+                            echo "<td class='colBlock'>".AMOUNT_TAX."(-".$TAX_PERCEN.")%</td>";
+                            echo "<td class='colBlock'>".displayNumberFormat($value->AMOUNT_TAX)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                            echo "</tr>";
+                            break;
+
+                    }
+					      
+                }else{
+					$TOTAL_PAY=$value->AMOUNT;
+					$TAX_PERCEN=0;
+					echo "<tr>";
+                    echo "<td class='colBlock'>".AMOUNT_TAX."(".$TAX_PERCEN.")%</td>";
+                    echo "<td class='colBlock'>".displayNumberFormat($value->AMOUNT_TAX)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                    echo "</tr>";
+				}
+                
+                echo "<tr>";
+                    echo "<td class='colBlock'>".TOTAL_AMOUNT."</td>";
+                    echo "<td class='colBlock'>".displayNumberFormat($value->INCOME_AMOUNT)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+                echo "</tr>";
+                //
+                
+            echo "</table>"; 
+        echo "</div>";
+    }
+?>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <td class="schoolBlock"><?= CREATED_DATE ?></td>
+            <td class="schoolBlock"><?= getShowDateTime(getCurrentDBDateTime()) ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= CASHIER_SIGNATURE ?></td>
+            <td class="schoolBlock">---</td>
+        </tr>
+    </table>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

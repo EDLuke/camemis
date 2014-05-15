@@ -1,0 +1,309 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man Web Application Developer
+// Date: 17.02.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'clients/CamemisWindow.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("LETTER");
+$OBJECT_FORM->setLoadUrl('/letter/jsonload/');
+$OBJECT_FORM->setSaveUrl('/letter/jsonsave/');
+
+$personType = isset($_GET["personType"]) ? $_GET["personType"] : "";
+$personId = isset($_GET["personId"]) ? $_GET["personId"] : "";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    
+	Ext.onReady(function() {
+		<?
+		$CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+		$CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		$OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DATE."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 330
+            ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        ");
+
+		if(!SchoolDBAccess::displayPersonNameInGrid()){
+			$OBJECT_FORM->addObjectItems("
+				xtype:'fieldset'
+				,checkboxToggle:true
+				,title: '".PERSONAL_INFORMATION."'
+				,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+				,width: 310
+				,items:[
+					{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+					,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
+					,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+				]
+			");
+		}else{
+			$OBJECT_FORM->addObjectItems("
+				xtype:'fieldset'
+				,checkboxToggle:true
+				,title: '".PERSONAL_INFORMATION."'
+				,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+				,width: 310
+				,items:[
+					{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+					,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+					,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
+				]
+			");
+		}
+
+		$OBJECT_FORM->addObjectItems("
+			xtype:'fieldset'
+			,checkboxToggle:true
+			,title: '".LETTER_INFORMATION."'
+			,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+			,width: 310
+			,items:[
+				{".CamemisField::comboCamemisTypes("LETTER_TYPE", TYPE, false,150, false)."}
+				,{".CamemisField::Textfield("NUMBER_ID", "NUMBER", NUMBER, false, false, false, 150)."}
+				,{".CamemisField::Textfield("NAME_ID", "NAME", SUBJECT, false, false, false, 150)."}
+			]
+		");
+
+		$OBJECT_FORM->addTBarItems("
+			text: '".RESET."'
+			,iconCls:'icon-arrow_undo'
+			,scope:this
+			,handler: function(){".CamemisPage::setRequestURI()."}
+		");
+
+		$LETTER_MANAGEMENT_READ_RIGHT = UserAuth::getACLValue("LETTER_MANAGEMENT_READ_RIGHT") ? "false" : "true";
+		$OBJECT_FORM->addTBarItems("
+			text: '".FIND."'
+			,disabled: ".$LETTER_MANAGEMENT_READ_RIGHT."
+			,formBind:true
+			,iconCls:'icon-magnifier'
+			,scope:this
+			,handler: function(){
+				Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+				form = this.getForm();
+				var name = form.findField('NAME_ID').getValue();
+				var code = form.findField('CODE_ID').getValue();
+				var number = form.findField('NUMBER_ID').getValue();
+				var firstname = form.findField('FIRSTNAME_ID').getValue();
+				var lastname = form.findField('LASTNAME_ID').getValue();
+				var type = form.findField('LETTER_TYPE').getValue();
+				 var _startDate = this.getForm().findField('START_DATE').getValue(); 
+                if(_startDate){
+                    startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
+                }else{
+                    startDate = '';
+                }
+                
+                var _endDate = this.getForm().findField('END_DATE').getValue(); 
+                if(_endDate){
+                    endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
+                }else{
+                    endDate = ''; 
+                }
+
+				var alertMsg = '';
+				alertMsg = alertMsg + ' || ".CODE_ID."<br/>' +
+				alertMsg + ' || ".LASTNAME."<br/>' +
+				alertMsg + ' || ".FIRSTNAME."<br/>' +
+				alertMsg + ' || ".NAME."<br/>'+
+				alertMsg + ' || ".NUMBER."<br/>'+
+				alertMsg + ' || ".TYPE."<br/>'+
+				alertMsg + ' || ".START_DATE."<br/>' +
+				alertMsg + ' || ".END_DATE."<br/>'
+				;
+
+				if (firstname || lastname || name || number || code || type || startDate || endDate){
+					searchString = 'name=' + name
+					+ '&number=' + number
+					+ '&code=' + code
+					+ '&firstname=' + firstname
+					+ '&lastname=' + lastname
+					+ '&type=' + type
+					+ '&startDate=' + startDate
+					+ '&endDate=' + endDate;
+
+					clickOpenPage('center','', '/letter/searchresult/?'+searchString);
+				} else {
+					Ext.Msg.show({
+						title:'".STATUS."'
+						,width: '250'
+						,icon: Ext.MessageBox.QUESTION
+						,msg: '" . PLEASE_SELECT . " <br/><br/>'+ alertMsg
+						,buttons: Ext.Msg.OK
+					});
+				}
+			}
+		");
+
+		$OBJECT_FORM->addTBarItems("
+			 text: '".ADD_A_NEW_ITEM."'
+            ,tooltip:'".ADD_A_NEW_ITEM."'
+            ,iconCls:'icon-application_form_add'
+            ,menu:[{
+                text: '" . ADD_EXTERNAL_LETTER . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    clickOpenPage('center','".ADD_EXTERNAL_LETTER."', '".$this->URL_SHOWITEM."&objectId=new&typeLetter=external');
+                }
+            },{
+                text: '" . ADD_INTERNAL_LETTER . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    clickOpenPage('center','".ADD_INTERNAL_LETTER."', '".$this->URL_SHOWITEM."&objectId=new&typeLetter=internal');
+                }
+            }]
+		");
+
+		$OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+		$OBJECT_FORM->labelAlign = "left";
+		$OBJECT_FORM->isObjectDefaultOnLoad = false;
+		$OBJECT_FORM->isKeys = true;
+		$OBJECT_FORM->renderJS();
+		?>
+		<?
+		switch (UserAuth::getUserType()):
+			case "SUPERADMIN":
+			case "ADMIN":
+				?>
+				viewport = new Ext.Viewport({
+					layout: 'fit'
+					,border: false
+					,items:[{
+						layout:'border'
+						,border: false
+						,defaults: {
+							collapsible: true
+							,split: true
+						}
+						,items: [{
+							title: '<?=LETTER_SEARCH;?>'
+							,region:'west'
+							,id: 'WEST_ID'
+							,margins: '3 0 3 3'
+							,cmargins: '3 3 3 3'
+							,width: 350
+							,minSize: 350
+							,maxSize: 350
+							,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+						},{
+							title: ''
+							,collapsible: false
+							,id: 'center'
+							,region:'center'
+							,layout: 'card'
+							,activeItem: 0
+							,margins: '3 3 3 0'
+							,items:[{
+								layout:'fit'
+								,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+								,border: false
+								,items:[{
+									xtype: 'tabpanel'
+									,id:'TABPANEL_ID'
+									,tabPosition: 'top'
+									,plain:true
+									,activeTab: 0
+									,enableTabScroll:true
+									,items:[{
+										title:'<?=LETTER_DASHBOARD;?>'
+										,layout:'fit'
+										,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_DASHBOARD', url:'/letter/chartreport/?key=<?=camemisId();?>'})]
+									},{
+										title:'<?=LETTER;?>'
+										,layout:'fit'
+										,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_ID', url:'/letter/searchresult/?key=<?=camemisId();?>'})]
+									}]
+								}]
+							}]
+						}]
+					}]
+				});
+				<?
+				break;
+			case "TEACHER":
+			case "STUDENT":
+			default:
+				?>
+				viewport = new Ext.Viewport({
+					layout: 'fit'
+					,border: false
+					,items: [{
+						title:''
+						,layout:'fit'
+						,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_ID', url:'/letter/searchresult/?key=<?=camemisId();?>&personId=<?=$personId;?>&personType=<?=$personType;?>'})]
+					}]
+				});
+				<?
+				break;
+		endswitch;
+		?>
+	});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

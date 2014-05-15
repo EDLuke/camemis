@@ -1,0 +1,140 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/subject/SubjectTeacherDBAccess.php';
+require_once 'models/app_school/student/StudentAttendanceDBAccess.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$classId = isset($_GET['classId'])?$_GET['classId']:"";
+$subjectId = isset($_GET['subjectId'])?$_GET['subjectId']:"";
+$target = isset($_GET['target'])?$_GET['target']:"";
+
+$error = true;
+$isTraining = false;
+$isGeneral = false;
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$STUDENT_ATTENDANCE_ACCESS = StudentAttendanceDBAccess::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ATTENDANCE_REPORT", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
+$columndata = Utiles::getGridColumnData("ATTENDANCE_REPORT_LIST_ID");
+
+$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
+
+if($error) {header("Location: /main/permission/");}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+
+<script>
+
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+        
+    function renderText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 3px; height:10px;;">' + value + '</div>';
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    
+    $OBJECT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+    ");
+
+    $OBJECT_GRID->addReadField("name: 'STUDENT', type: 'string'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+    $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+    $OBJECT_GRID->addReadField("name: 'GENDER_NAME'");
+    $OBJECT_GRID->addReadField("name: 'START_DATE'");
+    $OBJECT_GRID->addReadField("name: 'END_DATE'");
+    $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
+    $OBJECT_GRID->addReadField("name: 'TRAINING_TERM'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+    $OBJECT_GRID->addReadField("name: 'TRAINING_LEVEL'");
+    $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+    //$OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderText, sortable: true, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 130, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'ABSENT_TYPE'");
+    $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'START_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>' , align:'center', width: 60, hidden:".checkColHidden(5, $columndata).", renderer: renderText, sortable: true, dataIndex: 'COUNT_DATE'");
+    //$OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, sortable: true, dataIndex: 'SUBJECT_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".DESCRIPTION."</b>', width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'DESCRIPTION'");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonShowAllStudentAbsence'
+        ,subjectId: '".$subjectId."'
+        ,classId: '".$classId."'
+        ,schoolyearId: '".$this->schoolyearId."'
+        ,target: '".$target."'
+    ";
+ 
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField = "STUDENT";
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+   
+    ?>
+   viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,xtype: 'panel'
+            ,layout: 'card'
+            ,id: 'content'
+            ,activeItem: 0
+            ,items:[{
+                border: false
+                ,title: ''
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

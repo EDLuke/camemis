@@ -1,0 +1,65 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var roleId;
+Ext.onReady(function() {
+
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    ?>
+    
+    viewport = new Ext.Viewport({
+        border: false
+        ,layout: 'fit'
+        ,items:[{
+            border: false
+            ,id: 'content'
+            ,layout: 'fit'
+            ,tbar:[{                    
+                text: '<?=SYSTEM_USER;?>'
+                /*,iconCls: 'icon-tabs'*/
+                ,handler: function(){
+                    clickOpenPage('content','', '/userrole/');
+                }
+            },'-',{
+                text: '<?=ORGANIZATION_CHART;?>'
+                /*,iconCls: 'icon-tabs'*/
+                ,handler: function(){
+                    clickOpenPage('content','', '/organization/');
+                }
+            }]
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/userrole/'})]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

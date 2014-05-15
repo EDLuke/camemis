@@ -1,0 +1,266 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna
+// Date: 06.07.2013
+//
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$CATEGORY_OBJECT_TREE = new CamemisTree("DATASET", "CATEGORY");
+$CATEGORY_OBJECT_TREE->setURL("/dataset/jsontree/");
+$CATEGORY_OBJECT_TREE->setSaveUrl("/dataset/jsonsave/");
+
+$OBJECT_FORM = new CamemisForm("FINANCE");
+
+$OBJECT_FORM ->setSaveUrl("/finance/jsonsave/");
+$OBJECT_FORM ->setLoadUrl("/finance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$checkload=true;
+if($this->objectId=='new'){
+$checkload=false;    
+}
+ 
+?>
+<script>
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+   
+    
+    $CATEGORY_OBJECT_TREE->isAsyncTreeNode = false;
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $CATEGORY_OBJECT_TREE->setBaseParams("
+        cmd: 'jsonTreeAllIncomeCategories'
+    ");
+    $CATEGORY_OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $CATEGORY_OBJECT_TREE->isOnClickContextMenu = false;
+    $CATEGORY_OBJECT_TREE->isTreeExpand = true;
+    $CATEGORY_OBJECT_TREE->renderJS();
+    
+    $triggerOnClick = "
+        openWinXType('INCOME_CATEGORY','".INCOME_CATEGORY."', '".$CATEGORY_OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+        var myTree = ".$CATEGORY_OBJECT_TREE->ExtgetCmp().";
+        myTree.on('click', function(node, e){   
+            Ext.getCmp('CHOOSE_INCOME_CATEGORY_NAME_ID').setValue(node.text);
+            Ext.getCmp('HIDDEN_INCOME_CATEGORY').setValue(node.id);
+            Ext.getCmp('INCOME_CATEGORY').close();
+        });
+    ";
+    $js = "";
+    $js .= "xtype: 'numberfield'";
+    $js .= ",id: 'DISCOUNT_ID'";
+    $js .= ",name: 'DISCOUNT'";
+    $js .= ",fieldLabel: '" . DISCOUNT . " %'"; 
+    $js .= ",minValue:'0'";
+    $js .= ",maxValue:'100'";  
+    $js .= ",allowBlank: true";
+    $js .= ",decimalPrecision : 2";
+    $js .= ",width:250";
+    
+    $FORM_DETAIL_ITEMS = "[";
+    
+    $FORM_DETAIL_ITEMS .= "{".CamemisField::Textfield("NAME_ID", "NAME", FEE_NAME, true)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Numberfield("FEES","FEES",FEES,true)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Trigger("CHOOSE_INCOME_CATEGORY_NAME",INCOME_CATEGORY,$triggerOnClick, true)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hidden("HIDDEN_INCOME_CATEGORY", false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Datefield("START_DATE",START_DATE,false,false,false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Datefield("END_DATE",END_DATE,false,false,false)."}";
+    
+    $FORM_DETAIL_ITEMS .= "]";
+   
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: ".$FORM_DETAIL_ITEMS."
+        }]
+    }
+    ";
+  
+    $DESCRIPTION = "
+    ,{
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", TEXT, 100)."}]
+        }]
+    }
+    ";
+    
+   $future_term=StudentFeePrepaidDBAccess::findAllTermTraining();
+   $CHECKBOX_DATA = array();
+   if($future_term){
+     foreach($future_term as $values) {
+        $CHECKBOX_DATA[]="{boxLabel: '".$values->START_DATE." - ".$values->END_DATE."', name: 'CHECKBOX_".$values->ID."'}";
+     }  
+   }
+    
+    $SCHOOL_YEAR_INFORMATION = ",{
+    
+     title: '".PROGRAM."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:5px'
+            ,items:[{
+                xtype: 'checkboxgroup'
+                ,fieldLabel: '<b>".TERM."</b>'
+                ,columns: 2
+                ,items: [
+                    ".implode(',',$CHECKBOX_DATA)."
+                ]
+            }]
+        }]
+    }";
+    
+    $FORM_ITEMS = $DETAIL_INFORMATION;
+    $FORM_ITEMS .= $SCHOOL_YEAR_INFORMATION;
+    $FORM_ITEMS .= $DESCRIPTION;
+   
+    
+    $items = "
+        border:false
+        ,id:'FORM_ITEMS'
+        ,items: [".$FORM_ITEMS."]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+   
+        
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            if(window.parent.Ext.getCmp('WEST_ID'))
+            window.parent.Ext.getCmp('WEST_ID').expand(); 
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+    
+    if($this->facette){
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease());
+        if($this->facette->STATUS){
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(false));        
+        }else{
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(true));    
+        }
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    }else{
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());    
+    }
+    
+    $OBJECT_FORM->setLoadParams("      
+        cmd: 'jsonLoadFeePrePayment'
+        ,program:'".$this->program."'
+        ,objectId:'".$this->objectId."'
+    ");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveFeePrePayment'
+        ,program:'".$this->program."'
+        ,objectId:'".$this->objectId."'   
+    ");
+    $OBJECT_FORM->setReleaseParams("
+         cmd: 'jsonReleaseFeePrePayment'
+        ,objectId: '".$this->objectId."'   
+    ");
+    $OBJECT_FORM->setRemoveParams("
+         cmd: 'removeFeePrePayment'
+        ,objectId:'".$this->objectId."'   
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedEvents("
+        if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        var objectId = result.objectId;
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId; 
+        
+    ");
+   
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+    
+     if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        ".camemisPage::setRequestURI()."     
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        
+        if(window.parent.Ext.getCmp('WEST_ID'))
+        window.parent.Ext.getCmp('WEST_ID').expand();
+   
+        if(window.parent.Ext.getCmp('center'))
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);   
+    ");
+    
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = $checkload;
+  
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 160;
+    $OBJECT_FORM->renderJS();
+    
+?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+              xtype: 'panel'
+              ,id: 'panel'
+              ,border: false
+              ,layout: 'card'
+              ,activeItem: 0
+              ,items: [{
+                  layout: 'fit'
+                  ,border: false
+                  ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+              }]
+            }]
+        });      
+    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,291 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 16.07.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/CAMEMISUploadDBAccess.php';
+require_once 'models/app_school/FileDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$ATTACHMENT_ITEMS = "[{".CamemisField::Uploadfield("uploaded_file_1", false)."}]";
+
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$template = "";
+
+switch($this->object){
+    ////////////////////////////////////////////////////////////////////////////
+    //SCHOOL_DOCUMENT
+    ////////////////////////////////////////////////////////////////////////////
+    case "0f414800c09f2c991a4c9ead540e0d54":
+        $template = "SCHOOL_DOCUMENT";
+        $facette = FileDBAccess::findFileFromGuId($this->objectId);
+        $parentId = $facette->PARENT;
+        if(!$facette) {header("Location: /main/permission/");}
+        break;
+    ////////////////////////////////////////////////////////////////////////////
+    //Subject...
+    ////////////////////////////////////////////////////////////////////////////
+    case "f77e4f3523f38c355df0aef968c050bc":
+        $template = "SUBJECT";
+        break;
+    ////////////////////////////////////////////////////////////////////////////
+    //GradeSubject...
+    ////////////////////////////////////////////////////////////////////////////
+    case "WuykLjM1VqrQWr35mGZQnVq2M4fJj84AYm1": 
+        $template = "ACADEMIC_SUBJECT";
+        $setId = isset($_GET['setId'])?addText($_GET['setId']):"";
+        $explode = explode('48b544b62de6f',$setId);
+        $objectId = isset($explode[1])?$explode[1]:"";
+        $this->objectId = $objectId;
+        if(!is_numeric($objectId)) {header("Location: /main/permission/");}
+    break;
+}
+
+if(!$template) {header("Location: /main/permission/");}
+
+$resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template);
+
+?>
+
+<script>
+Ext.onReady(function() {
+    <?
+    camemisPage::showBlob();
+    camemisPage::deleteBlob();
+    camemisPage::uploadBlob();
+    
+    ////////////////////////////////////////////////////////
+    switch($template){
+        case "SCHOOL_DOCUMENT":
+            $tree = "";
+            $tree .= "myTree = window.parent.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');";
+            $tree .= "if (myTree) myNode = myTree.getNodeById('".$parentId."');";
+            $tree .= "if(myNode) if(myNode.parentNode==null){";
+                $tree .= "myTree.root.reload();";
+            $tree .= "}else{";
+                $tree .= "var parentId = myNode.parentNode.id";
+                $tree .= "myPerentNode = myTree.getNodeById(parentId);";
+                $tree .= "if(myNode.isLeaf()){";
+                    $tree .= "if(myPerentNode){";
+                        $tree .= "myPerentNode.reload();";
+                        $tree .= "myPerentNode.expand(true, false);";
+                    $tree .= "}else{";
+                        $tree .= "if (myTree) myTree.root.reload();";
+                    $tree .= "}";
+                $tree .= "}else{";
+                    $tree .= "if (myNode.hasChildNodes()) {";
+                        $tree .= "myNode.reload();";
+                        $tree .= "myNode.expand(true, false);";
+                    $tree .= "}";
+                $tree .= "}";
+            $tree .= "}";
+            
+            print $tree;
+            break;
+        
+    }
+    ///////////////////////////////////////////////////////
+    
+    //@File Action
+    if($resultRows){
+        foreach ($resultRows as $doc){
+            $FILE_SHOW=$doc->FILE_SHOW;
+            $file = "var clickFile = Ext.get('".$FILE_SHOW."');";
+            $file .= "clickFile.on('click', function(event){;";
+                $file .= "var contextMenu = new Ext.menu.Menu({";
+                $file .= "items: [{";
+                    $file .= "text: '".DOWNLOAD."'";
+                    $file .= ",iconCls: 'icon-breakpoint_down'";
+                    $file .= ",handler: function(){";
+                        $file .= "showBlob('".$FILE_SHOW."')";
+                    $file .= "}";
+                $file .= "}";
+                ////////////////////////////////////////////////////////////////
+                if(Zend_Registry::get('USER')->ID == $teacherId)
+                switch(UserAuth::getUserType()){
+                    case 'INSTRUCTOR':
+                    case 'TEACHER':
+                        $file .= ",{"; 
+                        $file .= "text: '".REMOVE."'";
+                        $file .= ",iconCls: 'icon-breakpoint_delete'";
+                        $file .= ",handler: function(){";
+                            $file .= "deleteBlob('".$FILE_SHOW."')"; 
+                        $file .= "}";
+                    $file .= "}"; 
+                    break;
+                }
+                ////////////////////////////////////////////////////////////////
+                $file .= "]"; 
+            $file .= "});";
+            $file .= "event.stopEvent();";
+            $file .= "contextMenu.showAt(event.xy);";
+            $file .= "});";
+            print $file;
+        }  
+    }
+    $js = "";
+    $js .="viewport = new Ext.Viewport({";
+        $js .="layout: 'fit'";
+        $js .=",border: false";
+        $js .=",items:[{";
+            $js .="layout:'fit'";
+            $js .=",border:false";
+            $js .=",items:[{";
+                $js .="title: ''";
+                $js .=",border:false";
+                $js .=",layout: 'fit'";
+                ////////////////////////////////////////////////////////////////
+                if(Zend_Registry::get('USER')->ID == $teacherId)
+                switch(UserAuth::getUserType()){
+                    case 'INSTRUCTOR':
+                    case 'TEACHER':
+                        $js .=",tbar:[{";
+                        $js .="text: '".UPLOAD."'";
+                        $js .=",iconCls: 'icon-breakpoint_up'";
+                        $js .=",handler: function(){";
+                            $js .="win = new Ext.Window({";
+                                $js .="title: '".UPLOAD."'";
+                                $js .=",id: 'myWin'";
+                                $js .=",width: 350";
+                                $js .=",height: 150";
+                                $js .=",modal: true";
+                                $js .=",layout: 'fit'";
+                                $js .=",items:[{";
+                                    $js .="layout: 'form'";
+                                    $js .=",border: false";
+                                    $js .=",bodyStyle: 'padding:10px'";
+                                    $js .=",items:[{";
+                                        $js .="xtype: 'form'";
+                                        $js .=",id: 'UPLOAD_FORM'";
+                                        $js .=",border: false";
+                                        $js .=",items: ".$ATTACHMENT_ITEMS."";
+                                    $js .="}]";
+                                $js .="}]";
+                                $js .=",tbar:[{";
+                                    $js .="tooltip:'".UPLOAD." (".ATTACHMENT.")'";
+                                    $js .=",iconCls: 'icon-breakpoint_up'";
+                                    $js .=",handler: function(){";
+                                        $js .="uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$template."');";
+                                    $js .="}";
+                                $js .="}]";
+                                $js .=",buttons:[{";
+                                    $js .="text: '".CLOSE."'";
+                                    $js .=",iconCls:'icon-close'";
+                                    $js .=",handler: function(){";
+                                        $js .="win.close();";
+                                    $js .="}";
+                                $js .="}]";
+                            $js .="});";
+                            $js .="win.show();";
+                        $js .="}";
+                    $js .="}]";
+                    break;
+                }
+                ////////////////////////////////////////////////////////////////
+                $js .=",items:[{";
+                    $js .="border:false";
+                    $js .=",height:percentHeight(85)";
+                    $js .=",autoScroll: true";
+                    $js .=",contentEl: 'iniTable'";
+                $js .="}]";        
+            $js .="}]";
+        $js .="}]";
+    $js .="});";
+    
+    print $js;
+    ?>
+});
+</script>
+
+<style type="text/css">
+.wrapper{
+    width:100%;
+    margin:0 auto;
+    }
+.content{
+    width:100%;
+    padding:5px;
+    float:left;
+    background:#FFF;
+    }
+.file_box{
+    width:166px;
+    height:135px;
+    float:left;
+    margin:5px;
+    background:#FFFFFF;
+    padding-top:5px;
+    }
+.file_box:hover{
+    background:#d5e2f2;
+    float:left;
+    }
+.file_text{
+    width:100%;
+    float:left;
+    text-align:center;
+    padding-top:3px;
+    }
+.posted{
+    color:#a7a7a7;
+    }
+</style>
+<div id="iniTable" class="x-hidde wrapper">
+    <div class="content">
+        <?
+            if($resultRows){
+                foreach ($resultRows as $value){
+                    $FILE_NAME=$value->FILE_NAME;
+                    $FILE_SIZE=_format_bytes($value->FILE_SIZE);
+                    $FILE_SHOW=$value->FILE_SHOW;
+                    $POST_DATE=getShowDate($value->POST_DATE);
+                    $fileExtension=getFileExtension($value->FILE_NAME);
+                    switch($fileExtension){
+                        case "doc":
+                        case "docx":
+                            $SRC_FILE = "/public/images/ms_word.png";
+                            break;
+                        case "xls":
+                        case "xlsx":
+                            $SRC_FILE = "/public/images/ms_excel.png";
+                            break;
+                        case "ppt":
+                        case "pptx":
+                            $SRC_FILE = "/public/images/ms_powerpoint.png";
+                            break;
+                        case "pdf":
+                            $SRC_FILE = "/public/images/adobe_pdf.png";
+                            break;
+                        default:
+                            $SRC_FILE = "/public/images/file.png";
+                            break;
+                    }
+                    //error_log($fileExtension);
+                    $html = '<div class="file_box">';
+                        $html .= '<div id="'.$FILE_SHOW.'" class="file_text"><img src="'.$SRC_FILE.'"></div>';
+                        $html .= '<div class="file_text">'.$FILE_NAME.'</div>';
+                        $html .= '<div class="file_text posted">Size: '.$FILE_SIZE.'</div>';
+                        $html .= '<div class="file_text posted">Posted: '.$POST_DATE.'</div>';
+                    $html .= '</div>';
+                    
+                    echo $html;
+                }  
+            }
+        ?>
+        
+    </div>
+</div>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

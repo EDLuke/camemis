@@ -1,0 +1,102 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.04.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("FACILITY", "LIST");
+$OBJECT_GRID->setLoadUrl('/facility/jsonload/');
+$OBJECT_GRID->setSaveUrl('facility/jsonsave/');
+$columndata = Utiles::getGridColumnData("FACILITY_LIST_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    
+    function cssText(value, metadata, record){
+        return '<div style="white-space:normal;font-weight:bold; color:#333; padding: 5px; height: 15px;;">' + value + '</div>';
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'REFERENCE_NUMBER'");
+    $OBJECT_GRID->addReadField("name: 'PERSON'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+    $OBJECT_GRID->addReadField("name: 'QUANTITY'");
+    $OBJECT_GRID->addReadField("name: 'ISSUED_BY'");
+    $OBJECT_GRID->addReadField("name: 'ISSUED_DATE'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'left', renderer: cssText, width:100, hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'STATUS'");
+    $OBJECT_GRID->addColumn("header: '<b>".REFERENCE_NUMBER."</b>', align:'left', renderer: cssText, width:150, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'REFERENCE_NUMBER'");
+    $OBJECT_GRID->addColumn("header: '<b>Person</b>', align:'center', renderer: cssText, width:150, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'PERSON'");
+    $OBJECT_GRID->addColumn("header: '<b>".QUANTITY."</b>', align:'left', renderer: cssText, width:150, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'QUANTITY'");
+    $OBJECT_GRID->addColumn("header: '<b>Issued by</b>', align:'left', renderer: cssText, width: 150, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'ISSUED_BY'");
+    $OBJECT_GRID->addColumn("header: '<b>Issued Date</b>', align:'left', renderer: cssText, width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'ISSUED_DATE'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text: '" . CANCEL . "'
+            ,id: 'CANCEL_ID'
+            ,iconCls:'icon-cancel'
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                Ext.getCmp('WEST_ID').collapse();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->isObjectDefaultOnLoad = false;
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonAllCheckInItems'
+    ";
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+    
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->objectTitle = false;
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    
+    viewport = new Ext.Viewport({
+        border: false
+        ,layout: 'fit'
+        ,items:[{
+            border: false
+            ,id: 'VIEWPORT_CONTENT'
+            ,layout: 'fit'
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+    
+    Ext.getCmp('FACILITY_LIST_ID').on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        //var clickId = record.data.ID;
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

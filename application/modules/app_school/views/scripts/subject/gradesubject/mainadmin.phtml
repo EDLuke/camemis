@@ -1,0 +1,139 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+
+$classObject = AcademicDBAccess::findGradeFromId($classId);
+if(!$classObject) {header("Location: /main/permission/");}
+
+$gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
+    false
+    , $classObject->GRADE_ID
+    , $subjectId
+    , $classObject->SCHOOL_YEAR
+    , $classId
+);
+
+if(!$gradeSubjectObject) {header("Location: /main/permission/");}
+
+$gradeSubjectId = $gradeSubjectObject->ID;
+
+$objectGrade = SubjectTeacherDBAccess::jsonLoadTeachersBySubjectID($gradeSubjectObject->ID,$subjectId,$classId);
+
+if(!$objectGrade) {header("Location: /main/permission/");}
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $setParams1 = "objectId=".$gradeSubjectId."&field=GOALS&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $GOALS = "{
+            title: '".GOALS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'GOALS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams1)."'})]
+        }";
+        $PENEL_ITEMS[] = $GOALS;
+        
+        $setParams2 = "objectId=".$gradeSubjectId."&field=OBJECTIVES&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $OBJECTIVES = "{
+            title: '".OBJECTIVES."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'OBJECTIVES', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams2)."'})]
+        }";
+        $PENEL_ITEMS[] = $OBJECTIVES;
+        
+        $setParams3 = "?objectId=".$gradeSubjectId."&field=EVALUATION&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $EVALUATION = "{
+            title: '".EVALUATION."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'EVALUATION', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams3)."'})]
+        }";
+        $PENEL_ITEMS[] = $EVALUATION;
+        
+        $setParams4 = "objectId=".$gradeSubjectId."&field=MATERIALS&object=gradesubject&classId=".$classId."&subjectId=".$subjectId."&teacherId=".$teacherId."";
+        $MATERIALS = "{
+            title: '".MATERIALS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'MATERIALS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams4)."'})]
+        }";
+        $PENEL_ITEMS[] = $MATERIALS;
+        
+        $setParams5 = "template=ACADEMIC_SUBJECT&objectId=".$gradeSubjectId."&academicId=".$classId."";
+        $ATTACHMENTS = "{
+            title: '".ATTACHMENTS."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams5)."'})]
+        }";
+        
+        $PENEL_ITEMS[] = $ATTACHMENTS;
+        
+        $setParams6 = "gradesubjectId=".$gradeSubjectId."&subjectId=".$subjectId."&gradeId=".$gradeId."&schoolyearId=".$schoolyearId."";
+        $HOMEWORK = "{
+            title: '".HOMEWORK."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/homework/homeworkshowgradesubject/?camIds=".$this->urlEncryp->encryptedGet($setParams6)."'})]
+        }";
+        $PENEL_ITEMS[] = $HOMEWORK;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+                
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,tbar:[{
+                    text: '<?=CANCEL?>'
+                    ,id: 'CANCEL_ID'
+                    ,iconCls:'icon-cancel'
+                    ,scope:this
+                    ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+                }]
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0 
+                    ,items:<?=$CHOOSE_ITEMS;?>    
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

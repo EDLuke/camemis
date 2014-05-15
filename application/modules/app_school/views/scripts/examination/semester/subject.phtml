@@ -1,0 +1,448 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("EXAMINATION_MANAGEMENT");
+$OBJECT_FORM->setLoadUrl('/examination/jsonload/');
+$OBJECT_FORM->setSaveUrl('/examination/jsonsave/');
+
+$SUBJECT_GRID = new CamemisGrid("EXAMINATION_MANAGEMENT", "SUBJECTS");
+$SUBJECT_GRID->setLoadUrl('/examination/jsonload/');
+
+$ASSIGNMENT_GRID = new CamemisGrid("EXAMINATION_MANAGEMENT", "ASSIGNMENTS");
+$ASSIGNMENT_GRID->setLoadUrl('/assignment/jsonload/');
+
+$STAFF_GRID = new CamemisGrid("EXAM_MANAGEMENT", "ASSIGNED");
+$STAFF_GRID->setLoadUrl("/examination/jsonload/");
+$STAFF_GRID->setSaveUrl("/examination/jsonsave/");
+$columndataStaff = Utiles::getGridColumnData("EXAM_MANAGEMENT_ASSIGNED_ID");
+
+$UNASSIGNED_STAFF_GRID = new CamemisGrid("EXAM_MANAGEMENT", "UNASSIGNED");
+$UNASSIGNED_STAFF_GRID->setLoadUrl("/examination/jsonload/");
+$UNASSIGNED_STAFF_GRID->setSaveUrl("/examination/jsonsave/");
+$columndataUnassignedStaff = Utiles::getGridColumnData("EXAM_MANAGEMENT_UNASSIGNED_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$type = isset($_GET['type'])?$_GET['type']:"";
+
+?>
+<script>
+var chooseSubject;
+Ext.onReady(function() {
+	
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    
+    Ext.form.Field.prototype.msgTarget = 'side';
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ///////////////////////////////////////////////////////////
+    $SUBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+    $SUBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>', align:'left', width: 200, sortable: true, dataIndex: 'SUBJECT_NAME'");
+    $SUBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,gradeId: '" . $this->gradeId . "'
+        ,schoolyearId: '".$this->schoolyearId."'
+        ,cmd: 'jsonAllExamSubjects'
+    ";
+    $SUBJECT_GRID->forceFit = "false";
+    $SUBJECT_GRID->renderJS();
+    
+    $triggerOnClickSubject = "
+        openWinXType('SUBJECT','".SUBJECT."', '".$SUBJECT_GRID->getObjectXType()."',500,percentHeight(85));
+        var myGrid = ".$SUBJECT_GRID->ExtgetCmp().";
+        myGrid.on('rowclick', function(grid, rowIndex, e){
+            var record = grid.store.getAt(rowIndex);
+            Ext.getCmp('CHOOSE_SUBJECT_NAME_ID').setValue(record.data.SUBJECT_NAME);
+            Ext.getCmp('CHOOSE_SUBJECT').setValue(record.data.ID);
+            chooseSubject = record.data.ID;
+            Ext.getCmp('SUBJECT').close();
+        });
+    ";
+    
+    $ASSIGNMENT_GRID->addReadField("name: 'NAME'");
+    $ASSIGNMENT_GRID->addColumn("header: '<b>" . NAME . "</b>', align:'left', width: 200, sortable: true, dataIndex: 'NAME'");
+    $ASSIGNMENT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,gradeId: '" . $this->gradeId . "'
+        ,schoolyearId: '".$this->schoolyearId."'
+        ,subjectId:chooseSubject
+        ,assessmentType:'ST'
+        ,cmd: 'jsonAssignmentsByGrade'
+    ";
+    $ASSIGNMENT_GRID->forceFit = "false";
+    $ASSIGNMENT_GRID->renderJS();
+    
+    $triggerOnClickAssignment = "
+        openWinXType('ASSIGNMENT','".ASSIGNMENT."', '".$ASSIGNMENT_GRID->getObjectXType()."',500,percentHeight(85));
+        var myGrid = ".$ASSIGNMENT_GRID->ExtgetCmp().";
+        myGrid.on('rowclick', function(grid, rowIndex, e){
+            var record = grid.store.getAt(rowIndex);
+            Ext.getCmp('CHOOSE_ASSIGNMENT_NAME_ID').setValue(record.data.NAME);
+            Ext.getCmp('CHOOSE_ASSIGNMENT').setValue(record.data.ID);
+            chooseSubject = record.data.ID;
+            Ext.getCmp('ASSIGNMENT').close();
+        });
+    ";
+    ///////////////////////////////////////////////////////////
+    $FORM_ITEMS = "[
+        {".CamemisField::Textfield("NAME", "NAME", NAME, true)."}
+        ,{".CamemisField::Trigger("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, true)."}
+        /*,{".CamemisField::Trigger("CHOOSE_ASSIGNMENT_NAME",ASSIGNMENT,$triggerOnClickAssignment, true)."}
+        ,new Ext.form.RadioGroup({
+            fieldLabel:'".TERM."'
+            ,columns:1
+            ,items:[
+                {boxLabel: '".FIRST_SEMESTER."', name: 'TERM', inputValue:'FIRST_SEMESTER'}
+                ,{boxLabel: '".SECOND_SEMESTER."', name: 'TERM', inputValue:'SECOND_SEMESTER'}
+            ]
+        })*/
+        ,{".CamemisField::Numberfield("COUNT","COUNT", MAX_STUDENTS, true, false)."} 
+        ,{".CamemisField::Hidden("CHOOSE_SUBJECT",false)."}
+        ,{".CamemisField::Hidden("CHOOSE_ASSIGNMENT",false)."}      
+    ]"; 
+
+    $EXAM_DATE = "
+    {
+        title: '".EXAM_DATE."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: [{
+                fieldLabel: '" . EXAM_DATE . "'
+                ,name: 'START_DATE'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,width: 250
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: false
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'START_TIME'
+                ,fieldLabel: '".START_TIME."'
+                ,width: 250
+                ,allowBlank: false
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'END_TIME'
+                ,fieldLabel: '".END_TIME."'
+                ,width: 250
+                ,allowBlank: false
+            }]
+        }]
+    }
+    ";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: ".$FORM_ITEMS."
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,height: 100
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; color:#000;padding:5px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", false,200)."}]
+        }]
+    }
+    ";
+    ///////////////////////////////////////////////////////
+    //Staff...
+    ///////////////////////////////////////////////////////
+    $UNASSIGNED_STAFF_GRID->addReadField("name: 'CODE'");
+    $UNASSIGNED_STAFF_GRID->addReadField("name: 'LASTNAME'");
+    $UNASSIGNED_STAFF_GRID->addReadField("name: 'FIRSTNAME'");
+    $UNASSIGNED_STAFF_GRID->addReadField("name: 'STUDENT_NAME'");
+    $UNASSIGNED_STAFF_GRID->addReadField("name: 'GENDER'");
+    
+    $UNASSIGNED_STAFF_GRID->addColumn("header: '<b>".CODE_ID."</b>', renderer:cssText, align:'left', sortable: true, width: 80, hidden:".checkColHidden(1, $columndataUnassignedStaff).", dataIndex: 'CODE'");
+    if(!SchoolDBAccess::displayPersonNameInGrid()){
+        $UNASSIGNED_STAFF_GRID->addColumn("header: '<b>".LASTNAME."</b>', renderer:cssText, width: 120, hidden:".checkColHidden(2, $columndataUnassignedStaff).", sortable: false, dataIndex: 'LASTNAME'");
+        $UNASSIGNED_STAFF_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', renderer:cssText, width: 120, hidden:".checkColHidden(3, $columndataUnassignedStaff).", sortable: false, dataIndex: 'FIRSTNAME'");
+    }else{
+        $UNASSIGNED_STAFF_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', renderer:cssText, width: 120, hidden:".checkColHidden(2, $columndataUnassignedStaff).", sortable: false, dataIndex: 'FIRSTNAME'");
+        $UNASSIGNED_STAFF_GRID->addColumn("header: '<b>".LASTNAME."</b>', renderer:cssText, width: 120, hidden:".checkColHidden(3, $columndataUnassignedStaff).", sortable: false, dataIndex: 'LASTNAME'");
+    }
+    
+    if($this->facette)
+    $UNASSIGNED_STAFF_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonUnassignedStaffExamination'
+        ,objectId: '" . $this->facette->GUID . "'
+    ";
+
+    if($this->facette)
+    $UNASSIGNED_STAFF_GRID->setSelectionParams("
+        cmd: 'jsonActionChooseStaffToExamination'
+        ,objectId: '" . $this->facette->GUID . "'
+    ");
+
+    $UNASSIGNED_STAFF_GRID->setSelectionEmbeddedEvents("
+        Ext.getCmp('" . $STAFF_GRID->getObjectId() . "').store.sortInfo = null;
+        Ext.getCmp('" . $STAFF_GRID->getObjectId() . "').store.reload();
+        Ext.getCmp('" . $UNASSIGNED_STAFF_GRID->getObjectId() . "').store.reload();
+    ");
+
+    $UNASSIGNED_STAFF_GRID->addTBarItems("
+        tbar.add([{
+            id: 'APLY_ID'
+            ,text: '<b>" . APPLY . "</b>'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,handler: this.onSelection
+        }]);
+    ");
+        
+    $UNASSIGNED_STAFF_GRID->isQuickySearch = true;
+    $UNASSIGNED_STAFF_GRID->isCheckboxSelect = true;
+    $UNASSIGNED_STAFF_GRID->forceFit = "false";
+    $UNASSIGNED_STAFF_GRID->renderJS();
+    ///////////////////////////////////////////////////////   
+    $STAFF_GRID->addReadField("name: 'CODE'");
+    $STAFF_GRID->addReadField("name: 'LASTNAME'");
+    $STAFF_GRID->addReadField("name: 'FIRSTNAME'");
+    $STAFF_GRID->addReadField("name: 'CHECKED'");
+    $STAFF_GRID->addReadField("name: 'ROOM_NAME'");
+    
+    $STAFF_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'CHECKED'
+        ,width: 50
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $STAFF_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 80, hidden:".checkColHidden(1, $columndataStaff).", dataIndex: 'CODE'");
+    if(!SchoolDBAccess::displayPersonNameInGrid()){
+        $STAFF_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(2, $columndataStaff).", renderer:cssText, sortable: false, dataIndex: 'LASTNAME'");
+        $STAFF_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(3, $columndataStaff).", renderer:cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+    }else{
+        $STAFF_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(2, $columndataStaff).", renderer:cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+        $STAFF_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(3, $columndataStaff).", renderer:cssText, sortable: false, dataIndex: 'LASTNAME'");
+    }
+    $STAFF_GRID->addColumn("header: '<b>".ROOM."</b>', width: 150, hidden:".checkColHidden(4, $columndataStaff).", renderer:cssText, sortable: true, dataIndex: 'ROOM_NAME'");
+    
+    if($this->facette){
+        
+        $STAFF_GRID->setSaveParams("
+            cmd: 'jsonActionRemoveStaffFromExamination'
+            ,objectId: '" . $this->facette->GUID . "'
+        ");
+        
+        $STAFF_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonAssignedStaffExamination'
+            ,objectId: '" . $this->facette->GUID . "'
+        ";
+        
+        $STAFF_GRID->setEditEmbeddedEvents("
+            Ext.getCmp('" . $STAFF_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $STAFF_GRID->getObjectId() . "').store.reload();
+        ");
+    }
+    if(UserAuth::getACLValue("SEMESTER_TEST_EXECUTE_RIGHT"))
+    $STAFF_GRID->addTBarItems("
+        tbar.add('->',[{
+            id: 'APLY_ID'
+            ,text: '<b>" . STAFF . "</b>'
+            ,iconCls:'icon-group_add'
+            ,scope:this
+            ,handler:function(){
+                openWinXType('WinXType','" . LIST_OF_STAFFS . "', '" . $UNASSIGNED_STAFF_GRID->getObjectXType() . "',500, percentHeight(85));
+            }
+        }]);
+    ");
+    
+    $STAFF_GRID->loadMask = false;
+    $STAFF_GRID->isGridEditing = true;
+    $STAFF_GRID->forceFit = "false";
+    $STAFF_GRID->renderJS();
+    $LIST_OF_STAFFS = "
+    {
+        title: '".LIST_OF_STAFFS."'
+        ,layout:'fit'
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,height:300
+        ,items:[{xtype: '".$STAFF_GRID->getObjectXtype()."'}]
+    }
+    ";
+    
+    $DISPLAY_ITEMS = "[";
+    $DISPLAY_ITEMS .= $DETAIL_INFORMATION;
+    $DISPLAY_ITEMS .= ",".$EXAM_DATE;
+    
+    if($this->facette){
+        $DISPLAY_ITEMS .= ",".$LIST_OF_STAFFS;    
+    }
+    
+    $DISPLAY_ITEMS .= ",".$DESCRIPTION;
+    $DISPLAY_ITEMS .= "]";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$DISPLAY_ITEMS."
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'WEST_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            window.parent.Ext.getCmp('WEST_ID').expand();
+        }
+    ");
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'loadExamination',objectId: '".$this->objectId."'");
+    if(UserAuth::getACLValue("SEMESTER_TEST_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+    if($this->objectId == "new"){
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActionSaveExamination'
+            ,type: '".$type."'
+            ,gradeId:'".$this->gradeId."'
+            ,schoolyearId:'".$this->schoolyearId."'
+            ,objectId:'".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            myTree = window.parent.Ext.getCmp('TREE.EXAMINAION_MANAGEMENT_LIST_ID');
+            myNode = myTree.getNodeById(".$this->academicObject->PARENT.");
+            myNode.reload();
+            myNode.expand(true, false);
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                var result = Ext.util.JSON.decode(action.response.responseText);
+                var objectId = result.objectId;
+                window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+            ");
+    }else{
+        if(UserAuth::getACLValue("SEMESTER_TEST_EDIT_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+        if(UserAuth::getACLValue("SEMESTER_TEST_REMOVE_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->removeStatus));
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActionSaveExamination'
+            ,type: '1'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            myTree = window.parent.Ext.getCmp('TREE.EXAMINAION_MANAGEMENT_LIST_ID');
+            myNode = myTree.getNodeById(".$this->facette->GRADE_ID.");
+            myNode.reload();
+            myNode.expand(true, false);
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->setReleaseParams("cmd: 'jsonActionReleaseExam',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            myTree = window.parent.Ext.getCmp('TREE.EXAMINAION_MANAGEMENT_LIST_ID');
+            myNode = myTree.getNodeById(".$this->facette->GRADE_ID.");
+            myNode.reload();
+            myNode.expand(true, false);
+            ".camemisPage::setRequestURI()."
+        ");
+    
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'removeExamination'
+            ,objectId: '".$this->objectId."'
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            myTree = window.parent.Ext.getCmp('TREE.EXAMINAION_MANAGEMENT_LIST_ID');
+            myNode = myTree.getNodeById(".$this->facette->GRADE_ID.");
+            myNode.reload();
+            myNode.expand(true, false);
+        ");
+    }
+    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

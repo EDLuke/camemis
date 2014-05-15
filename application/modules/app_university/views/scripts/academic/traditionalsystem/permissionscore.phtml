@@ -1,0 +1,81 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.12.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("USER", "LIST");
+$OBJECT_TREE->setURL("/userrole/jsontree/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->isTreeExpand = true;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'treeAllUserrole'
+        ,objectId:'".$this->objectId."'
+        ,searchAdmin:1
+    ");
+    
+    $OBJECT_TREE->backgroundColor = "#FFF";
+    $OBJECT_TREE->renderJS();
+    
+    $js = "";
+    $js .= "viewport = new Ext.Viewport({";
+        $js .= "layout: 'fit'";
+        $js .= ",border: false";
+        $js .= ",items:[{";
+            $js .= "layout:'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
+        $js .= "}]";
+    $js .= "});";
+    
+    $js .= "var tree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');";
+    $js .= "tree.on('checkchange', function(node, checked){";
+        $js .= "var selecteds = '', selNodes = tree.getChecked();";
+        $js .= "Ext.each(selNodes, function(node){";
+            $js .= "if(selecteds.length > 0){";
+                $js .= "selecteds += ',';";
+            $js .= "}";
+            $js .= "selecteds += node.id;";
+        $js .= "});";
+        $js .= "Ext.Ajax.request({";
+            $js .= "url: '/academic/jsonsave/'";
+            $js .= ",method: 'POST'";
+            $js .= ",scope:this";
+            $js .= ",params: {";
+                $js .= "cmd: 'actionStaffPermissionScore'";
+                $js .= ",selecteds: selecteds";
+                $js .= ",objectId: '".$this->objectId."'";
+            $js .= "}";
+            $js .= ",success: function(response, options) {";
+                $js .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); ";
+            $js .= "}";
+        $js .= "});";
+    $js .= "});";
+    
+    echo $js;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,113 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("AUTHENTICATION");
+$OBJECT_FORM->setLoadUrl('/school/jsonload/');
+$OBJECT_FORM->setSaveUrl('/school/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= "{
+        xtype: 'panel'
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,bodyStyle: 'padding:10px'
+        ,title: 'CAMEMIS-Authentication'
+        ,layout: 'form'
+        ,bodyStyle: 'padding:10px'
+        ,items:  [
+            {".CamemisField::Radio("AUTHENTICATION_1", "AUTHENTICATION", "Local Database", "1", true)."}
+            ,{".CamemisField::Radio("AUTHENTICATION_2", "AUTHENTICATION", "LDAP Server", "1", false)."}
+        ]
+    }";
+    $FORM_ITEMS .= ",{
+        xtype: 'panel'
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,bodyStyle: 'padding:10px'
+        ,title: 'LDAP Sever setting'
+        ,layout: 'form'
+        ,bodyStyle: 'padding:10px'
+        ,items:  [
+            {".CamemisField::Textfield("HOST_URL", "HOST_URL", 'Host URL', true)."}
+            ,{".CamemisField::Textfield("VERSION", "VERSION", 'Version', true)."}
+            ,{".CamemisField::Textfield("LDAP_ENCODIING", "LDAP_ENCODIING", 'LDAP Encoding', true)."}
+        ]
+    }";
+    $FORM_ITEMS .= ",{
+        xtype: 'panel'
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,bodyStyle: 'padding:10px'
+        ,title: 'Bind setting'
+        ,layout: 'form'
+        ,bodyStyle: 'padding:10px'
+        ,items:  [
+            {".CamemisField::Textfield("USERNAME", "USERNAME", 'Username', true)."}
+            ,{".CamemisField::Textfield("PASSWORD", "PASSWORD", 'Password', true)."}
+        ]
+    }";
+    $FORM_ITEMS .= ",{
+        xtype: 'panel'
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,bodyStyle: 'padding:10px'
+        ,title: 'Role mapping'
+        ,layout: 'form'
+        ,bodyStyle: 'padding:10px'
+        ,items:  [
+            {".CamemisField::Textfield("MAP_ROLES_FROM_LDAP", "MAP_ROLES_FROM_LDAP", 'Map roles from LDAP', true)."}
+        ]
+    }";
+    $FORM_ITEMS .= "]";
+    $OBJECT_FORM->addObjectItems("
+        xtype: 'panel'
+        ,border: false
+        ,height: percentHeight(90)
+        ,layout: 'form'
+        ,autoScroll: true
+        ,items: ".$FORM_ITEMS."
+    ");
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        window.location='".$_SERVER["REQUEST_URI"]."';
+    ");
+
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 160;
+    $OBJECT_FORM->renderJS();
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,140 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'models/UserAuth.php';
+require_once 'models/app_university/LocationDBAccess.php';
+require_once 'models/app_university/student/StudentDBAccess.php';
+
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$GENERAL_GRID = new CamemisGrid("GENERAL", "LIST");
+$GENERAL_GRID->setLoadUrl("/bulletin/jsonload/");
+
+$TRAINING_GRID = new CamemisGrid("BULLETINE", "LIST");
+$TRAINING_GRID->setLoadUrl("/bulletin/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+    function cssContent(value, metadata, record){
+        return '<div style="padding: 5px;"><span style="font-weight:bold; font-size:14px; white-space:normal; color:#333;">' 
+        + value + '</span><br><br><span style="font-weight:normal; white-space:normal; color:#333;">' 
+        + record.data.CONTENT + '</span></div>';
+    }
+    
+    function cssNumber(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+		
+    $CAMEMIS_PAGE_OBJECT->setAddTab();
+	
+    $GENERAL_GRID->addReadField("name: 'SUBJECT_BULLETIN'");
+    $GENERAL_GRID->addReadField("name: 'CONTENT'");
+    $GENERAL_GRID->addReadField("name: 'POSTED_DATE'");
+    $GENERAL_GRID->addReadField("name: 'CREATED_DATE'");
+	
+    $GENERAL_GRID->addColumn("header: '".SUBJECT_BULLETIN."', width:percentWidth(80), renderer:cssContent, sortable: true, dataIndex: 'SUBJECT_BULLETIN'");
+    $GENERAL_GRID->addColumn("header: '".POSTED_DATE."', width: 180, renderer:cssNumber, sortable: true, dataIndex: 'POSTED_DATE'");
+    
+    $GENERAL_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,type:1
+        ,cmd: 'jsonAllBulletins'
+    ";
+	
+    $GENERAL_GRID->isQuickySearch = true;
+    $GENERAL_GRID->forceFit = "true";
+    $GENERAL_GRID->renderJS();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    $TRAINING_GRID->addReadField("name: 'SUBJECT_BULLETIN'");
+    $TRAINING_GRID->addReadField("name: 'CONTENT'");
+    $TRAINING_GRID->addReadField("name: 'POSTED_DATE'");
+    $TRAINING_GRID->addReadField("name: 'CREATED_DATE'");
+	
+    $TRAINING_GRID->addColumn("header: '".SUBJECT_BULLETIN."', width:percentWidth(80), renderer:cssContent, sortable: true, dataIndex: 'SUBJECT_BULLETIN'");
+    $TRAINING_GRID->addColumn("header: '".POSTED_DATE."', width: 180, renderer:cssNumber, sortable: true, dataIndex: 'POSTED_DATE'");
+    
+    $TRAINING_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,type:2
+        ,cmd: 'jsonAllBulletins'
+    ";
+	
+    $TRAINING_GRID->isQuickySearch = true;
+    $TRAINING_GRID->forceFit = "true";
+    $TRAINING_GRID->renderJS();
+    
+    $PENEL_ITEMS = Array();    
+    $GENERAL_EDUCATION = "{
+        title: '".HIGHER_EDUCATION."'
+         ,layout: 'fit'
+         ,items:[{xtype: '".$GENERAL_GRID->getObjectXtype()."'}]
+    }";
+    if (UserAuth::displayRoleGeneralEducation())
+    $PENEL_ITEMS[] = $GENERAL_EDUCATION;
+    
+    $TRAINING_PROGRAMS = "{
+        title: '".TRAINING_PROGRAMS."'
+        ,layout: 'fit'
+        ,items:[{xtype: '".$TRAINING_GRID->getObjectXtype()."'}]
+    }";
+    if (UserAuth::displayRoleTrainingEducation())
+    $PENEL_ITEMS[] = $TRAINING_PROGRAMS;
+    
+    $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+            ,border:false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,plain:true
+                ,activeTab: 0
+                ,items:[<?=$CHOOSE_ITEMS?>]        
+            }]     
+        }]
+    });
+    
+	var grid1 = Ext.getCmp('<?=$GENERAL_GRID->getObjectId()?>');
+	if (grid12) grid1.on('cellclick', function(grid,rowIndex) {
+        var record = grid1.store.getAt(rowIndex);
+        clickOpenPage('content', '', '/bulletin/viewprofilebulletin/?objectId='+ record.data.ID);
+	});
+    
+    var grid2 = Ext.getCmp('<?=$GENERAL_GRID->getObjectId()?>');
+	if (grid2) grid2.on('cellclick', function(grid,rowIndex) {
+        var record = grid2.store.getAt(rowIndex);
+        clickOpenPage('content', '', '/bulletin/viewprofilebulletin/?objectId='+ record.data.ID);
+	});
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

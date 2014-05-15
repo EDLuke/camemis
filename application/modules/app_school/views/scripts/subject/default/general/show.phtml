@@ -1,0 +1,509 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("SUBJECT");
+$OBJECT_FORM->setLoadUrl('/subject/jsonload/');
+$OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
+
+$PREREQUISITE_TREE = new CamemisTree("SUBJECT", "LIST");
+$PREREQUISITE_TREE->setURL("/subject/jsontree/");
+
+$OBJECT_DATA = $this->objectData;
+
+$educationType = isset($OBJECT_DATA["EDUCATION_TYPE"])?$OBJECT_DATA["EDUCATION_TYPE"]:"";
+$subjectType = isset($OBJECT_DATA["SUBJECT_TYPE"])?$OBJECT_DATA["SUBJECT_TYPE"]:"";
+$scoreType = isset($OBJECT_DATA["SCORE_TYPE"])?$OBJECT_DATA["SCORE_TYPE"]:"";
+
+if($scoreType == 1){
+    $maxscoreHide = "false";
+    $HIDDEN_COEFFICIENT_SETTING = "false";
+    $HIDDEN_ADDITIONAL_EVALUATION = "false";
+    $HIDDEN_EVALUATION_IN_COMMENT = "true";
+}elseif($scoreType == 2){
+    $maxscoreHide = "true";
+    $HIDDEN_COEFFICIENT_SETTING = "true";
+    $HIDDEN_ADDITIONAL_EVALUATION = "true";
+    $HIDDEN_EVALUATION_IN_COMMENT = "false";
+}else{
+    $maxscoreHide = "false";
+    $HIDDEN_COEFFICIENT_SETTING = "false";
+    $HIDDEN_ADDITIONAL_EVALUATION = "false";
+    $HIDDEN_EVALUATION_IN_COMMENT = "true";
+}
+
+$removeStatus = true;
+if ($this->facette) {
+    $status = $this->facette->STATUS;
+    $reloadId = $this->facette->PARENT;
+    if ($status){
+        $removeStatus = false;
+    }else{
+        $removeStatus = true;
+    }
+    
+    $HIDDEN_SCORE_ON_NUMBER = ($this->facette->SCORE_TYPE==1)?"false":"true";
+    $HIDDEN_SCORE_ON_ALPHABET = ($this->facette->SCORE_TYPE==2)?"false":"true";
+    
+} else {
+    $reload = $this->parentId;
+    $status = false;
+    $HIDDEN_SCORE_ON_NUMBER = "true";
+    $HIDDEN_SCORE_ON_ALPHABET = "true";
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:20px;padding:8px;height:140px"><h1>Please make your selection!</h1></div>
+<script>
+Ext.onReady(function() {
+    
+    function getTreeNode(tree){
+        return tree.getNodeById('QUALIFICATION_TYPE_<?=$reloadId;?>');
+    }
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items: [
+                {".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}
+                ,{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
+                ,{".CamemisField::ComboQualificationType(false, false, false)."}    
+                ,{".CamemisField::Numberfield("NUMBER_CREDIT", "NUMBER_CREDIT", NUMBER_CREDIT, false, false, false) . "}
+                ,{".CamemisField::Numberfield("NUMBER_SESSION","NUMBER_SESSION", NUMBER_SESSION, false, false, false, false)."}
+                ,{".CamemisField::ComboSubjectType(TYPE, false, false, false)."}
+                ,{".CamemisField::comboScoreType()."}
+                ,{".CamemisField::Colorfield("COLOR", COLOR, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $SCORE_NUMBER = "
+    {
+        title: '".SCORE_ON_NUMBER."'
+        ,id:'SCORE_ON_NUMBER'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,hidden:".$HIDDEN_SCORE_ON_NUMBER."
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items: [
+                {".CamemisField::Numberfield("SCORE_MIN","SCORE_MIN", MIN_POINTS, false, false, false, false)."}
+                ,{".CamemisField::Numberfield("SCORE_MAX","SCORE_MAX", MAX_POINTS, false, false, false, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $SCORE_ALPHABET = "
+    {
+        title: '".SCORE_ON_ALPHABET."'
+        ,id:'SCORE_ON_ALPHABET'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,hidden:".$HIDDEN_SCORE_ON_ALPHABET."
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items: [
+                {".CamemisField::Textarea("MAX_POSSIBLE_SCORE", POINTS_POSSIBLE,30)."}
+            ]
+        }]
+    }
+    ";
+    
+    $EVALUATION_SETTINGS_ITEMS = "
+    [
+        {".CamemisField::comboMathematicalOperation()."}
+        ,{".CamemisField::Numberfield("COEFF_VALUE","COEFF_VALUE", VALUE, false, false, false)."}
+        ,{".CamemisField::Checkbox("INCLUDE_IN_EVALUATION","INCLUDE_IN_EVALUATION",INCLUDE_IN_EVALUATION, 1, false, false)."}
+    ]
+    ";
+    
+    $AVERAGE_FROM_SEMESTER_STORE = "[
+        [0, 'AVG(S1+S2)']
+        ,[1, 'AVG(S1)']
+        ,[2, 'AVG(S2)']
+    ]";
+    
+    $EVALUATION_SETTINGS = "
+    {
+        title: '".EVALUATION_SETTINGS."'
+        ,id:'EVALUATION_SETTINGS'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items:".$EVALUATION_SETTINGS_ITEMS."
+        }]
+    }
+    ";
+    
+    //@veasna 
+    ////////////////////////////////////////////////////////////////////////////
+    $PREREQUISITE_TREE->isAsyncTreeNode = false;
+    $PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $PREREQUISITE_TREE->setBaseParams("
+    	cmd: 'treeAllSubjects'
+        ,requisiteId:'".$this->objectId."'
+    ");
+    
+    $PREREQUISITE_TREE->backgroundColor = "#F9F9F9";
+    $PREREQUISITE_TREE->isTreeExpand = true;
+    $PREREQUISITE_TREE->isOnClickContextMenu = false;
+    $PREREQUISITE_TREE->renderJS();
+    
+    $PRE_REQUISITE_COURSE = "
+    {
+        title: '".PRE_REQUISITE_COURSE."'
+        ,collapsible: true
+        ,collapsed: false
+        ,height:450
+        ,layout:'fit'
+        ,style: 'padding-bottom:5px'
+        ,width: 550
+        ,items:[{xtype: '".$PREREQUISITE_TREE->getObjectXtype()."'}]
+    }";
+    
+    //
+    $CREATED = "
+    {
+        title: '".CREATED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,iconCls:'icon-about'
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,"".$OBJECT_DATA["CREATED_DATE"]."")."
+            },{
+                ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,"".$OBJECT_DATA["CREATED_BY"]."")."
+            }]
+        }]
+    }
+    ";
+    
+    $MODIFIED = "
+    {
+        title: '".MODIFIED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,iconCls:'icon-about'
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,"".$OBJECT_DATA["MODIFY_DATE"]."")."
+            },{
+                ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,"".$OBJECT_DATA["MODIFY_BY"]."")."
+            }]
+        }]
+    }
+    ";
+    
+    $ENABLED = "
+    {
+        title: '".ENABLED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,iconCls:'icon-about'
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("ENABLED_DATE",ENABLED_DATE,"".$OBJECT_DATA["ENABLED_DATE"]."")."
+            },{
+                ".CamemisField::Displayfield("ENABLED_BY",ENABLED_BY,"".$OBJECT_DATA["ENABLED_BY"]."")."
+            }]
+        }]
+    }
+    ";
+    
+    $DISABLED = "
+    {
+        title: '".DISABLED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,iconCls:'icon-about'
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,"".$OBJECT_DATA["DISABLED_DATE"]."")."
+            },{
+                ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,"".$OBJECT_DATA["DISABLED_BY"]."")."
+            }]
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+            ,".$SCORE_NUMBER."   
+            ,".$SCORE_ALPHABET."   
+            ,".$EVALUATION_SETTINGS."  
+            ,".$PRE_REQUISITE_COURSE."    
+            ,".$CREATED."
+            ,".$MODIFIED."
+            ,".$ENABLED."
+            ,".$DISABLED."
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+    
+    if ($this->objectId<>'new'){
+        if (UserAuth::getACLValue("ACADEMIC_SETTING_REMOVE_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+    }
+    if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+    if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'updateObject'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+
+    if($this->facette){
+        $OBJECT_FORM->setonEmbeddedEvents("
+            myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+            myNode = getTreeNode(myTree);
+            if(myNode){
+                myNode.reload();
+                myNode.expand(true, false);
+            }
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+             myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+            myNode = getTreeNode(myTree);
+            if(myNode){
+                myNode.reload();
+                myNode.expand(true, false);
+            }
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+             myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+            myNode = getTreeNode(myTree);
+            if(myNode){
+                myNode.reload();
+                myNode.expand(true, false);
+            }
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+        
+    }else{
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+            myNode = getTreeNode(myTree);
+            if(myNode){
+                myNode.reload();
+                myNode.expand(true, false);
+            }else{
+                window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
+            }
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+        "); 
+    }
+    
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = $this->facette?true:false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    
+    Ext.getCmp('SCORE_TYPE').on('select', function() {
+        scoreType = Ext.getCmp('SCORE_TYPE').getValue();
+        if(scoreType == 1){
+            if (Ext.getCmp('COEFFICIENT_SETTING')) Ext.getCmp('COEFFICIENT_SETTING').show();
+            if (Ext.getCmp('ADDITIONAL_EVALUATION')) Ext.getCmp('ADDITIONAL_EVALUATION').show();
+            if (Ext.getCmp('EVALUATION_IN_COMMENT')) Ext.getCmp('EVALUATION_IN_COMMENT').hide();
+            Ext.getCmp('SCORE_ON_ALPHABET').hide();    
+            Ext.getCmp('SCORE_ON_NUMBER').show();    
+        }
+        if(scoreType == 2){
+            if (Ext.getCmp('COEFFICIENT_SETTING')) Ext.getCmp('COEFFICIENT_SETTING').hide();
+            if (Ext.getCmp('ADDITIONAL_EVALUATION')) Ext.getCmp('ADDITIONAL_EVALUATION').hide();
+            if (Ext.getCmp('EVALUATION_IN_COMMENT')) Ext.getCmp('EVALUATION_IN_COMMENT').show();
+            Ext.getCmp('SCORE_ON_ALPHABET').show();    
+            Ext.getCmp('SCORE_ON_NUMBER').hide();    
+        }
+        if (Ext.getCmp('MAX_POSSIBLE_SCORE_ID')) Ext.getCmp('MAX_POSSIBLE_SCORE_ID').setValue('');  
+    });
+    
+    Ext.getCmp('SUBJECT_TYPE_ID').on('select', function() {
+        
+        subjectType = Ext.getCmp('SUBJECT_TYPE_ID').getValue();
+        
+//        if(subjectType == 0){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//        }else if(subjectType == 1){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').show();
+//        }else if(subjectType == 2){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//        }else if(subjectType == 3){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
+//            Ext.getCmp('EVALUATION_SETTINGS').show();
+//        }else if(subjectType == 4){
+//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//            Ext.getCmp('MAX_POSSIBLE_SCORE').hide();
+//            Ext.getCmp('COEFFICIENT_SETTING').hide();
+//            Ext.getCmp('ADDITIONAL_EVALUATION').hide();
+//            Ext.getCmp('EVALUATION_SETTINGS').hide();
+//            Ext.getCmp('EVALUATION_IN_COMMENT').hide();
+//        }
+    });
+    
+    var tree = Ext.getCmp('<?=$PREREQUISITE_TREE->getObjectId()?>');
+    tree.on('checkchange', function(node, checked){
+        
+        var selecteds = '', selNodes = tree.getChecked();
+        Ext.each(selNodes, function(node){
+            if(selecteds.length > 0){
+                selecteds += ',';
+            }
+            selecteds += node.id;
+        });
+        Ext.Ajax.request({
+            url: '/subject/jsonsave/'
+            ,method: 'POST'
+            ,scope:this
+            ,params: {
+                cmd: 'actionPreRequisite2Subject'
+                ,selecteds: selecteds
+                ,objectId: '<?=$this->objectId;?>'
+            }
+            ,success: function(response, options) {
+                XMsg('<?=STATUS?>','<?=ACTION_SUCCESSFULLY_SAVED?>'); 
+            }
+        });
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

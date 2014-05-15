@@ -1,0 +1,62 @@
+<?php
+
+    ///////////////////////////////////////////////////////////
+    // @sor veasna
+    // Date: 12/17/2012
+    // Adress
+    ///////////////////////////////////////////////////////////
+    
+    require_once 'excel/phpexcel/Classes/PHPExcel.php';
+    require_once 'excel/phpexcel/Classes/PHPExcel/IOFactory.php';
+    require_once 'clients/CamemisExcelReport.php';
+    require_once 'clients/CamemisExportToExcel.php'; 
+    require_once 'models/app_university/academic/AcademicDBAccess.php';
+    require_once 'models/app_university/academic/AcademicLevelDBAccess.php';
+    require_once 'models/app_university/student/StudentAcademicDBAccess.php';                          
+  
+    $params["classId"] = $this->classId ? $this->classId : ""; 
+    
+    $exportToExcel=new CamemisExportToExcel();
+    $schoolObject = $exportToExcel->getSchoolInfo();
+    $SchoolName = $schoolObject->NAME;
+    $SchoolAdress=$schoolObject->ADDRESS;
+    $schoolInfo= $SchoolName."\n".$SchoolAdress; 
+    $resultStudentlist = StudentAcademicDBAccess::getSQLStudentEnrollment($params);
+    
+    //print_r( $resultStudentlist);
+    //exit;
+    
+    $entries = array(); 
+    
+    $columns[] = "NA"; 
+    $columns[] = "STUDENT_CODE";
+    $columns[] = "LASTNAME";
+    $columns[] = "FIRSTNAME";
+    $columns[] = "GENDER";
+    $columns[] = "DATE_BIRTH";
+    $columns[] = "MOBIL_PHONE";
+    $columns[] = "EMAIL";
+    
+    $ShowColumns[] = "N°";
+    $ShowColumns[] = CODE_ID;
+    $ShowColumns[] = LASTNAME;
+    $ShowColumns[] = FIRSTNAME;
+    $ShowColumns[] = GENDER;
+    $ShowColumns[] = DATE_BIRTH;
+    $ShowColumns[] = PHONE;
+    $ShowColumns[] = EMAIL;  
+
+     //input entries
+    if($resultStudentlist){
+        $exportToExcel->objExcel($resultStudentlist,$columns,$ShowColumns,3);
+    } 
+    $filename = "List of Student"; 
+    $info['SCHOOL_INFO']=$schoolInfo;
+    //$info['CLASS_INFO']=$examinfo;  
+    $exportToExcel->excelHeader($info,1,'H'); 
+    $exportToExcel->excelFooter();
+    $exportToExcel->save($filename); 
+
+
+                                                                            
+?>                  

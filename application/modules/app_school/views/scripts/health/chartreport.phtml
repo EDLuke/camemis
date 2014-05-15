@@ -1,0 +1,98 @@
+<?
+//////////////////////
+/// @Sor Veasna
+///Date : 26-02-2014
+///
+///////////////////
+require_once 'clients/CamemisPage.php';
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    ////////////////////////////////////////////////////////////////////////////
+    //@Viewport
+    ////////////////////////////////////////////////////////////////////////////
+    Ext.onReady(function() {
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,layout: 'fit'
+                ,tbar:[{
+                    text:'<?=REFRESH?>'
+                    ,iconCls:'icon-arrow_refresh'
+                    ,handler: function(){
+                        window.location="<?=CamemisPage::setRequestURI()?>";
+                    }
+                }]
+                ,items:[{
+                    layout:'column'
+                    ,height:percentHeight(100)
+                    ,autoScroll:true
+                    ,border:false
+                    ,defaults: {
+                        layout: 'anchor'
+                        ,defaults: {anchor: '100%'}
+                    }
+                    ,items: [{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: 'Vaccination'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:480
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'VACCINATION', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=VACCINATION")?>'})]
+                        }]    
+                    },{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: 'Medical Visit'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:300
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'MEDICAL_VISIT', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MEDICAL_VISIT")?>'})]
+                        }]    
+                    },{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: 'BMI'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:300
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'BMI', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=BMI")?>'})]
+                        }]    
+                    },{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: 'Growth Chart'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:300
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'GROWTH_CHART', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=GROWTH_CHART")?>'})]
+                        }]    
+                    }]
+                }]
+            }]
+        });
+    });
+</script>
+    
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

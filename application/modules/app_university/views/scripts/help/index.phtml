@@ -1,0 +1,172 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 30.11.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("SCHOOL", "LIST");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$HIDDEN_KHMER = "false";
+$HIDDEN_VIETNAMESE = "true";
+
+switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+    case "KHMER":
+        $HIDDEN_KHMER = "false";
+        break;
+    case "VIETNAMESE":
+        $HIDDEN_VIETNAMESE = "false";
+        break;
+}
+
+switch (UserAuth::getUserType()) {
+    case "TEACHER":
+        $BLOCK = "TEACHER_PAGE";
+    break;
+    case "INSTRUCTOR":
+        $BLOCK = "INSTRUCTOR_PAGE";
+    break;
+    case "STUDENT":
+        $BLOCK = "PARENT_STUDENT_PAGE";
+    break;
+    case "SUPERADMIN":
+    case "ADMIN":
+        $BLOCK = "ADMIN_PAGE";
+    break;
+}
+
+?>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>
+</div>
+<div id="initVideo" class="x-hide-display" style="border:0px silver solid;margin:5px;padding:5px;">    
+    <div id="ytplayer">
+        <p>You will need Flash 8 or better to view this content.</p>
+    </div>
+    
+</div>
+
+<script type="text/javascript">
+
+  // The video to load
+  var videoID = "ylLzyHk54Z0"
+  // Lets Flash from another domain call JavaScript
+  var params = { allowScriptAccess: "always" };
+  // The element id of the Flash embed
+  var atts = { id: "ytplayer" };
+  // All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
+  swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=ytplayer", "ytplayer", "560", "340", "9", null, null, params, atts);
+
+</script>
+<script>
+
+Ext.onReady(function() {
+    function chooseLanguage(v){
+        Ext.getCmp('TREE.SCHOOL_LIST_ID').loader = new Ext.tree.TreeLoader({
+            dataUrl: '/school/jsontree/'
+            ,baseParams: {
+                cmd: 'jsonTreeHelps'
+                ,block: '<?=$BLOCK?>'
+                ,language: 'VN'
+            }
+        });
+        Ext.getCmp('TREE.SCHOOL_LIST_ID').root.reload();
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->addTBarItems("
+        text: '".ENGLISH."'
+        ,hidden: true
+        ,iconCls: 'icon-flag_england'
+        ,handler: function(){
+            chooseLanguage('EN');
+        }
+    ");
+    
+    $OBJECT_TREE->addTBarItems("
+        text: '".VIETNAMESE."'
+        ,hidden: ".$HIDDEN_VIETNAMESE."
+        ,iconCls: 'icon-flag_vietnam'
+        ,handler: function(){
+            chooseLanguage('VN');
+        }
+    ");
+    
+    $OBJECT_TREE->addTBarItems("
+        text: '".KHMER."'
+        //,hidden: ".$HIDDEN_KHMER."
+        ,hidden: true
+        ,iconCls: 'icon-flag_cambodia'
+        ,handler: function(){
+            chooseLanguage('KH');
+        }
+    ");
+    
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'jsonTreeHelps'
+        ,block: '".$BLOCK."'
+    ");
+    $OBJECT_TREE->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,id: 'WEST_ID'
+                ,margins: '5 0 5 0'
+                ,cmargins: '3 3 3 3'
+                ,width: percentWidth(28)
+                ,minSize: percentWidth(28)
+                ,maxSize: percentWidth(28)
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,contentEl: 'initCenter'
+                }]
+            }]
+        }]
+    });
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        myTree.on('click', function(node, e){
+        if(node.isLeaf()){
+            Ext.getCmp('WEST_ID').disable();
+            clickOpenPage('center','', '/help/showitem/?objectId=' + node.id);
+        }
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,389 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'models/app_school/staff/StaffDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$CURRENT_STATUS_OBJECT = StaffStatusDBAccess::getCurrentStaffStatus($this->objectId);
+
+$STATUS_NAME = isset($CURRENT_STATUS_OBJECT["NAME"])?$CURRENT_STATUS_OBJECT["NAME"]:"---";
+$STATUS_DATE = isset($CURRENT_STATUS_OBJECT["DATE"])?$CURRENT_STATUS_OBJECT["DATE"]:"---";
+$DEACTIVATE_ACCOUNT = isset($CURRENT_STATUS_OBJECT["DEACTIVATE_ACCOUNT"])?$CURRENT_STATUS_OBJECT["DEACTIVATE_ACCOUNT"]:0;
+
+$OBJECT_FORM = new CamemisForm("STAFF");
+$OBJECT_FORM->setLoadUrl('/staff/jsonload/');
+$OBJECT_FORM->setSaveUrl('/staff/jsonsave/');
+
+$template = isset($_GET["template"])?$_GET["template"]:"DEFAULT";
+$locationParentId = $this->staffObject->COUNTRY_PROVINCE;
+
+$COUNTRY_PROVINCE = $this->objectData["COUNTRY_PROVINCE"];
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    <?    
+    if ($this->objectId == Zend_Registry::get('USER')->ID){
+        $HIDDEN = false;
+    }else{
+        $HIDDEN = true;
+    }
+        
+    switch(UserAuth::getUserType()) {
+        case "INSTRUCTOR":
+        case "TEACHER":
+            $HIDDEN_COMMUNICATION = "false";
+            break;
+        default:
+            $HIDDEN_COMMUNICATION = "true";
+            break;
+    }
+    ?>
+
+    Ext.onReady(function() {
+
+        Ext.QuickTips.init();
+        
+        <?
+        camemisPage::setNoLogoutMessage();
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        $CAMEMIS_PAGE_OBJECT->setAddTab();
+        
+        $OBJECT_LOCATION_PARENT = new CamemisDynCombo("DATASET","PROVINCE");
+        $OBJECT_LOCATION_PARENT->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_PARENT->objectTitle = CITY_PROVINCE;
+        $OBJECT_LOCATION_PARENT->allowBlank = "true";
+        $OBJECT_LOCATION_PARENT->varName ="COUNTRY_PROVINCE";
+        $OBJECT_LOCATION_PARENT->width = 250;
+        $OBJECT_LOCATION_PARENT->setLoadParams("cmd: 'jsonAllLocation',parentId:0");
+        $OBJECT_LOCATION_PARENT->renderJS();
+
+        $OBJECT_LOCATION_CHILD = new CamemisDynCombo("DATASET","TWON");
+        $OBJECT_LOCATION_CHILD->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_CHILD->objectTitle = TOWN_CITY;
+        $OBJECT_LOCATION_CHILD->allowBlank = "true";
+        $OBJECT_LOCATION_CHILD->varName = "TOWN_CITY";
+        $OBJECT_LOCATION_CHILD->width = 250;
+        $OBJECT_LOCATION_CHILD->setLoadParams("cmd: 'jsonAllLocation',parentId:'".$COUNTRY_PROVINCE."'");
+        $OBJECT_LOCATION_CHILD->renderJS();
+        
+        if (Zend_Registry::get('USERID') == $this->objectId) {
+            $OBJECT_FORM->addTBarItems("
+                text: '" . REFRESH . "'
+                ,tooltip:'" . REFRESH . "'
+                ,iconCls:'icon-reload'
+                ,handler: function(){
+                    window.parent.parent.parent.location='/main?welcome';
+                }
+            ");
+        }
+        
+        switch(UserAuth::getUserType()) { 
+            case "SUPERADMIN": 
+            case "ADMIN":             
+                if(Zend_Registry::get('USER')->ID == $this->objectId){
+                    if (UserAuth::getACLValue("STAFF_PERSONAL_INFORMATION_EDIT_RIGHT"))
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                }else{
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRefresh("REFRESH1"));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                }
+                break;
+            case "TEACHER":
+                if (UserAuth::getACLTutorPermint("PROFILE_PERSONAL_INFORMATION_EDIT_RIGHT"))//@ THORN Visal
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                break;
+            case "INSTRUCTOR":
+                if (UserAuth::getACLTutorPermint("PROFILE_PERSONAL_INFORMATION_EDIT_RIGHT"))//@ THORN Visal
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                break;
+            default:
+                if(Zend_Registry::get('USER')->ID == $this->objectId){
+                    if (UserAuth::getACLValue("STAFF_PERSONAL_INFORMATION_EDIT_RIGHT"))
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                }else{
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRefresh("REFRESH1"));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                }
+                break;
+        }
+        
+        $PERSON_STATUS = "
+            title: ''
+            ,border: false
+            ,items:[{
+                xtype: 'panel'
+                ,layout: 'form'
+                ,collapsible: true
+                ,collapsed: false
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,title: '".STATUS."'
+                ,bodyStyle: 'padding:10px; background:#FFF;'
+                ,tbar:['->',{
+                    text: '".STATUS."'
+                    ,iconCls:'icon-lightning_add'
+                    ,border: false
+                    ,handler: function(){
+                        clickOpenPage('CONTENT','".STATUS."', '/staff/settingstaffstatus/?objectId=".$this->objectId."');
+                    }
+                }]
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,contentEl: 'initPersonStatus'
+                }]
+            }]    
+        ";
+        
+        $PERSONAL_IMAGE_ITEMS = "
+            title: '" . PERSONAL_IMAGE . "'
+            ,height: 270
+            ,collapsible: true
+            ,collapsed: false
+            ,layout: 'fit'
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items: [new Ext.ux.IFrameComponent({ id: 'PERSONAL_IMAGE', url:'/dataset/image/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&objectName=PERSONAL_IMAGE")."'})]
+        ";
+        
+        $PERSONAL_INFORMATION_ITEMS = "
+            title: ''
+            ,border: false
+            ,items:[{
+                xtype: 'panel'
+                ,layout: 'form'
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,title: '".PERSONAL_INFORMATION."'
+                ,bodyStyle: 'padding:10px; background:#FFF;'
+                ,items: [
+                    {".CamemisField::Box("CODEID", CODE_ID, $this->objectData["CODE"])."}
+                    ,{".CamemisField::Textfield("LASTNAME","LASTNAME",LASTNAME, true)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME","FIRSTNAME",FIRSTNAME, true)."}
+                    ,{".CamemisField::Textfield("LASTNAME_LATIN","LASTNAME_LATIN",LASTNAME_LATIN, false, false)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME_LATIN","FIRSTNAME_LATIN",FIRSTNAME_LATIN, false, false)."}
+                    ,{".CamemisField::ComboGender(GENDER)."}
+                    ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, false)."}
+                    ,{".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 80)."}
+                    ,{".CamemisField::comboReligion()."}
+                    ,{".CamemisField::comboEthnic()."}
+                    ,{".CamemisField::comboNationality()."}
+                ]
+            }]    
+        ";
+        
+        $PERSONAL_INFORMATION_ITEMS = "
+            title: ''
+            ,border: false
+            ,items:[{
+                xtype: 'panel'
+                ,layout: 'form'
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,title: '".PERSONAL_INFORMATION."'
+                ,bodyStyle: 'padding:10px; background:#FFF;'
+                ,items: [
+                    {".CamemisField::Box("CODEID", CODE_ID, $this->objectData["CODE"])."}
+                    ,{".CamemisField::Textfield("FIRSTNAME","FIRSTNAME",FIRSTNAME, true)."}
+                    ,{".CamemisField::Textfield("LASTNAME","LASTNAME",LASTNAME, true)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME_LATIN","FIRSTNAME_LATIN",FIRSTNAME_LATIN, false, false)."} 
+                    ,{".CamemisField::Textfield("LASTNAME_LATIN","LASTNAME_LATIN",LASTNAME_LATIN, false, false)."}
+                    ,{".CamemisField::ComboGender(GENDER)."}
+                    ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, false)."}
+                    ,{".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 80)."}
+                    ,{".CamemisField::comboReligion()."}
+                    ,{".CamemisField::comboEthnic()."}
+                    ,{".CamemisField::comboNationality()."}
+                ]
+            }]    
+        ";
+          
+        $CONTACT_INFORMATION_ITEMS = "
+            title: ''
+            ,border: false
+            ,layout: 'form'
+            ,items:[{
+                xtype: 'panel'
+                ,layout: 'form'
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,title: '".CONTACT_INFORMATION."'
+                ,bodyStyle: 'padding:10px; background:#FFF;'
+                ,items: [
+                    {".CamemisField::Textarea("ADDRESS", ADDRESS, 100, false, false)."}
+                    ,{
+                        xtype: '".$OBJECT_LOCATION_PARENT->getObjectXType()."'
+                    }
+                    ,{
+                        xtype: '".$OBJECT_LOCATION_CHILD->getObjectXType()."'
+                    }
+                    ,{".CamemisField::Textfield("PHONE","PHONE",PHONE, false, false)."}
+                    ,{".CamemisField::Textfield("EMAIL","EMAIL",EMAIL, false, false)."}
+                ]
+            }]    
+        ";
+        
+        $CHANGE_PASSWORD_USER_ITEMS = "
+            title: ''
+            ,border: false 
+            ,items:[{
+                xtype: 'panel'
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,width: 550
+                ,title: '".CHANGE_PASSWORD."'
+                ,bodyStyle: 'padding:5px'
+                ,tbar:['->',{
+                    text: '".CHANGE_PASSWORD."'
+                    ,iconCls:'icon-lightning'
+                    ,handler:function(){
+                        openWinIFrame('".CHANGE_PASSWORD."', '/staff/changepassword/?objectId=".$this->objectId."', 550,350);
+                    }
+                }]
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,bodyStyle: 'padding:10px; background:#FFF;'
+                    ,style: 'padding-bottom:10px'
+                    ,items: [{
+                        ".CamemisField::Displayfield("LOGINNAME",LOGINNAME,false)."
+                    },{
+                        ".CamemisField::Displayfield("PASSWORD",PASSWORD,'**********')."
+                    },{
+                        ".CamemisField::Displayfield("PASSWORD_REPEAT",PASSWORD_REPEAT,'**********')."
+                    }]
+                }]
+            }]    
+        ";
+        
+        $ITEMS = "[";
+        switch (UserAuth::getUserType()) {
+            case "SUPERADMIN":
+            case "ADMIN":
+                if ($this->objectId != Zend_Registry::get('USER')->ID){
+                    $ITEMS .= "{".$PERSON_STATUS."}";
+                    $ITEMS .= ",{".$PERSONAL_IMAGE_ITEMS."}";
+                    $ITEMS .= ",{".$CHANGE_PASSWORD_USER_ITEMS."}";
+                }else{
+                    $ITEMS .= "{".$PERSONAL_IMAGE_ITEMS."}";
+                    $ITEMS .= ",{".$CHANGE_PASSWORD_USER_ITEMS."}";
+                }
+                
+                $ITEMS .= ",{".$PERSONAL_INFORMATION_ITEMS."}";
+                $ITEMS .= ",{".$CONTACT_INFORMATION_ITEMS."}";
+                
+                break;
+            case "TEACHER":
+            case "INSTRUCTOR":
+                $ITEMS .= "{".$PERSONAL_IMAGE_ITEMS."}";
+                $ITEMS .= ",{".$CHANGE_PASSWORD_USER_ITEMS."}";
+                $ITEMS .= ",{".$PERSONAL_INFORMATION_ITEMS."}";
+                $ITEMS .= ",{".$CONTACT_INFORMATION_ITEMS."}";
+                break;
+        }
+        $ITEMS .= "]";
+        
+        $formItems = "
+            border: false
+            ,autoScroll: true
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$ITEMS."
+        ";
+        $OBJECT_FORM->addObjectItems($formItems);
+    
+        $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setSaveParams(
+            "cmd: 'updateObject'
+            ,objectId: '".$this->objectId."'
+        ");
+        $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+            if (Ext.getCmp('STAFF_STAFFSEARCH_ID')) window.parent.Ext.getCmp('STAFF_STAFFSEARCH_ID').store.reload();
+            ".camemisPage::setRequestURI()."
+        ");
+
+        $OBJECT_FORM->bodyStyle = "padding:0px";
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 150;
+        $OBJECT_FORM->renderJS();
+        
+        $objectData = $this->objectData;
+        ?>
+        
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'CONTENT'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        
+        <?
+        
+        $js = "";
+        $js .= "var comboProvince = Ext.getCmp('PROVINCE_ID');";
+        $js .= "var comboTwon = Ext.getCmp('TWON_ID');";
+        
+        $js .= "if(comboProvince){";
+            $js .= "comboProvince.on('select', function() {";
+                $js .= "if(comboTwon){";
+                    $js .= "comboTwon.setValue('');";
+                    $js .= "comboTwon.store.baseParams.parentId = comboProvince.getValue();";
+                    $js .= "comboTwon.store.reload();";
+                $js .= "}";
+            $js .= "});";
+        $js .= "}";
+        echo $js;
+        
+        ?>
+    });
+	
+</script>
+<div id="initPersonStatus" class="x-hidden" style="margin:10px;padding:8px;">
+    <h1 class="headerInfo"><?=$STATUS_NAME?> (<?=$STATUS_DATE?>)</h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

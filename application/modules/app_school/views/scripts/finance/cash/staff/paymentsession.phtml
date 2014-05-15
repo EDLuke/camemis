@@ -1,0 +1,552 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$CATEGORY_OBJECT_TREE = new CamemisTree("DATASET","LIST");
+$CATEGORY_OBJECT_TREE ->setURL("/dataset/jsontree/");
+
+$OBJECT_FORM = new CamemisForm("FINANCE");
+$OBJECT_FORM->setLoadUrl('/finance/jsonload/');
+$OBJECT_FORM->setSaveUrl('/finance/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("FINANCE", "SESSION");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$facette = StaffFeePaymentDBAccess::getStaffFeePaymentFromId($this->paymentId);
+$entriesParentCheckbox = FinanceDescriptionDBAccess::sqlDescription(false, 1, 2);
+
+$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+$actionType = isset($_GET["actionType"])?$_GET["actionType"]:0;
+
+$CHECKBOX_JS = "";
+$CHECKBOX_DATA = array();
+$CHECKBOX_ITEMS = array();
+if($entriesParentCheckbox){
+    foreach($entriesParentCheckbox as $value){
+        if(FinanceDescriptionDBAccess::checkChild($value->ID)){
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 1, 2);
+            $CHECKBOX_JS .= "var CHECKBOX_$value->ID = new Ext.form.CheckboxGroup({";
+               $CHECKBOX_JS .= "fieldLabel: '".addslashes($value->NAME)."'";
+               $CHECKBOX_JS .= ",columns: 2";
+               $CHECKBOX_JS .= ",items:[";
+                   $CHECKBOX_DATA = array();
+                   foreach($entries as $v){
+                       $CHECKBOX_DATA[] = "{boxLabel: '".addslashes($v->NAME)."', name: 'CHECKBOX_".$v->ID."'}";
+                   }
+                   $CHECKBOX_JS .= implode(',',$CHECKBOX_DATA);
+               $CHECKBOX_JS .= "]";
+           $CHECKBOX_JS .= "});";
+
+           $CHECKBOX_ITEMS[] = "CHECKBOX_".$value->ID."";   
+        }
+    }
+}
+
+$entriesParentRadiobox = FinanceDescriptionDBAccess::sqlDescription(false, 2, 2);
+$RADIOBOX_JS = "";
+$RADIOBOX_DATA = array();
+$RADIOBOX_ITEMS = array();
+if($entriesParentRadiobox){
+    foreach($entriesParentRadiobox as $value){
+        if(FinanceDescriptionDBAccess::checkChild($value->ID)){
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 2, 2);
+            $RADIOBOX_JS .= "var RADIOBOX_$value->ID = new Ext.form.RadioGroup({";
+                $RADIOBOX_JS .= "fieldLabel: '".addslashes($value->NAME)."'";
+                $RADIOBOX_JS .= ",columns: 2";
+                $RADIOBOX_JS .= ",items:[";
+                    $RADIOBOX_DATA = array();
+                    foreach($entries as $v){
+                        $RADIOBOX_DATA[] = "{boxLabel: '".addslashes($v->NAME)."', name: 'RADIOBOX_".$value->ID."', inputValue: '".$v->ID."'}";
+                    }
+                    $RADIOBOX_JS .= implode(',',$RADIOBOX_DATA);
+                $RADIOBOX_JS .= "]";
+            $RADIOBOX_JS .= "});";
+
+            $RADIOBOX_ITEMS[] = "RADIOBOX_".$value->ID."";
+        }
+    }
+}
+
+?>
+<script>
+    var startDate = '<?=setDate2DB($startDate)?>';
+    var endDate = '<?=setDate2DB($endDate)?>';
+    
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        function showText(v, p, record, rowIndex){
+            return String.format('<div style=\"white-space:normal;font-weight:bold; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['COLOR']
+                ,record.data['COLOR_FONT']
+            );
+        }
+        
+        function showTextStatus(v, p, record, rowIndex){
+            return String.format('<div style=\"white-space:normal;font-weight:bold;\">{0}</div>'
+                ,v
+            );
+        }
+        
+        function showHour(v){
+            return String.format('<div style=\"white-space:normal;font-weight:bold;\">{0}</div>'
+                ,v + ' hours'
+            );   
+        }
+            
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        echo $RADIOBOX_JS;
+        echo $CHECKBOX_JS;
+    
+        $CATEGORY_OBJECT_TREE->isAsyncTreeNode = false;
+        $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+        $CATEGORY_OBJECT_TREE->setBaseParams("
+            cmd: 'jsonTreeAllExpenseCategories'
+        ");
+
+        $CATEGORY_OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $CATEGORY_OBJECT_TREE->isTreeExpand = true;
+        $CATEGORY_OBJECT_TREE->renderJS();
+        $triggerOnClickCategory = "
+            openWinXType('EXPENSE_CATEGORY','".EXPENSE_CATEGORY."', '".$CATEGORY_OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$CATEGORY_OBJECT_TREE->getObjectId()."');
+            myTree.on('click', function(node, e){
+            Ext.getCmp('CHOOSE_EXPENSE_CATEGORY_NAME_ID').setValue(node.attributes.text);
+            Ext.getCmp('CHOOSE_EXPENSE_CATEGORY').setValue(node.attributes.id);
+            Ext.getCmp('EXPENSE_CATEGORY').close();
+        });
+        ";
+          
+        $FORM_ITEMS = "[
+            {".CamemisField::Textfield("PAYMENT_AMOUNT", "PAYMENT_AMOUNT", AMOUNT." (".Zend_Registry::get('SCHOOL')->CURRENCY.")", true, false, false, false, false)."}
+            ,{".CamemisField::Trigger("CHOOSE_EXPENSE_CATEGORY_NAME",EXPENSE_CATEGORY,$triggerOnClickCategory,true, false, false)."}
+            ,{".CamemisField::Hidden("CHOOSE_EXPENSE_CATEGORY",false)."}
+        ]"; 
+
+        $DETAIL_INFORMATION = "
+        {
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 500
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                ,items: ".$FORM_ITEMS."
+            }]
+        }
+        ";
+
+        $DATE_ITEMS = "[{
+            name: 'START_DATE'
+            ,hidden: false
+            ,width: 250
+            ,fieldLabel: '" . START_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'START_DATE'
+            ,vtype: 'daterange'
+            ,endDateField: 'END_DATE'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,allowBlank: false
+        },{
+            name: 'END_DATE'
+            ,hidden: false
+            ,width: 250
+            ,fieldLabel: '" . END_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'END_DATE'
+            ,vtype: 'daterange'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,startDateField: 'START_DATE'
+            ,allowBlank: false
+        },{
+            ".CamemisField::Numberfield("NUMBER_SESSION", "NUMBER_SESSION", NUMBER_SESSION, true, false, false, false)."
+        },{
+            ".CamemisField::Numberfield("NUMBER_EXTRA_SESSION", "NUMBER_EXTRA_SESSION", NUMBER_EXTRA_SESSION, true, false, false, false)."
+        },{
+            ".CamemisField::Numberfield("NUMBER_ABSENCE", "NUMBER_ABSENCE", NUMBER_ABSENCE, true, false, false, false)."
+        },{
+            ".CamemisField::Numberfield("TOTAL", "TOTAL", TOTAL, true, false, false, false)."
+        }]"; 
+        
+        $TEACHING_SESSION = "
+        {
+            title: '".TEACHING_SESSION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 500
+            ,tbar:['->',{
+                text:'".CHECK_TEACHING_SESSION."'
+                ,iconCls:'icon-lightning'
+                ,handler: function(){
+                    _startDate = Ext.getCmp('START_DATE').getValue();
+                    _endDate = Ext.getCmp('END_DATE').getValue();
+                    startDate = _startDate.format('Y-m-d');
+                    endDate = _endDate.format('Y-m-d');
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                        start:0
+                        ,limit:100
+                        ,teacherId: '".$this->objectId."'                         
+                        ,cmd: 'searchTeachingSession'
+                        ,target:'payment'
+                        ,startdt:startDate
+                        ,enddt:endDate
+                    };
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                    
+                    Ext.Ajax.request({
+                        url:'/schedule/jsonload/'
+                        ,method: 'POST'
+                        ,params: {
+                            start:0
+                            ,limit:100
+                            ,teacherId: '".$this->objectId."'                         
+                            ,cmd: 'searchTeachingSession'
+                            ,target:'payment'
+                            ,startdt:startDate
+                            ,enddt:endDate
+                            
+                        }
+                        ,success: function(response) {
+                            var jsonData = Ext.util.JSON.decode(response.responseText);
+                            totalSession = jsonData.totalSession;
+                            totalExtraSession = jsonData.totalExtraSession;
+                            totalAbsence = jsonData.totalAbsence;
+                            totalResult = jsonData.totalResult;
+                            
+                            Ext.getCmp('NUMBER_SESSION').setValue(totalSession);
+                            Ext.getCmp('NUMBER_EXTRA_SESSION').setValue(totalExtraSession);
+                            Ext.getCmp('NUMBER_ABSENCE').setValue(totalAbsence);
+                            Ext.getCmp('TOTAL').setValue(totalResult);
+                        }
+                        ,failure: function() {}
+                    });
+                }
+            }]
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                ,items: ".$DATE_ITEMS."
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DESCRIPTION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 500
+            ,height: 100
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                ,items: [{".CamemisField::Textarea("DESCRIPTION", false,100)."}]
+            }]
+        }
+        ";
+
+        $DETAIL_CHECKBOX = "
+        {
+            title: 'Check Box'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 500
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                ,items: [".implode(',',$CHECKBOX_ITEMS)."]
+            }]
+        }
+        ";
+
+        $DETAIL_RADIOBOX = "
+        {
+            title: 'Radio Box'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 500
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                ,items: [".implode(',',$RADIOBOX_ITEMS)."]
+            }]
+        }
+        ";
+
+        if($CHECKBOX_ITEMS && $RADIOBOX_ITEMS){
+            $SET_ITEMS = "
+            [
+                ".$DETAIL_RADIOBOX."
+                ,".$DETAIL_CHECKBOX."
+            ]
+            ";
+        }elseif(!$CHECKBOX_ITEMS && $RADIOBOX_ITEMS){
+            $SET_ITEMS = "
+            [
+                ".$DETAIL_RADIOBOX."
+            ]
+            ";
+        }elseif($CHECKBOX_ITEMS && !$RADIOBOX_ITEMS){
+            $SET_ITEMS = "
+            [
+                ".$DETAIL_CHECKBOX."
+            ]
+            ";
+        }else{
+            $SET_ITEMS = "
+            [
+            ]
+            ";
+        }
+    
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: [
+                ".$TEACHING_SESSION."
+                ,".$DETAIL_INFORMATION."
+                ,".$SET_ITEMS."
+                ,".$DESCRIPTION."
+            ]
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            }
+        ");
+
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        if ($this->paymentId !="new") $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
+
+        $OBJECT_FORM->setLoadParams("
+            cmd: 'jsonLoadStaffPayment'
+            ,paymentId: '".$this->paymentId."'
+        ");
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActionStaffPayment'
+            ,paymentId: '".$this->paymentId."'
+            ,objectId:'".$this->objectId."'
+            ,paymentType:'PAYMENT_FOR_TEACHING_SESSION'
+        ");
+
+        $OBJECT_FORM->setonEmbeddedEvents("
+            if (window.parent.Ext.getCmp('FINANCE_INVOICE_ID')) window.parent.Ext.getCmp('FINANCE_INVOICE_ID').store.reload();
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            if(window.parent.Ext.getCmp('FINANCE_MANAGEMENT_LIST_ID'))
+            window.parent.Ext.getCmp('FINANCE_MANAGEMENT_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'removeStaffPayment'
+            ,paymentId: '".$this->paymentId."'
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            if (window.parent.Ext.getCmp('FINANCE_INVOICE_ID')) window.parent.Ext.getCmp('FINANCE_INVOICE_ID').store.reload();
+            window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        ");
+        
+        if(!$facette){
+            $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        }
+
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'TEACHER_NAME'");
+        $OBJECT_GRID->addReadField("name: 'SESSION_DATE'");
+        $OBJECT_GRID->addReadField("name: 'EVENT'");
+        $OBJECT_GRID->addReadField("name: 'ROOM'");
+        $OBJECT_GRID->addReadField("name: 'HOURS'");
+        $OBJECT_GRID->addReadField("name: 'COLOR'");
+        $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'CLASS'");
+
+        $OBJECT_GRID->addColumn("header: '<b>".TEACHER."</b>', align:'left', renderer: showText, width: 150, sortable: true, dataIndex: 'TEACHER_NAME'");
+        $OBJECT_GRID->addColumn("
+            header: '<b>".DATE."</b>'
+            , align:'left'
+            , sortable: true
+            , width:200
+            , dataIndex: 'SESSION_DATE'
+            , renderer: showText
+            , summaryRenderer: function(){
+                return '".TOTAL."';
+            }
+        ");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".EVENT."</b>', align:'left', renderer: showText, width: 200, sortable: true, dataIndex: 'EVENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_CLASS."</b>', align:'left', renderer: showText, width:150, sortable: true, dataIndex: 'CLASS'");
+        $OBJECT_GRID->addColumn("
+            header: '<b>".HOURS."</b>'
+            , align:'left'
+            , sortable: true
+            , width:200
+            , dataIndex: 'HOURS'
+            , renderer: showHour
+            , summaryType: 'sum'
+            , summaryRenderer: function(total){
+                return ((total === 0 || total > 1) ? total + ' hours' : ' ');
+            }
+        ");
+        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'left', renderer: showTextStatus, width: 200, sortable: true, dataIndex: 'TEACHING_STATUS'");
+        
+        if($facette){
+            $OBJECT_GRID->baseParams = "
+                start:0
+                ,limit:100
+                ,teacherId:'".$this->objectId."'
+                ,cmd: 'searchTeachingSession'
+                ,target:'payment'
+                ,startdt:'$facette->START_DATE'
+                ,enddt:'$facette->END_DATE'
+            ";
+            $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        }else{
+            $OBJECT_GRID->baseParams = "
+                start:0
+                ,limit:100
+                ,teacherId:'".$this->objectId."'
+                ,cmd: 'searchTeachingSession'
+                ,target:'payment'
+                ,startdt:startDate
+                ,enddt:endDate
+            ";
+        }
+        if($actionType==1){
+            $OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    text: '".CANCEL."'
+                    ,id: 'CANCEL_ID'
+                    ,formBind:true
+                    ,iconCls:'icon-cancel'
+                    ,scope:this
+                    ,handler: function(){
+                        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                }
+                }]);
+            ");
+            $OBJECT_GRID->isObjectDefaultOnLoad = true;   
+        }else{
+            $OBJECT_GRID->isObjectDefaultOnLoad = false;    
+        }
+        
+        $OBJECT_GRID->objectTitle = TEACHING_SESSION;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "TEACHER_NAME";
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items: [{";
+                $js .= "bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px;'";
+                $js .= ",border:false";
+                $js .= ",items:[{";
+                    if($actionType==0){
+                        $js .= "xtype: 'tabpanel'";
+                        $js .= ",plain:true";
+                        $js .= ",activeTab: 0";
+                        $js .= ",items:[{";
+                            $js .= "title:'".MAIN_CONTENT."'";
+                            $js .= ",border: false";
+                            $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".TEACHING_SESSION."'";
+                            $js .= ",height:percentHeight(100)";
+                            $js .= ",border: false";
+                            $js .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+                        $js .= "}]";
+                    }else{
+                        
+                        $js .= "layout: 'fit'";
+                        $js .= ",height:percentHeight(100)";
+                        $js .= ",border: false";
+                        $js .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+                    }
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+        
+        print $js;  
+        ?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

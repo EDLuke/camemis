@@ -1,0 +1,271 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 07.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisTree("TRAINING", "LIST");
+$OBJECT_TREE->setURL('/training/jsontree/');
+$OBJECT_TREE->setSaveUrl('/training/jsonsave/');
+
+$ADD_SUBJECT_GRID = new CamemisGrid("TRAINING", "LIST_OF_SUBJECTS");
+$ADD_SUBJECT_GRID->setLoadUrl('/training/jsonload/');
+$ADD_SUBJECT_GRID->setSaveUrl('/training/jsonsave/');
+
+$ADD_ASSIGNMENT_GRID = new CamemisGrid("TRAINING", "LIST_OF_ASSIGNMENTS");
+$ADD_ASSIGNMENT_GRID->setLoadUrl('/training/jsonload/');
+$ADD_ASSIGNMENT_GRID->setSaveUrl('/training/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var subjectId;
+var parentId;
+Ext.onReady(function() {
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $ADD_SUBJECT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+        var str = '<span class=spanText>' + v + '</span>';
+        return str;
+    }
+    ");
+    $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+    $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_TYPE'");
+    $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_COEFF'");
+    
+    $ADD_SUBJECT_GRID->addColumn("header: '".TYPE."', align: 'center', width: 80, dataIndex: 'SUBJECT_TYPE'");
+    $ADD_SUBJECT_GRID->addColumn("header: '".NAME."', width: 150, renderer: renderText, sortable: true, dataIndex: 'SUBJECT_NAME'");
+    $ADD_SUBJECT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, renderer: renderText, sortable: true, dataIndex: 'SUBJECT_COEFF'");
+    
+    $ADD_SUBJECT_GRID->isGroupingView = false;
+    $ADD_SUBJECT_GRID->isQuickySearch = true;
+    $ADD_SUBJECT_GRID->isCheckboxSelect = true;
+    $ADD_SUBJECT_GRID->forceFit = "false";
+    $ADD_SUBJECT_GRID->addTBarItems(CamemisBar::tbarGridSelection());
+
+    $ADD_SUBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,trainingId: '".$this->objectId."'
+        ,cmd: 'jsonUnassignedSubjectsByTraining'
+    ";
+    $ADD_SUBJECT_GRID->setSelectionParams("
+        cmd: 'jsonAddSubjectToTraining'
+        ,trainingId: '".$this->objectId."'
+    ");
+    $ADD_SUBJECT_GRID->setSelectionEmbeddedEvents("
+        Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();
+    ");
+    
+    $ADD_SUBJECT_GRID->renderJS();
+    
+    //
+    $ADD_ASSIGNMENT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+        var str = '<span class=spanText>' + v + '</span>';
+        return str;
+    }
+    ");
+    $ADD_ASSIGNMENT_GRID->addReadField("name: 'ASSIGNMENT_NAME'");
+    $ADD_ASSIGNMENT_GRID->addReadField("name: 'WEIGHTING'");
+    
+    $ADD_ASSIGNMENT_GRID->addColumn("header: '".NAME."', width: 150, renderer: renderText, sortable: true, dataIndex: 'ASSIGNMENT_NAME'");
+    $ADD_ASSIGNMENT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, renderer: renderText, sortable: true, dataIndex: 'WEIGHTING'");
+    
+    $ADD_ASSIGNMENT_GRID->isGroupingView = false;
+    $ADD_ASSIGNMENT_GRID->isQuickySearch = true;
+    $ADD_ASSIGNMENT_GRID->isCheckboxSelect = true;
+    $ADD_ASSIGNMENT_GRID->forceFit = "false";
+    $ADD_ASSIGNMENT_GRID->addTBarItems(CamemisBar::tbarGridSelection());
+
+    $ADD_ASSIGNMENT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,trainingId: '".$this->objectId."'
+        ,subjectId: subjectId
+        ,cmd: 'jsonSubjectAssignmentTraining'
+    ";
+    $ADD_ASSIGNMENT_GRID->setSelectionParams("
+        cmd: 'jsonAddAssignmentToTraining'
+        ,subjectId: subjectId
+        ,parentId: parentId
+        ,trainingId: '".$this->objectId."'
+    ");
+    $ADD_ASSIGNMENT_GRID->setSelectionEmbeddedEvents("
+        Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();
+    ");
+    
+    $ADD_ASSIGNMENT_GRID->renderJS();
+    //
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isTreeExpand = true;
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    
+    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS"))      
+    if($this->facette->OBJECT_TYPE == "TERM"){
+        $OBJECT_TREE->addTBarItems("
+            id: 'ADD_SUBJECT_ID'
+            ,text: '".SUBJECT."'
+          
+            ,tooltip:'".ADD_SUBJECTS."'
+            ,scope:this
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+                openWinXType('WinXType','".ADD_SUBJECTS."', '".$ADD_SUBJECT_GRID->getObjectXType()."', 500, percentHeight(85));
+            }
+        ");
+    }
+    
+    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS")){
+        if($this->facette->OBJECT_TYPE == "TERM"){
+            $DISABLED_ADD_ASSIGNMENT = "false";
+            $DISABLED_DELETE_ASSIGNMENT = "false";
+        }else{
+            $DISABLED_ADD_ASSIGNMENT = "true";
+            $DISABLED_DELETE_ASSIGNMENT = "true";
+        }
+    }else{
+        $DISABLED_ADD_ASSIGNMENT = "true";
+        $DISABLED_DELETE_ASSIGNMENT = "true";
+    }
+    
+    if($this->facette->OBJECT_TYPE == "TERM"){
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'jsonTreeAssignedSubjectsByTraining'
+            ,trainingId: '".$this->objectId."'
+        ");
+    }else{
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'jsonTreeAssignedSubjectsByTraining'
+            ,trainingId: '".$this->facette->TERM."'
+        ");
+    }
+    
+    $OBJECT_TREE->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 250
+                ,minSize: 250
+                ,maxSize: 250
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        myTree.on('click', function(node, e){
+            if(!node.isLeaf()){
+                
+                subjectId = node.attributes.subjectId;
+                parentId = node.id;
+                var contextMenu = new Ext.menu.Menu({
+                    items: [{
+                        text: '<?=ADD_ASSIGNMENT;?>'
+                        ,disabled: <?=$DISABLED_ADD_ASSIGNMENT;?>
+                        ,iconCls:'icon-application_form_add'
+                        ,handler:function(){
+                            Ext.getCmp('center').getLayout().setActiveItem(0);
+                            openWinXType('WinXType','<?=ADD_ASSIGNMENT?>', '<?=$ADD_ASSIGNMENT_GRID->getObjectXType()?>', 500, percentHeight(85));
+                        }
+                    },{
+                        text: '<?=SUBJECT;?>'
+                        ,disabled: false
+                        ,iconCls:'icon-application_form_magnify'
+                        ,handler:function(){
+                            Ext.getCmp('center').getLayout().setActiveItem(0);
+                            clickOpenPage('center','', '/training/showallsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);
+                        }
+                    },{
+                        text: '<?=REMOVE;?>'
+                        ,iconCls:'icon-delete'
+                        ,disabled:<?=$DISABLED_DELETE_ASSIGNMENT;?>
+                        ,handler: function(){
+                            var id = node.id;
+                            Ext.MessageBox.show({
+                                title:'<?=CONFIRMATION?>'
+                                ,width: 350
+                                ,msg: '<?=DELETE_THIS_ITEM?>'
+                                ,buttons: Ext.MessageBox.YESNO
+                                ,icon: Ext.MessageBox.WARNING
+                                ,fn: function(btn){
+                                    if(btn == "yes"){
+                                        Ext.Ajax.request({
+                                            url: '/training/jsonsave/'
+                                            ,method: 'POST'
+                                            ,params: {cmd: 'jsonRemoveSubjectFromTraining', objectId: id}
+                                            ,success: function(response, options) {
+                                                Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();
+                                                <?
+                                                echo camemisPage::setRequestURI();
+                                                ?>
+                                            }
+                                            ,failure: function(response, options) {}
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }]
+                });
+                e.stopEvent();
+                contextMenu.showAt(e.xy);
+            }else{
+                Ext.getCmp('center').getLayout().setActiveItem(0);
+                clickOpenPage('center','<?=DETAIL_INFORMATION;?>: '+node.text, '/training/showsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);
+            }
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

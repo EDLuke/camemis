@@ -1,0 +1,106 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/DepartmentDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+
+$educationSystem = isset($_GET['system'])?$_GET['system']:0;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $formItems = "
+        [{
+            xtype: 'panel'
+            ,width: 550
+            ,style: 'padding-bottom: 5px'
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,title: '".NAME."'
+            ,layout: 'form'
+            ,items:  [
+                {".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
+                ,{".CamemisField::Textfield("SHORT", "SHORT", SHORT, true)."}
+                ,{".CamemisField::ComboEducationSystem(false,true,$educationSystem)."}
+                ,{".CamemisField::ComboQualificationType(false, false, false)."}
+                ,{".CamemisField::Combo("DEPARTMENT",FACULTY_OR_DEPARTMENT,DepartmentDBAccess::getComboDataDepartment(true),false,false,false, false, false)."}
+                ,{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}
+            ]
+        }]";
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype: 'panel'
+            ,border: false
+            ,height: percentHeight(90)
+            ,layout: 'form'
+            ,autoScroll: true
+            ,items: ".$formItems."
+        ");
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('WEST_ID').expand();
+            }
+        ");
+        
+        //if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'addCampus'
+            ,objecttype: 'CAMPUS'
+            ,parentId: '".$_GET["parentId"]."'
+        ");
+
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            var tree = window.parent.Ext.getCmp('ACADEMIC_TREE_ID');
+            tree.root.reload();
+        ");
+
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 160;
+        $OBJECT_FORM->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+        });
+        Ext.getCmp('RESET_ID').hide();
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,167 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ROOM");
+$OBJECT_FORM->setLoadUrl('/room/jsonload/');
+$OBJECT_FORM->setSaveUrl('/room/jsonsave/');
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+if($this->facette){
+    if($this->facette->PARENT){
+        $parentId = $this->facette->PARENT;
+    }else{
+        $parentId = "";
+    }
+}else{
+    $parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    if(!$parentId){
+        
+        $FORM_ITEMS = "[
+        {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
+        ,
+            new Ext.form.RadioGroup({
+                fieldLabel: '".TYPE."'
+                ,columns: 2
+                ,items: [
+                    {boxLabel: 'Checkbox', name: 'CHOOSE_TYPE', inputValue: '1', checked: true}
+                    ,{boxLabel: 'Radiobox', name: 'CHOOSE_TYPE', inputValue: '2', checked: false}
+                ]
+            })
+        ]";
+    }else{
+       $FORM_ITEMS = "[
+            {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
+        ]"; 
+    }
+
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$FORM_ITEMS."
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+	
+    if($objectId !="new"){
+        if(UserAuth::getACLValue("SCHOOL_SETTING_REMOVE_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+    }
+    if(UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+    if(!$parentId){
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            window.parent.Ext.getCmp('TREE.ROOM_LIST_ID').root.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+    
+    }else{
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            myTree = window.parent.Ext.getCmp('TREE.ROOM_LIST_ID');
+            myNode = myTree.getNodeById('".$parentId."');
+            myNode.reload();
+            myNode.expand(true, false);
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+    }
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'loadRoomDescription',objectId: '".$objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'saveRoomDescription'
+        ,objectId: '".$objectId."'
+        ,parentId: '".$parentId."'
+    ");
+    
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeRoomDescription'
+        ,objectId: '".$objectId."'
+    ");
+	
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        window.parent.Ext.getCmp('TREE.ROOM_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+	
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

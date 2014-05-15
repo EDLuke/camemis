@@ -1,0 +1,95 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("QUESTION", "LIST");
+$OBJECT_GRID->setLoadUrl("/camemisevaluation/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+
+    Ext.onReady(function() {
+        function renderText(value,record){
+            return '<div style=\"font-weight:normal; color:#000000; padding: 5px; height:15px;background:#FFFFFF;\">' + value + '</div>';
+        }
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        $OBJECT_GRID->addReadField("name: 'QUESTION_NAME'");
+        $OBJECT_GRID->addReadField("name: 'ANSWER_NAME'");
+        $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>" . QUESTION . "</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:400, dataIndex: 'QUESTION_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>" . ANSWER . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'ANSWER_NAME'");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ADD_ID'
+                ,scope:this
+                ,text:'".ADD_ENTRY."'
+                ,tooltip:'".ADD_ENTRY."'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    clickOpenPage('content','".ADD_ENTRY."', '/camemisevaluation/questionshow/?objectId=new');
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonLoadAllEvaluationQuestion'
+        ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('->');
+        ");
+        
+        $OBJECT_GRID->objectBorder = "true";
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "QUESTION_NAME";
+        $OBJECT_GRID->forceFit = "true";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                id: 'content'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        
+        var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            clickOpenPage('content','', '/camemisevaluation/questionshow/?objectId='+record.data.ID);
+        })
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

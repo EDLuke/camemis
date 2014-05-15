@@ -1,0 +1,430 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisTreeCombo.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$STAFF_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STAFF_REGISTRATION_WIZARD_EDIT_RIGHT")?"false":"true";
+
+?>
+<div id="congratulations" class="x-hide-display">
+    <h1 class="header"><?=CONGRATULATIONS?></h1>
+    <br/><br/>
+    <p class="header"><?=STEP?> 3/3 - <?=COMPLETE?></p>
+    <p class="header">
+        <?=MSG_CREATE_NOW_RECORDS;?>
+        <br><br>
+        <?=MSG_CLICK_SAVE_BUTTON;?>
+    </p>
+</div>
+<script>
+    var staff_school_id;
+    var campusId;
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    Ext.onReady(function() {
+        Ext.QuickTips.init();
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_LOCATION_PARENT = new CamemisDynCombo("DATASET","PROVINCE");
+        $OBJECT_LOCATION_PARENT->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_PARENT->objectTitle = CITY_PROVINCE;
+        $OBJECT_LOCATION_PARENT->allowBlank = "true";
+        $OBJECT_LOCATION_PARENT->width = 250;
+        $OBJECT_LOCATION_PARENT->varName = "COUNTRY_PROVINCE";
+        $OBJECT_LOCATION_PARENT->setLoadParams("cmd: 'jsonAllLocation',parentId:0");
+        $OBJECT_LOCATION_PARENT->renderJS();
+        
+        $OBJECT_LOCATION_CHILD = new CamemisDynCombo("DATASET","TWON");
+        $OBJECT_LOCATION_CHILD->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_CHILD->objectTitle = TOWN_CITY;
+        $OBJECT_LOCATION_CHILD->allowBlank = "true";
+        $OBJECT_LOCATION_CHILD->width = 250;
+        $OBJECT_LOCATION_CHILD->varName = "TOWN_CITY";
+        $OBJECT_LOCATION_CHILD->setLoadParams("cmd: 'jsonAllLocation',parentId:'1010101010'");
+        $OBJECT_LOCATION_CHILD->renderJS();
+        
+        $staffschoolIdHandler = "
+            function(){
+                var win = new Ext.Window({
+                    modal: true
+                    ,title: '".CHECK_STAFF_SCHOOL_ID."'
+                    ,width:330
+                    ,autoHeight: true
+	                ,closeAction:'hide'
+	                ,plain: false
+	                ,xtype: 'form'
+	                ,labelAlign: 'top'
+	                ,bodyStyle: 'padding:10px'
+                        ,items:[{
+                            xtype: 'textfield'
+                            ,allowBlank: false
+                            ,id: 'CHECK_FORM_ID'
+                            ,name: 'staffSchoolId'
+                            ,allowBlank: false
+                            ,width: 250
+	                }]
+                    ,tbar:['->',{
+                        text: '".APPLY."'
+                        ,id: 'APPLY_ID'
+                        ,iconCls:'icon-lightning_add'
+                        ,handler: function(){
+                            var checkFormId = document.getElementById('CHECK_FORM_ID').value;
+                            Ext.Ajax.request({
+                                url: '/staff/jsonsave/'
+                                ,method: 'POST'
+                                ,params: {
+                                    cmd: 'jsonCheckStaffSchoolID'
+                                    ,staffSchoolId: checkFormId
+                                }
+                                ,success: function(result) {
+                                    jsonData = Ext.util.JSON.decode(result.responseText);
+                                    if (jsonData.status){
+                                        Ext.getCmp('CHOOSE_STAFF_SCHOOID_ID_NAME').setValue(checkFormId);
+                                        staff_school_id = checkFormId;
+                                        win.close();
+                                    }else{
+                                        ".camemisPage::alertPleaseSelect(WARNING, setICONV(SCHOOL_ID_EXISTS))."
+                                    }
+                                }
+                            });
+                        }
+                    },{
+                        text: '".CLOSE."'
+                        ,iconCls:'icon-cancel'
+                        ,handler: function(){
+                            win.close();
+                        }
+                    }]
+                });
+                win.show();
+            }
+        ";
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $personItems = "[
+                {".CamemisField::Textfield("TITLE", "TITLE", JOB_TITLE, false)."},
+                {".CamemisField::Textfield("POSITION", "POSITION", POSITION, false)."},
+                {".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, true)."},
+                {".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, true)."},
+                {".CamemisField::ComboGender(GENDER)."},
+                {".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, true)."},
+                {".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 60)."},
+                {".CamemisField::ComboNationality()."},
+            ]";
+	}else{
+            $personItems = "[
+                {".CamemisField::Textfield("TITLE", "TITLE", JOB_TITLE, false)."},
+                {".CamemisField::Textfield("POSITION", "POSITION", POSITION, false)."},
+                {".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, true)."},
+                {".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, true)."},
+                {".CamemisField::ComboGender(GENDER)."},
+                {".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, true)."},
+                {".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 60)."},
+                {".CamemisField::ComboNationality()."},
+            ]";
+	}
+
+        $contactItems = "[
+            {".CamemisField::Textarea("ADDRESS", ADDRESS, 50)."},
+            {xtype: '".$OBJECT_LOCATION_PARENT->getObjectXType()."'},
+            {xtype: '".$OBJECT_LOCATION_CHILD->getObjectXType()."'},
+            {".CamemisField::Textfield("PHONE", "PHONE", PHONE, true)."},
+            {".CamemisField::Textfield("EMAIL", "EMAIL", EMAIL, false)."}
+        ]";
+
+        $card1Items = "[{
+            title: '".PERSONAL_INFORMATION."'
+            ,bodyStyle: 'padding:10px'
+            ,layout: 'form'
+            ,width: 550
+            ,items: ".$personItems."
+        },{
+            title: '".CONTACT_INFORMATION."'
+            ,bodyStyle: 'padding:10px'
+            ,style:'padding:5px 0px 0px 0px'
+            ,layout: 'form'
+            ,width: 550
+            ,items: ".$contactItems."
+        }]";
+
+        $card2Items = "
+        [{
+            title: '".SCHOOL_INFORMATION."'
+            ,id: 'SCHOOL_INFORMATION'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                width: 550
+                ,layout: 'form'
+                ,border: false
+                ,bodyStyle: 'padding:10px'
+                ,items: [{
+                    ".CamemisField::ComboUserRole(USER_ROLE, true, false)."
+                }]
+            }]
+        }, {
+            title: '".STAFF_CONTRACT."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,width: 550
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, false)."}
+                    ,{".CamemisField::comboCamemisTypes("CONTRACT_TYPE", CONTRACT_TYPE, false,false, true)."}
+                    ,{
+                        name: 'START_DATE'
+                        ,hidden: false
+                        ,width: 250
+                        ,fieldLabel: '" . START_DATE . "'
+                        ,xtype: 'datefield'
+                        ,id: 'START_DATE'
+                        ,vtype: 'daterange'
+                        ,endDateField: 'EXPIRED_DATE'
+                        ,format: '" . setExtDatafieldFormat() . "'
+                        ,allowBlank: true
+                    },{
+                        name: 'EXPIRED_DATE'
+                        ,hidden: false
+                        ,width: 250
+                        ,fieldLabel: '" . EXPIRED_DATE . "'
+                        ,xtype: 'datefield'
+                        ,id: 'EXPIRED_DATE'
+                        ,vtype: 'daterange'
+                        ,format: '" . setExtDatafieldFormat() . "'
+                        ,startDateField: 'START_DATE'
+                        ,allowBlank: true
+                    }]
+            }] 
+            }]";
+        $STAFF_REGISTRATION_READ_RIGHT = (UserAuth::getACLValue("STAFF_REGISTRATION_WIZARD_READ_RIGHT"))?"false":"true";
+        ?>
+        var cardNav = function(incr){
+            var l = Ext.getCmp('card-wizard-panel').getLayout();
+            var i = l.activeItem.id.split('card-')[1];
+            var next = parseInt(i) + incr;
+
+            l.setActiveItem(next);
+            Ext.getCmp('card-prev').setDisabled(next==0);
+            Ext.getCmp('card-next').setDisabled(next==2);
+            Ext.getCmp('card-next').setDisabled(next==3);
+
+            var formCard1 = Ext.getCmp('card-1').getForm();
+            var formCard2 = Ext.getCmp('card-2').getForm();
+
+            if (formCard1.isValid() == false){
+                l.setActiveItem(1);
+            }
+
+            if (formCard1.isValid() == true && formCard2.isValid() == false){
+                l.setActiveItem(2);
+            }
+        };
+
+        function actionSave(){
+
+            var formCard1 = Ext.getCmp('card-1').getForm();
+            var formCard2 = Ext.getCmp('card-2').getForm();
+			
+            var connection = new Ext.data.Connection();
+                connection.request({
+                url: '/staff/jsonsave/'
+                ,scope:this
+                ,params:{
+                    cmd: 'registrationRecord'
+                    ,staffId: '<?=generateGuid();?>'
+                    ,title: formCard1.findField('TITLE').getValue()
+                    ,position: formCard1.findField('POSITION').getValue()
+                    ,firstname: formCard1.findField('FIRSTNAME').getValue()
+                    ,lastname: formCard1.findField('LASTNAME').getValue()
+                    ,gender: formCard1.findField('GENDER').getValue()
+                    ,datebirth: formCard1.findField('DATE_BIRTH').getValue().format('Y-m-d')
+                    ,birth_place: formCard1.findField('BIRTH_PLACE').getValue()
+                    ,address: formCard1.findField('ADDRESS').getValue()
+                    ,nationality: formCard1.findField('NATIONALITY').getValue()
+                    ,town_city: formCard1.findField('TOWN_CITY').getValue()
+                    ,country_province: formCard1.findField('COUNTRY_PROVINCE').getValue()
+                    ,phone: formCard1.findField('PHONE').getValue()
+                    ,email: formCard1.findField('EMAIL').getValue()                     
+                    ,userRole: formCard2.findField('USER_ROLE').getValue()
+                    ,CONTRACT_TYPE: formCard2.findField('CONTRACT_TYPE').getValue()
+                    ,START_DATE: formCard2.findField('START_DATE').getValue().format('Y-m-d')
+                    ,EXPIRED_DATE: formCard2.findField('EXPIRED_DATE').getValue().format('Y-m-d')
+                    ,NAME: formCard2.findField('NAME').getValue()
+                }
+                ,method: 'POST'
+                ,success: function (result) {
+                    <?=camemisPage::setRequestURI();?>
+                }
+            });
+        }
+        
+        viewport = new Ext.Viewport({
+            border: false
+            ,items: [{
+                border: false
+                ,bodyStyle: 'padding:10px'
+                ,layout: 'fit'
+                ,items:[{
+                    xtype: 'panel'
+                    ,layout:'card'
+                    ,activeItem: 0
+                    ,id:'card-wizard-panel'
+                    ,title: ''
+                    ,height: percentHeight(93)
+                    ,items:[{
+                        xtype: 'form'
+                        ,layout: 'fit'
+                        ,title: ''
+                        ,bodyStyle: 'padding:10px'
+                        ,border: false
+                        ,id: 'card-0'
+                        ,items:[{
+                            title: ''
+                            ,width: 550
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,html: '<h1 class="header"><?=MSG_WELCOME_STAFF_REGISTRATION?><p class="header"><br>3 <?=STEPS?><br><br><?=MSG_NEXT_CONTINUE;?></p></h1>'
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,layout: 'fit'
+                        ,labelWidth: 150
+                        ,title: '1/3'
+                        ,bodyStyle: 'padding:10px'
+                        ,border: false
+                        ,id: 'card-1'
+                        ,items:[{
+                            title: ''
+                            ,width: 550
+                            ,autoScroll: true
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card1Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,layout: 'fit'
+                        ,labelWidth: 150
+                        ,title: '2/3'
+                        ,bodyStyle: 'padding:10px'
+                        ,border: false
+                        ,id: 'card-2'
+                        ,items:[{
+                            title: ''
+                            ,width: 550
+                            ,autoScroll: true
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card2Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,layout: 'fit'
+                        ,labelWidth: 150
+                        ,title: '3/3'
+                        ,bodyStyle: 'padding:10px'
+                        ,border: false
+                        ,id: 'card-3'
+                        ,items:[{
+                            title: ''
+                            ,width: 550
+                            ,height: percentHeight(75)
+                            ,bodyStyle: 'padding:10px'
+                            ,contentEl:'congratulations'
+                            ,tbar:['->','-',{
+                                text: '<?=SAVE;?>'
+                                ,disabled: <?=$STAFF_REGISTRATION_EDIT_RIGHT?>
+                                ,id: 'SAVE_ID'
+                                ,iconCls:'icon-disk'
+                                ,handler: function () {
+                                    actionSave();
+                                }
+                            }]
+                        }]
+                    }]
+                    ,tbar: [
+                    {
+                        text: '<?=REFRESH;?>'
+                        ,iconCls:'icon-reload'
+                        ,handler: function(){
+                        <?=camemisPage::setRequestURI();?>
+                        }
+                    },'->', {
+                        id: 'card-prev'
+                        ,text: '&laquo; <?=PREVIOUS;?>'
+                        ,handler: cardNav.createDelegate(this, [-1])
+                        ,disabled: true
+                    },'-',{
+                        id: 'card-next'
+                        ,text: '<?=NEXT;?> &raquo;'
+                        ,disabled: <?=$STAFF_REGISTRATION_READ_RIGHT;?>
+                        ,handler: cardNav.createDelegate(this, [1])
+                    }]
+                }]
+            }]
+        });
+        
+        var comboParent = Ext.getCmp('PROVINCE_ID');
+        var comboChild = Ext.getCmp('TWON_ID');
+        
+        if(comboParent){
+            comboParent.on('select', function() {
+                comboChild.setValue('');
+                comboChild.store.baseParams = {
+                    cmd: 'jsonAllLocation'
+                    ,parentId: comboParent.getValue()
+                };
+                comboChild.store.reload();
+            });
+        }
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

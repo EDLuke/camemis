@@ -1,0 +1,156 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/PersonStatusDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("PERSON_STATUS");
+$OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
+
+$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
+
+$facette = PersonStatusDBAccess::findObjectFromId($this->objectId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $TYPE_STORE = "[
+        [1, '" . START_DATE . "']
+        ,[2, '" . START_DATE . " - " . END_DATE . "']
+    ]";
+    
+    $FORM_ITEMS = "[
+        {".CamemisField::Textfield("SHORT", "SHORT", SHORT_CODE,true,false,false,false)."}
+        ,{".CamemisField::Textfield("NAME", "NAME", NAME,true,false,false,false)."}
+        ,{".CamemisField::Colorfield("COLOR", COLOR, false)."}
+        ,{".CamemisField::Combo("DISPLAY_DATE", 'Display Date', $TYPE_STORE,false, false, false)."}
+        ,{".CamemisField::Checkbox("DEACTIVATE_ACCOUNT", "DEACTIVATE_ACCOUNT", "Deactivate User Account", false, false,true)."}
+    ]";
+
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$FORM_ITEMS."
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+        ]
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+	
+    if($facette) {
+        if(UserAuth::getACLValue("ACADEMIC_SETTING_REMOVE_RIGHT")){
+            if(!$facette->NO_DELETE){
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+            }
+        }
+    }
+    
+    if(UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadPersonStatus',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSavePersonStatus'
+        ,objectId: '".$this->objectId."'
+        ,objectType: '".$objectType."'
+    ");
+    
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'jsonRemovePersonStatus'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        if(window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID').root.reload();
+        if(window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID').root.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        if(window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STUDENT_TYPE_ID').root.reload();
+        if(window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID'))
+        window.parent.Ext.getCmp('TREE.DATASET_STAFF_TYPE_ID').root.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+	
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->isObjectDefaultOnLoad = $facette?true:false;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

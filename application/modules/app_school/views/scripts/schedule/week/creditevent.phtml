@@ -1,0 +1,286 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna
+// Date: 25.11.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+     
+    Ext.onReady(function() {
+        
+        function styleTime(v, p, record, rowIndex){
+
+            return String.format('<div style=\"font-weight:bold; padding: 10px; height: 65px; color:#333; background:#FFF;\">{0}</div>'
+                ,v
+            );
+        }
+    
+        function cssMO(v, metadata, record){
+            var name = record.data.MO_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['MO_COLOR']
+                ,record.data['MO_COLOR_FONT']
+            );
+        }
+       
+        function cssTU(v, metadata, record){
+            var name = record.data.TU_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['TU_COLOR']
+                ,record.data['TU_COLOR_FONT']
+            );
+        }
+        
+        function cssWE(v, metadata, record){
+            var name = record.data.WE_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['WE_COLOR']
+                ,record.data['WE_COLOR_FONT']
+            );
+        }
+        
+        function cssTH(v, metadata, record){
+            var name = record.data.TH_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['TH_COLOR']
+                ,record.data['TH_COLOR_FONT']
+            );
+        }
+        
+        function cssFR(v, metadata, record){
+            var name = record.data.FR_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['FR_COLOR']
+                ,record.data['FR_COLOR_FONT']
+            );
+        }
+        
+        function cssSA(v, metadata, record){
+            var name = record.data.SA_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['SA_COLOR']
+                ,record.data['SA_COLOR_FONT']
+            );
+        }
+        
+        function cssSU(v, metadata, record){
+            var name = record.data.SU_DESCRIPTION;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 65px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['SU_COLOR']
+                ,record.data['SU_COLOR_FONT']
+            );
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        $OBJECT_GRID->addReadField("name: 'MO_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TU_GUID'");
+        $OBJECT_GRID->addReadField("name: 'WE_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TH_GUID'");
+        $OBJECT_GRID->addReadField("name: 'FR_GUID'");
+        $OBJECT_GRID->addReadField("name: 'SA_GUID'");
+        $OBJECT_GRID->addReadField("name: 'SU_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TIME'");
+        $OBJECT_GRID->addReadField("name: 'MO'");
+        $OBJECT_GRID->addReadField("name: 'TU'");
+        $OBJECT_GRID->addReadField("name: 'WE'");
+        $OBJECT_GRID->addReadField("name: 'TH'");
+        $OBJECT_GRID->addReadField("name: 'FR'");
+        $OBJECT_GRID->addReadField("name: 'SA'");
+        $OBJECT_GRID->addReadField("name: 'SU'");
+        $OBJECT_GRID->addReadField("name: 'SCHEDULE_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'MO_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'TU_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'WE_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'TH_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'FR_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'SA_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'SU_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'MO_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'TU_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'WE_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'TH_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'FR_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'SA_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'SU_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'MO_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'TU_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'WE_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'TH_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'FR_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'SA_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'SU_COLOR_FONT'");
+        
+        $OBJECT_GRID->addReadField("name: 'MO_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'TU_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'WE_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'TH_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'FR_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SA_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SU_DESCRIPTION'");
+        
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");    
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . TIME . "</b>'
+            , align:'center'
+            ,renderer: styleTime
+            , sortable: false
+            , dataIndex: 'TIME'
+            , width: 110
+        ");
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . MONDAY . "</b>'
+            ,renderer: cssMO
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'MO'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . TUESDAY . "</b>'
+            ,renderer: cssTU
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'TU'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . WEDNESDAY . "</b>'
+            ,renderer: cssWE
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'WE'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . THURSDAY . "</b>'
+            ,renderer: cssTH
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'TH'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . FRIDAY . "</b>'
+            ,renderer: cssFR
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'FR'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . SATURDAY . "</b>'
+            ,renderer: cssSA
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'SA'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . SUNDAY . "</b>'
+            ,renderer: cssSU
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'SU'
+            , width: 165
+        ");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,schoolyearId: '".$this->schoolyearId."'
+            ,studentId: '".$this->studentId."'
+            ,term: '".$this->term."'
+            ,cmd: 'loadCreditStudentSubjectEvents'
+            
+        ";
+      
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-',[{
+                id: 'REFRESH_ID'
+                ,text: '".REFRESH."'
+                ,iconCls:'icon-reload'
+                ,scope:this
+                ,disabled: false
+                ,handler: function(){
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+        ");
+        
+    
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'content'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        
+        
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

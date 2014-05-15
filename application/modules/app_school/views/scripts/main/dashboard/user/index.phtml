@@ -1,0 +1,148 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+////////////////////////////////////////////////////////////////////////////////
+Utiles::setDashboard();
+////////////////////////////////////////////////////////////////////////////////
+$OBJECT_TREE = new CamemisTree("DASHBOARD", "LIST");
+$OBJECT_TREE->setURL("/main/jsontree/");
+$OBJECT_TREE->setSaveUrl("/main/jsonsave/");
+
+$data = array();
+
+if(Utiles::getUserDashboardItems()){
+    $i=0;
+    foreach(Utiles::getUserDashboardItems() as $value){
+        $title = defined(trim($value->CONST)) ? constant(trim($value->CONST)) : trim($value->CONST);
+        $padding = $i?"padding:0px 20px 0px 5px;":"padding:10px 20px 0px 5px;";
+        $item = "{";
+            $item .= "columnWidth:1";
+            $item .= ",style:'".$padding."'";
+            $item .= ",items:[{";
+                $item .= "title: '".$title."'";
+                $item .= ",id:'".$value->CONST."'";
+                $item .= ",layout:'fit'";
+                $item .= ",tools: tools";
+                
+                switch($value->CONST){
+                    case "USER_ONLINE_LOG":
+                        $item .= ",height:450";
+                        break;
+                    default:
+                        $item .= ",height:350";
+                        break;
+                }
+                
+                $item .= ",items: [new Ext.ux.IFrameComponent({ id: '".$value->CONST."', url:'".$value->URL."'})]";
+            $item .= "}]";
+        $item .= "}";
+        $data[] = $item;
+        $i++;
+    }
+}
+$VIEWPORT_ITEMS = implode(",",$data);
+?>
+<script type="text/javascript" src="/public/ux/Portal.js"></script>
+<script type="text/javascript" src="/public/ux/PortalColumn.js"></script>
+<script type="text/javascript" src="/public/ux/Portlet.js"></script>
+<script>
+Ext.onReady(function(){
+    
+    <?
+    $OBJECT_TREE->setBaseParams("
+        cmd: 'jsonTreeUnassignedDashboardItems'
+    ");
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isTreeExpand = false;
+    $OBJECT_TREE->renderJS();
+    ?>
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+    var tools = [{
+        id:'gear',
+        handler: function(){
+            //Ext.Msg.alert('Message', 'The Settings tool was clicked.');
+        }
+    },{
+        id:'close',
+        handler: function(e, target, panel){
+            panel.ownerCt.remove(panel, true);
+            Ext.Ajax.request({
+                url: '/main/jsonsave/'
+                ,method: 'POST'
+                ,params:{cmd:'actionRemovePanel',panelId:panel.id}
+                ,success: function(response, options) {
+                    XMsg('<?=STATUS?>','<?=ACTION_SUCCESSFULLY_SAVED?>');
+                }
+            });
+        }
+    }];
+
+    new Ext.Viewport({
+        layout:'fit',
+        items:[{
+            xtype:'portal'
+            ,region:'fit'
+            ,margins:'35 5 5 0'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>'
+            ,tbar:[{
+                text:'<?=REFRESH?>'
+                ,iconCls:'icon-arrow_refresh'
+                ,handler:function(){
+                    window.location='<?=$_SERVER["REQUEST_URI"]?>';
+                }
+            },'-',{
+                text:'<?=SETTINGS?>'
+                ,iconCls:'icon-wrench'
+                ,handler:function(){
+                    openWinXType('SETTINGS','<?=SETTINGS?>', '<?=$OBJECT_TREE->getObjectXType()?>',350,350);
+                    var myTree = Ext.getCmp('<?=$OBJECT_TREE->getObjectId()?>');
+                    myTree.on('checkchange', function(node, checked){
+                        Ext.Ajax.request({
+                            url: '/main/jsonsave/'
+                            ,method: 'POST'
+                            ,scope:this
+                            ,params: {
+                                cmd: 'actionAddUserDashboardItem'
+                                ,checked: checked
+                                ,panelId: node.id
+                            }
+                            ,success: function(response, options) {
+                                window.location='<?=$_SERVER["REQUEST_URI"]?>';
+                            }
+                        });
+                    });
+                }
+            }]
+            ,items:[<?=$VIEWPORT_ITEMS;?>]
+            ,listeners: {
+                'drop': function(e){
+                    var position = e.position+1;
+                    Ext.Ajax.request({
+                        url: '/main/jsonsave/'
+                        ,method: 'POST'
+                        ,params:{cmd:'setPositionDashboardItem',newposition:position,clickId:e.panel.id}
+                        ,success: function(response, options) {
+                            XMsg('<?=STATUS?>','<?=ACTION_SUCCESSFULLY_SAVED?>');
+                        }
+                    });
+                }
+            }
+        }]
+    });
+});
+
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

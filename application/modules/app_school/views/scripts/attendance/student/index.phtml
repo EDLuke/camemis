@@ -1,0 +1,549 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("STUDENT_ATTENDANCE", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
+
+$GENERAL_EDU_TREE = new CamemisTree("ACADEMIC","LIST");
+$GENERAL_EDU_TREE->setURL('/academic/jsontree/');
+$GENERAL_EDU_TREE->setSaveUrl('/academic/jsonsave/');
+
+$TRAINING_TREE = new CamemisTree("TRAINING","LIST");
+$TRAINING_TREE->setURL('/training/jsontree/');
+$TRAINING_TREE->setSaveUrl('/training/jsonsave/');
+
+$OBJECT_FORM = new CamemisForm("ATTENDANCE");
+$OBJECT_FORM->setLoadUrl('/attendance/jsonload/');
+$OBJECT_FORM->setSaveUrl('/attendance/jsonsave/');
+
+$OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
+$OBJECT_TREE->setURL('/subject/jsontree/');
+$OBJECT_TREE->setSaveUrl('/subject/jsonsave/');  
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
+
+?>
+<script>
+    Ext.onReady(function() {
+        ///////////////////////////////////////////////////////////////////
+        Ext.Ajax.timeout = 600000;
+        Ext.QuickTips.init();
+    
+        function myAjaxRequest(formObject, gridObject){
+            var fieldValue = formObject.getForm().getFieldValues(); 
+            if(plsEnterKey(fieldValue)){
+                <?=CamemisPage::alertPleaseSelect(NOTES,PLS_ENTER_KEYWORD)?>
+            }else{
+                var myMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS <?=LOADING?></b>', msgCls:'x-mask-loading-camemis'});
+                myMask.show();
+                Ext.Ajax.request({
+                    url: '/attendance/jsonload'
+                    ,method: 'POST'
+                    ,params:{cmd:'jsonSearchStudentAttendance'}
+                    ,form: formObject.getForm().getEl().dom
+                    ,success: function(response, options) {
+                        jsonData = Ext.util.JSON.decode(response.responseText);
+                        var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                        for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                            if(myform.getForm().getEl().dom[i].value){
+                                Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                            }
+                        }
+                        
+                        gridObject.getStore().loadData(jsonData);
+                        myMask.hide();
+                    }
+                });
+            }
+        }
+        
+        function plsEnterKey(obj){
+            var s;
+            if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER 
+                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.GENDER || obj.ABSENT_TYPE || obj.START_DATE || obj.END_DATE
+            ){
+                s = 0;
+            }else{
+                s = 1;
+            }
+            return s;
+        }
+        
+        function keyEnter(){
+            Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+            var formObject = Ext.getCmp('<?=$OBJECT_FORM->getObjectId()?>');
+            var gridObject = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+            myAjaxRequest(formObject, gridObject);
+        }
+        
+        function geFormat(data){
+            return date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+        }
+        Ext.apply(Ext.form.VTypes, {
+            daterange : function(val, field) {
+                var date = field.parseDate(val);
+                if(!date){
+                    return false;
+                }
+                if (field.startDateField) {
+                    var start = Ext.getCmp(field.startDateField);
+                    if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                        start.setMaxValue(date);
+                        start.validate();
+                    }
+                }
+                else if (field.endDateField) {
+                    var end = Ext.getCmp(field.endDateField);
+                    if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                        end.setMinValue(date);
+                        end.validate();
+                    }
+                }
+                return true;
+            }
+        });
+        ////////////////////////////////////////////////////////////////
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+        $OBJECT_SCHOOLYEAR->objectTitle = false;
+        $OBJECT_SCHOOLYEAR->allowBlank = "true";
+        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+        $OBJECT_SCHOOLYEAR->renderJS();
+        
+        $OBJECT_TREE->isAsyncTreeNode = false;   
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $triggerOnClickSubject = "
+            openWinXType('SUBJECT_ID','".SUBJECT."', '".$OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
+            myTree.on('click', function(node, e){
+                Ext.getCmp('CHOOSE_SUBJECT_NAME_ID').setValue(node.attributes.text);
+                Ext.getCmp('CHOOSE_SUBJECT').setValue(node.id);
+                Ext.getCmp('SUBJECT_ID').close();
+            });
+        ";
+
+        if($this->target=='training'){
+            $OBJECT_TREE->setBaseParams("
+                cmd: 'treeAllTrainingSubjects'
+            ");   
+        }else{
+            $OBJECT_TREE->setBaseParams("
+                cmd: 'treeAllSubjects'
+            ");    
+        }
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = false;
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->renderJS();
+        
+        ////////////////////////////////////////////////////////////////////////
+        $TRAINING_TREE->isAsyncTreeNode = false;
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $TRAINING_TREE->setBaseParams("
+            cmd: 'jsonTreeAllTrainings'
+        ");
+        
+        $TRAINING_TREE->backgroundColor = "#F9F9F9";
+        $TRAINING_TREE->isTreeExpand = false;
+        $TRAINING_TREE->renderJS();
+        
+        $triggerOnClickTraining = "
+            openWinXType('XTYPE_TRAINING','".TRAINING_PROGRAMS."', '".$TRAINING_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$TRAINING_TREE->getObjectId()."');
+            if (myTree) myTree.on('click', function(node, e){   
+                if(node.attributes.objecttype == 'TERM' || node.attributes.objecttype == 'CLASS'){
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').setValue(node.text);
+                    Ext.getCmp('CHOOSE_TRAINING').setValue(node.id);
+                    Ext.getCmp('XTYPE_TRAINING').close();
+                }
+            });
+        ";
+        
+        ////////////////////////////////////////////////////////////////////////
+        $GENERAL_EDU_TREE->isAsyncTreeNode = false;
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+        $GENERAL_EDU_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 120
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+        
+        switch(strtoupper($this->target)){
+            case "GENERAL":
+                $GENERAL_EDU_TREE->setBaseParams("
+                    cmd: 'getTreeTraditionalEducationSystem'
+                "); 
+                break;
+            case "CREDIT":
+                 $GENERAL_EDU_TREE->setBaseParams("
+                    cmd: 'getTreeCreditEducationSystem'
+                    ,educationSystem:1
+                ");
+                break;
+        }
+        
+        $GENERAL_EDU_TREE->isOnClickContextMenu = false;
+        $GENERAL_EDU_TREE->isTreeExpand = false;
+        $GENERAL_EDU_TREE->renderJS();
+    
+        $triggerOnClick = "
+            openWinXType('SCHOOL_YEAR_OR_CLASS','".HIGHER_EDUCATION."', '".$GENERAL_EDU_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$GENERAL_EDU_TREE->getObjectId()."');
+
+            Ext.getCmp('COMBO_ID').on('select', function() {
+                myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+                myTree.root.reload();
+                myTree.getRootNode().expand(true, false);
+            });
+
+            myTree.getRootNode().expand(true, false);
+
+            if (myTree) myTree.on('click', function(node, e){   
+                if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' ){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
+                    Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                }
+            });
+        ";
+		
+        ////////////////////////////////////////////////////////////////////////
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DATE."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        ");
+
+        $OBJECT_FORM->addObjectItems("
+            title: '".PERSONAL_INFORMATION."'
+            ,xtype:'fieldset'
+            ,checkboxToggle:true
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[
+                {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("CODE", "CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                ,{".CamemisField::comboAbsentTypes("STUDENT", false,150, false)."}
+                ,{".CamemisField::Trigger2("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, false, 150)."}
+            ]
+        ");
+        
+        //@Sea Peng 11.12.2013
+        $educationSystem = '';
+        if($this->target=='general')
+            $educationSystem .= GENERAL_EDUCATION;
+        
+        if($this->target=='credit')
+            $educationSystem .= CREDIT_EDUCATION;
+        
+        $SEARCH_ITEMS = array();
+        $CHOOSE_GRADE_NAME= "{".CamemisField::Trigger2("CHOOSE_GRADE_NAME",$educationSystem,$triggerOnClick, false, 150)."}";
+        $CHOOSE_TRAINING_NAME= "{".CamemisField::Trigger2("CHOOSE_TRAINING_NAME",TRAINING_PROGRAMS,$triggerOnClickTraining, false, 150)."}";
+        
+        if($this->target=='general' or $this->target=='credit')
+        $SEARCH_ITEMS[]=  $CHOOSE_GRADE_NAME;
+        
+        if($this->target=='training')
+        $SEARCH_ITEMS[]=  $CHOOSE_TRAINING_NAME ;
+        
+        $CHOOSE_SEARCH_ITEMS = implode(",", $SEARCH_ITEMS);
+        
+        $OBJECT_FORM->addObjectItems("
+            title: '".SCHOOL_INFORMATION."'
+            ,xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[".$CHOOSE_SEARCH_ITEMS."]
+        ");
+        //
+            
+        $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_GRADE",false));
+        $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_TRAINING",false));
+        $OBJECT_FORM->addObjectItems(CamemisField::Hidden("TARGET",false));
+        $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_SUBJECT",false));
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+
+        $STUDENT_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STUDENT_ATTENDANCE_READ_RIGHT")?"false":"true";
+
+        //@Visal
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,disabled: ".$STUDENT_ATTENDANCE_READ_RIGHT."
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+                var formObject = Ext.getCmp('".$OBJECT_FORM->getObjectId()."');
+                var gridObject = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
+                myAjaxRequest(formObject, gridObject);
+            }
+        ");
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = false;
+        $OBJECT_FORM->renderJS();
+
+        $OBJECT_GRID->addCellRenderer("
+            function renderTextBold(v, p, record, rowIndex){
+                var str = '<span style=\"font-weight:bold;color:#061f83;white-space:normal;\">' + v + '</span>';
+                return str;
+            }
+        ");
+        
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span style=\"font-weight:normal;color:#555;white-space:normal;\">' + v + '</span>';
+                return str;
+            }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'STUDENT', type: 'string'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'GENDER_NAME'");
+        $OBJECT_GRID->addReadField("name: 'START_DATE'");
+        $OBJECT_GRID->addReadField("name: 'END_DATE'");
+        $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_TERM'");
+        $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+        $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_LEVEL'");
+        $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderTextBold, sortable: true, dataIndex: 'STUDENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 130, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'START_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>' , align:'center', hidden:".checkColHidden(5, $columndata).", width: 60, renderer: renderText, sortable: true, dataIndex: 'COUNT_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".DESCRIPTION."</b>', width: 150, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'DESCRIPTION'");
+        
+        if($this->target=='general'){
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 130, hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'SCHOOLYEAR_NAME'");
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CLASS_NAME'");
+        }
+        
+        if($this->target=='training'){
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 120, hidden:".checkColHidden(8, $columndata).", renderer: renderText, sortable: true, dataIndex: 'TRAINING_TERM'");
+            $OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", sortable: true, dataIndex: 'TRAINING_NAME'");
+        }
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStudentAttendance'
+        ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-',{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,timeout: 600000
+                        ,params:{cmd: 'jsonSearchStudentAttendance',gridId:'STUDENT_ATTENDANCE_LIST_ID'}
+                        ,form: myForm.getEl().dom
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openstudentattendancelist/'
+                        }
+                    });
+                }
+            }]);
+        ");
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "STUDENT";
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->setUserColumn = true;
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,id: 'CONTENT'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,collapsible: true
+                        ,region:'west'
+                        ,id: 'WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width: 350
+                        ,minSize: 350
+                        ,maxSize: 350
+                        ,keys:{
+                            key:[13]
+                            ,fn: keyEnter
+                            ,scope:this
+                        }
+                        ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                    },{
+                        title: ''
+                        ,collapsible: false
+                        ,id: 'center'
+                        ,region:'center'
+                        ,layout: 'card'
+                        ,activeItem: 0
+                        ,margins: '3 3 3 0'
+                        ,items:[{
+                            layout:'fit'
+                            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                            ,border: false
+                            ,items:[{
+                                xtype: 'tabpanel'
+                                ,id:'TABPANEL_ID'
+                                ,tabPosition: 'top'
+                                ,plain:true
+                                ,activeTab: 0
+                                ,enableTabScroll:true
+                                ,items:[{
+                                    title:'<?=CHARTS;?>'
+                                    ,layout:'fit'
+                                    ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_CHARTS', url:'/attendance/studentchartreport/?key=<?=camemisId();?>&target=<?=$this->target?>'})]
+                                },{
+                                    title:'<?=SEARCH_RESULT;?>'
+                                    ,layout:'fit'
+                                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        });        
+        
+        if(Ext.get('GENERAL_EDUCATION')){
+            Ext.get('GENERAL_EDUCATION').on('click', function(e){
+                if(Ext.getCmp('GENERAL_EDUCATION').getValue() === true){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').show();
+                    Ext.getCmp('CHOOSE_TRAINING').setValue('');
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').hide();
+                    Ext.getCmp('TARGET').setValue('GENERAL');
+                }
+            });
+        }
+        if(Ext.get('TRAINING')){
+            Ext.get('TRAINING').on('click', function(e){
+                if(Ext.getCmp('TRAINING').getValue() === true){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').hide();
+                    Ext.getCmp('CHOOSE_GRADE').setValue('');
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').show();
+                    Ext.getCmp('TARGET').setValue('TRAINING');
+                }
+            });
+        }
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

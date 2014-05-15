@@ -1,0 +1,235 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("GUARDIAN");
+$OBJECT_FORM->setLoadUrl('/guardian/jsonload/');
+$OBJECT_FORM->setSaveUrl('/guardian/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("GUARDIAN", "LIST");
+$OBJECT_GRID->setLoadUrl("/guardian/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    var code = '';
+    var firstname= '';
+    var lastname= '';
+    var gender= '';
+    var phone= '';
+    var email= '';
+
+    Ext.onReady(function() {
+        
+        function renderText(value,record){
+            return '<div style=\"font-weight:normal; color:#000000; padding: 5px; height:15px;background:#FFFFFF;\">' + value + '</div>';
+        }
+        
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PERSONAL_INFORMATION ="{
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".PERSONAL_INFORMATION."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,autoHeight:true
+            ,items:[
+                {".CamemisField::Textfield("CODE", "CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+
+            ]
+        }";
+        
+        $ADDRESS ="{
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".ADDRESS."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+            ,width: 310
+            ,items:[
+                {".CamemisField::Textfield("PHONE", "PHONE", PHONE, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("EMAIL", "EMAIL", EMAIL, false, false, false, 150)."}
+            ]
+        }";
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,handler: function(){
+                ".CamemisPage::setRequestURI(false)."
+            }
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                Ext.getCmp('center').getLayout().setActiveItem(0); 
+                
+                code = this.getForm().findField('CODE').getValue();
+                lastname = this.getForm().findField('LASTNAME').getValue();
+                firstname = this.getForm().findField('FIRSTNAME').getValue();
+                gender = this.getForm().findField('GENDER').getValue();
+                phone = this.getForm().findField('PHONE').getValue();
+                email = this.getForm().findField('EMAIL').getValue();
+                
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonSearchStudentGuardian'
+                    ,code: code
+                    ,firstname: firstname
+                    ,lastname: lastname
+                    ,gender: gender
+                    ,phone: phone
+                    ,email: email
+                };
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            }
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".ADD_ENTRY."'
+            ,id: 'ADD_ID'
+            ,formBind:true
+            ,iconCls:'icon-application_form_add'
+            ,scope:this
+            ,handler: function(){
+                clickOpenPage('center','".ADD_A_NEW_ITEM."', '/guardian/guardianshowitem?objectId=new');
+            }
+        ");
+        
+        $FORM_ITEMS = "[";
+            $FORM_ITEMS .= "".$PERSONAL_INFORMATION;
+            $FORM_ITEMS .= ",".$ADDRESS;
+        $FORM_ITEMS .= "]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";'
+            ,items: ".$FORM_ITEMS."
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = false;
+        $OBJECT_FORM->renderJS();
+        
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        //OBJECT GRID
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME_LATIN'");
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'PHONE'");
+        $OBJECT_GRID->addReadField("name: 'EMAIL'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', renderer: renderText, width: 80, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'LASTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'FIRSTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME_LATIN . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'LASTNAME_LATIN'");
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME_LATIN . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'FIRSTNAME_LATIN'");     
+        }else{
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'FIRSTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'LASTNAME'");
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRSTNAME_LATIN . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'FIRSTNAME_LATIN'");
+            $OBJECT_GRID->addColumn("header: '<b>" . LASTNAME_LATIN . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'LASTNAME_LATIN'");   
+        }
+        $OBJECT_GRID->addColumn("header: '<b>" . GENDER . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'GENDER'");
+        $OBJECT_GRID->addColumn("header: '<b>" . PHONE . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'PHONE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . EMAIL . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'EMAIL'");
+        
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStudentGuardian'
+        ";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('->');
+        ");
+        
+        $OBJECT_GRID->loadMask = true;
+        $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout: 'card'
+                ,border: false
+                ,activeItem: 0
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,region:'west'
+                        ,id: 'WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width:350
+                        ,minSize:350
+                        ,maxSize:350
+                        ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+
+                    },{
+                        title: ''
+                        ,collapsible: false
+                        ,id: 'center'
+                        ,region:'center'
+                        ,layout: 'card'
+                        ,activeItem: 0
+                        ,margins: '3 3 3 0'
+                        ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+                    }]
+                }]
+            }]
+        });
+        var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            clickOpenPage('center','', '/guardian/guardianshowitem?objectId='+record.data.ID);
+        })
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

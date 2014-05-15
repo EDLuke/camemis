@@ -1,0 +1,564 @@
+<?
+///////////////////////////////////////////////////////////
+//@Chung veng Web Developer
+//Date: 22.06.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/club/ClubDBAccess.php';
+require_once 'models/app_school/club/StudentClubDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("CLUB");
+
+$OBJECT_FORM->setLoadUrl("/club/jsonload/");
+$OBJECT_FORM->setSaveUrl("/club/jsonsave/");
+ 
+$TEACHER_GRID = new CamemisGrid("TEACHER", "SEARCH");
+$TEACHER_GRID->setLoadUrl('/club/jsonload/');
+$TEACHER_GRID->setSaveUrl("/club/jsonsave/");
+$columndataTeacher = Utiles::getGridColumnData("TEACHER_SEARCH_ID");
+ 
+$SHOWTEACHER_GRID = new CamemisGrid("TEACHER", "LIST");
+$SHOWTEACHER_GRID->setLoadUrl('/club/jsonload/');
+$SHOWTEACHER_GRID->setSaveUrl("/club/jsonsave/");
+$columndataShowTeacher = Utiles::getGridColumnData("TEACHER_LIST_ID");
+
+$SUBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
+$SUBJECT_TREE->setURL('/subject/jsontree/');
+ 
+$ADD_STUDENTS_GRID = new CamemisGrid("CLUB", "SEARCH");
+$ADD_STUDENTS_GRID->setLoadUrl("/club/jsonload/");
+$ADD_STUDENTS_GRID->setSaveUrl("/club/jsonsave/");
+$columndataAddStudent = Utiles::getGridColumnData("CLUB_SEARCH_ID");
+
+$STUDENTS_GRID = new CamemisGrid("CLUB", "LIST");
+$STUDENTS_GRID->setLoadUrl("/club/jsonload/"); 
+$columndataStudents = Utiles::getGridColumnData("CLUB_LIST_ID");
+ 
+$HIDDEN_ADD_ENTRY = false;
+$HIDDEN_ITEM=false;
+switch(UserAuth::getUserType()){
+    case "ADMIN":
+    case "SUPPERADMIN":
+        $HIDDEN_ADD_ENTRY = false;
+        $HIDDEN_ITEM=false;
+    break;
+    case "TEACHER":
+    case "INSTRUCTOR":
+        $HIDDEN_ITEM=false;
+        $HIDDEN_ADD_ENTRY = true;
+        break;
+    case "STUDENT":
+        $HIDDEN_ADD_ENTRY = true;
+        $HIDDEN_ITEM=true;
+    break;
+}
+if(!$this->facette){
+    $reloadId = isset($_GET['parentId'])?$_GET['parentId']:0;
+}else{
+    $reloadId = $this->facette?$this->facette->PARENT:0; 
+}
+
+$status = $this->facette?$this->facette->STATUS:1;
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script> 
+    
+    Ext.onReady(function() {
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();  
+        
+        ///    add student
+        $ADD_STUDENTS_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+
+        $ADD_STUDENTS_GRID->addReadField("name: 'STUDENT_ID'");
+        $ADD_STUDENTS_GRID->addReadField("name: 'CODE'");
+        $ADD_STUDENTS_GRID->addReadField("name: 'STUDENT'");
+        $ADD_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
+        $ADD_STUDENTS_GRID->addReadField("name: 'GENDER'");
+        $ADD_STUDENTS_GRID->addReadField("name: 'REGISTRATION'");
+      
+        $ADD_STUDENTS_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'ASSIGNED'
+            ,hidden:'".$HIDDEN_ITEM."'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+      
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, hidden:".checkColHidden(1, $columndataAddStudent).", dataIndex: 'CODE'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataAddStudent).", dataIndex: 'STUDENT'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100, hidden:".checkColHidden(3, $columndataAddStudent).", sortable: true, dataIndex: 'GENDER'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, hidden:".checkColHidden(4, $columndataAddStudent).", sortable: true, dataIndex: 'DATE_BIRTH'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . REGISTRATION . "</b>', width: 100, hidden:".checkColHidden(5, $columndataAddStudent).", sortable: true, dataIndex: 'REGISTRATION'");
+       
+        $ADD_STUDENTS_GRID->isGridEditing = true;
+        $ADD_STUDENTS_GRID->isQuickySearch = true;
+        $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
+        $ADD_STUDENTS_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."' 
+            ,cmd: 'jsonListStudentInSchool'
+        ";
+        $ADD_STUDENTS_GRID->setSaveParams("
+            cmd: 'actionStudentToClub' 
+            ,objectId: '".$this->objectId."'
+        ");
+        $ADD_STUDENTS_GRID->setAftereditCallback("
+            Ext.getCmp('" . $ADD_STUDENTS_GRID->getObjectId() . "').store.reload();
+            Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.reload();
+        ");
+        
+        $ADD_STUDENTS_GRID->forceFit = "false";
+        $ADD_STUDENTS_GRID->renderJS();
+        
+        $TEACHER_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+        $TEACHER_GRID->addReadField("name: 'CHECKED'");
+       
+        $TEACHER_GRID->addReadField("name: 'ID'");
+        $TEACHER_GRID->addReadField("name: 'CODE'");
+        $TEACHER_GRID->addReadField("name: 'TEACHER'");
+        $TEACHER_GRID->addReadField("name: 'FULL_NAME'");
+        $TEACHER_GRID->addReadField("name: 'LASTNAME'");
+        $TEACHER_GRID->addReadField("name: 'FIRSTNAME'");
+        $TEACHER_GRID->addReadField("name: 'GENDER'");
+        
+        $TEACHER_GRID->addColumn("
+             xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'ASSIGNEDs'
+            ,hidden:'".$HIDDEN_ADD_ENTRY."'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+             
+        $TEACHER_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', sortable: false, dataIndex: 'CODE', width: 80, hidden:".checkColHidden(1, $columndataTeacher).",renderer: cssText");
+        $TEACHER_GRID->addColumn("header: '<b>" . TEACHER . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataTeacher).",renderer:cssText, dataIndex: 'TEACHER'");
+        $TEACHER_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(3, $columndataTeacher).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+         
+        $TEACHER_GRID->setSaveParams("
+            cmd: 'actionTeacherToClub' 
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $TEACHER_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."' 
+            ,cmd: 'jsonListTeacherInSchool'
+        ";
+        
+         $TEACHER_GRID->setAftereditCallback("
+            Ext.getCmp('" . $TEACHER_GRID->getObjectId() . "').store.reload();
+            Ext.getCmp('" . $SHOWTEACHER_GRID->getObjectId() . "').store.reload();
+        ");
+        $TEACHER_GRID->setEditEmbeddedEvents("
+             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        ");
+       
+        $TEACHER_GRID->isGridEditing = true;
+        $TEACHER_GRID->isQuickySearch = true;
+        $TEACHER_GRID->loadMask = false;
+        $TEACHER_GRID->isPagingToolbar = true;
+        $TEACHER_GRID->isObjectDefaultOnLoad = true;
+        $TEACHER_GRID->forceFit = "false";
+        $TEACHER_GRID->renderJS();
+        ////
+        /// show grid teacher in club
+        
+        $SHOWTEACHER_GRID->addReadField("name: 'CHECKED'");
+       
+        $SHOWTEACHER_GRID->addReadField("name: 'ID'");
+        $SHOWTEACHER_GRID->addReadField("name: 'CODE'");
+        $SHOWTEACHER_GRID->addReadField("name: 'TEACHER_ID'");
+        $SHOWTEACHER_GRID->addReadField("name: 'FULL_NAME'");
+        $SHOWTEACHER_GRID->addReadField("name: 'LASTNAME'");
+        $SHOWTEACHER_GRID->addReadField("name: 'FIRSTNAME'");
+        $SHOWTEACHER_GRID->addReadField("name: 'GENDER'");
+        
+        if(!$status){
+           $SHOWTEACHER_GRID->addTBarItems("
+                tbar.add([{
+                    id: 'ADD_TEACHER_ID'
+                    ,tooltip: '" . TEACHER . "'
+                    ,text: '".TEACHER."'
+                    ,hidden:'".$HIDDEN_ADD_ENTRY."'
+                    ,iconCls:'icon-application_form_add'
+                    ,scope:this
+                    ,disabled: false
+                    ,handler: function(){
+                         openWinXType('WinXType','".TEACHER."', '".$TEACHER_GRID->getObjectXType()."',percentWidth(70),percentHeight(85));
+                         Ext.getCmp('".$TEACHER_GRID->getObjectId()."').store.load(); 
+                    }
+                }]);
+            ");
+            $SHOWTEACHER_GRID->isGridEditing = true;     
+        }
+        $SHOWTEACHER_GRID->addColumn("
+                xtype: 'checkboxcolumn'
+                ,header: ''
+                ,dataIndex: 'CHECKEDs'
+                ,hidden:'".$HIDDEN_ADD_ENTRY."'
+                ,width: 50
+                ,on: 1
+                ,off: 0 
+            ");     
+        $SHOWTEACHER_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', sortable: false, dataIndex: 'CODE', width: 80, hidden:".checkColHidden(1, $columndataShowTeacher).",rendererrenderer: cssText");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $SHOWTEACHER_GRID->addColumn(" header: '<b>" . LASTNAME . "</b>', align:'left', sortable: false, dataIndex: 'LASTNAME', width: 120, hidden:".checkColHidden(2, $columndataShowTeacher).",renderer: cssText");
+            $SHOWTEACHER_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', sortable: false, dataIndex: 'FIRSTNAME', width: 120, hidden:".checkColHidden(3, $columndataShowTeacher).",renderer: cssText");     
+        }else{
+            $SHOWTEACHER_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', sortable: false, dataIndex: 'FIRSTNAME', width: 120, hidden:".checkColHidden(2, $columndataShowTeacher).",renderer: cssText");
+            $SHOWTEACHER_GRID->addColumn(" header: '<b>" . LASTNAME . "</b>', align:'left', sortable: false, dataIndex: 'LASTNAME', width: 120, hidden:".checkColHidden(3, $columndataShowTeacher).",renderer: cssText");  
+        }
+        $SHOWTEACHER_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(4, $columndataShowTeacher).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+        
+        $SHOWTEACHER_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."'
+            ,cmd: 'jsonTeacherClubs'
+        ";
+        
+         $SHOWTEACHER_GRID->setSaveParams("
+            cmd: 'actionRemoveTeacherClub'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $SHOWTEACHER_GRID->setEditEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            Ext.getCmp('" . $SHOWTEACHER_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $SHOWTEACHER_GRID->getObjectId() . "').store.reload();
+        ");
+       
+        
+        $SHOWTEACHER_GRID->isQuickySearch = true;
+        $SHOWTEACHER_GRID->loadMask = false;
+        $SHOWTEACHER_GRID->isPagingToolbar = true;
+        $SHOWTEACHER_GRID->isObjectDefaultOnLoad = true;
+        $SHOWTEACHER_GRID->forceFit = "false";
+        $SHOWTEACHER_GRID->renderJS();
+        ////
+        $STUDENTS_GRID->addReadField("name: 'CHECKED'");
+        $STUDENTS_GRID->addReadField("name: 'STUDENT_ID'");
+        $STUDENTS_GRID->addReadField("name: 'CODE'");
+        $STUDENTS_GRID->addReadField("name: 'FIRSTNAME'");
+        $STUDENTS_GRID->addReadField("name: 'LASTNAME'");
+        $STUDENTS_GRID->addReadField("name: 'GENDER'");
+        $STUDENTS_GRID->addReadField("name: 'SORTKEY'");;
+   
+        if(!$status){
+           $STUDENTS_GRID->addTBarItems("
+                tbar.add([{
+                    id: 'ADD_STUDENT_ID'
+                    ,tooltip: '" . ADD_STUDENTS . "'
+                    ,text: '".ADD_STUDENTS."'
+                    ,hidden:'".$HIDDEN_ITEM."'
+                    ,iconCls:'icon-application_form_add'
+                    ,scope:this
+                    ,disabled: false
+                    ,handler: function(){
+                         openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(70),percentHeight(85));
+                         Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.load(); 
+                    }
+                }]);
+           ");
+           $STUDENTS_GRID->isGridEditing = true;
+        }               
+        $STUDENTS_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,hidden:'".$HIDDEN_ITEM."'
+            ,dataIndex: 'CHECKED' 
+            ,width: 50
+            ,on: 1
+            ,off: 0 
+         ");            
+        $STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', width: 80, hidden:".checkColHidden(1, $columndataStudents).", renderer: cssText, sortable: false, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $STUDENTS_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 140, hidden:".checkColHidden(2, $columndataStudents).", renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+            $STUDENTS_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 140, hidden:".checkColHidden(3, $columndataStudents).", renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");    
+        }else{
+            $STUDENTS_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 140, hidden:".checkColHidden(2, $columndataStudents).", renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+            $STUDENTS_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 140, hidden:".checkColHidden(3, $columndataStudents).", renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");  
+        }
+        $STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(4, $columndataStudents).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+        
+        $STUDENTS_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."'
+            ,cmd: 'jsonStudentClub'
+        ";
+        
+        $STUDENTS_GRID->setSaveParams("
+            cmd: 'actionRemoveStudentClub'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $STUDENTS_GRID->setEditEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.reload();
+        ");
+        
+        $STUDENTS_GRID->loadMask = false;
+        $STUDENTS_GRID->isPagingToolbar = true;
+        $STUDENTS_GRID->isQuickySearch = true;
+        $STUDENTS_GRID->isObjectDefaultOnLoad = true;
+        $STUDENTS_GRID->forceFit = "false";
+        $STUDENTS_GRID->renderJS();
+
+        $DETAIL_INFORMATION = "
+        {
+            title: '".NAME."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px' 
+            ,width: 550 
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true 
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("NAME", "NAME", NAME, true)."}
+                    ,{".CamemisField::Checkbox("REGISTRATION", "REGISTRATION", 'Registration', false, false)."}
+                ]
+            }] 
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DESCRIPTION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [{".CamemisField::Textarea('DESCRIPTION', false, 150, false, false, false)."}]
+            }]
+        }
+        ";
+        
+         $TEACHER_INFORMATION = "
+        {
+            title: '".TEACHER."'
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,width: 550
+            ,height: 300
+            ,layout: 'fit'
+            ,items:[{xtype: '".$SHOWTEACHER_GRID->getObjectXtype()."'}]
+        }";
+ 
+        $ITEMS = "[";
+        $ITEMS .= $DETAIL_INFORMATION;
+        if($this->facette){
+            $ITEMS .= ",".$TEACHER_INFORMATION; 
+        }
+        $ITEMS .= ",".$DESCRIPTION;
+
+        $ITEMS .= "]";
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS' 
+            ,autoScroll: true
+            ,bodyStyle: 'background:#FFF; padding:10px'
+            ,items: [".$ITEMS."]
+        "; 
+        $OBJECT_FORM->addObjectItems($items);
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadClub',objectId: '".$this->objectId."'"); 
+        switch(UserAuth::getUserType()){
+            case "ADMIN":
+            case "SUPERADMIN":  
+                   
+                $OBJECT_FORM->setReleaseParams("cmd: 'jsonReleaseClub',objectId: '".$this->objectId."'");
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonSaveClub'
+                    ,objectId: '".$this->objectId."'
+                    ,parentId: '".$this->parentId."'
+                ");
+                
+                if($this->facette){
+                    
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+                    if($this->facette->STATUS){
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(false));
+                    }else{
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(true));
+                    } 
+                    $OBJECT_FORM->setRemoveParams("
+                        cmd: 'jsonRemoveClub'
+                        ,objectId: '".$this->objectId."'
+                    ");
+                    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+                        myTree = window.parent.Ext.getCmp('TREE.CLUB_LIST_ID');
+                        myNode = myTree.getNodeById('".$this->facette->PARENT."');
+                        myNode.reload();
+                        myNode.expand(true, false);
+                        //myNode.setText(action.result.text);
+                        ".camemisPage::setRequestURI()."
+                    ");
+                } 
+                if($reloadId){
+                    $OBJECT_FORM->setonEmbeddedEvents("
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                        myTree = window.parent.Ext.getCmp('TREE.CLUB_LIST_ID');
+                        myNode = myTree.getNodeById('".$reloadId."');
+                        if(myNode.parentNode==null){
+                            myTree.root.reload();
+                        }else{
+                            var parentId = myNode.parentNode.id
+                            myPerentNode = myTree.getNodeById(parentId);
+                            if(myNode.isLeaf()){
+                                if(myPerentNode){
+                                    myPerentNode.reload();
+                                    myPerentNode.expand(true, false);
+                                }else{
+                                    myTree.root.reload();
+                                }
+                            }else{
+                                if (myNode.hasChildNodes()) {
+                                    myNode.reload();
+                                    myNode.expand(true, false);
+                                }
+                            }
+                        }
+                        var result = Ext.util.JSON.decode(action.response.responseText);
+                        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+                    ");
+                    
+                    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                        myTree = window.parent.Ext.getCmp('TREE.CLUB_LIST_ID');
+                        myNode = myTree.getNodeById('".$reloadId."');
+                        myNode.reload();
+                        myNode.expand(true, false);
+                        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                    ");
+                }else{ 
+                    $OBJECT_FORM->setonEmbeddedEvents("
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                        myTree = window.parent.Ext.getCmp('TREE.CLUB_LIST_ID');
+                        myNode = myTree.getNodeById('".$reloadId."');
+                        if(myNode.parentNode==null){
+                            myTree.root.reload();
+                        }else{
+                            myNode.reload();
+                            myNode.expand(true, false);
+                        }
+
+                        var result = Ext.util.JSON.decode(action.response.responseText);
+                        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+                    ");
+                    
+                    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                        myTree = window.parent.Ext.getCmp('TREE.CLUB_LIST_ID');
+                        myTree.root.reload();
+                        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                    ");
+                   }  
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                
+            break;
+        }   
+        $OBJECT_FORM->isObjectDefaultOnLoad = true;
+        $OBJECT_FORM->bodyStyle = "padding:0px";
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        if(!$this->facette){ 
+        ?>  
+            viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false 
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}] 
+            }]
+            });  
+        <?   
+        }else { 
+        ?>     
+            viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                    ,tabPosition: 'top'
+                    ,activeTab: 0  
+                    ,items:[{
+                        title: '<?=MAIN_CONTENT;?>'
+                        ,layout: 'fit'
+                        ,hidden:'<?=$HIDDEN_ADD_ENTRY?> ' 
+                        ,border:false  
+                        ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+                    },{
+                        title: '<?=STUDENTS;?>'
+                        ,layout: 'fit'
+                        ,items:[{xtype: '<?=$STUDENTS_GRID->getObjectXtype();?>'}]
+                    },{
+                        title: '<?=CLUB_EVENT;?>'
+                        ,layout: 'fit' 
+                        ,style: 'padding:3px '
+                        ,border:false                                                         
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'CLUB_EVENT', url: '/club/clubevents/?objectId=<?=$this->objectId;?>'})]
+                    }]        
+                }]     
+            }]
+        });
+         <?}?> 
+         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

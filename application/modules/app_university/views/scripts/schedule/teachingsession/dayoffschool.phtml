@@ -1,0 +1,216 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("SCHEDULE");
+$OBJECT_FORM->setLoadUrl('/schedule/jsonload/');
+$OBJECT_FORM->setSaveUrl('/schedule/jsonsave/');
+
+$type = isset($_GET["type"])?$_GET["type"]:"";
+$choosedate = isset($_GET["choosedate"])?$_GET["choosedate"]:"";
+
+$CHECK = timeDifference($choosedate, getCurrentDBDate());
+
+if(!$this->facette) {header("Location: /main/permission/");}
+
+$teachingSession = TeachingSessionDBAccess::getTeachingSessionFromId($this->scheduleId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    span.showText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<div id="initError" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError"><?=MSG_WARNING_EXAM_TIME;?></h1>
+</div>
+<script>
+    Ext.onReady(function() {
+
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px; height: 35px;">' + value + '</div>';
+        }
+
+        function cssTextRed(value, metadata, record){
+            return '<div style="font-weight:bold; color:#CC0000; padding: 5px; height: 35px;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $DETAIL_INFORMATION = "
+        {
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Displayfield("START_TIME", START_TIME, false, false)."}
+                    ,{".CamemisField::Displayfield("END_TIME", END_TIME, false, false)."}
+                    ,{".CamemisField::Displayfield("EVENT", EVENT, false, false)."}
+                    ,{".CamemisField::Displayfield("TEACHER_NAME", TEACHER, false, false)."}
+                    ,{".CamemisField::Displayfield("ROOM_NAME", ROOM, false, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DESCRIPTION."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 100)."}]
+            }]
+        }
+        ";
+        
+        $FORM_ITEMS = "[";
+        $FORM_ITEMS .= $DETAIL_INFORMATION;    
+        $FORM_ITEMS .= ",".$DESCRIPTION;
+        $FORM_ITEMS .= "]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,width: 550
+            ,bodyStyle: 'padding:0px'
+            ,items:".$FORM_ITEMS."
+        ";
+        
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        
+        $OBJECT_FORM->setLoadParams("
+            cmd: 'jsonLoadTeachingSession'
+            ,scheduleId: '".$this->scheduleId."'
+        ");
+        
+        if($teachingSession){
+            
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+            
+            $OBJECT_FORM->setSaveParams("
+                cmd: 'jsonActionTeachingSession'
+                ,scheduleId: '".$this->scheduleId."'
+            ");
+            
+           $OBJECT_FORM->setonEmbeddedEvents("
+                XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            ");
+
+            $OBJECT_FORM->setRemoveParams("
+                cmd: 'jsonDeleteTeachingSession'
+                ,scheduleId: '".$this->scheduleId."'
+            ");
+
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            ");
+            
+        }else{
+            $OBJECT_FORM->setSaveParams("
+                cmd: 'jsonActionTeachingSession'
+                ,scheduleId: '".$this->scheduleId."'
+                ,choosedate: '".$choosedate."'
+                ,type: '".$type."'
+                ,target: '".$this->target."'
+            ");
+        }
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        if($CHECK){
+            $ITEMS = "[{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+            }]";
+        }else{
+            $ITEMS = "[{
+                layout: 'fit'
+                ,border: false
+                ,contentEl: 'initError'
+                ,tbar:[{
+                    text: '".CANCEL."'
+                    ,id: 'CANCEL_ID'
+                    ,formBind:true
+                    ,iconCls:'icon-cancel'
+                    ,scope:this
+                    ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+                }]
+            }]";
+        }
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'panel'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: <?=$ITEMS;?>
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

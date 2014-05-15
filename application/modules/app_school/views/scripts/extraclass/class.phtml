@@ -1,0 +1,576 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 08.06.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("EXTRACLASS");
+$OBJECT_FORM->setLoadUrl('/extraclass/jsonload/');
+$OBJECT_FORM->setSaveUrl('/extraclass/jsonsave/');
+
+$OBJECT_DATA = $this->objectData;
+
+$SUBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
+$SUBJECT_TREE->setURL('/subject/jsontree/');
+
+$TEACHER_GRID = new CamemisGrid("TEACHER", "LIST");
+$TEACHER_GRID->setLoadUrl('/extraclass/jsonload/');
+$columndataTeacher = Utiles::getGridColumnData("TEACHER_LIST_ID");
+
+$ROOM_TREE = new CamemisTree("ROOM", "LIST");
+$ROOM_TREE->setURL("/room/jsontree/");
+
+$ADD_STUDENTS_GRID = new CamemisGrid("EXTRACLASS", "SEARCH");
+$ADD_STUDENTS_GRID->setLoadUrl("/extraclass/jsonload/");
+$ADD_STUDENTS_GRID->setSaveUrl("/extraclass/jsonsave/");
+$columndataAddStudent = Utiles::getGridColumnData("EXTRACLASS_SEARCH_ID");
+
+$STUDENTS_GRID = new CamemisGrid("EXTRACLASS", "LIST");
+$STUDENTS_GRID->setLoadUrl("/extraclass/jsonload/");
+$columndataStudent = Utiles::getGridColumnData("EXTRACLASS_LIST_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    var clickSubjectId=<?= $this->facette->SUBJECT_ID; ?>;
+
+    Ext.onReady(function() {
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $ADD_STUDENTS_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+    ");
+
+    $ADD_STUDENTS_GRID->addReadField("name: 'STUDENT_ID'");
+    $ADD_STUDENTS_GRID->addReadField("name: 'CODE'");
+    $ADD_STUDENTS_GRID->addReadField("name: 'STUDENT'");
+    $ADD_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
+    $ADD_STUDENTS_GRID->addReadField("name: 'GENDER'");
+    $ADD_STUDENTS_GRID->addReadField("name: 'CURRENT_CLASS'");
+    
+    $ADD_STUDENTS_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'ASSIGNED'
+        ,width: 50
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, hidden:".checkColHidden(1, $columndataAddStudent).", dataIndex: 'CODE'");
+    $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataAddStudent).", dataIndex: 'STUDENT'");
+    $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100, hidden:".checkColHidden(3, $columndataAddStudent).", sortable: true, dataIndex: 'GENDER'");
+    $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, hidden:".checkColHidden(4, $columndataAddStudent).", sortable: true, dataIndex: 'DATE_BIRTH'");
+    $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, hidden:".checkColHidden(5, $columndataAddStudent).", sortable: true, dataIndex: 'CURRENT_CLASS'");
+    
+    $ADD_STUDENTS_GRID->isQuickySearch = true;
+    $ADD_STUDENTS_GRID->isGridEditing = true;
+    $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
+    $ADD_STUDENTS_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->objectId."'
+        ,cmd: 'jsonListStudentInSchool'
+    ";
+    $ADD_STUDENTS_GRID->setSaveParams("
+        cmd: 'actionStudentToExtraClass'
+        ,objectId: '".$this->objectId."'
+    ");
+    $ADD_STUDENTS_GRID->setAftereditCallback("
+        Ext.getCmp('" . $ADD_STUDENTS_GRID->getObjectId() . "').store.reload();
+        Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.reload();
+    ");
+    $ADD_STUDENTS_GRID->forceFit = "false";
+    $ADD_STUDENTS_GRID->renderJS();
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    $TEACHER_GRID->addReadField("name: 'STATUS'");
+    $TEACHER_GRID->addReadField("name: 'ID'");
+    $TEACHER_GRID->addReadField("name: 'CODE'");
+    $TEACHER_GRID->addReadField("name: 'FULL_NAME'");
+    $TEACHER_GRID->addReadField("name: 'LASTNAME'");
+    $TEACHER_GRID->addReadField("name: 'FIRSTNAME'");
+    
+    $TEACHER_GRID->addColumn("header: '<b>". STATUS ."</b>', align:'center', renderer: cssText, width: 80, hidden:".checkColHidden(1, $columndataTeacher).", sortable: false, dataIndex: 'STATUS'");
+    $TEACHER_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', sortable: false, dataIndex: 'CODE', width: 80, hidden:".checkColHidden(2, $columndataTeacher).",renderer: cssText");
+    if(!SchoolDBAccess::displayPersonNameInGrid()){
+        $TEACHER_GRID->addColumn(" header: '<b>" . LASTNAME . "</b>', align:'left', sortable: false, dataIndex: 'LASTNAME', width: 120, hidden:".checkColHidden(3, $columndataTeacher).",renderer: cssText");
+        $TEACHER_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', sortable: false, dataIndex: 'FIRSTNAME', width: 120, hidden:".checkColHidden(4, $columndataTeacher).",renderer: cssText");
+    }else{
+        $TEACHER_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', align:'left', sortable: false, dataIndex: 'FIRSTNAME', width: 120, hidden:".checkColHidden(3, $columndataTeacher).",renderer: cssText");
+        $TEACHER_GRID->addColumn(" header: '<b>" . LASTNAME . "</b>', align:'left', sortable: false, dataIndex: 'LASTNAME', width: 120, hidden:".checkColHidden(4, $columndataTeacher).",renderer: cssText");
+    }
+        
+    $TEACHER_GRID->baseParams=("
+        start:0
+        ,limit:100
+        ,cmd: 'jsonTeacherExtraClass'
+        ,objectId: '" . $this->objectId . "'
+        ,subjectId: clickSubjectId
+    ");
+    
+    $TEACHER_GRID->setEditEmbeddedEvents("
+         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    $TEACHER_GRID->isGridEditing = true;
+    $TEACHER_GRID->loadMask = false;
+    $TEACHER_GRID->isPagingToolbar = true;
+    $TEACHER_GRID->isObjectDefaultOnLoad = true;
+    $TEACHER_GRID->forceFit = "false";
+    $TEACHER_GRID->renderJS();
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    $STUDENTS_GRID->addReadField("name: 'CHECKED'");
+    $STUDENTS_GRID->addReadField("name: 'STUDENT_ID'");
+    $STUDENTS_GRID->addReadField("name: 'CODE'");
+    $STUDENTS_GRID->addReadField("name: 'STUDENT'");
+    $STUDENTS_GRID->addReadField("name: 'GENDER'");
+    $STUDENTS_GRID->addReadField("name: 'CLASS_NAME'");
+ 
+    $STUDENTS_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'CHECKED'
+        ,width: 50
+        ,on: 1
+        ,off: 0 
+    ");
+    
+    $STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', width: 80, hidden:".checkColHidden(1, $columndataStudent).", renderer: cssText, sortable: false, dataIndex: 'CODE'");
+    $STUDENTS_GRID->addColumn("header: '<b>" . FULL_NAME . "</b>', width: 140, hidden:".checkColHidden(2, $columndataStudent).", renderer: cssText, sortable: false, dataIndex: 'STUDENT'");
+    $STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(3, $columndataStudent).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+    $STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, hidden:".checkColHidden(4, $columndataStudent).", sortable: true, dataIndex: 'CLASS_NAME'");
+    
+    $STUDENTS_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->objectId."'
+        ,cmd: 'jsonStudentExtraClass'
+    ";
+    
+    $STUDENTS_GRID->setSaveParams("
+        cmd: 'actionRemoveStudentExtraClass'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $STUDENTS_GRID->setEditEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.sortInfo = null;
+        Ext.getCmp('" . $STUDENTS_GRID->getObjectId() . "').store.reload();
+    ");
+    
+    $STUDENTS_GRID->addTBarItems("
+        tbar.add([{
+            id: 'ADD_STUDENT_ID'
+            ,tooltip: '" . ADD_STUDENTS . "'
+            ,text: '".ADD_STUDENTS."'
+            ,iconCls:'icon-application_form_add'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(70),percentHeight(85));
+               Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.load(); 
+            }
+        }]);
+    ");
+        
+    $STUDENTS_GRID->isGridEditing = true;
+    $STUDENTS_GRID->loadMask = false;
+    $STUDENTS_GRID->isPagingToolbar = true;
+    $STUDENTS_GRID->isQuickySearch = true;
+    $STUDENTS_GRID->isObjectDefaultOnLoad = true;
+    $STUDENTS_GRID->forceFit = "false";
+    $STUDENTS_GRID->renderJS();
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+    $SUBJECT_TREE->isAsyncTreeNode = false;
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $SUBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $SUBJECT_TREE->setBaseParams("
+        cmd: 'treeAllSubjects'
+    ");
+    
+    $SUBJECT_TREE->backgroundColor = "#F9F9F9";
+    $SUBJECT_TREE->isTreeExpand = false;
+    $SUBJECT_TREE->isOnClickContextMenu = false;
+    $SUBJECT_TREE->renderJS();
+    
+    $triggerOnClickSubject = "
+        openWinXType('SUBJECT','".SUBJECT."', '".$SUBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+        var subjectTree = Ext.getCmp('".$SUBJECT_TREE->getObjectId()."');
+        subjectTree.on('click', function(node, e){
+            if(node.isLeaf()){
+                clickSubjectId= node.attributes.id;
+                Ext.getCmp('NAME_ID').setValue(node.text);
+                Ext.getCmp('SUBJECT_ID').setValue(node.attributes.id);
+                Ext.getCmp('SUBJECT').close(); 
+            }        
+        });
+    ";
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    
+    $ROOM_TREE->isAsyncTreeNode = false;
+    $ROOM_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $ROOM_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $ROOM_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $ROOM_TREE->setBaseParams("
+        cmd: 'jsonTreeAllRooms'
+    ");
+    
+    $ROOM_TREE->backgroundColor = "#F9F9F9";
+    $ROOM_TREE->isTreeExpand = false;
+    $ROOM_TREE->isOnClickContextMenu = false;
+    $ROOM_TREE->renderJS();
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    
+    $DETAIL_ITEMS = "
+    [
+        {".CamemisField::Box("CODE", CODE_ID, $OBJECT_DATA["CODE"])."}
+        ,{".CamemisField::Trigger2("NAME",NAME,$triggerOnClickSubject, false, 230)."}
+        ,{".CamemisField::Textfield("SORTKEY","SORTKEY",SORTKEY)."}
+    ]
+    ";
+    
+    //Hidden Field subject id
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("SUBJECT_ID",false));
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+    
+    $OBJECT_FORM->setReleaseParams("cmd: 'jsonReleaseObject',objectId: '".$this->objectId."'");
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $STUDENT_INFORMATION = "
+    {
+        title: '".STUDENT."'
+        ,style: 'padding-bottom:5px'
+        ,collapsible: true
+        ,width: 550
+        ,height: 300
+        ,layout: 'fit'
+        ,items:[{xtype: '".$STUDENTS_GRID->getObjectXtype()."'}]
+    }";
+    
+    $TEACHER_INFORMATION = "
+    {
+        title: '".TEACHER."'
+        ,id: 'TEACHER_INFORMATION'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items:[
+                {".CamemisField::Textfield("TEACHER_NAME", "TEACHER_NAME", FULL_NAME, false, true, false)."}
+                ,{".CamemisField::Hidden("TEACHER_ID", $this->teacherId)."}
+            ]
+        }]
+         ,tbar: ['->',{
+            text: '".TEACHER."'
+            ,iconCls:'icon-lightning'
+            ,handler: function(){
+                openWinXType('TEACHER','".TEACHER."', '".$TEACHER_GRID->getObjectXType()."', 500, percentHeight(85));
+                var grid = Ext.getCmp('".$TEACHER_GRID->getObjectId()."');
+                grid.on('cellclick', function(grid, rowIndex, columnIndex, event){
+                    var record = grid.store.getAt(rowIndex);
+                    Ext.getCmp('TEACHER_ID').setValue(record.data.ID);
+                    Ext.getCmp('TEACHER_NAME').setValue(record.data.FULL_NAME);
+                    Ext.getCmp('TEACHER').close();    
+                }); 
+            }
+        }]
+    }
+    ";
+    
+    $ROOM_INFORMATION = "
+    {
+        title: '".ROOM."'
+        ,id: 'ROOM_INFORMATION'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items:[
+                {".CamemisField::Textfield("ROOM_NAME", "ROOM_NAME", ROOM, false, true, false)."}
+                ,{".CamemisField::Hidden("ROOM_ID", false)."}
+            ]
+        }]
+         ,tbar: ['->',{
+            text: '".ROOM."'
+            ,iconCls:'icon-lightning'
+            ,handler: function(){
+                openWinXType('ROOM','".ROOM."', '".$ROOM_TREE->getObjectXType()."', 500, percentHeight(85));
+                var roomTree = Ext.getCmp('".$ROOM_TREE->getObjectId()."');
+                roomTree.on('click', function(node, e){
+                    if(node.isLeaf()){
+                        Ext.getCmp('ROOM_NAME').setValue(node.text);
+                        Ext.getCmp('ROOM_ID').setValue(node.attributes.id);
+                        Ext.getCmp('ROOM').close(); 
+                    }        
+                });     
+            }
+        }]
+    }
+    ";
+    
+    $TIME_BLOCK = "
+    {
+        title: '" . TIME_BLOCK . "'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: true
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'MONDAY'
+                ,fieldLabel: '".MONDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'TUESDAY'
+                ,fieldLabel: '".TUESDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'WEDNESDAY'
+                ,fieldLabel: '".WEDNESDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'THURSDAY'
+                ,fieldLabel: '".THURSDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'FRIDAY'
+                ,fieldLabel: '".FRIDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'SATURDAY'
+                ,fieldLabel: '".SATURDAY."'
+                ,width: 250
+                ,allowBlank:true
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'Start Time - End Time'
+                ,name: 'SUNDAY'
+                ,fieldLabel: '".SUNDAY."'
+                ,width: 250
+                ,allowBlank:true
+            }]
+        }]
+    }
+    ";
+    
+    //if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+    //if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+     $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+        myTree = window.parent.Ext.getCmp('EXTRACLASS_TREE_ID');
+        myNode = myTree.getNodeById('".$this->facette->PARENT."');
+        myNode.reload();
+        myNode.expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+        myTree = window.parent.Ext.getCmp('EXTRACLASS_TREE_ID');
+        myNode = myTree.getNodeById('".$this->facette->PARENT."');
+        myNode.reload();
+        myNode.expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    ///////////////////////////////////////////////////
+    $CREATED = "
+    {
+        title: '".CREATED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,false)."
+            }]
+        }]
+    }";
+
+    $MODIFIED = "
+    {
+        title: '".MODIFIED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,false)."
+            }]
+        }]
+    }";
+
+    $DISABLED = "
+    {
+        title: '".DISABLED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,false)."
+            }]
+        }]
+    }";
+    ///////////////////////////////////////////////////
+    
+    $ITEMS = $DETAIL_INFORMATION;
+    $ITEMS .= ",".$TEACHER_INFORMATION;
+    $ITEMS .= ",".$ROOM_INFORMATION;
+    $ITEMS .= ",".$STUDENT_INFORMATION;
+    $ITEMS .= ",".$TIME_BLOCK;
+    $ITEMS .= ",".$CREATED;
+    $ITEMS .= ",".$MODIFIED;
+    $ITEMS .= ",".$DISABLED;
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'background:#FFF; padding:10px'
+        ,items: [".$ITEMS."]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id: 'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

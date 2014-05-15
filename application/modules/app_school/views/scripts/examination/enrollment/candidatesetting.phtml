@@ -1,0 +1,64 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 22.05.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+   
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:[{
+                        title: '<?=EXAM_CANDIDATES;?>'
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'EXAM_CANDIDATES', url: '/examination/enrollmentlistcandidate/?objectId=<?=$this->objectId;?>'})]
+                    }
+                    ,{
+                        title: '<?=SETTING;?>'
+                        ,layout: 'fit'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'SETTING', url: ''})]
+                    }
+                    ,{
+                        title: '<?=IMPORT_FROM_EXCEL;?>'
+                        ,layout: 'fit'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'IMPORT_FROM_EXCEL', url: '/examination/enrollmentimportxls/?objectId=<?=$this->objectId;?>'})]
+                    }]        
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

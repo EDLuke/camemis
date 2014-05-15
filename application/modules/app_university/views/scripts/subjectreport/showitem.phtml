@@ -1,0 +1,189 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 03.05.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("SUBJECTREPORT");
+$OBJECT_FORM->setLoadUrl('/subjectreport/jsonload/');
+$OBJECT_FORM->setSaveUrl('/subjectreport/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+
+<script>
+
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    $SETLOAD=false;
+    if($this->objectId)
+    $SETLOAD=true;
+    
+    $CREATEDATE = "
+    {
+        title: '".PUBLISH."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                name: 'CREATED_DATE'
+                ,hidden: false
+                ,width: 230
+                ,fieldLabel: '" . CREATED_DATE . "'
+                ,xtype: 'datefield'
+                ,name: 'CREATED_DATE' 
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: false
+            }]
+        }]
+    }
+    ";
+    
+    $TITLE = "
+    {
+        title: '".TITLE."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::Textarea("TITLE", false,80, false,true)."}]
+        }]
+    }
+    ";
+    
+    $CONTENT = "
+    {
+        title: '".CONTENT."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::HTML("CONTENT",false,false)."}]
+        }]
+    }
+    ";
+    
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,height: 570
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("template=SUBJECT_REPORT&count=3&objectId=".$this->objectId."")."'})]
+         
+    }
+    ";
+        
+    $ITEMS = "[";
+        $ITEMS .= $CREATEDATE;
+        $ITEMS .= ",".$TITLE;
+        $ITEMS .= ",".$CONTENT;
+        if($this->objectId)
+        $ITEMS .= ",".$ATTACHMENTS;
+    $ITEMS .= "]";
+
+    $formItems = "
+        border: false
+        ,layout: 'form'
+        ,bodyStyle: 'padding:0px'
+        ,items:".$ITEMS 
+    ;
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadTeachingReport'
+        ,objectId: '".$this->objectId."'
+    ");
+        
+    if(UserAuth::getUserType()<>"STUDENT" && UserAuth::getUserType()<>"ADMINISTRATOR" && UserAuth::getUserType()<>"SUPERADMIN"){
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->setRemoveParams("cmd: 'jsonDeleteSubjectTeachingReport',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveSubjectTeachingReport'
+            ,academicId: '".$this->academicId."'
+            ,subjectId: '".$this->subjectId."'
+            ,objectId: '".$this->objectId."'
+        ");
+       
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('SUBJECTREPORT_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('SUBJECTREPORT_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+        
+    }
+   
+    $OBJECT_FORM->isObjectDefaultOnLoad = $SETLOAD;
+    $OBJECT_FORM->isObjectSend = true;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->renderJS();
+
+    $VIEWPORT = "
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'fit'
+                ,items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]
+            }]
+        }); 
+    ";
+    echo  $VIEWPORT;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,85 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+$tutor = isset($_GET["tutor"])?$_GET["tutor"]:"";
+$myschedule = isset($_GET["myschedule"])?$_GET["myschedule"]:0;
+
+$teacherId = $myschedule?$tutor:0;
+
+$entries = StaffDBAccess::getClassTeachingSession($tutor, $schoolyearId);
+
+function setItem($name, $Id, $teacherId){
+    
+    $js = "
+        border:true
+        ,xtype: 'panel'
+        ,collapsible: true
+        ,collapsed: false
+        ,title:'".SCHEDULE." &raquo; ".$name."'
+        ,layout:'fit'
+        ,width:percentWidth(95)
+        ,style: 'padding-bottom: 5px'
+        ,height:percentHeight(95)
+        ,items:[new Ext.ux.IFrameComponent({ id: '".strtoupper($name)."', url: '/schedule/byclass/?classId=".$Id."&teacherId=".$teacherId."'})]
+    ";
+    
+    return $js;
+}
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $data = array();
+        if($entries){
+            foreach($entries as $value){
+                $data[] = "{".setItem($value->CLASS_NAME,$value->CLASS_ID,$teacherId)."}";
+            }
+        }
+        $ITEMS ="[";
+            $ITEMS .= implode(",",$data);
+        $ITEMS .="]";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'content'
+                ,autoScroll: true
+                ,border: false
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,items: [{
+                    border: false
+                    ,items: <?=$ITEMS;?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

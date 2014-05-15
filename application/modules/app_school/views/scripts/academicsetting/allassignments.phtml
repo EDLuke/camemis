@@ -1,0 +1,65 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var subjectId = null;
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $TABE_ITEMS=array();
+    $GENERAL_EDUCATION ="{
+        title: '".GENERAL_EDUCATION."'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'SCHOOL_EVENTS', url: '/academicsetting/allgeneralassignments/'})]
+    }";
+    
+    $TRAINING_PROGRAMS ="{
+        title: '".TRAINING_PROGRAMS."'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'SCHOOL_EVENTS', url: '/academicsetting/alltrainingassignments/'})]
+    }";
+    if(UserAuth::displayRoleGeneralEducation())
+        $TABE_ITEMS[]=$GENERAL_EDUCATION;
+    if(UserAuth::displayRoleTrainingEducation())
+        $TABE_ITEMS[]=$TRAINING_PROGRAMS;
+    $CHOOSE_ITEMS = implode(",", $TABE_ITEMS);
+    ?>   
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'bottom'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:[<?=$CHOOSE_ITEMS?>]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

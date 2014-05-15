@@ -1,0 +1,486 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 06.08.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$CATEGORY_OBJECT_TREE = new CamemisTree("DATASET", "CATEGORY");
+$CATEGORY_OBJECT_TREE->setURL("/dataset/jsontree/");
+$CATEGORY_OBJECT_TREE->setSaveUrl("/dataset/jsonsave/");
+
+$ACADEMIC_TREE = new CamemisTree("FINANCE", "GRADE");
+$OBJECT_FORM = new CamemisForm("FINANCE");
+
+$ACADEMIC_TREE ->setURL("/finance/jsontree/");
+$OBJECT_FORM ->setSaveUrl("/finance/jsonsave/");
+$OBJECT_FORM ->setLoadUrl("/finance/jsonload/");
+
+//
+$OBJECT_OPTION_FORM= new CamemisForm("FINANCEOPTION");
+$OBJECT_OPTION_FORM ->setSaveUrl("/finance/jsonsave/");
+$OBJECT_OPTION_FORM ->setLoadUrl("/finance/jsonload/");
+//
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$type = 'GENERAL_EDU';
+
+if($this->facette){
+    $readOnly = true;
+}else{
+    $readOnly = false;
+}
+
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    //
+    
+    function getOptionItems($Id){
+    
+        $items = "[{";
+    
+            $index = array("FIRST","SECOND","THIRD","FOURTH","FIFTH","SIXTH","SEVEN","EIGHTH","NINTH","TENTH");
+            
+            $items .= "".CamemisField::Textfield($index[$Id-1]."_DES", $index[$Id-1]."_DES", NAME, false)."";
+            $items .= "},{";
+            $items .= "".CamemisField::Textfield($index[$Id-1]."_AMOUNT", $index[$Id-1]."_AMOUNT", AMOUNT." (".Zend_Registry::get('SCHOOL')->CURRENCY.")", false, false, false, false, false)."";
+            $items .= "},{";
+            $items .= "".CamemisField::Textfield($index[$Id-1]."_TOTAL", $index[$Id-1]."_TOTAL", TOTAL_AMOUNT." (".Zend_Registry::get('SCHOOL')->CURRENCY.")", false, false, false, false, false)."";
+            $items .= "}";
+            $items .= ",{".CamemisField::Datefield($index[$Id-1]."_START_DATE", START_DATE, false, false)."}";
+            $items .= ",{".CamemisField::Datefield($index[$Id-1]."_END_DATE", END_DATE, false, false)."}";
+            $items .= ",{".CamemisField::Hidden($index[$Id-1]."_ID", false)."}";
+
+        $items .= "]";
+        
+        return $items;
+    }
+   $option=0; 
+   if ($this->objectId != 'new'){
+        
+        $FEE_OPTIONS_ARRAY=array();
+        
+        if($this->facette->AMOUNT_OPTION){
+            $option=$this->facette->AMOUNT_OPTION;
+            for ($i=1;$i<=$option;$i++){
+                
+                $FEE_OPTIONS_ARRAY[]= "                     
+                {
+                    xtype:'fieldset'
+                    ,checkboxToggle:true
+                    ,collapsed: false
+                    ,title: 'OPTION".$i."'
+                    ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+                    ,width: 450
+                    ,items:[".getOptionItems($i)."]
+                }
+                ";        
+            } 
+        }
+        
+        $FEE_OPTIONS=implode(",", $FEE_OPTIONS_ARRAY);
+
+        $items ="[";
+            $items .=$FEE_OPTIONS;
+        $items .="]";
+
+        $formItems = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items:".$items."
+        ";
+        if(!$this->incomeFee)//@veasna
+        $OBJECT_OPTION_FORM->addTBarItems(CamemisBar::tbarSave());
+        
+        $OBJECT_OPTION_FORM->setLoadParams("
+            cmd: 'jsonLoadAllFeeOptions'
+            ,nOption:'".$option."'
+            ,feeId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_OPTION_FORM->setSaveParams("
+            cmd: 'jsonActionSaveFeeOptions'
+            ,nOption:'".$option."'
+            ,feeId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_OPTION_FORM->setonEmbeddedEvents("
+            
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            
+            Ext.getCmp('PAYMENT_OPTION').close(); 
+   
+        ");
+        
+        $OBJECT_OPTION_FORM->addObjectItems($formItems);
+        $OBJECT_OPTION_FORM->isObjectDefaultOnLoad=true;
+        $OBJECT_OPTION_FORM->labelAlign = "left";
+        $OBJECT_OPTION_FORM->labelWidth = 120;
+        $OBJECT_OPTION_FORM->renderJS();
+        
+        $triggerFeeOptionOnClick = "
+            openWinXType('PAYMENT_OPTION','".PAYMENT_OPTION."', '".$OBJECT_OPTION_FORM->getObjectXType()."', 500, percentHeight(85));
+        ";  
+    }
+    
+    $CATEGORY_OBJECT_TREE->isAsyncTreeNode = false;
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $CATEGORY_OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $CATEGORY_OBJECT_TREE->setBaseParams("
+        cmd: 'jsonTreeAllIncomeCategories'
+    ");
+    $CATEGORY_OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $CATEGORY_OBJECT_TREE->isOnClickContextMenu = false;
+    $CATEGORY_OBJECT_TREE->isTreeExpand = true;
+    $CATEGORY_OBJECT_TREE->renderJS();
+    
+    $triggerOnClick = "
+        openWinXType('INCOME_CATEGORY','".INCOME_CATEGORY."', '".$CATEGORY_OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+        var myTree = ".$CATEGORY_OBJECT_TREE->ExtgetCmp().";
+        myTree.on('click', function(node, e){   
+            Ext.getCmp('CHOOSE_INCOME_CATEGORY_NAME_ID').setValue(node.text);
+            Ext.getCmp('HIDDEN_INCOME_CATEGORY').setValue(node.id);
+            Ext.getCmp('INCOME_CATEGORY').close();
+        });
+    ";
+    //
+    $ACADEMIC_TREE->backgroundColor = "#F9F9F9";
+    $ACADEMIC_TREE->isAsyncTreeNode = false;
+    $ACADEMIC_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $ACADEMIC_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $ACADEMIC_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $ACADEMIC_TREE->setBaseParams("
+        cmd: 'jsonTreeGradeGeneralByFee'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $ACADEMIC_TREE->backgroundColor = "#F9F9F9";
+    $ACADEMIC_TREE->isOnClickContextMenu = false;
+    $ACADEMIC_TREE->isObjectCheckBox = true;
+    $ACADEMIC_TREE->isTreeExpand = true;
+    $ACADEMIC_TREE->renderJS();
+    
+   $FORM_DETAIL_ITEMS = "[";
+    $FORM_DETAIL_ITEMS .= "{".CamemisField::Textfield("NAME_ID", "NAME", FEE_NAME, true)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::ComboSchoolYear('SCHOOLYEAR', 'SCHOOLYEAR', SCHOOL_YEAR,false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Trigger("CHOOSE_INCOME_CATEGORY_NAME",INCOME_CATEGORY,$triggerOnClick, true)."}";
+    //$FORM_DETAIL_ITEMS .= ",{".CamemisField::ComboAmountOption(false,$readOnly)."}";
+    
+    $js = "";
+    $js .= "xtype: 'numberfield'";
+    $js .= ",id: 'AMOUNT_OPTION'";
+    $js .= ",name: 'AMOUNT_OPTION'";
+    $js .= ",fieldLabel: '" . AMOUNT_OPTION . "'"; 
+    $js .= ",minValue:'1'";
+    $js .= ",maxValue:'10'";  
+    $js .= ",allowBlank: true";
+    $js .= ",decimalPrecision : 3";
+    $js .= ",width:250";
+    
+   if ($this->objectId=='new'){
+    $FORM_DETAIL_ITEMS .= ",{".$js."}";
+    }else{
+        
+        $js = "id: 'AMOUNT_OPTION_ID',fieldLabel: '" . AMOUNT_OPTION . "',xtype: 'trigger',name: 'AMOUNT_OPTION',";
+        $js .="triggerClass: 'x-form-search-trigger',editable:true,";
+        $js .="width:250,";
+        $js .="onTriggerClick: function() {";
+        $js .="" . $triggerFeeOptionOnClick . "";
+        $js .="} ";
+        $js .= ",allowBlank:false";
+        $FORM_DETAIL_ITEMS .= ",{". $js."}";
+        //$FORM_DETAIL_ITEMS .= ",{".CamemisField::Trigger("AMOUNT_OPTION",AMOUNT_OPTION,$triggerFeeOptionOnClick,false)."}";
+    }
+  
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hidden("HIDDEN_INCOME_CATEGORY", false)."}";
+
+    $FORM_DETAIL_ITEMS .= "]";
+   
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: ".$FORM_DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    ,{
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; color:#000;padding:5px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", TEXT, 100)."}]
+        }]
+    }
+    ";
+    
+    $FORM_ITEMS = $DETAIL_INFORMATION;
+    $FORM_ITEMS .= $DESCRIPTION;
+    
+    $items = "
+        border:false
+        ,id:'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [".$FORM_ITEMS."]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    //@veasna edit
+   
+    if ($this->objectId=='new'){
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                
+                if(window.parent.parent.Ext.getCmp('WEST_ID'))
+                window.parent.parent.Ext.getCmp('WEST_ID').expand();
+                if(window.parent.parent.Ext.getCmp('center'))
+                window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                if(window.parent.Ext.getCmp('center'))
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+                window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+            }
+        ");
+    }else{
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                
+                if(window.parent.parent.Ext.getCmp('WEST_ID'))
+                window.parent.parent.Ext.getCmp('WEST_ID').expand();
+                if(window.parent.parent.Ext.getCmp('center'))
+                window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                if(window.parent.Ext.getCmp('center'))
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                
+                window.parent.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+            }
+        ");    
+    }
+    //
+    
+    if ($this->facette){
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->facette->STATUS));
+        if($this->facette->STATUS){
+            if(!$this->incomeFee)//@veasna
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(false));
+        }else{
+            if(!$this->incomeFee)
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(true));
+        }
+        if(!$this->incomeFee)//@veasna
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+
+    }else{
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    }
+    
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadFee'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveFee'
+        ,type: '".$type."'
+        ,services:0
+        ,type:'GENERAL_EDU'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setReleaseParams("
+        cmd: 'jsonReleaseFee'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeFee'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        
+        if(window.parent.parent.Ext.getCmp('WEST_ID'))
+        window.parent.parent.Ext.getCmp('WEST_ID').expand();
+        
+        if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        
+        if(window.parent.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+    
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        var objectId = result.objectId;
+        window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        
+        if(window.parent.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        
+        if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        
+        if(window.parent.parent.Ext.getCmp('WEST_ID'))
+        window.parent.parent.Ext.getCmp('WEST_ID').expand();
+        if(window.parent.parent.Ext.getCmp('center'))
+        window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        if(window.parent.Ext.getCmp('center'))
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        
+        window.parent.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+    ");
+    
+    if ($this->facette){
+        $OBJECT_FORM->isObjectDefaultOnLoad = true;
+    }else{
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    }
+    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 160;
+    $OBJECT_FORM->renderJS();
+    
+    if(!$this->facette){
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+              xtype: 'panel'
+              ,id: 'panel'
+              ,border: false
+              ,layout: 'card'
+              ,activeItem: 0
+              ,items: [{
+                  layout: 'fit'
+                  ,border: false
+                  ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+              }]
+            }]
+        });      
+        <?
+    }else{
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: false
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 250
+                    ,minSize: 250
+                    ,maxSize: 250
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$ACADEMIC_TREE->getObjectXType();?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        var myTree = Ext.getCmp('TREE.FINANCE_GRADE_ID');
+        myTree.on('checkchange', function(node, checked){
+            Ext.Ajax.request({
+                url: '/finance/jsonsave/'
+                ,method: 'POST'
+                ,params: {
+                    cmd: 'jsonActionGradeGeneralToFee'
+                    ,checked: checked
+                    ,gradeId: node.id
+                    ,objectId: '<?=$this->objectId;?>'
+                }
+                ,success: function(response, options) {
+                    myNode = myTree.getNodeById(node.id);
+                    var parentId = myNode.parentNode.id;
+                    myPerentNode = myTree.getNodeById(parentId);
+                    if(myNode.isLeaf()){
+                        if(myPerentNode){
+                            myPerentNode.reload();
+                            myPerentNode.expand(true, false);
+                        }else{
+                            myTree.root.reload();
+                        }
+                    }else{
+                        if (myNode.hasChildNodes()) {
+                            myNode.reload();
+                            myNode.expand(true, false);
+                        }
+                    }
+                    result = Ext.util.JSON.decode(response.responseText);
+                    XMsg('<?=STATUS?>',result.msg);
+                }
+            });
+        });
+        <?
+    }
+    
+   
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

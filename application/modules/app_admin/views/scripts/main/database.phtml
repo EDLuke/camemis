@@ -1,0 +1,187 @@
+<?
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminField.php';
+require_once 'clients/app_admin/AdminBar.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'models/app_admin/AdminCustomerDBAccess.php';
+
+$CAMEMIS_PAGE = AdminPage::getInstance();
+
+$type = isset($_GET["type"])?$_GET["type"]:"";
+
+print $CAMEMIS_PAGE->showCamemisHeader();
+?>
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection!</h1>
+</div>
+<script>
+    var language;
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE->setExtDefaultGif();
+        
+        $OBJECT_FORM = new AdminForm("MAIN");
+        $OBJECT_FORM->setURL("/main/");
+        
+        $TALBE_ITEMS = "
+        {
+            title: 'System information'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 10px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textfield("TABLE_NAME", "TABLE_NAME", 'Name of Table', true, false)."}
+                    ,{".AdminField::Textarea("SQL", "SQL-String", 200, false, true)."}
+                ]
+            }]
+        }
+        ";
+        
+        $COLUMN_ITEMS = "
+        {
+            title: 'System information'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 10px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textfield("TABLE_NAME", "TABLE_NAME", 'Name of Table', true, false)."}
+                    ,{".AdminField::Textfield("COLUMN_NAME", "COLUMN_NAME", 'Name of Column', true, false)."}
+                    ,{".AdminField::Textarea("SQL", "SQL-String", 200, false, true)."}
+                ]
+            }]
+        }
+        ";
+        
+        $DELETE_COLUMN_ITEMS = "
+        {
+            title: 'System information'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 10px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textfield("TABLE_NAME", "TABLE_NAME", 'Name of Table', true, false)."}
+                    ,{".AdminField::Textfield("COLUMN_NAME", "COLUMN_NAME", 'Name of Column', true, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $SQL_STATEMENTS = "
+        {
+            title: 'System information'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 10px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                ,items: [
+                    {".AdminField::Textarea("SQL_STATEMENTS", "SQL Statements", 200, false, true)."}
+                ]
+            }]
+        }
+        ";
+        
+        $VIEWPORT_ITEMS ="
+        {
+            layout:'fit'
+            ,border: false
+            ,items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]
+        }
+        ";
+        $ITEMS_WIDTH = "percentWidth(45)";
+        $ITEMS = "";
+        switch($type){
+            case "add_table":
+                $ITEMS .= "[".$TALBE_ITEMS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionAddTable'
+                    ,dbAction: 'addTable'
+                ");
+                break;
+            case "delete_table":
+                $ITEMS .= "[".$TALBE_ITEMS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionDeleteTable'
+                    ,dbAction: 'deleteTable'
+                ");
+                break;
+            case "add_column":
+                $ITEMS .= "[".$COLUMN_ITEMS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionAddColumn'
+                    ,dbAction: 'addColumn'
+                ");
+                break;
+            case "update_column":
+                $ITEMS .= "[".$COLUMN_ITEMS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionUpdateColumn'
+                    ,dbAction: 'updateColumn'
+                ");
+                break;
+            case "delete_column":
+                $ITEMS .= "[".$DELETE_COLUMN_ITEMS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionDeleteColumn'
+                    ,dbAction: 'deleteColumn'
+                ");
+                break;
+            case "statements":
+                $ITEMS .= "[".$SQL_STATEMENTS."]";
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonActionSQLStatements'
+                    ,dbAction: 'statements'
+                ");
+                break;
+        }
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,width: $ITEMS_WIDTH
+            ,bodyStyle: 'padding:0px'
+            ,items: ".$ITEMS."
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+        $OBJECT_FORM->addTBarItems(AdminBar::tbarSingleSave());
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 100;
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [<?=$VIEWPORT_ITEMS;?>]
+        });
+    });
+</script>
+<?
+$a = Zend_Registry::getInstance();
+print $CAMEMIS_PAGE->showCamemisFooter();
+?>

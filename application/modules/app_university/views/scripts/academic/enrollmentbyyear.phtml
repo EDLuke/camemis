@@ -1,0 +1,358 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$LIST_OF_STUDENTS_GIRD = new CamemisGrid("LIST_OF_STUDENTS", "LIST_OF_STUDENTS");
+$LIST_OF_STUDENTS_GIRD->setLoadUrl("/student/jsonload/");
+$LIST_OF_STUDENTS_GIRD->setSaveUrl("/student/jsonsave/");
+$ASSIGNED_STUDENTS_GRID = new CamemisGrid("STUDENT", "LIST_GRADE_YEAR");
+$ASSIGNED_STUDENTS_GRID->setLoadUrl("/student/jsonload/");
+$ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
+
+?>
+
+<script>
+    
+    var studentId;
+    Ext.onReady(function() {
+        
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+            );
+        }
+        
+        function cssText(value, metadata, record){
+            var name = record.data.STUDENT;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<span style="color:#333; padding: 5px; height: 15px;">' + value + '</span>';
+        }
+           
+        function qtipFullname(value, metadata, record){
+            
+            var isTransfer = record.data.TRANSFER;
+            if (isTransfer === 1){
+                var statusName = '<?=STUDENT_TRANSFER;?>';
+                metadata.attr = 'ext:qtip="' + statusName + '"';
+            }
+            return '' + value + '';
+        }
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'CODE'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'LASTNAME'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'FIRSTNAME'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'GENDER'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'DATE_BIRTH'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'BG_COLOR'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'BG_COLOR_FONT'");
+        $LIST_OF_STUDENTS_GIRD->addReadField("name: 'STATUS_KEY'");
+        
+        switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+            case "VIETNAMESE": $width = 125;break;
+            default: $width = 85;break;
+        }
+        
+        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 100, dataIndex: 'STUDENT_SCHOOL_ID'");
+        
+        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 80, dataIndex: 'CODE'");
+        
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".LASTNAME."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
+            $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        }else{
+            $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+            $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".LASTNAME."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
+        }
+        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+        
+        $LIST_OF_STUDENTS_GIRD->isQuickySearch = true;
+        $LIST_OF_STUDENTS_GIRD->isCheckboxSelect = true;
+        
+        $LIST_OF_STUDENTS_GIRD->addTBarItems("tbar.add('-');");
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+            $LIST_OF_STUDENTS_GIRD->addTBarItems("
+                tbar.add([{
+                    id: 'LIST_ADD_ENROLLMENT_RECORD_ID'
+                    ,text: '<b>".APPLY_INTO_LIST_OF_STUDENTS."</b>'
+                    ,iconCls:'icon-disk'
+                    ,scope:this
+                    ,handler: this.onSelection
+                }]);
+            ");
+        }
+
+        $LIST_OF_STUDENTS_GIRD->baseParams = "
+            start:0
+            ,limit:100
+            ,academicId: '".$this->facette->GUID."'
+            ,cmd: 'jsonUnassignedStudents'
+        ";
+
+        $LIST_OF_STUDENTS_GIRD->setSelectionParams("
+            cmd: 'jsonAddEnrollStudentSchoolyear'
+            ,academicId: '".$this->facette->GUID."'
+        ");
+
+        $LIST_OF_STUDENTS_GIRD->setSelectionEmbeddedEvents("
+            Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."').store.reload();
+        ");
+
+        $LIST_OF_STUDENTS_GIRD->forceFit = "false";
+        $LIST_OF_STUDENTS_GIRD->renderJS();
+
+        ////////////////////////////////////////////////////////////////////////////
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'ID'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CODE'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'GENDER'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_TERM'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_NAME'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME_LATIN'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'PHONE'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'EMAIL'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STREET'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TOWN_CITY'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'POSTCODE_ZIPCODE'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'COUNTRY'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_MOTHER'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_FATHER'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CREATED_DATE'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS_KEY'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_TERM'");
+        
+        switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+            case "VIETNAMESE": $width = 125;break;
+            default: $width = 85;break;
+        }
+
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'center', hidden:".checkColHidden(3, $columndata).", width: 80, renderer: cssText, sortable: true, dataIndex: 'STUDENT_SCHOOL_ID'");
+
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
+
+        }else{
+
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
+        }
+
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: true, dataIndex: 'PHONE'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'EMAIL'");
+
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(11, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150, hidden:".checkColHidden(13, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_TERM'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150, hidden:".checkColHidden(14, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_NAME'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(15, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
+        
+        $ASSIGNED_STUDENTS_GRID->isQuickySearch = true;
+        $ASSIGNED_STUDENTS_GRID->isCheckboxSelect = false;
+        $ASSIGNED_STUDENTS_GRID->isGridEditing = $this->isCurrentYear?true:false;
+        
+        $ASSIGNED_STUDENTS_GRID->addTBarItems(CamemisBar::tbarGridRemove("this.onRemove"));
+        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+            $ASSIGNED_STUDENTS_GRID->addTBarItems("
+                tbar.add('-',[{
+                    id: 'ADD_STUDENTS'
+                    ,iconCls:'icon-application_form_add'
+                    ,text: '".ADD_STUDENTS." '
+                    ,handler: function(){
+                        openWinXType('WinXType','".ADD_STUDENTS."', '".$LIST_OF_STUDENTS_GIRD->getObjectXType()."',percentWidth(80), percentHeight(85));
+                    }
+                }]);
+            ");
+        }
+		
+        if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
+            $ASSIGNED_STUDENTS_GRID->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                cmd: 'studentSearch'
+                                ,objectId:'STUDENT_LIST_GRADE_YEAR_ID'
+                                ,CHOOSE_GRADE: '".$this->facette->GRADE_ID."'
+                                ,CHOOSE_SCHOOLYEAR: '".$this->facette->SCHOOL_YEAR."'
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openstudentlist/'
+                            }
+                        });
+                    }
+                }]);
+            ");
+        }
+        
+        $ASSIGNED_STUDENTS_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,gradeId: '".$this->facette->GRADE_ID."'
+            ,schoolyearId: '".$this->facette->SCHOOL_YEAR."'
+            ,cmd: 'searchStudent'
+        ";
+
+        $ASSIGNED_STUDENTS_GRID->setRemoveParams("
+            cmd: 'jsonRemoveEnrolledStudentSchoolyear'
+            ,type:'traditional'
+            ,academicId: '".$this->facette->GUID."'
+        ");
+
+        $ASSIGNED_STUDENTS_GRID->setSaveParams("
+            cmd: 'actionStudentSchoolYear'
+            ,academicId: '".$this->facette->GUID."'
+        ");
+
+        ////////////////// Begin....
+        $ASSIGNED_STUDENTS_GRID->setAftereditLoadParams("
+            cmd: 'loadActionStudentSchoolYear'
+        ");
+        
+        $ASSIGNED_STUDENTS_GRID->setRemoveEmbeddedEvents("
+            Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."').store.reload();
+        ");
+        ////////////////// End...
+        
+        switch(UserAuth::getUserType()){
+            case "ADMIN":
+            case "SUPERADMIN":
+                $ASSIGNED_STUDENTS_GRID->setSaveParams("
+                    cmd: 'actionStudentSchoolYear'
+                    ,academicId: '".$this->facette->GUID."'
+                ");
+                $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
+                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                ");
+                $ASSIGNED_STUDENTS_GRID->isGridEditing = true;
+            break;
+        }
+        
+        $ASSIGNED_STUDENTS_GRID->forceFit = "false";
+        $ASSIGNED_STUDENTS_GRID->removeNAME = "STUDENT";
+		$ASSIGNED_STUDENTS_GRID->setUserColumn = true;
+        $ASSIGNED_STUDENTS_GRID->renderJS();
+        
+        $TAB_ITEMS = "";
+        $TAB_ITEMS .= "{
+            title: ''
+            ,layout: 'fit'
+            ,border:false
+            ,items:[{
+                border: false
+                ,xtype: 'panel'
+                ,layout: 'card'
+                ,id: 'panel'
+                ,activeItem: 0
+                ,items:[{
+                    border: false
+                    ,layout: 'fit'
+                    ,items: [{xtype: '".$ASSIGNED_STUDENTS_GRID->getObjectXType()."'}]
+                }]
+            }]
+        }"; 
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,layout: 'fit'
+                ,items:[<?=$TAB_ITEMS?>]
+            }]
+        });
+        
+        if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').disable();
+
+        var grid = Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>');
+        grid.on('rowclick', function(grid, rowIndex, e){
+            var rec = grid.store.getAt(rowIndex);
+            var academic_activity = rec.data.ACADEMIC_ACTIVITY;
+            if (academic_activity === true){
+                if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').disable();
+            }else{
+                if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').enable();
+            }
+            if (Ext.getCmp('STUDENT_SUBJECT')) Ext.getCmp('STUDENT_SUBJECT').enable();
+        });
+
+        var grid = Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>');
+        grid.on('rowdblclick', function(grid, rowIndex, e){
+            var rec = grid.store.getAt(rowIndex);
+            var clickId = rec.data.STUDENT;
+            var clickName = rec.data.STUDENT;
+            var openUrl = '<?=$this->URL_SHOWITEM_STUDENT?>' + 'objectId=' + clickId;
+            window.parent.parent.openWinMax(clickName,openUrl);
+        });
+        
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+        
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,290 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/student/StudentDBAccess.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM= new CamemisForm("DISCIPLINE");
+$OBJECT_FORM->setSaveUrl("/discipline/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/discipline/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    <?
+    camemisPage::ExtformVTypes();
+    ?>
+    Ext.onReady(function() {
+        
+        Ext.form.Field.prototype.msgTarget = 'side';
+        
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+																	
+        $DETAIL_INFORMATION = "
+        {
+            title: '".DETAIL_INFORMATION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Datefield('INFRACTION_DATE', INFRACTION_DATE, true)."}
+                    ,{".CamemisField::comboCamemisTypes("DISCIPLINE_TYPE_STUDENT", INFRACTION_TYPE, false,false, true)."}
+                    ,{".CamemisField::ComboPunishmentType()."} 
+                ]
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DISCIPLINE." - ".NOTES."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,style: 'padding: 5px'
+                ,items: [
+                    {".CamemisField::Textarea("COMMENT", DESCRIPTION, 150)."}
+                ]
+            }]
+        }
+        ";
+        
+        $CREATED = "
+        {
+            title: '".CREATED."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,false)."
+                }]
+            }]
+        }
+        ";
+        
+        $MODIFIED = "
+        {
+            title: '".MODIFIED."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,false)."
+                }]
+            }]
+        }
+        ";
+        
+        $ENABLED = "
+        {
+            title: '".ENABLED."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("ENABLED_DATE",ENABLED_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("ENABLED_BY",ENABLED_BY,false)."
+                }]
+            }]
+        }
+        ";
+        
+        $DISABLED = "
+        {
+            title: '".DISABLED."'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,false)."
+                }]
+            }]
+        }
+        ";
+        $FORM_ITEMS = "[";
+        
+        if ($this->objectId !="new") {
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            $FORM_ITEMS .= ",".$CREATED;
+            $FORM_ITEMS .= ",".$MODIFIED;
+            $FORM_ITEMS .= ",".$ENABLED;
+            $FORM_ITEMS .= ",".$DISABLED;
+        }else{
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+        }
+        
+        $FORM_ITEMS .= "]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: $FORM_ITEMS
+        ";
+		
+        $OBJECT_FORM->addObjectItems($items);
+
+        if(UserAuth::getACLValue("STUDENT_DISCIPLINE_READ_RIGHT"))
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}  
+        ");
+         /*
+         window.parent.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
+            window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+         */
+        switch(UserAuth::getUserType()) {
+            case "SUPERADMIN":
+            case "ADMIN":
+            case "INSTRUCTOR":
+            case "TEACHER":
+
+                if(UserAuth::getACLValue("STUDENT_DISCIPLINE_REMOVE_RIGHT"))
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
+
+                if ($this->objectId !="new") {
+                    if(UserAuth::getACLValue("STUDENT_DISCIPLINE_EDIT_RIGHT"))
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+                    if(UserAuth::getACLValue("STUDENT_DISCIPLINE_EDIT_RIGHT"))
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                }else{
+                    if(UserAuth::getACLValue("STUDENT_DISCIPLINE_EDIT_RIGHT")) 
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                }
+            break;
+        }
+        
+        $OBJECT_FORM->setReleaseParams("cmd: 'releaseDiscipline',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setLoadParams("
+            cmd: 'loadDiscipline'
+            ,objectId: '".$this->objectId."'
+        ");
+
+        if ($this->objectId !="new") {
+            $OBJECT_FORM->setSaveParams("
+                cmd: 'actionDiscipline'
+                ,objectId: '".$this->objectId."'
+            ");
+        }else{
+            $OBJECT_FORM->setSaveParams("
+                cmd: 'actionDiscipline'
+                ,objectId: '".$this->objectId."'
+                ,trainingId: '".$this->trainingId."'
+                ,classId: '".$this->creditAcademicId."'
+                ,studentId: '".$this->studentId."'
+                ,target: '".$this->target."'
+            ");
+        }
+        
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'removeDiscipline'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("      
+            if (window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID')) window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID').store.reload();
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;   
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+            if (window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID')) window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID').store.reload();
+            if (window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID'))
+            window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID').store.reload();
+            " . camemisPage::setRequestURI() . "   
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            if (window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID')) window.parent.Ext.getCmp('DISCIPLINE_GENERAL_ID').store.reload();
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->isObjectDefaultOnLoad = ($this->objectId=="new")?false:true;
+        $OBJECT_FORM->isWindowlocation = false;
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 170;
+        $OBJECT_FORM->renderJS();
+        
+        $LAYOUT_ITMEMS = "[{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                border: false
+                ,layout: 'fit'
+                ,items: <?=$LAYOUT_ITMEMS;?>
+            }]
+        });     	
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

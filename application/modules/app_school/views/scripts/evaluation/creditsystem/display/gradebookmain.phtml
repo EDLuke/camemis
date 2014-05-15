@@ -1,0 +1,461 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 04.05.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$studentObject = StudentDBAccess::findStudentFromId($studentId);
+
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+class DisplayItem{
+    
+    public function __construct($studentObject, $academicObject, $urlEnryp) {
+        
+        $this->studentObject = $studentObject;
+        $this->academicObject = $academicObject;
+        $this->__urlEnryp = $urlEnryp;
+        
+    }
+    
+    public function getParams(){
+        
+        $result = "";
+        $result .= "&studentId=".$this->studentObject->ID."";
+        $result .= "&academicId=".$this->academicObject->ID."";
+        return $result;
+    }
+    
+    public function getDisplayMonthlyLearningResult(){
+        
+        $setParams = $this->getParams();
+        
+        $monthList = AcademicDBAccess::getAcademicMonthList($this->academicObject->ID);
+        
+        $PENEL_ITEMS = Array();
+        
+        if($monthList){
+            foreach($monthList as $key=>$value){
+                $setParams .= "&monthyear=".$key."_".$value;
+                $item = "{
+                    title: '".constant($key)." (".$value.")'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/displaymonthsubject/?camIds=".$this->__urlEnryp->encryptedGet($setParams)."'})]
+                }";
+                $PENEL_ITEMS[] = $item;
+            }
+        }
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        
+        $js = "";
+        $js .= "layout:'fit'";
+        $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+        $js .= ",border: false";
+        $js .= ",items:[{";
+            $js .= "xtype: 'tabpanel'";
+            $js .= ",tabPosition: 'top'";
+            $js .= ",plain:true";
+            $js .= ",activeTab: 0";
+            $js .= ",enableTabScroll:true";
+            $js .= ",height: 380";
+            $js .= ",items:".$CHOOSE_ITEMS."";
+        $js .= "}]";
+        
+        return $js;
+    }
+    
+    public function getDisplayLearningOutcomes(){
+        
+        $termNumber = AcademicDBAccess::findAcademicTerm($this->academicObject->SCHOOL_YEAR);
+        
+        $PENEL_ITEMS = Array();
+        
+        switch($termNumber){
+            case 1:
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_TERM";
+                $FIRST_TERM_RESULT = "{
+                    title: '".FIRST_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_TERM_RESULT;
+                
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_TERM";
+                $SECOND_TERM_RESULT = "{
+                    title: '".SECOND_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
+                
+                $thirdParmas = $this->getParams();
+                $thirdParmas .= "&term=THIRD_TERM";
+                $THIRD_TERM_RESULT = "{
+                    title: '".THIRD_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($thirdParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
+                $PENEL_ITEMS[] = $THIRD_TERM_RESULT;
+                
+                break;
+            case 2:
+                
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_QUARTER";
+                $FIRST_QUARTER_RESULT = "{
+                    title: '".FIRST_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_QUARTER_RESULT;
+                
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_QUARTER";
+                $SECOND_QUARTER_RESULT = "{
+                    title: '".SECOND_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_QUARTER_RESULT;
+                
+                $thirdParmas = $this->getParams();
+                $thirdParmas .= "&term=THIRD_QUARTER";
+                $THIRD_QUARTER_RESULT = "{
+                    title: '".THIRD_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($thirdParmas)."'})]
+                }";
+                $PENEL_ITEMS[] = $THIRD_QUARTER_RESULT;
+                
+                $fourthParmas = $this->getParams();
+                $fourthParmas .= "&term=FOURTH_QUARTER";
+                $FOURTH_QUARTER_RESULT = "{
+                    title: '".FOURTH_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($fourthParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
+                $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
+                break;
+            default:
+                
+                $firstParmas = $this->getParams();
+                $firstParmas .= "&term=FIRST_SEMESTER";
+                $FIRST_SEMESTER_RESULT = "{
+                    title: '".FIRST_SEMESTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($firstParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
+                
+                $secondParmas = $this->getParams();
+                $secondParmas .= "&term=SECOND_SEMESTER";
+                $SECOND_SEMESTER_RESULT = "{
+                    title: '".SECOND_SEMESTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_RESULT', url: '/evaluation/displaysemestersubject/?camIds=".$this->__urlEnryp->encryptedGet($secondParmas)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
+                break;
+        }
+        
+        $yearParmas = $this->getParams();
+        if($this->academicObject->DISPLAY_YEAR_RESULT){
+            $DISPLAY_YEAR_RESULT = "{
+                title: '".YEAR_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_RESULT', url: '/evaluation/displayyearsubject/?camIds=".$this->__urlEnryp->encryptedGet($yearParmas)."'})]
+            }";
+            $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
+        }
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        
+        $js = "";
+        $js .= "layout:'fit'";
+        $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+        $js .= ",border: false";
+        $js .= ",items:[{";
+            $js .= "xtype: 'tabpanel'";
+            $js .= ",tabPosition: 'top'";
+            $js .= ",plain:true";
+            $js .= ",activeTab: 0";
+            $js .= ",enableTabScroll:true";
+            $js .= ",height: 380";
+            $js .= ",items:".$CHOOSE_ITEMS."";
+        $js .= "}]";
+        
+        return $js;
+    }
+    
+    public function getDisplayTeacherCommentLearningResult(){
+        
+        $setParams = $this->getParams();
+        $termNumber = AcademicDBAccess::findAcademicTerm($this->academicObject->SCHOOL_YEAR);
+        
+        $PENEL_ITEMS = Array();
+        
+        switch($termNumber){
+            case 1:
+                $FIRST_TERM_RESULT = "{
+                    title: '".FIRST_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_TERM_RESULT;
+                
+                $SECOND_TERM_RESULT = "{
+                    title: '".SECOND_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
+                
+                $THIRD_TERM_RESULT = "{
+                    title: '".THIRD_TERM_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM_COMMENT', url: ''})]
+                }";
+                $PENEL_ITEMS[] = $THIRD_TERM_RESULT;
+                
+                break;
+            case 2:
+                $FIRST_QUARTER_RESULT = "{
+                    title: '".FIRST_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_QUARTER_RESULT;
+                
+                $SECOND_QUARTER_RESULT = "{
+                    title: '".SECOND_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_QUARTER_RESULT;
+                
+                $THIRD_QUARTER_RESULT = "{
+                    title: '".THIRD_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_THIRD_RESULT)
+                $PENEL_ITEMS[] = $THIRD_QUARTER_RESULT;
+                
+                $FOURTH_QUARTER_RESULT = "{
+                    title: '".FOURTH_QUARTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER_COMMENT', url: ''})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FOURTH_RESULT)
+                $PENEL_ITEMS[] = $FOURTH_QUARTER_RESULT;
+                break;
+            default:
+                $setFirstCommentParams = $this->getParams();
+                $setFirstCommentParams .= "&term=FIRST_SEMESTER";
+                $FIRST_SEMESTER_RESULT = "{
+                    title: '".FIRST_SEMESTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setFirstCommentParams)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_FIRST_RESULT)
+                $PENEL_ITEMS[] = $FIRST_SEMESTER_RESULT;
+                
+                $setSecondCommentParams = $this->getParams();
+                $setSecondCommentParams .= "&term=SECOND_SEMESTER";
+                $SECOND_SEMESTER_RESULT = "{
+                    title: '".SECOND_SEMESTER_RESULT."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setSecondCommentParams)."'})]
+                }";
+                
+                if($this->academicObject->DISPLAY_SECOND_RESULT)
+                $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
+                break;
+        }
+        
+        if($this->academicObject->DISPLAY_YEAR_RESULT){
+            $setYearCommentParams = $this->getParams();
+            $DISPLAY_YEAR_RESULT = "{
+                title: '".YEAR_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'DISPLAY_YEAR_COMMENT', url: '/evaluation/teachercomment/?camIds=".$this->__urlEnryp->encryptedGet($setYearCommentParams)."'})]
+            }";
+            $PENEL_ITEMS[] = $DISPLAY_YEAR_RESULT;
+        }
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        
+        $js = "";
+        $js .= "layout:'fit'";
+        $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+        $js .= ",border: false";
+        $js .= ",items:[{";
+            $js .= "xtype: 'tabpanel'";
+            $js .= ",tabPosition: 'top'";
+            $js .= ",plain:true";
+            $js .= ",activeTab: 0";
+            $js .= ",enableTabScroll:true";
+            $js .= ",height: 380";
+            $js .= ",items:".$CHOOSE_ITEMS."";
+        $js .= "}]";
+        
+        return $js;
+    }
+    
+    public function getViewportMonthlyLearningResult(){
+        
+        $js = "{";
+            $js .= "layout:'fit'";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".MONTHLY_RESULT."'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
+            $js .= ",border: true";
+            $js .= ",height:450";
+            $js .= ",items:[{";
+                $js .= "".$this->getDisplayMonthlyLearningResult()."";
+            $js .= "}]";
+        $js .= "}";
+        
+        return $js;
+    }
+    
+    public function getViewportLearningOutcomes(){
+        
+        $js = "{";
+            $js .= "layout:'fit'";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".LEARNING_OUTCOMES."'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
+            $js .= ",border: true";
+            $js .= ",height:450";
+            $js .= ",items:[{";
+                $js .= "".$this->getDisplayLearningOutcomes()."";
+            $js .= "}]";
+        $js .= "}";
+        
+        return $js;
+    }
+    
+    public function getViewportTeacherCommentLearningResult(){
+        
+        $js = "{";
+            $js .= "layout:'fit'";
+            $js .= ",collapsible: true";
+            $js .= ",collapsed: false";
+            $js .= ",title:'".TEACHER_COMMENTS."'";
+            $js .= ",style:'padding:3px 10px 3px 3px'";
+            $js .= ",border: true";
+            $js .= ",height:450";
+            $js .= ",items:[{";
+                $js .= "".$this->getDisplayTeacherCommentLearningResult()."";
+            $js .= "}]";
+        $js .= "}";
+        
+        return $js;
+    }
+    
+    public function getDisplayViewport(){
+        
+        $PENEL_ITEMS = Array();
+        
+        if($this->academicObject->DISPLAY_MONTH_RESULT){
+            $PENEL_ITEMS[] = $this->getViewportMonthlyLearningResult();
+        }
+        
+        $PENEL_ITEMS[] = $this->getViewportLearningOutcomes();
+        $PENEL_ITEMS[] = $this->getViewportTeacherCommentLearningResult();
+        
+        return "[".implode(',',$PENEL_ITEMS)."]";
+    }
+    
+}
+
+$DISPLAY_ITEM = new DisplayItem(
+    $studentObject
+    ,$academicObject
+    ,$this->urlEncryp
+);
+
+?>
+<script>
+
+    Ext.onReady(function() {
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'card'
+                ,id: 'CONTENT'
+                ,activeItem: 0
+                ,border: false
+                ,items:[{
+                    layout: 'anchor'
+                    ,autoScroll: true
+                    ,border:false
+                    ,style:'padding:3px 3px 3px 3px'
+                    ,bodyStyle: 'background:#F9F9F9;padding;'
+                    ,items:<?=$DISPLAY_ITEM->getDisplayViewport();?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

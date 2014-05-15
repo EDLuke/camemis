@@ -1,0 +1,361 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 01.05.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
+$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
+$OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
+
+$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+
+////////////////////////////////////////////////////////////////////////////////
+$evaluation = new EvaluationSubjectAssessment();
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setSection(3);
+$evaluation->actionDefaultStudentSubjectAssessment("YEAR");
+////////////////////////////////////////////////////////////////////////////////
+
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
+$campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$setParams = "";
+$setParams .="&subjectId=".$this->subjectId."";
+$setParams .="&academicId=".$academicObject->ID."";
+$setParams .="&section=3";
+
+?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
+<script>
+Ext.onReady(function() {
+    
+    Ext.Ajax.timeout = 600000;
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#333;background:#FFF;">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");  
+    $OBJECT_GRID->addReadField("name: 'RANK'");
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $OBJECT_GRID->addReadField("name: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'");
+            break;
+        case 2:
+            $OBJECT_GRID->addReadField("name: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'FOURTH_QUARTER_RESULT'");
+            break;
+        default:
+            $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER_RESULT'");
+            break;
+    }
+    
+    $OBJECT_GRID->addReadField("name: 'RANG'");
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 125;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
+    
+    switch($subjectObject->SCORE_TYPE){
+        case 1:
+            ////////////////////////////////////////////////////////////////////
+            $comboEditor = "
+                new Ext.form.ComboBox({
+                    triggerAction:'all'
+                    ,mode:'local'
+                    ,store: new Ext.data.JsonStore({
+                        autoDestroy: true
+                        ,fields: ['chooseValue', 'chooseDisplay']
+                        ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject->QUALIFICATION_TYPE)."]
+                    })
+                    ,valueField: 'chooseValue'
+                    ,displayField: 'chooseDisplay'
+                    ,editable: false
+                    ,listeners: {
+                        select: function(combo, record, index) {
+                            replaceValue = combo.getValue();
+                            var newDisplay = record.get('chooseDisplay');
+                            combo.setValue(newDisplay);
+                        }
+                    }
+                })
+            ";
+            
+            ////////////////////////////////////////////////////////////////////
+            break;
+        case 2:
+            ////////////////////////////////////////////////////////////////////
+            $STORE_DATA = array();
+            $scoresEntries = explode(',',$subjectObject->MAX_POSSIBLE_SCORE);
+            $STORE_DATA[0] = "{chooseValue: '0', chooseDisplay: '---'}";
+            if($scoresEntries){
+                $i=0;
+                foreach($scoresEntries as $value){
+                    $j = $i+1;
+                    //error_log($value);
+                    $gradingObject = AssessmentConfig::getSQLGradingScale(trim($value), 2, $campusObject->QUALIFICATION_TYPE, false);
+                    if($gradingObject && trim($value)){
+                        $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".trim($value)."'}";
+                    }
+                    $i++;
+                }
+            }
+            
+            $comboEditor = "
+                new Ext.form.ComboBox({
+                    triggerAction:'all'
+                    ,mode:'local'
+                    ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:[".implode($STORE_DATA)."]
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                            replaceValue = combo.getValue();
+                            var newDisplay = record.get('chooseDisplay');
+                            combo.setValue(newDisplay);
+                            setnewValue = newDisplay;
+                        }
+                    }
+                })
+            ";
+            ////////////////////////////////////////////////////////////////////
+            break;
+    }
+    
+    $OBJECT_GRID->addColumn("
+        header: '<b>".ASSESSMENT."</b>'
+        , width: 130
+        , align: 'right'
+        , sortable: true
+        , dataIndex: 'ASSESSMENT'
+        , renderer:cssDefault
+        , editor: ".$comboEditor."
+        ,filter:{}
+    ");
+    
+    if($subjectObject->SCORE_TYPE == 1){
+        if(!$academicObject->EVALUATION_OPTION){
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+        }else{
+            $OBJECT_GRID->addColumn("
+                header: '<b>".RANK."</b>'
+                , width: 120
+                , align: 'right'
+                , sortable: true
+                , dataIndex: 'RANK'
+                , renderer:cssDefault
+                , editor: new Ext.form.NumberField({
+                    allowBlank: false
+                    ,name: 'RANK'   
+                })
+                ,filter:{}
+            ");
+        }
+        $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
+    }
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'THIRD_TERM_RESULT'");
+            break;
+        case 2:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FOURTH_QUARTER_RESULT'");
+            break;
+        default:
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'SECOND_SEMESTER_RESULT'");
+            break;
+    }
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '" . REFRESH . "'
+            ,iconCls:'icon-reload'
+            ,handler: function(){
+                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+            }
+        }]);
+    ");
+    
+//    $OBJECT_GRID->addTBarItems("
+//        tbar.add('-',[{
+//            text: '" . PUBLISH_SCORE . "'
+//            ,iconCls:'icon-lightning_add'
+//            ,handler: function(){
+//                Ext.MessageBox.show({
+//                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+//                    progressText: 'Saving...',
+//                    width:300,
+//                    wait:true,
+//                    waitConfig: {interval:200},
+//                    icon:'ext-mb-download'
+//                });
+//                Ext.Ajax.request({
+//                    url:'/evaluation/jsonsave/'
+//                    ,method: 'POST'
+//                    ,params: {cmd: 'jsonActionPublishSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}
+//                    ,success: function(response, options) {
+//                        var jsonData = Ext.util.JSON.decode(response.responseText);
+//                        Ext.MessageBox.hide();
+//                    }
+//                    ,failure: function(response, options) {}
+//                });
+//            }
+//        }]);
+//    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonSubjectYearResult'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    ";
+    
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonActionStudentSubjectAssessment'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    $OBJECT_GRID->setAftereditCallback("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+    ");
+    
+    $OBJECT_GRID->comboReplaceValue = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->isFilterRow = true;
+    $OBJECT_GRID->renderJS();
+    
+    ?>      
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id:'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+    
+    <?
+    
+    if(!$academicObject->EVALUATION_OPTION){
+        $SHOW_DETAIL ="{";
+        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
+        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
+        $SHOW_DETAIL .=",disabled:false";
+        $SHOW_DETAIL .=",handler: function(){";
+        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaysemestersubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
+        $SHOW_DETAIL .="}";
+        $SHOW_DETAIL .="}";
+
+        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+    }
+    
+    $TEACHER_COMMENTS ="{";
+    $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
+    $TEACHER_COMMENTS .=",iconCls: 'icon-comments_add'";
+    $TEACHER_COMMENTS .=",disabled:false";
+    $TEACHER_COMMENTS .=",handler: function(){";
+    $TEACHER_COMMENTS .="openWinIFrame('".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT,'/evaluation/teachercomment/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(85));";
+    $TEACHER_COMMENTS .="}";
+    $TEACHER_COMMENTS .="}";
+    
+    $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENTS;
+    
+    $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
+    if($CONTEXTMENU_ITEMS){
+        $js = "";
+        $js .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $js .="if(columnIndex<=2){";
+                $js .="var record = grid.store.getAt(rowIndex);";
+                $js .="var contextMenu = new Ext.menu.Menu({";
+                $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                $js .="});";
+                $js .="event.stopEvent();";
+                $js .="contextMenu.showAt(event.xy);"; 
+            $js .="}";
+        $js .="});";
+        echo $js;
+    }
+    ?>
+    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

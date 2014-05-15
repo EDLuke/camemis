@@ -1,0 +1,146 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ASSIGNMENT");
+$OBJECT_FORM->setLoadUrl('/assignment/jsonload/');
+$OBJECT_FORM->setSaveUrl('/assignment/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+var objectId = '<?=$this->objectId;?>';
+
+Ext.onReady(function() {
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $DETAIL_INFORMATION = "
+    {
+    title: '".DETAIL_INFORMATION."'
+    ,autoHeight: true
+    ,style: 'padding-bottom: 5px'
+    ,width: percentWidth(85)
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
+                ,{".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}
+                ,{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}
+                ,{".CamemisField::Displayfield("POINTS_POSSIBLE", POINTS_POSSIBLE, 10)."}
+                ,{border: false, html: '<br>".INFO_INCLUDE_IN_EVALUATION."<br><br>'}
+                ,{".CamemisField::Checkbox("ID1","INCLUDE_IN_EVALUATION","<b>".INCLUDE_IN_EVALUATION."</b>",1, true)."}
+                ,{border: false, html: '<br>'}
+                ,{".CamemisField::Checkbox("SMS_SEND","SMS_SEND","<b>SMS-".SEND."</b>",1, true)."}
+                ,{border: false, html: '<br>'}
+                ,{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 100, false)."}
+            ]
+        }]
+    }
+    ";
+
+    $items = "
+    border: false
+    ,id: 'FORM_ITEMS'
+    ,autoScroll: true
+    ,bodyStyle: 'padding:0px'
+    ,items: [
+        ".$DETAIL_INFORMATION."
+    ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+
+    if ($this->objectId != "new"){
+        //if (UserAuth::getACLValue("ACADEMIC_SETTING_REMOVE_RIGHT"))
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+    }
+    
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'actionAssignment'
+        ,objectId: '".$this->objectId."'
+        ,gradeId: '".$this->gradeId."'
+        ,subjectId: '".$this->subjectId."'
+        ,academicId: '".$this->academicId."'
+        ,teacherId: '".$this->teacherId."'
+    ");
+
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'loadObject'
+        ,objectId: '".$this->objectId."'
+        ,subjectId: '".$this->subjectId."'
+    ");
+    $OBJECT_FORM->setRemoveParams("cmd: 'removeObject',objectId: objectId");
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: objectId");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        window.parent.Ext.getCmp('TREE.SUBJECT_ID').root.reload();
+        //window.parent.Ext.getCmp('TREE.SUBJECT_ID').getRootNode().expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+       
+        window.parent.Ext.getCmp('TREE.SUBJECT_ID').root.reload();
+        //window.parent.Ext.getCmp('TREE.SUBJECT_ID').getRootNode().expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        
+        window.parent.Ext.getCmp('TREE.SUBJECT_ID').root.reload();
+        //window.parent.Ext.getCmp('TREE.SUBJECT_ID').getRootNode().expand(true, false);
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+
+    $OBJECT_FORM->isObjectDefaultOnLoad = true;
+
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+        border: false
+            ,layout: 'fit'
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

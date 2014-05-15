@@ -1,0 +1,119 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 23.05.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("FINANCE", "LIST");
+$OBJECT_GRID->setLoadUrl("/finance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+    
+    function cssTextBold(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    
+    function cssOwn(value, metadata, record){
+        return '<div style="font-weight:normal; color:#e24f43; padding: 5px;">' + value + '</div>';
+    }
+    
+    function cssNumber(value, metadata, record){
+        return '<div style="font-weight:normal; color:#3B5998; padding: 5px;">' + value + '</div>';
+    }
+        
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();     
+    
+    $OBJECT_GRID->addReadField("name: 'STUDENT_NAME'");
+    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+    $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT_CODE'");
+    $OBJECT_GRID->addReadField("name: 'PAID_STATUS'");
+    $OBJECT_GRID->addReadField("name: 'NPAID'");
+    $OBJECT_GRID->addReadField("name: 'NALERT'");
+    $OBJECT_GRID->addReadField("name: 'TOTAL_AMOUNT'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'AMOUNT_PAID'");
+    $OBJECT_GRID->addReadField("name: 'CHOOSE_OPTION'");
+    $OBJECT_GRID->addReadField("name: 'AMOUNT_OWED'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".CODE."</b>', align:'right', renderer: cssNumber, width:80, sortable: true, dataIndex: 'STUDENT_CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', align:'left', renderer: cssTextBold, width: 120, sortable: true, dataIndex: 'STUDENT_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".GRADE_CLASS."</b>', align:'left', renderer: cssTextBold, width: 60, sortable: true, dataIndex: 'CLASS_NAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".PAYMENT_OPTION."</b>', align:'left', renderer: cssNumber, width: 80, sortable: true, dataIndex: 'CHOOSE_OPTION'");
+    $OBJECT_GRID->addColumn("header: '<b>".NUMBER_OF_PAYMENT."</b>', align:'left', renderer: cssNumber, width: 80, sortable: true, dataIndex: 'NPAID'");
+    $OBJECT_GRID->addColumn("header: '<b>".TOTAL_AMOUNT."</b>', align:'left', renderer: cssNumber, width: 100, sortable: true, dataIndex: 'TOTAL_AMOUNT'");
+    $OBJECT_GRID->addColumn("header: '<b>".AMOUNT_PAID."</b>', align:'left', renderer: cssNumber, width: 100, sortable: true, dataIndex: 'AMOUNT_PAID'");
+    $OBJECT_GRID->addColumn("header: '<b>".AMOUNT_OWED."</b>', align:'left', renderer: cssOwn, width: 100, sortable: true, dataIndex: 'AMOUNT_OWED'");
+    $OBJECT_GRID->addColumn("header: '<b>".NUMBER_OF_ALERT."</b>', align:'left', renderer: cssNumber, width: 100, sortable: true, dataIndex: 'NALERT'");
+    $OBJECT_GRID->addColumn("header: '<b>".PAID_STATUS."</b>', align:'left', renderer: cssNumber, width: 100, sortable: true, dataIndex: 'PAID_STATUS'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonLoadStudentFeeGrade'
+        ,feeID: '".$this->objectId."'
+        ,schoolyear: '".$this->schoolyear."'
+    ";
+    
+    $OBJECT_GRID->isQuickySearch=true; 
+    
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,xtype: 'panel'
+            ,layout: 'card'
+            ,id: 'center'
+            ,activeItem: 0
+            ,items:[{
+                border: false
+                ,title: ''
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

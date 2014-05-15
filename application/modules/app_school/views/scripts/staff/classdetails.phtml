@@ -1,0 +1,167 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 21.01.2010 20:29
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/staff/StaffDBAccess.php';
+require_once 'models/app_school/schedule/ScheduleDBAccess.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+//@veasna on training
+$target= isset($_GET["target"])?addText($_GET["target"]):"";
+$trainingId= isset($_GET["trainingId"])?$_GET["trainingId"]:"";      
+//
+$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+$current_instructor = isset($_GET["current_instructor"])?$_GET["current_instructor"]:"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+$gradeId=isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";    
+
+
+if($current_instructor == Zend_Registry::get('USER')->ID){
+    $IS_INSTRCTOR = true;
+}else{
+    $IS_INSTRCTOR = false;
+}
+
+function setItem($name, $url){
+    $js = "title: '<b>" . $name . "</b>'";
+    $js .= ",layout: 'fit'";
+    $js .= ",iconCls:'icon-package_white'";
+    $js .= ",items: [new Ext.ux.IFrameComponent({ id: '".strtoupper($name)."', url: '".$url."' + parameters})]";
+    return $js;
+} 
+
+//$veasna
+$paramstr="";
+if($target){
+    switch($target){ 
+        case 'training':
+            $paramstr.="";
+            $paramstr.="&trainingId=".$trainingId;
+            $paramstr.="&objectId=".$trainingId;
+            break;
+        case 'general':
+            $paramstr.="";
+            $paramstr.="&classId=".$classId;
+            $paramstr.="&objectId=".$classId;
+            $paramstr.="&teacherId=".$teacherId;
+            $paramstr.="&current_instructor=".$current_instructor;
+            $paramstr.="&schoolyearId=".$schoolyearId;  
+            break;
+    }
+}
+//
+
+?>
+
+<script>
+    var parameters = '<?=$paramstr;?>';
+     
+Ext.onReady(function() {
+    function handleActivate(tab){
+        switch(tab.id){
+            case "SMS":
+            case "COMMUNICATION":
+            case "ACADEMIC_PERFORMANCES":
+                window.parent.Ext.getCmp('WEST_ID').collapse();
+                break;
+            default:
+                window.parent.Ext.getCmp('WEST_ID').expand();
+                break;
+        }
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    switch(Zend_Registry::get('ADDITIONAL_ROLE')){
+        case 1:
+            $USER_TYPE = "INSTRUCTOR";
+            break;
+        case 2:
+            $USER_TYPE = "TEACHER";
+            break;
+        default:
+            $USER_TYPE = UserAuth::getUserType();
+            break;
+    }
+    
+    $ITEMS ="[";
+    
+    if($target){
+        switch($target){ 
+            case 'training':
+                $ITEMS .="{".setItem(SCHEDULE,'/schedule/byclass/?target='.$target)."}";
+                
+                $ITEMS .=",{".setItem(LIST_OF_STUDENTS,'/training/studentlist/?target=TERM')."}";
+                
+                $ITEMS .=",{".setItem(LIST_OF_TEACHERS,'/training/teacherlist/?')."}";    
+                
+                $ITEMS .=",{".setItem(LIST_OF_ATTENDANCE,'/attendance/byclass/?target='.$target.'&classId='.$trainingId)."}";   
+                
+                $ITEMS .=",{".setItem(LIST_BY_DISCIPLINE,'/discipline/byclass/?target='.$target.'&classId='.$trainingId)."}";   
+                
+                $ITEMS .=",{".setItem(EVENTS,'/schoolevent/classevents/?classId='.$trainingId)."}";   
+                 
+                break;
+                
+             case 'general':
+             
+                $ITEMS .="{".setItem(SCHEDULE,'/schedule/byclass/?gradeId='.$gradeId)."}";
+                
+                $ITEMS .=",{".setItem(LIST_OF_STUDENTS,'/academic/studentlist/?')."}";
+                
+                $ITEMS .=",{".setItem(LIST_OF_TEACHERS,'/academic/teachersbyclass/?')."}";    
+                
+                $ITEMS .=",{".setItem(LIST_OF_ATTENDANCE,'/attendance/byclass/?target='.$target)."}";   
+                
+                $ITEMS .=",{".setItem(LIST_BY_DISCIPLINE,'/discipline/byclass/?target='.$target)."}";   
+                
+                $ITEMS .=",{".setItem(EVENTS,'/schoolevent/classevents/?')."}";   
+                
+                if($USER_TYPE == "INSTRUCTOR")
+                $ITEMS .=",{".setItem(ACADEMIC_PERFORMANCES,'/evaluation/classperformances/?')."}";
+                
+                break;  
+        }
+    }
+    $ITEMS .="]";
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,layout: 'fit'
+            ,border: false
+            ,items:[{
+                xtype: 'vrtabpanel'
+                ,tabWidth: 200
+                ,border: false			
+                ,activeTab: 0
+                ,plain:true
+                ,width:percentWidth(25)
+                ,defaults:{autoScroll: true, border: false}
+                ,items: <?=$ITEMS;?>      
+            }]
+        }]
+    }); 
+});
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,160 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 02.08.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$BLOCK_ATTENDANCE_GRID = new CamemisGrid("BLOCK_ATTENDANCE", "LIST");
+$BLOCK_ATTENDANCE_GRID->setLoadUrl("/attendance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+    Ext.onReady(function() {
+        
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+            );
+        }
+        
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px;;">' + value + '</div>';
+        }
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $STAFF_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STAFF_ATTENDANCE_READ_RIGHT")?"false":"true";
+        
+        ///////////////////////////////////////////////////
+        //Block Absence Grid...
+        ///////////////////////////////////////////////////
+        $BLOCK_ATTENDANCE_GRID->addReadField("name: 'CODE'");
+        $BLOCK_ATTENDANCE_GRID->addReadField("name: 'FULL_NAME'");
+        $BLOCK_ATTENDANCE_GRID->addReadField("name: 'BG_COLOR'");
+        $BLOCK_ATTENDANCE_GRID->addReadField("name: 'BG_COLOR_FONT'");
+        $BLOCK_ATTENDANCE_GRID->addReadField("name: 'STATUS_KEY'");
+        
+        switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+            case "VIETNAMESE": $width = 125;break;
+            default: $width = 85;break;
+        }
+    
+        $BLOCK_ATTENDANCE_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+        $BLOCK_ATTENDANCE_GRID->addColumn("header: '<b>".CODE."</b>', width: 100, renderer: cssText, sortable: true, dataIndex: 'CODE'");
+        $BLOCK_ATTENDANCE_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 190, renderer: cssText, sortable: true, dataIndex: 'FULL_NAME'");
+        
+        $BLOCK_ATTENDANCE_GRID->baseParams = "
+            start: 0
+            ,limit: 100
+            ,cmd: 'jsonStaffBlockAttendance'
+            ,object: 'h84k964g3434b5v6b54h34n45hgh3'
+        ";
+        
+        $BLOCK_ATTENDANCE_GRID->loadMask = true;
+        $BLOCK_ATTENDANCE_GRID->isPagingToolbar = true;
+        $BLOCK_ATTENDANCE_GRID->isQuickySearch = true;
+        $BLOCK_ATTENDANCE_GRID->isObjectDefaultOnLoad = true;
+        $BLOCK_ATTENDANCE_GRID->forceFit = "false";
+        $BLOCK_ATTENDANCE_GRID->renderJS(); 
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    id:'west'
+                    ,region:'west'
+                    ,title: ''
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 450
+                    ,minSize: 450
+                    ,maxSize: 450
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items:[{xtype: '<?=$BLOCK_ATTENDANCE_GRID->getObjectXtype();?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items: [{
+                        border: false
+                        ,layout: 'anchor'
+                        ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                        ,items: [{
+                            title: ''
+                            ,height:60
+                            ,width:500
+                            ,bodyStyle: 'background:#F9F9F9; padding:15px; border:1px dotted #999;text-align:center;'
+                            ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                        }]
+                    }]
+                }]
+            }]
+        });
+        
+        <?  
+        ////////////////////////////////////////////////////////////
+        //Block Absence Grid Click
+        ///////////////////////////////////////////////////////////
+        $html ="var grid = Ext.getCmp('".$BLOCK_ATTENDANCE_GRID->getObjectId()."');";
+        $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $html .="var record = grid.store.getAt(rowIndex);";
+            $html .="Ext.getCmp('west').getLayout().setActiveItem(0);";
+            $html .="var contextMenu = new Ext.menu.Menu({";
+            $html .="items: [{";
+            $html .="text: '".SHOW_DETAIL." &raquo; ' + record.data.FULL_NAME";
+            $html .=",iconCls: 'icon-application_form_magnify'";
+            $html .=",handler: function(){";  
+            $html .="clickOpenPage('center','','/attendance/showitems/?objectId='+record.data.ID);";
+            $html .="}";
+            $html .="},{";
+            $html .="text: '".ADD_ATTENDANCE." &raquo; ' + record.data.FULL_NAME";
+            $html .=",iconCls: 'icon-add'";
+            $html .=",handler: function(){";  
+            $html .="clickOpenPage('center','','/attendance/showbystaff/?staffId=' + record.data.ID +'&objectId=new');";
+            $html .="}";
+            $html .="}]";
+            $html .="});";
+            $html .="event.stopEvent();";
+            $html .="contextMenu.showAt(event.xy);";
+        $html .="});";
+        echo $html;
+        ?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,189 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+$gradeId = "";
+$campusId = "";
+$schoolyearId = "";
+$classId = "";
+
+if (strpos($objectId, "CAMPUS_") !== false) {
+    $Ids = explode("_",substr($objectId, 7));
+    $campusId = isset($Ids[0])?$Ids[0]:"";
+    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
+    $objectType = "CAMPUS";
+} elseif (strpos($objectId, "GRADE_") !== false) {
+    $objectType = "GRADE";
+    $Ids = explode("_",substr($objectId, 6));
+    $gradeId = isset($Ids[0])?$Ids[0]:"";
+    $campusId = isset($Ids[1])?$Ids[1]:"";
+    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+} else{
+    $classId = $objectId;
+}
+
+$OBJECT_GRID = new CamemisGrid("STUDENT_ADVISORY", "FILTER_".$objectType."");
+$OBJECT_GRID->setLoadUrl('/advisory/jsonload');
+$OBJECT_GRID->setSaveUrl('/advisory/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$columndata = Utiles::getGridColumnData("STUDENT_ADVISORY_FILTER_".$objectType."_ID");
+
+?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
+<script>
+Ext.onReady(function() {
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addCellRenderer("
+        function renderText(value,record){
+            return '<div style=\"font-weight:normal; color:#000000; padding: 5px; height:15px;background:#FFFFFF;\">' + value + '</div>';
+        }
+    ");
+    
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'ADVISORY_NAME'");
+    $OBJECT_GRID->addReadField("name: 'ADVISORY_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'ADVISED_DATE'");
+    $OBJECT_GRID->addReadField("name: 'ADVISED_BY'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    ////////////////////////////////////
+    $OBJECT_GRID->addColumn("header: '<b>" . NAME . "</b>',hidden:".checkColHidden(1, $columndata).", align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'ADVISORY_NAME',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISORY_TYPE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(3, $columndata).", dataIndex: 'ADVISORY_TYPE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_DATE . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'ADVISED_DATE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>" . ADVISED_BY . "</b>', align:'left', renderer: renderText, width: 150,hidden:".checkColHidden(5, $columndata).", dataIndex: 'ADVISED_BY',filter:{}");
+    ////////////////////////////////////////////////////////////////////////////
+    if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,disabled:true
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,timeout: 600000
+                        ,params:{cmd: 'studentSearch'
+                                ,objectId:'".$OBJECT_GRID->getObjectId()."'
+                                }
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openstudentlist/'
+                        }
+                    });
+                }
+            }]);
+        ");
+    }
+    
+    
+    $OBJECT_GRID->addTBarItems("tbar.add('->');");
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    //$OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->isFilterRow = true;
+    //$OBJECT_GRID->groupField = "ADVISORY_NAME";
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->setUserColumn = true;
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->renderJS();
+    
+    $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStudentAdvisory'
+            ,campusId: '".$campusId."'
+            ,schoolyearId: '".$schoolyearId."'
+            ";
+    $OBJECT_GRID->renderJS();
+    
+    $params = "";
+    $params .= "objectType=".$objectType."";
+    $params .= "&campusId=".$campusId."";
+    $params .= "&gradeId=".$gradeId."";
+    $params .= "&schoolyearId=".$schoolyearId."";
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'north'
+                ,id:'NORTH_ID'
+                ,margins: '3 3 0 3'
+                ,cmargins: '3 3 3 3'
+                ,autoScroll: true
+                ,height:300
+                ,minSize:300
+                ,maxSize:300
+                ,layout: 'fit'
+                ,items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentadvisory/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '0 3 3 3'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType()?>'}]
+            }]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

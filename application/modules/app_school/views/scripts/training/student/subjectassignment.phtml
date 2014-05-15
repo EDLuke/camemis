@@ -1,0 +1,150 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 16.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl('/training/jsonload/');
+$OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+
+$VIEWPORT = new CamemisViewport();
+
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$trainingId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+$ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(
+    $subjectId
+    , $trainingId
+);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+Ext.onReady(function() {
+    
+    function cssFirst(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#D1DDEF;">' + value + '</div>';
+    }
+    
+    function cssSecond(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#FFE5A6;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:10px; background:#f46862;">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    //$EDITOR = "new Ext.form.TextField({allowBlank: false})";
+    $OBJECT_GRID->addCellRenderer("
+        function renderText(v, p, record, rowIndex){
+            var str = '<span class=spanText>' + v + '</span>';
+            return str;
+        }
+    ");
+    
+    $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    
+    if($ENTRIES_ASSIGNMENT){
+        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
+            $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_".$value->ID."'");
+        }
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: renderText, width: 210, dataIndex: 'STUDENT'");
+       
+    if($ENTRIES_ASSIGNMENT){
+        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
+            if(($key % 2) == 1){
+                $RENDERER = "cssFirst";
+            }else{
+                $RENDERER = "cssSecond";
+            }
+            $EDITOR = "new Ext.form.NumberField({allowBlank: false,minValue: '".$value->SCORE_MIN."',maxValue: '".$value->SCORE_MAX."'})";
+                                                                                   
+            $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer: ".$RENDERER.", width: 80, dataIndex: 'ASSIGNMENT_".$value->ID."'");
+        }
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 80, dataIndex: 'AVERAGE'");
+    
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId:'".$trainingId."'
+        ,subjectId:'".$subjectId."'
+        ,cmd: 'jsonStudentSubjectAssignment'
+    ";
+    
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'actionTrainingStudentAssignment'
+        ,subjectId:'".$subjectId."'
+    ");
+
+    $CALLBACK_DATA = "";
+    if($ENTRIES_ASSIGNMENT){
+        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
+            $CALLBACK_DATA .= "if (jsonData.data.ASSIGNMENT_".$value->ID.") e.record.set('ASSIGNMENT_".$value->ID."',jsonData.data.ASSIGNMENT_".$value->ID.");";
+        }
+    }
+    
+    $CALLBACK_DATA .= "if (jsonData.data.AVERAGE) e.record.set('AVERAGE',jsonData.data.AVERAGE);";
+    
+    $OBJECT_GRID->setAftereditCallback($CALLBACK_DATA);
+        
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    $VIEWPORT->viewportLayout = "Normal";
+    $VIEWPORT->collapsible = "false";
+    
+    $TBAR_ITEMS = "";
+    $TBAR_ITEMS .= "text:'".CANCEL."'";
+    $TBAR_ITEMS .= ",id:'CANCEL_ID'";
+    $TBAR_ITEMS .= ",iconCls:'icon-cancel'";
+    $TBAR_ITEMS .= ",handler: function(){window.parent.Ext.getCmp('CENTER_CONTENT').getLayout().setActiveItem(0);}";
+    $VIEWPORT->addViewportTbarItem($TBAR_ITEMS);
+    
+    $ITEMS = "xtype:'".$OBJECT_GRID->getObjectXtype()."'";
+    $VIEWPORT->addItem($ITEMS);
+    
+    $VIEWPORT->renderJS();
+    ?>
+    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

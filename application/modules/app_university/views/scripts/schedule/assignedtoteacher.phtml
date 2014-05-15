@@ -1,0 +1,120 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$GENERAL_GRID = new CamemisGrid("SCHEDULE", "GENERAL");
+$GENERAL_GRID->setLoadUrl("/schedule/jsonload/");
+$GENERAL_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$TRAINING_GRID = new CamemisGrid("SCHEDULE", "TRAINING");
+$TRAINING_GRID->setLoadUrl("/schedule/jsonload/");
+$TRAINING_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$chooseId = isset($_GET["chooseId"])?$_GET["chooseId"]:"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+    Ext.onReady(function() {
+        function showText(v, p, record, rowIndex){
+            return String.format('<div style=\"white-space:normal;font-weight:bold; padding: 20px; height: 35px; background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['COLOR']
+                ,record.data['COLOR_FONT']
+            );
+        }
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $GENERAL_GRID->addReadField("name: 'TIME'");
+        $GENERAL_GRID->addReadField("name: 'DAY'");
+        $GENERAL_GRID->addReadField("name: 'COLOR'");
+        $GENERAL_GRID->addReadField("name: 'COLOR_FONT'");
+        $GENERAL_GRID->addReadField("name: 'TEACHING_INFORMATION'");
+        
+        $GENERAL_GRID->addColumn("header: '".DAY."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'DAY'");
+        $GENERAL_GRID->addColumn("header: '".TIME."', align:'center', width:170, renderer: showText, sortable: true, dataIndex: 'TIME'");
+        $GENERAL_GRID->addColumn("header: '".TEACHING_INFORMATION."', align:'left', width: 210, renderer: showText, sortable: false, dataIndex: 'TEACHING_INFORMATION'");
+
+        $GENERAL_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,target: 'GENERAL'
+            ,checkId: '".$chooseId."'
+            ,cmd: 'checkAssignedTeacherInSchedule'
+        ";
+        $GENERAL_GRID->isObjectDefaultOnLoad = true;
+        $GENERAL_GRID->renderJS();
+        //
+        $TRAINING_GRID->addReadField("name: 'TIME'");
+        $TRAINING_GRID->addReadField("name: 'DAY'");
+        $TRAINING_GRID->addReadField("name: 'COLOR'");
+        $TRAINING_GRID->addReadField("name: 'COLOR_FONT'");
+        $TRAINING_GRID->addReadField("name: 'TEACHING_INFORMATION'");
+        
+        $TRAINING_GRID->addColumn("header: '".DAY."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'DAY'");
+        $TRAINING_GRID->addColumn("header: '".TIME."', align:'center', width:170, renderer: showText, sortable: true, dataIndex: 'TIME'");
+        $TRAINING_GRID->addColumn("header: '".TEACHING_INFORMATION."', align:'left', width: 210, renderer: showText, sortable: false, dataIndex: 'TEACHING_INFORMATION'");
+
+        $TRAINING_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,target: 'TRAINING'
+            ,checkId: '".$chooseId."'
+            ,cmd: 'checkAssignedTeacherInSchedule'
+        ";
+        $TRAINING_GRID->isObjectDefaultOnLoad = true;
+        $TRAINING_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: false
+                    ,split: true
+                }
+                ,items: [{
+                    title: '<?=HIGHER_EDUCATION?>'
+                    ,region:'west'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: percentWidth(50)
+                    ,minSize: percentWidth(50)
+                    ,maxSize: percentWidth(50)
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$GENERAL_GRID->getObjectXType();?>'}]
+                },{
+                    title: '<?=TRAINING_PROGRAMS?>'
+                    ,collapsible: false
+                    ,region:'center'
+                    ,id: 'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$TRAINING_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

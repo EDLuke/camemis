@@ -1,0 +1,136 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
+$OBJECT_GRID->setLoadUrl("/student/jsonload/");
+$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style>
+    span.spanText {
+        font-weight:normal;
+        color:#000; 
+        white-space:normal;
+    }
+    span.spanStatus {
+        font-weight:normal;
+        color:#FFF; 
+        white-space:normal;
+    }
+   
+</style>
+<script>
+    Ext.onReady(function() {
+         function filertByStatus(type){
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                start:0
+                ,limit:100
+                ,studentstatusType:type
+                ,cmd: 'jsonListStudentStatus'
+            };
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.load();
+        }
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['BG_COLOR']
+                ,record.data['BG_COLOR_FONT']
+            );
+        }
+        function cssContent(value, metadata, record){
+            return '<div style="padding: 5px;"><span style="font-weight:bold; font-size:14px; white-space:normal; color:#333;">' 
+            + value + '</span><br><br><span style="font-weight:normal; white-space:normal; color:#333;">' 
+            + record.data.DESCRIPTION + '</span></div>';
+        }
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+        
+        
+        //
+        $OBJECT_GRID->addReadField("name: 'STUDENT', type: 'string'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'STUDENT_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'START_DATE'");
+        $OBJECT_GRID->addReadField("name: 'END_DATE'");
+        $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");
+        $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+        $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_LEVEL'");
+        $OBJECT_GRID->addReadField("name: 'TRAINING_TERM'");
+        $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+        //
+        $OBJECT_GRID->addColumn("header: '<b>".STUDENT_STATUS."</b>', align:'center',width:percentWidth(30), renderer:cssContent, sortable: true, dataIndex: 'STATUS_KEY'");
+        $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'START_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 130, renderer: renderText, sortable: true, dataIndex: 'SCHOOLYEAR_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 70, renderer: renderText, sortable: true, dataIndex: 'CLASS_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 120, renderer: renderText, sortable: true, dataIndex: 'TRAINING_TERM'");
+        $OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', width: 150, sortable: true, dataIndex: 'TRAINING_NAME'");
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListStudentStatus'
+            ,studentId: '".$objectId."'
+			,target: '".$target."'
+        ";
+      
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        });  
+         var myGrid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+            if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            clickOpenPage('center',record.data.STUDENT,'/student/studentstatus/?objectId=<?=$objectId;?>');
+        });  
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

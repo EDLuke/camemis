@@ -1,0 +1,64 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 22.05.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,items:[{
+                        title: '<?=MAIN_CONTENT;?>'
+                        ,layout: 'fit'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'MAIN_CONTENT', url: '/finance/showfeecourse/?objectId=<?=$this->objectId;?>'})]
+                    },{
+                        title: '<?=LIST_OF_STUDENTS;?>'
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '<?=$this->URL_STUDENT_FEE_TRAINING;?>'})]
+                    },{
+                        title: '<?=REMINDER;?>'
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'REMINDER', url: '<?=$this->URL_STUDENT_FEE_TRAINING_REMINDER;?>'})]
+                    }]        
+                }]     
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
