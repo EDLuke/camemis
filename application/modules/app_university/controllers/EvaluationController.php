@@ -132,34 +132,21 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
 
-        if ($this->classObject) {
-            if ($this->classObject->EDUCATION_SYSTEM) {
-                $this->_helper->viewRenderer('creditsystem/display/gradebookmain');
-            } else {
-                $this->_helper->viewRenderer('classicsystem/display/gradebookmain');
-            }
-        }
+        $this->_helper->viewRenderer('display/gradebookmain');
     }
-
-    public function gradebookchartAction() {
-
-        $this->view->academicId = $this->academicId;
-        $this->view->studentId = $this->studentId;
-        $this->_helper->viewRenderer('classicsystem/display/gradebookchart');
-    }
-
+    
     public function gradebookmonthAction() {
 
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
-        $this->_helper->viewRenderer('classicsystem/display/gradebookmonth');
+        $this->_helper->viewRenderer('display/gradebookmonth');
     }
 
     public function creditgradebookmonthAction() {
 
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->studentId = $this->studentId;
-        $this->_helper->viewRenderer('creditsystem/display/gradebookmonth');
+        $this->_helper->viewRenderer('display/gradebookmonth');
     }
 
     public function subjectassignmentsAction() {
@@ -304,14 +291,14 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
 
-        $this->_helper->viewRenderer('classicsystem/display/gradebookmain');
+        $this->_helper->viewRenderer('display/gradebookmain');
     }
 
     public function gradebookcreditAction() {
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->academicId = $this->academicId;
         $this->view->studentId = $this->studentId;
-        $this->_helper->viewRenderer('creditsystem/display/gradebookmain');
+        $this->_helper->viewRenderer('display/gradebookmain');
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -321,7 +308,7 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->studentId = $this->studentId;
         $this->view->subjectId = $this->subjectId;
 
-        $this->_helper->viewRenderer('classicsystem/display/displayyearsubject');
+        $this->_helper->viewRenderer('display/displayyearsubject');
     }
 
     public function displaysemestersubjectAction() {
@@ -331,7 +318,7 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->subjectId = $this->subjectId;
         $this->view->term = $this->term;
 
-        $this->_helper->viewRenderer('classicsystem/display/displaysemestersubject');
+        $this->_helper->viewRenderer('display/displaysemestersubject');
     }
 
     public function displaymonthsubjectAction() {
@@ -342,7 +329,7 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->subjectId = $this->subjectId;
         $this->view->monthyear = $this->monthyear;
 
-        $this->_helper->viewRenderer('classicsystem/display/displaymonthsubject');
+        $this->_helper->viewRenderer('display/displaymonthsubject');
     }
 
     public function settingbehaviorAction() {
@@ -350,7 +337,7 @@ class EvaluationController extends Zend_Controller_Action {
         $this->view->studentId = $this->studentId;
         $this->view->term = $this->term;
         $this->view->section = $this->section;
-        $this->_helper->viewRenderer('classicsystem/display/settingbehavior');
+        $this->_helper->viewRenderer('display/settingbehavior');
     }
 
     public function performancemaincreditAction() {
@@ -367,28 +354,28 @@ class EvaluationController extends Zend_Controller_Action {
             "semester" => $this->term)
         );
 
-        $this->_helper->viewRenderer('classicsystem/performance/credit/index');
+        $this->_helper->viewRenderer('performance/credit/index');
     }
 
     public function performanceyearcreditAction() {
 
         $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
-        $this->_helper->viewRenderer('classicsystem/performance/credit/displayyearsubject');
+        $this->_helper->viewRenderer('performance/credit/displayyearsubject');
     }
 
     public function performancesemestercreditAction() {
 
         $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
-        $this->_helper->viewRenderer('classicsystem/performance/credit/displaysemestersubject');
+        $this->_helper->viewRenderer('performance/credit/displaysemestersubject');
     }
 
     public function performancemaintraditionalAction() {
 
         $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
-        $this->_helper->viewRenderer('classicsystem/performance/index');
+        $this->_helper->viewRenderer('performance/index');
     }
 
     public function performanceyeartraditionalAction() {
@@ -400,7 +387,7 @@ class EvaluationController extends Zend_Controller_Action {
                     "&academicId" => $this->academicId)
         );
 
-        $this->_helper->viewRenderer('classicsystem/performance/displayyear');
+        $this->_helper->viewRenderer('/performance/displayyear');
     }
 
     public function performancesemestertraditionalAction() {
@@ -412,14 +399,14 @@ class EvaluationController extends Zend_Controller_Action {
                     "&academicId" => $this->academicId)
         );
 
-        $this->_helper->viewRenderer('classicsystem/performance/displaysemester');
+        $this->_helper->viewRenderer('performance/displaysemester');
     }
 
     public function performancemonthtraditionalmainAction() {
 
         $this->view->academicId = $this->academicId;
         $this->view->term = $this->term;
-        $this->_helper->viewRenderer('classicsystem/performance/displaymonthmain');
+        $this->_helper->viewRenderer('performance/displaymonthmain');
     }
 
     public function performancemonthtraditionalAction() {
@@ -431,7 +418,7 @@ class EvaluationController extends Zend_Controller_Action {
                     "&academicId" => $this->academicId)
         );
 
-        $this->_helper->viewRenderer('classicsystem/performance/displaymonth');
+        $this->_helper->viewRenderer('performance/displaymonth');
     }
 
     public function classperformancesAction() {
