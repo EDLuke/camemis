@@ -1,0 +1,129 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.04.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
+$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$assignmentId = isset($_GET["assignmentId"])?addText($_GET["assignmentId"]):"";
+$date = isset($_GET["date"])?addText($_GET["date"]):"";
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
+
+$setParams = "";
+$setParams .= "&academicId=".$academicId."";
+
+if($subjectId)
+$setParams .= "&subjectId=".$subjectId."";
+
+if($subjectId)
+$setParams .= "&assignmentId=".$assignmentId."";
+
+if($date)
+$setParams .= "&date=".$date."";
+
+if($term)
+$setParams .= "&term=".$term."";
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
+if(!$academicObject) {header("Location: /main/permission/");}
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$formItems = "[";
+    $formItems .= "
+    {
+        xtype: 'fileuploadfield'
+        ,id: 'form-file'
+        ,emptyText: '".SELECT_AN_XLS_FILE."'
+        ,fieldLabel: '".FILE."'
+        ,name: 'xlsfile'
+        ,buttonText: ''
+        ,buttonCfg: {
+            iconCls: 'upload-icon'
+        }
+    }
+    ";
+    $formItems.= ",{".CamemisField::Datefield('CREATED_DATE',CREATED_DATE,false)."}";
+    $formItems .= "]";
+
+    $FORM_TBAR = "";
+    $FORM_TBAR .= "{";
+    $FORM_TBAR .= "tooltip: '".RESET."'";
+    $FORM_TBAR .= ",iconCls:'icon-arrow_undo'";
+    $FORM_TBAR .= ",handler: function(){";
+    $FORM_TBAR .= "fp.getForm().reset();";
+    $FORM_TBAR .= "}";
+    $FORM_TBAR .= "},'-',{";
+    $FORM_TBAR .= "tooltip: '".UPLOAD."'";
+    $FORM_TBAR .= ",id: 'UPLOAD'";
+    $FORM_TBAR .= ",iconCls:'icon-disk'";
+    $FORM_TBAR .= ",disabled: true";
+    $FORM_TBAR .= ",handler: function(){";
+    $FORM_TBAR .= "if(fp.getForm().isValid()){";
+    $FORM_TBAR .= "Ext.Ajax.request({";
+    $FORM_TBAR .= "url: '/evaluation/jsonimport'";
+    $FORM_TBAR .= ",isUpload: true";
+    $FORM_TBAR .= ",headers: {'Content-type':'multipart/form-data'}";
+    $FORM_TBAR .= ",method: 'POST'";
+    $FORM_TBAR .= ",params:{cmd: 'importXLS',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}";
+    $FORM_TBAR .= ",waitMsg: 'Uploading your file...'";
+    $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
+    $FORM_TBAR .= ",success: function(response, options) {";
+    $FORM_TBAR .= "".CamemisPage::setRequestURI(false)."";
+    $FORM_TBAR .= "}";
+    $FORM_TBAR .= ",failure: function(response, options) { console.log('fail'); }";
+    $FORM_TBAR .= "});";
+    $FORM_TBAR .= "}";
+    $FORM_TBAR .= "}";
+    $FORM_TBAR .= "}";
+
+?>
+
+<script>
+Ext.onReady(function() {
+    var fp = new Ext.FormPanel({
+        fileUpload: true
+        ,labelAlign: 'left'
+        ,border: true
+        ,width:335
+        ,height:350
+        ,title: ''
+        ,bodyStyle: 'background:#FFF;padding:15px'
+        ,labelWidth:140
+        ,defaults: {
+            anchor: '95%'
+            ,allowBlank: false
+            ,msgTarget: 'side'
+        },
+        items: <?=$formItems;?>
+        ,tbar:[<?=$FORM_TBAR;?>]
+    });
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+            ,border:false
+            ,items:[fp]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

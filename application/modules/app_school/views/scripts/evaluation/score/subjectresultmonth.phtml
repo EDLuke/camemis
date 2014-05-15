@@ -266,9 +266,8 @@ Ext.onReady(function() {
                 ,menu:[{
                     text: '" . EXCEL_TEMPLATE . "'
                     ,iconCls:'icon-page_excel'
-                    ,disabled:true
                     ,handler:function(){
-                        window.location='/evaluation/scoreexport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';
+                        window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';
                     }
                 },{
                     text: '" . IMPORT . "'

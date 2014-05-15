@@ -1,4 +1,5 @@
 <?php
+
 ////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
 // Date: 18.04.2014
@@ -513,11 +514,11 @@ class EvaluationController extends Zend_Controller_Action {
     }
 
     public function scoreimportAction() {
-        $this->_helper->viewRenderer('importxls');
+        $this->_helper->viewRenderer('scoreimportxls');
     }
 
     public function scoreimporttemplateAction() {
-        $this->_helper->viewRenderer('exportxls');
+        $this->_helper->viewRenderer('scoreimporttemplate');
     }
 
     public function jsonloadAction() {

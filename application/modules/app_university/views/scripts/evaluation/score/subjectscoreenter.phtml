@@ -279,6 +279,9 @@ Ext.onReady(function() {
             ,menu:[{
                 text: '" . EXCEL_TEMPLATE . "'
                 ,iconCls:'icon-page_excel'
+                ,handler:function(){
+                    window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';
+                }
             },{
                 text: '" . IMPORT . "'
                 ,iconCls:'icon-database_copy'
