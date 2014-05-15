@@ -348,27 +348,23 @@ class SQLEvaluationStudentAssignment {
 
     public static function getActionDeleteAllStudentsTeacherScoreEnter($stdClass) {
 
-        $data["CLASS_ID"] = $stdClass->academicId;
-        $data["SUBJECT_ID"] = $stdClass->subjectId;
-        $data["ASSIGNMENT_ID"] = $stdClass->assignmentId;
-        if ($stdClass->term)
-            $data["TERM"] = $stdClass->term;
-        $data["SCORE_DATE"] = $stdClass->date;
-
-        self::dbAccess()->delete('t_student_assignment', $data);
+        $SQL = "DELETE FROM t_student_assignment WHERE";
+        $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
+        $SQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
+        $SQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
+        $SQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
+        self::dbAccess()->query($SQL);
     }
 
     public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
-        self::dbAccess()->delete('t_student_assignment'
-                , array(
-            "STUDENT_ID='" . $stdClass->studentId . "'"
-            , "CLASS_ID='" . $stdClass->academicId . "'"
-            , "SUBJECT_ID='" . $stdClass->subjectId . "'"
-            , "ASSIGNMENT_ID='" . $stdClass->assignmentId . "'"
-            , "TERM='" . $stdClass->term . "'"
-            , "SCORE_DATE='" . $stdClass->date . "'"
-                )
-        );
+        
+        $SQL = "DELETE FROM t_student_assignment WHERE";
+        $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
+        $SQL .= " AND STUDENT_ID='" . $stdClass->studentId . "'";
+        $SQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
+        $SQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
+        $SQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
+        self::dbAccess()->query($SQL);
     }
 
     public static function getAcitonSubjectAssignmentModifyScoreDate($stdClass) {
