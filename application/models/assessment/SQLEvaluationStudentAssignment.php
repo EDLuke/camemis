@@ -357,7 +357,7 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
-        
+
         $SQL = "DELETE FROM t_student_assignment WHERE";
         $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
         $SQL .= " AND STUDENT_ID='" . $stdClass->studentId . "'";

@@ -77,6 +77,14 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $this->section = $value;
     }
 
+    public function setAssignmentId($value) {
+        return $this->assignmentId = $value;
+    }
+
+    public function setDate($value) {
+        return $this->date = $value;
+    }
+
     public function listStudentsData() {
 
         $data = array();
@@ -1219,6 +1227,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
             }
         }
+    }
+    
+    public function actionScoreImport() {
+        
     }
 
 }

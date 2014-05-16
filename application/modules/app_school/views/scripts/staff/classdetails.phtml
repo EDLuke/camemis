@@ -22,10 +22,10 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 //@veasna on training
 $target= isset($_GET["target"])?addText($_GET["target"]):"";
-$trainingId= isset($_GET["trainingId"])?$_GET["trainingId"]:"";      
+$trainingId= isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";      
 //
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
-$current_instructor = isset($_GET["current_instructor"])?$_GET["current_instructor"]:"";
+$current_instructor = isset($_GET["current_instructor"])? addText($_GET["current_instructor"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $gradeId=isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";    

@@ -38,60 +38,68 @@ abstract class CamemisExportDBAccess {
     }
 
     public function getFileStaffList() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_stafflist.xls";
+        return self::getUserPhath("_stafflist.xls");
     }
 
     public function getFileStudentList() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentlist.xls";
+        return self::getUserPhath("_studentlist.xls");
     }
 
     public function getFileStudentPreschoolList() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentpreschoollist.xls";
+        return self::getUserPhath("_studentpreschoollist.xls");
     }
 
     public function getFileDaySchedule() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_dayschedule.xls";
+        return self::getUserPhath("_dayschedule.xls");
     }
 
     public function getFileWeekSchedule() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_weekschedule.xls";
+        return self::getUserPhath("_weekschedule.xls");
     }
 
     public function getFileStudentAttendance() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentattendancelist.xls";
+        return self::getUserPhath("_studentattendancelist.xls");
     }
 
     //@Visal
     public function getFileStudentStatus() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentstatuslist.xls";
+        return self::getUserPhath("_studentstatuslist.xls");
     }
 
     public function getFileStudentAvisory() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentadvisory.xls";
+        return self::getUserPhath("_studentadvisory.xls");
     }
 
     public function getFileStaffAttendance() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_staffattendancelist.xls";
+        return self::getUserPhath("_staffattendancelist.xls");
     }
 
     public function getFileStudentDiscipline() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentdisciplinelist.xls";
+        return self::getUserPhath("_studentdisciplinelist.xls");
     }
 
     public function startContent() {
         return $this->startHeader + 1;
     }
 
-    public function setCellStyle($col, $row, $width, $height) {
+    public function setCellStyle($col, $row, $width, $height, $alignmentLeft = false) {
+
         $this->EXCEL->getActiveSheet()
                 ->getStyleByColumnAndRow($col, $row)
                 ->getAlignment()
                 ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-        $this->EXCEL->getActiveSheet()
-                ->getStyleByColumnAndRow($col, $row)
-                ->getAlignment()
-                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        if ($alignmentLeft) {
+            $this->EXCEL->getActiveSheet()
+                    ->getStyleByColumnAndRow($col, $row)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        } else {
+            $this->EXCEL->getActiveSheet()
+                    ->getStyleByColumnAndRow($col, $row)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        }
 
         if ($width)
             $this->EXCEL->getActiveSheet()
@@ -172,6 +180,11 @@ abstract class CamemisExportDBAccess {
         $data["STUDENT"] = $result->LASTNAME . " " . $result->FIRSTNAME;
 
         return (object) $data;
+    }
+
+    public static function getUserPhath($name) {
+
+        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "" . $name . "";
     }
 
     public function setHeaderInformation() {

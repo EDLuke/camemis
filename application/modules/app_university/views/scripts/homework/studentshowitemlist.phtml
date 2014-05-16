@@ -21,7 +21,7 @@ $OBJECT_GRID = new CamemisGrid("HOMEWORK", "LIST");
 $OBJECT_GRID->setLoadUrl('/homework/jsonload/');
 $OBJECT_GRID->setSaveUrl('/homework/jsonsave/');
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 

@@ -19,7 +19,7 @@ $OBJECT_GRID = new CamemisGrid("EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
 $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
@@ -274,6 +274,9 @@ Ext.onReady(function() {
         }]);
     ");
     
+    $importParams = $setParams;
+    $importParams .= "&target=subjectscoreenter";
+    
     $OBJECT_GRID->addTBarItems("
         tbar.add(['-',{
             text: '" . IMPORT . "'
@@ -289,7 +292,7 @@ Ext.onReady(function() {
                 text: '" . IMPORT . "'
                 ,iconCls:'icon-database_copy'
                 ,handler:function(){
-                    openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."', 450,300);
+                    openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($importParams)."', 450,300);
                 }
             }]
         }]);

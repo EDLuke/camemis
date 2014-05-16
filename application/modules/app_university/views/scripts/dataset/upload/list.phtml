@@ -24,7 +24,7 @@ $object = isset($_GET["object"])?addText($_GET["object"]):"";
 
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $ckSubject=new SubjectTeacherDBAccess() ;
 $disable_enable=$ckSubject->checkAssignedSubjectTeacherClass($subjectId, $teacherId, $academicId, false);

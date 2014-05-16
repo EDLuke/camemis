@@ -19,8 +19,8 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 
 if($academicId){
     $URL_WEEK_SCHEDULE = $this->URL_WEEK_SCHEDULE;

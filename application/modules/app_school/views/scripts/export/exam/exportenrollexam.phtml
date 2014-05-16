@@ -43,7 +43,7 @@
         case "1": 
                 ////
                 //Exam Object   
-                $acdemicId=isset($_GET["academicId"])?$_GET["academicId"]:'';
+                $acdemicId=isset($_GET["academicId"])? (int) $_GET["academicId"]:'';
                 $academicObject='';
                 if($acdemicId){
                     $academicObject = AcademicDBAccess::findGradeFromId($acdemicId);

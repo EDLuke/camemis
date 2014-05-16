@@ -21,7 +21,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
-$oldTeacherId = isset($_GET["oldTeacherId"])?$_GET["oldTeacherId"]:"";
+$oldTeacherId = isset($_GET["oldTeacherId"])? addText($_GET["oldTeacherId"]):"";
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 

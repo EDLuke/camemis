@@ -15,44 +15,45 @@ class jsonAcademicPerformances extends AcademicPerformances {
 
     public function setParams($params) {
         if (isset($params["start"]))
-            $this->start = $params["start"];
+            $this->start = (int) $params["start"];
 
         if (isset($params["limit"]))
-            $this->limit = $params["limit"];
+            $this->limit = (int) $params["limit"];
 
         if (isset($params["date"]))
-            $this->date = $params["date"];
+            $this->date = addText($params["date"]);
 
         if (isset($params["monthyear"]))
-            $this->monthyear = $params["monthyear"];
+            $this->monthyear = addText($params["monthyear"]);
 
         if (isset($params["term"]))
-            $this->term = $params["term"];
+            $this->term = addText($params["term"]);
 
         if (isset($params["academicId"]))
-            $this->academicId = $params["academicId"];
+            $this->academicId = (int) $params["academicId"];
 
         if (isset($params["studentId"]))
-            $this->studentId = $params["studentId"];
+            $this->studentId = addText($params["studentId"]);
 
         if (isset($params["globalSearch"]))
-            $this->globalSearch = $params["globalSearch"];
+            $this->globalSearch = addText($params["globalSearch"]);
 
         if (isset($params["id"])) {
-            $this->studentId = $params["id"];
+            $this->studentId = addText($params["id"]);
         }
 
         if (isset($params["field"]))
-            $this->actionField = $params["field"];
+            $this->actionField = addText($params["field"]);
 
         if (isset($params["newValue"]))
-            $this->actionValue = $params["newValue"];
+            $this->actionValue = addText($params["newValue"]);
 
         if (isset($params["section"]))
-            $this->section = $params["section"];
+            $this->section = addText($params["section"]);
     }
 
     public function jsonListStudentsMonthAcademicPerformance($encrypParams) {
+        
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 

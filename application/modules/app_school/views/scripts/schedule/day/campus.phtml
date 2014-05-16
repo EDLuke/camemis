@@ -18,7 +18,7 @@ $OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
 $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 $OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 

@@ -106,6 +106,10 @@ abstract class AssessmentProperties {
         return AcademicDBAccess::findGradeFromId($this->academicId);
     }
 
+    public function getCurrentSchoolyear() {
+        return $result = AcademicDateDBAccess::findAcademicDateFromId($this->getSchoolyearId());
+    }
+
     public function getTermNumber() {
         return AcademicDBAccess::findAcademicTerm($this->getSchoolyearId());
     }
