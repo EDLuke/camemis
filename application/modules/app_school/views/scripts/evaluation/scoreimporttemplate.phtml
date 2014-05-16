@@ -40,7 +40,8 @@ class myExportDBAccess extends CamemisExportDBAccess {
 
     public function setTableHeader() {
 
-        $this->setCellContent(0, 1, "Ich komme aus Kambodscha und meine Frau heisst Socheata, Sie kommt auch aus Kambodscha.");
+        $content = "Ich komme aus Kambodscha und meine Frau heisst Socheata, Sie kommt auch aus Kambodscha.";
+        $this->setCellMergeContent(0, 1, $content, "A1", "C1");
         $this->setFontStyle(0, 1, true, 14, "000000");
         $this->setFullStyle(0, 1, "DFE3E8");
         $this->setCellStyle(0, 1, 100, 40);
