@@ -15,8 +15,8 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/DaySc
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/ScheduleDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentPreschoolDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAttendanceDBAccess.php";
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php";//@Visal
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php";//@Visal
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php"; //@Visal
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php"; //@Visal
 
 error_reporting(E_ALL);
 
@@ -24,8 +24,7 @@ abstract class CamemisExportDBAccess {
 
     protected $startHeader = 1;
 
-    function __construct()
-    {
+    function __construct() {
         $this->EXCEL = new PHPExcel();
         $this->WRITER = PHPExcel_IOFactory::createWriter($this->EXCEL, 'Excel5');
         $this->DB_STUDENT_SEARCH = new StudentSearchDBAccess();
@@ -35,65 +34,55 @@ abstract class CamemisExportDBAccess {
         $this->DB_STAFF = StaffDBAccess::getInstance();
         $this->DB_DAYSCHEDULE = DayScheduleDBAccess::getInstance();
         $this->DB_WEEKSCHEDULE = ScheduleDBAccess::getInstance();
-        $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance();//@Visal
+        $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance(); //@Visal
     }
 
-    public function getFileStaffList()
-    {
+    public function getFileStaffList() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_stafflist.xls";
     }
 
-    public function getFileStudentList()
-    {
+    public function getFileStudentList() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentlist.xls";
     }
 
-    public function getFileStudentPreschoolList()
-    {
+    public function getFileStudentPreschoolList() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentpreschoollist.xls";
     }
 
-    public function getFileDaySchedule()
-    {
+    public function getFileDaySchedule() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_dayschedule.xls";
     }
 
-    public function getFileWeekSchedule()
-    {
+    public function getFileWeekSchedule() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_weekschedule.xls";
     }
 
-    public function getFileStudentAttendance()
-    {
+    public function getFileStudentAttendance() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentattendancelist.xls";
     }
+
     //@Visal
-    public function getFileStudentStatus()
-    {
+    public function getFileStudentStatus() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentstatuslist.xls";
     }
-    public function getFileStudentAvisory()
-    {
+
+    public function getFileStudentAvisory() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentadvisory.xls";
     }
 
-    public function getFileStaffAttendance()
-    {
+    public function getFileStaffAttendance() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_staffattendancelist.xls";
     }
 
-    public function getFileStudentDiscipline()
-    {
+    public function getFileStudentDiscipline() {
         return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_studentdisciplinelist.xls";
     }
 
-    public function startContent()
-    {
+    public function startContent() {
         return $this->startHeader + 1;
     }
 
-    public function setCellStyle($col, $row, $width, $height)
-    {
+    public function setCellStyle($col, $row, $width, $height) {
         $this->EXCEL->getActiveSheet()
                 ->getStyleByColumnAndRow($col, $row)
                 ->getAlignment()
@@ -113,8 +102,7 @@ abstract class CamemisExportDBAccess {
                     ->getRowDimension($row)->setRowHeight($height);
     }
 
-    public function setCellContent($col, $row, $content)
-    {
+    public function setCellContent($col, $row, $content) {
         $this->EXCEL->getActiveSheet()
                 ->setCellValueByColumnAndRow($col, $row, $content, false);
         $this->EXCEL->getActiveSheet()
@@ -122,8 +110,7 @@ abstract class CamemisExportDBAccess {
                 ->getAlignment()->setWrapText(true);
     }
 
-    public function setFontStyle($col, $row, $bold, $fontSize, $fontColor)
-    {
+    public function setFontStyle($col, $row, $bold, $fontSize, $fontColor) {
         $this->EXCEL->getActiveSheet()
                 ->getStyleByColumnAndRow($col, $row)
                 ->applyFromArray(array(
@@ -135,8 +122,7 @@ abstract class CamemisExportDBAccess {
         )));
     }
 
-    public function setFullStyle($col, $row, $bgColor)
-    {
+    public function setFullStyle($col, $row, $bgColor) {
         $this->EXCEL->getActiveSheet()
                 ->getStyleByColumnAndRow($col, $row)
                 ->applyFromArray(array(
@@ -146,8 +132,7 @@ abstract class CamemisExportDBAccess {
         )));
     }
 
-    public function setBorderStyle($col, $row, $color = false)
-    {
+    public function setBorderStyle($col, $row, $color = false) {
         $this->EXCEL->getActiveSheet()
                 ->getStyleByColumnAndRow($col, $row)
                 ->applyFromArray(array(
@@ -167,22 +152,14 @@ abstract class CamemisExportDBAccess {
         )));
     }
 
-    /**
-     * 
-     * @param type $Id
-     * @return type
-     * $sheet->setCellValue('A1','A pretty long sentence that deserves to be in a merged cell');
-$sheet->mergeCells('A1:C1');
-     */
-    public function setCellMergeContent($col, $row, $content){
-        $this->EXCEL->setCellValue('A1','A pretty long sentence that deserves to be in a merged cell');
+    public function setCellMergeContent($col, $row, $content, $col1, $col2) {
+
         $this->EXCEL->getActiveSheet()
-                ->setCellValueByColumnAndRow($col, $row, $content, false);
-        $sheet->mergeCells('A1:C1');
+                ->setCellValueByColumnAndRow($col, $row, $content, false)
+                ->mergeCells("" . $col1 . ":" . $col2 . "");
     }
-            
-    public static function getStudentObject($Id)
-    {
+
+    public static function getStudentObject($Id) {
         $SQL = UserAuth::dbAccess()->select()
                 ->from("t_student", array('*'))
                 ->where("ID = '" . $Id . "'");
@@ -191,9 +168,8 @@ $sheet->mergeCells('A1:C1');
 
         return (object) $data;
     }
-    
-    public function setHeaderInformation()
-    {
+
+    public function setHeaderInformation() {
         $this->setCellStyle(0, 0, 50, 50);
     }
 
