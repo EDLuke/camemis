@@ -155,7 +155,12 @@ abstract class CamemisExportDBAccess {
     public function setCellMergeContent($col, $row, $content, $col1, $col2) {
 
         $this->EXCEL->getActiveSheet()
-                ->setCellValueByColumnAndRow($col, $row, $content, false)
+                ->setCellValueByColumnAndRow($col, $row, $content, false);
+        $this->EXCEL->getActiveSheet()
+                ->getStyleByColumnAndRow($col, $row)
+                ->getAlignment()->setWrapText(true);
+
+        $this->EXCEL->getActiveSheet()
                 ->mergeCells("" . $col1 . ":" . $col2 . "");
     }
 

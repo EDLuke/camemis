@@ -42,9 +42,9 @@ class myExportDBAccess extends CamemisExportDBAccess {
 
         $content = "Ich komme aus Kambodscha und meine Frau heisst Socheata, Sie kommt auch aus Kambodscha.";
         $this->setCellMergeContent(0, 1, $content, "A1", "C1");
-        $this->setFontStyle(0, 1, true, 14, "000000");
-        $this->setFullStyle(0, 1, "DFE3E8");
-        $this->setCellStyle(0, 1, 100, 40);
+        $this->setFontStyle(0, 1, true, 12, "000000");
+        $this->setFullStyle(0, 1, "FFFFFF");
+        $this->setCellStyle(0, 1, false, 100);
 
         $this->setCellContent(0, $this->startHeader, CODE_ID);
         $this->setFontStyle(0, $this->startHeader, true, 11, "000000");
