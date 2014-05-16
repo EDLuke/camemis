@@ -831,7 +831,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         if (!$facette) {
             $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
             $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-            $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+            $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             $schoolyearId = $academicObject ? $academicObject->SCHOOL_YEAR : "";
         } else {
@@ -973,7 +973,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
 
@@ -1066,7 +1066,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
         //error_log( $trainingId);
         $absentDate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";
@@ -1183,7 +1183,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $academicId= isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
         $absentDate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";

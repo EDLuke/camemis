@@ -64,7 +64,7 @@ class AdminAppDBAccess {
         $SAVEDATA['ICON'] = addText($params["ICON"]);
 
         $SAVEDATA['CHECKED'] = $params["CHECKED"];
-        $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+        $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         if ($objectId == "new") {
             $parentObject = self::findRightFromId($parentId);

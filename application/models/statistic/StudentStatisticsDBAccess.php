@@ -70,7 +70,7 @@ class StudentStatisticsDBAccess {
         $studentstatusType = isset($params["studentstatusType"]) ? addText($params["studentstatusType"]) : "";
         $isStudentStatus = isset($params["isStudentStatus"]) ? $params["isStudentStatus"] : "";
         $isStudentAbsence = isset($params["isStudentAbsence"]) ? $params["isStudentAbsence"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";    // Chuy Thong 19/08/2012
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";    // Chuy Thong 19/08/2012
         $SQL = "";
         $SQL .= "SELECT DD.NAME,
         SUM( IF( A.GENDER = 1, 1, 0 ) ) AS MALE,

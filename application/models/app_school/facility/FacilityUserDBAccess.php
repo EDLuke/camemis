@@ -167,7 +167,7 @@ class FacilityUserDBAccess {
         $ITEM_NAME = isset($params['ITEM_NAME']) ? $params['ITEM_NAME'] : '';
         $ACTION_TYPE = isset($params['ACTION_TYPE']) ? $params['ACTION_TYPE'] : '';
         $ITEM_ACTION_TYPE = isset($params['ITEM_ACTION_TYPE']) ? $params['ITEM_ACTION_TYPE'] : '';
-        $USER_INVOICE_ID = isset($params['objectId']) ? $params['objectId'] : '';
+        $USER_INVOICE_ID = isset($params['objectId']) ? addText($params['objectId']) : '';
         $FIRST_NAME = isset($params['FIRSTNAME']) ? $params['FIRSTNAME'] : '';
         $LAST_NAME = isset($params['LASTNAME']) ? $params['LASTNAME'] : '';
         $CODE = isset($params['CODE']) ? $params['CODE'] : '';
@@ -363,7 +363,7 @@ class FacilityUserDBAccess {
 
     public static function updateFacilityItems($params) {
 
-        $objectId = isset($params['objectId']) ? $params['objectId'] : '';
+        $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
         $QUANTITY = isset($params['QUANTITY']) ? $params['QUANTITY'] : '';
         $STATUS = isset($params['STATUS']) ? $params['STATUS'] : '';
         $old_objectId = isset($params['oldObjectId']) ? $params['oldObjectId'] : '';

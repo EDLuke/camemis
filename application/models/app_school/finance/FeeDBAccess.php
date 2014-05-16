@@ -588,7 +588,7 @@
 
             $name = isset($params["name"]) ? addText($params["name"]) : "";
             $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
-            $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+            $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
             $type = isset($params["type"]) ? addText($params["type"]) : "";
             $isService = isset($params["isService"]) ? addText($params["isService"]) : "";
             $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";

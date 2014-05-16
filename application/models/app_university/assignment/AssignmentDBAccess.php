@@ -169,10 +169,10 @@ class AssignmentDBAccess {
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
+            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
@@ -187,7 +187,7 @@ class AssignmentDBAccess {
             $SAVEDATA['SHORT'] = $params["SHORT"];
 
         if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA['EVALUATION_TYPE'] = addText($params["EVALUATION_TYPE"]);
+            $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
 
         if (isset($params["INCLUDE_IN_EVALUATION"]))
             $SAVEDATA['INCLUDE_IN_EVALUATION'] = addText($params["INCLUDE_IN_EVALUATION"]);
@@ -249,7 +249,7 @@ class AssignmentDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "0";
+        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "0";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "0";
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "0";
@@ -577,7 +577,7 @@ class AssignmentDBAccess {
 
         $SAVEDATA = Array();
         $WHERE = Array();
-        $assignmentId = $params["assignmentId"] ? $params["assignmentId"] : "0";
+        $assignmentId = $params["assignmentId"] ? (int) $params["assignmentId"] : "0";
         $academicIds = $params["academicIds"] ? $params["academicIds"] : "0";
 
         $SAVEDATA['CLASS_IDS'] = $academicIds;

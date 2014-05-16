@@ -249,10 +249,10 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
     public function campusEventList($params) {
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $roomId = isset($params["roomId"]) ? addText($params["roomId"]) : "";
+        $roomId = isset($params["roomId"]) ? (int) $params["roomId"] : "";
         $currentTerm = isset($params["currentTerm"]) ? addText($params["currentTerm"]) : "";
         $selectedDay = isset($params["selectedDay"]) ? addText($params["selectedDay"]) : "";
         $searchTeacherCode = isset($params["searchTeacherCode"]) ? addText($params["searchTeacherCode"]) : "";

@@ -270,7 +270,7 @@ class StudentImportDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
         $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : "0";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "0";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "0";
 
         //@veasna
         $type = isset($params["type"]) ? addText($params["type"]) : "";
@@ -490,7 +490,7 @@ class StudentImportDBAccess {
     public function importStudentExamScoreXLS($params) {
 
         $examId = isset($params["examId"]) ? (int) $params["examId"] : "0";
-        $roomId = isset($params["roomId"]) ? addText($params["roomId"]) : "0";
+        $roomId = isset($params["roomId"]) ? (int) $params["roomId"] : "0";
 
         $xls = new Spreadsheet_Excel_Reader();
         $xls->setUTFEncoder('iconv');

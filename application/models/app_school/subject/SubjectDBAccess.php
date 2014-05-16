@@ -582,7 +582,7 @@ class SubjectDBAccess {
         {
             $SAVEDATA['FORMULA_TYPE'] = 1;
         }
-        $SAVEDATA['COEFF_VALUE'] = addText($params["COEFF_VALUE"]);
+        $SAVEDATA['COEFF_VALUE'] = (int) $params["COEFF_VALUE"];
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
 
         if (isset($params["SCORE_TYPE"]))

@@ -166,7 +166,7 @@ class AssignmentDBAccess {
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
@@ -181,13 +181,13 @@ class AssignmentDBAccess {
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
+            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
 
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA["EVALUATION_TYPE"] = $params["EVALUATION_TYPE"];
 
         if (isset($params["INCLUDE_IN_EVALUATION"]))
-            $SAVEDATA["INCLUDE_IN_EVALUATION"] = $params["INCLUDE_IN_EVALUATION"];
+            $SAVEDATA["INCLUDE_IN_EVALUATION"] = (int) $params["INCLUDE_IN_EVALUATION"];
 
         if (isset($params["SMS_SEND"]))
             $SAVEDATA['SMS_SEND'] = addText($params["SMS_SEND"]);
@@ -246,7 +246,7 @@ class AssignmentDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "0";
+        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "0";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "0";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "0";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "0";
@@ -578,7 +578,7 @@ class AssignmentDBAccess {
 
         $SAVEDATA = Array();
         $WHERE = Array();
-        $assignmentId = $params["assignmentId"] ? $params["assignmentId"] : "0";
+        $assignmentId = $params["assignmentId"] ? (int) $params["assignmentId"] : "0";
         $classIds = $params["classIds"] ? addText($params["classIds"]) : "0";
 
         $SAVEDATA['CLASS_IDS'] = $classIds;

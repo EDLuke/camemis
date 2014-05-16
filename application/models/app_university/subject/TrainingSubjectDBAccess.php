@@ -192,7 +192,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public static function sqlAssignedSubjectsByTraining($params) {
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";  
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";  
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
@@ -377,7 +377,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function removeGradeSubject($params) {
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
 
         if ($trainingId && $subjectId) {
@@ -430,7 +430,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function jsonTreeAssignedSubjectsByTraining($params) {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : 0;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : 0;
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
 
@@ -566,7 +566,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : 0;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : 0;
 
         $SELECTION_A = array(
             'ID AS TEACHER_ID'
@@ -616,7 +616,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function actionSubjectTrainingTeacherClass($params) {
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $teacherId = isset($params["id"]) ? addText($params["id"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
@@ -974,7 +974,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function jsonSubjectAssignmentTraining($params) {
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         $SQL = "SELECT ID,CONCAT('(',SHORT,') ',NAME) AS NAME";
         $SQL .= " FROM t_assignment_temp";

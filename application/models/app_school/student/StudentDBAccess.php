@@ -1488,10 +1488,10 @@ class StudentDBAccess {
 
     public function actionGeneratePassword($params) {
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         if ($trainingId) {
-            $params["trainingId"] = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+            $params["trainingId"] = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
             $result = StudentTrainingDBAccess::sqlStudentTraining($params);
         } else {
             $params["gradeId"] = isset($params["classId"]) ? (int) $params["classId"] : "";

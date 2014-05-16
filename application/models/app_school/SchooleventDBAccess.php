@@ -104,9 +104,9 @@ class SchooleventDBAccess {
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $eventType = isset($params["eventType"]) ? $params["eventType"] : "SCHOOL";
+        $eventType = isset($params["eventType"]) ? addText($params["eventType"]) : "SCHOOL";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
-        $dayoffschool = isset($params["dayoffschool"]) ? $params["dayoffschool"] : "";
+        $dayoffschool = isset($params["dayoffschool"]) ? addText($params["dayoffschool"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
 
         $SQL = "";
@@ -255,175 +255,7 @@ class SchooleventDBAccess {
                 $i++;
             }
         }
-
-//        //////////THORN Visal
-//        switch (UserAuth::getUserType()) {
-//            case "TEACHER":
-//            case "INSTRUCTOR":
-//                $resultschool = self::getTeacherAllSchoolEvents($params);
-//                $resultclass = self::getTeacherAllClassEvents($params);
-//
-//                $data = array();
-//
-//                $i = 0;
-//
-//                if ($resultschool)
-//                    foreach ($resultschool as $value) {
-//
-//                        $data[$i]["ID"] = $value->ID;
-//                        $data[$i]["CLASS"] = $value->CLASS_ID;
-//
-//                        if ($value->SUBJECT_NAME) {
-//                            $data[$i]["EVENT_NAME"] = setShowText($value->EVENT_NAME) . " (" . $value->SUBJECT_NAME . ")";
-//                        } else {
-//                            $data[$i]["EVENT_NAME"] = setShowText($value->EVENT_NAME);
-//                        }
-//
-//                        $date = getShowDate($value->START_DATE);
-//                        $date .= " - " . getShowDate($value->END_DATE);
-//
-//                        $data[$i]["DATE"] = $date;
-//
-//                        $time = $value->START_HOUR;
-//                        $time .= " - " . $value->END_HOUR;
-//
-//                        $data[$i]["TIME"] = $time;
-//
-//                        $data[$i]["REMARK"] = setShowText($value->REMARK);
-//                        $data[$i]["LOCATION"] = setShowText($value->LOCATION);
-//
-//                        $data[$i]["START_DATE"] = getShowDate($value->START_DATE);
-//                        $data[$i]["END_DATE"] = getShowDate($value->END_DATE);
-//                        $data[$i]["START_HOUR"] = $value->START_HOUR;
-//                        $data[$i]["END_HOUR"] = $value->END_HOUR;
-//
-//                        $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                        $data[$i]["STATUS"] = $value->STATUS;
-//                        //////// THORN Visal
-//                        $classEvent = $value->GRADE_NAME;
-//                        if (!$classEvent) {
-//                            $data[$i]["EVENT_TYPE"] = "School Event";
-//                        } else {
-//                            $data[$i]["EVENT_TYPE"] = $value->GRADE_NAME . " (Class Event)";
-//                        }
-//                        ////////
-//                        if (isset($value->STATUS)) {
-//                            $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                            $data[$i]["STATUS"] = $value->STATUS;
-//                        }
-//
-//                        $i++;
-//                    }
-//                $j = count($resultschool);
-//                if ($resultclass)
-//                    foreach ($resultclass as $value) {
-//
-//                        $data[$j]["ID"] = $value->ID;
-//                        $data[$j]["CLASS"] = $value->CLASS_ID;
-//
-//                        if ($value->SUBJECT_NAME) {
-//                            $data[$j]["EVENT_NAME"] = setShowText($value->EVENT_NAME) . " (" . $value->SUBJECT_NAME . ")";
-//                        } else {
-//                            $data[$j]["EVENT_NAME"] = setShowText($value->EVENT_NAME);
-//                        }
-//
-//                        $date = getShowDate($value->START_DATE);
-//                        $date .= " - " . getShowDate($value->END_DATE);
-//
-//                        $data[$j]["DATE"] = $date;
-//
-//                        $time = $value->START_HOUR;
-//                        $time .= " - " . $value->END_HOUR;
-//
-//                        $data[$j]["TIME"] = $time;
-//
-//                        $data[$j]["REMARK"] = setShowText($value->REMARK);
-//                        $data[$j]["LOCATION"] = setShowText($value->LOCATION);
-//
-//                        $data[$j]["START_DATE"] = getShowDate($value->START_DATE);
-//                        $data[$j]["END_DATE"] = getShowDate($value->END_DATE);
-//                        $data[$j]["START_HOUR"] = $value->START_HOUR;
-//                        $data[$j]["END_HOUR"] = $value->END_HOUR;
-//
-//                        $data[$j]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                        $data[$j]["STATUS"] = $value->STATUS;
-//                        //////// THORN Visal
-//                        $classEvent = $value->GRADE_NAME;
-//                        if (!$classEvent) {
-//                            $data[$j]["EVENT_TYPE"] = "School Event";
-//                        } else {
-//                            $data[$j]["EVENT_TYPE"] = $value->GRADE_NAME . " (Class Event)";
-//                        }
-//                        ////////
-//                        if (isset($value->STATUS)) {
-//                            $data[$j]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                            $data[$j]["STATUS"] = $value->STATUS;
-//                        }
-//
-//                        $j++;
-//                    }
-//
-//                break;
-//            default:
-//                $result = self::getAllSchooleventsQuery($params);
-//
-//                $data = array();
-//
-//                $i = 0;
-//                if (isset($data) && $data)
-//                    unset($data);
-//
-//                if ($result)
-//                    foreach ($result as $value) {
-//
-//                        $data[$i]["ID"] = $value->ID;
-//                        $data[$i]["CLASS"] = $value->CLASS_ID;
-//
-//                        if ($value->SUBJECT_NAME) {
-//                            $data[$i]["EVENT_NAME"] = setShowText($value->EVENT_NAME) . " (" . $value->SUBJECT_NAME . ")";
-//                        } else {
-//                            $data[$i]["EVENT_NAME"] = setShowText($value->EVENT_NAME);
-//                        }
-//
-//                        $date = getShowDate($value->START_DATE);
-//                        $date .= " - " . getShowDate($value->END_DATE);
-//
-//                        $data[$i]["DATE"] = $date;
-//
-//                        $time = $value->START_HOUR;
-//                        $time .= " - " . $value->END_HOUR;
-//
-//                        $data[$i]["TIME"] = $time;
-//
-//                        $data[$i]["REMARK"] = setShowText($value->REMARK);
-//                        $data[$i]["LOCATION"] = setShowText($value->LOCATION);
-//
-//                        $data[$i]["START_DATE"] = getShowDate($value->START_DATE);
-//                        $data[$i]["END_DATE"] = getShowDate($value->END_DATE);
-//                        $data[$i]["START_HOUR"] = $value->START_HOUR;
-//                        $data[$i]["END_HOUR"] = $value->END_HOUR;
-//
-//                        $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                        $data[$i]["STATUS"] = $value->STATUS;
-//                        //////// THORN Visal
-//                        $eventType = $value->EVENT_TYPE;
-//                        if ($eventType == '1') {
-//                            $data[$i]["EVENT_TYPE"] = "School Event";
-//                        } else {
-//                            $data[$i]["EVENT_TYPE"] = $value->GRADE_NAME . " (Class Event)";
-//                        }
-//                        ////////
-//                        if (isset($value->STATUS)) {
-//                            $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
-//                            $data[$i]["STATUS"] = $value->STATUS;
-//                        }
-//
-//                        $i++;
-//                    }
-//                break;
-//        }
-
-
+        
         $a = array();
         for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
@@ -671,7 +503,7 @@ class SchooleventDBAccess {
     public function jsonLoadTestSchedule($params) {
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
+        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 
@@ -769,7 +601,7 @@ class SchooleventDBAccess {
 
     public function jsonActionTestSchedule($params) {
 
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
+        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";

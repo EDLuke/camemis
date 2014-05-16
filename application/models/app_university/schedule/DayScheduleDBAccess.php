@@ -36,7 +36,7 @@ class DayScheduleDBAccess extends ScheduleDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : false;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
         $eventDay = isset($params["eventDay"]) ? $params["eventDay"] : false;
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : false;
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : false;   //@new....  veasna

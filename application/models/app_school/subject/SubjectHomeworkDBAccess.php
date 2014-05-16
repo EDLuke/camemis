@@ -646,7 +646,7 @@ class SubjectHomeworkDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $homeworkId = isset($params["homeworkId"]) ? $params["homeworkId"] : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -839,7 +839,7 @@ class SubjectHomeworkDBAccess {
     
     public static function jsonAddTrainingSubjectHomework($params) {
 
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $title = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $content = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "";

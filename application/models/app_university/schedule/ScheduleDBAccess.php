@@ -175,7 +175,7 @@ class ScheduleDBAccess {
         $shared = isset($params["SHARED_SCHEDULE"]) ? addText($params["SHARED_SCHEDULE"]) : false;
 
         $target = isset($params["target"]) ? addText($params["target"]) : false;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : false;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 
         $facette = self::findScheduleFromGuId($scheduleId);
 
@@ -490,16 +490,16 @@ class ScheduleDBAccess {
         $shortday = isset($params["shortday"]) ? addText($params["shortday"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $roomId = isset($params["roomId"]) ? addText($params["roomId"]) : "";
+        $roomId = isset($params["roomId"]) ? (int) $params["roomId"] : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
 
-        $starttime = isset($params["starttime"]) ? $params["starttime"] : "";
-        $endtime = isset($params["endtime"]) ? $params["endtime"] : "";
+        $starttime = isset($params["starttime"]) ? addText($params["starttime"]) : "";
+        $endtime = isset($params["endtime"]) ? addText($params["endtime"]) : "";
 
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : ''; //@new... veasna
-        $groupIds = isset($params["groupIds"]) ? $params["groupIds"] : ''; //@Man
+        $groupIds = isset($params["groupIds"]) ? addText($params["groupIds"]) : ''; //@Man
 
         if ($academicId && !$trainingId) {
             $SELECT_DATA = array(
@@ -647,7 +647,7 @@ class ScheduleDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         ///@veasna
         $checkAcademicId = '';
@@ -1833,7 +1833,7 @@ class ScheduleDBAccess {
 
     public static function sqlTeachersCredit($params) {
 
-        $objectId = isset($params['objectId']) ? $params['objectId'] : '';
+        $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
         //$parentId = isset($params['parentId']) ? $params['parentId'] : '';
 
         $SELECTION_C = array(

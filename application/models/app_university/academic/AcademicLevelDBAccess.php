@@ -574,7 +574,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $chooseSubjectId = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) . "" : "";
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);

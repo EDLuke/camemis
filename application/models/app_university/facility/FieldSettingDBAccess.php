@@ -40,7 +40,7 @@ Class FieldSettingDBAccess {
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         if ($type)
             $SAVEDATA['CHOOSE_TYPE'] = $type;

@@ -176,7 +176,7 @@ class ScheduleDBAccess {
         $shared = isset($params["SHARED_SCHEDULE"]) ? addText($params["SHARED_SCHEDULE"]) : false;
 
         $target = isset($params["target"]) ? addText($params["target"]) : false;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : false;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 
         $facette = self::findScheduleFromGuId($scheduleId);
 
@@ -491,16 +491,16 @@ class ScheduleDBAccess {
         $shortday = isset($params["shortday"]) ? addText($params["shortday"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $roomId = isset($params["roomId"]) ? addText($params["roomId"]) : "";
+        $roomId = isset($params["roomId"]) ? (int) $params["roomId"] : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
 
-        $starttime = isset($params["starttime"]) ? $params["starttime"] : "";
-        $endtime = isset($params["endtime"]) ? $params["endtime"] : "";
+        $starttime = isset($params["starttime"]) ? addText($params["starttime"]) : "";
+        $endtime = isset($params["endtime"]) ? addText($params["endtime"]) : "";
 
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : ''; //@new... veasna
-        $groupIds = isset($params["groupIds"]) ? $params["groupIds"] : ''; //@Man
+        $groupIds = isset($params["groupIds"]) ? addText($params["groupIds"]) : ''; //@Man
 
         if ($academicId && !$trainingId) {
             $SELECT_DATA = array(
@@ -563,7 +563,7 @@ class ScheduleDBAccess {
                 , "E.NAME AS TRAINING_NAME"
             );
         }
-        
+
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => "t_schedule"), $SELECT_DATA);
@@ -641,7 +641,7 @@ class ScheduleDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         ///@veasna
         $checkAcademicId = '';
@@ -947,7 +947,7 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        if($globalSearch){
+        if ($globalSearch) {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
             $SQL->Orwhere("A.SHORT LIKE '" . $globalSearch . "%'");
         }
@@ -1768,9 +1768,8 @@ class ScheduleDBAccess {
 
     public static function sqlTeachersCredit($params) {
 
-        $objectId = isset($params['objectId']) ? $params['objectId'] : '';
-        //$parentId = isset($params['parentId']) ? $params['parentId'] : '';
-
+        $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
+        
         $SELECTION_C = array(
             "ID AS STAFF_ID"
             , "CODE AS CODE"
@@ -2273,15 +2272,9 @@ class ScheduleDBAccess {
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
                     switch ($EVENT_OBJECT->SCHEDULE_TYPE) {
                         case 1:
-                            //@THORN Visal
-                            /* switch (UserAuth::getUserType()) {
-                              case "SUPERADMIN":
-                              case "ADMIN":
-                              case "STUDENT": */
+                            
                             $DAY_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_SUBJECT);
                             $DAY_EVENT .= "<br>";
-                            // break;
-                            // }
 
                             $groupObject = self::findLinkedScheduleAcademicByScheduleId($EVENT_OBJECT->SCHEDULE_ID);
                             if ($groupObject) {

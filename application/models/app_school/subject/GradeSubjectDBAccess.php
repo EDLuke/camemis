@@ -294,7 +294,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $SAVEDATA['AVERAGE_FROM_SEMESTER'] = $params["AVERAGE_FROM_SEMESTER"];
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA['COEFF_VALUE'] = addText($params["COEFF_VALUE"]);
+            $SAVEDATA['COEFF_VALUE'] = (int) $params["COEFF_VALUE"];
 
         if (isset($params["EVALUATION"]))
             $SAVEDATA["EVALUATION"] = addText($params["EVALUATION"]);
@@ -306,7 +306,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $SAVEDATA["OBJECTIVES"] = addText($params["OBJECTIVES"]);
 
         if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA["EVALUATION_TYPE"] = addText($params["EVALUATION_TYPE"]);
+            $SAVEDATA["EVALUATION_TYPE"] = (int) $params["EVALUATION_TYPE"];
 
         if (isset($params["CHOOSE_ASSIGNED_SUBJECT"]))
             $SAVEDATA["ASSIGNED_SUBJECT"] = addText($params["CHOOSE_ASSIGNED_SUBJECT"]);

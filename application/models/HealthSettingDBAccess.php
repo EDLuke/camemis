@@ -51,7 +51,7 @@ Class HealthSettingDBAccess {
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
 
         $SAVEDATA['FIELD_IS_REQUIRED'] = isset($params["FIELD_IS_REQUIRED"]) ? 1 : 0;
 

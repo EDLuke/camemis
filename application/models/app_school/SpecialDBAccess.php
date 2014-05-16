@@ -132,7 +132,7 @@ Class SpecialDBAccess {
             $SAVEDATA["SCORE_TYPE"] = addText($params["SCORE_TYPE"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
+            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
 
         $facette = self::findGradingSystemFromId($objectId);
         if ($facette) {

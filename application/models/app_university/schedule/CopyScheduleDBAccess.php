@@ -217,7 +217,7 @@ class CopyScheduleDBAccess extends ScheduleDBAccess {
         $targetshortday = isset($params["targetshortday"]) ? $params["targetshortday"] : false;
         $sourceshortday = isset($params["sourceshortday"]) ? $params["sourceshortday"] : false;
         $term = isset($params["term"]) ? addText($params["term"]) : false;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         if ($trainingId) {
             $result = $this->getScheduleByClassId(false, $sourceshortday, false, $trainingId);

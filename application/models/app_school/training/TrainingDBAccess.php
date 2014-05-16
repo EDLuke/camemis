@@ -317,7 +317,7 @@ class TrainingDBAccess {
             $SAVEDATA["EVALUATION_TYPE"] = $params["EVALUATION_TYPE"];
             
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
+            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
 
         if (isset($params["MAX_STUDENTS"]))
             $SAVEDATA["MAX_STUDENTS"] = addText($params["MAX_STUDENTS"]);
@@ -347,7 +347,7 @@ class TrainingDBAccess {
             $SAVEDATA['ENDTIME_BLOCK_AFTERNOON'] = timeStrToSecond($params["ENDTIME_BLOCK_AFTERNOON"]);
 
         if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA['EVALUATION_TYPE'] = addText($params["EVALUATION_TYPE"]);
+            $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
             
         if (isset($params["START_DATE"]) && isset($params["END_DATE"])) {
             $SAVEDATA["START_DATE"] = setDate2DB($params["START_DATE"]);

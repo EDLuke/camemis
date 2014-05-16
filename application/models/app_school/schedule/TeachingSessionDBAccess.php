@@ -194,7 +194,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
         ///@veasna
@@ -559,7 +559,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $teacherId = isset($params["TEACHER_HIDDEN"]) ? addText($params["TEACHER_HIDDEN"]) : false;
         $description = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : false;
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : false;
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 
         if ($choosedate) {
             $SAVEDATA["TEACHING_DATE"] = setDate2DB($choosedate);

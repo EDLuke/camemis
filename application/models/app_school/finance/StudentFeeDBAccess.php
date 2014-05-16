@@ -216,7 +216,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $CHECKBOX_DATA = array();
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $chooseOption = isset($params["CHOOSE_OPTION"]) ? $params["CHOOSE_OPTION"] : "";
         $feeId = isset($params["feeId"]) ? $params["feeId"] : "";
         //@veasna
@@ -410,7 +410,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
     public static function jsonActionStudentPayment($params) {
 
         $payment_type = isset($params['PAYMENT']) ? $params['PAYMENT'] : '';
-        $objectId = isset($params['objectId']) ? $params['objectId'] : '';
+        $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
         $isTraing = isset($params['training']) ? $params['training'] :false; 
         if ($payment_type) {
             switch ($payment_type) {
@@ -575,7 +575,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $feeId = isset($params["feeId"]) ? $params["feeId"] : "";
 
         $result = self::getSQLStudentPayments($studentId, $trainingId, $feeId, false);
@@ -715,7 +715,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $CHECKBOX_DATA = array();
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $amount = isset($params["PAYMENT_AMOUNT"]) ? str2no($params["PAYMENT_AMOUNT"]) : "";
 
         $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);

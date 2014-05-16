@@ -99,13 +99,13 @@ class AssignmentTempDBAccess {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
+            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
+            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
 
         if (isset($params["WEIGHTING"])) {
-            $SAVEDATA["WEIGHTING"] = $params["WEIGHTING"];
+            $SAVEDATA["WEIGHTING"] = (int) $params["WEIGHTING"];
         } else {
             $SAVEDATA["WEIGHTING"] = 1;
         }
@@ -373,7 +373,7 @@ class AssignmentTempDBAccess {
 
     public function jsonAddAssignmentToSubject($params) {
 
-        $assignmentId = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
+        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
 
@@ -469,9 +469,9 @@ class AssignmentTempDBAccess {
         $data = Array();
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
-        $includeInEvaluation = isset($params["includeInEvaluation"]) ? $params["includeInEvaluation"] : 0;
+        $includeInEvaluation = isset($params["includeInEvaluation"]) ? (int) $params["includeInEvaluation"] : 0;
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         //$classObject = AcademicDBAccess::findGradeFromId($classId);
         $classObject = TrainingDBAccess::findTrainingFromId($trainingId);
@@ -543,7 +543,7 @@ class AssignmentTempDBAccess {
     
     public function getAllAssignmentQuery($params) {
         
-        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);     
         switch ($facette->OBJECT_TYPE) {
@@ -587,7 +587,7 @@ class AssignmentTempDBAccess {
     public static function findAssignmentJoinCategory($Id=false) {    
       
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $assignment = isset($params["assignmentId"]) ? $params["assignmentId"] : "";    
+        $assignment = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";    
         $SQL = "";
         $SQL .= " SELECT ";
         $SQL .= " A.ID AS ASSIGNMENT_ID, A.NAME AS NAME,B.INCLUDE_IN_EVALUATION AS INCLUDE_IN_EVALUATION,B.SUBJECT AS SUBJECT, B.OBJECT_TYPE AS OBJECT_TYPE, B.ID AS RUL_ID";
