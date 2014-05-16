@@ -18,7 +18,7 @@ $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 $columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
-$term = isset($_GET["term"])?$_GET["term"]:"";
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
 
 switch($term){
     case "FIRST_SEMESTER":

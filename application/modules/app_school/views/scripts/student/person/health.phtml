@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("DATASET");
 $OBJECT_FORM->setSaveUrl("/student/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/student/jsonload/");
 
-$setId = isset($_GET["setId"])?$_GET["setId"]:"";
+$setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
 $settingId = isset($_GET["settingId"])?$_GET["settingId"]:"";
 $target = isset($_GET["target"])?$_GET["target"]:"";
 

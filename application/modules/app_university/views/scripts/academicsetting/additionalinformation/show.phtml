@@ -23,7 +23,7 @@ $STUDENT_TREE = new CamemisTree("ACADEMIC_INFORMATION","STUDENT_LIST");
 $STUDENT_TREE->setURL('/academicsetting/jsontree/');
 
 if($this->objectId == "new"){
-    $parentId = isset($_GET['parentId'])? $_GET['parentId']:'';
+    $parentId = isset($_GET['parentId'])? addText($_GET['parentId']):'';
 }else{
     $facette = AcademicAdditionalDBAccess::findAcademicAdditionalFromId($this->objectId);
     $parentId = $facette?$facette->PARENT:'';    

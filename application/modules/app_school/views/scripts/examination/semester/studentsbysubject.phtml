@@ -62,10 +62,10 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if(!SchoolDBAccess::displayPersonNameInGrid()){
             $UNASSIGNED_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 150, hidden:".checkColHidden(2, $columndataUnassigned).", renderer:cssTextBold, sortable: false, dataIndex: 'LASTNAME'");
             $UNASSIGNED_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 150, hidden:".checkColHidden(3, $columndataUnassigned).", renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
-	}else{
+        }else{
             $UNASSIGNED_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 150, hidden:".checkColHidden(2, $columndataUnassigned).", renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
             $UNASSIGNED_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 150, hidden:".checkColHidden(3, $columndataUnassigned).", renderer:cssTextBold, sortable: false, dataIndex: 'LASTNAME'");
-	}
+        }
         $UNASSIGNED_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndataUnassigned).", renderer:cssTextBold, sortable: true, dataIndex: 'GENDER'");
         $UNASSIGNED_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 100, hidden:".checkColHidden(5, $columndataUnassigned).", renderer:cssTextBold, sortable: true, dataIndex: 'CURRENT_CLASS'");
         $UNASSIGNED_GRID->baseParams = "
