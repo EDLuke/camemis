@@ -77,7 +77,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $this->section = $value;
     }
 
-    protected function listStudentsData() {
+    public function listStudentsData() {
 
         $data = array();
 
