@@ -195,7 +195,7 @@ class StaffDBAccess {
         $isTraining = isset($params["isTraining"]) ? addText($params["isTraining"]) : "";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : false;
         $choosegrade = isset($params["choosegrade"]) ? addText($params["choosegrade"]) : false;
-        $globalSearch = isset($params["query"]) ? trim($params["query"]) : false;
+        $globalSearch = isset($params["query"]) ? addText($params["query"]) : false;
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : false;
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : false;
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : false;
@@ -850,7 +850,7 @@ class StaffDBAccess {
             $SAVEDATA['LASTNAME_LATIN'] = addText($params["LASTNAME_LATIN"]);
 
         if (isset($params["GENDER"]))
-            $SAVEDATA['GENDER'] = $params["GENDER"];
+            $SAVEDATA['GENDER'] = (int) $params["GENDER"];
 
         if (isset($params["DATE_BIRTH"]))
             $SAVEDATA['DATE_BIRTH'] = setDate2DB($params["DATE_BIRTH"]);
@@ -913,7 +913,7 @@ class StaffDBAccess {
         if (isset($params["NATIONALITY"]))
             $SAVEDATA['NATIONALITY'] = addText($params["NATIONALITY"]);
 
-        $loginName = isset($params["LOGINNAME"]) ? $params["LOGINNAME"] : "";
+        $loginName = isset($params["LOGINNAME"]) ? addText($params["LOGINNAME"]) : "";
 
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -957,8 +957,8 @@ class StaffDBAccess {
                 ////////////////////////////////////////////////////////////////
                 //CHANGE PASSWORD...
                 ////////////////////////////////////////////////////////////////
-                $password = isset($params["PASSWORD"]) ? $params["PASSWORD"] : "";
-                $password_repeat = isset($params["PASSWORD_REPEAT"]) ? $params["PASSWORD_REPEAT"] : "";
+                $password = isset($params["PASSWORD"]) ? addText($params["PASSWORD"]) : "";
+                $password_repeat = isset($params["PASSWORD_REPEAT"]) ? addText($params["PASSWORD_REPEAT"]) : "";
                 $USERDATA['UMCPANL'] = isset($params["UMCPANL"]) ? 1 : 0;
                 $USERDATA['UCNCP'] = isset($params["UCNCP"]) ? 1 : 0;
                 if ($password != "" && $password_repeat != "")
@@ -2733,10 +2733,10 @@ class StaffDBAccess {
             foreach ($result as $value)
             {
 
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? $params["CHECKBOX_" . $value->ID . ""] : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? $params["RADIOBOX_" . $value->PARENT . ""] : "";
-                $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? $params["INPUTFIELD_" . $value->ID . ""] : "";
-                $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? $params["TEXTAREA_" . $value->ID . ""] : "";
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? addText($params["RADIOBOX_" . $value->PARENT . ""]) : "";
+                $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? addText($params["INPUTFIELD_" . $value->ID . ""]) : "";
+                $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? addText($params["TEXTAREA_" . $value->ID . ""]) : "";
 
                 switch ($value->CHOOSE_TYPE)
                 {

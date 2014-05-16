@@ -236,8 +236,8 @@ class UserMemberDBAccess {
         if (isset($params["ADDITIONAL_ROLE"]))
             $SAVEDATA['ADDITIONAL_ROLE'] = $params["ADDITIONAL_ROLE"];
 
-        $password = isset($params["PASSWORD"]) ? $params["PASSWORD"] : "";
-        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? $params["PASSWORD_REPEAT"] : "";
+        $password = isset($params["PASSWORD"]) ? addText($params["PASSWORD"]) : "";
+        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? addText($params["PASSWORD_REPEAT"]) : "";
         
         if ($password != "" && $password_repeat != "") {
 

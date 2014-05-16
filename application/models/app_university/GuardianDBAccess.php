@@ -139,8 +139,8 @@ class GuardianDBAccess {
         ////////////////////////////////////////////////////////////////////////
         //CHANGE PASSWORD...
         ////////////////////////////////////////////////////////////////////////
-        $password = isset($params["PASSWORD"]) ? $params["PASSWORD"] : "";
-        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? $params["PASSWORD_REPEAT"] : "";
+        $password = isset($params["PASSWORD"]) ? addText($params["PASSWORD"]) : "";
+        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? addText($params["PASSWORD_REPEAT"]) : "";
         $USERDATA['UMCPANL'] = isset($params["UMCPANL"]) ? 1 : 0;
         $USERDATA['UCNCP'] = isset($params["UCNCP"]) ? 1 : 0;
         if ($password != "" && $password_repeat != "") {

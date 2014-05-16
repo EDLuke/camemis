@@ -255,8 +255,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
         if ($result) {
             foreach ($result as $value) {
 
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? $params["CHECKBOX_" . $value->ID . ""] : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? $params["RADIOBOX_" . $value->ID . ""] : "";
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? addText($params["RADIOBOX_" . $value->ID . ""]) : "";
 
                 if ($RADIOBOX) {
                     $RADIOBOX_DATA[$RADIOBOX] = $RADIOBOX;
@@ -720,8 +720,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
         if ($result) {
             foreach ($result as $value) {
 
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? $params["CHECKBOX_" . $value->ID . ""] : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? $params["RADIOBOX_" . $value->ID . ""] : "";
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? addText($params["RADIOBOX_" . $value->ID . ""]) : "";
 
                 if ($RADIOBOX) {
                     $RADIOBOX_DATA[$RADIOBOX] = $RADIOBOX;

@@ -214,7 +214,7 @@ class StudentDBAccess {
             $SAVEDATA['SYSTEM_LANGUAGE'] = addText($params["SYSTEM_LANGUAGE"]);
 
         if (isset($params["GENDER"]))
-            $SAVEDATA['GENDER'] = $params["GENDER"];
+            $SAVEDATA['GENDER'] = (int) $params["GENDER"];
 
         if (isset($params["DATE_BIRTH"]))
             $SAVEDATA['DATE_BIRTH'] = setDate2DB($params["DATE_BIRTH"]);
@@ -270,16 +270,16 @@ class StudentDBAccess {
             $SAVEDATA['MOBIL_PHONE'] = addText($params["MOBIL_PHONE"]);
 
         if (isset($params["BIRTH_DAY"]))
-            $SAVEDATA['BIRTH_DAY'] = $params["BIRTH_DAY"];
+            $SAVEDATA['BIRTH_DAY'] = addText($params["BIRTH_DAY"]);
 
         if (isset($params["BIRTH_MONTH"]))
-            $SAVEDATA['BIRTH_MONTH'] = $params["BIRTH_MONTH"];
+            $SAVEDATA['BIRTH_MONTH'] = addText($params["BIRTH_MONTH"]);
 
         if (isset($params["BIRTH_YEAR"]))
-            $SAVEDATA['BIRTH_YEAR'] = $params["BIRTH_YEAR"];
+            $SAVEDATA['BIRTH_YEAR'] = addText($params["BIRTH_YEAR"]);
 
         if (isset($params["ACADEMIC_TYPE"]))
-            $SAVEDATA['ACADEMIC_TYPE'] = $params["ACADEMIC_TYPE"];
+            $SAVEDATA['ACADEMIC_TYPE'] = addText($params["ACADEMIC_TYPE"]);
 
         if (isset($params["SORTKEY"])) {
             StudentAcademicDBAccess::setStudentSortkeyInClass(
@@ -300,8 +300,8 @@ class StudentDBAccess {
         ////////////////////////////////////////////////////////////////////////
         //CHANGE PASSWORD...
         ////////////////////////////////////////////////////////////////////////
-        $password = isset($params["PASSWORD"]) ? $params["PASSWORD"] : "";
-        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? $params["PASSWORD_REPEAT"] : "";
+        $password = isset($params["PASSWORD"]) ? addText($params["PASSWORD"]) : "";
+        $password_repeat = isset($params["PASSWORD_REPEAT"]) ? addText($params["PASSWORD_REPEAT"]) : "";
 
         $SAVEDATA['UMCPANL'] = isset($params["UMCPANL"]) ? 1 : 0;
         $SAVEDATA['UCNCP'] = isset($params["UCNCP"]) ? 1 : 0;
@@ -330,7 +330,7 @@ class StudentDBAccess {
         ////////////////////////////////////////////////////////////////////////
         //CHANGE LOGINNAME...
         ////////////////////////////////////////////////////////////////////////
-        $loginName = isset($params["LOGINNAME"]) ? $params["LOGINNAME"] : "";
+        $loginName = isset($params["LOGINNAME"]) ? addText($params["LOGINNAME"]) : "";
         if ($loginName != "") {
             $loginObject = self::findLoginName($loginName);
             if ($loginObject) {
@@ -744,7 +744,7 @@ class StudentDBAccess {
 
     public function queryAssignedStudentSchoolYear($params, $isclassId = false) {
 
-        $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
+        $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : '';
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
@@ -1532,25 +1532,25 @@ class StudentDBAccess {
         $WHERE_COMMUNICATION = array();
 
         $WHERE[] = "STUDENT_ID = '" . addText($params["objectId"]) . "'";
-        $WHERE[] = "CLASS_ID = '" . $params["olClassId"] . "'";
-        $SAVEDATA['CLASS_ID'] = $params["newClassId"];
+        $WHERE[] = "CLASS_ID = '" . (int) $params["olClassId"] . "'";
+        $SAVEDATA['CLASS_ID'] = (int) $params["newClassId"];
         self::dbAccess()->update('t_student_subject_assessment', $SAVEDATA, $WHERE);
         self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
 
         $WHERE[] = "STUDENT_ID = '" . addText($params["objectId"]) . "'";
-        $WHERE[] = "CLASS_ID = '" . $params["olClassId"] . "'";
-        $SAVEDATA['CLASS_ID'] = $params["newClassId"];
+        $WHERE[] = "CLASS_ID = '" . (int) $params["olClassId"] . "'";
+        $SAVEDATA['CLASS_ID'] = (int) $params["newClassId"];
         self::dbAccess()->update('t_student_attendance', $SAVEDATA, $WHERE);
         self::dbAccess()->update('t_discipline', $SAVEDATA, $WHERE);
 
         $WHERE_STUDENT_SCHOOLYEAR[] = "STUDENT = '" . addText($params["objectId"]) . "'";
-        $WHERE_STUDENT_SCHOOLYEAR[] = "CLASS = '" . $params["olClassId"] . "'";
-        $SAVEDATA_STUDENT_SCHOOLYEAR['CLASS'] = $params["newClassId"];
+        $WHERE_STUDENT_SCHOOLYEAR[] = "CLASS = '" . (int) $params["olClassId"] . "'";
+        $SAVEDATA_STUDENT_SCHOOLYEAR['CLASS'] = (int) $params["newClassId"];
         self::dbAccess()->update('t_student_schoolyear', $SAVEDATA_STUDENT_SCHOOLYEAR, $WHERE_STUDENT_SCHOOLYEAR);
 
         $WHERE_COMMUNICATION[] = "SENDER = '" . addText($params["objectId"]) . "'";
-        $WHERE_COMMUNICATION[] = "CLASS_ID = '" . $params["olClassId"] . "'";
-        $SAVEDATA_COMMUNICATION['CLASS_ID'] = $params["newClassId"];
+        $WHERE_COMMUNICATION[] = "CLASS_ID = '" . (int) $params["olClassId"] . "'";
+        $SAVEDATA_COMMUNICATION['CLASS_ID'] = (int) $params["newClassId"];
         self::dbAccess()->update('t_communication', $SAVEDATA_COMMUNICATION, $WHERE_COMMUNICATION);
 
         return array("success" => true);
@@ -1891,10 +1891,10 @@ class StudentDBAccess {
         if ($result && $objectId) {
             foreach ($result as $value) {
 
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? $params["CHECKBOX_" . $value->ID . ""] : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? $params["RADIOBOX_" . $value->PARENT . ""] : "";
-                $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? $params["INPUTFIELD_" . $value->ID . ""] : "";
-                $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? $params["TEXTAREA_" . $value->ID . ""] : "";
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? addText($params["RADIOBOX_" . $value->PARENT . ""]) : "";
+                $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? addText($params["INPUTFIELD_" . $value->ID . ""]) : "";
+                $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? addText($params["TEXTAREA_" . $value->ID . ""]) : "";
 
                 switch ($value->CHOOSE_TYPE) {
                     case 1:
@@ -2054,8 +2054,8 @@ class StudentDBAccess {
         if ($result) {
             foreach ($result as $value) {
 
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? $params["CHECKBOX_" . $value->ID . ""] : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? $params["RADIOBOX_" . $value->ID . ""] : "";
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? addText($params["RADIOBOX_" . $value->ID . ""]) : "";
 
                 if ($RADIOBOX) {
                     $RADIOBOX_DATA[$RADIOBOX] = $RADIOBOX;

@@ -645,7 +645,7 @@ class LetterDBAccess {
 			$chooseId = "STAFF_ID";
 		} else {
             $studentObject = new StudentSearchDBAccess();
-            $studentObject->globalSearch=isset($params["query"]) ? trim($params["query"]) : false;
+            $studentObject->globalSearch=isset($params["query"]) ? addText($params["query"]) : false;
 			$result = $studentObject->queryAllStudents($params);
 			$chooseId = "STUDENT_ID";
 		}

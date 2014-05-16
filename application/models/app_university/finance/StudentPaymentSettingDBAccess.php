@@ -265,7 +265,7 @@
             
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
+            $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
             $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
             $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : '';
             $studentReminds=isset($params["studentReminds"])?$params["studentReminds"]:'';
@@ -637,7 +637,7 @@
              
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
+            $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
             $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
            
             $trainingArray = self::gettrainingbyFee($feeId);
