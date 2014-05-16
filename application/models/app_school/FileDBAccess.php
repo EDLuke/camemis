@@ -104,7 +104,7 @@ class FileDBAccess {
 
     public static function getAllFilesQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : '';
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : '';
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : '';
@@ -209,7 +209,7 @@ class FileDBAccess {
     public function jsonSaveFile($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
 
         $SAVEDATA = array();
 
@@ -292,7 +292,7 @@ class FileDBAccess {
         $DATA_FOR_JSON = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $educationSystem = isset($params["educationSystem"]) ? $params["educationSystem"] : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
         $result = AcademicLevelDBAccess::getSQLAllAcademics($params);
         
 
@@ -384,7 +384,7 @@ class FileDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $checked = isset($params["checked"]) ? $params["checked"] : "";
-        $academicId = isset($params["academic"]) ? $params["academic"] : "";
+        $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
         $userroleId = isset($params["userroleId"]) ? $params["userroleId"] : "";
 
         if ($checked == "true") {

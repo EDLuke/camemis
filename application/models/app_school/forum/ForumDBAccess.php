@@ -51,7 +51,7 @@ class ForumDBAccess {
     
     public static function sqlForum($params){
         
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $CAMEMIS_TYPE = isset($params["CAMEMIS_TYPE"]) ? $params["CAMEMIS_TYPE"] : "";
         $object_type = isset($params["object_type"]) ? $params["object_type"] : "";
         $objectId = isset($params["ID"]) ? $params["ID"] : "";
@@ -114,8 +114,8 @@ class ForumDBAccess {
     
     public static function jsonTopicForum($params){
         
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $data = array();
         $i = 0;

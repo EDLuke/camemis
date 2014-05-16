@@ -29,8 +29,8 @@ Class SpecialDBAccess {
 
         $data = array();
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $isActive = isset($params["isActive"]) ? $params["isActive"] : 0;
         $eduSystem = isset($params["eduSystem"]) ? $params["eduSystem"] : 0;
 
@@ -168,8 +168,8 @@ Class SpecialDBAccess {
 
         $data = array();
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
         $SQL = "SELECT B.CODE AS ACTION_USER";

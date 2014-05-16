@@ -67,8 +67,8 @@
 
         public function allOrganizations($params) {
 
-            $start = $params["start"] ? $params["start"] : "0";
-            $limit = $params["limit"] ? $params["limit"] : "50";
+            $start = $params["start"] ? (int) $params["start"] : "0";
+            $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
             $entries = $this->getAllOrganizationQuery($params);
             $data = array();

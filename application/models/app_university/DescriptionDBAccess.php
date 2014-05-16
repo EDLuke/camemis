@@ -92,7 +92,7 @@ class DescriptionDBAccess {
             $SAVEDATA['SORTKEY'] = $params["SORTKEY"];
 
         if ($params["parentId"] > 0) {
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
             $facette = self::findObjectFromId($params["parentId"]);
             if ($facette) {
@@ -133,11 +133,11 @@ class DescriptionDBAccess {
             $SQL = "UPDATE t_personal_description";
             $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . $params["CHOOSE_TYPE"] . "'";
+                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
             if (isset($params["SORTKEY"]))//@veasna
                 $SQL .= " ,SORTKEY='" . $params["SORTKEY"] . "'";
             $SQL .= " WHERE";
-            $SQL .= " ID='" . $params["objectId"] . "'";
+            $SQL .= " ID='" . addText($params["objectId"]) . "'";
             self::dbAccess()->query($SQL);
         }else {
             self::addObject($params);

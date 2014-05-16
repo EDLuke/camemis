@@ -89,7 +89,7 @@
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
             if ($params["parentId"] > 0) {
-                $SAVEDATA['PARENT'] = $params["parentId"];
+                $SAVEDATA['PARENT'] = (int) $params["parentId"];
                 $SAVEDATA['OBJECT_TYPE'] = "ITEM";
                 $facette = self::findObjectFromId($params["parentId"]);
                 if ($facette) {
@@ -166,11 +166,11 @@
                 $SQL = "UPDATE t_finance_description";
                 $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
                 if (isset($params["CHOOSE_TYPE"]))
-                    $SQL .= " ,CHOOSE_TYPE='" . $params["CHOOSE_TYPE"] . "'";
+                    $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
                 if (isset($params["LINK"]))
                     $SQL .= " ,LINK='" . $params["LINK"] . "'";
                 $SQL .= " WHERE";
-                $SQL .= " ID='" . $params["objectId"] . "'";
+                $SQL .= " ID='" . addText($params["objectId"]) . "'";
                 self::dbAccess()->query($SQL);
                 self::updateChildren($objectId);
             }else {

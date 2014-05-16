@@ -648,8 +648,8 @@ class StaffDBAccess {
         /**
          * Advanced Search Staff....
          */
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         //@veasna
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         if ($studentId)
@@ -941,7 +941,7 @@ class StaffDBAccess {
 
                 $USER_OBJECT = UserMemberDBAccess::findUserFromId($params["objectId"]);
 
-                $WHERE[] = "ID = '" . $params["objectId"] . "'";
+                $WHERE[] = "ID = '" . addText($params["objectId"]) . "'";
                 self::dbAccess()->update('t_staff', $SAVEDATA, $WHERE);
 
                 if (isset($params["FIRSTNAME"]))
@@ -1338,7 +1338,7 @@ class StaffDBAccess {
         $data = array();
 
         $teacherId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "0";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "0";
 
         if (substr($params["node"], 8))
         {
@@ -1608,8 +1608,8 @@ class StaffDBAccess {
 
         $data = array();
 
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : 0;
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : 0;
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
 
         $SQL = "";
         $SQL .= " SELECT A.ID AS TEACHER_ID";
@@ -1728,10 +1728,10 @@ class StaffDBAccess {
         $data = array();
         $term = isset($params["gradingterm"]) ? $params["gradingterm"] : "";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-        $classIds = isset($params["classIds"]) ? $params["classIds"] : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $classIds = isset($params["classIds"]) ? addText($params["classIds"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         if ($academicObject)
         {
@@ -2119,8 +2119,8 @@ class StaffDBAccess {
         $data = array();
 
         $staffId = isset($params["staffId"]) ? $params["staffId"] : "0";
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
@@ -2274,9 +2274,9 @@ class StaffDBAccess {
 
         $data = array();
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
-        $classId = $params["classId"] ? addText($params["classId"]) : "0";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
+        $classId = $params["classId"] ? (int) $params["classId"] : "0";
 
         $facette = AcademicDBAccess::findGradeFromId($classId);
 

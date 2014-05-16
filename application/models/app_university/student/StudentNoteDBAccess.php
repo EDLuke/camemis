@@ -76,10 +76,10 @@ class StudentNoteDBAccess {
 
     public static function jsonLoadAllNotes($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $teacherId = Zend_Registry::get('USER')->ID;
 
@@ -113,7 +113,7 @@ class StudentNoteDBAccess {
 
     public static function jsonAddNote($params) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $content = isset($params["content"]) ? addText($params["content"]) : "";
         $teacherId = Zend_Registry::get('USER')->ID;

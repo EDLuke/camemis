@@ -120,8 +120,8 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     public static function jsonStudentExtraClass($params, $isJson = true) {
 
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
@@ -205,8 +205,8 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     public static function jsonListStudentInSchool($params) {
 
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $extraClassId = isset($params["objectId"]) ? addText($params["objectId"]) : "";

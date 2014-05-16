@@ -44,12 +44,12 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
 
     public function jsonListStudentsBySubject($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
         $result = StudentAcademicDBAccess::getQueryStudentEnrollment($classId, $globalSearch, false);
@@ -107,10 +107,10 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
 
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $term = isset($params["field"]) ? addText($params["field"]) : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
 
         $condition = array(
             'CLASS_ID = ? ' => $classId

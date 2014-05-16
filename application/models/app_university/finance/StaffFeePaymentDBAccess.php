@@ -230,8 +230,8 @@
 
         public static function jsonListStaffInvoices($params) {
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
             $SELECTION_A = array(
@@ -308,8 +308,8 @@
 
         public static function searchStaffPayment($params) {
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $startDate = isset($params["startDate"]) ? $params["startDate"] :"";
             $endDate = isset($params["endDate"]) ? $params["endDate"] :"";
             $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";

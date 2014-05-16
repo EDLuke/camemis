@@ -182,7 +182,7 @@ class UserDBAccess {
         $SAVEDATA['TS'] = time();
 
         if (isset($params["Id"])) {
-            $WHERE = self::dbAccess()->quoteInto("ID = ?", $params["Id"]);
+            $WHERE = self::dbAccess()->quoteInto("ID = ?", addText($params["Id"]));
             self::dbAccess()->update('t_members', $SAVEDATA, $WHERE);
         }
 

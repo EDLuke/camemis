@@ -30,7 +30,7 @@ class SubjectImportDBAccess extends SubjectDBAccess {
     public static function importXLS($params) {
 
         $xls = new Spreadsheet_Excel_Reader($_FILES["xlsfile"]['tmp_name']);
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
 
         $facette = self::findSubjectFromId($parentId);
 

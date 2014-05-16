@@ -122,9 +122,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
-        $academicId= isset($params["classId"]) ? addText($params["classId"]) : "";
+        $academicId= isset($params["classId"]) ? (int) $params["classId"] : "";
         $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
@@ -141,7 +141,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
         $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
 
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
 
         if ($searchGrade) {
 
@@ -345,8 +345,8 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
     public function jsonSearchStudentAttendance($params, $isJson = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->getAllAttendancesQuery($params);
 
@@ -825,12 +825,12 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $SAVEDATA = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
         $facette = self::findAttendanceFromId($objectId);
 
         if (!$facette) {
             $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-            $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+            $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
             $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             $schoolyearId = $academicObject ? $academicObject->SCHOOL_YEAR : "";
@@ -969,10 +969,10 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
@@ -1062,10 +1062,10 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
         //error_log( $trainingId);
@@ -1182,7 +1182,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
-        $academicId= isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId= isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
@@ -1446,7 +1446,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $SAVEDATA = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
 
         $facette = self::findAttendanceFromId($objectId);
 
@@ -1572,8 +1572,8 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
     public function jsonStudentAttendanceMonth($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->getAllAttendancesQuery($params);
 

@@ -96,8 +96,8 @@
 
             $data = array();
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $globalSearch = isset($params["query"])?$params["query"]:"";
             
             $searchParams["isTutor"] = true;
@@ -137,8 +137,8 @@
 
         public static function jsonUnassignedStaffExamination($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
 
@@ -329,8 +329,8 @@
         ///////////////////////////////////////////////////
         public static function jsonAssignedStaffExamRoom($params,$isJason=true){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";

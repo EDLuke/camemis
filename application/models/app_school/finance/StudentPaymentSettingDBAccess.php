@@ -134,8 +134,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function jsonLoadStudentFeeReminder($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : '';
 
@@ -257,8 +257,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function findStudentsByFeeID($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
         $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : '';
@@ -388,8 +388,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function jsonLoadStudentFeeGrade($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::findStudentsByFeeID($params);
 
@@ -621,8 +621,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function findStudentsTrainingFee($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? trim($params["query"]) : "";
         $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
 
@@ -710,8 +710,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function jsonLoadStudentFeeTrainingReminder($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
 
         $result = self::findStudentsTrainingFee($params);
@@ -822,8 +822,8 @@ class StudentPaymentSettingDBAccess {
 
     public static function jsonLoadStudentFeeTraining($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
 
         $result = self::findStudentsTrainingFee($params);

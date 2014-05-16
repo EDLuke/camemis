@@ -88,7 +88,7 @@ class PersonStatusDBAccess {
     public static function createOnlyItem($params) {
 
         $name = isset($params["name"]) ? addText($params["name"]) : "";
-        $objectType = isset($params["objectType"]) ? $params["objectType"] : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
 
         $SQL = "
             INSERT INTO t_person_status SET
@@ -103,7 +103,7 @@ class PersonStatusDBAccess {
     public static function jsonTreeAllPersonStatus($params) {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $objectType = isset($params["objectType"]) ? $params["objectType"] : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
 
         $data = array();
         $result = self::getAllPersonStatus($objectType, $globalSearch);

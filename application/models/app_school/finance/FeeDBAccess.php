@@ -587,7 +587,7 @@
         public static function sqlSearchFee($params) {
 
             $name = isset($params["name"]) ? addText($params["name"]) : "";
-            $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+            $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
             $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
             $type = isset($params["type"]) ? addText($params["type"]) : "";
             $isService = isset($params["isService"]) ? addText($params["isService"]) : "";
@@ -667,8 +667,8 @@
 
         public static function jsonSearchFee($params) {
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $result = self::sqlSearchFee($params);
             $i = 0;

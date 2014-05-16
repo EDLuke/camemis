@@ -110,11 +110,11 @@ class RoomDescriptionDBAccess {
 
         $SAVEDATA = array();
         $SAVEDATA['NAME'] = addText($params["NAME"]);
-        
+
         if ($params["parentId"] > 0) {
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
-            $facette = self::findObjectFromId($params["parentId"]);
+            $facette = self::findObjectFromId((int) $params["parentId"]);
             if ($facette) {
                 $SAVEDATA['CHOOSE_TYPE'] = $facette->CHOOSE_TYPE;
             }
@@ -127,7 +127,7 @@ class RoomDescriptionDBAccess {
         self::dbAccess()->insert('t_room_description', $SAVEDATA);
         return array("success" => true);
     }
-    
+
     public static function saveRoomDescription($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -136,9 +136,9 @@ class RoomDescriptionDBAccess {
             $SQL = "UPDATE t_room_description";
             $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . $params["CHOOSE_TYPE"] . "'";
+                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
             $SQL .= " WHERE";
-            $SQL .= " ID='" . $params["objectId"] . "'";
+            $SQL .= " ID='" . addText($params["objectId"]) . "'";
             self::dbAccess()->query($SQL);
         }else {
             self::addObject($params);
@@ -155,7 +155,7 @@ class RoomDescriptionDBAccess {
             $SQL .= " AND PARENT=0";
         else
             $SQL .= " AND PARENT=" . $node . "";
-        
+
         if ($type)
             $SQL .= " AND CHOOSE_TYPE='" . $type . "'";
         $SQL .= " ORDER BY SORTKEY ASC";
@@ -166,7 +166,7 @@ class RoomDescriptionDBAccess {
     public static function jsonTreeAllRoomDescription($params) {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
-        
+
         $data = array();
         $result = self::sqlDescription($node);
 

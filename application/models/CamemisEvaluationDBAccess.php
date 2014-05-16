@@ -90,7 +90,7 @@ class CamemisEvaluationDBAccess {
         
         if ($params["parentId"] <> 0){
             $facette = self::findAnswerObjectFromId($params["parentId"]);
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
             
             if ($facette)
                 $SAVEDATA['ANSWER_TYPE'] = $facette->ANSWER_TYPE;
@@ -273,8 +273,8 @@ class CamemisEvaluationDBAccess {
     }
     
     public static function jsonLoadAllEvaluationQuestion($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         
         $data = array();
         $i = 0;
@@ -318,8 +318,8 @@ class CamemisEvaluationDBAccess {
     }
     
     public static function jsonLoadEvaluationQuestionByTopic($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         
         $data = array();
         $i = 0;
@@ -369,8 +369,8 @@ class CamemisEvaluationDBAccess {
     }
     
     public static function jsonLoadUnassignedQuestionToTopic($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         
         $data = array();
@@ -406,7 +406,7 @@ class CamemisEvaluationDBAccess {
     public static function jsonActionAddQuestionToTopic($params) {
     
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $selectedCount = 0;
 
         if ($selectionIds) {
@@ -434,7 +434,7 @@ class CamemisEvaluationDBAccess {
     public static function jsonSaveEvaluationTopic($params) {
         
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) :'new'; 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
         
         $SAVEDATA = array();
         
@@ -582,7 +582,7 @@ class CamemisEvaluationDBAccess {
         $DATA_FOR_JSON = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $educationSystem = isset($params["educationSystem"]) ? $params["educationSystem"] : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
         $result = AcademicLevelDBAccess::getSQLAllAcademics($params);
         
         if ($result)
@@ -670,7 +670,7 @@ class CamemisEvaluationDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $checked = isset($params["checked"]) ? $params["checked"] : "";
-        $academicId = isset($params["academic"]) ? $params["academic"] : "";
+        $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
         $userroleId = isset($params["userroleId"]) ? $params["userroleId"] : "";
 
         if ($checked == "true") {

@@ -83,8 +83,8 @@ class CommunicationDBAccess{
     
     public function jsonLoadAllCommunications($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $result = $this->sqlAllCommunication($params);
 
@@ -244,7 +244,7 @@ class CommunicationDBAccess{
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
 
         $SQL = "";
         $SQL .= "
@@ -475,11 +475,11 @@ class CommunicationDBAccess{
             $SAVEDATA['SUBJECT'] = isset($params["SUBJECT"]) ? addText($params["SUBJECT"]) : "";
 
         if (isset($params["academicId"]))
-            $SAVEDATA['CLASS_ID'] = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+            $SAVEDATA['CLASS_ID'] = isset($params["academicId"]) ? (int) $params["academicId"] : "";
 
         if (isset($params["parentId"])) {
 
-            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? $params["parentId"] : "";
+            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? (int) $params["parentId"] : "";
             $parentObject = $this->findCommunicationFromId($params["parentId"]);
             $newContent = addText($parentObject->CONTENT);
             $newContent .= "<BR/><BR/><B>" . getCurrentDBDateTime() . " >>>>>>>>>>>>>>>></B><BR/><BR/>";
@@ -688,7 +688,7 @@ class CommunicationDBAccess{
     //@sea peng 08.05.2013
     public static function getAllCommunicationSubjectQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = "";

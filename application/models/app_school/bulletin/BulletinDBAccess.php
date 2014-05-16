@@ -276,8 +276,8 @@ class BulletinDBAccess {
 
     public static function jsonAllBulletins($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $data = array();
         $i = 0;
@@ -358,7 +358,7 @@ class BulletinDBAccess {
 
         $SAVEDATA = array();
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $name = isset($params["name"]) ? addText($params["name"]) : "";
 
         $count = self::getCount();
@@ -500,8 +500,8 @@ class BulletinDBAccess {
     public function searchBulletins($params, $isJson = true) {
 
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->queryAllBulletins($params, " A.ID", " A.CONTENT");
         $i = 0;
@@ -606,7 +606,7 @@ class BulletinDBAccess {
         $DATA_FOR_JSON = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $educationSystem = isset($params["educationSystem"]) ? $params["educationSystem"] : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
 
         $result = AcademicLevelDBAccess::getSQLAllAcademics($params);
 
@@ -773,7 +773,7 @@ class BulletinDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $checked = isset($params["checked"]) ? $params["checked"] : "";
-        $academicId = isset($params["academic"]) ? $params["academic"] : "";
+        $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
 
         $facette = self::findBulletinFromId($objectId);
 

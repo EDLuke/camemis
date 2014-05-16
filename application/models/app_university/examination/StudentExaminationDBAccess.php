@@ -31,8 +31,8 @@
 
         public static function jsonUnassignedStudentExamination($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
 
@@ -139,8 +139,8 @@
         //List students in Exam...
         public static function jsonAssignedStudentExamination($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             
             $result = self::getQueryAssignedStudentExamination($params, false);
 
@@ -341,8 +341,8 @@
         ///////////////////////////////////////////////////
         public static function jsonAssignedStudentExamRoom($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
@@ -434,8 +434,8 @@
         }
 
         public static function jsonUnassignedStudentExamRoom($params){
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
@@ -548,8 +548,8 @@
 
         public static function jsonUnassignedStudentTmpExamination($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
             $academicId=isset($params["academicId"])?$params["academicId"]:"";
@@ -719,8 +719,8 @@
         //List students in Exam...
         public static function jsonAssignedStudentTmpExamination($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
             
             $result = self::getQueryAssignedStudentTmpExamination($params, false);
 
@@ -756,8 +756,8 @@
         }
         
         public static function jsonUnassignedStudentTmpExamRoom($params){
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";
@@ -814,8 +814,8 @@
         
         public static function jsonAssignedStudentTmpExamRoom($params){
 
-            $start = isset($params["start"]) ? $params["start"] : "0";
-            $limit = isset($params["limit"]) ? $params["limit"] : "50";
+            $start = isset($params["start"]) ? (int) $params["start"] : "0";
+            $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
             $globalSearch = isset($params["query"])?$params["query"]:"";
             $objectId = isset($params["objectId"])?$params["objectId"]:"";

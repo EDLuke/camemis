@@ -165,8 +165,8 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
     public static function jsonListRoomSession($params, $isJson = true) {
 
         $searchCount = isset($params["searchCount"]) ? $params["searchCount"] : "";
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $startDate = isset($params["startDate"]) ? substr($params["startDate"], 0, 10) : "";
         $endDate = isset($params["endDate"]) ? substr($params["endDate"], 0, 10) : "";
         $academicType = isset($params["type"]) ? addText($params["type"]) : "GENERAL";

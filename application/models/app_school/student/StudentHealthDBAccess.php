@@ -393,8 +393,8 @@ class StudentHealthDBAccess {
     public static function searchStudentHealth($encrypParams, $isJson = true) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
         $facette = "";
         if ($health_type) {
@@ -589,8 +589,8 @@ class StudentHealthDBAccess {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $settingId = isset($params["settingId"]) ? addText($params["settingId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";

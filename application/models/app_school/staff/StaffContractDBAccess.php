@@ -154,8 +154,8 @@ class StaffContractDBAccess {
     }
 
     public static function jsonShowAllStaffContracts($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
         $i = 0;
 
@@ -217,8 +217,8 @@ class StaffContractDBAccess {
     }
 
     public static function jsonShowAllMembers($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
         $i = 0;
 
@@ -305,8 +305,8 @@ class StaffContractDBAccess {
     
     public static function jsonSearchStaffContract($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $data = array();
         $i = 0;

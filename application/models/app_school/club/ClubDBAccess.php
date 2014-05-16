@@ -105,7 +105,7 @@ class ClubDBAccess {
     }
 
     public static function getAllClubsQuery($params) {
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $SQL = "";
         $SQL .= " SELECT *";
@@ -170,7 +170,7 @@ class ClubDBAccess {
 
     public function jsonSaveClub($params) {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
         $SAVEDATA = array();
 
         if (isset($params["NAME"]))
@@ -217,8 +217,8 @@ class ClubDBAccess {
     }
 
     public function jsonTeacherClub($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $SELECT_DATA = array(
             "A.ID AS ID"
@@ -290,8 +290,8 @@ class ClubDBAccess {
 
     public function allClubevents($params, $isJson = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getAllClubeventsQuery($params);
 

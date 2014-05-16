@@ -127,13 +127,13 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     public static function sqlAssignedSubjectsByGrade($params)
     {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $nationalExam = isset($params["nationalExam"]) ? addText($params["nationalExam"]) : "";
         $subjectType = isset($params["subjectType"]) ? addText($params["subjectType"]) : "";
-        $include_in_evaluation = isset($params["include_in_evaluation"]) ? addText($params["include_in_evaluation"]) : "0";
+        $include_in_evaluation = isset($params["include_in_evaluation"]) ? (int) $params["include_in_evaluation"] : "0";
 
         $isTutor = false;
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
@@ -327,7 +327,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         $SAVEDATA['USED_IN_CLASS'] = $academicObject->EDUCATION_SYSTEM ? 0 : 1;
         $SAVEDATA['NATIONAL_EXAM'] = isset($params["NATIONAL_EXAM"]) ? 1 : 0;
-        $SAVEDATA['FORMULA_TYPE'] = $params["FORMULA_TYPE"];
+        $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
         $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
 
         $WHERE = array();
@@ -683,7 +683,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     {
 
         $selectionIds = $params["selectionIds"];
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $selectedCount = self::addSubject2Grade($selectionIds, $academicId);
 
         return array("success" => true, 'selectedCount' => $selectedCount);
@@ -736,9 +736,9 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $node = $params["node"];
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : 0;
-        $chooseSubjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
+        $chooseSubjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : 0;
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($academicObject)
@@ -920,9 +920,9 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     public function jsonAllSubjectByClass($params)
     {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $searchParams["academicId"] = $academicObject->ID;
@@ -1297,7 +1297,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         $subjectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $selecteds = isset($params["selecteds"]) ? addText($params["selecteds"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $facette = self::getGradeSubject(false, $academicId, $subjectId, $schoolyear, false);
 
@@ -1316,7 +1316,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     public static function getPreRequisiteByGradeSubject($params)
     {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $subjectId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
 
@@ -1366,8 +1366,8 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     public static function jsonStudentSubjectCredit($params)
     {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
 

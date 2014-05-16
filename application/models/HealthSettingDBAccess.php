@@ -34,7 +34,7 @@ Class HealthSettingDBAccess {
     public static function jsonSaveHealthSetting($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
         $type = isset($params["FIELD_TYPE"]) ? addText($params["FIELD_TYPE"]) : '';
 
         $parentObject = self::findHealthSettingFromId($parentId);

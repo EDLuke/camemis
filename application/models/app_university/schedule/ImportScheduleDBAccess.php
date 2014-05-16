@@ -167,7 +167,7 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
 
         $_FILES['xlsfile']['type'];
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
         $term = isset($params["term"]) ? addText($params["term"]) : false;
 
         $classObject = AcademicDBAccess::findGradeFromId($academicId);

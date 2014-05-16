@@ -678,7 +678,7 @@ class AcademicDateDBAccess {
     public function actionDateline($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : 0;
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : 0;
 
         $UPDATE_VALUES['MODIFY_DATE'] = getCurrentDBDateTime();
         $UPDATE_VALUES['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;

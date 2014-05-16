@@ -87,7 +87,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
 
     public function getSqlCampusSchedule($params, $groupBy = false) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $currentTerm = isset($params["currentTerm"]) ? addText($params["currentTerm"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $eventDay = isset($params["eventDay"]) ? setFormatDate($params["eventDay"]) : getCurrentDBDate();
@@ -248,7 +248,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
 
     public function campusEventList($params) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
@@ -598,8 +598,8 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     public function searchTeachingSession($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $startDate = isset($params["startdt"]) ? substr($params["startdt"], 0, 10) : "";
         $endDate = isset($params["enddt"]) ? substr($params["enddt"], 0, 10) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";

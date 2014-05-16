@@ -156,8 +156,8 @@ class AdminCustomerDBAccess {
 
     public function jsonAllCustomers($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $result = $this->allCustomersQuery($params);
 
@@ -325,8 +325,8 @@ class AdminCustomerDBAccess {
 
     public function jsonEnrolledStudents($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
 
         if (self::checkSchoolDB()) {

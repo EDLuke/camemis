@@ -228,8 +228,8 @@ class DBWebservices {
 
     public function jsonAllLocalizations($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $language = isset($params["language"]) ? $params["language"] : "ENGLISH";

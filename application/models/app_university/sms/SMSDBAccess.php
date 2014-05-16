@@ -147,8 +147,8 @@ class SMSDBAccess {
 
     public function jsonAllSMS($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $result = $this->getAllSMSQuery($params);
         $data = array();
@@ -286,8 +286,8 @@ class SMSDBAccess {
 
     public function jsonUnassignedStudentsSMS($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $params["status"] = 1;
         $ALL_STUDENTS = StudentSearchDBAccess::queryAllStudents($params);
         $STUDENTS_SMS = $this->listStudentsSMSServices($params["objectId"]);
@@ -329,8 +329,8 @@ class SMSDBAccess {
 
     public function jsonUnassignedStaffsSMS($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $params["status"] = 1;
         $DB_STAFF = StaffDBAccess::getInstance();
@@ -557,8 +557,8 @@ class SMSDBAccess {
 
     public function jsonAssignedStudentsSMSServices($params, $isjson = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->assignedStudentsSMSVervices($params);
 
@@ -600,8 +600,8 @@ class SMSDBAccess {
 
     public function jsonAssignedStaffsSMSServices($params, $isjson = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->assignedStaffsSMSVervices($params);
 
@@ -706,9 +706,9 @@ class SMSDBAccess {
 
     public function jsonLoadLogSMS($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "0";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "0";
 
         $SQL = "SELECT *";
         $SQL .= " FROM t_logsms";
@@ -760,7 +760,7 @@ class SMSDBAccess {
 
         $registered = isset($params["registered"]) ? $params["registered"] : 1;
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
 
         $schoolyearObject = AcademicDateDBAccess::loadCurrentSchoolyear();
 
@@ -856,8 +856,8 @@ class SMSDBAccess {
 
     public static function jsonListSubscriptons($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_sms_subscription", array('*'));

@@ -591,9 +591,9 @@ class ExtraClassDBAccess {
     }
 
     public function jsonTeacherExtraClass($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : '';
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : '';
 
         $SELECT_DATA = array(
             "A.ID AS ID"
@@ -657,8 +657,8 @@ class ExtraClassDBAccess {
     }
 
     public function jsonListExtraClass($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $studentId = isset($params["studentId"]) ? $params["studentId"] : "";
         $teacherId = isset($params["teacherId"]) ? $params["teacherId"] : "";
 

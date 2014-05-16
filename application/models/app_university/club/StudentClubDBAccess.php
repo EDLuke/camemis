@@ -77,8 +77,8 @@ class StudentClubDBAccess extends ClubDBAccess {
     }
     public static function jsonStudentClub($params, $isJson = true) {
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $clubId = isset($params["objectId"]) ? addText($params["objectId"]) : ""; 
@@ -189,8 +189,8 @@ class StudentClubDBAccess extends ClubDBAccess {
      }   
      public static function jsonTeacherClubs($params, $isJson = true) {
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $clubId = isset($params["objectId"]) ? addText($params["objectId"]) : "";   
@@ -235,8 +235,8 @@ class StudentClubDBAccess extends ClubDBAccess {
     ///
     public static function jsonListStudentInSchool($params) {
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $clubId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $SELECT_A = array(
@@ -357,8 +357,8 @@ class StudentClubDBAccess extends ClubDBAccess {
     }
     public static function jsonListTeacherInSchool($params) {
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $clubId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 

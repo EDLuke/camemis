@@ -95,11 +95,11 @@ class SubjectTeachingReportDBAccess {
 
     public static function jsonLoadAllSubjectTeachingReport($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         switch(UserAuth::getUserType()){
             case "TEACHER":
             case "INSTRUCTOR":
@@ -195,7 +195,7 @@ class SubjectTeachingReportDBAccess {
     public function jsonDeleteSubjectTeachingReport($params) { 
        
         if ($this->checkSubjectTeachingReport($params["objectId"])) {
-            self::dbAccess()->delete('t_subject_teaching_report', array("ID='" . $params["objectId"] . "'"));
+            self::dbAccess()->delete('t_subject_teaching_report', array("ID='" . addText($params["objectId"]) . "'"));
         }
       
         return array("success" => true);

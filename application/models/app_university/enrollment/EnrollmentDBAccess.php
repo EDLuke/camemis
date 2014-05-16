@@ -32,8 +32,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
     public static function jsonListStudentLastSchoolyear($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $nextSchoolyearId = isset($params["nextSchoolyearId"]) ? $params["nextSchoolyearId"] : "";
 
         $result = self::getSQLStudentEnrollment($params);
@@ -92,8 +92,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
     public static function jsonListStudentNextSchoolyear($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getSQLStudentEnrollment($params);
 
@@ -185,11 +185,11 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
     public static function transferStudentToGradeSchoolyear($params) {
 
-        $SQLIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $SQLIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $selectedStudents = explode(",", $SQLIds);
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $gradeLeftId = isset($params["gradeLeftId"]) ? $params["gradeLeftId"] : "";
         $schoolyearLeftId = isset($params["schoolyearLeftId"]) ? $params["schoolyearLeftId"] : "";
 
@@ -280,8 +280,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : 0;
 
         $SAVEDATA = array();
@@ -416,8 +416,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
     public static function jsonAllStudentsHistory($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getAllStudentsHistory($params);
 

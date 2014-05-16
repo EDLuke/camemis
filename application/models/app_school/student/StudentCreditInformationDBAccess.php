@@ -50,10 +50,10 @@ class StudentCreditInformationDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $creditStatus = isset($params["creditStatus"]) ? $params["creditStatus"] : "";
         $creditNumber = isset($params["creditNumber"]) ? $params["creditNumber"] : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
@@ -235,8 +235,8 @@ class StudentCreditInformationDBAccess {
     //////////////
     public static function jsonListCreditStudentInformation($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $result = self::sqlStudentEnrolledSubject($params);
 
         $data = array();

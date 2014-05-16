@@ -30,8 +30,8 @@ class StudentImportDBAccess {
 
     protected function importQuery($params) {
 
-        $display = isset($params["display"]) ? $params["display"] : "1";
-        $educationSystem = isset($params["educationSystem"]) ? $params["educationSystem"] : "0";
+        $display = isset($params["display"]) ? addText($params["display"]) : "1";
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : "0";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         //@veasna
@@ -42,11 +42,11 @@ class StudentImportDBAccess {
         if ($objectId) {
             $campus = $objectId;
         } else {
-            $campus = isset($params["campus"]) ? $params["campus"] : "";
+            $campus = isset($params["campus"]) ? addText($params["campus"]) : "";
         }
 
         $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
-        $examResult = isset($params["examResult"]) ? $params["examResult"] : "";
+        $examResult = isset($params["examResult"]) ? addText($params["examResult"]) : "";
 
         if ($examResult) {
             $facette = AcademicDBAccess::sqlGradeFromId($campus);
@@ -106,8 +106,8 @@ class StudentImportDBAccess {
         if ($type) { //@ THORN Visal
             //@veasna
             $SQL .= " AND A.TYPE ='" . $type . "'";
-        }else{
-            $SQL .= " AND A.TYPE <> 'ENROLL'";    
+        } else {
+            $SQL .= " AND A.TYPE <> 'ENROLL'";
         }
 
         if ($campus)
@@ -160,13 +160,13 @@ class StudentImportDBAccess {
 
     public function importStudents($params, $isJason = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         ///
-        $type = isset($params['type']) ? $params['type'] : '';
-        $campus = isset($params['campus']) ? $params['campus'] : '';
-        $training = isset($params['trainingId']) ? $params['trainingId'] : '';
+        $type = isset($params['type']) ? addText($params['type']) : '';
+        $campus = isset($params['campus']) ? (int)($params['campus']) : '';
+        $training = isset($params['trainingId']) ? (int) ($params['trainingId']) : '';
         $subjectExam = "";
         if ($type == 'ENROLL') {
             $facette = ExaminationDBAccess::findAcademicById($campus);
@@ -269,14 +269,14 @@ class StudentImportDBAccess {
     public function importXLS($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
-        $educationSystem = isset($params["educationSystem"]) ? $params["educationSystem"] : "0";
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : "0";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "0";
 
         //@veasna
         $type = isset($params["type"]) ? addText($params["type"]) : "";
         //
 
-        $dates = isset($params["CREATED_DATE"]) ? $params["CREATED_DATE"] : "";
+        $dates = isset($params["CREATED_DATE"]) ? addText($params["CREATED_DATE"]) : "";
 
         $xls = new Spreadsheet_Excel_Reader();
         $xls->setUTFEncoder('iconv');
@@ -391,7 +391,7 @@ class StudentImportDBAccess {
             $IMPORT_DATA['ID'] = generateGuid();
             $IMPORT_DATA['CODE'] = createCode();
             $IMPORT_DATA['ACADEMIC_TYPE'] = addText($ACADEMIC_TYPE);
-        
+
             switch (UserAuth::systemLanguage()) {
                 case "VIETNAMESE":
                     $IMPORT_DATA['FIRSTNAME'] = setImportChartset($FIRSTNAME);
@@ -489,7 +489,7 @@ class StudentImportDBAccess {
 
     public function importStudentExamScoreXLS($params) {
 
-        $examId = isset($params["examId"]) ? $params["examId"] : "0";
+        $examId = isset($params["examId"]) ? (int) $params["examId"] : "0";
         $roomId = isset($params["roomId"]) ? addText($params["roomId"]) : "0";
 
         $xls = new Spreadsheet_Excel_Reader();
@@ -538,7 +538,7 @@ class StudentImportDBAccess {
 
     public function jsonAddTrainingToStudentDB($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
 
         $result = $this->importQuery($params);
 
@@ -620,7 +620,7 @@ class StudentImportDBAccess {
 
     public function jsonAddStudentToStudentDB($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $result = $this->importQuery($params);
 
         if ($selectionIds) {
@@ -792,8 +792,8 @@ class StudentImportDBAccess {
 
     public function jsonAddPreSchoolStudentDB($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
-        $type = isset($params["type"]) ? $params["type"] : "PRE_SCHOOL";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
+        $type = isset($params["type"]) ? addText($params["type"]) : "PRE_SCHOOL";
 
         if ($selectionIds) {
 
@@ -863,7 +863,7 @@ class StudentImportDBAccess {
 
     public function jsonRemoveStudentsFromImport($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
 
         $selectedCount = 0;
         if ($selectionIds) {

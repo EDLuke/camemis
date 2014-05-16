@@ -93,7 +93,7 @@ class SchoolFacilityDBAccess {
 
         if ($params["parentId"] > 0) {
             $facette = self::findObjectFromId($params["parentId"]);
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
             if ($facette) {
                 $SAVEDATA['TYPE'] = $facette->TYPE;
@@ -145,7 +145,7 @@ class SchoolFacilityDBAccess {
             $SQL = "UPDATE t_school_facility";
             $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . $params["CHOOSE_TYPE"] . "'";
+                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
             $SQL .= " ,SORTKEY='" . $params["SORTKEY"] . "'";
 
             if ($facette->PARENT > 0) {
@@ -161,7 +161,7 @@ class SchoolFacilityDBAccess {
             if (isset($params["DESCRIPTION"]))
                 $SQL .= " ,DESCRIPTION='" . addText($params["DESCRIPTION"]) . "'";
             $SQL .= " WHERE";
-            $SQL .= " ID='" . $params["objectId"] . "'";
+            $SQL .= " ID='" . addText($params["objectId"]) . "'";
             self::dbAccess()->query($SQL);
         }else {
             self::addObject($params);

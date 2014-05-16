@@ -47,8 +47,8 @@ class StudentSearchDBAccess {
     }
 
     public function searchStudents($params, $isJson = true) {
-        $this->start = isset($params["start"]) ? $params["start"] : 0;
-        $this->limit = isset($params["limit"]) ? $params["limit"] : 100;
+        $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
+        $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $this->displayCurrentAcademic = isset($params["displayCurrentAcademic"]) ? $params["displayCurrentAcademic"] : 1;
         $this->startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $this->endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
@@ -68,7 +68,7 @@ class StudentSearchDBAccess {
         $this->campusId = isset($params["campusId"]) ? $params["campusId"] : "";
         $this->gradeId = isset($params["gradeId"]) ? $params["gradeId"] : "";
         $this->schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : "";
-        $this->classId = isset($params["classId"]) ? $params["classId"] : "";
+        $this->classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $this->programId = isset($params["programId"]) ? $params["programId"] : "";
         $this->levelId = isset($params["levelId"]) ? $params["levelId"] : "";
         $this->termId = isset($params["termId"]) ? $params["termId"] : "";

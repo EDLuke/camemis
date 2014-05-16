@@ -127,7 +127,7 @@ class RoomDBAccess {
     public function getAllRoomsQuery($params) {
 
         $node = isset($params["node"]) ? addText($params["node"]) : "0";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
 
         if ($parentId) {
             $_parentId = $parentId;
@@ -236,8 +236,8 @@ class RoomDBAccess {
 
     public function allRooms($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $result = $this->getAllRoomsQuery($params);
         $data = array();
@@ -371,7 +371,7 @@ class RoomDBAccess {
         $RADIOBOX_DATA = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
 
         $facette = self::findRoomFromId($objectId);
 
@@ -391,7 +391,7 @@ class RoomDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         if (isset($params["MAX_COUNT"]))
-            $SAVEDATA['MAX_COUNT'] = $params["MAX_COUNT"];
+            $SAVEDATA['MAX_COUNT'] = addText($params["MAX_COUNT"]);
 
         if (isset($params["ROOM_SIZE"]))
             $SAVEDATA['ROOM_SIZE'] = addText($params["ROOM_SIZE"]);

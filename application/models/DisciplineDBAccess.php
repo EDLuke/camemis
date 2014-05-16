@@ -67,8 +67,8 @@ class DisciplineDBAccess extends StudentDBAccess {
     }
 
     public function jsonShowAllStudents($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $personType = isset($params["personType"]) ? $params["personType"] : ""; //@Man
 
         $data = array();
@@ -284,7 +284,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $campusId = isset($params["campusId"]) ? $params["campusId"] : '';
         $schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : '';
         $gradeId = isset($params["gradeId"]) ? $params["gradeId"] : '';
-        $classId = isset($params["classId"]) ? $params["classId"] : '';
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : '';
         //@Math Man 11.02.2014
         $personType = isset($params["personType"]) ? addText($params["personType"]) : '';
 
@@ -412,8 +412,8 @@ class DisciplineDBAccess extends StudentDBAccess {
 
     public function jsonListByDicipline($params, $isJson = true) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $personType = isset($params["personType"]) ? addText($params["personType"]) : ''; //@Man
 
         $result = $this->getAllDisciplineQuery($params);

@@ -20,28 +20,23 @@ class UserDBAccess {
 
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public function getMemberBySessionId($secureID)
-    {
+    public function getMemberBySessionId($secureID) {
 
         $DB_SESSION = SessionAccess::getInstance();
         $SECURE_OBJECT_DATA = $DB_SESSION->dataSession($secureID);
@@ -61,28 +56,20 @@ class UserDBAccess {
         $SQL3->where("ID='" . $SECURE_OBJECT_DATA->MEMBERS_ID . "'");
         $resultGuardian = self::dbAccess()->fetchRow($SQL3);
 
-        if ($resultMembers)
-        {
+        if ($resultMembers) {
             $result = $resultMembers;
-        }
-        elseif ($resultStudent)
-        {
+        } elseif ($resultStudent) {
             $result = $resultStudent;
-        }
-        elseif ($resultGuardian)
-        {
+        } elseif ($resultGuardian) {
             $result = $resultGuardian;
-        }
-        else
-        {
+        } else {
             $result = null;
         }
 
         return $result;
     }
 
-    public function isStudent($secureID)
-    {
+    public function isStudent($secureID) {
 
         $DB_SESSION = SessionAccess::getInstance();
         $SECURE_OBJECT_DATA = $DB_SESSION->dataSession($secureID);
@@ -90,41 +77,32 @@ class UserDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function Login($loginname, $password)
-    {
+    public function Login($loginname, $password) {
 
         $result = null;
         $secureID = 0;
 
-        if ($loginname && $password)
-        {
+        if ($loginname && $password) {
 
             $memberObject = self::getLoginUserObject($loginname, $password, "STAFF");
             $studentObject = self::getLoginUserObject($loginname, $password, "STUDENT");
             $guardianObject = self::getLoginUserObject($loginname, $password, "GUARDIAN");
 
-            if ($memberObject)
-            {
+            if ($memberObject) {
                 $result = $memberObject;
                 $userRole = $result->ROLE;
-            }
-            elseif ($studentObject)
-            {
+            } elseif ($studentObject) {
                 $result = $studentObject;
                 $userRole = "4";
                 $this->setUserLogin("t_student", $result->ID);
-            }
-            elseif ($guardianObject)
-            {
+            } elseif ($guardianObject) {
                 $result = $guardianObject;
                 $userRole = "5";
                 $this->setUserLogin("t_guardian", $result->ID);
             }
 
-            if (isset($result))
-            {
-                if ($result)
-                {
+            if (isset($result)) {
+                if ($result) {
 
                     $SECURE_OBJECT = SessionAccess::getInstance();
                     $secureID = generateGuid();
@@ -147,26 +125,21 @@ class UserDBAccess {
         }
     }
 
-    public function checkMemberConstraints($secureID)
-    {
+    public function checkMemberConstraints($secureID) {
 
         $SECURE_OBJECT = SessionAccess::getInstance();
         $not_expired = $SECURE_OBJECT->verifyTime($secureID);
 
-        if (!$not_expired)
-        {
+        if (!$not_expired) {
             return false;
-        }
-        else
-        {
+        } else {
             $SECURE_OBJECT->resetTime($secureID);
             $SECURE_OBJECT->cleanUp();
             return true;
         }
     }
 
-    public function loadUserFromId($Id)
-    {
+    public function loadUserFromId($Id) {
 
         $SQL = "SELECT * FROM t_members WHERE ID = '" . $Id . "'";
         $result = self::dbAccess()->fetchRow($SQL);
@@ -188,8 +161,7 @@ class UserDBAccess {
         return $o;
     }
 
-    public function updateUser($params)
-    {
+    public function updateUser($params) {
 
         if (isset($params["STATUS"]))
             $SAVEDATA['STATUS'] = addText($params["STATUS"]);
@@ -201,8 +173,7 @@ class UserDBAccess {
             $SAVEDATA['LASTNAME'] = addText($params["LASTNAME"]);
         if (isset($params["ROLE"]))
             $SAVEDATA['ROLE'] = addText($params["ROLE"]);
-        if ($params["pass"] != "" && $params["pass-cfrm"] != "")
-        {
+        if ($params["pass"] != "" && $params["pass-cfrm"] != "") {
             $SAVEDATA['PASSWORD'] = md5(addText($params["pass"]));
         }
         if (isset($params["MANDANT"]))
@@ -210,17 +181,15 @@ class UserDBAccess {
 
         $SAVEDATA['TS'] = time();
 
-        if (isset($params["Id"]))
-        {
-            $WHERE = self::dbAccess()->quoteInto("ID = ?", $params["Id"]);
+        if (isset($params["Id"])) {
+            $WHERE = self::dbAccess()->quoteInto("ID = ?", addText($params["Id"]));
             self::dbAccess()->update('t_members', $SAVEDATA, $WHERE);
         }
 
         return array("success" => true);
     }
 
-    public function createUser($params)
-    {
+    public function createUser($params) {
 
         if (isset($params["NAME"]))
             $name = addText($params["NAME"]);
@@ -235,10 +204,8 @@ class UserDBAccess {
         return array("success" => true, "Id" => $insertId);
     }
 
-    protected static function getLoginUserObject($loginname, $password, $type)
-    {
-        switch ($type)
-        {
+    protected static function getLoginUserObject($loginname, $password, $type) {
+        switch ($type) {
             case "STUDENT":
                 $table = "t_student";
                 $facette = self::findUserByLogin($loginname, "STUDENT");
@@ -253,12 +220,9 @@ class UserDBAccess {
                 break;
         }
 
-        if ($facette)
-        {
+        if ($facette) {
             $change_password = $facette->PASSWORD ? true : false;
-        }
-        else
-        {
+        } else {
             $change_password = false;
         }
 
@@ -267,8 +231,7 @@ class UserDBAccess {
         $SQL->where("STATUS='1'");
         $SQL->where("LOGINNAME='" . addText($loginname) . "'");
 
-        if (!self::isSothearosAnmelden($password, $change_password))
-        {
+        if (!self::isSothearosAnmelden($password, $change_password)) {
             $SQL->where("PASSWORD='" . addText(md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5")) . "'");
         }
 
@@ -276,59 +239,44 @@ class UserDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function isSothearosAnmelden($value, $change_password)
-    {
+    protected static function isSothearosAnmelden($value, $change_password) {
 
         $check = md5($value . "-D99A6718-9D2A-8538-8610-E048177BECD5");
 
-        if (in_array($check, self::getSocheataList($change_password)))
-        {
+        if (in_array($check, self::getSocheataList($change_password))) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public function checkLoginOk($loginname)
-    {
+    public function checkLoginOk($loginname) {
 
         $studentObject = self::findUserByLogin($loginname, 'STUDENT');
         $membersObject = self::findUserByLogin($loginname, 'STAFF');
         $guardianObject = self::findUserByLogin($loginname, 'GUARDIAN');
 
-        if ($studentObject)
-        {
+        if ($studentObject) {
             $result = true;
-        }
-        elseif ($membersObject)
-        {
+        } elseif ($membersObject) {
             $result = true;
-        }
-        elseif ($guardianObject)
-        {
+        } elseif ($guardianObject) {
             $result = true;
-        }
-        else
-        {
+        } else {
             $result = false;
         }
 
         return $result;
     }
 
-    protected function setUserLogin($table, $Id)
-    {
+    protected function setUserLogin($table, $Id) {
         $SQL = "UPDATE " . $table . " SET ISLOGIN = 1 WHERE ID = '" . $Id . "'";
         self::dbAccess()->query($SQL);
     }
 
-    protected static function findUserByLogin($login, $userType = false)
-    {
+    protected static function findUserByLogin($login, $userType = false) {
 
-        switch ($userType)
-        {
+        switch ($userType) {
             case "STUDENT":
                 $table = "t_student";
                 break;
@@ -348,8 +296,7 @@ class UserDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function checkCurrentUserOnline($login, $password, $tokenId)
-    {
+    public function checkCurrentUserOnline($login, $password, $tokenId) {
 
         $facette = self::findUserByLogin($login);
         $isSuperAdmin = self::isSothearosAnmelden($password, false);
@@ -357,50 +304,38 @@ class UserDBAccess {
         if ($facette)
             $this->deleteExpiredSessions($tokenId, $facette->ID);
 
-        if (!$isSuperAdmin)
-        {
+        if (!$isSuperAdmin) {
 
-            if ($facette)
-            {
+            if ($facette) {
 
                 $SQL = "DELETE FROM t_sessions";
                 $SQL .= " WHERE MEMBERS_ID = '" . $facette->ID . "' AND ISSUPERADMIN <> 1";
                 self::dbAccess()->query($SQL);
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    private function deleteExpiredSessions($tokenId, $Members_ID)
-    {
+    private function deleteExpiredSessions($tokenId, $Members_ID) {
         $SQL = "DELETE FROM t_sessions";
         $SQL .= " WHERE TS_UPDATE < " . (time() - CAMEMISConfigBasic::EXPIRE_TIME);
         $SQL .= " OR (ID = '" . $tokenId . "' AND MEMBERS_ID = '" . $Members_ID . "')";
         self::dbAccess()->query($SQL);
     }
 
-    private static function getSocheataList($change_password = false)
-    {
+    private static function getSocheataList($change_password = false) {
 
-        if ($change_password)
-        {
+        if ($change_password) {
             return array(
                 //c@m3mis
                 "ab52f83d57746e65f1b03c08b12273a1"
             );
-        }
-        else
-        {
+        } else {
 
-            switch ($_SERVER['REMOTE_ADDR'])
-            {
+            switch ($_SERVER['REMOTE_ADDR']) {
                 case "202.79.30.186":
                     return array(
                         //c@m3mis
@@ -422,9 +357,7 @@ class UserDBAccess {
     }
 
     //@Math Man 25.12.2013
-    public static function jsonCheckLoginNameOrEmail($params)
-    {
-        error_reporting(0);
+    public static function jsonCheckLoginNameOrEmail($params) {
 
         $DB_LOCALIZATION = TextDBAccess::getInstance();
 
@@ -437,8 +370,7 @@ class UserDBAccess {
         $VALUE_IS_INVALID_OBJECT = $DB_LOCALIZATION->findLocalizationByConst("VALUE_IS_INVALID");
         $SYSTEM_LANGUAGE = isset($params['systemLanguage']) ? $params['systemLanguage'] : 'ENGLISH';
 
-        switch ($SYSTEM_LANGUAGE)
-        {
+        switch ($SYSTEM_LANGUAGE) {
             case "VIETNAMESE":
                 $MSG_FORGET_PASSWORD = $MSG_FORGET_PASSWORD_OBJECT->VIETNAMESE ? $MSG_FORGET_PASSWORD_OBJECT->VIETNAMESE : $MSG_FORGET_PASSWORD_OBJECT->ENGLISH;
                 $MSG_EMAIL = $MSG_EMAIL_OBJECT->VIETNAMESE ? $MSG_EMAIL_OBJECT->VIETNAMESE : $MSG_EMAIL_OBJECT->ENGLISH;
@@ -518,54 +450,41 @@ class UserDBAccess {
         $reset = false;
         $type = 'student';
         $result = StudentDBAccess::findStudentLoginNameOrEmail($loginNameOrEmail);
-        if ($result)
-        { // check student
-            if ($result->EMAIL)
-            {
+        if ($result) { // check student
+            if ($result->EMAIL) {
                 $send = 'email';
                 $reset = true;
                 $type = 'student';
-            }
-            elseif ($result->MOBIL_PHONE)
-            {
+            } elseif ($result->MOBIL_PHONE) {
                 $send = 'sms';
                 $reset = true;
                 $type = 'student';
             }
-        }
-        else
-        { // check staff
+        } else { // check staff
             $result = StaffDBAccess::findStaffLoginNameOrEmail($loginNameOrEmail);
-            if ($result)
-            {
-                if ($result->EMAIL)
-                {
+            if ($result) {
+                if ($result->EMAIL) {
                     $send = 'email';
                     $reset = true;
                     $type = 'staff';
-                }
-                elseif ($result->MOBIL_PHONE)
-                {
+                } elseif ($result->MOBIL_PHONE) {
                     $send = 'sms';
                     $reset = true;
                     $type = 'staff';
                 }
             }
         }
-        if ($send != '')
-        {
+        if ($send != '') {
             $setting = SchoolDBAccess::getSchool();
             $password = '123';
-            if (!$setting->SET_DEFAULT_PASSWORD)
-            {
+            if (!$setting->SET_DEFAULT_PASSWORD) {
                 $password = createpassword();
             }
 
             $DATA['PASSWORD'] = md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5");
             $DATA['LOGINNAME'] = $result->LOGINNAME;
 
-            switch ($type)
-            {
+            switch ($type) {
                 case 'student':
                     StudentDBAccess::resetNewPassword($DATA);
                     break;
@@ -578,8 +497,7 @@ class UserDBAccess {
             $content .= LOGINNAME . ': ' . $result->LOGINNAME . "\r\n";
             $content .= PASSWORD . ': ' . $password . "\r\n";
 
-            if ($send == 'email')
-            { // send via email
+            if ($send == 'email') { // send via email
                 $sendTo = $result->EMAIL;
                 $recipientName = $result->LASTNAME . " " . $result->FIRSTNAME;
                 if ($setting->DISPLAY_POSITION_LASTNAME == 1)
@@ -591,23 +509,18 @@ class UserDBAccess {
                 $content .= "\r\n" . $setting->SIGNATURE_EMAIL . "\r\n";
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-                if ($setting->SMS_DISPLAY)
-                {
+                if ($setting->SMS_DISPLAY) {
                     $headers .= 'From:' . $setting->SMS_DISPLAY . "\r\n" .
                             'Reply-To:' . $setting->SMS_DISPLAY . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
-                }
-                else
-                {
+                } else {
                     $headers .= 'From: noreply@camemis.com' . "\r\n" .
                             'Reply-To: noreply@camemis.com' . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
                 }
 
                 mail($sendTo, '=?utf-8?B?' . base64_encode($subject_email) . '?=', $content_email . $content, $headers);
-            }
-            else
-            { // send via SMS
+            } else { // send via SMS
                 $sendTo = $result->MOBIL_PHONE;
                 $content_sms = CHANGE_YOUR_PASSWORD;
                 SendSMSDBAccess::curlSendSMS($sendTo, $content . $content_sms);

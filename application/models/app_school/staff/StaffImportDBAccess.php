@@ -91,8 +91,8 @@ class StaffImportDBAccess {
 
         $data = array();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->importQuery($params);
 
@@ -150,7 +150,7 @@ class StaffImportDBAccess {
         $campusId = isset($params["CAMPUS"]) ? $params["CAMPUS"] : "0";
         $programId = isset($params["PROGRAM"]) ? $params["PROGRAM"] : "0";
         $roleId = isset($params["USER_ROLE"]) ? $params["USER_ROLE"] : "0";
-        $dates = isset($params["CREATED_DATE"]) ? $params["CREATED_DATE"] : "";
+        $dates = isset($params["CREATED_DATE"]) ? addText($params["CREATED_DATE"])  : "";
 
         for ($iCol = 1; $iCol <= $xls->sheets[0]['numCols']; $iCol++) {
 
@@ -383,7 +383,7 @@ class StaffImportDBAccess {
 
     public function jsonAddStaffToStaffDB($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $result = $this->importQuery($params);
 
         $DB_USER_ROLE = UserRoleDBAccess::getInstance();
@@ -525,7 +525,7 @@ class StaffImportDBAccess {
 
     public function jsonRemoveStaffsFromImport($params) {
 
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
 
         $selectedCount = 0;
         if ($selectionIds) {

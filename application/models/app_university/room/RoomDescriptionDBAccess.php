@@ -112,9 +112,9 @@ class RoomDescriptionDBAccess {
         $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if ($params["parentId"] > 0) {
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
-            $facette = self::findObjectFromId($params["parentId"]);
+            $facette = self::findObjectFromId((int) $params["parentId"]);
             if ($facette) {
                 $SAVEDATA['CHOOSE_TYPE'] = $facette->CHOOSE_TYPE;
             }
@@ -136,9 +136,9 @@ class RoomDescriptionDBAccess {
             $SQL = "UPDATE t_room_description";
             $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . $params["CHOOSE_TYPE"] . "'";
+                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
             $SQL .= " WHERE";
-            $SQL .= " ID='" . $params["objectId"] . "'";
+            $SQL .= " ID='" . addText($params["objectId"]) . "'";
             self::dbAccess()->query($SQL);
         }else {
             self::addObject($params);

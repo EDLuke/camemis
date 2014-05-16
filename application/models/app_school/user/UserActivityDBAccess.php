@@ -65,8 +65,8 @@ class UserActivityDBAccess {
 
     public function searchUserActivity($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $result = $this->getSQLUserActivity($params);
 
         $data = array();
@@ -101,8 +101,8 @@ class UserActivityDBAccess {
 
         $DB_SESSION = SessionAccess::getInstance();
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $firstName = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";

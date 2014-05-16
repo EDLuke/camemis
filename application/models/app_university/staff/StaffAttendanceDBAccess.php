@@ -136,8 +136,8 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
         require_once 'models/app_university/schedule/TeacherScheduleDBAccess.php';
         $DB_ACCESS = TeacherScheduleDBAccess::getInstance();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $absentDate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";
 
         $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STAFF', 1);
@@ -364,7 +364,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         if (!$facette) {
             $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
-            $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
+            $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
         } else {
             $staffId = $facette->STAFF_ID;
             $actionType = $facette->ACTION_TYPE;
@@ -485,7 +485,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
         $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $object = isset($params["object"]) ? $params["object"] : "";
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : "";
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
         $searchSubjecttype = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
         $contract_type = isset($params["CONTRACT_TYPE"]) ? $params["CONTRACT_TYPE"] : "";
         
@@ -591,8 +591,8 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $data = array();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
 
         $result = self::sqlStaffAttendance($params);
 
@@ -647,8 +647,8 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $data = array();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $contract_type = isset($params["CONTRACT_TYPE"]) ? addText($params["CONTRACT_TYPE"]) : "";
 

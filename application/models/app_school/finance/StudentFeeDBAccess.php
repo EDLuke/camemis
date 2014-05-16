@@ -444,8 +444,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
     public static function jsonListStudentInvoicesGeneral($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $services = isset($params["services"]) ? $params["services"] : "0";
 
         $SQL = self::dbSelectAccess();
@@ -571,8 +571,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function jsonListStudentPayments($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
@@ -789,8 +789,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function jsonListStudentInvoicesTraining($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $services = isset($params["services"]) ? $params["services"] : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -905,7 +905,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         
         $searchService = isset($params["searchService"]) ? $params["searchService"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         
         $SELECTION_A = array(
@@ -1026,7 +1026,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $scholarship = isset($params["scholarship"]) ? $params["scholarship"] : "";
         $searchService = isset($params["searchService"]) ? $params["searchService"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         
         $result = self::getSQLSearchCasshStudent($params);
@@ -1145,8 +1145,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function searchCashStudent($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         //$result = self::getSQLSearchCasshStudent($params);
         $result = self::getSQLCheckCasshStudent($params);

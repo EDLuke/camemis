@@ -122,7 +122,7 @@ class LetterDBAccess {
 	*/
 	public function addPersonToLetter($params) {
 		$objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
-		$selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+		$selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
 		$selectedCount = 0;
 
 		if ($selectionIds) {
@@ -267,8 +267,8 @@ class LetterDBAccess {
 	* @return mixed array
 	*/
 	public function loadPersonLetter($params) {
-		$start = isset($params["start"]) ? $params["start"] : "0";
-		$limit = isset($params["limit"]) ? $params["limit"] : "50";
+		$start = isset($params["start"]) ? (int) $params["start"] : "0";
+		$limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
 		$data = array();
 		$i = 0;
@@ -561,8 +561,8 @@ class LetterDBAccess {
 	* @return array
 	*/
 	public function showListByLetter($params, $isJson = true) {
-		$start = $params["start"] ? $params["start"] : "0";
-		$limit = $params["limit"] ? $params["limit"] : "50";
+		$start = $params["start"] ? (int) $params["start"] : "0";
+		$limit = $params["limit"] ? (int) $params["limit"] : "50";
 
 		$result = $this->getAllLetterQuery($params);
 
@@ -629,8 +629,8 @@ class LetterDBAccess {
 	* @param mixed $params
 	*/
 	public function showAllStudentsOrStaffs($params) {
-		$start = isset($params["start"]) ? $params["start"] : "0";
-		$limit = isset($params["limit"]) ? $params["limit"] : "50";
+		$start = isset($params["start"]) ? (int) $params["start"] : "0";
+		$limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 		$objectId = isset($params["objectId"]) ? $params["objectId"] : "";
 		$personType = isset($params["personType"]) ? addText($params["personType"]) : "";
 		$type = isset($params["type"]) ? addText($params["type"]) : "";

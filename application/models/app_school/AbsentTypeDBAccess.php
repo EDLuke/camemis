@@ -160,7 +160,7 @@ class AbsentTypeDBAccess {
     {
 
         $name = isset($params["name"]) ? addText($params["name"]) : "";
-        $objectType = isset($params["objectType"]) ? $params["objectType"] : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
 
         $SQL = "
             INSERT INTO t_absent_type SET
@@ -202,7 +202,7 @@ class AbsentTypeDBAccess {
     {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $objectType = isset($params["objectType"]) ? $params["objectType"] : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
 
         $SQL = "";

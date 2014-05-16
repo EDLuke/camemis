@@ -213,7 +213,7 @@ class CopyScheduleDBAccess extends ScheduleDBAccess {
 
     public function jsonCopyDayClassEvent($params) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
         $targetshortday = isset($params["targetshortday"]) ? $params["targetshortday"] : false;
         $sourceshortday = isset($params["sourceshortday"]) ? $params["sourceshortday"] : false;
         $term = isset($params["term"]) ? addText($params["term"]) : false;

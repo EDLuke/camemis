@@ -134,7 +134,7 @@ class SubjectDBAccess {
 
         $status = isset($params["status"]) ? addText($params["status"]) : "0";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
 
         if ($gradeId)
@@ -188,7 +188,7 @@ class SubjectDBAccess {
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? $params["gradeSubjectGradId"] : "";
         //
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $checkUsed = false;
 
@@ -371,8 +371,8 @@ class SubjectDBAccess {
     {
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "0";
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $params["status"] = 1;
         $result = self::getAllSubjectsQuery($params);
@@ -453,8 +453,8 @@ class SubjectDBAccess {
     public function allSubjects($params, $forjson = true)
     {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
 
         $result = self::getAllSubjectsQuery($params);
 
@@ -576,7 +576,7 @@ class SubjectDBAccess {
 
         if (isset($params["FORMULA_TYPE"]))
         {
-            $SAVEDATA['FORMULA_TYPE'] = $params["FORMULA_TYPE"];
+            $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
         }
         else
         {
@@ -750,7 +750,7 @@ class SubjectDBAccess {
 
         $SQL = "
 		DELETE FROM t_subject
-		WHERE ID = '" . $params["objectId"] . "'
+		WHERE ID = '" . addText($params["objectId"]) . "'
 		";
         self::dbAccess()->query($SQL);
         return array("success" => true);
@@ -821,7 +821,7 @@ class SubjectDBAccess {
     public function treeSubjectsByClass($params)
     {
 
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "0";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "0";
 
         $result = self::sqlSubjectsByClass($classId, false, false);
 
@@ -1119,7 +1119,7 @@ class SubjectDBAccess {
     public function jsonSubjectsByClass($params)
     {
 
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
         $data = array();
 

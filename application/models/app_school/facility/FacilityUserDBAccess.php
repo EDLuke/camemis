@@ -280,8 +280,8 @@ class FacilityUserDBAccess {
     }
 
     public static function jsonAllCheckOutItems($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $type = isset($params["ACTION_TYPE"]) ? $params["ACTION_TYPE"] : "";
 
         $result = self::getSqlUserCheckOutItems($params);
@@ -583,8 +583,8 @@ class FacilityUserDBAccess {
     }
 
     public static function jsonAllNotReturnItems($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getSqlUserCheckOutItems($params);
         if ($params['objectId']) {
@@ -662,7 +662,7 @@ class FacilityUserDBAccess {
             $subparams['objectId'] = 'new';
             $subparams['facUserId'] = isset($params['facUserId']) ? $params['facUserId'] : '';
             $facUserObject = self::findFacilityUserById($params['facUserId']);
-            $subparams['type'] = isset($params['type']) ? $params['type'] : '';
+            $subparams['type'] = isset($params['type']) ? addText($params['type']) : '';
             $subparams['LOCATION'] = $newValue;
             $subparams['QUANTITY'] = 1;
             $subparams['DEADLINE'] = getShowDate($object->DEADLINE);

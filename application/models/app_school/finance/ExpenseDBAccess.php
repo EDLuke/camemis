@@ -148,7 +148,7 @@ class ExpenseDBAccess {
         $SAVEDATA['NAME'] = addText($params["name"]);
 
         if ($params["parentId"] > 0) {
-            $SAVEDATA['PARENT'] = $params["parentId"];
+            $SAVEDATA['PARENT'] = (int) $params["parentId"];
         } else {
             $SAVEDATA['PARENT'] = 0;
         }
@@ -310,8 +310,8 @@ class ExpenseDBAccess {
 
     public static function jsonSearchExpense($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::sqlSearchExpense($params);
         $i = 0;

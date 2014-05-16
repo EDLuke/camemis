@@ -61,8 +61,8 @@ class FacilityDBAccess {
     }
 
     public static function jsonSearchFacility($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getAllFacilityQuery($params);
 
@@ -126,7 +126,7 @@ class FacilityDBAccess {
 
     protected static function getAllFacilityType($params) {
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = self::dbAccess()->select();
@@ -217,7 +217,7 @@ class FacilityDBAccess {
         $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
         if ($objectId == 'new') {
-            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? $params["parentId"] : 0;
+            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
             self::dbAccess()->insert('t_facility_type', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
         } else {
@@ -299,7 +299,7 @@ class FacilityDBAccess {
 
     public static function getAllFacilityItem($params) {
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $facility_type = isset($params["type"]) ? addText($params["type"]) : "";
 
@@ -373,8 +373,8 @@ class FacilityDBAccess {
 
     public static function jsonLoadAvailableFacilityItem($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getItemFacilityItem($params);
 
@@ -564,7 +564,7 @@ class FacilityDBAccess {
     public static function jsonSaveFacilityItem($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
         $DELIVERED_DATE = isset($params["DELIVERED_DATE"]) ? $params["DELIVERED_DATE"] : '';
         $EXPIRED_WARRANTY = isset($params["EXPIRED_WARRANTY"]) ? $params["EXPIRED_WARRANTY"] : '';
 
@@ -720,7 +720,7 @@ class FacilityDBAccess {
 
     //@veasna
     public static function findFacilityStatus($params) {
-        $type = isset($params['type']) ? $params['type'] : '';
+        $type = isset($params['type']) ? addText($params['type']) : '';
         $facilityId = isset($params['facilityId']) ? $params['facilityId'] : '';
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility_user_item', '*');
@@ -742,8 +742,8 @@ class FacilityDBAccess {
 
     public static function jsonSearchFacilityItem($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = self::getAllFacilityItem($params);
 
@@ -846,7 +846,7 @@ class FacilityDBAccess {
     public static function importXLS($params) {
 
         $xls = new Spreadsheet_Excel_Reader($_FILES["xlsfile"]['tmp_name']);
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
         $parentObject = self::findFacilityItem($parentId);
 
         $importCount = 0;

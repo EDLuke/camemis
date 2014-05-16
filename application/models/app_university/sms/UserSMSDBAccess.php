@@ -81,8 +81,8 @@ class UserSMSDBAccess {
 
     public function jsonListUserSMS($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $result = $this->getListUserSMS($params);
         $data = array();

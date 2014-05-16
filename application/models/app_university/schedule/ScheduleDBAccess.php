@@ -162,7 +162,7 @@ class ScheduleDBAccess {
         $SAVEDATA = array();
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
         $shortDay = isset($params["shortday"]) ? addText($params["shortday"]) : false;
         $term = isset($params["term"]) ? addText($params["term"]) : false;
         $startTime = isset($params["START_TIME"]) ? addText($params["START_TIME"]) : false;
@@ -484,9 +484,9 @@ class ScheduleDBAccess {
 
         $single = isset($params["single"]) ? $params["single"] : "";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $shortday = isset($params["shortday"]) ? addText($params["shortday"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
@@ -643,10 +643,10 @@ class ScheduleDBAccess {
 
         $data = array();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
 
         ///@veasna
@@ -946,8 +946,8 @@ class ScheduleDBAccess {
     //@veasna
     public function availableGridRoom($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : '';
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $facette = self::findScheduleFromGuId($scheduleId);
@@ -1250,8 +1250,8 @@ class ScheduleDBAccess {
 
         $SAVEDATA = array();
         $Id = $params["scheduleId"] ? addText($params["scheduleId"]) : false;
-        $subjectId = $params["subjectId"] ? addText($params["subjectId"]) : false;
-        $academicId = $params["academicId"] ? addText($params["academicId"]) : false;
+        $subjectId = $params["subjectId"] ? (int) $params["subjectId"] : false;
+        $academicId = $params["academicId"] ? (int) $params["academicId"] : false;
         $term = $params["term"] ? addText($params["term"]) : false;
 
         $facette = self::findScheduleFromGuId($Id);
@@ -1271,7 +1271,7 @@ class ScheduleDBAccess {
     public function jsonDeleteAllClassEventByDay($params) {
 
         $shortday = $params["shortday"] ? addText($params["shortday"]) : false;
-        $academicId = $params["academicId"] ? addText($params["academicId"]) : false;
+        $academicId = $params["academicId"] ? (int) $params["academicId"] : false;
         $term = $params["term"] ? addText($params["term"]) : false;
 
         $entries = self::getSQLClassEvents($params);
@@ -1469,8 +1469,8 @@ class ScheduleDBAccess {
 
     public function jsonTeacherSchedule($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : false;
 
@@ -1902,8 +1902,8 @@ class ScheduleDBAccess {
 
     public static function jsonListTeacherCredit($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($objectId);
         $result = self::sqlTeachersCredit($params);
@@ -2035,8 +2035,8 @@ class ScheduleDBAccess {
 
         $data = array();
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 

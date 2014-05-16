@@ -142,8 +142,8 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
      
      public static function jsonListRoomSession($params, $isJson = true) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $startDate = isset($params["startDate"]) ? setDate2DB($params["startDate"]) : "";
         $endDate = isset($params["endDate"]) ? setDate2DB($params["endDate"]) : "";
         $academicType = isset($params["type"]) ? addText($params["type"]) : "GENERAL";
@@ -234,8 +234,8 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
     
     public function jsonShowRoomSession($params, $noJson = false) {
         
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "100";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $startdt = isset($params["startdt"]) ? substr($params["startdt"], 0, 10) : "";
         $enddt = isset($params["enddt"]) ? substr($params["enddt"], 0, 10) : "";
         $roomId = isset($params["objectId"]) ? addText($params["objectId"]) : "";

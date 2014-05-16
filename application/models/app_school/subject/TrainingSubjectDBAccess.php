@@ -158,8 +158,8 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         $data = array();
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $searchParams["target"] = "TRAINING";
         $searchParams["query"] = isset($params["query"]) ? addText($params["query"]) : "";
@@ -202,14 +202,14 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";  
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $classId = isset($params["classId"]) ? addText($params["classId"]) : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : ""; 
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : ""; 
         $nationalExam = isset($params["nationalExam"]) ? addText($params["nationalExam"]) : "";
         $subjectType = isset($params["subjectType"]) ? addText($params["subjectType"]) : "";
-        $include_in_evaluation = isset($params["include_in_evaluation"]) ? addText($params["include_in_evaluation"]) : "0";
+        $include_in_evaluation = isset($params["include_in_evaluation"]) ? (int) $params["include_in_evaluation"] : "0";
        
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
         
@@ -269,8 +269,8 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function jsonAssignedSubjectsByTraining($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $result = self::sqlAssignedSubjectsByTraining($params);
 
@@ -400,7 +400,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function removeGradeSubject($params) {
 
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
 
         if ($trainingId && $subjectId) {
             $SQL = "DELETE FROM 't_grade_subject'";
@@ -571,10 +571,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function jsonLoadTeachersBySubjectTraining($params) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : 0;
 
         $SELECTION_A = array(
@@ -626,7 +626,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function actionSubjectTrainingTeacherClass($params) {
 
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $teacherId = isset($params["id"]) ? addText($params["id"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
 
@@ -711,8 +711,8 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function jsonTeacherTraining($params, $isJson = true) {
 
-        $start = $params["start"] ? $params["start"] : "0";
-        $limit = $params["limit"] ? $params["limit"] : "50";
+        $start = $params["start"] ? (int) $params["start"] : "0";
+        $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
         $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
@@ -841,8 +841,8 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public static function jsonTeacherByStudentTraining($params) {
 
         $data = array();
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $trainingId = "";
@@ -925,7 +925,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $selectionIds = $params["selectionIds"];
         $trainingId = $params["trainingId"];
         $subjectId = $params["subjectId"];
-        $parentId = $params["parentId"];
+        $parentId = (int) $params["parentId"];
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
 
@@ -983,7 +983,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function jsonSubjectAssignmentTraining($params) {
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
 
         $SQL = "SELECT ID,CONCAT('(',SHORT,') ',NAME) AS NAME";
@@ -1120,9 +1120,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     }
      public function getAllAssignmentQuery($params) {
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $includeInEvaluation = isset($params["includeInEvaluation"]) ? $params["includeInEvaluation"] : "";
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);

@@ -403,7 +403,7 @@ class UserCalendarDBAccess {
     }
 
     public function sqlSchoolEvent($params) {
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $current_academicId = isset($params["current_academicId"]) ? addText($params["current_academicId"]) : "";

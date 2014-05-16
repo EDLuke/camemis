@@ -74,7 +74,7 @@ class DepartmentDBAccess {
 
     public static function getAllDepartmentsQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = "";
@@ -160,7 +160,7 @@ class DepartmentDBAccess {
     public function jsonSaveDepartment($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
 
         $SAVEDATA = array();
 

@@ -688,7 +688,7 @@ class AcademicDBAccess {
 
     public function searchClass($params) {
 
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : 0;
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : 0;
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : 0;
         $leftClass = isset($params["leftClass"]) ? $params["leftClass"] : '';
 
@@ -1078,7 +1078,7 @@ class AcademicDBAccess {
 
     public function jsonEnrollmentType($params) {
 
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : 0;
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : 0;
         $facette = self::findGradeFromId($gradeId);
 
         $data = array();
@@ -1127,7 +1127,7 @@ class AcademicDBAccess {
     public function actionScoreDuration($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $actionType = isset($params["actionType"]) ? $params["actionType"] : 0;
+        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : 0;
 
         $UPDATE_VALUES['MODIFY_DATE'] = getCurrentDBDateTime();
         $UPDATE_VALUES['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -1461,10 +1461,10 @@ class AcademicDBAccess {
 
     public function jsonCheckTeacherScoreEnter($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
         $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
@@ -1601,8 +1601,8 @@ class AcademicDBAccess {
 
     public static function jsonInstructorsByClass($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $academicId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -2050,8 +2050,8 @@ class AcademicDBAccess {
     }
 
     public static function jsonListSubClass($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $facette = self::findGradeFromId($objectId);

@@ -135,7 +135,7 @@ class CamemisTypeDBAccess {
         $readonly = isset($params["readOnly"]) ? addText($params["readOnly"]) : ''; //@veasna
 
         $facette = self::findObjectFromId($objectId);
-        $objectType = isset($params["objectType"]) ? $params["objectType"] : 0;
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : 0;
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('t_camemis_type'));
@@ -285,7 +285,7 @@ class CamemisTypeDBAccess {
     public static function jsonSaveCamemisType($params)
     {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
 
         $SAVEDATA = array();
 

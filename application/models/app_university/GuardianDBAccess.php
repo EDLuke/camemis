@@ -233,8 +233,8 @@ class GuardianDBAccess {
     }
 
     public static function jsonSearchStudentGuardian($params) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $data = array();
         $i = 0;
@@ -294,8 +294,8 @@ class GuardianDBAccess {
     public static function jsonLoadStudentGuardian($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
         $i = 0;
 
@@ -341,7 +341,7 @@ class GuardianDBAccess {
     public static function jsonActionAddStudentToGuardian($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $selectedCount = 0;
 
         if ($selectionIds) {
@@ -365,8 +365,8 @@ class GuardianDBAccess {
 
     public static function jsonLoadActiveStudentsForGuardian($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $data = array();

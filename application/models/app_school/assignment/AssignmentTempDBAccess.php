@@ -166,7 +166,7 @@ class AssignmentTempDBAccess {
 
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -395,8 +395,8 @@ class AssignmentTempDBAccess {
 
         $selectionIds = $params["selectionIds"];
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($academicObject)
@@ -535,7 +535,7 @@ class AssignmentTempDBAccess {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $includeInEvaluation = isset($params["includeInEvaluation"]) ? $params["includeInEvaluation"] : 0;
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
 
         //$classObject = AcademicDBAccess::findGradeFromId($classId);
@@ -610,7 +610,7 @@ class AssignmentTempDBAccess {
     {
 
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
         switch ($facette->OBJECT_TYPE)
         {
@@ -654,7 +654,7 @@ class AssignmentTempDBAccess {
     public static function findAssignmentJoinCategory($Id = false)
     {
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $assignment = isset($params["assignmentId"]) ? $params["assignmentId"] : "";
         $SQL = "";
         $SQL .= " SELECT ";

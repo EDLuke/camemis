@@ -183,7 +183,7 @@
 
         public static function jsonTreeAllTrainings($params) {
 
-            //$objectTypeLevel = isset($params["objectType"]) ? $params["objectType"] : false;
+            //$objectTypeLevel = isset($params["objectType"]) ? addText($params["objectType"]) : false;
             $children = isset($params["children"]) ? $params["children"] : false;
             $node = isset($params["node"]) ? addText($params["node"]) : 0;
             $objectTypeLevel = self::getObjectTypeLevelByParentId($node);

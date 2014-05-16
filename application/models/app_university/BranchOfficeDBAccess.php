@@ -109,7 +109,7 @@ class BranchOfficeDBAccess {
     public static function updateObject($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $email = isset($params["EMAIL"]) ? addText($params["EMAIL"]) : "";
         $phone = isset($params["PHONE"]) ? addText($params["PHONE"]) : "";

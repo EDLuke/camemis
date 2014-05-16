@@ -95,7 +95,7 @@ class CampusScheduleDBAccess extends ScheduleDBAccess {
 
     public function getSqlCampusSchedule($params, $groupBy = false) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $currentTerm = isset($params["currentTerm"]) ? addText($params["currentTerm"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $eventDay = isset($params["eventDay"]) ? setFormatDate($params["eventDay"]) : getCurrentDBDate();
@@ -250,7 +250,7 @@ class CampusScheduleDBAccess extends ScheduleDBAccess {
 
     public function campusEventList($params , $isJson = true) {
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
         $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";

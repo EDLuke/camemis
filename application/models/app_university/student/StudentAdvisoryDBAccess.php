@@ -128,8 +128,8 @@ class StudentAdvisoryDBAccess {
     }
 
     public static function jsonSearchStudentAdvisory($params, $isJson = true) {
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $data = array();
         $i = 0;
@@ -192,8 +192,8 @@ class StudentAdvisoryDBAccess {
 
     public static function jsonLoadStudentAdvisory($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
         $i = 0;
 
@@ -249,7 +249,7 @@ class StudentAdvisoryDBAccess {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
 
         if (isset($params["ADVISORY_TYPE"]))
-            $SAVEDATA["ADVISORY_TYPE"] = $params["ADVISORY_TYPE"];
+            $SAVEDATA["ADVISORY_TYPE"] = addText($params["ADVISORY_TYPE"]);
 
         if ($objectId == "new") {
             $SAVEDATA['ADVISED_DATE'] = getCurrentDBDateTime();
@@ -279,7 +279,7 @@ class StudentAdvisoryDBAccess {
     public static function jsonActionAddStudentToAdvisory($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
-        $selectionIds = isset($params["selectionIds"]) ? $params["selectionIds"] : "";
+        $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
         $selectedCount = 0;
 
         if ($selectionIds) {
@@ -315,8 +315,8 @@ class StudentAdvisoryDBAccess {
 
     public static function jsonLoadAllActiveStudents($params) {
 
-        $start = isset($params["start"]) ? $params["start"] : "0";
-        $limit = isset($params["limit"]) ? $params["limit"] : "50";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $data = array();

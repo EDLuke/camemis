@@ -56,8 +56,8 @@
 
         public function jsonAllDatabases($params) {
 
-            $start = $params["start"] ? $params["start"] : "0";
-            $limit = $params["limit"] ? $params["limit"] : "50";
+            $start = $params["start"] ? (int) $params["start"] : "0";
+            $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
             $result = $this->allDatabasesQuery($params);
 

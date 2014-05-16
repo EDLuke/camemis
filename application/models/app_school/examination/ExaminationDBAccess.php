@@ -128,8 +128,8 @@ class ExaminationDBAccess {
         $status = isset($params["status"]) ? addText($params["status"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
         $startDate = isset($params["start"]) ? setDate2DB($params["start"]) : "";
         $endDate = isset($params["end"]) ? setDate2DB($params["end"]) : "";
 
@@ -426,7 +426,7 @@ class ExaminationDBAccess {
         $errors = array();
 
         $assignmentId = isset($params["CHOOSE_ASSIGNMENT"]) ? $params["CHOOSE_ASSIGNMENT"] : "";
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
         $subjectId = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
@@ -434,7 +434,7 @@ class ExaminationDBAccess {
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $startTime = isset($params["START_TIME"]) ? timeStrToSecond($params["START_TIME"]) : "";
         $endTime = isset($params["END_TIME"]) ? timeStrToSecond($params["END_TIME"]) : "";
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : ""; //@veasna
+        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : ""; //@veasna
 
         $facette = self::findExamFromId($objectId);
 
@@ -550,7 +550,7 @@ class ExaminationDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $roomId = isset($params["CHOOSE_ROOM"]) ? $params["CHOOSE_ROOM"] : "";
-        $parentId = isset($params["parentId"]) ? $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
 
         $facette = self::findExamFromId($parentId);
 
@@ -614,7 +614,7 @@ class ExaminationDBAccess {
         $DB_GRADE_SUBJECT = GradeSubjectDBAccess::getInstance();
         $result = $DB_GRADE_SUBJECT->sqlAssignedSubjectsByGrade($params);
 
-        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : "";
+        $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 
         $CHECK_SUBJECT = self::checkUsedExamSubject($gradeId, $schoolyearId, 1);
