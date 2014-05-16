@@ -167,6 +167,20 @@ abstract class CamemisExportDBAccess {
         )));
     }
 
+    /**
+     * 
+     * @param type $Id
+     * @return type
+     * $sheet->setCellValue('A1','A pretty long sentence that deserves to be in a merged cell');
+$sheet->mergeCells('A1:C1');
+     */
+    public function setCellMergeContent($col, $row, $content){
+        $this->EXCEL->setCellValue('A1','A pretty long sentence that deserves to be in a merged cell');
+        $this->EXCEL->getActiveSheet()
+                ->setCellValueByColumnAndRow($col, $row, $content, false);
+        $sheet->mergeCells('A1:C1');
+    }
+            
     public static function getStudentObject($Id)
     {
         $SQL = UserAuth::dbAccess()->select()
