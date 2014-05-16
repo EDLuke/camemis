@@ -15,7 +15,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
 
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $teacherId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 
 $ENTRIES = SubjectDBAccess::sqlSubjectsByTraining($trainingId, false, false);

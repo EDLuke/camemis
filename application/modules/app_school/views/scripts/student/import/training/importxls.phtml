@@ -31,7 +31,7 @@ $TRAINING_TREE->setSaveUrl('/training/jsonsave/');
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $disabledButton = $this->facette > 0 ? false : true; //@Math Man
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();

@@ -12,7 +12,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
 
