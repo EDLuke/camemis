@@ -150,10 +150,12 @@ Ext.onReady(function() {
             ,subjectId: '".$this->subjectId."'
             ,objectId: '".$this->objectId."'
         ");
-       
+        
         $OBJECT_FORM->setonEmbeddedEvents("
             window.parent.Ext.getCmp('SUBJECTREPORT_LIST_ID').store.reload();
-            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            var result = Ext.util.JSON.decode(action.response.responseText); 
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
         ");
         
         $OBJECT_FORM->setOnEmbeddedRemoveEvents("
