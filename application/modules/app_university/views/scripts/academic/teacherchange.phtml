@@ -23,7 +23,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $oldTeacherId = isset($_GET["oldTeacherId"])? addText($_GET["oldTeacherId"]):"";
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 
 $teacherObject = StaffDBAccess::findStaffFromId($oldTeacherId);
 $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);

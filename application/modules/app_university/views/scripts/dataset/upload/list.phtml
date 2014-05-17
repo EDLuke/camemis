@@ -22,7 +22,7 @@ $OBJECT_GRID->setLoadUrl('/dataset/jsonload/');
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $object = isset($_GET["object"])?addText($_GET["object"]):"";
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 

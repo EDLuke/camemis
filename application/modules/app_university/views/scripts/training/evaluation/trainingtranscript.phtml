@@ -23,7 +23,7 @@ $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 
 $VIEWPORT = new CamemisViewport();
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $trainingId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";

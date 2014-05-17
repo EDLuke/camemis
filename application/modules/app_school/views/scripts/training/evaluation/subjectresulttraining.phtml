@@ -30,7 +30,7 @@ $STUDENT_ASSIGNMENT->trainingObject = $trainingObject;
 
 $entries = $STUDENT_ASSIGNMENT->listAssignmentsByTraining();
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";  
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();

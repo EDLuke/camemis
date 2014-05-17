@@ -27,7 +27,7 @@ $OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
 $gradingterm = isset($_GET["gradingterm"])? addText($_GET["gradingterm"]):"";
 $gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";

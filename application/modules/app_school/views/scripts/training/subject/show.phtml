@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("TRAINING");
 $OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
 $OBJECT_FORM ->setLoadUrl("/training/jsonload/");
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

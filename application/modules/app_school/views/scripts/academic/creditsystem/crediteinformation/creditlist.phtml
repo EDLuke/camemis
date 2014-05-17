@@ -25,7 +25,7 @@ $lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
 $gender = isset($_GET["gender"])?$_GET["gender"]:"";
 
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $creditStatus = isset($_GET["creditStatus"])?$_GET["creditStatus"]:"";
 $creditNumber = isset($_GET["creditNumber"])?$_GET["creditNumber"]:"";
 

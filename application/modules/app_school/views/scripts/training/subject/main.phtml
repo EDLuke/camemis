@@ -15,7 +15,7 @@ require_once 'include/Common.inc.php';
 require_once 'utiles/Utiles.php';
 require_once setUserLoacalization();
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";  
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";  
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();    
 

@@ -14,7 +14,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

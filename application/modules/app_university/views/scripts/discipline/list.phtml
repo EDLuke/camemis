@@ -22,7 +22,7 @@ $OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
 $OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
 $view=isset($_GET['view'])? $_GET['view']:0;
 
-$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 

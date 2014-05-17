@@ -19,7 +19,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $ATTACHMENT_ITEMS = "[{".CamemisField::Uploadfield("uploaded_file_1", false)."}]";
 
-$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 

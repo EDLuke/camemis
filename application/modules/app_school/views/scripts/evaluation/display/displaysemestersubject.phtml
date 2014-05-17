@@ -17,7 +17,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $studentId = isset($_GET["studentId"])?addText($_GET["studentId"]):"";
-$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);

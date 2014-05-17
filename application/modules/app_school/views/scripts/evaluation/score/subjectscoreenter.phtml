@@ -20,6 +20,8 @@ $OBJECT_GRID->setLoadUrl("/evaluation/jsonload/");
 $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
+$setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
+
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
@@ -276,6 +278,7 @@ Ext.onReady(function() {
     
     $importParams = $setParams;
     $importParams .= "&target=subjectscoreenter";
+    $importParams .= "&setId=".$setId."";
     
     $OBJECT_GRID->addTBarItems("
         tbar.add(['-',{
