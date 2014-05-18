@@ -10,15 +10,13 @@ require_once 'models/export/CamemisExportDBAccess.php';
 
 class ScheduleExportDBAccess extends CamemisExportDBAccess {
 
-    function __construct($academicId, $trainingId)
-    {
+    function __construct($academicId, $trainingId) {
         $this->academicId = $academicId;
         $this->trainingId = $trainingId;
         parent::__construct();
     }
 
-    public function setWeekContentHeader()
-    {
+    public function setWeekContentHeader() {
 
         $this->setCellContent(0, $this->startHeader, TIME);
         $this->setCellStyle(0, $this->startHeader, 20, 40);
@@ -61,13 +59,10 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
         $this->setFullStyle(6, $this->startHeader, "DFE3E8");
     }
 
-    public function setWeekContent($searchParams)
-    {
+    public function setWeekContent($searchParams) {
         $entries = $this->DB_WEEKSCHEDULE->loadClassEvents($searchParams, false);
-        if ($entries)
-        {
-            for ($i = 0; $i <= count($entries); $i++)
-            {
+        if ($entries) {
+            for ($i = 0; $i <= count($entries); $i++) {
                 $j = $i + $this->startContent();
 
                 $TIME = isset($entries[$i]["TIME"]) ? $entries[$i]["TIME"] : "";
@@ -104,48 +99,42 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
                 $this->setFullStyle(0, $j, "FFFFFF");
                 $this->setCellStyle(0, $j, false, 80);
 
-                if ($MO)
-                {
+                if ($MO) {
                     $this->setCellContent(1, $j, $MO);
                     $this->setFontStyle(1, $j, false, 9, $MO_COLOR_FONT);
                     $this->setFullStyle(1, $j, $MO_COLOR);
                     $this->setCellStyle(1, $j, false, 80);
                 }
 
-                if ($TU)
-                {
+                if ($TU) {
                     $this->setCellContent(2, $j, $TU);
                     $this->setFontStyle(2, $j, false, 9, $TU_COLOR_FONT);
                     $this->setFullStyle(2, $j, $TU_COLOR);
                     $this->setCellStyle(2, $j, false, 80);
                 }
 
-                if ($WE)
-                {
+                if ($WE) {
                     $this->setCellContent(3, $j, $WE);
                     $this->setFontStyle(3, $j, false, 9, $WE_COLOR_FONT);
                     $this->setFullStyle(3, $j, $WE_COLOR);
                     $this->setCellStyle(3, $j, false, 80);
                 }
 
-                if ($TH)
-                {
+                if ($TH) {
                     $this->setCellContent(4, $j, $TH);
                     $this->setFontStyle(4, $j, false, 9, $TH_COLOR_FONT);
                     $this->setFullStyle(4, $j, $TH_COLOR);
                     $this->setCellStyle(4, $j, false, 80);
                 }
 
-                if ($FR)
-                {
+                if ($FR) {
                     $this->setCellContent(5, $j, $FR);
                     $this->setFontStyle(5, $j, false, 9, $FR_COLOR_FONT);
                     $this->setFullStyle(5, $j, $FR_COLOR);
                     $this->setCellStyle(5, $j, false, 80);
                 }
 
-                if ($SA)
-                {
+                if ($SA) {
                     $this->setCellContent(6, $j, $SA);
                     $this->setFontStyle(6, $j, false, 9, $SA_COLOR_FONT);
                     $this->setFullStyle(6, $j, $SA_COLOR);
@@ -158,8 +147,7 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //DAY SCHEDULE....
     ////////////////////////////////////////////////////////////////////////////
-    public function setDayContentHeader()
-    {
+    public function setDayContentHeader() {
 
         $this->setCellContent(0, $this->startHeader, TIME);
         $this->setCellStyle(0, $this->startHeader, 20, 40);
@@ -187,13 +175,10 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
         $this->setFullStyle(4, $this->startHeader, "DFE3E8");
     }
 
-    public function setDayContent($searchParams)
-    {
+    public function setDayContent($searchParams) {
         $entries = $this->DB_DAYSCHEDULE->dayEventList($searchParams, false);
-        if ($entries)
-        {
-            for ($i = 0; $i <= count($entries); $i++)
-            {
+        if ($entries) {
+            for ($i = 0; $i <= count($entries); $i++) {
                 $j = $i + $this->startContent();
 
                 $TIME = isset($entries[$i]["TIME"]) ? $entries[$i]["TIME"] : "";
@@ -204,36 +189,31 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
                 $COLOR_FONT = isset($entries[$i]["COLOR_FONT"]) ? $entries[$i]["COLOR_FONT"] : "";
                 $COLOR = isset($entries[$i]["COLOR"]) ? $entries[$i]["COLOR"] : "";
 
-                if ($TIME)
-                {
+                if ($TIME) {
                     $this->setCellContent(0, $j, $TIME);
                     $this->setFontStyle(0, $j, true, 9, substr($COLOR_FONT, 1));
                     $this->setFullStyle(0, $j, substr($COLOR, 1));
                 }
 
-                if ($EVENT)
-                {
+                if ($EVENT) {
                     $this->setCellContent(1, $j, $EVENT);
                     $this->setFontStyle(1, $j, false, 9, substr($COLOR_FONT, 1));
                     $this->setFullStyle(1, $j, substr($COLOR, 1));
                 }
 
-                if ($TEACHER)
-                {
+                if ($TEACHER) {
                     $this->setCellContent(2, $j, $TEACHER);
                     $this->setFontStyle(2, $j, false, 9, substr($COLOR_FONT, 1));
                     $this->setFullStyle(2, $j, substr($COLOR, 1));
                 }
 
-                if ($ROOM)
-                {
+                if ($ROOM) {
                     $this->setCellContent(3, $j, $ROOM);
                     $this->setFontStyle(3, $j, false, 9, substr($COLOR_FONT, 1));
                     $this->setFullStyle(3, $j, substr($COLOR, 1));
                 }
 
-                if ($STATUS)
-                {
+                if ($STATUS) {
                     $this->setCellContent(4, $j, $STATUS);
                     $this->setFontStyle(4, $j, false, 9, substr($COLOR_FONT, 1));
                     $this->setFullStyle(4, $j, substr($COLOR, 1));
@@ -248,8 +228,7 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function dayEventList($encrypParams)
-    {
+    public function dayEventList($encrypParams) {
         $searchParams = Utiles::setPostDecrypteParams($encrypParams);
 
         $this->EXCEL->setActiveSheetIndex(0);
@@ -263,8 +242,7 @@ class ScheduleExportDBAccess extends CamemisExportDBAccess {
         );
     }
 
-    public function loadClassEvents($encrypParams)
-    {
+    public function loadClassEvents($encrypParams) {
         $searchParams = Utiles::setPostDecrypteParams($encrypParams);
 
         $this->EXCEL->setActiveSheetIndex(0);

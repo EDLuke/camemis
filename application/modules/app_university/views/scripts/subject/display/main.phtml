@@ -34,12 +34,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $PENEL_ITEMS = Array();
         
-        $GOALS = "{
-            title: '".GOALS."'
+        $ONLINE_COURSE = "{
+            title: '".ONLINE_COURSE."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'GOALS', url: '/subject/subjectdisplay/?setId=".$setId."&field=GOALS&object=gradesubject'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'GOALS', url: ''})]
         }";
-        $PENEL_ITEMS[] = $GOALS;
+        
+        if (Zend_Registry::get('SCHOOL')->AVAILABLE_ELEARNING == 2) {
+            $PENEL_ITEMS[] = $ONLINE_COURSE;
+        }
         
         $OBJECTIVES = "{
             title: '".OBJECTIVES."'
