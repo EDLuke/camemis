@@ -280,6 +280,7 @@ class SQLEvaluationStudentSubject {
             , "SUBJECT_ID='" . $stdClass->subjectId . "'")
         );
     }
+
 }
 
 ?>

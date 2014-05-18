@@ -64,6 +64,9 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
         if (isset($params["CONTENT"]))
             $this->content = addText($params["CONTENT"]);
+        
+        if (isset($params["tmp_name"]))
+            $this->tmp_name = $params["tmp_name"];
     }
 
     public function jsonListStudentSubjectAssignments($encrypParams) {
@@ -245,7 +248,10 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
     }
 
     public function jsonScoreImport($encrypParams) {
+
         $params = Utiles::setPostDecrypteParams($encrypParams);
+        $params["tmp_name"] = $_FILES["xlsfile"]['tmp_name'];
+
         $this->setParams($params);
         $this->actionScoreImport();
 

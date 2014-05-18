@@ -30,7 +30,7 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $this->evaluation->setTerm($this->term);
         $this->evaluation->setMonthYear($this->monthyear);
 
-        $this->startHeader = 3;
+        $this->startHeader = 2;
         parent::__construct();
     }
 
@@ -75,9 +75,16 @@ class myExportDBAccess extends CamemisExportDBAccess {
             $content .= getShowDate($this->date);
             $content .= "\r";
         }
+        
+        if($this->monthyear){
+            $content .= diplayNameMonthYear($this->monthyear);
+            $content .= "\r";
+        }
 
         $content .= $this->evaluation->getSubject()->SUBJECT_NAME;
-
+        $content .= "\r";
+        $content .= $this->evaluation->getSubjectScorePossible();
+        
         if ($this->assignmentId) {
             $content .= "\r";
             $content .= $this->evaluation->getAssignment()->NAME;
@@ -88,35 +95,20 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $this->setFullStyle(0, 1, "FFFFFF");
         $this->setCellStyle(0, 1, false, 100, false);
 
-        $this->setCellContent(0, 2, "CODE_ID");
+        $this->setCellContent(0, 2, CODE_ID);
         $this->setFontStyle(0, 2, true, 11, "000000");
         $this->setFullStyle(0, 2, "DFE3E8");
-        $this->setCellStyle(0, 2, 20, 25);
+        $this->setCellStyle(0, 2, 20, 30);
 
-        $this->setCellContent(1, 2, "STUDENT");
+        $this->setCellContent(1, 2, STUDENT);
         $this->setFontStyle(1, 2, true, 11, "000000");
         $this->setFullStyle(1, 2, "DFE3E8");
-        $this->setCellStyle(1, 2, 30, 25);
+        $this->setCellStyle(1, 2, 30, 30);
 
-        $this->setCellContent(2, 2, "SCORE");
+        $this->setCellContent(2, 2, SCORE);
         $this->setFontStyle(2, 2, true, 11, "000000");
         $this->setFullStyle(2, 2, "DFE3E8");
-        $this->setCellStyle(2, 2, 20, 25);
-
-        $this->setCellContent(0, 3, CODE_ID);
-        $this->setFontStyle(0, 3, true, 11, "FFFFFF");
-        $this->setFullStyle(0, 3, "2B65EC");
-        $this->setCellStyle(0, 3, 20, 30);
-
-        $this->setCellContent(1, 3, STUDENT);
-        $this->setFontStyle(1, 3, true, 11, "FFFFFF");
-        $this->setFullStyle(1, 3, "2B65EC");
-        $this->setCellStyle(1, 3, 30, 30);
-
-        $this->setCellContent(2, 3, SCORE);
-        $this->setFontStyle(2, 3, true, 11, "FFFFFF");
-        $this->setFullStyle(2, 3, "2B65EC");
-        $this->setCellStyle(2, 3, 20, 30);
+        $this->setCellStyle(2, 2, 20, 30);
     }
 
     public function setTableContent() {

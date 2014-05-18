@@ -15,6 +15,7 @@ $academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
 $subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $assignmentId = isset($_GET["assignmentId"])? (int)$_GET["assignmentId"]:"";
 $date = isset($_GET["date"])?addText($_GET["date"]):"";
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
@@ -37,6 +38,11 @@ $setParams .= "&term=".$term."";
 if($setId)
 $setParams .= "&setId=".$setId."";
 
+if($monthyear){
+    $setParams .= "&monthyear=".$monthyear."";
+    $setParams .= "&section=1";
+}
+
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
@@ -57,7 +63,6 @@ $formItems = "[";
         }
     }
     ";
-    $formItems.= ",{".CamemisField::Datefield('CREATED_DATE',CREATED_DATE,false)."}";
     $formItems .= "]";
 
     $FORM_TBAR = "";
@@ -83,7 +88,13 @@ $formItems = "[";
     $FORM_TBAR .= ",waitMsg: 'Uploading your file...'";
     $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
     $FORM_TBAR .= ",success: function(response, options) {";
-    $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    
+    if($setId){
+        $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    }else{
+        $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    }
+    
     $FORM_TBAR .= "}";
     $FORM_TBAR .= ",failure: function(response, options) { console.log('fail'); }";
     $FORM_TBAR .= "});";
