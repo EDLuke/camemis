@@ -89,7 +89,7 @@ $formItems = "[";
     $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
     $FORM_TBAR .= ",success: function(response, options) {";
     
-    if($setId){
+    if($target == "subjectassignments"){
         $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
     }else{
         $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";

@@ -1198,12 +1198,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         if ($this->getSettingEvaluationOption()) {
             
             $stdClass->term = $this->term;
+            $stdClass->month = $this->getMonth();
+            $stdClass->year = $this->getYear();
+            
             if ($this->term) {
                 $stdClass->section = $this->getNameSectionByTerm();
             }
 
-            $stdClass->month = $this->getMonth();
-            $stdClass->year = $this->getYear();
+            if($stdClass->month && $stdClass->year){
+                $stdClass->section = "MONTH";
+            }
+            
             SQLEvaluationImport::importScoreSubject($stdClass);
         } else {
             $stdClass->assignmentId = $this->assignmentId;
