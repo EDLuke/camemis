@@ -247,7 +247,7 @@ class CommunicationDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $SQL = "";
         $SQL .= "
@@ -498,7 +498,7 @@ class CommunicationDBAccess {
             $SAVEDATA['SUBJECT'] = isset($params["SUBJECT"]) ? addText($params["SUBJECT"]) : "";
 
         if (isset($params["academicId"]))
-            $SAVEDATA['CLASS_ID'] = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+            $SAVEDATA['CLASS_ID'] = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         if (isset($params["parentId"])) {
 

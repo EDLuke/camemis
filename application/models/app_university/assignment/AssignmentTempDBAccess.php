@@ -196,7 +196,7 @@ class AssignmentTempDBAccess {
         $type = isset($params["type"]) ? addText($params["type"]) : 1;
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         $gradeId = "";
@@ -375,7 +375,7 @@ class AssignmentTempDBAccess {
 
         $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         if (strpos($assignmentId, "_") !== false) {
             $explode = explode("_", $assignmentId);

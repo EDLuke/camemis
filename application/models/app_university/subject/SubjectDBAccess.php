@@ -135,7 +135,7 @@ class SubjectDBAccess {
         $staffId = isset($params["setId"]) ? $params["setId"] : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "0";
         $department = isset($params["department"]) ? $params["department"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $parent = isset($params["node"]) ? addText($params["node"]) : "";
         $node = isset($params["node"]) ? addText($params["node"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
@@ -204,7 +204,7 @@ class SubjectDBAccess {
 
         $staffId = isset($params["setId"]) ? $params["setId"] : "";
         $department = isset($params["department"]) ? $params["department"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $requisiteId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? $params["gradeSubjectGradId"] : "";
@@ -854,7 +854,7 @@ class SubjectDBAccess {
     public function treeSubjectsByClass($params)
     {
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
         $result = self::sqlSubjectsByClass($academicId, false, false);
 
@@ -1181,7 +1181,7 @@ class SubjectDBAccess {
     public function jsonSubjectsByClass($params)
     {
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $data = array();
 

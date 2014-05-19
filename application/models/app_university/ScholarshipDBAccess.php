@@ -61,7 +61,7 @@ class ScholarshipDBAccess {
 
     public static function getSQLStudentEnrollmentScholarship($params) {
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $globalSearch = isset($params["globalSearch"]) ? addText($params["globalSearch"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";

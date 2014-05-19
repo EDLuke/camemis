@@ -150,7 +150,7 @@ class AssignmentDBAccess {
     public function actionAssignment($params)
     {
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
         if (substr($params["objectId"], 8))
         {
@@ -227,7 +227,7 @@ class AssignmentDBAccess {
     {
 
         $subjectId = $params["subjectId"] ? (int) $params["subjectId"] : "0";
-        $academicId = $params["academicId"] ? (int) $params["academicId"] : "0";
+        $academicId = $params["academicId"] ? addText($params["academicId"]) : "0";
 
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -251,7 +251,7 @@ class AssignmentDBAccess {
 
         $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "0";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "0";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "0";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "0";
 
@@ -394,7 +394,7 @@ class AssignmentDBAccess {
     {
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 
@@ -631,7 +631,7 @@ class AssignmentDBAccess {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $displayDate = isset($params["displayDate"]) ? $params["displayDate"] : "";
 
         $classObject = AcademicDBAccess::findGradeFromId($academicId);

@@ -51,7 +51,7 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
         $result = StudentAcademicDBAccess::getQueryStudentEnrollment($academicId, $globalSearch, false, false);
@@ -109,7 +109,7 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
 
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $term = isset($params["field"]) ? addText($params["field"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";

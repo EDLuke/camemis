@@ -75,7 +75,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "0";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $classId = $academicObject ? $academicObject->ID : 0;
@@ -209,7 +209,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
 
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $term = isset($params["field"]) ? addText($params["field"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $teacherId = isset($params["id"]) ? addText($params["id"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
 

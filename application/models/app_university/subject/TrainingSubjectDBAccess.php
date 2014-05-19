@@ -195,7 +195,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";  
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : ""; 

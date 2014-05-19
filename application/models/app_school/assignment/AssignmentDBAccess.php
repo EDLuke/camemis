@@ -395,7 +395,7 @@ class AssignmentDBAccess {
     {
 
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
@@ -632,7 +632,7 @@ class AssignmentDBAccess {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);

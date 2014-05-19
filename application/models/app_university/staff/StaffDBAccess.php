@@ -1728,7 +1728,7 @@ class StaffDBAccess {
         $data = array();
         $term = isset($params["gradingterm"]) ? $params["gradingterm"] : "";
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $classIds = isset($params["classIds"]) ? addText($params["classIds"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";

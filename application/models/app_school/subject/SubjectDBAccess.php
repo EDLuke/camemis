@@ -188,7 +188,7 @@ class SubjectDBAccess {
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? $params["gradeSubjectGradId"] : "";
         //
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $checkUsed = false;
 

@@ -1325,7 +1325,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
-        $academicId = $params["academicId"] ? (int) $params["academicId"] : "0";
+        $academicId = $params["academicId"] ? addText($params["academicId"]) : "0";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);

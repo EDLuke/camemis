@@ -246,7 +246,7 @@ class SubjectHomeworkDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : ""; //@soda $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : ""; //@soda $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
@@ -305,7 +305,7 @@ class SubjectHomeworkDBAccess {
     }
 
     public static function jsonAddSubjectHomework($params) {
-        $classId = isset($params["academicId"]) ? (int) $params["academicId"] : ""; //@soda   $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $classId = isset($params["academicId"]) ? addText($params["academicId"]) : ""; //@soda   $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $title = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
         $content = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "";

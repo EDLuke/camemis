@@ -434,7 +434,7 @@ class ExaminationDBAccess {
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $startTime = isset($params["START_TIME"]) ? timeStrToSecond($params["START_TIME"]) : "";
         $endTime = isset($params["END_TIME"]) ? timeStrToSecond($params["END_TIME"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : ""; //@veasna
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : ""; //@veasna
 
         $facette = self::findExamFromId($objectId);
 
