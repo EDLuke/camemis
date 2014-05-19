@@ -17,42 +17,35 @@ class SubjectDBAccess {
     public $data = array();
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->SELECT = self::dbAccess()->select();
         $this->_TOSTRING = $this->SELECT->__toString();
         $this->DB_ACADEMIC = AcademicDBAccess::getInstance();
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public function getSubjectDataFromId($Id)
-    {
+    public function getSubjectDataFromId($Id) {
 
         $data = array();
         $facette = self::findSubjectFromId($Id);
 
-        if ($facette)
-        {
+        if ($facette) {
             $data["ID"] = $facette->ID;
             $data["AVERAGE_FROM_SEMESTER"] = $facette->AVERAGE_FROM_SEMESTER;
             $data["NUMBER_CREDIT"] = $facette->NUMBER_CREDIT;
@@ -89,37 +82,29 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public static function findSubjectFromId($Id)
-    {
+    public static function findSubjectFromId($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array('*'));
-        if (is_numeric($Id))
-        {
+        if (is_numeric($Id)) {
             $SQL->where("ID = '" . $Id . "'");
-        }
-        else
-        {
+        } else {
             $SQL->where("GUID = '" . $Id . "'");
         }
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function loadObject($Id)
-    {
+    public function loadObject($Id) {
 
         $result = self::findSubjectFromId($Id);
 
-        if ($result)
-        {
+        if ($result) {
             return array(
                 "success" => true
                 , "data" => $this->getSubjectDataFromId($Id)
             );
-        }
-        else
-        {
+        } else {
             return array(
                 "success" => true
                 , "data" => array()
@@ -127,8 +112,7 @@ class SubjectDBAccess {
         }
     }
 
-    public static function getAllSubjectsQuery($params)
-    {
+    public static function getAllSubjectsQuery($params) {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -140,13 +124,10 @@ class SubjectDBAccess {
         $node = isset($params["node"]) ? addText($params["node"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
 
-        if ($academicId)
-        {
+        if ($academicId) {
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             $departmentId = $academicObject->DEPARTMENT;
-        }
-        else
-        {
+        } else {
             $departmentId = 0;
         }
 
@@ -157,27 +138,20 @@ class SubjectDBAccess {
 
         if ($status)
             $SQL .= " AND STATUS='" . $status . "'";
-        if ($globalSearch)
-        {
+        if ($globalSearch) {
             $SQL .= " AND ((NAME like '" . $globalSearch . "%') ";
             $SQL .= " OR (SHORT like '" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
 
-        switch (strtoupper($target))
-        {
+        switch (strtoupper($target)) {
             case "GENERAL":
                 $SQL .= " AND TRAINING =0";
-                if ($department == "YES")
-                {
-                    if (!$staffId)
-                    {
-                        if ($academicId)
-                        {
-                            if ($departmentId)
-                            {
-                                if ($parent > 4)
-                                {
+                if ($department == "YES") {
+                    if (!$staffId) {
+                        if ($academicId) {
+                            if ($departmentId) {
+                                if ($parent > 4) {
                                     $SQL .= " AND (DEPARTMENT='" . $departmentId . "' OR DEPARTMENT=0)";
                                 }
                             }
@@ -192,15 +166,15 @@ class SubjectDBAccess {
         }
 
         $SQL .= " ORDER BY SHORT";
-        error_log($SQL);
+
+        //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
     ///////////////////////////////////////////////////////
     // Tree: List of Subjects...
     ///////////////////////////////////////////////////////
-    public function treeAllSubjects($params)
-    {
+    public function treeAllSubjects($params) {
 
         $staffId = isset($params["setId"]) ? $params["setId"] : "";
         $department = isset($params["department"]) ? $params["department"] : "";
@@ -212,11 +186,9 @@ class SubjectDBAccess {
         $node = $params["node"];
 
         $WHERE = "WHERE OBJECT_TYPE='QUALIFICATION_TYPE' AND PARENT<>0";
-        if ($requisiteId)
-        {
+        if ($requisiteId) {
             $subjectObject = self::findSubjectFromId($requisiteId);
-            if ($subjectObject)
-            {
+            if ($subjectObject) {
                 $WHERE .= " AND ID = '" . $subjectObject->PARENT . "'";
             }
         }
@@ -228,19 +200,14 @@ class SubjectDBAccess {
         $schoolyearId = $academicObject ? $academicObject->SCHOOL_YEAR : 0;
         $departmentId = $academicObject ? $academicObject->DEPARTMENT : 0;
 
-        if (substr($params["node"], 19))
-        {
+        if (substr($params["node"], 19)) {
             $node = str_replace('QUALIFICATION_TYPE_', '', $params["node"]);
-        }
-        else
-        {
+        } else {
             $node = $params["node"];
         }
 
-        if ($academicObject)
-        {
-            switch ($academicObject->OBJECT_TYPE)
-            {
+        if ($academicObject) {
+            switch ($academicObject->OBJECT_TYPE) {
                 case "SCHOOLYEAR":
                     $academicId = 0;
                     break;
@@ -252,16 +219,13 @@ class SubjectDBAccess {
 
         $data = array();
 
-        if ($node == 0)
-        {
+        if ($node == 0) {
 
             $result = self::dbAccess()->fetchAll("SELECT * FROM t_camemis_type " . $WHERE . "");
 
             $i = 0;
-            if ($result)
-            {
-                foreach ($result as $value)
-                {
+            if ($result) {
+                foreach ($result as $value) {
                     $data[$i]['id'] = "QUALIFICATION_TYPE_" . $value->ID;
                     $data[$i]['objectId'] = $value->ID;
                     $data[$i]['type'] = "qualification";
@@ -274,32 +238,25 @@ class SubjectDBAccess {
                     $i++;
                 }
             }
-        }
-        else
-        {
+        } else {
 
             $params["node"] = $node;
             $result = self::getAllSubjectsQuery($params);
 
             $i = 0;
-            if ($result)
-            {
-                foreach ($result as $value)
-                {
+            if ($result) {
+                foreach ($result as $value) {
 
-                    if ($gradeId && $schoolyearId)
-                    {
+                    if ($gradeId && $schoolyearId) {
                         $CHECK = GradeSubjectDBAccess::checkSubjectINGrade(
                                         $value->ID
                                         , $gradeId
                                         , $schoolyearId
                                         , $academicId
                         );
-                        if ($CHECK == 0)
-                        {
+                        if ($CHECK == 0) {
 
-                            if (self::checkChild($value->ID))
-                            {
+                            if (self::checkChild($value->ID)) {
                                 $data[$i]['id'] = $value->ID;
                                 $data[$i]['type'] = "subject";
                                 $data[$i]['text'] = "(" . $value->SHORT . ")" . " - " . setShowText($value->NAME);
@@ -307,21 +264,14 @@ class SubjectDBAccess {
                                 $data[$i]['leaf'] = false;
                                 $data[$i]['iconCls'] = "icon-folder_magnify";
                                 $i++;
-                            }
-                            else
-                            {
+                            } else {
 
-                                if ($department == "YES")
-                                {
-                                    if ($value->DEPARTMENT == $departmentId)
-                                    {
+                                if ($department == "YES") {
+                                    if ($value->DEPARTMENT == $departmentId) {
                                         $departmentObject = DepartmentDBAccess::findDepartmentFromId($value->DEPARTMENT);
-                                        if ($departmentObject)
-                                        {
+                                        if ($departmentObject) {
                                             $data[$i]['qtip'] = $departmentObject->NAME;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             $data[$i]['qtip'] = '?';
                                         }
                                         $data[$i]['id'] = $value->ID;
@@ -332,17 +282,12 @@ class SubjectDBAccess {
                                         $data[$i]['iconCls'] = "icon-flag_white";
                                         $i++;
                                     }
-                                }
-                                else
-                                {
+                                } else {
 
                                     $departmentObject = DepartmentDBAccess::findDepartmentFromId($value->DEPARTMENT);
-                                    if ($departmentObject)
-                                    {
+                                    if ($departmentObject) {
                                         $data[$i]['qtip'] = $departmentObject->NAME;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         $data[$i]['qtip'] = '?';
                                     }
                                     $data[$i]['id'] = $value->ID;
@@ -352,15 +297,11 @@ class SubjectDBAccess {
                                     $data[$i]['leaf'] = true;
                                     $data[$i]['iconCls'] = "icon-flag_white";
 
-                                    if ($staffId)
-                                    {
+                                    if ($staffId) {
 
-                                        if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID))
-                                        {
+                                        if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID)) {
                                             $data[$i]['checked'] = true;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             $data[$i]['checked'] = false;
                                         }
                                     }
@@ -368,12 +309,9 @@ class SubjectDBAccess {
                                 }
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
 
-                        if (self::checkChild($value->ID))
-                        {
+                        if (self::checkChild($value->ID)) {
                             $data[$i]['id'] = $value->ID;
                             $data[$i]['type'] = "subject";
                             $data[$i]['text'] = "(" . $value->SHORT . " " . $value->ID . ")" . " - " . setShowText($value->NAME);
@@ -381,18 +319,13 @@ class SubjectDBAccess {
                             $data[$i]['leaf'] = false;
                             $data[$i]['iconCls'] = "icon-folder_magnify";
                             $i++;
-                        }
-                        else
-                        {
+                        } else {
 
                             $departmentObject = DepartmentDBAccess::findDepartmentFromId($value->DEPARTMENT);
 
-                            if ($departmentObject)
-                            {
+                            if ($departmentObject) {
                                 $data[$i]['qtip'] = $departmentObject->NAME;
-                            }
-                            else
-                            {
+                            } else {
                                 $data[$i]['qtip'] = '?';
                             }
 
@@ -403,26 +336,20 @@ class SubjectDBAccess {
                             $data[$i]['cls'] = $value->STATUS ? "nodeText" : "nodeTextRed";
                             $data[$i]['leaf'] = true;
 
-                            if ($staffId)
-                            {
+                            if ($staffId) {
 
-                                if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID))
-                                {
+                                if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID)) {
                                     $data[$i]['checked'] = true;
-                                }
-                                else
-                                {
+                                } else {
                                     $data[$i]['checked'] = false;
                                 }
                             }
 
-                            if ($requisiteId)
-                            {
+                            if ($requisiteId) {
                                 $data[$i]['iconCls'] = "icon-shape_square_link";
                                 $data[$i]["checked"] = in_array($value->ID, self::getPreRequisiteBySubject($requisiteId)) ? true : false;
                                 //@veasna
-                                if ($schoolyear)
-                                {
+                                if ($schoolyear) {
                                     $data[$i]['iconCls'] = "icon-shape_square_link";
                                     $snaParams['academicId'] = $gradeSubjectGradId;
                                     $snaParams['schoolyear'] = $schoolyear;
@@ -430,9 +357,7 @@ class SubjectDBAccess {
                                     $data[$i]["checked"] = in_array($value->ID, GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
                                 }
                                 //
-                            }
-                            else
-                            {
+                            } else {
                                 $data[$i]['iconCls'] = "icon-star";
                             }
 
@@ -446,15 +371,13 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public static function actionPreRequisite2Subject($params)
-    {
+    public static function actionPreRequisite2Subject($params) {
 
         $subjectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $selecteds = isset($params["selecteds"]) ? addText($params["selecteds"]) : "";
         $facette = self::findSubjectFromId($subjectId);
 
-        if ($facette)
-        {
+        if ($facette) {
             $SAVEDATA['PRE_REQUISITE_COURSE'] = $selecteds;
             $WHERE[] = "ID = '" . $facette->ID . "'";
             self::dbAccess()->update('t_subject', $SAVEDATA, $WHERE);
@@ -468,8 +391,7 @@ class SubjectDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     // Grid: Subjects by Teacher...
     ////////////////////////////////////////////////////////////////////////////
-    public function loadSubjectByTeacher($params)
-    {
+    public function loadSubjectByTeacher($params) {
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "0";
         $start = $params["start"] ? (int) $params["start"] : "0";
@@ -480,13 +402,10 @@ class SubjectDBAccess {
         $data = array();
 
         $i = 0;
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
 
-                if (!self::checkChild($value->ID))
-                {
+                if (!self::checkChild($value->ID)) {
 
                     $assigned = $this->checkSubjectByTeacher($teacherId, $value->ID);
                     $inTheClass = $this->checkTeacherBySubjectTeacherClass($teacherId, $value->ID);
@@ -507,8 +426,7 @@ class SubjectDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -522,8 +440,7 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     // Checktree: Teacher and Subject
     ///////////////////////////////////////////////////////
-    public function treeTeacherSubjects($params)
-    {
+    public function treeTeacherSubjects($params) {
 
         //checked:true/false
         $data = array();
@@ -532,8 +449,7 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $check = $this->checkSubjectByTeacher($teacherId, $value->ID);
 
@@ -555,8 +471,7 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     //Grid: List of Subjects...
     ///////////////////////////////////////////////////////
-    public function allSubjects($params, $forjson)
-    {
+    public function allSubjects($params, $forjson) {
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "100";
 
@@ -566,8 +481,7 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["SHORT"] = $value->SHORT;
@@ -579,44 +493,36 @@ class SubjectDBAccess {
                 $i++;
             }
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-        if ($forjson)
-        {
+        if ($forjson) {
             $dataforjson = array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
             return $dataforjson;
-        }
-        else
+        } else
             return $a;
     }
 
-    public static function allSubjectsComboData($educationType = false)
-    {
+    public static function allSubjectsComboData($educationType = false) {
 
         $data = array();
 
-        if ($educationType)
-        {
+        if ($educationType) {
             $params["educationType"] = $educationType;
             $result = self::getAllSubjectsQuery($params);
-        }
-        else
-        {
+        } else {
             $result = self::getAllSubjectsQuery(false);
         }
 
         $data[0] = "[0,'[---]']";
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i + 1] = "[\"$value->ID\",\"" . addslashes($value->NAME) . "\"]";
 
                 $i++;
@@ -625,8 +531,7 @@ class SubjectDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public function jsonActionSave($params)
-    {
+    public function jsonActionSave($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "1";
@@ -660,7 +565,7 @@ class SubjectDBAccess {
         if (isset($params["MAX_POSSIBLE_SCORE"]))
             $SAVEDATA['MAX_POSSIBLE_SCORE'] = addText($params["MAX_POSSIBLE_SCORE"]);
 
-        if (isset($params["SUBJECT_TYPE"])){
+        if (isset($params["SUBJECT_TYPE"])) {
             $SAVEDATA['SUBJECT_TYPE'] = addText($params["SUBJECT_TYPE"]);
         }
 
@@ -682,9 +587,9 @@ class SubjectDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
-        if (isset($params["FORMULA_TYPE"])){
+        if (isset($params["FORMULA_TYPE"])) {
             $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
-        }else{
+        } else {
             $SAVEDATA['FORMULA_TYPE'] = 1;
         }
 
@@ -693,15 +598,14 @@ class SubjectDBAccess {
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
         $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
 
-        if ($objectId != "new"){
+        if ($objectId != "new") {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_subject', $SAVEDATA, $WHERE);
-        }
-        else{
+        } else {
 
-            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT){
+            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
                 $SAVEDATA['STATUS'] = 1;
             }
 
@@ -716,7 +620,7 @@ class SubjectDBAccess {
             $SAVEDATA['GUID'] = generateGuid();
             $SAVEDATA['PARENT'] = $parentId;
 
-            if (!self::findLastSubjectId()){
+            if (!self::findLastSubjectId()) {
                 $SAVEDATA['ID'] = self::findLastId() + 1000;
             }
 
@@ -727,15 +631,13 @@ class SubjectDBAccess {
         return array("success" => true, "objectId" => $objectId);
     }
 
-    public function SubjectCheckBox()
-    {
+    public function SubjectCheckBox() {
 
         $entries = self::getAllSubjectsQuery(array());
 
         $CHECK_BOX = array();
         if ($entries)
-            foreach ($entries as $key => $value)
-            {
+            foreach ($entries as $key => $value) {
                 $CHECK_BOX[$key] = "
                 {
                 fieldLabel: ''
@@ -751,46 +653,37 @@ class SubjectDBAccess {
         return implode(",", $CHECK_BOX);
     }
 
-    public function checkRemoveSubject($Id)
-    {
+    public function checkRemoveSubject($Id) {
 
         $count2 = $this->checkSubjectBySubjectTeacherClass($Id);
         $count3 = $this->checkSubjectByAssignment($Id);
         $count4 = self::existingSubjectInSchedule($Id);
 
-        if ($count2 || $count3 || $count4)
-        {
+        if ($count2 || $count3 || $count4) {
             $status = true;
-        }
-        else
-        {
+        } else {
             $status = false;
         }
 
         return $status;
     }
 
-    public function removeObject($params)
-    {
+    public function removeObject($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $CHECK = self::checkChild($objectId);
 
-        if ($CHECK)
-        {
+        if ($CHECK) {
             self::dbAccess()->query("DELETE FROM t_subject WHERE ID = '" . $objectId . "'");
             self::dbAccess()->query("DELETE FROM t_subject WHERE PARENT = '" . $objectId . "'");
-        }
-        else
-        {
+        } else {
             self::dbAccess()->query("DELETE FROM t_subject WHERE ID = '" . $objectId . "'");
         }
 
         return array("success" => true);
     }
 
-    protected function countTeachersBySubject($subjectId, $gradeId, $schoolyearId)
-    {
+    protected function countTeachersBySubject($subjectId, $gradeId, $schoolyearId) {
 
         $SQL = self::dbAccess()->select()
                 ->from("t_subject", array("C" => "COUNT(*)"))
@@ -801,8 +694,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function countAssignmentBySubject($subjectId, $gradeId)
-    {
+    public function countAssignmentBySubject($subjectId, $gradeId) {
 
         $SQL = self::dbAccess()->select()
                 ->from("t_assignment", array("C" => "COUNT(*)"))
@@ -812,8 +704,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function releaseObject($params)
-    {
+    public function releaseObject($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
@@ -824,10 +715,8 @@ class SubjectDBAccess {
         $SQL .= " t_subject";
         $SQL .= " SET";
 
-        if (isset($facette))
-        {
-            switch ($facette->STATUS)
-            {
+        if (isset($facette)) {
+            switch ($facette->STATUS) {
                 case 0:
                     $newStatus = 1;
                     $SQL .= " STATUS=1";
@@ -851,8 +740,7 @@ class SubjectDBAccess {
         return array("success" => true, "status" => $newStatus);
     }
 
-    public function treeSubjectsByClass($params)
-    {
+    public function treeSubjectsByClass($params) {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
@@ -862,8 +750,7 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
                                 false
@@ -877,8 +764,7 @@ class SubjectDBAccess {
                 $data[$i]['text'] = "" . $value->SUBJECT_NAME . "";
                 $data[$i]['gradeId'] = "" . $value->GRADE_ID . "";
 
-                switch ($value->SUBJECT_TYPE)
-                {
+                switch ($value->SUBJECT_TYPE) {
                     case 0:
                         $data[$i]['iconCls'] = "icon-star_silver";
                         break;
@@ -904,8 +790,7 @@ class SubjectDBAccess {
         return $data;
     }
 
-    protected function checkSubjectByAssignment($Id)
-    {
+    protected function checkSubjectByAssignment($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", array("C" => "COUNT(*)"));
@@ -914,8 +799,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkSubjectBySubjectTeacherClass($Id)
-    {
+    protected function checkSubjectBySubjectTeacherClass($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -924,8 +808,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkTeacherBySubjectTeacherClass($teacherId, $subjectId)
-    {
+    protected function checkTeacherBySubjectTeacherClass($teacherId, $subjectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -936,8 +819,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkTeacherBySubjectTeacherTraining($teacherId, $subjectId)
-    {
+    protected function checkTeacherBySubjectTeacherTraining($teacherId, $subjectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_training", array("C" => "COUNT(*)"));
@@ -948,8 +830,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkSubjectByTeacher($teacherId, $subjectId)
-    {
+    protected function checkSubjectByTeacher($teacherId, $subjectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_subject", array("C" => "COUNT(*)"));
@@ -959,8 +840,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function removeSubjectFromTeacher($teacherId, $subjectId)
-    {
+    protected function removeSubjectFromTeacher($teacherId, $subjectId) {
 
         $SQL = "
         DELETE FROM t_teacher_subject
@@ -970,8 +850,7 @@ class SubjectDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    protected function addTeacherSubject($teacherId, $subjectId)
-    {
+    protected function addTeacherSubject($teacherId, $subjectId) {
 
         $SQL = "
         INSERT INTO t_teacher_subject
@@ -982,29 +861,25 @@ class SubjectDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    public static function existingSubjectInSchedule($subjectId, $term = false)
-    {
+    public static function existingSubjectInSchedule($subjectId, $term = false) {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_schedule";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND SUBJECT_ID = '" . $subjectId . "'";
-        if ($term)
-        {
+        if ($term) {
             $SQL .= " AND TERM = '" . $term . "'";
         }
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
 
-    public function SubjectByTeacherCombo()
-    {
+    public function SubjectByTeacherCombo() {
 
         $utiles = Utiles::getInstance();
         $teacherId = "";
 
-        if (UserAuth::getUserType() == 'TEACHER' || UserAuth::getUserType() == "INSTRUCTOR")
-        {
+        if (UserAuth::getUserType() == 'TEACHER' || UserAuth::getUserType() == "INSTRUCTOR") {
             $teacherId = $utiles->getValueRegistry("USERID");
         }
 
@@ -1026,16 +901,14 @@ class SubjectDBAccess {
 
         $data = array();
         if ($result)
-            foreach ($result as $key => $value)
-            {
+            foreach ($result as $key => $value) {
                 $data[$key] = "[\"$value->SUBJECT_ID\",\"$value->SUBJECT_NAME\"]";
             }
 
         return "[" . implode(",", $data) . "]";
     }
 
-    public function actionTeacherSubject($params)
-    {
+    public function actionTeacherSubject($params) {
 
         $teacherId = isset($params["setId"]) ? $params["setId"] : "";
         $subjectId = isset($params["Id"]) ? $params["Id"] : "";
@@ -1043,25 +916,19 @@ class SubjectDBAccess {
 
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
-        switch ($type)
-        {
+        switch ($type) {
             case "GENERAL":
                 $CHECK_SUBJECT_TEACHER_CLASS = $this->checkTeacherBySubjectTeacherClass($teacherId, $subjectId);
                 $CHECK_SUBJECT_TEACHER = $this->checkSubjectByTeacher($teacherId, $subjectId);
 
                 $msg = MSG_RECORD_NOT_CHANGED_DELETED;
-                if ($checked == "true")
-                {
-                    if (!$CHECK_SUBJECT_TEACHER)
-                    {
+                if ($checked == "true") {
+                    if (!$CHECK_SUBJECT_TEACHER) {
                         $this->addTeacherSubject($teacherId, $subjectId);
                         $msg = RECORD_WAS_ADDED;
                     }
-                }
-                else
-                {
-                    if (!$CHECK_SUBJECT_TEACHER_CLASS)
-                    {
+                } else {
+                    if (!$CHECK_SUBJECT_TEACHER_CLASS) {
                         $this->removeSubjectFromTeacher($teacherId, $subjectId);
                     }
                 }
@@ -1071,18 +938,13 @@ class SubjectDBAccess {
                 $CHECK_SUBJECT_TEACHER = $this->checkSubjectByTeacher($teacherId, $subjectId);
 
                 $msg = MSG_RECORD_NOT_CHANGED_DELETED;
-                if ($checked == "true")
-                {
-                    if (!$CHECK_SUBJECT_TEACHER)
-                    {
+                if ($checked == "true") {
+                    if (!$CHECK_SUBJECT_TEACHER) {
                         $this->addTeacherSubject($teacherId, $subjectId);
                         $msg = RECORD_WAS_ADDED;
                     }
-                }
-                else
-                {
-                    if (!$CHECK_SUBJECT_TEACHER_TRAINING)
-                    {
+                } else {
+                    if (!$CHECK_SUBJECT_TEACHER_TRAINING) {
                         $this->removeSubjectFromTeacher($teacherId, $subjectId);
                     }
                 }
@@ -1092,8 +954,7 @@ class SubjectDBAccess {
         return array("success" => true, "msg" => $msg);
     }
 
-    public static function sqlSubjectsByClass($academicId, $isIncludeEvaluation = false, $isNationalExam = false)
-    {
+    public static function sqlSubjectsByClass($academicId, $isIncludeEvaluation = false, $isNationalExam = false) {
 
         $SQL = "";
         $SQL .= " SELECT ";
@@ -1126,8 +987,7 @@ class SubjectDBAccess {
     }
 
     //@SODA
-    public static function sqlSubjectsByTraining($trainingId, $isIncludeEvaluation = false, $isNationalExam = false)
-    {
+    public static function sqlSubjectsByTraining($trainingId, $isIncludeEvaluation = false, $isNationalExam = false) {
 
         $SQL = "";
         $SQL .= " SELECT ";
@@ -1159,16 +1019,13 @@ class SubjectDBAccess {
 
     //
 
-    public function subjectsByClassPrimary($academicId)
-    {
+    public function subjectsByClassPrimary($academicId) {
 
         $result = self::sqlSubjectsByClass($academicId, true, false);
 
         $data = array();
-        if ($result)
-        {
-            foreach ($result as $key => $value)
-            {
+        if ($result) {
+            foreach ($result as $key => $value) {
                 $data[$key]["ID"] = $value->SUBJECT_ID;
                 $data[$key]["NAME"] = $value->SUBJECT_NAME;
                 $data[$key]["TEMPLATE"] = $value->TEMPLATE;
@@ -1178,8 +1035,7 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public function jsonSubjectsByClass($params)
-    {
+    public function jsonSubjectsByClass($params) {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
@@ -1204,8 +1060,7 @@ class SubjectDBAccess {
         $data[1]["NAME"] = ALL_SUBJECTS;
         $i = 2;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
                 $i++;
@@ -1218,18 +1073,15 @@ class SubjectDBAccess {
         );
     }
 
-    public static function jsonSubject($edutype)
-    {
+    public static function jsonSubject($edutype) {
         $SQL = "SELECT * FROM T_SUBJECT";
         $SQL .= " WHERE EDUCATION_TYPE=" . $edutype;
         $SQL .= " ORDER BY ID ASC";
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
                 $i++;
@@ -1243,8 +1095,7 @@ class SubjectDBAccess {
         );
     }
 
-    public function treeAllTrainingSubjects($params = false)
-    {
+    public function treeAllTrainingSubjects($params = false) {
 
         $params["target"] = "TRAINING";
         $staffId = isset($params["setId"]) ? $params["setId"] : "";
@@ -1254,32 +1105,24 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $short = $value->SHORT ? $value->SHORT : "---";
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = "(" . $short . ") " . stripslashes($value->NAME);
 
-                if ($staffId)
-                {
+                if ($staffId) {
 
-                    if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID))
-                    {
+                    if (StaffDBAccess::checkSubjectByTeacher($staffId, $value->ID)) {
                         $data[$i]['checked'] = true;
-                    }
-                    else
-                    {
+                    } else {
                         $data[$i]['checked'] = false;
                     }
                 }
 
-                if ($value->STATUS)
-                {
+                if ($value->STATUS) {
                     $data[$i]['iconCls'] = "icon-green";
-                }
-                else
-                {
+                } else {
                     $data[$i]['iconCls'] = "icon-red";
                 }
 
@@ -1292,8 +1135,7 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public static function checkUseSubjectInClass($subjecId, $classId)
-    {
+    public static function checkUseSubjectInClass($subjecId, $classId) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = '" . $subjecId . "'");
@@ -1304,8 +1146,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function getAcademicSubject($subjectId, $academicId)
-    {
+    public static function getAcademicSubject($subjectId, $academicId) {
 
         $SELECTION_B = array(
             "INCLUDE_IN_EVALUATION"
@@ -1341,8 +1182,7 @@ class SubjectDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function findSubjectFromGuId($GuId)
-    {
+    public static function findSubjectFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("*"));
         $SQL->where("GUID = '" . $GuId . "'");
@@ -1350,8 +1190,7 @@ class SubjectDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function checkChild($Id)
-    {
+    public static function checkChild($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("C" => "COUNT(*)"));
@@ -1361,8 +1200,7 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected static function findLastSubjectId()
-    {
+    protected static function findLastSubjectId() {
 
         $SQL = "SELECT ID";
         $SQL .= " FROM t_subject";
@@ -1371,8 +1209,7 @@ class SubjectDBAccess {
         return $result ? $result->ID : 0;
     }
 
-    protected static function findLastQualificationTypeId()
-    {
+    protected static function findLastQualificationTypeId() {
 
         $SQL = "SELECT ID";
         $SQL .= " FROM t_camemis_type WHERE OBJECT_TYPE='QUALIFICATION_TYPE'";
@@ -1381,21 +1218,18 @@ class SubjectDBAccess {
         return $result ? $result->ID : 0;
     }
 
-    protected static function findLastId()
-    {
+    protected static function findLastId() {
 
         return self::findLastSubjectId() + self::findLastQualificationTypeId();
     }
 
     ///@veasna
-    public static function getPreRequisiteBySubject($id)
-    {
+    public static function getPreRequisiteBySubject($id) {
 
         $facette = self::findSubjectFromId($id);
         $result = array();
 
-        if ($facette)
-        {
+        if ($facette) {
             if ($facette->PRE_REQUISITE_COURSE)
                 $result = explode(",", $facette->PRE_REQUISITE_COURSE);
         }

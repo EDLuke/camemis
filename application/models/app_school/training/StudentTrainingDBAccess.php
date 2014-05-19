@@ -1588,27 +1588,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , $assessmentId
             , $this->scoreListSubjectByTraining()  
         );
-           /*
-            if ($this->section) {   
-            error_log("hello world");      
-                $this->setStudentSubjectAssessmentTraining(
-                    $this->studentId
-                    , $this->subjectId
-                    , $comment
-                    , $assessmentId
-                    , $this->scoreListSubjectByTraining()  
-                );
-            }else{
-                error_log("hello world else"); 
-                 $this->setStudentSubjectAssessmentTraining(
-                    $this->studentId
-                    , $this->subjectId
-                    , $comment
-                    , $assessmentId
-                    , $this->scoreListSubjectByTraining()
-                );
-            } */
-
+        
         if (!$noJson) {
             return Array(
                 "success" => true
