@@ -99,13 +99,13 @@ class AssignmentTempDBAccess {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
+            $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
+            $SAVEDATA["COEFF_VALUE"] =  addText($params["COEFF_VALUE"]);
 
         if (isset($params["WEIGHTING"])) {
-            $SAVEDATA["WEIGHTING"] = (int) $params["WEIGHTING"];
+            $SAVEDATA["WEIGHTING"] =  addText($params["WEIGHTING"]);
         } else {
             $SAVEDATA["WEIGHTING"] = 1;
         }
@@ -125,7 +125,7 @@ class AssignmentTempDBAccess {
         switch ($objectId) {
             case "new":
                 if (isset($params["parentId"])) {
-                    $SAVEDATA["EDUCATION_TYPE"] = (int) $params["parentId"];
+                    $SAVEDATA["EDUCATION_TYPE"] =  addText($params["parentId"]);
                 }
 
                 if (!self::checkCount())

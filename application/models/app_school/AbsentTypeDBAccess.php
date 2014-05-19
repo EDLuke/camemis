@@ -260,7 +260,7 @@ class AbsentTypeDBAccess {
             $SAVEDATA['COLOR'] = addText($params["COLOR"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if (isset($params["CODE"]))
             $SAVEDATA['CODE'] = addText($params["CODE"]);

@@ -169,10 +169,10 @@ class AssignmentDBAccess {
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
+            $SAVEDATA["COEFF_VALUE"] =  addText($params["COEFF_VALUE"]);
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);

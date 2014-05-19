@@ -302,7 +302,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         if (isset($params["COEFF_VALUE"]))
         {
-            $SAVEDATA['COEFF_VALUE'] = (int) $params["COEFF_VALUE"];
+            $SAVEDATA['COEFF_VALUE'] =  addText($params["COEFF_VALUE"]);
         }
 
         $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);

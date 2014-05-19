@@ -914,7 +914,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $selectionIds = $params["selectionIds"];
         $trainingId = $params["trainingId"];
         $subjectId = $params["subjectId"];
-        $parentId = (int) $params["parentId"];
+        $parentId =  addText($params["parentId"]);
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
 

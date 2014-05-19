@@ -101,16 +101,16 @@ class AssignmentTempDBAccess {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
+            $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
 
         if (isset($params["COEFF_VALUE"]))
-            $SAVEDATA["COEFF_VALUE"] = (int) $params["COEFF_VALUE"];
+            $SAVEDATA["COEFF_VALUE"] =  addText($params["COEFF_VALUE"]);
 
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA["EVALUATION_TYPE"] = (int) $params["EVALUATION_TYPE"];
 
         if (isset($params["WEIGHTING"])) {
-            $SAVEDATA["WEIGHTING"] = (int) $params["WEIGHTING"];
+            $SAVEDATA["WEIGHTING"] =  addText($params["WEIGHTING"]);
         } else {
             $SAVEDATA["WEIGHTING"] = 1;
         }
