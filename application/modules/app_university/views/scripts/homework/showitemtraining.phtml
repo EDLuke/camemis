@@ -19,9 +19,9 @@ $OBJECT_FORM = new CamemisForm("HOMEWORK");
 $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
 
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 
 $facette = SubjectHomeworkDBAccess::findSubjectHomeworkFromId($this->objectId);
 

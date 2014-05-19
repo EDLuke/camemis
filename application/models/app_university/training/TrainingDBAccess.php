@@ -331,7 +331,7 @@
                 $SAVEDATA["GRADE_LEVEL"] = addText($params["GRADE_LEVEL"]);
 
             if (isset($params["SORTKEY"]))
-                $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
+                $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
 
             if (isset($params["MAX_STUDENTS"]))
                 $SAVEDATA["MAX_STUDENTS"] = addText($params["MAX_STUDENTS"]);

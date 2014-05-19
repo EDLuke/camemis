@@ -190,7 +190,7 @@
                 $SAVEDATA['TAX'] = addText($params["HIDDEN_TAX"]);
 
             if (isset($params["SORTKEY"]))
-                $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+                $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
             if (isset($params["DESCRIPTION"]))
                 $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);

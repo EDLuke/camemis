@@ -261,7 +261,7 @@ class SQLEvaluationStudentSubject {
     }
 
     public static function getActionDeleteSubjectScoreAssessment($stdClass) {
-        
+
         self::dbAccess()->delete('t_student_subject_assessment'
                 , array(
             "CLASS_ID='" . $stdClass->academicId . "'"
@@ -273,13 +273,14 @@ class SQLEvaluationStudentSubject {
             "CLASS_ID='" . $stdClass->academicId . "'"
             , "SUBJECT_ID='" . $stdClass->subjectId . "'")
         );
-        
+
         self::dbAccess()->delete('t_student_score_date'
                 , array(
             "CLASS_ID='" . $stdClass->academicId . "'"
             , "SUBJECT_ID='" . $stdClass->subjectId . "'")
         );
     }
+
 }
 
 ?>

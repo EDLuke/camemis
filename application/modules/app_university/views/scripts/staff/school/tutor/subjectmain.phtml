@@ -19,7 +19,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
 $gradeSubjectId = isset($_GET["gradeSubjectId"]) ? $_GET["gradeSubjectId"] : "";
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 if(!$classObject && !$subjectObject) {header("Location: /main/permission/");}
 

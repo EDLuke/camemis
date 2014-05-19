@@ -9,6 +9,7 @@
 require_once 'models/assessment/AssessmentProperties.php';
 require_once 'models/assessment/SQLEvaluationStudentAssignment.php';
 require_once 'models/assessment/SQLEvaluationStudentSubject.php';
+require_once 'models/assessment/SQLEvaluationImport.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/SpecialDBAccess.php";
 
 class EvaluationSubjectAssessment extends AssessmentProperties {
@@ -75,6 +76,14 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function setSection($value) {
         return $this->section = $value;
+    }
+
+    public function setAssignmentId($value) {
+        return $this->assignmentId = $value;
+    }
+
+    public function setDate($value) {
+        return $this->date = $value;
     }
 
     public function listStudentsData() {
@@ -899,55 +908,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
     }
 
-//    public function actionPublishSubjectAssessment() {
-//
-//        $data = array(
-//            "academicId" => $this->academicId
-//            , "section" => $this->getSection()
-//            , "subjectId" => $this->subjectId
-//            , "scoreType" => $this->getSubjectScoreType()
-//            , "month" => $this->getMonth()
-//            , "year" => $this->getYear()
-//            , "term" => $this->term
-//            , "actionField" => "SUBJECT_VALUE"
-//            , "schoolyearId" => $this->getSchoolyearId()
-//            , "evaluationType" => $this->getSettingEvaluationType()
-//            , "educationSystem" => $this->getEducationSystem()
-//        );
-//
-//        switch ($this->getSection()) {
-//            case "MONTH":
-//                $result = $this->getSubjectMonthResult();
-//                break;
-//            case "TERM":
-//            case "QUARTER":
-//            case "SEMESTER":
-//                $result = $this->getSubjectTermResult();
-//                break;
-//            case "YEAR":
-//                $result = $this->getSubjectYearResult();
-//                break;
-//        }
-//
-//        for ($i = 0; $i <= count($result); $i++) {
-//
-//            $data["studentId"] = isset($result[$i]["ID"]) ? $result[$i]["ID"] : "";
-//            $data["actionRank"] = isset($result[$i]["RANK"]) ? $result[$i]["RANK"] : "";
-//            $data["assessmentId"] = isset($result[$i]["ASSESSMENT_ID"]) ? $result[$i]["ASSESSMENT_ID"] : "";
-//
-//            switch ($this->getSubjectScoreType()) {
-//                case self::SCORE_NUMBER:
-//                    $data["actionValue"] = isset($result[$i]["AVERAGE"]) ? $result[$i]["AVERAGE"] : "";
-//                    break;
-//                case self::SCORE_CHAR:
-//                    $data["actionValue"] = isset($result[$i]["ASSESSMENT"]) ? $result[$i]["ASSESSMENT"] : "";
-//                    break;
-//            }
-//
-//            SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation((object) $data);
-//        }
-//    }
-
     public function getSubjectValue($stdClass) {
 
         $result = "";
@@ -1218,6 +1178,49 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
                 }
             }
+        }
+    }
+
+    public function actionScoreImport() {
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "scoreMax" => $this->getSubjectScoreMax()
+                    , "scoreMin" => $this->getSubjectScoreMin()
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "schoolyearId" => $this->getSchoolyearId()
+                    , "qualificationType" => $this->getSettingQualificationType()
+                    , "listStudents" => $this->listClassStudents()
+                    , "tmp_name" => $this->tmp_name
+        );
+
+        if ($this->getSettingEvaluationOption()) {
+            
+            $stdClass->term = $this->term;
+            $stdClass->month = $this->getMonth();
+            $stdClass->year = $this->getYear();
+            
+            if ($this->term) {
+                $stdClass->section = $this->getNameSectionByTerm();
+            }
+
+            if($stdClass->month && $stdClass->year){
+                $stdClass->section = "MONTH";
+            }
+            
+            SQLEvaluationImport::importScoreSubject($stdClass);
+        } else {
+            $stdClass->assignmentId = $this->assignmentId;
+            $stdClass->date = $this->date;
+            $stdClass->month = $this->getMonth();
+            $stdClass->year = $this->getYear();
+            $stdClass->coeffValue = $this->getAssignmentCoeff();
+            $stdClass->include_in_valuation = $this->getAssignmentInCludeEvaluation();
+            $stdClass->educationSystem = $this->getEducationSystem();
+            $stdClass->term = $this->getTermByDateAcademicId();
+            $stdClass->actionField = "SCORE";
+            SQLEvaluationImport::importScoreAssignment($stdClass);
         }
     }
 

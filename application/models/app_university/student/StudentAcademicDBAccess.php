@@ -143,7 +143,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
     public static function getSQLStudentEnrollment($params) {
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $globalSearch = isset($params["globalSearch"]) ? addText($params["globalSearch"]) : "";
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
@@ -551,7 +551,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : 0;
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -632,7 +632,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : 0;
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
@@ -668,7 +668,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         //@soda
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $ACADEMIC_ID = isset($params["academicId"]) ? (int) $params["academicId"] : 0;
+        $ACADEMIC_ID = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
 
         $GLOBAL_SEARCH = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -696,7 +696,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function actionTransferDes($params) {
 
         $STUDENT_ID = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
-        $CLASS_ID = isset($params["academicId"]) ? (int) $params["academicId"] : "0";
+        $CLASS_ID = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
         $content = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "0";
 
         $SQL = "UPDATE";
@@ -729,7 +729,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public function actionStudentRepresentation($params) {
 
         $STUDENT_ID = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $CLASS_ID = isset($params["academicId"]) ? (int) $params["academicId"] : 0;
+        $CLASS_ID = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
         $representative = isset($params["CLASS_REPRESENTATIVE"]) ? $params["CLASS_REPRESENTATIVE"] : 0;
 
         $SQL = "UPDATE";
@@ -980,7 +980,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $ACADEMIC = AcademicDBAccess::getInstance();
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $data = $ACADEMIC->getGradeDataFromId($academicId);
@@ -1035,7 +1035,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
     public static function jsonActionStudentAcademicTraditional($params) {
 
-        $classGuid = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $classGuid = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $scholarshipId = isset($params["SCHOLARSHIP_ID"]) ? $params["SCHOLARSHIP_ID"] : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($classGuid);
@@ -1134,7 +1134,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $ACADEMIC_ID = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $ACADEMIC_ID = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($ACADEMIC_ID);
 
@@ -1289,7 +1289,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function jsonAddEnrollStudentSubject($params) {
 
         $selectionIds = isset($params["selectionIds"]) ? addText($params["selectionIds"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($selectionIds != "" && $academicObject) {
@@ -1345,7 +1345,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function jsonRemoveEnrolledStudentSubject($params) {
 
         $studentId = isset($params["removeId"]) ? addText($params["removeId"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 

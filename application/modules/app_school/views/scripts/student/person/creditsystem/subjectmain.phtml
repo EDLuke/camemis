@@ -13,8 +13,8 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:'';
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:'';
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):'';
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:'';
 
 $academicObject = AcademicDBAccess::findSchoolyearSubjectFromId($academicId);
 

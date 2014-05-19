@@ -24,7 +24,7 @@ if(!$gradeSchoolyearObject) {header("Location: /main/permission/");}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($gradeSchoolyearObject->SCHOOL_YEAR);
 
-$term = isset($_GET["term"])?$_GET["term"]:"FIRST_SEMESTER";
+$term = isset($_GET["term"])?addText($_GET["term"]):"FIRST_SEMESTER";
 
 if($gradeSchoolyearObject->EDUCATION_SYSTEM){
     

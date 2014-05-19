@@ -25,7 +25,7 @@ $OBJECT_FORM->setLoadUrl('/student/jsonload/');
 $OBJECT_FORM->setSaveUrl('/student/jsonsave/');
 
 $studentId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $STUDENT_CLASS = StudentAcademicDBAccess::getCurrentStudentAcademic(
         $studentId

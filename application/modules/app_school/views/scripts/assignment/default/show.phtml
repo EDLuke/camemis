@@ -25,7 +25,7 @@ $OBJECT_FORM->setSaveUrl('/assignment/jsonsave/');
 
 $CLASS_LIST = new CamemisGrid("ASSIGNMENT", "ACADEMIC");
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $academicId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";

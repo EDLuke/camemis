@@ -238,6 +238,13 @@ class EvaluationController extends Zend_Controller_Action {
 
     public function jsonimportAction() {
 
+        switch ($this->REQUEST->getPost('cmd')) {
+            case "jsonScoreImport":
+                $DB_ACCESS = new jsonEvaluationSubjectAssessment();
+                $jsondata = $DB_ACCESS->jsonScoreImport($this->REQUEST->getPost());
+                break;
+        }
+
         Zend_Loader::loadClass('Zend_Json');
 
         if (isset($jsondata))

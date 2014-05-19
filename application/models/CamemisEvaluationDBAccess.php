@@ -90,7 +90,7 @@ class CamemisEvaluationDBAccess {
         
         if ($params["parentId"] <> 0){
             $facette = self::findAnswerObjectFromId($params["parentId"]);
-            $SAVEDATA['PARENT'] = (int) $params["parentId"];
+            $SAVEDATA['PARENT'] =  addText($params["parentId"]);
             
             if ($facette)
                 $SAVEDATA['ANSWER_TYPE'] = $facette->ANSWER_TYPE;
@@ -434,7 +434,7 @@ class CamemisEvaluationDBAccess {
     public static function jsonSaveEvaluationTopic($params) {
         
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) :'new'; 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
         
         $SAVEDATA = array();
         

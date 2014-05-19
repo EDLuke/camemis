@@ -322,7 +322,7 @@ class ExtraClassDBAccess {
             $SAVEDATA["GRADE_LEVEL"] = addText($params["GRADE_LEVEL"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] = (int) $params["SORTKEY"];
+            $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
@@ -593,7 +593,7 @@ class ExtraClassDBAccess {
     public function jsonTeacherExtraClass($params) {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : '';
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : '';
 
         $SELECT_DATA = array(
             "A.ID AS ID"

@@ -26,9 +26,9 @@ $academicObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
 
 $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $academicObject);
 
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 
 $ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(

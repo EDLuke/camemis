@@ -258,6 +258,10 @@ Ext.onReady(function() {
     ");
     
     if($academicObject->EVALUATION_OPTION){
+        
+        $importParams = $setParams;
+        $importParams .= "&target=subjectresultmonth";
+    
         $OBJECT_GRID->addTBarItems("
             tbar.add(['-',{
                 text: '" . IMPORT . "'
@@ -273,7 +277,7 @@ Ext.onReady(function() {
                     text: '" . IMPORT . "'
                     ,iconCls:'icon-database_copy'
                     ,handler:function(){
-                        openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($setParams)."', 450,300);
+                        openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($importParams)."', 450,250);
                     }
                 }]
             }]);

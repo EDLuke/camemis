@@ -19,8 +19,8 @@ $OBJECT_FORM = new CamemisForm("SCHOOLEVENT");
 $OBJECT_FORM->setLoadUrl('/schoolevent/jsonload/');
 $OBJECT_FORM->setSaveUrl('/schoolevent/jsonsave/');
 
-$eventType = isset($_GET["eventType"])?$_GET["eventType"]:"";
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$eventType = isset($_GET["eventType"])? addText($_GET["eventType"]):"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 
 $classObject = AcademicDBAccess::findGradeFromId($academicId);

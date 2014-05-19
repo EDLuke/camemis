@@ -14,7 +14,7 @@ require_once 'models/app_school/subject/GradeSubjectDBAccess.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$setId = isset($_GET["setId"])?$_GET["setId"]:"";
+$setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
 
 $tmpArr = explode("-",$setId);
 $classId = $tmpArr[0];
@@ -35,6 +35,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
         $PENEL_ITEMS = Array();
 
+        $ONLINE_COURSE = "{
+            title: '".ONLINE_COURSE."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'GOALS', url: ''})]
+        }";
+        
+        if (Zend_Registry::get('SCHOOL')->AVAILABLE_ELEARNING == 2) {
+            $PENEL_ITEMS[] = $ONLINE_COURSE;
+        }
+        
         $GOALS = "{
             title: '".GOALS."'
             ,layout: 'fit'

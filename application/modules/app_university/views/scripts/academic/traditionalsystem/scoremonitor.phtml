@@ -16,7 +16,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 

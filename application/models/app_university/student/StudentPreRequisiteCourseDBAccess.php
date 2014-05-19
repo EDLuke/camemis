@@ -72,7 +72,7 @@ class StudentPreRequisiteCourseDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
         $subjectId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";

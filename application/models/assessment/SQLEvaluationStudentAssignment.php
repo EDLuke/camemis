@@ -215,7 +215,24 @@ class SQLEvaluationStudentAssignment {
     public static function setActionStudentScoreSubjectAssignment($stdClass) {
 
         $facette = self::getScoreSubjectAssignment($stdClass);
-
+        
+//        $log = "";
+//        $log .= "\n academicId: ".$stdClass->academicId;
+//        $log .= "\n subjectId: ".$stdClass->subjectId;
+//        $log .= "\n assignmentId: ".$stdClass->assignmentId;
+//        $log .= "\n date: ".$stdClass->date;
+//        $log .= "\n actionValue: ".$stdClass->actionValue;
+//        $log .= "\n actionField: ".$stdClass->actionField;
+//        $log .= "\n scoreType: ".$stdClass->scoreType;
+//        $log .= "\n month: ".$stdClass->month;
+//        $log .= "\n year: ".$stdClass->year;
+//        $log .= "\n coeffValue: ".$stdClass->coeffValue;
+//        $log .= "\n term: ".$stdClass->term;
+//        $log .= "\n date: ".$stdClass->date;
+//        $log .= "\n include_in_valuation: ".$stdClass->include_in_valuation;
+//
+//        error_log($log);
+        
         if ($facette) {
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
             $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
@@ -357,7 +374,7 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
-        
+
         $SQL = "DELETE FROM t_student_assignment WHERE";
         $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
         $SQL .= " AND STUDENT_ID='" . $stdClass->studentId . "'";

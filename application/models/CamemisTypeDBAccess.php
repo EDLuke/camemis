@@ -285,7 +285,7 @@ class CamemisTypeDBAccess {
     public static function jsonSaveCamemisType($params)
     {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
 
         $SAVEDATA = array();
 

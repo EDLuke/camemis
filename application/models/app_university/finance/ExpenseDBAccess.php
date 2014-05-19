@@ -147,7 +147,7 @@
             $SAVEDATA['NAME'] = addText($params["name"]);
 
             if ($params["parentId"] > 0) {
-                $SAVEDATA['PARENT'] = (int) $params["parentId"];
+                $SAVEDATA['PARENT'] =  addText($params["parentId"]);
             } else {
                 $SAVEDATA['PARENT'] = 0;
             }

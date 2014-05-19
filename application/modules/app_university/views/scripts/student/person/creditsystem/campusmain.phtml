@@ -9,9 +9,9 @@ require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:$this->studentId;
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):$this->studentId;
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):$this->schoolyearId;
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:$this->academicId;
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:$this->academicId;
 $campusId = isset($_GET["campusId"])?$_GET["campusId"]:$this->campusId;
 
 $setParams = "&objectId={$studentId}&academicId={$academicId}&schoolyearId={$schoolyearId}&campusId={$campusId}";

@@ -38,7 +38,7 @@ Class AcademicAdditionalDBAccess {
     {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
         $type = isset($params["CHOOSE_TYPE"]) ? addText($params["CHOOSE_TYPE"]) : '';
 
         $SAVEDATA = array();

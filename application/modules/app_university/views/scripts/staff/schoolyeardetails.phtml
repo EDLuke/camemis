@@ -20,8 +20,8 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
-$current_instructor = isset($_GET["current_instructor"])?$_GET["current_instructor"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
+$current_instructor = isset($_GET["current_instructor"])? addText($_GET["current_instructor"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 

@@ -10,59 +10,110 @@ require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
 require_once 'models/export/CamemisExportDBAccess.php';
 
-$academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
-$subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
-$assignmentId = isset($_GET["assignmentId"]) ? addText($_GET["assignmentId"]) : "";
-$date = isset($_GET["date"]) ? addText($_GET["date"]) : "";
-$term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
-
 class myExportDBAccess extends CamemisExportDBAccess {
 
-    function __construct($academicId, $subjectId, $assignmentId, $term, $date) {
+    function __construct($academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section) {
 
-        $this->academidId = $academicId * 1;
-        $this->subjectId = $subjectId * 1;
-        $this->assignmentId = $assignmentId * 1;
+        $this->academicId = (int) $academicId;
+        $this->subjectId = (int) $subjectId;
+        $this->assignmentId = (int) $assignmentId;
         $this->term = $term;
         $this->date = $date;
-
-        $this->startHeader = 2;
+        $this->section = $section;
+        $this->monthyear = $monthyear;
 
         $this->evaluation = new EvaluationSubjectAssessment();
-        $this->evaluation->setAcademicId($this->academidId);
+        $this->evaluation->setAcademicId($this->academicId);
+        $this->evaluation->setSubjectId($this->subjectId);
+        $this->evaluation->setAssignmentId($this->assignmentId);
+        $this->evaluation->setDate($this->date);
+        $this->evaluation->setTerm($this->term);
+        $this->evaluation->setMonthYear($this->monthyear);
 
+        $this->startHeader = 2;
         parent::__construct();
     }
 
+    public function setParams() {
+        if ($this->evaluation->getSettingEvaluationOption()) {
+
+            if ($this->term) {
+                return array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "section" => $this->section
+                );
+            } else {
+                return array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "section" => $this->section
+                );
+            }
+        } else {
+            return array(
+                "academicId" => $this->academicId
+                , "subjectId" => $this->subjectId
+                , "assignmentId" => $this->assignmentId
+                , "date" => $this->date
+            );
+        }
+    }
+
     public function getFileName() {
-        return "../public/" . UserAuth::getMyFolder() . "/" . UserAuth::getUserId() . "_scoreimporttemplate.xls";
+        return self::getUserPhath("_scoreimporttemplate.xls");
     }
 
     public function setTableHeader() {
 
-        $content = "Ich komme aus Kambodscha und meine Frau heisst Socheata, Sie kommt auch aus Kambodscha.";
+        $content = $this->evaluation->getCurrentClass()->NAME . " (" . $this->evaluation->getCurrentSchoolyear()->NAME . ")";
+        $content .= "\r";
+
+        if ($this->date) {
+            $content .= getShowDate($this->date);
+            $content .= "\r";
+        }
+        
+        if($this->monthyear){
+            $content .= diplayNameMonthYear($this->monthyear);
+            $content .= "\r";
+        }
+
+        $content .= $this->evaluation->getSubject()->SUBJECT_NAME;
+        $content .= "\r";
+        $content .= $this->evaluation->getSubjectScorePossible();
+        
+        if ($this->assignmentId) {
+            $content .= "\r";
+            $content .= $this->evaluation->getAssignment()->NAME;
+        }
+
         $this->setCellMergeContent(0, 1, $content, "A1", "C1");
-        $this->setFontStyle(0, 1, true, 12, "000000");
+        $this->setFontStyle(0, 1, true, 11, "000000");
         $this->setFullStyle(0, 1, "FFFFFF");
-        $this->setCellStyle(0, 1, false, 100);
+        $this->setCellStyle(0, 1, false, 100, false);
 
-        $this->setCellContent(0, $this->startHeader, CODE_ID);
-        $this->setFontStyle(0, $this->startHeader, true, 11, "000000");
-        $this->setFullStyle(0, $this->startHeader, "DFE3E8");
-        $this->setCellStyle(0, $this->startHeader, 20, 40);
+        $this->setCellContent(0, 2, CODE_ID);
+        $this->setFontStyle(0, 2, true, 11, "000000");
+        $this->setFullStyle(0, 2, "DFE3E8");
+        $this->setCellStyle(0, 2, 20, 30);
 
-        $this->setCellContent(1, $this->startHeader, STUDENT);
-        $this->setFontStyle(1, $this->startHeader, true, 11, "000000");
-        $this->setFullStyle(1, $this->startHeader, "DFE3E8");
-        $this->setCellStyle(1, $this->startHeader, 30, 40);
+        $this->setCellContent(1, 2, STUDENT);
+        $this->setFontStyle(1, 2, true, 11, "000000");
+        $this->setFullStyle(1, 2, "DFE3E8");
+        $this->setCellStyle(1, 2, 30, 30);
 
-        $this->setCellContent(2, $this->startHeader, SCORE);
-        $this->setFontStyle(2, $this->startHeader, true, 11, "000000");
-        $this->setFullStyle(2, $this->startHeader, "DFE3E8");
-        $this->setCellStyle(2, $this->startHeader, 20, 40);
+        $this->setCellContent(2, 2, SCORE);
+        $this->setFontStyle(2, 2, true, 11, "000000");
+        $this->setFullStyle(2, 2, "DFE3E8");
+        $this->setCellStyle(2, 2, 20, 30);
     }
 
     public function setTableContent() {
+
+        $stdClass = (object) $this->setParams();
 
         $entries = $this->evaluation->listClassStudents();
 
@@ -76,6 +127,7 @@ class myExportDBAccess extends CamemisExportDBAccess {
                 $rowIndex = $i + $this->startContent();
 
                 $STUDENT = getFullName($value->FIRSTNAME, $value->LASTNAME);
+                $stdClass->studentId = $value->ID;
 
                 $this->setCellContent(0, $rowIndex, $value->CODE);
                 $this->setFontStyle(0, $rowIndex, false, 9, "000000");
@@ -85,7 +137,13 @@ class myExportDBAccess extends CamemisExportDBAccess {
                 $this->setFontStyle(1, $rowIndex, false, 9, "000000");
                 $this->setCellStyle(1, $rowIndex, false, 20);
 
-                $this->setCellContent(2, $rowIndex, "");
+                if ($this->evaluation->getSettingEvaluationOption()) {
+                    $this->setCellContent(2, $rowIndex, "");
+                } else {
+                    $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
+                    $this->setCellContent(2, $rowIndex, $facette ? $facette->POINTS : "");
+                }
+
                 $this->setFontStyle(2, $rowIndex, false, 9, "000000");
                 $this->setCellStyle(2, $rowIndex, false, 20);
 
@@ -105,7 +163,33 @@ class myExportDBAccess extends CamemisExportDBAccess {
 
 }
 
-$MY_EXPORT = new myExportDBAccess($academicId, $subjectId, $assignmentId, $term, $date);
+$academicId = isset($_GET["academicId"]) ? (int) $_GET["academicId"] : "";
+$subjectId = isset($_GET["subjectId"]) ? (int) $_GET["subjectId"] : "";
+$assignmentId = isset($_GET["assignmentId"]) ? (int) $_GET["assignmentId"] : "";
+$date = isset($_GET["date"]) ? addText($_GET["date"]) : "";
+$term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
+$monthyear = isset($_GET["monthyear"]) ? addText($_GET["monthyear"]) : "";
+
+$section = "";
+switch ($term) {
+    case "FIRST_SEMESTER":
+    case "SECOND_SEMESTER":
+        $section = "2";
+        break;
+    case "FIRST_TERM":
+    case "SECOND_TERM":
+    case "THIRD_TERM":
+        $section = "4";
+        break;
+    case "FIRST_QUARTER":
+    case "SECOND_QUARTER":
+    case "THIRD_QUARTER":
+    case "FOURTH_QUARTER":
+        $section = "5";
+        break;
+}
+
+$MY_EXPORT = new myExportDBAccess($academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section);
 $MY_EXPORT->setSaveExcel();
 
 $fileName = UserAuth::getUserId() . "_scoreimporttemplate.xls";

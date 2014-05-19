@@ -125,7 +125,6 @@ class StudentImportDBAccess {
             case 1:
                 $SQL .= " AND A.EDUCATION_SYSTEM=" . $educationSystem . "";
                 $SQL .= " AND A.TRAINING=0";
-                //$SQL .= " AND A.CAMPUS <> 0"; //@THORN Visal -> Old "A.CAMPUS <> 0"
                 switch ($examResult) {
                     case 1:
                         if ($facette)
@@ -165,7 +164,7 @@ class StudentImportDBAccess {
 
         ///
         $type = isset($params['type']) ? addText($params['type']) : '';
-        $campus = isset($params['campus']) ? (int)($params['campus']) : '';
+        $campus = isset($params['campus']) ? (int) ($params['campus']) : '';
         $training = isset($params['trainingId']) ? (int) ($params['trainingId']) : '';
         $subjectExam = "";
         if ($type == 'ENROLL') {

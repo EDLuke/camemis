@@ -127,7 +127,7 @@ class RoomDBAccess {
     public function getAllRoomsQuery($params) {
 
         $node = isset($params["node"]) ? addText($params["node"]) : "0";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
 
         if ($parentId) {
             $_parentId = $parentId;
@@ -371,7 +371,7 @@ class RoomDBAccess {
         $RADIOBOX_DATA = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
 
         $facette = self::findRoomFromId($objectId);
 

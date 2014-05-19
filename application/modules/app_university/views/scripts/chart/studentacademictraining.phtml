@@ -2,7 +2,7 @@
 require_once 'models/statistic/StudentStatisticsDBAccess.php';
 
 $objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 
 switch($objectType){
     case "PROGRAM":

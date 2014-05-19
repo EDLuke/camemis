@@ -20,7 +20,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 $gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";

@@ -421,7 +421,7 @@ class AcademicDBAccess {
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if (isset($params["CLASS_TYPE"]))
             $SAVEDATA['CLASS_TYPE'] = addText($params["CLASS_TYPE"]);

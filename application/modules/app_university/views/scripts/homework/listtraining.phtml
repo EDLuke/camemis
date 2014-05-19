@@ -24,10 +24,10 @@ $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$trainingId = isset($_GET["trainingId"])?$_GET["trainingId"]:"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
                                           
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

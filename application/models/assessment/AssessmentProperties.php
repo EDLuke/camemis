@@ -79,6 +79,14 @@ abstract class AssessmentProperties {
         return $this->getSubject()->SCORE_MAX;
     }
 
+    public function getSubjectScoreMin() {
+        return $this->getSubject()->SCORE_MIN;
+    }
+
+    public function getSubjectScorePossible() {
+        return $this->getSubject()->MAX_POSSIBLE_SCORE;
+    }
+
     public function getAssignment() {
         return AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
     }
@@ -104,6 +112,10 @@ abstract class AssessmentProperties {
 
     public function getCurrentClass() {
         return AcademicDBAccess::findGradeFromId($this->academicId);
+    }
+
+    public function getCurrentSchoolyear() {
+        return $result = AcademicDateDBAccess::findAcademicDateFromId($this->getSchoolyearId());
     }
 
     public function getTermNumber() {
@@ -178,6 +190,31 @@ abstract class AssessmentProperties {
         }
     }
 
+    public function getNameSectionByTerm() {
+        
+        $section = "";
+        
+        switch ($this->term) {
+            case "FIRST_SEMESTER":
+            case "SECOND_SEMESTER":
+                $section = "SEMESTER";
+                break;
+            case "FIRST_TERM":
+            case "SECOND_TERM":
+            case "THIRD_TERM":
+                $section = "TERM";
+                break;
+            case "FIRST_QUARTER":
+            case "SECOND_QUARTER":
+            case "THIRD_QUARTER":
+            case "FOURTH_QUARTER":
+                $section = "QUARTER";
+                break;
+        }
+        
+        return $section;
+    }
+
     public function getListSubjects() {
         return GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
     }
@@ -240,6 +277,10 @@ abstract class AssessmentProperties {
 
     public function getSettingQualificationType() {
         return AcademicDBAccess::findGradeFromId($this->getCurrentClass()->CAMPUS_ID)->QUALIFICATION_TYPE;
+    }
+
+    public function getTermByDateAcademicId() {
+        return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->getCurrentClass()->ID);
     }
 
 }

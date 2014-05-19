@@ -102,7 +102,7 @@ class SchooleventDBAccess {
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $eventType = isset($params["eventType"]) ? addText($params["eventType"]) : "SCHOOL";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
@@ -482,7 +482,7 @@ class SchooleventDBAccess {
         $classId = isset($params["Classes"]) ? $params["Classes"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $SAVEDATA['NAME'] = addText($params["NAME"]);
         $SAVEDATA['START_DATE'] = setDate2DB($params["START_DATE"]);
@@ -673,8 +673,8 @@ class SchooleventDBAccess {
     public function jsonLoadTestSchedule($params) {
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 
         $facette = $this->findEvent(
@@ -717,7 +717,7 @@ class SchooleventDBAccess {
     public function jsonTestSchedule($params) {
 
         $assignmentId = str_replace('CAMEMIS_', '', $params["assignmentId"]);
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
 
         $DB_GRADE = AcademicDBAccess::getInstance();
@@ -771,8 +771,8 @@ class SchooleventDBAccess {
 
     public function jsonActionTestSchedule($params) {
 
-        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 

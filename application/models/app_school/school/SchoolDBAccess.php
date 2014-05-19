@@ -94,7 +94,7 @@ class SchoolDBAccess {
             ///////////////////////
             $data["PMCR"] = $result->PMCR ? true : false;
             $data["ALD"] = $result->ALD;
-            $data["ALL"] = $result->ALL;
+            $data["ACLL"] = $result->ACLL;
             $data["MAXPA"] = $result->MAXPA;
             $data["MINPA"] = $result->MINPA;
             $data["MINPL"] = $result->MINPL;
@@ -279,12 +279,16 @@ class SchoolDBAccess {
         $SAVEDATA['PMCR'] = isset($params["PMCR"]) ? 1 : 0;
         if (isset($params["ALD"]))
             $SAVEDATA['ALD'] = addText($params["ALD"]);
-        if (isset($params["ALL"]))
-            $SAVEDATA['ALL'] = addText($params["ALL"]);
+        
+        if (isset($params["ACLL"]))
+            $SAVEDATA['ACLL'] = addText($params["ACLL"]);
+        
         if (isset($params["MAXPA"]))
             $SAVEDATA['MAXPA'] = addText($params["MAXPA"]);
+        
         if (isset($params["MINPA"]))
             $SAVEDATA['MINPA'] = addText($params["MINPA"]);
+        
         if (isset($params["MINPL"]))
             $SAVEDATA['MINPL'] = addText($params["MINPL"]);
 

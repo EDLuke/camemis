@@ -11,11 +11,14 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$academicId = isset($_GET["academicId"])?addText($_GET["academicId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
-$assignmentId = isset($_GET["assignmentId"])?addText($_GET["assignmentId"]):"";
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+$assignmentId = isset($_GET["assignmentId"])? (int)$_GET["assignmentId"]:"";
 $date = isset($_GET["date"])?addText($_GET["date"]):"";
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
 
 $setParams = "";
 $setParams .= "&academicId=".$academicId."";
@@ -23,7 +26,7 @@ $setParams .= "&academicId=".$academicId."";
 if($subjectId)
 $setParams .= "&subjectId=".$subjectId."";
 
-if($subjectId)
+if($assignmentId)
 $setParams .= "&assignmentId=".$assignmentId."";
 
 if($date)
@@ -31,6 +34,14 @@ $setParams .= "&date=".$date."";
 
 if($term)
 $setParams .= "&term=".$term."";
+
+if($setId)
+$setParams .= "&setId=".$setId."";
+
+if($monthyear){
+    $setParams .= "&monthyear=".$monthyear."";
+    $setParams .= "&section=1";
+}
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -52,7 +63,6 @@ $formItems = "[";
         }
     }
     ";
-    $formItems.= ",{".CamemisField::Datefield('CREATED_DATE',CREATED_DATE,false)."}";
     $formItems .= "]";
 
     $FORM_TBAR = "";
@@ -66,7 +76,7 @@ $formItems = "[";
     $FORM_TBAR .= "tooltip: '".UPLOAD."'";
     $FORM_TBAR .= ",id: 'UPLOAD'";
     $FORM_TBAR .= ",iconCls:'icon-disk'";
-    $FORM_TBAR .= ",disabled: true";
+    $FORM_TBAR .= ",disabled: false";
     $FORM_TBAR .= ",handler: function(){";
     $FORM_TBAR .= "if(fp.getForm().isValid()){";
     $FORM_TBAR .= "Ext.Ajax.request({";
@@ -74,11 +84,17 @@ $formItems = "[";
     $FORM_TBAR .= ",isUpload: true";
     $FORM_TBAR .= ",headers: {'Content-type':'multipart/form-data'}";
     $FORM_TBAR .= ",method: 'POST'";
-    $FORM_TBAR .= ",params:{cmd: 'importXLS',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}";
+    $FORM_TBAR .= ",params:{cmd: 'jsonScoreImport',camIds: '".$this->urlEncryp->encryptedGet($setParams)."'}";
     $FORM_TBAR .= ",waitMsg: 'Uploading your file...'";
     $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
     $FORM_TBAR .= ",success: function(response, options) {";
-    $FORM_TBAR .= "".CamemisPage::setRequestURI(false)."";
+    
+    if($target == "subjectassignments"){
+        $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    }else{
+        $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    }
+    
     $FORM_TBAR .= "}";
     $FORM_TBAR .= ",failure: function(response, options) { console.log('fail'); }";
     $FORM_TBAR .= "});";

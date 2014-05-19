@@ -25,7 +25,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $TEACHERLISTADMIN = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
 
-$term = isset($_GET["term"])?$_GET["term"]:"ALL";
+$term = isset($_GET["term"])?addText($_GET["term"]):"ALL";
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->objectId);
 if(!$academicObject) {header("Location: /main/permission/");}

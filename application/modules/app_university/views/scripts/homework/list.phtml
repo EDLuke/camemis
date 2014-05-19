@@ -25,13 +25,13 @@ $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$academicId = isset($_GET["academicId"])?$_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-$subjectId = isset($_GET["subjectId"])?addText($_GET["subjectId"]):"";
-$studentId = isset($_GET["studentId"])?$_GET["studentId"]:"";
-$gradingterm = isset($_GET["gradingterm"])?$_GET["gradingterm"]:"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
+$gradingterm = isset($_GET["gradingterm"])? addText($_GET["gradingterm"]):"";
 $gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
-$schoolyear = isset($_GET["schoolyear"])?$_GET["schoolyear"]:"";
+$schoolyear = isset($_GET["schoolyear"])?addText($_GET["schoolyear"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
