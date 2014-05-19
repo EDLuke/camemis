@@ -483,14 +483,7 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->view->objectId = $this->objectId;
         $this->view->classId = $this->classId;
-        switch ($this->facette->EDUCATION_SYSTEM) {
-            case 1:
-                $this->_helper->viewRenderer("creditsystem/scoremonitor");
-                break;
-            default:
-                $this->_helper->viewRenderer("traditionalsystem/scoremonitor");
-                break;
-        }
+        $this->_helper->viewRenderer("traditionalsystem/scoremonitor");
     }
 
     public function studentlistadminAction() {

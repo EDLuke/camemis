@@ -20,10 +20,6 @@ if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
-$setParams = "";
-$setParams .= "&subjectId=".$this->subjectId."";
-$setParams .= "&academicId=".$this->academicId."";
-
 $DISPLAY_ERROR = "{
     title: '".STATUS."'
     ,layout: 'fit'
@@ -35,17 +31,20 @@ $DISPLAY_ERROR = "{
     }]
 }";
 
-print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$setParams = "";
+$setParams .= "&subjectId=".$this->subjectId."";
+$setParams .= "&academicId=".$this->academicId."";
 
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
 Ext.onReady(function() {
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-
+      
     $PENEL_ITEMS = Array();
-
+        
     $MONTHLY_RESULT = "{
         title: '".MONTHLY_RESULT."'
         ,layout: 'fit'
@@ -164,13 +163,14 @@ Ext.onReady(function() {
             $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
         break;
     }
-
+    
     $setParamsYear = $setParams;
     $YEAR_RESULT = "{
         title: '".YEAR_RESULT."'
         ,layout: 'fit'
         ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
     }";
+    
     if($academicObject->DISPLAY_YEAR_RESULT)
     $PENEL_ITEMS[] = $YEAR_RESULT;
 
@@ -179,7 +179,7 @@ Ext.onReady(function() {
     }else{
         $CHOOSE_ITEMS = $DISPLAY_ERROR;
     }
-
+    
     ?>
     viewport = new Ext.Viewport({
         layout: 'fit'

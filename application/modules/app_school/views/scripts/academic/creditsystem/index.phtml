@@ -62,15 +62,18 @@ if($entries){
         
         $CAMEMIS_PAGE_OBJECT->setAddTab();
 
-        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
-        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
-        $OBJECT_SCHOOLYEAR->objectTitle = false;
-        $OBJECT_SCHOOLYEAR->allowBlank = "true";
-        $OBJECT_SCHOOLYEAR->width = 150;
-        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
-        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
-        $OBJECT_SCHOOLYEAR->renderJS();
-
+        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+        $STORE_SCHOOLYEAR = "[";
+        if(AcademicDateDBAccess::getAllSchoolyear()){
+            $i = 0;
+            foreach(AcademicDateDBAccess::getAllSchoolyear() as $value){
+                $DATA[$i] = $value->ID;
+                $STORE_SCHOOLYEAR .= $i?",":"";
+                $STORE_SCHOOLYEAR .= "['" . $value->ID . "', '" . setShowText($value->NAME) ."', 'icon-date']";
+                $i++;
+            }
+        }
+        
         $OBJECT_TREE->isAsyncTreeNode = false;
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
@@ -86,11 +89,25 @@ if($entries){
             ");
         }
 
+        $STORE_SCHOOLYEAR .= "]";
         $OBJECT_TREE->addTBarItems("
             xtype: 'buttongroup'
             ,items:[{
-                width: 80
-                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+                xtype:'combo'
+                ,id:'COMO_SCHOOLYEAR_ID'
+                ,width:170
+                ,fieldLabel:'IconCombo'
+                ,store: new Ext.data.SimpleStore({
+                    fields: ['comboCode', 'comboName', 'comboIcon'],
+                    data: ".$STORE_SCHOOLYEAR."
+                })
+                ,plugins:new Ext.ux.plugins.IconCombo()
+                ,valueField: 'comboCode'
+                ,displayField: 'comboName'
+                ,iconClsField: 'comboIcon'
+                ,triggerAction: 'all'
+                ,mode: 'local'
+                ,value:'".$currentSchoolyearId."'
             }]
         ");
         
@@ -106,7 +123,9 @@ if($entries){
         $OBJECT_TREE->setBaseParams("
             cmd: 'getTreeCreditEducationSystem'
             ,educationSystem:1
+            ,SCHOOLYEAR:'".$currentSchoolyearId."'
         ");
+        
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isCrediSystem = true;
         $OBJECT_TREE->isTreeExpand = true;

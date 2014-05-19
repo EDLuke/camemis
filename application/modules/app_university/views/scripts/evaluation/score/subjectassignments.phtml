@@ -19,9 +19,18 @@ $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId,$this->academicId);
 
-if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");}
+
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $academicId = $academicObject->PARENT;
+}else{
+    $subjectId = $this->subjectId;
+    $academicId = $this->academicId;
+}
+
+$subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicId);
 
 AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
 
@@ -29,8 +38,8 @@ $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHOOL_YEAR);
 
 $setParams = "";
-$setParams .= "&academicId=".$this->academicId."";
-$setParams .= "&subjectId=".$this->subjectId."";
+$setParams .= "&academicId=".$academicId."";
+$setParams .= "&subjectId=".$subjectId."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){

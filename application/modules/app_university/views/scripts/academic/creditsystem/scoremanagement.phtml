@@ -146,7 +146,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,iconCls:'icon-note_edit'
                         ,disabled:false
                         ,handler: function(){
-                             clickOpenPage('center','<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.attributes.title, '/academic/scoremonitor/?academicId=' + node.id);
+                             clickOpenPage('center','<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.attributes.title, '/academic/subjectassignments/?academicId=' + node.id);
                              Ext.getCmp('ACADEMIC_ID').collapse();
                         }
                     }]
