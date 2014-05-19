@@ -166,7 +166,7 @@
                 $SAVEDATA['FORMULAR'] = addText($params["FORMULAR"]);
 
             if (isset($params["SORTKEY"]))
-                $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+                $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
             if (isset($params["DESCRIPTION"]))
                 $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);

@@ -760,7 +760,7 @@ class SMSDBAccess {
 
         $registered = isset($params["registered"]) ? $params["registered"] : 1;
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $schoolyearObject = AcademicDateDBAccess::loadCurrentSchoolyear();
 

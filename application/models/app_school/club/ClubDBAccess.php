@@ -105,7 +105,7 @@ class ClubDBAccess {
     }
 
     public static function getAllClubsQuery($params) {
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $SQL = "";
         $SQL .= " SELECT *";
@@ -170,7 +170,7 @@ class ClubDBAccess {
 
     public function jsonSaveClub($params) {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "0";
         $SAVEDATA = array();
 
         if (isset($params["NAME"]))

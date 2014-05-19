@@ -280,7 +280,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : 0;
 

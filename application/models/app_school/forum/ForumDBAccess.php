@@ -51,7 +51,7 @@ class ForumDBAccess {
     
     public static function sqlForum($params){
         
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $CAMEMIS_TYPE = isset($params["CAMEMIS_TYPE"]) ? $params["CAMEMIS_TYPE"] : "";
         $object_type = isset($params["object_type"]) ? $params["object_type"] : "";
         $objectId = isset($params["ID"]) ? $params["ID"] : "";

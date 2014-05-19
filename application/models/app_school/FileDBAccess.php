@@ -104,7 +104,7 @@ class FileDBAccess {
 
     public static function getAllFilesQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : '';
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : '';
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : '';
@@ -209,7 +209,7 @@ class FileDBAccess {
     public function jsonSaveFile($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
 
         $SAVEDATA = array();
 

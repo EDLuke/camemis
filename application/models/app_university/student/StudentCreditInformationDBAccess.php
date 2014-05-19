@@ -50,7 +50,7 @@
             
             $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
             $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
-            $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+            $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
             $creditStatus = isset($params["creditStatus"]) ? $params["creditStatus"] : "";
             $creditNumber = isset($params["creditNumber"]) ? $params["creditNumber"] : "";
             $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";

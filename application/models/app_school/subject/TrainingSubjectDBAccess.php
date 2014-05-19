@@ -202,11 +202,11 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";  
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : ""; 
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : ""; 
         $nationalExam = isset($params["nationalExam"]) ? addText($params["nationalExam"]) : "";
         $subjectType = isset($params["subjectType"]) ? addText($params["subjectType"]) : "";
         $include_in_evaluation = isset($params["include_in_evaluation"]) ? (int) $params["include_in_evaluation"] : "0";
@@ -400,7 +400,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function removeGradeSubject($params) {
 
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         if ($trainingId && $subjectId) {
             $SQL = "DELETE FROM 't_grade_subject'";
@@ -574,7 +574,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : 0;
 
         $SELECTION_A = array(
@@ -626,7 +626,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public function actionSubjectTrainingTeacherClass($params) {
 
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $teacherId = isset($params["id"]) ? addText($params["id"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
 
@@ -925,7 +925,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $selectionIds = $params["selectionIds"];
         $trainingId = $params["trainingId"];
         $subjectId = $params["subjectId"];
-        $parentId = (int) $params["parentId"];
+        $parentId =  addText($params["parentId"]);
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
 
@@ -983,7 +983,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public function jsonSubjectAssignmentTraining($params) {
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         $SQL = "SELECT ID,CONCAT('(',SHORT,') ',NAME) AS NAME";
@@ -1120,7 +1120,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     }
      public function getAllAssignmentQuery($params) {
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";

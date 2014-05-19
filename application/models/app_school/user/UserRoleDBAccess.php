@@ -261,7 +261,7 @@
 
             $SAVEDATA = array();
 
-            $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+            $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
 
             if (isset($params["name"])) {
                 $name = $params["name"];

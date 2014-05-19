@@ -31,7 +31,7 @@ Class FieldSettingDBAccess {
     public static function jsonSaveFieldSetting($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
         $type = isset($params["CHOOSE_TYPE"]) ? addText($params["CHOOSE_TYPE"]) : '';
 
         $SAVEDATA = array();
@@ -40,7 +40,7 @@ Class FieldSettingDBAccess {
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if ($type)
             $SAVEDATA['CHOOSE_TYPE'] = $type;

@@ -193,7 +193,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
@@ -558,7 +558,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $roomId = isset($params["ROOM_HIDDEN"]) ? addText($params["ROOM_HIDDEN"]) : false;
         $teacherId = isset($params["TEACHER_HIDDEN"]) ? addText($params["TEACHER_HIDDEN"]) : false;
         $description = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : false;
-        $academicId = isset($params["academicId"]) ? (int) $params["academicId"] : false;
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 
         if ($choosedate) {

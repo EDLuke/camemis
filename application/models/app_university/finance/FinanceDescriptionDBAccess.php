@@ -89,7 +89,7 @@
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
             if ($params["parentId"] > 0) {
-                $SAVEDATA['PARENT'] = (int) $params["parentId"];
+                $SAVEDATA['PARENT'] =  addText($params["parentId"]);
                 $SAVEDATA['OBJECT_TYPE'] = "ITEM";
                 $facette = self::findObjectFromId($params["parentId"]);
                 if ($facette) {

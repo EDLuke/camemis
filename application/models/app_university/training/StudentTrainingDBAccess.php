@@ -1076,10 +1076,10 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
-        $this->assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
+        $this->assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
         $this->date = isset($params["date"]) ? $params["date"] : "";     
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $this->assignmenObject = $this->getAssignmentObject();
         
@@ -1168,9 +1168,9 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
        
         $this->studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $this->assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
+        $this->assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
        
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $this->date = isset($params["date"]) ? $params["date"] : "";
         
         $this->assignmenObject = AssignmentTempDBAccess::findAssignmentJoinCategory();
@@ -1297,8 +1297,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $date = isset($params["date"]) ? $params["date"] : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
 
         $SAVEDATA['TEACHER_COMMENTS'] = addText($comment);
 
@@ -1322,8 +1322,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $date = isset($params["date"]) ? $params["date"] : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : ""; 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
              
         $WHERE = Array();
         $WHERE[] = self::dbAccess()->quoteInto('STUDENT = ?', $studentId);
@@ -1342,8 +1342,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $date = isset($params["date"]) ? $params["date"] : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
-        $assignmentId = isset($params["assignmentId"]) ? (int) $params["assignmentId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
 
         $WHERE_A = Array();
         $WHERE_A[] = self::dbAccess()->quoteInto('ASSIGNMENT = ?', $assignmentId);
@@ -1370,7 +1370,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $this->trainingObject = $this->getTrainingObject();
         $this->trainingSubject = $this->getTrainingSubject();
@@ -1797,7 +1797,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $this->section = isset($params["section"]) ? $params["section"] : "";
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : ""; 
         $this->trainingObject = $this->getTrainingObject();
         $this->trainingSubject = $this->getTrainingSubject();
@@ -1969,7 +1969,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
         $this->classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $this->section = isset($params["section"]) ? $params["section"] : "";
        
@@ -2083,7 +2083,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $this->subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $this->section = isset($params["section"]) ? $params["section"] : "";
         
          
@@ -2188,7 +2188,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
     public static function listStudentTrainings($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $SQL = self::dbAccess()->select();
@@ -2244,7 +2244,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SAVEDATA = array();
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $chooseId = isset($params["id"]) ? addText($params["id"]) : "0";
 
         $currentTraning = self::getCurrentTrainingByTerm($studentId, $parentId);

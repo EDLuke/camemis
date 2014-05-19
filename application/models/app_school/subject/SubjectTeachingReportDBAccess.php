@@ -99,7 +99,7 @@ class SubjectTeachingReportDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         switch(UserAuth::getUserType()){
             case "TEACHER":
             case "INSTRUCTOR":

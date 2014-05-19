@@ -358,7 +358,7 @@ class BulletinDBAccess {
 
         $SAVEDATA = array();
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $name = isset($params["name"]) ? addText($params["name"]) : "";
 
         $count = self::getCount();

@@ -39,7 +39,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     {
 
         $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $parentCampus = isset($params["parentCampus"]) ? $params["parentCampus"] : "";
         $parentGrade = isset($params["parentGrade"]) ? $params["parentGrade"] : "";
         $gradeSchoolyearId = isset($params["gradeSchoolyearId"]) ? $params["gradeSchoolyearId"] : 0;
@@ -557,7 +557,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     public function addNode($params)
     {
 
-        $parentId = (int) $params["parentId"];
+        $parentId =  addText($params["parentId"]);
 
         $OBJECT_PARENT = AcademicDBAccess::findGradeFromId($parentId);
 
@@ -574,7 +574,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $chooseSubjectId = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) . "" : "";
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
@@ -887,7 +887,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $COPY_LASTSCHOOLYEAR = isset($params["COPY_LASTSCHOOLYEAR"]) ? $params["COPY_LASTSCHOOLYEAR"] : "";
                 $COPY_SUBJECT = isset($params["COPY_SUBJECT"]) ? $params["COPY_SUBJECT"] : "";
                 $COPY_ASSIGNMENT = isset($params["COPY_ASSIGNMENT"]) ? $params["COPY_ASSIGNMENT"] : "";
-                $gradeId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+                $gradeId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
                 $newGradeSchoolyearId = $objectId;
 
                 if ($QUESTION == "YES")
@@ -1325,8 +1325,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
-        $academicId = $params["academicId"] ? (int) $params["academicId"] : "0";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $academicId = $params["academicId"] ? addText($params["academicId"]) : "0";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -1383,7 +1383,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $teacherId = isset($params["id"]) ? addText($params["id"]) : 0;
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : 0;
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : 0;
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
         $academicId = isset($params["field"]) ? substr($params["field"], 6) : 0;
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : 0;
 
@@ -1575,7 +1575,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : 0;
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : 0;
 

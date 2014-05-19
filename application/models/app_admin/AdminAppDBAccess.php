@@ -56,7 +56,7 @@ class AdminAppDBAccess {
     public static function jsonSaveAppRight($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
 
         $SAVEDATA['USER_RIGHT'] = addText($params["USER_RIGHT"]);
         $SAVEDATA['CONST_RIGHT'] = addText($params["CONST_RIGHT"]);
@@ -64,7 +64,7 @@ class AdminAppDBAccess {
         $SAVEDATA['ICON'] = addText($params["ICON"]);
 
         $SAVEDATA['CHECKED'] = $params["CHECKED"];
-        $SAVEDATA['SORTKEY'] = (int) $params["SORTKEY"];
+        $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
 
         if ($objectId == "new") {
             $parentObject = self::findRightFromId($parentId);

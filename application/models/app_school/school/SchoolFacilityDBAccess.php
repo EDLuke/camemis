@@ -93,7 +93,7 @@ class SchoolFacilityDBAccess {
 
         if ($params["parentId"] > 0) {
             $facette = self::findObjectFromId($params["parentId"]);
-            $SAVEDATA['PARENT'] = (int) $params["parentId"];
+            $SAVEDATA['PARENT'] =  addText($params["parentId"]);
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
             if ($facette) {
                 $SAVEDATA['TYPE'] = $facette->TYPE;

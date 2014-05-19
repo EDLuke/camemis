@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("ASSIGNMENT");
 $OBJECT_FORM->setLoadUrl('/assignment/jsonload/');
 $OBJECT_FORM->setSaveUrl('/assignment/jsonsave/');
 
-$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
+$academicId = isset($_GET["academicId"])? addText($_GET["academicId"]):"";
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -90,7 +90,7 @@ Ext.onReady(function() {
         break;
     }
     
-    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Combo('INCLUDE_IN_EVALUATION', EVALUATION, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('INCLUDE_IN_EVALUATION', EVALUATION, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", COEFFICIENT_SETTING, false, false, false, false)."}";
     
