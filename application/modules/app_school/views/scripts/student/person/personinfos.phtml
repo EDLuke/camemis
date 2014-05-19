@@ -99,7 +99,7 @@ function columnProperties($header, $dataindex, $width){
                                     replaceValue = combo.getValue();
                                     var newDisplay = record.get('chooseDisplay');
                                     combo.setValue(newDisplay);
-                                    camboValue = replaceValue;
+                                    comboValue = replaceValue;
                                 }
                             }
                         })
@@ -126,7 +126,7 @@ function columnProperties($header, $dataindex, $width){
                                     replaceValue = combo.getValue();
                                     var newDisplay = record.get('chooseDisplay');
                                     combo.setValue(newDisplay);
-                                    camboValue = replaceValue;
+                                    comboValue = replaceValue;
                                 }
                             }
                         })
@@ -153,7 +153,7 @@ function columnProperties($header, $dataindex, $width){
                                     replaceValue = combo.getValue();
                                     var newDisplay = record.get('chooseDisplay');
                                     combo.setValue(newDisplay);
-                                    camboValue = replaceValue;
+                                    comboValue = replaceValue;
                                 }
                             }
                         })
@@ -180,7 +180,7 @@ function columnProperties($header, $dataindex, $width){
                                     replaceValue = combo.getValue();
                                     var newDisplay = record.get('chooseDisplay');
                                     combo.setValue(newDisplay);
-                                    camboValue = replaceValue;
+                                    comboValue = replaceValue;
                                 }
                             }
                         })
@@ -220,7 +220,7 @@ function columnProperties($header, $dataindex, $width){
                                 replaceValue = combo.getValue();
                                 var newDisplay = record.get('chooseDisplay');
                                 combo.setValue(newDisplay);
-                                camboValue = replaceValue;
+                                comboValue = replaceValue;
                             }
                         }
                     })
@@ -247,7 +247,7 @@ function columnProperties($header, $dataindex, $width){
                                 replaceValue = combo.getValue();
                                 var newDisplay = record.get('chooseDisplay');
                                 combo.setValue(newDisplay);
-                                camboValue = replaceValue;
+                                comboValue = replaceValue;
                             }
                         }
                     })
@@ -343,7 +343,7 @@ function columnProperties($header, $dataindex, $width){
             cmd: 'actionPersonInfos'
             ,object: '".$this->target."'
             ,objectId: '".$this->objectId."'
-            ,comboValue:camboValue
+            ,comboValue:comboValue
         ");
 
         $OBJECT_GRID->baseParams = "

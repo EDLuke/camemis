@@ -86,7 +86,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 </style>
 <script>
 
-    var camboValue;
+    var comboValue;
     Ext.apply(Ext.form.VTypes, {
         daterange : function(val, field) {
             var date = field.parseDate(val);
@@ -151,7 +151,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         replaceValue = combo.getValue();
                         var newDisplay = record.get('chooseDisplay');
                         combo.setValue(newDisplay);
-                        camboValue = replaceValue;
+                        comboValue = replaceValue;
                     }
                 }
             })
@@ -178,7 +178,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         replaceValue = combo.getValue();
                         var newDisplay = record.get('chooseDisplay');
                         combo.setValue(newDisplay);
-                        camboValue = replaceValue;
+                        comboValue = replaceValue;
                     }
                 }
             })
@@ -207,7 +207,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         replaceValue = combo.getValue();
                         var newDisplay = record.get('chooseDisplay');
                         combo.setValue(newDisplay);
-                        camboValue = replaceValue;
+                        comboValue = replaceValue;
                     }
                 }
             })
@@ -257,7 +257,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             cmd: 'jsonSaveGridpreschool'
             ,object: 'APPLICATION'
             ,objectId: '".$getID."'
-            ,camboValue: camboValue
+            ,comboValue: comboValue
         ");
 
         $APPLICATION_GRID->baseParams = "
@@ -318,7 +318,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         replaceValue = combo.getValue();
                         var newDisplay = record.get('chooseDisplay');
                         combo.setValue(newDisplay);
-                        camboValue = replaceValue;
+                        comboValue = replaceValue;
                     }
                 }
             })
@@ -376,7 +376,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             cmd: 'jsonSaveGridpreschool'
             ,object: 'TESTING'
             ,objectId: '".$getID."'
-            ,camboValue: camboValue
+            ,comboValue: comboValue
         ");
 
         $TESTING_GRID->baseParams = "

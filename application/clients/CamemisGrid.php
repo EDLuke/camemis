@@ -460,21 +460,38 @@ class CamemisGrid {
                 $js .= "afteredit: function (e){";
 
                 $js .= "var objectId = e.record.get('ID');";
-                $js .= "if (e.field != 'STATUS' && e.record.get('STATUS') == 1){";
+                $js .= "if (e.field == 'DELETE'){";
 
+                /**
+                 * KAOM Vibolrith
+                 * 19.05.2014
+                 * Editing Grid Delete and message box
+                 */
                 $js .= "Ext.MessageBox.show({";
                 $js .= "title: '" . ACTION_STATUS . "'";
-                $js .= ",msg: '" . CANNOT_SAVE . "'";
+                $js .= ",msg: '" . DELETE_THIS_ITEM . "'";
                 $js .= ",width:250";
-                $js .= ",buttons: Ext.MessageBox.OK";
-                $js .= ",icon: Ext.MessageBox.WARNING";
-                $js .= "
-                ,fn: function(btn){
-                if (btn == 'ok'){
-                Ext.getCmp('" . $this->getObjectId() . "').store.reload();
-                }
-                }
-                ";
+                $js .= ",buttons: Ext.MessageBox.YESNOCANCEL";
+                $js .= ",icon: Ext.MessageBox.QUESTION";
+                $js .= ",fn: function(btn){";
+                $js .= "if (btn == 'yes'){";
+                    
+                    $js .= "Ext.Ajax.request({";
+                        $js .= "url: '" . $this->saveUrl . "'";
+                        $js .= ",method: 'POST'";
+                        $js .= ",params: {";
+                            $js .= "id: objectId";
+                            $js .= ",field:'DELETE'";
+                            $js .= ",newValue:1";
+                            $js .= "" . $this->saveParams . "";
+                        $js .= "}";
+                        $js .= ",success: function (result, request ) {";
+                            $js .= "Ext.getCmp('" . $this->getObjectId() . "').store.reload();";
+                    $js .= "}";
+                $js .= "});";
+                
+                $js .= "}";
+                $js .= "}";
                 $js .= "});";
 
                 $js .= "}else{";
@@ -488,11 +505,13 @@ class CamemisGrid {
                 $js .= ",params: {";
                 $js .= "id: objectId";
                 $js .= ",field: e.field";
-                if ($this->comboReplaceValue) {
-                    $js .= ",newValue: replaceValue?replaceValue:e.value";
-                } else {
-                    $js .= ",newValue: e.value";
-                }
+                $js .= ",newValue: e.value";
+
+//                if ($this->comboReplaceValue) {
+//                    $js .= ",newValue: replaceValue?replaceValue:e.value";
+//                } else {
+//                    $js .= ",newValue: e.value";
+//                }
 
                 $js .= "" . $this->saveParams . "";
                 $js .= "}";
