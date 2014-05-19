@@ -2382,6 +2382,7 @@ class AcademicDBAccess {
 
     public static function findAcademicTerm($schoolyearId, $academicId = false) {
 
+        $Id = "";
         if ($academicId && !$schoolyearId) {
             $academicObject = self::findGradeFromId($academicId);
             $Id = $academicObject ? $academicObject->SCHOOL_YEAR : "";
@@ -2389,7 +2390,7 @@ class AcademicDBAccess {
             $Id = $schoolyearId;
         }
 
-        $schoolyearObject = AcademicDateDBAccess::findAcademicDateFromId($academicId);
+        $schoolyearObject = AcademicDateDBAccess::findAcademicDateFromId($Id);
         return $schoolyearObject ? $schoolyearObject->TERM_NUMBER : 0;
     }
 
