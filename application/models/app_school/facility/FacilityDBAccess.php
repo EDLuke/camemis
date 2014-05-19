@@ -126,7 +126,7 @@ class FacilityDBAccess {
 
     protected static function getAllFacilityType($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = self::dbAccess()->select();
@@ -217,7 +217,7 @@ class FacilityDBAccess {
         $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : "";
 
         if ($objectId == 'new') {
-            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
+            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
             self::dbAccess()->insert('t_facility_type', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
         } else {
@@ -299,7 +299,7 @@ class FacilityDBAccess {
 
     public static function getAllFacilityItem($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $facility_type = isset($params["type"]) ? addText($params["type"]) : "";
 
@@ -564,7 +564,7 @@ class FacilityDBAccess {
     public static function jsonSaveFacilityItem($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : 0;
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
         $DELIVERED_DATE = isset($params["DELIVERED_DATE"]) ? $params["DELIVERED_DATE"] : '';
         $EXPIRED_WARRANTY = isset($params["EXPIRED_WARRANTY"]) ? $params["EXPIRED_WARRANTY"] : '';
 
@@ -846,7 +846,7 @@ class FacilityDBAccess {
     public static function importXLS($params) {
 
         $xls = new Spreadsheet_Excel_Reader($_FILES["xlsfile"]['tmp_name']);
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "0";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "0";
         $parentObject = self::findFacilityItem($parentId);
 
         $importCount = 0;

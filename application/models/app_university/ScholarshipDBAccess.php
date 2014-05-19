@@ -361,7 +361,7 @@ class ScholarshipDBAccess {
 
     protected function getAllScholarshipQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = self::dbAccess()->select();

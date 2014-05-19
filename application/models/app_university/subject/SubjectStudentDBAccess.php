@@ -50,7 +50,7 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
@@ -112,7 +112,7 @@ class SubjectStudentDBAccess extends SubjectDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $condition = array(
             'CLASS_ID = ? ' => $academicId

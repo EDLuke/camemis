@@ -1609,7 +1609,7 @@ class StaffDBAccess {
         $data = array();
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : 0;
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
 
         $SQL = "";
         $SQL .= " SELECT A.ID AS TEACHER_ID";
@@ -1731,7 +1731,7 @@ class StaffDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $classIds = isset($params["classIds"]) ? addText($params["classIds"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         if ($academicObject)
         {

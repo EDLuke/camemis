@@ -129,7 +129,7 @@ class ExaminationDBAccess {
         $type = isset($params["type"]) ? addText($params["type"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $startDate = isset($params["start"]) ? setDate2DB($params["start"]) : "";
         $endDate = isset($params["end"]) ? setDate2DB($params["end"]) : "";
 
@@ -550,7 +550,7 @@ class ExaminationDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $roomId = isset($params["CHOOSE_ROOM"]) ? $params["CHOOSE_ROOM"] : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
 
         $facette = self::findExamFromId($parentId);
 

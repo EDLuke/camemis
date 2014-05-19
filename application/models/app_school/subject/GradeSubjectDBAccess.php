@@ -130,7 +130,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $nationalExam = isset($params["nationalExam"]) ? addText($params["nationalExam"]) : "";
         $subjectType = isset($params["subjectType"]) ? addText($params["subjectType"]) : "";
         $include_in_evaluation = isset($params["include_in_evaluation"]) ? (int) $params["include_in_evaluation"] : "0";
@@ -736,7 +736,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $node = $params["node"];
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : 0;
-        $chooseSubjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : 0;
+        $chooseSubjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : 0;
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : 0;
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);

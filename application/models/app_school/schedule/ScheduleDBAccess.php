@@ -487,7 +487,7 @@ class ScheduleDBAccess {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $shortday = isset($params["shortday"]) ? addText($params["shortday"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
@@ -1243,7 +1243,7 @@ class ScheduleDBAccess {
 
         $SAVEDATA = array();
         $Id = $params["scheduleId"] ? addText($params["scheduleId"]) : false;
-        $subjectId = $params["subjectId"] ? (int) $params["subjectId"] : false;
+        $subjectId = $params["subjectId"] ? addText($params["subjectId"]) : false;
         $academicId = $params["academicId"] ? addText($params["academicId"]) : false;
         $term = $params["term"] ? addText($params["term"]) : false;
 

@@ -434,7 +434,7 @@ class CamemisEvaluationDBAccess {
     public static function jsonSaveEvaluationTopic($params) {
         
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) :'new'; 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : '';
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
         
         $SAVEDATA = array();
         

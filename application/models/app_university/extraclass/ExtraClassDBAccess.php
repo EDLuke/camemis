@@ -593,7 +593,7 @@ class ExtraClassDBAccess {
     public function jsonTeacherExtraClass($params) {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : '';
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : '';
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $SELECT_DATA = array(
             "A.ID AS ID"

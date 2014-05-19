@@ -629,7 +629,7 @@ class SubjectDBAccess {
     {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "1";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "1";
         $type = isset($params["type"]) ? addText($params["type"]) : 0;
 
         $facette = self::findSubjectFromId($objectId);

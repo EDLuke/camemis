@@ -76,7 +76,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "0";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "0";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
@@ -214,7 +214,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
         $term = isset($params["field"]) ? addText($params["field"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $teacherId = isset($params["id"]) ? addText($params["id"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -318,7 +318,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
     public static function jsonLoadTeacherSubjectDays($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_teacher_subject', '*');
@@ -379,7 +379,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
     public static function jsonSaveTeacherSubjectDays($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $subjectId = isset($params["subjectId"]) ? (int) $params["subjectId"] : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $FIRST_SEMESTER = array(
             "FS_MONDAY" => "FS_MONDAY"

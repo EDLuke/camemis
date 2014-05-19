@@ -502,7 +502,7 @@ class CommunicationDBAccess {
 
         if (isset($params["parentId"])) {
 
-            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+            $SAVEDATA['PARENT'] = isset($params["parentId"]) ? addText($params["parentId"]) : "";
             $parentObject = $this->findCommunicationFromId($params["parentId"]);
             $newContent = addText($parentObject->CONTENT);
             $newContent .= "<BR/><BR/><B>" . getCurrentDBDateTime() . " >>>>>>>>>>>>>>>></B><BR/><BR/>";
@@ -708,7 +708,7 @@ class CommunicationDBAccess {
     //@sea peng 08.05.2013
     public static function getAllCommunicationSubjectQuery($params) {
 
-        $parentId = isset($params["parentId"]) ? (int) $params["parentId"] : "";
+        $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SQL = self::dbAccess()->select();
