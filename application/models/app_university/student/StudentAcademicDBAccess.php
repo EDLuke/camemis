@@ -819,26 +819,28 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function checkStudentEnrolledTraditionalSystem($studentId, $gradeId, $schoolyearId) {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_schoolyear", array("*"));
+        $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
         $SQL->where("STUDENT = '" . $studentId . "'");
         if ($gradeId)
             $SQL->where("GRADE = '" . $gradeId . "'");
         if ($schoolyearId)
             $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+
+        //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
-        return $result;
+        return $result ? $result->C : 0;
     }
 
     //@veasna
     public static function findEnrollmentCountGeneralByStudentId($studentId, $gradeId, $schoolyearId) {
-        return count(self::checkStudentEnrolledTraditionalSystem($studentId, $gradeId, $schoolyearId));
+        return self::checkStudentEnrolledTraditionalSystem($studentId, $gradeId, $schoolyearId);
     }
 
     public static function checkEnrollmentCountTrainingByStudentId($STUDENT_ID) {
 
         $SQL = self::dbAccess()->select()
-            ->from("t_student_training", array("C" => "COUNT(*)"))
-            ->where("STUDENT = '" . $STUDENT_ID . "'");
+                ->from("t_student_training", array("C" => "COUNT(*)"))
+                ->where("STUDENT = '" . $STUDENT_ID . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -897,8 +899,8 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function getStudentEnrolledAcademic($enrolledId) {
 
         $SQL = self::dbAccess()->select()
-            ->from("t_student_schoolyear", array('*'))
-            ->where("ID = '" . strtoupper(trim($enrolledId)) . "'");
+                ->from("t_student_schoolyear", array('*'))
+                ->where("ID = '" . strtoupper(trim($enrolledId)) . "'");
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -933,7 +935,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
                 $i++;
             }
         }
-        
+
         return array(
             "success" => true
             , "totalCount" => sizeof($data)
@@ -1180,11 +1182,14 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         //error_log($SQL->__toString());
         $entries = self::dbAccess()->fetchAll($SQL);
 
-        if ($entries && $academicObject) {
+        $data = array();
+
+        if ($entries) {
             $i = 0;
             foreach ($entries as $result) {
 
                 $CHECK = self::checkStudentEnrolledCreditSystem($result->ID, $academicObject);
+
                 if (!$CHECK) {
                     $data[$i]["ID"] = $result->ID;
 
