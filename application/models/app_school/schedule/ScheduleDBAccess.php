@@ -1649,7 +1649,7 @@ class ScheduleDBAccess {
     public function linkedScheduleAcademic($Id, $type) {
         if ($type == 'EXTRA_SESSION') {
             $facette = TeachingSessionDBAccess::getTeachingSessionFromId($Id);
-        } elseif ($type == 'SCHEDULE') {
+        } else {
             $facette = self::findScheduleFromGuId($Id);
         }
 
@@ -1769,7 +1769,7 @@ class ScheduleDBAccess {
     public static function sqlTeachersCredit($params) {
 
         $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
-        
+
         $SELECTION_C = array(
             "ID AS STAFF_ID"
             , "CODE AS CODE"
@@ -2272,7 +2272,7 @@ class ScheduleDBAccess {
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
                     switch ($EVENT_OBJECT->SCHEDULE_TYPE) {
                         case 1:
-                            
+
                             $DAY_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_SUBJECT);
                             $DAY_EVENT .= "<br>";
 

@@ -652,7 +652,7 @@ class ScheduleController extends Zend_Controller_Action {
                 break;
 
             case "linkedScheduleAcademic":
-                $jsondata = $this->DB_SCHEDULE->linkedScheduleAcademic($this->REQUEST->getPost('scheduleId'));
+                $jsondata = $this->DB_SCHEDULE->linkedScheduleAcademic($this->REQUEST->getPost('scheduleId'), $this->REQUEST->getPost('type'));
                 break;
 
             case "jsonListTeachingSession":

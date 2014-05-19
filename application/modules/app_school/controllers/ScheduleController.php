@@ -340,7 +340,7 @@ class ScheduleController extends Zend_Controller_Action {
         Zend_Registry::set('TRAINING_ID', $this->trainingId);
 
         $this->view->URL_SHOW_CLASS_EVENT = $this->UTILES->buildURL("schedule/showclassevent", array("academicId" => $this->academicId));
-        
+
         $this->_helper->viewRenderer("day/classevent");
     }
 

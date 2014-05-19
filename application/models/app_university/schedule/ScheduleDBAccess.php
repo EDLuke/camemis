@@ -954,7 +954,7 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        if($globalSearch){
+        if ($globalSearch) {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
             $SQL->Orwhere("A.SHORT LIKE '" . $globalSearch . "%'");
         }
@@ -1714,10 +1714,10 @@ class ScheduleDBAccess {
     public function linkedScheduleAcademic($Id, $type) {
         if ($type == 'EXTRA_SESSION') {
             $facette = TeachingSessionDBAccess::getTeachingSessionFromId($Id);
-        } elseif ($type == 'SCHEDULE') {
+        } else{
             $facette = self::findScheduleFromGuId($Id);
         }
-
+        
         $data = Array();
 
         if ($facette) {
