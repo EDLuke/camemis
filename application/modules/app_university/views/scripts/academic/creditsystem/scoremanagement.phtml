@@ -149,14 +149,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                              clickOpenPage('center','<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.attributes.title, '/academic/scoremonitor/?academicId=' + node.id);
                              Ext.getCmp('ACADEMIC_ID').collapse();
                         }
-                    },{
-                        text: '<?=ACADEMIC_PERFORMANCES?>'
-                        ,iconCls:'icon-note_edit'
-                        ,hidden:true
-                        ,handler: function(){
-                             clickOpenPage('center','<?=ACADEMIC_PERFORMANCES?> &raquo; ' + node.attributes.title, '/evaluation/performancemaintraditional/?academicId=' + node.id);
-                             Ext.getCmp('ACADEMIC_ID').collapse();
-                        }
                     }]
                 });
                 event.stopEvent();
