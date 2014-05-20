@@ -583,6 +583,9 @@ class AssignmentDBAccess {
 
         $facette = self::findAssignmentFromId($node);
         if ($facette) {
+            if ($classObject->EDUCATION_SYSTEM) {
+                $academicId = $classObject->PARENT;
+            }
             $entries = $this->getAllScoreDate($node, $academicId, $subjectId);
         } else {
 
