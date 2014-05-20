@@ -43,7 +43,7 @@ $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 $columndata = Utiles::getGridColumnData("ATTENDANCE_MANAGEMENT_LIST_ID");
 
-$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
+$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
 
 if($error) {header("Location: /main/permission/");}
 
@@ -158,7 +158,7 @@ if($classId){
     var trainingId = '<?=$trainingId?>';
     var absenceValue=0;
     
-    function setAjaxRequest(newValue, field, studentId, choosedate, scheduleId, absentType, classId, trainingId){
+    function setAjaxRequest(newValue, field, studentId, actionType, choosedate, scheduleId, absentType, classId, trainingId){
         Ext.Ajax.request({
             url: '/attendance/jsonsave/'
             ,method: 'POST'
@@ -167,7 +167,8 @@ if($classId){
                 ,id:studentId
                 ,newValue: newValue
                 ,field:field
-                ,choosedate:choosedate
+                ,choosedate:choosedate 
+                ,actionType:actionType 
                 ,scheduleId:scheduleId
                 ,trainingId:trainingId
                 ,absentType:absentType
@@ -199,9 +200,9 @@ if($classId){
                         function functionActionDaily".$newIndex."() {
                             var newValue = document.getElementById('TYPE_".$newIndex."').checked;
                             if(newValue){
-                                setAjaxRequest(1, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."', choosedate, scheduleId, '".$v->ID."', classId, trainingId)
+                                setAjaxRequest(1, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."',1, choosedate, scheduleId, '".$v->ID."', classId, trainingId)
                             }else{
-                                setAjaxRequest(0, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."', choosedate, scheduleId, '".$v->ID."', classId, trainingId)    
+                                setAjaxRequest(0, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."',1, choosedate, scheduleId, '".$v->ID."', classId, trainingId)    
                             }
                         }
                     ";

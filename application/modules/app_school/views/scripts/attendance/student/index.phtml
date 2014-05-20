@@ -44,10 +44,10 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
 ?>
 <script>
     Ext.onReady(function() {
-        ///////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////   
         Ext.Ajax.timeout = 600000;
         Ext.QuickTips.init();
-    
+        
         function myAjaxRequest(formObject, gridObject){
             var fieldValue = formObject.getForm().getFieldValues(); 
             if(plsEnterKey(fieldValue)){
@@ -79,7 +79,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
         function plsEnterKey(obj){
             var s;
             if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER 
-                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.GENDER || obj.ABSENT_TYPE || obj.START_DATE || obj.END_DATE
+                || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.GENDER || obj.ABSENT_TYPE || obj.START_DATE || obj.END_DATE 
+                || obj.CHOOSE_SUBJECT_NAME || obj.CHOOSE_GRADE_NAME || obj.CHOOSE_TRAINING_NAME
             ){
                 s = 0;
             }else{
@@ -147,7 +148,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
             var myTree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
             myTree.on('click', function(node, e){
                 Ext.getCmp('CHOOSE_SUBJECT_NAME_ID').setValue(node.attributes.text);
-                Ext.getCmp('CHOOSE_SUBJECT').setValue(node.id);
+                Ext.getCmp('CHOOSE_SUBJECT').setValue(node.id); 
                 Ext.getCmp('SUBJECT_ID').close();
             });
         ";
@@ -234,14 +235,14 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
                 myTree.root.reload();
                 myTree.getRootNode().expand(true, false);
             });
-
+            
             myTree.getRootNode().expand(true, false);
 
             if (myTree) myTree.on('click', function(node, e){   
                 if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' ){
                     Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
                     Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
-                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();    
                 }
             });
         ";
@@ -258,7 +259,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
                 ,hidden: false
                 ,width: 150
                 ,fieldLabel: '" . START_DATE . "'
-                ,xtype: 'datefield'
+                ,xtype: 'datefield'  
                 ,id: 'START_DATE'
                 ,vtype: 'daterange'
                 ,endDateField: 'END_DATE'
@@ -281,7 +282,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
         $OBJECT_FORM->addObjectItems("
             title: '".PERSONAL_INFORMATION."'
             ,xtype:'fieldset'
-            ,checkboxToggle:true
+            ,checkboxToggle:true   
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
             ,width: 310
             ,items:[
@@ -291,7 +292,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
                 ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
                 ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
                 ,{".CamemisField::comboAbsentTypes("STUDENT", false,150, false)."}
-                ,{".CamemisField::Trigger2("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, false, 150)."}
+                ,{".CamemisField::Trigger2("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, false, 150)."} 
             ]
         ");
         

@@ -152,8 +152,8 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
         $target = isset($params["TARGET"]) ? addText($params["TARGET"]) : "";
         $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
-
+        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";      
+        $chooseSubject = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : ""; 
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
 
         if ($searchGrade)
@@ -250,6 +250,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $SQL .= " FROM t_student_attendance AS A";
         $SQL .= " LEFT JOIN t_student AS B ON A.STUDENT_ID=B.ID";
         $SQL .= " LEFT JOIN t_absent_type AS T ON A.ABSENT_TYPE=T.ID";
+        $SQL .= " LEFT JOIN t_subject AS L ON A.SUBJECT_ID=L.ID";
         switch (strtoupper($target))
         {
             case "GENERAL":
@@ -322,6 +323,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         if ($actionType)
             $SQL .= " AND A.ACTION_TYPE = '" . $actionType . "'";
+            
+        if ($chooseSubject)
+            $SQL .= " AND A.SUBJECT_ID = '" . $chooseSubject . "'";
 
         switch (strtoupper($target))
         {
@@ -1222,7 +1226,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                 $isDisabled = $scheduleObject ? "" : "disabled";
         }
 
-        $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
+        $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
 
         $data = array();
 
