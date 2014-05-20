@@ -42,7 +42,7 @@ $OBJECT_GRID = new CamemisGrid("ATTENDANCE_MANAGEMENT", "LIST");
 $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 
-$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
+$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
 
 if($error) {header("Location: /main/permission/");}
 
