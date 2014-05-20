@@ -143,6 +143,7 @@ class ExportController extends Zend_Controller_Action {
         switch ($this->REQUEST->getPost('cmd'))
         {
             case "studentSearch":
+            case "searchStudent":
                 $jsondata = $this->STUDENT_EXCEL->studentSearch($this->REQUEST->getPost());
                 break;
             case "jsonSearchStudentPreschool":

@@ -1,0 +1,572 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 17.05.2014
+// 
+///////////////////////////////////////////////////////////
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/student_filter/StudentFilterReportDBAccess.php';
+require_once setUserLoacalization();
+
+class StudentFilterViewPort{
+    
+    public $datafield = array();
+    public $campusId = null;
+    public $gradeId = null;
+    public $schoolyearId = null;
+    public $classId = null;
+    public $objectType = null;
+    public $OBJECT_GRID = null;
+    public $exportExcel = false;
+    public function __construct($params) {
+        
+        $this->campusId = isset($params["campusId"]) ? $params["campusId"] : "";
+        $this->classId = isset($params["classId"]) ? $params["classId"] : "";
+        $this->gradeId = isset($params["gradeId"]) ? $params["gradeId"] : "";
+        $this->schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : "";
+        $this->objectType = isset($params["objectType"]) ? $params["objectType"] : "";
+        $this->gridType = isset($params["gridType"]) ? $params["gridType"] : "";//example: STUDENT_ATTENDANCE_FILTER
+        
+        $this->OBJECT_GRID = new CamemisGrid($this->gridType,$this->objectType);
+        switch($this->gridType){
+            case 'STUDENT_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/student/jsonload/');
+                $this->OBJECT_GRID->setSaveUrl('/student/jsonsave/');
+                break;
+            case 'STUDENT_ATTENDANCE_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/attendance/jsonload');
+                $this->OBJECT_GRID->setSaveUrl('/attendance/jsonsave/'); 
+                break;
+            case 'STUDENT_DISCIPLINE_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/discipline/jsonload');
+                $this->OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+                break;
+            case 'STUDENT_ADVISORY_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/advisory/jsonload');
+                $this->OBJECT_GRID->setSaveUrl('/advisory/jsonsave/');
+                break;
+                
+        }
+        $this->columndata = Utiles::getGridColumnData($this->OBJECT_GRID->getObjectId()); 
+        $this->urlEncryp = new URLEncryption();              
+    }
+    
+    public function __get($name) {
+        if (array_key_exists($name, $this->datafield)) {
+            return $this->datafield[$name];
+        }
+        return null;
+    }
+
+    public function __set($name, $value) {
+        $this->datafield[$name] = $value;
+    }
+
+    public function __isset($name) {
+        return array_key_exists($name, $this->datafield);
+    }
+
+    public function __unset($name) {
+        unset($this->datafield[$name]);
+    }
+    
+    public function setGridCulumn($columns){
+        $this->OBJECT_GRID->addCellRenderer("
+            function renderTextBold(v, p, record, rowIndex){
+                var str = '<span style=\"font-weight:bold;color:#061f83;white-space:normal;\">' + v + '</span>';
+                return str;
+            }
+        ");
+
+        $this->OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span style=\"font-weight:normal;color:#555;white-space:normal;\">' + v + '</span>';
+                return str;
+            }
+        "); 
+        
+        switch($this->gridType){
+            case 'STUDENT_FILTER':
+                $this->setStudentFilterColumn($columns);
+                break;
+            case 'STUDENT_ATTENDANCE_FILTER':
+                $this->setStudentAttendanceFilterColumn($columns);
+                break;
+            case 'STUDENT_DISCIPLINE_FILTER':
+                $this->setStudentDisciplineFilterColumn($columns);
+                break;
+            case 'STUDENT_ADVISORY_FILTER':
+                $this->setStudentAdvisoryFilterColumn($columns);
+                break;
+                
+        }
+           
+    }
+    
+    public function setStudentFilterColumn($columns){
+        $i=1;
+        if($columns)
+        {
+            foreach($columns as $value)
+            {
+                $this->OBJECT_GRID->addReadField("name: '".$value."'"); 
+                $fieldFilter = "";
+                switch ($value) {
+                    case "CODE":
+                        $CONST_NAME = CODE_ID;
+                        $colWidth = 120;
+                        $filter = false;
+                        break;
+                    case "GENDER":
+                        $CONST_NAME = GENDER;
+                        $colWidth = 120;
+                        $filter = true;
+                        $fieldFilter = "field: {
+                                        xtype: 'combo',
+                                            mode: 'local',
+                                            store: new Ext.data.ArrayStore({
+                                                id: 0,
+                                                fields: ['value'],
+                                                data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                                            }),
+                                            valueField: 'value',
+                                            displayField: 'value',
+                                            triggerAction: 'all',
+                                            value: '-'
+                                        },
+                                        fieldEvents: ['select'],
+                                        test: function(filterValue, value, record) {
+                                            return filterValue === '-' || filterValue === value;
+                                        }
+                        ";
+                        break;
+                    case "AGE":
+                        $CONST_NAME = AGE;
+                        $colWidth = 80;
+                        $filter = true;
+                        $fieldFilter = "";
+                        break;
+                    case "CURRENT_CAMPUS":
+                        $CONST_NAME = CAMPUS;
+                        $colWidth = 200;
+                        $filter = true;
+                        $fieldFilter = "";
+                        break;
+                    default:
+                        $CONST_NAME = defined($value) ? constant($value) : $value;
+                        $colWidth = 120;
+                        $filter = true;
+                        $fieldFilter = "";
+                        break;
+                }
+                
+                $columnProperies = "header: '<b>".$CONST_NAME."</b>'";
+                $columnProperies .= ", width: ".$colWidth."";
+                $columnProperies .= ", align:'center'";
+                $columnProperies .= ", hidden:".checkColHidden($i, $this->columndata)."";
+                $columnProperies .= ", renderer: cssText";
+                $columnProperies .= ", sortable: true";
+                $columnProperies .= ", dataIndex: '".$value."'";
+                if($filter)
+                $columnProperies .= ",filter:{".$fieldFilter."}";
+                $this->OBJECT_GRID->addColumn($columnProperies);      
+                $i++;
+            }
+        }
+        
+    }
+    
+    public function setStudentAttendanceFilterColumn($columns){
+        
+        $studentStatistic = new StudentFilterReportDBAccess();
+        $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
+        $studentStatistic->personType="STUDENT";
+        $studentStatistic->status=1;
+        $objectAttendanceType = $studentStatistic->getAttendanceType(); 
+        if($objectAttendanceType){
+            foreach($objectAttendanceType as $value){
+                $this->OBJECT_GRID->addReadField("name: 'ATTENDANCE_".$value->ID."'");
+            }
+        }
+        $i=1;
+        switch($this->objectType){
+            case 'CAMPUS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;
+            case 'GRADE':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE_CLASS."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'  
+                ");
+                break;
+            case 'CLASS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".FULL_NAME."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , renderer: renderTextBold
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;      
+        }
+        $i++;
+        foreach($objectAttendanceType as $value){
+            $this->OBJECT_GRID->addColumn("
+                header: '<b>".$value->NAME."</b>'
+                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                ,  sortable: true
+                , dataIndex: 'ATTENDANCE_".$value->ID."'
+            ");
+            $i++;
+        }    
+    }
+    
+    public function setStudentDisciplineFilterColumn($columns){
+        $studentStatistic = new StudentFilterReportDBAccess();
+        $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
+        $objectDisciplineType = $studentStatistic->getDisciplineType(); 
+        if($objectDisciplineType){
+            foreach($objectDisciplineType as $value){
+                $this->OBJECT_GRID->addReadField("name: 'DISCIPLINE_".$value->ID."'");
+            }
+        }
+        $i=1;
+        switch($this->objectType){
+            case 'CAMPUS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;
+            case 'GRADE':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE_CLASS."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'  
+                ");
+                break;
+            case 'CLASS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".FULL_NAME."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , renderer: renderTextBold
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;      
+        }
+        $i++;
+        foreach($objectDisciplineType as $value){
+            $this->OBJECT_GRID->addColumn("
+                header: '<b>".$value->NAME."</b>'
+                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                ,  sortable: true
+                , dataIndex: 'DISCIPLINE_".$value->ID."'
+            ");
+            $i++;
+        }    
+    }
+    
+    public function setStudentAdvisoryFilterColumn($columns){
+        $studentStatistic = new StudentFilterReportDBAccess();
+        $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
+        $objectAdvisoryType = $studentStatistic->getAdvisoryType(); 
+        if($objectAdvisoryType){
+            foreach($objectAdvisoryType as $value){
+                $this->OBJECT_GRID->addReadField("name: 'ADVISORY_".$value->ID."'");
+            }
+        }
+        $i=1;
+        switch($this->objectType){
+            case 'CAMPUS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;
+            case 'GRADE':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".GRADE_CLASS."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'  
+                ");
+                break;
+            case 'CLASS':
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".FULL_NAME."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    , renderer: renderTextBold
+                    , sortable: true
+                    , dataIndex: 'FIRST_CULUMN'
+                ");
+                break;      
+        }
+        $i++;
+        foreach($objectAdvisoryType as $value){
+            $this->OBJECT_GRID->addColumn("
+                header: '<b>".$value->NAME."</b>'
+                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                ,  sortable: true
+                , dataIndex: 'ADVISORY_".$value->ID."'
+            ");
+            $i++;
+        }    
+    }
+    
+    public function setCmd(){
+    
+        $this->cmdParams = "start:0";
+        $this->cmdParams .=",limit:100";
+        if($this->campusId)
+        $this->cmdParams .=",campusId: '".$this->campusId."'";
+        if($this->gradeId)
+        $this->cmdParams .=",gradeId: '".$this->gradeId."'";
+        if($this->schoolyearId)
+        $this->cmdParams .=",schoolyearId: '".$this->schoolyearId."'";
+        if($this->classId)
+        $this->cmdParams .=",classId: '".$this->classId."'";
+        switch($this->gridType){
+            case 'STUDENT_FILTER':
+                $this->cmdParams .=",displayCurrentAcademic:2";
+                $this->cmdParams .=",cmd: 'searchStudent'";
+                break;
+            case 'STUDENT_ATTENDANCE_FILTER':
+                $this->cmdParams .=",objectType:'".$this->objectType."'";
+                $this->cmdParams .=",cmd: 'getStudentAttendanceData'";
+                $this->cmdParams .=",personType: 'STUDENT'";
+                $this->cmdParams .=",status: '1'";
+                $this->cmdParams .=",gridType: '".$this->gridType."'";
+                break;
+            case 'STUDENT_DISCIPLINE_FILTER':
+                $this->cmdParams .=",objectType:'".$this->objectType."'";
+                $this->cmdParams .=",cmd: 'getStudentDisciplineData'";
+                $this->cmdParams .=",gridType: '".$this->gridType."'";
+                break;
+            case 'STUDENT_ADVISORY_FILTER':
+                $this->cmdParams .=",objectType:'".$this->objectType."'";
+                $this->cmdParams .=",cmd: 'getStudentAdvisoryData'";
+                $this->cmdParams .=",gridType: '".$this->gridType."'";
+                break;    
+        }    
+        $this->OBJECT_GRID->baseParams = $this->cmdParams;
+        if($this->exportExcel)
+            $this->tbarExport();    
+    }
+    
+    public function tbarExport(){
+        if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
+            $this->OBJECT_GRID->addTBarItems("
+                tbar.add([{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,timeout: 600000
+                            ,params:{".$this->cmdParams.",objectId:'".$this->OBJECT_GRID->getObjectId()."'}
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openstudentlist/'
+                            }
+                        });
+                    }
+                }]);
+            ");
+        }  
+    }
+
+    public function redererViewPort(){
+        
+        $params = "";
+        $params .= "objectType=".$this->objectType."";
+        $params .= "&campusId=".$this->campusId."";
+        $params .= "&gradeId=".$this->gradeId."";
+        $params .= "&schoolyearId=".$this->schoolyearId."";
+        if($this->gradeId)
+        $params .= "&academicId=".$this->gradeId."";
+        $js = "";
+            $js .= "viewport = new Ext.Viewport({";
+                $js .= "layout: 'fit'";
+                $js .= ",border: false";
+                $js .= ",items:[{";
+                    $js .= "layout:'border'";
+                    $js .= ",border: false";
+                    $js .= ",defaults: {";
+                        $js .= "collapsible: true";
+                        $js .= ",split: true";
+                    $js .= "}";
+                    $js .= ",items: [{";
+                        $js .= "region:'north'";
+                        $js .= ",id:'NORTH_ID'";
+                        $js .= ",margins: '3 3 0 3'";
+                        $js .= ",cmargins: '3 3 3 3'";
+                        $js .= ",autoScroll: true";
+                        $js .= ",height:300";
+                        $js .= ",minSize:300";
+                        $js .= ",maxSize:300";
+                        $js .= ",layout: 'fit'";
+                        switch($this->gridType){
+                            case 'STUDENT_FILTER':
+                                $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=".$this->urlEncryp->encryptedGet($params)."'})]";
+                                break;
+                            case 'STUDENT_ATTENDANCE_FILTER':
+                                $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentattendance/?camIds=".$this->urlEncryp->encryptedGet($params)."'})]";
+                                break;
+                            case 'STUDENT_DISCIPLINE_FILTER':
+                                $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/discipline/?camIds=".$this->urlEncryp->encryptedGet($params."&personType=STUDENT")."'})]";
+                                break;
+                            case 'STUDENT_ADVISORY_FILTER':
+                                $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentadvisory/?camIds=".$this->urlEncryp->encryptedGet("objectType=YEARLY")."'})]";
+                                break;
+                            default:
+                                $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=".$this->urlEncryp->encryptedGet($params)."'})]";
+                                break; 
+                        }
+                    $js .= "},{";
+                        $js .= "collapsible: false";
+                        $js .= ",id: 'center'";
+                        $js .= ",region:'center'";
+                        $js .= ",margins: '0 3 3 3'";
+                        $js .= ",layout: 'card'";
+                        $js .= ",activeItem: 0";
+                        $js .= ",items: [{xtype: '".$this->OBJECT_GRID->getObjectXType()."'}]";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "});";
+            $js .= "Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));";
+        echo $js;    
+    }
+      
+}
+//////////////////////
+//generate the view///
+/////////////////////
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+$gradeId = "";
+$campusId = "";
+$schoolyearId = "";
+$classId = "";
+
+if (strpos($objectId, "CAMPUS_") !== false) {
+    $Ids = explode("_",substr($objectId, 7));
+    $campusId = isset($Ids[0])?$Ids[0]:"";
+    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
+    $objectType = "CAMPUS";
+} elseif (strpos($objectId, "GRADE_") !== false) {
+    $objectType = "GRADE";
+    $Ids = explode("_",substr($objectId, 6));
+    $gradeId = isset($Ids[0])?$Ids[0]:"";
+    $campusId = isset($Ids[1])?$Ids[1]:"";
+    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+} else{
+    $objectType = "CLASS";
+    $classId = $objectId;
+}
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+
+$filterObject = new StudentFilterViewPort(array('campusId'=>$campusId,'classId'=>$classId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId,'objectType'=>$objectType,'gridType'=>$this->gridType));
+?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
+<script>
+Ext.onReady(function() {
+    Ext.Ajax.timeout = 600000;
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    $dataColumn = array();
+    if($this->gridType)
+    {
+        switch($this->gridType)
+        {
+            case 'STUDENT_FILTER':
+                $dataColumn[]='CODE';
+                $dataColumn[]='STUDENT_SCHOOL_ID';
+                $dataColumn[]='FIRSTNAME';
+                $dataColumn[]='LASTNAME';
+                $dataColumn[]='GENDER';
+                $dataColumn[]='PHONE';
+                $dataColumn[]='EMAIL';
+                $dataColumn[]='DATE_BIRTH';
+                $dataColumn[]='AGE';
+                $dataColumn[]='CURRENT_CAMPUS';
+                $dataColumn[]='CURRENT_GRADE';
+                $dataColumn[]='CURRENT_CLASS';
+                $dataColumn[]='NATIONALITY';
+                $dataColumn[]='RELIGION';
+                $dataColumn[]='ETHNIC_GROUPS';
+                $filterObject->OBJECT_GRID->isFilterRow = true;
+                $filterObject->exportExcel=true;
+                break; 
+        }
+    
+        $filterObject->setGridCulumn($dataColumn);
+        $filterObject->setCmd();
+        $filterObject->OBJECT_GRID->addTBarItems("tbar.add('->');");
+        $filterObject->OBJECT_GRID->isQuickySearch = true;
+        $filterObject->OBJECT_GRID->isPagingToolbar = true;
+        $filterObject->OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $filterObject->OBJECT_GRID->setUserColumn = true;
+        $filterObject->OBJECT_GRID->forceFit = "false";    
+        $filterObject->OBJECT_GRID->renderJS();
+        $filterObject->redererViewPort();
+    }
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
