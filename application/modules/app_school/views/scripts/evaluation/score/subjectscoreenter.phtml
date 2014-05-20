@@ -277,7 +277,8 @@ Ext.onReady(function() {
     ");
     
     $importParams = $setParams;
-    $importParams .= "&target=subjectassignments";
+    $importParams .= "&target=subjectscoreenter";
+    $importParams .= "&setId=".$setId."";
     
     $OBJECT_GRID->addTBarItems("
         tbar.add(['-',{

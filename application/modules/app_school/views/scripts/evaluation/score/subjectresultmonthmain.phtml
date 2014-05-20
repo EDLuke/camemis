@@ -19,6 +19,7 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicId);
+
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
@@ -30,11 +31,10 @@ if($monthList){
     foreach($monthList as $key=>$value){
         $setParams = "&section=1&subjectId=".$this->subjectId."&academicId=".$academicId."&monthyear=".$key."_".$value."";
         $ITEMS = "{";
-            $ITEMS .= "title:'".constant($key)." ".$value."'";
-            $ITEMS .= ",id:'".$key."_".$value."'";
+            $ITEMS .= "title:'".constant($key)." (".$value.")'";
             $ITEMS .= ",border:false";
             $ITEMS .= ",layout:'fit'";
-            $ITEMS .= ",items:[new Ext.ux.IFrameComponent({ id: 'FRAME_".$key."_".$value."', url: '/evaluation/subjectresultmonth/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]";
+            $ITEMS .= ",items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/subjectresultmonth/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]";
         $ITEMS .= "}";
         $data[] = $ITEMS;
     }  
@@ -73,10 +73,9 @@ Ext.onReady(function() {
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
-        ,items: [{
-            xtype: 'vrtabpanel'
+        ,items:[{
+            xtype: 'vrtabpanel'				
             ,activeTab: 0
-            ,tabMarginTop:100
             ,enableTabScroll:true       
             ,defaults: {autoScroll:true}
             ,items:[<?=$TAB_ITEMS;?>]

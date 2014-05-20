@@ -10,8 +10,8 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
-require_once 'models/app_school/assignment/AssignmentDBAccess.php';
-
+require_once 'models/app_university/assignment/AssignmentDBAccess.php';
+ 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
@@ -22,31 +22,34 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
-if($academicObject->EDUCATION_SYSTEM){
-    $subjectId = $academicObject->SUBJECT_ID;
-    $academicId = $academicObject->PARENT;
-}else{
-    $subjectId = $this->subjectId;
-    $academicId = $this->academicId;
-}
-
-$subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicId);
-
 AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
 
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHOOL_YEAR);
 
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+} 
+    
 $setParams = "";
-$setParams .= "&academicId=".$academicId."";
-$setParams .= "&subjectId=".$subjectId."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
+$setParams .="&academicId=".$academicObject->ID."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){
     
     $html = "{";
-        $html .= "bodyStyle: 'padding:10px'";
-        $html .= ",border:false";
+        $html .= "xtype:'fieldset'";
+        $html .= ",width:480";
+        $html .= ",checkboxToggle:true";
+        $html .= ",collapsed: false";
+        $html .= ",bodyStyle: 'padding:10px'";
+        $html .= ",title: '".constant($titte)."'";
+        $html .= ",autoHeight:true";
         $html .= ",layout:'form'";
         $html .= ",labelWidth:130";
         $html .= ",items:[{";
@@ -70,23 +73,23 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 
-print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();      
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
 
 var objectId;
 var date='<?=getCurrentDBDate();?>';
 Ext.onReady(function() {
-    Ext.QuickTips.init();
+	
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-
+    
     $OBJECT_TREE->isAsyncTreeNode = false;
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
-       
+    
     $INFORMATION_ITEMS = Array();
     $SCORE_INFORMATION = "{
         width:480
@@ -227,7 +230,7 @@ Ext.onReady(function() {
             if (win) win.show(win);
         }
     ");
-
+    
     $OBJECT_TREE->addTBarItems("
         text:''
         ,tooltip:'" . REMOVE_ALL . "'
@@ -256,7 +259,7 @@ Ext.onReady(function() {
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();
-
+    
     ////////////////////////////////////////////////////////////////////////////
     $VIEWPORT_ITEMS = Array();
     $TEACHER_ENTER_SCORE = "{
@@ -315,6 +318,7 @@ Ext.onReady(function() {
     
     $DISPLAY_VIEWPORT_ITEMS = implode(",",$VIEWPORT_ITEMS);
     ////////////////////////////////////////////////////////////////////////////
+    
     ?>
     var fp = new Ext.FormPanel({
         labelAlign: 'left'
@@ -354,15 +358,16 @@ Ext.onReady(function() {
             }]
         }]
     });
-  
+    
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
     if (myTree) myTree.on('click', function(node, event){
+        
         if(node.isLeaf()){
             var contextMenu = new Ext.menu.Menu({
                 items: [{
                     text: '<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.text
                     ,iconCls: 'icon-table_edit'
-                    ,handler: function(){    
+                    ,handler: function(){
                         clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date);
                     }
                 },{
@@ -399,8 +404,8 @@ Ext.onReady(function() {
                 }]
             });
             event.stopEvent();
-            contextMenu.showAt(event.xy);
-
+            contextMenu.showAt(event.xy); 
+            
         }else{
             var dateMenu = new Ext.menu.DateMenu({
                 handler: function(dp, date){
@@ -408,7 +413,7 @@ Ext.onReady(function() {
                 }
             });
             event.stopEvent();
-            dateMenu.showAt(event.xy);
+            dateMenu.showAt(event.xy); 
         }
     });
 });
