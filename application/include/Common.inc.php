@@ -768,7 +768,7 @@ function setShowText($text) {
 }
 
 function addText($text) {
-    return addslashes(htmlspecialchars($text));
+    return addslashes(htmlspecialchars(trim($text)));
 }
 
 function explodeData($explodestr) {
