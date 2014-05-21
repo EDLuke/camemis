@@ -16,7 +16,6 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
-$columndata = Utiles::getGridColumnData("SUBJECT_EVALUATION_LIST_ID");
 
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
 
@@ -38,12 +37,21 @@ switch($term){
     break;
 }
 
-$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");}
 
 ////////////////////////////////////////////////////////////////////////////////
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+}
+
+if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+
 $evaluation = new EvaluationSubjectAssessment();
     $evaluation->setAcademicId($academicObject->ID);
     $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
@@ -59,7 +67,7 @@ $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
-$setParams .="&subjectId=".$this->subjectId."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
@@ -129,7 +137,7 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, hidden:".checkColHidden(3, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
@@ -409,7 +417,6 @@ Ext.onReady(function() {
         echo $js;
     }
     ?>
-    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?

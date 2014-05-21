@@ -64,7 +64,11 @@ abstract class AssessmentProperties {
     }
 
     public function getSubject() {
-        return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
+            return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->getCurrentClass()->PARENT);
+        } else {
+            return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
+        }
     }
 
     public function getSubjectScoreType() {
@@ -104,10 +108,18 @@ abstract class AssessmentProperties {
     }
 
     public function getCurrentClassAssignments() {
-        return AssignmentDBAccess::getListAssignmentsToAcademic(
-                        $this->academicId
-                        , $this->subjectId
-        );
+
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
+            return AssignmentDBAccess::getListAssignmentsToAcademic(
+                            $this->getCurrentClass()->PARENT
+                            , $this->subjectId
+            );
+        } else {
+            return AssignmentDBAccess::getListAssignmentsToAcademic(
+                            $this->academicId
+                            , $this->subjectId
+            );
+        }
     }
 
     public function getCurrentClass() {
@@ -191,9 +203,9 @@ abstract class AssessmentProperties {
     }
 
     public function getNameSectionByTerm() {
-        
+
         $section = "";
-        
+
         switch ($this->term) {
             case "FIRST_SEMESTER":
             case "SECOND_SEMESTER":
@@ -211,12 +223,17 @@ abstract class AssessmentProperties {
                 $section = "QUARTER";
                 break;
         }
-        
+
         return $section;
     }
 
     public function getListSubjects() {
-        return GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
+
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
+            return GradeSubjectDBAccess::getListSubjectsToAcademic($this->getCurrentClass()->PARENT, $this->term);
+        } else {
+            return GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
+        }
     }
 
     public function getFirstSemesterCoeff() {

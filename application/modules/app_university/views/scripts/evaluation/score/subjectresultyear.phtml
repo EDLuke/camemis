@@ -17,12 +17,21 @@ $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
-$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");}
 
 ////////////////////////////////////////////////////////////////////////////////
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+}
+
+if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+
 $evaluation = new EvaluationSubjectAssessment();
 $evaluation->setAcademicId($academicObject->ID);
 $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
@@ -36,7 +45,7 @@ $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
-$setParams .="&subjectId=".$this->subjectId."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$academicObject->ID."";
 $setParams .="&section=3";
 

@@ -138,7 +138,7 @@ class ReportDBAccess {
                             $data[$i]['id'] = $value->ID;
                             $data[$i]['text'] = setShowText($value->NAME);
                             $data[$i]['leaf'] = true;
-                            $data[$i]['isClick'] = false;
+                            $data[$i]['isClick'] = true;
                             $data[$i]['objectId'] = $value->ID;
                             $data[$i]['iconCls'] = "icon-blackboard";
                             $data[$i]['cls'] = "nodeTextBlue";

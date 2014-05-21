@@ -22,24 +22,24 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
-if($academicObject->EDUCATION_SYSTEM){
-    $subjectId = $academicObject->SUBJECT_ID;
-    $academicId = $academicObject->PARENT;
-}else{
-    $subjectId = $this->subjectId;
-    $academicId = $this->academicId;
-}
-
-$subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicId);
-
 AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
 
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHOOL_YEAR);
 
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+} 
+
+if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+
 $setParams = "";
-$setParams .= "&academicId=".$academicId."";
-$setParams .= "&subjectId=".$subjectId."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
+$setParams .="&academicId=".$academicObject->ID."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 function getDataField($titte, $startdate, $enddate){

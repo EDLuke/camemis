@@ -11,6 +11,7 @@ require_once setUserLoacalization();
 require_once 'models/app_school/UserDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
+require_once 'models/student_filter/StudentFilterReportDBAccess.php';
 require_once 'models/DisciplineDBAccess.php';
 
 class DisciplineController extends Zend_Controller_Action {
@@ -237,6 +238,12 @@ class DisciplineController extends Zend_Controller_Action {
             case "jsonShowAllStudents":
                 $jsondata = $this->DB_DISCIPLINE->jsonShowAllStudents($this->REQUEST->getPost());
                 break;
+            ////@veasna
+            case "getStudentDisciplineData":
+                $objectStudentAttendance = new StudentFilterReportDBAccess();
+                $jsondata = $objectStudentAttendance->getGridData($this->REQUEST->getPost());
+                break;
+            ///
         }
 
         if (isset($jsondata))

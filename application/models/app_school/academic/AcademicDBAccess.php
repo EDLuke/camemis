@@ -421,7 +421,7 @@ class AcademicDBAccess {
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
 
         if (isset($params["CLASS_TYPE"]))
             $SAVEDATA['CLASS_TYPE'] = addText($params["CLASS_TYPE"]);
@@ -2258,7 +2258,9 @@ class AcademicDBAccess {
         $CHECK_DATA = array();
         foreach ($entries as $value) {
             if (isset($value["month"]) && isset($value["year"])) {
-                $CHECK_DATA[] = array("MONTH" => getMonthNrByName(strtoupper($value["month"])), "YEAR" => $value["year"]);
+                if ($value["year"] != 1970) {
+                    $CHECK_DATA[] = array("MONTH" => getMonthNrByName(strtoupper($value["month"])), "YEAR" => $value["year"]);
+                }
             }
         }
 

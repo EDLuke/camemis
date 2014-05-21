@@ -1,8 +1,8 @@
 <?
 ///////////////////////////////////////////////////////////
-// @Kaom Vibolrith Senior Software Developer
-// Date: 18.07.2009
-// Am Stollheen 18, 55120 Mainz, Germany
+// @Sor Veasna
+// Date: 17.05.2014
+// 
 ///////////////////////////////////////////////////////////
 require_once 'models/UserAuth.php';
 require_once 'clients/CamemisPage.php';
@@ -10,10 +10,11 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
+require_once 'models/app_school/student/StudentAttendanceReportDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-
+$studentStatistic = new StudentAttendanceReportDBAccess();
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 
 $gradeId = "";
@@ -33,6 +34,7 @@ if (strpos($objectId, "CAMPUS_") !== false) {
     $campusId = isset($Ids[1])?$Ids[1]:"";
     $schoolyearId = isset($Ids[2])?$Ids[2]:"";
 } else{
+    $objectType = "CLASS";
     $classId = $objectId;
 }
 
@@ -82,70 +84,58 @@ Ext.onReady(function() {
             return str;
         }
     ");
-
-    $OBJECT_GRID->addReadField("name: 'STUDENT', type: 'string'");
-    $OBJECT_GRID->addReadField("name: 'CODE'");
-    $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
-    $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
-    $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
-    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
-    $OBJECT_GRID->addReadField("name: 'GENDER_NAME'");
-    $OBJECT_GRID->addReadField("name: 'START_DATE'");
-    $OBJECT_GRID->addReadField("name: 'END_DATE'");
-    $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
-    $OBJECT_GRID->addReadField("name: 'TRAINING_TERM'");
-    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
-    $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
-    $OBJECT_GRID->addReadField("name: 'STATUS'");
-    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
-    $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
-    $OBJECT_GRID->addReadField("name: 'TRAINING_LEVEL'");
-    $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
-    $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
-    ////////////////////////////////////
-    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderTextBold, sortable: true, dataIndex: 'STUDENT',filter:{}");
-    $OBJECT_GRID->addColumn("
-        header: '<b>".GENDER."</b>'
-        , width: 100, hidden:".checkColHidden(2, $columndata)."
-        , sortable: true
-        , dataIndex: 'GENDER_NAME'
-        ,filter:{
-            field: {
-                    xtype: 'combo',
-                    mode: 'local',
-                    store: new Ext.data.ArrayStore({
-                        id: 0,
-                        fields: ['value'],
-                        data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
-                    }),
-                    valueField: 'value',
-                    displayField: 'value',
-                    triggerAction: 'all',
-                    value: '-'
-                },
-                fieldEvents: ['select'],
-                test: function(filterValue, value, record) {
-                    return filterValue === '-' || filterValue === value;
-                }
+    
+    $OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
+    $studentStatistic->personType="STUDENT";
+    $studentStatistic->status=1;
+    $objectAttendanceType = $studentStatistic->getAttendanceType(); 
+    if($objectAttendanceType){
+        foreach($objectAttendanceType as $value){
+            $OBJECT_GRID->addReadField("name: 'ATTENDANCE_".$value->ID."'");
         }
-    ");
-    $OBJECT_GRID->addColumn("header: '<b>".TYPE."</b>', width: 130, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'ABSENT_TYPE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'START_DATE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: renderText, sortable: true, dataIndex: 'END_DATE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".DAYS."</b>' , align:'center', hidden:".checkColHidden(6, $columndata).", width: 60, renderer: renderText, sortable: true, dataIndex: 'COUNT_DATE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, hidden:".checkColHidden(7, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".DESCRIPTION."</b>', width: 150, hidden:".checkColHidden(8, $columndata).", sortable: true, dataIndex: 'DESCRIPTION',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', width: 160, hidden:".checkColHidden(9, $columndata).", renderer: renderText, sortable: true, dataIndex: 'SCHOOLYEAR_NAME'");
-    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(10, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CLASS_NAME',filter:{}");
-
-    $OBJECT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,cmd: 'jsonSearchStudentAttendance'
+    }
+    switch($objectType){
+        case 'CAMPUS':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".GRADE."</b>'
+                , width: 160, hidden:".checkColHidden(1, $columndata)."
+                , sortable: true
+                , dataIndex: 'FIRST_CULUMN'
+            ");
+            break;
+        case 'GRADE':
+            $OBJECT_GRID->addColumn("
+                header: '<b>".GRADE_CLASS."</b>'
+                , width: 160, hidden:".checkColHidden(1, $columndata)."
+                , sortable: true
+                , dataIndex: 'FIRST_CULUMN'
+                
+            ");
+            break;
+        case 'CLASS':
+            $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 160, hidden:".checkColHidden(1, $columndata).", renderer: renderTextBold, sortable: true, dataIndex: 'FIRST_CULUMN'");
+            break;      
+    }
+    
+    foreach($objectAttendanceType as $value){
+        $OBJECT_GRID->addColumn("
+            header: '<b>".$value->NAME."</b>'
+            , width: 160, hidden:".checkColHidden(1, $columndata)."
+            ,  sortable: true
+            , dataIndex: 'ATTENDANCE_".$value->ID."'
+            , summaryType: 'totalCost'
+        ");
+    }
+ 
+    $OBJECT_GRID->baseParams = "  
+        cmd: 'getGridData'
         ,campusId: '".$campusId."'
         ,schoolyearId: '".$schoolyearId."'
         ,gradeId: '".$gradeId."'
         ,classId: '".$classId."'
+        ,objectType: '".$objectType."'
+        ,personType: 'STUDENT'
+        ,status: '1'
     ";
     ////////////////////////////////////////////////////////////////////////////
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
@@ -184,9 +174,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addTBarItems("tbar.add('->');");
     $OBJECT_GRID->isQuickySearch = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
-    $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->forceFit = "false";
-    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->loadMask = true;
     $OBJECT_GRID->renderJS();
     
