@@ -27,7 +27,16 @@ $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 if(!$academicObject) {header("Location: /main/permission/");}
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
-$subjectObject = SubjectDBAccess::getAcademicSubject($this->subjectId, $academicObject->ID);
+
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $academicId = $academicObject->PARENT;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $academicId = $academicObject->ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+}
 
 if(!$subjectObject) {header("Location: /main/permission/");}
 
@@ -46,7 +55,7 @@ if($CHECK_STATUS){
     $SQL = UserAuth::dbAccess()->select();
     $SQL->from("t_schedule", array("C" => "COUNT(*)"));
     $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
-    $SQL->where("SUBJECT_ID = '" . $this->subjectId . "'");
+    $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
     $SQL->where("TERM = '" . $TERM_NAME . "'");
     //error_log($SQL);
     $result = UserAuth::dbAccess()->fetchRow($SQL);

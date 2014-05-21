@@ -119,12 +119,13 @@ class StudentImportDBAccess {
         //
         switch ($display) {
             case 2:
-                $SQL .= " AND A.TRAINING<>0";
                 $SQL .= " AND A.CAMPUS IS NULL";
+                $SQL .= " AND A.TARGET = 'TRAINING_EDUCATION'";
                 break;
             case 1:
                 $SQL .= " AND A.EDUCATION_SYSTEM=" . $educationSystem . "";
                 $SQL .= " AND A.TRAINING=0";
+                $SQL .= " AND A.TARGET = 'TRADITIONAL_EDUCATION'";
                 switch ($examResult) {
                     case 1:
                         if ($facette)
@@ -270,6 +271,7 @@ class StudentImportDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
         $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : "0";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "0";
+        $objectType =   isset($params["objectType"]) ? addText($params["objectType"]) : "";
 
         //@veasna
         $type = isset($params["type"]) ? addText($params["type"]) : "";
@@ -445,6 +447,10 @@ class StudentImportDBAccess {
             if ($type)
                 $IMPORT_DATA['TYPE'] = $type;
             //
+            
+            if ($objectType)
+                $IMPORT_DATA['TARGET'] = $objectType;
+                
             if ($dates) {
                 $IMPORT_DATA['CREATED_DATE'] = setDatetimeFormat($dates);
             } else {

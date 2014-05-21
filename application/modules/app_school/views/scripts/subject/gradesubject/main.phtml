@@ -27,7 +27,7 @@ $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $gradesubjectId = isset($_GET["gradesubjectId"])?addText($_GET["gradesubjectId"]):"";
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
 $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
-$skipField = isset($_GET["skipfield"])?addText($_GET["skipfield"]):"";
+$skipField = isset($_GET["skipfield"])?addText($_GET["skipfield"]):"";       
 //@THORN Visal
 switch(UserAuth::getUserType()){
     case "ADMIN":
@@ -124,7 +124,7 @@ if($skipField){
         }";
         $PENEL_ITEMS[] = $ATTACHMENTS;
         
-        $setParams6 = "gradesubjectId=".$gradesubjectId."&subjectId=".$subjectId."&gradeId=".$gradeId."&schoolyearId=".$schoolyearId."";
+        $setParams6 = "gradesubjectId=".$gradesubjectId."&subjectId=".$subjectId."&gradeId=".$gradeId."&schoolyearId=".$schoolyearId."&classId=".$this->classId."";
         switch(UserAuth::getUserType()){
             case "SUPERADMIN":
             $HOMEWORK = "{

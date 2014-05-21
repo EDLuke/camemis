@@ -431,7 +431,7 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     public function gradesubjectsAction() {
 
-        $this->view->academicId = $this->academicId;
+        $this->view->academicId = $this->academicId;   
         $this->view->subjectId = $this->subjectId;
         $this->view->teacherId = $this->teacherId;
         $this->view->facette = $this->facette;

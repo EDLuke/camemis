@@ -21,7 +21,7 @@ class SubjectHomeworkDBAccess {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function getGradeSubjectHomework($objectId, $subjectId, $studentId, $globalSearch = false) {
+    public static function getGradeSubjectHomework($objectId, $subjectId,$academicId, $studentId, $globalSearch = false) {
 
         $SELECTION_A = array(
             "ID AS GRADE_ID"
@@ -70,6 +70,9 @@ class SubjectHomeworkDBAccess {
             $SQL->where('C.SUBJECT = ?', $subjectId);
         if($studentId)
             $SQL->where('E.STUDENT_ID = ?', $studentId); 
+            
+        if($academicId)    
+            $SQL->where('C.CLASS_ID = ?', $academicId); 
             
         if ($globalSearch) {
             $SEARCH = " ((B.NAME LIKE '" . $globalSearch . "%')";
@@ -260,7 +263,7 @@ class SubjectHomeworkDBAccess {
         switch(UserAuth::getUserType()){
             case "SUPERADMIN":
             case "ADMIN": 
-                $result = self::getGradeSubjectHomework($objectId, $subjectId, $studentId, $globalSearch);
+                $result = self::getGradeSubjectHomework($objectId, $subjectId,$academicId, $studentId, $globalSearch);
                 break;
             case 'INSTRUCTOR':
             case 'TEACHER':
