@@ -53,6 +53,92 @@ if($CHECK_STATUS){
     $CHECK_STATUS = $result ? $result->C : 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+$INFORMATION_ITEMS = Array();
+switch ($TERM_NUMBER) {
+    case 1:
+        $FIRST_TERM = "{
+            title: '".FIRST_TERM."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("FIRST_TERM", $academicObject->TERM1_START, $academicObject->TERM1_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $FIRST_TERM;
+        $SECOND_TERM = "{
+            title: '".SECOND_TERM."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("SECOND_TERM", $academicObject->TERM2_START, $academicObject->TERM2_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $SECOND_TERM;
+        $THIRD_TERM = "{
+            title: '".THIRD_TERM."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("THIRD_TERM", $academicObject->TERM3_START, $academicObject->TERM3_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $THIRD_TERM;
+        break;
+    case 2:
+        $FIRST_QUARTER = "{
+            title: '".FIRST_QUARTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("FIRST_QUARTER", $academicObject->QUARTER1_START, $academicObject->QUARTER1_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $FIRST_QUARTER;
+        $SECOND_QUARTER = "{
+            title: '".SECOND_QUARTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("SECOND_QUARTER", $academicObject->QUARTER2_START, $academicObject->QUARTER2_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $SECOND_QUARTER;
+        $THIRD_QUARTER = "{
+            title: '".THIRD_QUARTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("THIRD_QUARTER", $academicObject->QUARTER3_START, $academicObject->QUARTER3_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $THIRD_QUARTER;
+        $FOURTH_QUARTER = "{
+            title: '".FOURTH_QUARTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("FOURTH_QUARTER", $academicObject->QUARTER4_START, $academicObject->QUARTER4_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $FOURTH_QUARTER;
+        break;
+    default:
+        $FIRST_SEMESTER = "{
+            title: '".FIRST_SEMESTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("FIRST_SEMESTER", $academicObject->SEMESTER1_START, $academicObject->SEMESTER1_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $FIRST_SEMESTER;
+        $SECOND_SEMESTER = "{
+            title: '".SECOND_SEMESTER."'
+            ,width:480
+            ,bodyStyle: 'padding:15px'
+            ,border:false
+            ,items:[".getDataField("SECOND_SEMESTER", $academicObject->SEMESTER2_START, $academicObject->SEMESTER2_END)."]
+        }";
+        $INFORMATION_ITEMS[] = $SECOND_SEMESTER;
+        break;
+}
+
+if (!$CHECK_STATUS) $DISPLAY_INFORMATION_ITEMS = implode(",",$INFORMATION_ITEMS);
+
+////////////////////////////////////////////////////////////////////////////////
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>
@@ -341,7 +427,15 @@ Ext.onReady(function() {
                     window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
                 }
             }]
-            ,contentEl: 'initCenter'
+            ,items:[{
+                xtype: 'tabpanel'
+                ,height:150
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:[".$DISPLAY_INFORMATION_ITEMS."]
+            }]
         }]";
     }
     ?>
