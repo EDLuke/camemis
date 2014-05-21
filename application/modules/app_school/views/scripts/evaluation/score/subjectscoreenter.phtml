@@ -364,7 +364,7 @@ Ext.onReady(function() {
         }]
     });
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
-    grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+    if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
         Ext.getCmp('REMOVE').enable();
     });
 });
