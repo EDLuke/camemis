@@ -1169,6 +1169,7 @@ class ScheduleDBAccess {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
         $facette = self::findScheduleFromGuId($scheduleId);
+        $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
         $SELECT_DATA = array(
             "A.ID AS ID"
@@ -1185,6 +1186,14 @@ class ScheduleDBAccess {
 
         if ($facette->SUBJECT_ID)
             $SQL->where("C.ID ='" . $facette->SUBJECT_ID . "'");
+            
+        if ($globalSearch) {
+            $SEARCH = " ((A.CODE LIKE '" . strtoupper($globalSearch) . "%')";
+            $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
+            $SEARCH .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
+            $SEARCH .= " ) ";
+            $SQL->where($SEARCH);
+        }
 
         //error_log($SQL->__toString());
 

@@ -132,6 +132,8 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addReadField("name: 'STUDENT'");
         $OBJECT_GRID->addReadField("name: 'LASTNAME'");
         $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME_LATIN'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
         $OBJECT_GRID->addReadField("name: 'GENDER'");
         $OBJECT_GRID->addReadField("name: 'ACADEMIC_TYPE'");
         $OBJECT_GRID->addReadField("name: 'CAMPUS_NAME'");
@@ -206,6 +208,28 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 })
             ");
         }
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>".FIRSTNAME_LATIN."</b>',
+            dataIndex: 'FIRSTNAME_LATIN',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
+
+        $OBJECT_GRID->addColumn("
+            header: '<b>".LASTNAME_LATIN."</b>',
+            dataIndex: 'LASTNAME_LATIN',
+            width: 120,
+            align: 'left',
+            renderer: renderText,
+            editor: new Ext.form.TextField({
+                allowBlank: false
+            })
+        ");
                 
         $OBJECT_GRID->addColumn("header: '<b>" . ACADEMIC . "</b>', align:'left', renderer: renderTextAcademic, width:150, sortable: false, dataIndex: 'CAMPUS_NAME'");
         $OBJECT_GRID->addColumn("
@@ -450,7 +474,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,isUpload: true
                         ,headers: {'Content-type':'multipart/form-data'}
                         ,method: 'POST'
-                        ,params:{cmd: 'importXLS', trainingId: trainingId,objectType:'TRAINING_EUCATION'}
+                        ,params:{cmd: 'importXLS', trainingId: trainingId,objectType:'TRAINING_EDUCATION'}
                         ,waitMsg: 'Uploading your file...'
                         ,form: fp.getForm().getEl().dom
                         ,success: function(response, options) {

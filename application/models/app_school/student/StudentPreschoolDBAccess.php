@@ -47,6 +47,7 @@ class StudentPreschoolDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => 't_student_preschool'), array('*'));
+        $SQL->joinLeft(array('B' => 't_members'), 'A.CREATED_BY = B.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
         $SQL->where("A.STUDENT_INDEX='" . $objectId . "'");
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -70,6 +71,13 @@ class StudentPreschoolDBAccess {
             $data['EMAIL'] = $result->EMAIL;
             $data['GENDER'] = $result->GENDER;
             $data['DATE_BIRTH'] = getShowDate($result->DATE_BIRTH);
+            $data['CREATED_DATE'] = getShowDate($result->CREATED_DATE);
+            if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                $data["CREATED_BY"] = setShowText($result->MEMBER_FIRSTNAME) . " " . setShowText($result->MEMBER_LASTNAME);
+            } else {
+                $data["CREATED_BY"] = setShowText($result->MEMBER_LASTNAME) . " " . setShowText($result->MEMBER_FIRSTNAME);
+                
+            }
         }
         
         return $data;
@@ -256,6 +264,8 @@ class StudentPreschoolDBAccess {
             $SAVEDATA['ID'] = generateGuid();
             $GETDATA['PRESTUDENT'] = $SAVEDATA['ID'];
             $GETDATA['OBJECT_TYPE'] = "REFERENCE";
+            $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+            $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
             
             self::dbAccess()->insert('t_student_preschooltype', $GETDATA);
             self::dbAccess()->insert('t_student_preschool', $SAVEDATA);
@@ -368,11 +378,12 @@ class StudentPreschoolDBAccess {
         if ($informationType){
             switch($informationType){
                 case "CLEAR":
-                    $SQL->where("B.OBJECT_TYPE = 'REFERENCE'");
-                    $SQL->where("B.CAMEMIS_TYPE is Null");
+                    //$SQL->where("B.OBJECT_TYPE = 'REFERENCE'");
+                    $SQL->where("B.CAMEMIS_TYPE = 0");
                     break;
                 default:
                     $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
+                    $SQL->where("B.CAMEMIS_TYPE != 0");
                     break;
             }   
            
@@ -468,31 +479,37 @@ class StudentPreschoolDBAccess {
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
         $objectType = isset($params["object"]) ? addText($params["object"]) : "";
+        $comboValue = isset($params["comboValue"]) ? addText($params["comboValue"]) : "";
         
         $SAVEDATA = array();
         switch ($field)
         {
             case "CAMEMIS_TYPE":
-                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                $newValue = $comboValue;
                 break;
             case "DEGREE_TYPE":
-                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                $newValue = $comboValue;
                 break;
             case "APPLICATION_STATUS":
-                $newValue = isset($params["camboValue"]) ? addText($params["camboValue"]) : "";
+                $newValue = $comboValue;
                 break;
             default:
                 $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
                 break;
         }
-
         
         if ($objectId)
-        {
+        {         
             switch ($field)
             {
                 case "DELETE":
                     self::dbAccess()->delete("t_student_preschooltype", "ID='" . $objectId . "'");
+                    break;
+                case "SCORE":
+                    $SAVEDATA["" . $field . ""] = addText($newValue);
+                    $SAVEDATA['ENTER_BY'] = Zend_Registry::get('USER')->ID;
+                    $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
+                    self::dbAccess()->update("t_student_preschooltype", $SAVEDATA, $WHERE);
                     break;
                 default:
                     $SAVEDATA["" . $field . ""] = addText($newValue);
@@ -500,15 +517,25 @@ class StudentPreschoolDBAccess {
                     self::dbAccess()->update("t_student_preschooltype", $SAVEDATA, $WHERE);
                     break;
             }
-        }
-        else
-        {
-            $SAVEDATA["" . $field . ""] = addText($newValue);
+        }else{
+            switch ($field)
+            {
+                case "SCORE":
+                    $SAVEDATA["" . $field . ""] = addText($newValue);
+                    $SAVEDATA['ENTER_BY'] = Zend_Registry::get('USER')->ID;
+
+                    break;
+                
+                default:
+                    $SAVEDATA["" . $field . ""] = addText($newValue);
+                    break;
+            }
+
             $SAVEDATA["PRESTUDENT"] = $studentId;
             $SAVEDATA["OBJECT_TYPE"] = $objectType;
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-
+            
             self::dbAccess()->insert('t_student_preschooltype', $SAVEDATA);
 
             $objectId = self::dbAccess()->lastInsertId();
@@ -541,7 +568,8 @@ class StudentPreschoolDBAccess {
         $objectType = isset($params["object"]) ? addText($params["object"]) : "";
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_preschooltype", array('*'));
+        $SQL->from(array('A' => 't_student_preschooltype'), array('*'));
+        $SQL->joinLeft(array('B' => 't_members'), 'A.ENTER_BY = B.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
         $SQL->where("PRESTUDENT='" . $studentId . "'");
         $SQL->where("OBJECT_TYPE='" . $objectType . "'");
 
@@ -572,7 +600,11 @@ class StudentPreschoolDBAccess {
                         $data[$i]["SCORE"] = $value->SCORE;
                         $data[$i]["LEVEL"] = $value->LEVEL;
                         $data[$i]["STATUS"] = $value->TESTING_STATUS;
-                        //$data[$i]["RESULT_DATE"] = getShowDate($value->RESULT_DATE);
+                        if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                            $data[$i]["ENTER_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
+                        } else {
+                            $data[$i]["ENTER_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
+                        }
                         $data[$i]["RESULT_DATE"] = $value->RESULT_DATE;
                         if ($value->CAMEMIS_TYPE <> 0)
                             $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;

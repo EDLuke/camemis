@@ -148,7 +148,7 @@ class AcademicDateDBAccess {
             $SQL .= " AND PARENT='" . $facette->INDEX_ID . "'";
         }
 
-        $SQL .= " ORDER BY A.NAME";
+        $SQL .= " ORDER BY A.YEAR_LEVEL";
         return self::dbAccess()->fetchAll($SQL);
     }
 

@@ -187,7 +187,7 @@ class SubjectController extends Zend_Controller_Action {
 		//UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING_READ_RIGHT");
 		$this->view->gradesubjectId = $this->gradesubjectId;
 		$this->view->subjectId = $this->subjectId;
-		$this->view->classId = $this->classId;
+		$this->view->classId = $this->classId;    
 		$this->view->teacherId = $this->teacherId;
 		$this->_helper->viewRenderer("/gradesubject/main");
 	}

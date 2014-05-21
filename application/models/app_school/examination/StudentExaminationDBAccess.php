@@ -33,8 +33,8 @@
 
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
 
             $facette = self::findExamFromId($objectId);
 
@@ -86,9 +86,9 @@
 
         public static function getQueryAssignedStudentExamination($params, $limitCount = false){
 
-            $globalSearch = isset($params["globalSearch"])?$params["globalSearch"]:"";
-            $examId = isset($params["objectId"])?$params["objectId"]:"";
-            $roomId = isset($params["roomId"])?$params["roomId"]:"";
+            $globalSearch = isset($params["globalSearch"])?addText($params["globalSearch"]):"";
+            $examId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $roomId = isset($params["roomId"])?addText($params["roomId"]):"";
 
             $SELECTION_A = array(
                 "ID AS STUDENT_ID"
@@ -183,9 +183,9 @@
 
         public static function jsonActionRemoveStudentFromExamination($params){
 
-            $studentId = isset($params["id"])?$params["id"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
-            $newValue = isset($params["newValue"])?$params["newValue"]:"";
+            $studentId = isset($params["id"])?addText($params["id"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $newValue = isset($params["newValue"])?addText($params["newValue"]):"";
             if ($newValue) self::dbAccess()->delete('t_student_examination', array("STUDENT_ID='" . $studentId . "'", "EXAM_ID='" . $objectId . "'"));
 
             return array(
@@ -234,8 +234,8 @@
         ////$veasna
        public static function jsonActionChooseStudentTmpManually($params){
 
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
-            $selectionIds = isset($params["selectionIds"])?$params["selectionIds"]:"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $selectionIds = isset($params["selectionIds"])?addText($params["selectionIds"]):"";
             $facette = self::findExamFromId($objectId);
 
             $selectedCount = 0;
@@ -280,8 +280,8 @@
 
         public static function jsonActionChooseStudentManually($params){
 
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
-            $selectionIds = isset($params["selectionIds"])?$params["selectionIds"]:"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $selectionIds = isset($params["selectionIds"])?addText($params["selectionIds"]):"";
             $facette = self::findExamFromId($objectId);
 
             $selectedCount = 0;
@@ -348,8 +348,8 @@
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
 
             $facette = self::findExamFromId($objectId);
             $parentObject = self::findExamParentFromId($objectId);
@@ -404,9 +404,9 @@
 
         public static function jsonActionRemoveStudentFromExamRoom($params){
 
-            $newValue = isset($params["newValue"])?$params["newValue"]:"";
-            $studentId = isset($params["id"])?$params["id"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $newValue = isset($params["newValue"])?addText($params["newValue"]):"";
+            $studentId = isset($params["id"])?addText($params["id"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
             $facette = self::findExamFromId($objectId);
             $parentObject = self::findExamParentFromId($objectId);
 
@@ -443,8 +443,8 @@
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
 
             $facette = self::findExamFromId($objectId);
             $parentObject = self::findExamParentFromId($objectId);
@@ -495,8 +495,8 @@
 
         public static function jsonActionChooseStudentIntoRoom($params){
 
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
-            $selectionIds = isset($params["selectionIds"])?$params["selectionIds"]:"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $selectionIds = isset($params["selectionIds"])?addText($params["selectionIds"]):"";
 
             $facette = self::findExamFromId($objectId);
             $COUNT = $facette->COUNT?$facette->COUNT:1;
@@ -557,8 +557,8 @@
 
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
             $academicId=isset($params["academicId"])?$params["academicId"]:"";
 
             $facette = self::findExamFromId($objectId);
@@ -669,9 +669,9 @@
        
         public static function getQueryAssignedStudentTmpExamination($params, $limitCount = false){
 
-            $globalSearch = isset($params["globalSearch"])?$params["globalSearch"]:"";
-            $examId = isset($params["objectId"])?$params["objectId"]:"";
-            $roomId = isset($params["roomId"])?$params["roomId"]:"";
+            $globalSearch = isset($params["globalSearch"])?addText($params["globalSearch"]):"";
+            $examId = isset($params["objectId"])?addText($params["objectId"]):"";
+            $roomId = isset($params["roomId"])?addText($params["roomId"]):"";
 
             $SELECTION_A = array(
                 "ID AS STUDENT_ID"
@@ -767,8 +767,8 @@
         
         public static function jsonUnassignedStudentTmpExamRoom($params){
             
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
 
             $facette = self::findExamFromId($objectId);
             $parentObject = self::findExamParentFromId($objectId);
@@ -825,8 +825,8 @@
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-            $globalSearch = isset($params["query"])?$params["query"]:"";
-            $objectId = isset($params["objectId"])?$params["objectId"]:"";
+            $globalSearch = isset($params["query"])?addText($params["query"]):"";
+            $objectId = isset($params["objectId"])?addText($params["objectId"]):"";
 
             $facette = self::findExamFromId($objectId);
             $parentObject = self::findExamParentFromId($objectId);
