@@ -15,7 +15,7 @@ class URLEncryption {
     }
 
     private function base64url_encode($data) {
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+        return raddText(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     private function base64url_decode($data) {
@@ -27,57 +27,57 @@ class URLEncryption {
         if ($this->isEmbeddedParams) {
             $str = $this->decrypt($pData);
             if (isset($_GET["setId"]))
-                $str .= "&setId=" . trim($_GET["setId"]);
+                $str .= "&setId=" . addText($_GET["setId"]);
             if (isset($_GET["section"]))
-                $str .= "&section=" . trim($_GET["section"]);
+                $str .= "&section=" . addText($_GET["section"]);
             if (isset($_GET["subjectId"]))
-                $str .= "&subjectId=" . trim($_GET["subjectId"]);
+                $str .= "&subjectId=" . addText($_GET["subjectId"]);
             if (isset($_GET["classId"]))
-                $str .= "&classId=" . trim($_GET["classId"]);
+                $str .= "&classId=" . addText($_GET["classId"]);
             if (isset($_GET["academicId"]))
-                $str .= "&academicId=" . trim($_GET["academicId"]);
+                $str .= "&academicId=" . addText($_GET["academicId"]);
             if (isset($_GET["objectId"]))
-                $str .= "&objectId=" . trim($_GET["objectId"]);
+                $str .= "&objectId=" . addText($_GET["objectId"]);
             if (isset($_GET["studentId"]))
-                $str .= "&studentId=" . trim($_GET["studentId"]);
+                $str .= "&studentId=" . addText($_GET["studentId"]);
             if (isset($_GET["assignmentId"]))
-                $str .= "&assignmentId=" . trim($_GET["assignmentId"]);
+                $str .= "&assignmentId=" . addText($_GET["assignmentId"]);
             if (isset($_GET["setnewValue"]))
-                $str .= "&setnewValue=" . trim($_GET["setnewValue"]);
+                $str .= "&setnewValue=" . addText($_GET["setnewValue"]);
             if (isset($_GET["monthyear"]))
-                $str .= "&monthyear=" . trim($_GET["monthyear"]);
+                $str .= "&monthyear=" . addText($_GET["monthyear"]);
             if (isset($_GET["semester"]))
-                $str .= "&semester=" . trim($_GET["semester"]);
+                $str .= "&semester=" . addText($_GET["semester"]);
             if (isset($_GET["schoolyearId"]))
-                $str .= "&schoolyearId=" . trim($_GET["schoolyearId"]);
+                $str .= "&schoolyearId=" . addText($_GET["schoolyearId"]);
             if (isset($_GET["newValue"]))
-                $str .= "&newValue=" . trim($_GET["newValue"]);
+                $str .= "&newValue=" . addText($_GET["newValue"]);
             if (isset($_GET["field"]))
-                $str .= "&field=" . trim($_GET["field"]);
+                $str .= "&field=" . addText($_GET["field"]);
             if (isset($_GET["date"]))
-                $str .= "&date=" . trim($_GET["date"]);
+                $str .= "&date=" . addText($_GET["date"]);
             if (isset($_GET["objectType"]))
-                $str .= "&objectType=" . trim($_GET["objectType"]);
+                $str .= "&objectType=" . addText($_GET["objectType"]);
             if (isset($_GET["campusId"]))
-                $str .= "&campusId=" . trim($_GET["campusId"]);
+                $str .= "&campusId=" . addText($_GET["campusId"]);
             if (isset($_GET["gradeId"]))
-                $str .= "&gradeId=" . trim($_GET["gradeId"]);
+                $str .= "&gradeId=" . addText($_GET["gradeId"]);
             if (isset($_GET["target"]))
-                $str .= "&target=" . trim($_GET["target"]);
+                $str .= "&target=" . addText($_GET["target"]);
             if (isset($_GET["scheduleId"]))
-                $str .= "&scheduleId=" . trim($_GET["scheduleId"]);
+                $str .= "&scheduleId=" . addText($_GET["scheduleId"]);
             if (isset($_GET["shortday"]))
-                $str .= "&shortday=" . trim($_GET["shortday"]);
+                $str .= "&shortday=" . addText($_GET["shortday"]);
             if (isset($_GET["parentId"]))
-                $str .= "&parentId=" . trim($_GET["parentId"]);
+                $str .= "&parentId=" . addText($_GET["parentId"]);
             if (isset($_GET["personType"]))
-                $str .= "&personType=" . trim($_GET["personType"]);
+                $str .= "&personType=" . addText($_GET["personType"]);
             if (isset($_GET["term"]))
-                $str .= "&term=" . trim($_GET["term"]);
+                $str .= "&term=" . addText($_GET["term"]);
             if (isset($_GET["choosedate"]))
-                $str .= "&choosedate=" . trim($_GET["choosedate"]);
+                $str .= "&choosedate=" . addText($_GET["choosedate"]);
             if (isset($_GET["eventDay"]))
-                $str .= "&eventDay=" . trim($_GET["eventDay"]);
+                $str .= "&eventDay=" . addText($_GET["eventDay"]);
         } else {
             $str = $this->decrypt($pData);
         }
