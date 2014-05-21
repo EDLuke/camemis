@@ -42,18 +42,37 @@ $columndata = Utiles::getGridColumnData("NEW_PRESCHOOL_LIST");
 function columnProperties($header, $dataindex, $width, $hidden=false){
     $fg = "";
     $fg .= "editor: new Ext.form.TextArea({";
-        $fg .= "allowBlank: false";
+    $fg .= "allowBlank: false";                                                                              
     $fg .= "})";
     $fg .= ",renderer:cssDefault";
     $fg .= ",align: 'left'";
     $fg .= ",height:25";
     $fg .= ",header: '<b>".$header."</b>'";
     $fg .= ",dataIndex: '".$dataindex."'";
-    $fg .= ",width:".$width;
+    $fg .= ",width:".$width;   
     $fg .= ",hidden:".$hidden;
     
     return $fg;
 }
+
+function columnPropertiesReadonly($header, $dataindex, $width, $hidden=false){
+    $fg = "";
+    $fg .= "editor: new Ext.form.TextField({";
+    $fg .= "allowBlank: false";                                                                              
+    $fg .= ",readOnly: true";                                                                              
+    $fg .= "})";
+    $fg .= ",renderer:cssDefault";
+    $fg .= ",align: 'left'";
+    $fg .= ",height:25";
+    $fg .= ",header: '<b>".$header."</b>'";
+    $fg .= ",dataIndex: '".$dataindex."'";
+    $fg .= ",width:".$width;   
+    $fg .= ",hidden:".$hidden;
+    
+    return $fg;
+}
+
+
 
 function columnDate($header, $dataindex, $width, $hidden){
     $fg = "";
@@ -291,6 +310,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $TESTING_GRID->addReadField("name: 'CAMEMIS_TYPE'");
         $TESTING_GRID->addReadField("name: 'SCORE'");
+        $TESTING_GRID->addReadField("name: 'ENTER_BY'");
         $TESTING_GRID->addReadField("name: 'DESCRIPTION'");
         $TESTING_GRID->addReadField("name: 'LEVEL'");
         $TESTING_GRID->addReadField("name: 'STATUS'");
@@ -325,10 +345,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         ");
         
         $TESTING_GRID->addColumn(columnProperties(SCORE,"SCORE",150,checkColHidden(2,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(4,$columndata)));
-        $TESTING_GRID->addColumn(columnDate(RESULT_DATE,"RESULT_DATE",150,checkColHidden(5,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(4,$columndata)));
+        $TESTING_GRID->addColumn(columnPropertiesReadonly(ENTER_BY,"ENTER_BY",150,checkColHidden(3,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(4,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(5,$columndata)));
+        $TESTING_GRID->addColumn(columnDate(RESULT_DATE,"RESULT_DATE",150,checkColHidden(6,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(7,$columndata)));
         
         $TESTING_GRID->addColumn("
             xtype: 'checkboxcolumn'
@@ -366,6 +387,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,RESULT_DATE:''
                         ,STATUS:''
                         ,DESCRIPTION:''
+                        ,ENTER_BY:''
                     };
                     Ext.getCmp('".$TESTING_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
                 }
@@ -398,6 +420,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             objectId = jsonData.ID;
             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
             window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+            Ext.getCmp('".$TESTING_GRID->getObjectId()."').store.reload();
         ");
         
         //if (UserAuth::getACLStudent("EDIT_RIGHT"))
@@ -582,6 +605,25 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     {".CamemisField::Textarea("ADDRESS",ADDRESS,200,false,false)."}
                     ,{".CamemisField::Textfield("PHONE_ID", "PHONE", PHONE, false, false, false, 250)."}
                     ,{".CamemisField::EMailfield("EMAIL", EMAIL, false, false)."}
+                ]
+            }]   
+        ");
+        
+        $OBJECT_FORM->addObjectItems("
+            title: '".CREATED."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Displayfield("CREATED_DATE", CREATED_DATE, "" . isset($data["CREATED_DATE"]) ? $data["CREATED_DATE"] : "---" . "")."}
+                    ,{".CamemisField::Displayfield("CREATED_BY", CREATED_BY, "" . isset($data["CREATED_BY"]) ? $data["CREATED_BY"] : "---" . "")."}
                 ]
             }]   
         ");
