@@ -5,8 +5,8 @@
 ///////////////////////////////////////////////////////////
 require_once 'models/statistic/LetterStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"]) ? $_GET["objectType"] : "";
-$objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+$objectType = isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
+$objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
 
 $dataSet = "";
 switch($objectType){

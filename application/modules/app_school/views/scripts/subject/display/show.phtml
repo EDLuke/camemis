@@ -64,7 +64,7 @@ if ($_POST){
 
     $field = isset($_POST["field"])?addText($_POST["field"]):"";
     $object = isset($_POST["object"])?addText($_POST["object"]):"";
-    //$objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    //$objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
     
     $subjectObject = SubjectDBAccess::getAcademicSubject($objectId, $classId);
 

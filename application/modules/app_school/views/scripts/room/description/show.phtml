@@ -28,7 +28,7 @@ if($this->facette){
         $parentId = "";
     }
 }else{
-    $parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+    $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 }
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();

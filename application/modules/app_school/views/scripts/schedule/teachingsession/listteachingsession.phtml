@@ -30,8 +30,8 @@ $columndataGeneral = Utiles::getGridColumnData("GENERAL_EDUCATION_LIST_ID");
 $columndataCredit = Utiles::getGridColumnData("CREDIT_EDUCATION_LIST_ID");
 $columndataTraining = Utiles::getGridColumnData("TRAINING_LIST_ID");
 
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
 
 ?>
 <script>

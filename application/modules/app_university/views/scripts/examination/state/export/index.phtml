@@ -6,7 +6,7 @@
     require_once 'models/app_university/examination/ExaminationDBAccess.php';
     require_once 'models/app_university/examination/StudentExaminationDBAccess.php';                         
     
-    $params["objectId"] = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    $params["objectId"] = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
            
     $entries = array(); 
      

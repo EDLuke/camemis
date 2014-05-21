@@ -20,7 +20,7 @@ $OBJECT_FORM->setLoadUrl("/file/jsonload/");
 $OBJECT_FORM->setSaveUrl("/file/jsonsave/");
 
 if($this->objectId == "new"){
-    $parentId = isset($_GET['parentId'])?$_GET['parentId']:0;
+    $parentId = isset($_GET['parentId'])?addText($_GET['parentId']):0;
 }else{
     $parentId = $this->facette?$this->facette->PARENT:0;
     $checkChild = FileDBAccess::checkChild($this->objectId); 

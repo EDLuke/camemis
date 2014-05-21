@@ -25,18 +25,18 @@ $OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
 
 $subject_bulletin = isset($_GET["subject_bulletin"])?$_GET["subject_bulletin"]:"";
 
-$studentschoolId = isset($_GET["studentschoolId"])?$_GET["studentschoolId"]:"";
-$code = isset($_GET["student_code_id"])?$_GET["student_code_id"]:"";
-$firstname = isset($_GET["firstname"])?$_GET["firstname"]:"";
-$lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
-$gender = isset($_GET["gender"])?$_GET["gender"]:"";
-$infractionType = isset($_GET["infraction_type"])?$_GET["infraction_type"]:"";
-$choosegrade = isset($_GET["choosegrade"])?$_GET["choosegrade"]:"";
+$studentschoolId = isset($_GET["studentschoolId"])?addText($_GET["studentschoolId"]):"";
+$code = isset($_GET["student_code_id"])?addText($_GET["student_code_id"]):"";
+$firstname = isset($_GET["firstname"])?addText($_GET["firstname"]):"";
+$lastname = isset($_GET["lastname"])?addText($_GET["lastname"]):"";
+$gender = isset($_GET["gender"])?addText($_GET["gender"]):"";
+$infractionType = isset($_GET["infraction_type"])? addText($_GET["infraction_type"]):"";
+$choosegrade = isset($_GET["choosegrade"])? addText($_GET["choosegrade"]):"";
 $trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:"";
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
-$personType = isset($_GET["personType"])?$_GET["personType"]:""; //@Man
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):""; //@Man
 
 switch ($personType) {
 	case "staff":

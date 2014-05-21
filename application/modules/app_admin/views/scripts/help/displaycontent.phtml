@@ -2,7 +2,7 @@
 
 $HELP_ACCESS = new AdminHelpDBAccess();
 
-$field = isset($_GET["field"])?$_GET["field"]:"";
+$field = isset($_GET["field"])?addText($_GET["field"]):"";
 
 $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);
 

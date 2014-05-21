@@ -1,8 +1,8 @@
 <?
 require_once 'models/statistic/StudentStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
-$campusId = isset($_GET["campusId"])?$_GET["campusId"]:"";
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
+$campusId = isset($_GET["campusId"])?addText($_GET["campusId"]):"";
 $subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
 
 switch($objectType){

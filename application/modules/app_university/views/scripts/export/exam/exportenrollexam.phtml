@@ -17,7 +17,7 @@
     require_once 'models/app_university/AcademicDateDBAccess.php';
     require_once 'models/app_university/room/RoomDBAccess.php';
     
-    $objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
     $bnt=isset($_GET["bnt"])?$_GET["bnt"]:"";
     $header=false;
     $footer=false;
@@ -167,7 +167,7 @@
             
             $myParams=array();
             $myParams["type"]=isset($_GET["enrollExamType"]) ? $_GET["enrollExamType"] : "";
-            $myParams["objectType"]=isset($_GET["objectType"]) ? $_GET["objectType"] : "";
+            $myParams["objectType"]=isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
             $myParams["campus"]=isset($_GET["campus"]) ? $_GET["campus"] : "";
             $myParams["gender"]=isset($_GET["gender"]) ? $_GET["gender"] : "";
             $myParams["examResult"]=isset($_GET["examResult"]) ? $_GET["examResult"] : "";

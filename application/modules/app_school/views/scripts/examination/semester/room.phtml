@@ -36,10 +36,10 @@ $UNASSIGNED_STAFF_GRID->setLoadUrl("/examination/jsonload/");
 $UNASSIGNED_STAFF_GRID->setSaveUrl("/examination/jsonsave/");
 $columndataUnassignedStaff = Utiles::getGridColumnData("EXAM_MANAGEMENT_UNASSIGNED_ID");
 
-$schoolyear_Id = isset($_GET["schoolyear_Id"])?$_GET["schoolyear_Id"]:"";
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
-$startTime = isset($_GET["startTime"])?$_GET["startTime"]:"";
-$endTime = isset($_GET["endTime"])?$_GET["endTime"]:"";
+$schoolyear_Id = isset($_GET["schoolyear_Id"])? addText($_GET["schoolyear_Id"]):"";
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
+$startTime = isset($_GET["startTime"])? addText($_GET["startTime"]):"";
+$endTime = isset($_GET["endTime"])? addText($_GET["endTime"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

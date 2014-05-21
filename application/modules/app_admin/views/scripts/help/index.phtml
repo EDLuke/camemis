@@ -12,7 +12,7 @@ print $OBJECT_ADMIN_PAGE->showCamemisHeader();
 
 $OBJECT_TREE = new AdminTree("HELP", "LIST");
 
-$choose_language = isset($_GET["language"])?$_GET["language"]:"EN";
+$choose_language = isset($_GET["language"])?addText($_GET["language"]):"EN";
 
 ?>
 <div id="iniContent" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">

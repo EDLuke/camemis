@@ -15,8 +15,8 @@ if ($_POST){
     header("Location: ".$_SERVER['REQUEST_URI']."");
 }
 
-$choose_language = isset($_GET["language"])?$_GET["language"]:"EN";
-$field = isset($_GET["field"])?$_GET["field"]:"";
+$choose_language = isset($_GET["language"])?addText($_GET["language"]):"EN";
+$field = isset($_GET["field"])?addText($_GET["field"]):"";
 
 
 $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);

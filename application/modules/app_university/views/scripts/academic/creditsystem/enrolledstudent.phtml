@@ -22,7 +22,7 @@ $ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
 
 if(!$this->facette) {header("Location: /main/permission/");}
 
-$display = isset($_GET["display"])?$_GET["display"]:"";
+$display = isset($_GET["display"])?addText($_GET["display"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

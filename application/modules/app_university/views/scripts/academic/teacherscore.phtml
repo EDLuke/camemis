@@ -28,8 +28,8 @@ $OBJECT_DATA = $this->objectData;
 $gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:"";
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):"";
 
 $CURRENT_SCHOOLYEAR = $DB_SCHOOLYEAR->isCurrentSchoolyear($schoolyearId);
 

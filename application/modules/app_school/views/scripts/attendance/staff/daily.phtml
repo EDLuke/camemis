@@ -26,7 +26,7 @@ $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STAFF',1);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$choosedate = isset($_GET["choosedate"])?$_GET["choosedate"]:date('Y-m-d');
+$choosedate = isset($_GET["choosedate"])? addText($_GET["choosedate"]):date('Y-m-d');
 $staffEntries = StaffAttendanceDBAccess::getQueryStaffAttendance();
 ?>
 

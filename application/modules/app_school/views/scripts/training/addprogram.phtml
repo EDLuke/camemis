@@ -21,7 +21,7 @@ $OBJECT_FORM->setLoadUrl("/training/jsonload/");
 $OBJECT_FORM->setSaveUrl("/training/jsonsave/");
 
 $template = isset($_GET["template"])?$_GET["template"]:"";
-$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"0";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"0";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

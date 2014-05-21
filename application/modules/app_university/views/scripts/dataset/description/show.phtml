@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("DATASET");
 $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"";
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 
 if($this->facette){
@@ -29,7 +29,7 @@ if($this->facette){
         $parentId = "";
     }
 }else{
-    $parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+    $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 }
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();

@@ -9,7 +9,7 @@ require_once 'models/app_admin/AdminCustomerDBAccess.php';
 
 $CAMEMIS_PAGE = AdminPage::getInstance();
 
-$type = isset($_GET["type"])?$_GET["type"]:"";
+$type = isset($_GET["type"])? addText($_GET["type"]):"";
 
 print $CAMEMIS_PAGE->showCamemisHeader();
 ?>

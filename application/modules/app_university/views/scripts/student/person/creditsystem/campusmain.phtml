@@ -12,7 +12,7 @@ require_once setUserLoacalization();
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):$this->studentId;
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):$this->schoolyearId;
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:$this->academicId;
-$campusId = isset($_GET["campusId"])?$_GET["campusId"]:$this->campusId;
+$campusId = isset($_GET["campusId"])?addText($_GET["campusId"]):$this->campusId;
 
 $setParams = "&objectId={$studentId}&academicId={$academicId}&schoolyearId={$schoolyearId}&campusId={$campusId}";
 

@@ -20,7 +20,7 @@ $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

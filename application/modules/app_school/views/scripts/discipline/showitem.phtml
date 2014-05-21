@@ -19,7 +19,7 @@ $OBJECT_FORM= new CamemisForm("DISCIPLINE");
 $OBJECT_FORM->setSaveUrl("/discipline/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/discipline/jsonload/"); 
 
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"";
 
 switch (strtoupper($personType)) {
     case "STAFF":

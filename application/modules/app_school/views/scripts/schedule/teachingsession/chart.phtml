@@ -11,8 +11,8 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
 $academicType = isset($_GET["academicType"])?$_GET["academicType"]:'general';
 
 $searchParams["startDate"] = $startDate;

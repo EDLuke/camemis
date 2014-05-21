@@ -22,7 +22,7 @@ $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 if($this->objectId == "new"){
-    $parentId = isset($_GET['parentId'])?$_GET['parentId']:0;
+    $parentId = isset($_GET['parentId'])?addText($_GET['parentId']):0;
 }else{
     $parentId = $this->facette?$this->facette->PARENT:0; 
 }

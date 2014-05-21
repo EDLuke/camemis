@@ -11,7 +11,7 @@ $CAMEMIS_PAGE = AdminPage::getInstance();
 $OBJECT_FORM = new AdminForm("CUSTOMER");
 $OBJECT_FORM->setURL("/app/");
 
-$parentId = isset($_GET['parentId'])?$_GET['parentId']:0;
+$parentId = isset($_GET['parentId'])?addText($_GET['parentId']):0;
 
 print $CAMEMIS_PAGE->showCamemisHeader();
 

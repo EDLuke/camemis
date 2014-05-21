@@ -26,7 +26,7 @@ $OBJECT_FORM = new CamemisForm("SMS");
 $OBJECT_FORM->setLoadUrl('/sms/jsonload/');
 $OBJECT_FORM->setSaveUrl('/sms/jsonsave/');
 
-$studentId = isset($_GET["objectId"]) ? $_GET["objectId"]: null;
+$studentId = isset($_GET["objectId"]) ? addText($_GET["objectId"]): null;
 $academicId = isset($_GET["academicId"]) ? $_GET["academicId"]: null;
 
 $STUDENT_OBJECT = StudentDBAccess::findStudentFromId($studentId);

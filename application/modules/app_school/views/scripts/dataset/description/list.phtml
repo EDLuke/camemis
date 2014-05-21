@@ -16,7 +16,7 @@ $OBJECT_TREE = new CamemisTree("DATASET", "LIST");
 $OBJECT_TREE->setURL("/dataset/jsontree/");
 $OBJECT_TREE->setSaveUrl("/dataset/jsonsave/");
 
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

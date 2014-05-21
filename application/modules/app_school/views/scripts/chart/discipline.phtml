@@ -2,14 +2,14 @@
 require_once 'models/statistic/StudentStatisticsDBAccess.php';
 require_once 'models/statistic/StaffStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
-$staffId = isset($_GET["staffId"])?$_GET["staffId"]:"";
+$staffId = isset($_GET["staffId"])?addText($_GET["staffId"]):"";
 $personType = isset($_GET["personType"])?strtoupper($_GET["personType"]):""; //@Man
 
-$campusId = isset($_GET["campusId"])?$_GET["campusId"]:"";
-$gradeId = isset($_GET["gradeId"])?$_GET["gradeId"]:"";
-$schoolyearId = isset($_GET["schoolyearId"])?$_GET["schoolyearId"]:"";
+$campusId = isset($_GET["campusId"])?addText($_GET["campusId"]):"";
+$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])? addText($_GET["schoolyearId"]):"";
 
 switch($personType){
     case "STUDENT":

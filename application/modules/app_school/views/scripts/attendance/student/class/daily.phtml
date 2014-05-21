@@ -16,7 +16,7 @@ require_once 'models/app_school/student/StudentAttendanceDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once setUserLoacalization();
 
-$choosedate = isset($_GET["choosedate"])?$_GET["choosedate"]:date('Y-m-d');   
+$choosedate = isset($_GET["choosedate"])? addText($_GET["choosedate"]):date('Y-m-d');   
 $classId = isset($_GET['classId'])?addText($_GET['classId']):"";
 $trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 

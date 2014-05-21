@@ -15,7 +15,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 
-$Id = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+$Id = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
 $incomeObject = IncomeDBAccess::findIncomeFromId($Id);
 
 if (!$incomeObject)

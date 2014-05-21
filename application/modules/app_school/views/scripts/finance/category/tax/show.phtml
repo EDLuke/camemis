@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("DATASET");
 $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 
-$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 $lastNode = isset($_GET["lastNode"])?$_GET["lastNode"]:"";
 
 $parentObject = TaxDBAccess::findObjectFromId($parentId);

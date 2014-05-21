@@ -1,6 +1,6 @@
 <?
 require_once 'models/app_school/statistic/StudentCreditInformationDBAccess.php';
-$compusId = isset($_GET["compusId"])?$_GET["compusId"]:"";
+$compusId = isset($_GET["compusId"])?addText($_GET["compusId"]):"";
 
 print($compusId);exit;
 

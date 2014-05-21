@@ -20,7 +20,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_TREE = new CamemisTree("SETTING", "LIST");
 $OBJECT_TREE->setURL("/dataset/jsontree/");
 */
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"";
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

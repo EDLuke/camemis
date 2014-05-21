@@ -26,7 +26,7 @@ $OBJECT_GRID = new CamemisGrid("STAFF", "SEARCH");
 $OBJECT_GRID->setLoadUrl('/staff/jsonload/');
 $OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
 
-$personType = isset($_GET["personType"])?$_GET["personType"]:"STAFF";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"STAFF";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

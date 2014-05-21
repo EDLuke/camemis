@@ -18,16 +18,16 @@ $OBJECT_GRID = new CamemisGrid("CREDIT_INFORMATION", "LIST");
 $OBJECT_GRID->setLoadUrl("/academic/jsonload/");
 $OBJECT_GRID->setSaveUrl("/academic/jsonsave/");
 
-$studentschoolId = isset($_GET["studentschoolId"])?$_GET["studentschoolId"]:"";
-$code = isset($_GET["student_code_id"])?$_GET["student_code_id"]:"";
-$firstname = isset($_GET["firstname"])?$_GET["firstname"]:"";
-$lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
-$gender = isset($_GET["gender"])?$_GET["gender"]:"";
+$studentschoolId = isset($_GET["studentschoolId"])?addText($_GET["studentschoolId"]):"";
+$code = isset($_GET["student_code_id"])?addText($_GET["student_code_id"]):"";
+$firstname = isset($_GET["firstname"])?addText($_GET["firstname"]):"";
+$lastname = isset($_GET["lastname"])?addText($_GET["lastname"]):"";
+$gender = isset($_GET["gender"])?addText($_GET["gender"]):"";
 
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
-$creditStatus = isset($_GET["creditStatus"])?$_GET["creditStatus"]:"";
-$creditNumber = isset($_GET["creditNumber"])?$_GET["creditNumber"]:"";
+$creditStatus = isset($_GET["creditStatus"])?addText($_GET["creditStatus"]):"";
+$creditNumber = isset($_GET["creditNumber"])?addText($_GET["creditNumber"]):"";
 
 $baseParams = "";
 $baseParams .= "start:0";
@@ -77,19 +77,19 @@ $js .= "Ext.getCmp('CREDIT_INFORMATION_LIST_ID').on('cellclick', function(grid, 
         var record = grid.store.getAt(rowIndex);
         var contextMenu = new Ext.menu.Menu({
             items: [{
-                        text: 'SHOW STATUS' 
-                        ,iconCls: 'icon-application_form_magnify' 
-                        ,handler: function(){
-                            clickOpenPage('center','','/academic/showcreditinformation/?studentSubjectId=' + record.data.ID);
-                        }
-                    },{
-                        text: 'SHOW ASSESSMENT' 
-                        ,iconCls: 'icon-application_form_magnify' 
-                        ,handler: function(){
-                    
-                        }
-                    }]
-            });
+                text: 'SHOW STATUS' 
+                ,iconCls: 'icon-application_form_magnify' 
+                ,handler: function(){
+                    clickOpenPage('center','','/academic/showcreditinformation/?studentSubjectId=' + record.data.ID);
+                }
+            },{
+                text: 'SHOW ASSESSMENT' 
+                ,iconCls: 'icon-application_form_magnify' 
+                ,handler: function(){
+
+                }
+            }]
+        });
         event.stopEvent();
         contextMenu.showAt(event.xy);
         

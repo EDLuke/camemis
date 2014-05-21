@@ -15,7 +15,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$personType = isset($_GET["personType"])?$_GET["personType"]:"";
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):"";
 
 $gradeId = "";
 $campusId = "";

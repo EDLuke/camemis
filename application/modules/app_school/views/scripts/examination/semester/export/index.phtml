@@ -14,7 +14,7 @@
     require_once 'models/app_school/academic/AcademicDBAccess.php';
     require_once 'models/app_school/AcademicDateDBAccess.php';
     require_once 'models/app_school/room/RoomDBAccess.php';
-    $objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
     $bnt=isset($_GET["bnt"])?$_GET["bnt"]:"";
     $exportToExcel=new CamemisExportToExcel();
     //school information

@@ -10,8 +10,8 @@ require_once 'models/app_admin/AdminHelpDBAccess.php';
 
 $CAMEMIS_PAGE = AdminPage::getInstance();
 
-$choose_language = isset($_GET["language"])?$_GET["language"]:"EN";
-$type = isset($_GET["type"])?$_GET["type"]:"0";
+$choose_language = isset($_GET["language"])?addText($_GET["language"]):"EN";
+$type = isset($_GET["type"])? addText($_GET["type"]):"0";
 
 print $CAMEMIS_PAGE->showCamemisHeader();
 

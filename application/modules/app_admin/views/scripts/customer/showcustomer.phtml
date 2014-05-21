@@ -12,7 +12,7 @@ $OBJECT_FORM = new AdminForm("CUSTOMER");
 $OBJECT_GRID = new AdminGrid("CUSTOMER", "LIST_OF_CUSTOMERS");
 $LOCAL_TREE = new AdminTree("MAIN", "LIST_LOCAL");
 print $CAMEMIS_PAGE->showCamemisHeader();
-$schoolURL = isset($_GET["schoolURL"])?$_GET["schoolURL"]:"";
+$schoolURL = isset($_GET["schoolURL"])? addText($_GET["schoolURL"]):"";
 
 $CUSTOMER_OBJECT = $this->customerObject;
 

@@ -20,7 +20,7 @@ $OBJECT_FORM = new CamemisForm("SCHEDULE");
 $OBJECT_FORM->setLoadUrl('/schedule/jsonload/');
 $OBJECT_FORM->setSaveUrl('/schedule/jsonsave/');
 
-$type = isset($_GET["type"])?$_GET["type"]:"";
+$type = isset($_GET["type"])? addText($_GET["type"]):"";
 $chooseDate = isset($_GET["chooseDate"])?$_GET["chooseDate"]:"";
 
 $CHECK = timeDifference($chooseDate, getCurrentDBDate());

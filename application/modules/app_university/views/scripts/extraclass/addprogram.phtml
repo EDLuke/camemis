@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("EXTRACLASS");
 $OBJECT_FORM->setSaveUrl('/extraclass/jsonsave/');
 
 $template = isset($_GET["template"])?$_GET["template"]:"";
-$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"0";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"0";
 
 $OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
 $OBJECT_TREE->setURL('/subject/jsontree/');

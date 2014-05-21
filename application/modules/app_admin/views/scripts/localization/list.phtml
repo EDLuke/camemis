@@ -12,7 +12,7 @@ print $OBJECT_ADMIN_PAGE->showCamemisHeader();
 
 $OBJECT_GRID = new AdminGrid("MAIN", "LOCALIZATIONS");
 
-$language = isset($_GET["language"])?$_GET["language"]:"ENGLISH";
+$language = isset($_GET["language"])?addText($_GET["language"]):"ENGLISH";
 $languageName = isset($_GET["languageName"])?$_GET["languageName"]:"English";
 
 ?>

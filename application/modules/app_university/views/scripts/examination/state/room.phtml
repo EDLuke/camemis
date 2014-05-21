@@ -34,10 +34,10 @@ $UNASSIGNED_STAFF_GRID = new CamemisGrid("EXAM_MANAGEMENT", "UNASSIGNED");
 $UNASSIGNED_STAFF_GRID->setLoadUrl("/examination/jsonload/");
 $UNASSIGNED_STAFF_GRID->setSaveUrl("/examination/jsonsave/");
 
-$schoolyear_Id = isset($_GET["schoolyear_Id"])?$_GET["schoolyear_Id"]:"";
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
-$startTime = isset($_GET["startTime"])?$_GET["startTime"]:"";
-$endTime = isset($_GET["endTime"])?$_GET["endTime"]:"";
+$schoolyear_Id = isset($_GET["schoolyear_Id"])? addText($_GET["schoolyear_Id"]):"";
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
+$startTime = isset($_GET["startTime"])? addText($_GET["startTime"]):"";
+$endTime = isset($_GET["endTime"])? addText($_GET["endTime"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

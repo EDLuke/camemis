@@ -1,8 +1,8 @@
 <?
 require_once 'models/statistic/StaffStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
-$staffId = isset($_GET["staffId"])?$_GET["staffId"]:"";
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
+$staffId = isset($_GET["staffId"])?addText($_GET["staffId"]):"";
 
 //$dataSet = StaffStatisticsDBAccess::getDataSetStaffContract("WEEKLY", $staffId);
 switch($objectType){

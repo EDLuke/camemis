@@ -21,7 +21,7 @@ $OBJECT_FORM = new CamemisForm("ATTENDANCE");
 $OBJECT_FORM->setLoadUrl('/attendance/jsonload/');
 $OBJECT_FORM->setSaveUrl('/attendance/jsonsave/');
 
-$type = isset($_GET["type"])?$_GET["type"]:"";
+$type = isset($_GET["type"])? addText($_GET["type"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

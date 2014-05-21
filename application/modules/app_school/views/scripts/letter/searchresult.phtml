@@ -23,13 +23,13 @@ $OBJECT_GRID->setLoadUrl('/letter/jsonload/');
 $columndata = Utiles::getGridColumnData("LETTER_LIST_ID");
 
 $code = isset($_GET["code"])?$_GET["code"]:"";
-$firstname= isset($_GET["firstname"])?$_GET["firstname"]:"";
-$lastname = isset($_GET["lastname"])?$_GET["lastname"]:"";
+$firstname= isset($_GET["firstname"])?addText($_GET["firstname"]):"";
+$lastname = isset($_GET["lastname"])?addText($_GET["lastname"]):"";
 $name = isset($_GET["name"])?$_GET["name"]:"";
 $number = isset($_GET["number"])?$_GET["number"]:"";
-$type = isset($_GET["type"])?$_GET["type"]:"";
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:"";
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:"";
+$type = isset($_GET["type"])? addText($_GET["type"]):"";
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

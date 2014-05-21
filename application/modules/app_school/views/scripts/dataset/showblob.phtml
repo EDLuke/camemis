@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////
 require_once 'models/CAMEMISUploadDBAccess.php';
 
-$blobId = isset($_GET["blobId"]) ? $_GET["blobId"] : "";
+$blobId = isset($_GET["blobId"]) ? addText($_GET["blobId"]) : "";
 $BLOB_OBJECT = CAMEMISUploadDBAccess::findBlobFromId($blobId);
 
 header("Content-Type: $BLOB_OBJECT->FILE_TYPE; name=\"".$BLOB_OBJECT->FILE_SHOW."\"");

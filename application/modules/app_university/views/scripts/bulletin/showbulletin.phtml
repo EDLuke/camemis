@@ -10,7 +10,7 @@ require_once 'models/CAMEMISUploadDBAccess.php';
 require_once 'models/CAMEMISYoutubeDBAccess.php';
 require_once setUserLoacalization();
 
-$objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : '';
+$objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : '';
 
 $facette = BulletinDBAccess::findBulletinFromId($objectId);
 

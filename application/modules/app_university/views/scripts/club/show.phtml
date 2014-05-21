@@ -20,7 +20,7 @@ $OBJECT_FORM->setLoadUrl("/club/jsonload/");
 $OBJECT_FORM->setSaveUrl("/club/jsonsave/");
 
 if(!$this->facette){
-    $reloadId = isset($_GET['parentId'])?$_GET['parentId']:0;
+    $reloadId = isset($_GET['parentId'])?addText($_GET['parentId']):0;
 }else{
     $reloadId = $this->facette?$this->facette->PARENT:0; 
 }

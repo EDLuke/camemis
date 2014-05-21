@@ -21,7 +21,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
-$monthyear = isset($_GET["monthyear"])?$_GET["monthyear"]:"";
+$monthyear = isset($_GET["monthyear"])? addText($_GET["monthyear"]):"";
 
 ////////////////////////////////////////////////////////////////////////////////
 $evaluation = new AcademicPerformances();

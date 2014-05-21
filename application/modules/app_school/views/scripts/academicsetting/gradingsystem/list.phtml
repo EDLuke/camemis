@@ -22,7 +22,7 @@ $columndata = Utiles::getGridColumnData("GRADINGSYSTEM_EDUCATION_ID");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$eduSystem = isset($_GET["eduSystem"])?$_GET["eduSystem"]:"";
+$eduSystem = isset($_GET["eduSystem"])? addText($_GET["eduSystem"]):"";
 ?>
 <script>
 Ext.onReady(function() {

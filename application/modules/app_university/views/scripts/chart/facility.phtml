@@ -2,7 +2,7 @@
 
 require_once 'models/statistic/FacilityStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
 
 $dataSet = "[";
 $dataSet .= "{'key' : '".CHECK_OUT."','color':'#FFDEDE','values':".FacilityStatisticsDBAccess::getFacilityItemByDayType('CHECK-OUT')."}";

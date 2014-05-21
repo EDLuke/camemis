@@ -1,7 +1,7 @@
 <?
 require_once 'models/statistic/CreditInformationDBAccess.php';
 
-$compusId = isset($_GET["compusId"])?$_GET["compusId"]:"";
+$compusId = isset($_GET["compusId"])?addText($_GET["compusId"]):"";
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
 $academicObject = AcademicDBAccess::findCreditGradeSchoolyear($schoolyearId,$compusId);
 $dataSet = "";

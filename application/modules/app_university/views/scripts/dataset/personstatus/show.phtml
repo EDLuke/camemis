@@ -20,7 +20,7 @@ $OBJECT_FORM = new CamemisForm("PERSON_STATUS");
 $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 
-$objectType = isset($_GET["objectType"])?$_GET["objectType"]:"";
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
 
 $facette = PersonStatusDBAccess::findObjectFromId($this->objectId);
 

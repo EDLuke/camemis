@@ -23,7 +23,7 @@ $OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
 $OBJECT_TREE->setURL('/subject/jsontree/');
 $OBJECT_TREE->setSaveUrl('/subject/jsonsave/');
 
-$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 
 $facette = AcademicDBAccess::findGradeFromId($parentId);
 

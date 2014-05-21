@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("GRADING");
 $OBJECT_FORM->setLoadUrl('/academicsetting/jsonload/');
 $OBJECT_FORM->setSaveUrl('/academicsetting/jsonsave/');
 
-$eduSystem = isset($_GET['eduSystem'])?$_GET['eduSystem']:"";
+$eduSystem = isset($_GET['eduSystem'])?addText($_GET['eduSystem']):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

@@ -6,7 +6,7 @@
 require_once 'clients/CamemisPage.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-$personType = isset($_GET["personType"])?$_GET["personType"]:""; //@Man
+$personType = isset($_GET["personType"])? addText($_GET["personType"]):""; //@Man
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

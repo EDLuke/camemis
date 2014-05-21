@@ -21,7 +21,7 @@ $OBJECT_GRID->setSaveUrl('/academicsetting/jsonsave/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$eduSystem = isset($_GET["eduSystem"])?$_GET["eduSystem"]:"";
+$eduSystem = isset($_GET["eduSystem"])? addText($_GET["eduSystem"]):"";
 ?>
 <script>
 Ext.onReady(function() {

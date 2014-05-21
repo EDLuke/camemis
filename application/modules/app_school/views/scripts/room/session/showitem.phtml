@@ -23,8 +23,8 @@ $columndata = Utiles::getGridColumnData("ROOM_LIST_ID");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$startDate = isset($_GET["startDate"])?$_GET["startDate"]:firstDayOfMonth();
-$endDate = isset($_GET["endDate"])?$_GET["endDate"]:lastDayOfMonth();
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
 $actionType = isset($_GET["actionType"])?$_GET["actionType"]:0;
 
 ?>

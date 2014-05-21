@@ -15,7 +15,7 @@
     $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
     $type = isset($_GET["type"]) ? $_GET["type"] : "";
-    $objectId = isset($_GET["objectId"]) ? $_GET["objectId"] : "";
+    $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
     $schoolyearId = isset($_GET["schoolyearId"]) ? $_GET["schoolyearId"] : "";
     
     if(!$schoolyearId){
