@@ -15,7 +15,7 @@ class URLEncryption {
     }
 
     private function base64url_encode($data) {
-        return raddText(strtr(base64_encode($data), '+/', '-_'), '=');
+        return addText(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     private function base64url_decode($data) {
