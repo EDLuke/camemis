@@ -374,7 +374,7 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->view->objectId = $this->objectId;
         $this->view->facette = $this->facette; //added by @sor veasna
-
+        $this->view->classId = $this->classId;
         $this->view->URL_SHOW_SUBJECT_GRADE = $this->UTILES->buildURL(
                 'subject/showgradesubject'
                 , array()

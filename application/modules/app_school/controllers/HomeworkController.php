@@ -164,6 +164,7 @@ class HomeworkController extends Zend_Controller_Action {
 
     public function homeworkshowgradesubjectAction()
     {
+        $this->view->classId = $this->classId;
         $this->view->objectId = $this->objectId;
         $this->view->object = $this->object;
         //$facette = SubjectHomeworkDBAccess::getGradeSubjectHomework($this->objectId);
