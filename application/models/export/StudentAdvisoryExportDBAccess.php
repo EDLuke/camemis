@@ -83,13 +83,14 @@ class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
                     //Name of Student
                     $colIndex = 0;
                     $GROUP_NAME = $EACH_DATA[0][$groupField];
-                    $this->setCellContent($colIndex, $rowIndex, $GROUP_NAME);
+                    $this->setCellMergeContent($colIndex,$rowIndex, $GROUP_NAME, "A".$rowIndex, "B".$rowIndex);
                     $this->setFontStyle($colIndex, $rowIndex, true, 10, "FFFFFF");
                     $this->setCellStyle($colIndex, $rowIndex, false, 20);
                     for ($ii = 0; $ii < count($this->getUserSelectedColumns()); $ii++)
                     {
                         $this->setBorderStyle($ii, $rowIndex, "FF6495ED");
                         $this->setFullStyle($ii, $rowIndex,"8DB2E3");
+                        
                     }
 
                     for ($j = 0; $j < count($EACH_DATA); $j++)
@@ -97,6 +98,7 @@ class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
 
                         $rowIndex++;
                         $colIndex = $this->columnIndex;
+                        
 
                         foreach ($this->getUserSelectedColumns() as $colName)
                         {
@@ -106,7 +108,6 @@ class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
                             if ($colName == $groupField)
                                 continue;
                             /////
-                            
                             $this->setCellContent($colIndex, $rowIndex, $CONTENT);
                             $this->setFontStyle($colIndex, $rowIndex, false, 9, "000000");
                             $this->setCellStyle($colIndex, $rowIndex, false, 20);
