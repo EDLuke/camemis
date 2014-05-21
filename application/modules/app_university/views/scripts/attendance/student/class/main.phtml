@@ -17,10 +17,10 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$target = isset($_GET['target'])?$_GET['target']:""; ///@THORN Visal
+$target = isset($_GET['target'])?addText($_GET['target']):""; ///@THORN Visal
 $academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
-$trainingId = isset($_GET['trainingId'])?$_GET['trainingId']:"";
-$subjectId = isset($_GET['subjectId'])?$_GET['subjectId']:"";///@THORN Visal
+$trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
+$subjectId = isset($_GET['subjectId'])?addText($_GET['subjectId']):"";///@THORN Visal
 
 if($academicId){
     $params = "academicId=".$academicId."&staffId=".Zend_Registry::get('USER')->ID."";

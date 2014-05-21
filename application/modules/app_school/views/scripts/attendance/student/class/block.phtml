@@ -22,8 +22,8 @@ $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 $columndata = Utiles::getGridColumnData("ATTENDANCE_LIST_ID");
 
-$classId = isset($_GET['classId'])?$_GET['classId']:"";
-$trainingId = isset($_GET['trainingId'])?$_GET['trainingId']:"";
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
+$trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

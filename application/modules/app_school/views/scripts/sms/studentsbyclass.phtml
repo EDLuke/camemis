@@ -24,7 +24,7 @@ $OBJECT_GRID->setSaveUrl('sms/jsonsave/');
 $columndata = Utiles::getGridColumnData("SMS_LIST_ID");
 
 
-$classId = isset($_GET['classId'])?$_GET['classId']:"";
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

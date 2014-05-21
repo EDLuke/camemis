@@ -16,9 +16,9 @@ require_once 'models/app_school/student/StudentAttendanceDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once setUserLoacalization();
 
-$classId = isset($_GET['classId'])?$_GET['classId']:"";
-$subjectId = isset($_GET['subjectId'])?$_GET['subjectId']:"";
-$target = isset($_GET['target'])?$_GET['target']:"";
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
+$subjectId = isset($_GET['subjectId'])?addText($_GET['subjectId']):"";
+$target = isset($_GET['target'])?addText($_GET['target']):"";
 
 $error = true;
 $isTraining = false;

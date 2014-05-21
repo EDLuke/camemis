@@ -30,7 +30,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     var searchJobtype = '<?=isset($_GET['searchJobtype'])?$_GET['searchJobtype']:""?>';
     var choosegrade = '<?=isset($_GET['choosegrade'])?$_GET['choosegrade']:""?>';
     var searchUserRole = '<?=isset($_GET['searchUserRole'])?$_GET['searchUserRole']:""?>';
-    var subjectId = '<?=isset($_GET['subjectId'])?$_GET['subjectId']:""?>';
+    var subjectId = '<?=isset($_GET['subjectId'])?addText($_GET['subjectId']):""?>';
     var staff_school_id = '<?=isset($_GET['staff_school_id'])?$_GET['staff_school_id']:""?>';
     
     Ext.onReady(function() {

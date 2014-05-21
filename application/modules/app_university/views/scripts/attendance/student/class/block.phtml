@@ -22,7 +22,7 @@ $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 
 $academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
-$trainingId = isset($_GET['trainingId'])?$_GET['trainingId']:"";
+$trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

@@ -18,7 +18,7 @@ require_once setUserLoacalization();
 
 $choosedate = isset($_GET["choosedate"])?$_GET["choosedate"]:date('Y-m-d');
 $academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
-$trainingId = isset($_GET['trainingId'])?$_GET['trainingId']:"";
+$trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 
 $classObject = AcademicDBAccess::findGradeFromId($academicId);
 $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);

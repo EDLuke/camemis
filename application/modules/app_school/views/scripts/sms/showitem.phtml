@@ -27,7 +27,7 @@ $columndataToStaff = Utiles::getGridColumnData("SMS_PERSONS_ID");
 
 $OBJECT_DATA = $this->OBJECT_DATA;
 
-$classId = isset($_GET['classId'])?$_GET['classId']:"";
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
 $sendTo = isset($_GET['sendTo'])?$_GET['sendTo']:"";
 $sent = isset($OBJECT_DATA['SENT'])?$OBJECT_DATA['SENT']:"";
 
