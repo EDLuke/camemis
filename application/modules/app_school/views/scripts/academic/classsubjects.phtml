@@ -28,7 +28,6 @@ $OBJECT_TREE->setURL('/subject/jsontree/');
 $DEFAULT_SUBJECT_TREE = new CamemisTree("SUBJECT", false);
 $DEFAULT_SUBJECT_TREE->setURL('/subject/jsontree/');
 $DEFAULT_SUBJECT_TREE->setSaveUrl('/subject/jsonsave/');
-
 $classObject = AcademicDBAccess::findGradeFromId($this->objectId);
 
 $CHECK = GradeSubjectDBAccess::checkAssignedSubjectByClass($this->objectId);
@@ -153,6 +152,7 @@ Ext.onReady(function() {
     $DEFAULT_SUBJECT_TREE->setBaseParams("
     	cmd: 'treeAllSubjects'
         ,academicId: '".$classObject->ID."'
+        ,schoolyearId: '".$this->schoolyearId."'
     ");
     
     $DEFAULT_SUBJECT_TREE->backgroundColor = "#F9F9F9";
@@ -285,7 +285,7 @@ Ext.onReady(function() {
                     //Ext.getCmp('WEST_ID').collapse();
                     gradesubjectId = node.attributes.gradesubjectId;
                     subjectId = node.attributes.subjectId;
-                    var url = '/subject/gradesubject/?target=".camemisId()."&gradesubjectId=' + gradesubjectId + '&subjectId=' + subjectId + '&classId=".$this->objectId."';
+                    var url = '/subject/gradesubject/?target=".camemisId()."&gradesubjectId=' + gradesubjectId + '&subjectId=' + subjectId + '&classId=".$this->classId."';
                     clickOpenPage('center',node.text, url);
                 }
             }
