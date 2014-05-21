@@ -6,7 +6,7 @@
     require_once 'models/app_school/staff/StaffDBAccess.php';
     echo "hello World";
     exit;
-    $params["gradeId"] = isset($_GET["gradeId"]) ? $_GET["gradeId"] : "";
+    $params["gradeId"] = isset($_GET["gradeId"])  ? addText($_GET["gradeId"]) : "";
     $params["gradingterm"] = "ALL";
 
     $DB_STAFF = StaffDBAccess::getInstance();

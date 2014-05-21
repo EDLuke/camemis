@@ -45,8 +45,8 @@ $SHARED_TREE->setSaveUrl("/schedule/jsonsave/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$objectId = isset($_GET["scheduleId"])?$_GET["scheduleId"]:"";
-$isCancel = isset($_GET["isCancel"])?$_GET["isCancel"]:"";
+$objectId = isset($_GET["scheduleId"]) ? addText($_GET["scheduleId"]):"";
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
 $status = $this->facette?$this->facette->STATUS:1;
 
 if($objectId !="new"){

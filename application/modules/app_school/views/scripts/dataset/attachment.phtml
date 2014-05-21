@@ -19,9 +19,9 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$template = isset($_GET["template"])?$_GET["template"]:"";
-$count = isset($_GET["count"])?$_GET["count"]:"3";
-$attachment = isset($_GET["attachment"])?$_GET["attachment"]:"";
+$template = isset($_GET["template"]) ? addText($_GET["template"]):"";
+$count = isset($_GET["count"]) ? addText($_GET["count"]):"3";
+$attachment = isset($_GET["attachment"]) ? addText($_GET["attachment"]):"";
 
 class DisplayItem{
     

@@ -5,7 +5,7 @@ require_once 'models/app_school/ScholarshipDBAccess.php';
 require_once setUserLoacalization();
 
 //print_r($_POST);
-$scholarshipId = isset($_GET["scholarshipId"]) ? $_GET["scholarshipId"] :0;
+$scholarshipId = isset($_GET["scholarshipId"]) ? addText($_GET["scholarshipId"]) :0;
 
 $facette = ScholarshipDBAccess::findObjectFromId($scholarshipId);
 

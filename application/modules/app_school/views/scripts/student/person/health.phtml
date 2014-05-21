@@ -20,8 +20,8 @@ $OBJECT_FORM->setSaveUrl("/student/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/student/jsonload/");
 
 $setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
-$settingId = isset($_GET["settingId"])?$_GET["settingId"]:"";
-$target = isset($_GET["target"])?$_GET["target"]:"";
+$settingId = isset($_GET["settingId"]) ? addText($_GET["settingId"]):"";
+$target = isset($_GET["target"]) ? addText($_GET["target"]):"";
 
 $facette = StudentHealthDBAccess::findStudentHealth($setId, $this->objectId, false);
 

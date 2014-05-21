@@ -5,7 +5,7 @@ require_once 'excel/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once 'clients/CamemisExcelReport.php';
 require_once 'models/app_university/staff/StaffDBAccess.php';
 
-$params["gradeId"] = isset($_GET["gradeId"]) ? $_GET["gradeId"] : "";
+$params["gradeId"] = isset($_GET["gradeId"])  ? addText($_GET["gradeId"]) : "";
 $params["gradingterm"] = "ALL";
 
 $DB_STAFF = StaffDBAccess::getInstance();

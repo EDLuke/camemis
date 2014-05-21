@@ -31,7 +31,7 @@ $CHECK_ITEM_GRID->setLoadUrl('/facility/jsonload/');
 $ASSIGNED_ITEMS_GRID = new CamemisGrid("AVAILABLE_FACILITY", "LIST");
 $ASSIGNED_ITEMS_GRID->setLoadUrl('/facility/jsonload/');
 
-$actionType = isset($_GET['type'])?$_GET['type']:"0";
+$actionType = isset($_GET['type'])?addText($_GET['type']):"0";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

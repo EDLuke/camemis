@@ -22,7 +22,7 @@ $OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
 $OBJECT_GRID->setLoadUrl("/student/jsonload/");
 $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
 
-$isCancel = isset($_GET["isCancel"])?$_GET["isCancel"]:"";
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
 
 function columnProperties($header, $dataindex, $width){
     $js = "";

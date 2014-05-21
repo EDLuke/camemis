@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $target = isset($_GET['target'])?addText($_GET['target']):""; ///@THORN Visal
-$academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 $trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 $subjectId = isset($_GET['subjectId'])?addText($_GET['subjectId']):"";///@THORN Visal
 

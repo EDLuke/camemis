@@ -33,7 +33,7 @@ $UNASSIGNED_STAFF_GRID->setSaveUrl("/examination/jsonsave/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$type = isset($_GET['type'])?$_GET['type']:"";
+$type = isset($_GET['type'])?addText($_GET['type']):"";
 
 ?>
 <script>

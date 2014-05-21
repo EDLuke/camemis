@@ -64,7 +64,7 @@ if($ENTRIES_SCHOOLYEAR){
 }
 $STORE_SCHOOLYEAR .= "]";
 
-$schoolyearId = isset($_GET['schoolyearId'])?$_GET['schoolyearId']:$DEFAULT_SCHOOLYEAR_ID;
+$schoolyearId = isset($_GET['schoolyearId']) ? addText($_GET["schoolyearId"]):$DEFAULT_SCHOOLYEAR_ID;
 
 $FIRST_SQL_CLASS = "";
 $FIRST_SQL_CLASS .= " SELECT A.ID AS SUBJECT_ACADEMIC_ID";

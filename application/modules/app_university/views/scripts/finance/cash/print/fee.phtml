@@ -16,8 +16,8 @@ require_once 'models/app_university/training/StudentTrainingDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-$print=isset($_GET['printlast'])?$_GET['printlast']:'';
-$prepay=isset($_GET['feeprepay'])?$_GET['feeprepay']:'';
+$print=isset($_GET['printlast']) ? addText($_GET["printlast"]):'';
+$prepay=isset($_GET['feeprepay']) ? addText($_GET["feeprepay"]):'';
 if($prepay){
 $objectPrePay=StudentFeePrepaidDBAccess::findFeePrePaymentById($prepay);    
 }

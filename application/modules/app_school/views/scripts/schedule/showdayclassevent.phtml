@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $TERM_NAME = isset($_GET["term"])?displaySchoolTerm($_GET["term"]):FIRST_SEMESTER;
 $TERM = isset($_GET["term"])?addText($_GET["term"]):'FIRST_SEMESTER';
-$SHORTDAY = isset($_GET["shortday"])?$_GET["shortday"]:"MO";
+$SHORTDAY = isset($_GET["shortday"]) ? addText($_GET["shortday"]):"MO";
 
 $OBJECT_GRID = new CamemisGrid("SCHEDULE", $SHORTDAY);
 $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");

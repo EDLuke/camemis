@@ -17,7 +17,7 @@ require_once 'models/UserAuth.php';
 require_once setUserLoacalization();
 
 $choosedate = isset($_GET["choosedate"])? addText($_GET["choosedate"]):date('Y-m-d');
-$academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 $trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 
 $classObject = AcademicDBAccess::findGradeFromId($academicId);

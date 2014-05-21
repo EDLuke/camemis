@@ -22,11 +22,11 @@ $OBJECT_GRID = new CamemisGrid("LETTER", "LIST");
 $OBJECT_GRID->setLoadUrl('/letter/jsonload/');
 $columndata = Utiles::getGridColumnData("LETTER_LIST_ID");
 
-$code = isset($_GET["code"])?$_GET["code"]:"";
+$code = isset($_GET["code"]) ? addText($_GET["code"]):"";
 $firstname= isset($_GET["firstname"])?addText($_GET["firstname"]):"";
 $lastname = isset($_GET["lastname"])?addText($_GET["lastname"]):"";
-$name = isset($_GET["name"])?$_GET["name"]:"";
-$number = isset($_GET["number"])?$_GET["number"]:"";
+$name = isset($_GET["name"])?addText($_GET['$name']):"";
+$number = isset($_GET["number"]) ? addText($_GET["number"]):"";
 $type = isset($_GET["type"])? addText($_GET["type"]):"";
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
 $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):"";

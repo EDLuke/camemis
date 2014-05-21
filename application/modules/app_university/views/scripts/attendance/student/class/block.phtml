@@ -21,7 +21,7 @@ $OBJECT_GRID = new CamemisGrid("ATTENDANCE", "LIST");
 $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 
-$academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 $trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();

@@ -16,7 +16,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 if($this->objectId == "new"){
-    $this->roleId = isset($_GET['roleId'])?$_GET['roleId']:"";
+    $this->roleId = isset($_GET['roleId']) ? addText($_GET["roleId"]):"";
 }
 
 $REGISTRY_OBJECT = Zend_Registry::getInstance();

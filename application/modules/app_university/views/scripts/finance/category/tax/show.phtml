@@ -20,7 +20,7 @@ $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
 
 $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
-$lastNode = isset($_GET["lastNode"])?$_GET["lastNode"]:"";
+$lastNode = isset($_GET["lastNode"]) ? addText($_GET["lastNode"]):"";
 
 $parentObject = TaxDBAccess::findObjectFromId($parentId);
 

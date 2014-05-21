@@ -26,7 +26,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $studentAcademicObject = StudentAcademicDBAccess::getCurrentStudentAcademic($this->objectId, false, false, false);
 
-$feeId = isset($_GET["fee"])?$_GET["fee"]:"";
+$feeId = isset($_GET["fee"]) ? addText($_GET["fee"]):"";
 
 $FEE_OBJECT = FeeDBAccess::findFeeTaxFromId($feeId); //@veasna
 $STUDENT_FEE = StudentFeeDBAccess::getStudentFee($this->objectId, $feeId);

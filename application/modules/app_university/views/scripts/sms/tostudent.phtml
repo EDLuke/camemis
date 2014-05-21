@@ -26,7 +26,7 @@ $OBJECT_GRID = new CamemisGrid("SMS", "LIST");
 $OBJECT_GRID->setLoadUrl('/sms/jsonload/');
 $OBJECT_GRID->setSaveUrl('sms/jsonsave/');
 
-$academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

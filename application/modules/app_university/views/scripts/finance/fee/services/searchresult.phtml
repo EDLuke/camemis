@@ -20,8 +20,8 @@ $OBJECT_GRID->setLoadUrl("/finance/jsonload/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$name = isset($_GET["name"])?$_GET["name"]:"";
-$code = isset($_GET["code"])?$_GET["code"]:"";
+$name = isset($_GET["name"])?addText($_GET['$name']):"";
+$code = isset($_GET["code"]) ? addText($_GET["code"]):"";
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):"";
 $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):"";
 $type = isset($_GET["type"])? addText($_GET["type"]):"";

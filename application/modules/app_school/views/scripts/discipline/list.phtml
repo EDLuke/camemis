@@ -21,7 +21,7 @@ $OBJECT_GRID = new CamemisGrid("DISCIPLINE", "GENERAL");
 $OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
 $OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
 $columndata = Utiles::getGridColumnData("DISCIPLINE_GENERAL_ID");
-$view=isset($_GET['view'])? $_GET['view']:0;
+$view=isset($_GET['view'])? addText($_GET['view']):0;
 
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
 

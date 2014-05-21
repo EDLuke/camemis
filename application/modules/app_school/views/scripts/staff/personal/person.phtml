@@ -27,7 +27,7 @@ $OBJECT_FORM = new CamemisForm("STAFF");
 $OBJECT_FORM->setLoadUrl('/staff/jsonload/');
 $OBJECT_FORM->setSaveUrl('/staff/jsonsave/');
 
-$template = isset($_GET["template"])?$_GET["template"]:"DEFAULT";
+$template = isset($_GET["template"]) ? addText($_GET["template"]):"DEFAULT";
 $locationParentId = $this->staffObject->COUNTRY_PROVINCE;
 
 $COUNTRY_PROVINCE = $this->objectData["COUNTRY_PROVINCE"];

@@ -35,7 +35,7 @@ $columndataUnassignedStaff = Utiles::getGridColumnData("EXAM_MANAGEMENT_UNASSIGN
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$type = isset($_GET['type'])?$_GET['type']:"";
+$type = isset($_GET['type'])?addText($_GET['type']):"";
 
 ?>
 <script>

@@ -31,7 +31,7 @@ $UNASSIGNED_STAFF_GRID = new CamemisGrid("EXAM_MANAGEMENT", "UNASSIGNED");
 $UNASSIGNED_STAFF_GRID->setLoadUrl("/examination/jsonload/");
 $UNASSIGNED_STAFF_GRID->setSaveUrl("/examination/jsonsave/");
 
-$type = isset($_GET['type'])?$_GET['type']:"";
+$type = isset($_GET['type'])?addText($_GET['type']):"";
 $objectId=$this->facette?$this->facette->GUID:'';
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

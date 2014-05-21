@@ -13,7 +13,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
 $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
-$academicType = isset($_GET["academicType"])?$_GET["academicType"]:'general';
+$academicType = isset($_GET["academicType"]) ? addText($_GET["academicType"]):'general';
 
 $searchParams["startDate"] = $startDate;
 $searchParams["endDate"] = $endDate;

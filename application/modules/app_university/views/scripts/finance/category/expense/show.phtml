@@ -25,7 +25,7 @@ $CATEGORY_TREE ->setURL("/dataset/jsontree/");
 $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 
 $parentObject = ExpenseCategoryDBAccess::findObjectFromId($parentId);
-$lastNode = isset($_GET["lastNode"])?$_GET["lastNode"]:"";
+$lastNode = isset($_GET["lastNode"]) ? addText($_GET["lastNode"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

@@ -22,7 +22,7 @@ $OBJECT_GRID->setLoadUrl('/staff/jsonload/');
 $OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
 
 $schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
-$tutor = isset($_GET["tutor"])?$_GET["tutor"]:"";
+$tutor = isset($_GET["tutor"]) ? addText($_GET["tutor"]):"";
 $entries = StaffDBAccess::getClassesByTutor($tutor, $schoolyearId);
 
 $data = array();

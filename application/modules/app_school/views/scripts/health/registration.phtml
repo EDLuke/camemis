@@ -49,7 +49,7 @@ $STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_W
     var schoolyearId;
     var campusId;
     var academicType;
-    var gradeSchoolYearId = '<?=isset($_GET["classId"])?$_GET["classId"]:0?>';
+    var gradeSchoolYearId = '<?=isset($_GET["classId"]) ? addText($_GET["classId"]):0?>';
     Ext.onReady(function() {
 
         Ext.QuickTips.init();

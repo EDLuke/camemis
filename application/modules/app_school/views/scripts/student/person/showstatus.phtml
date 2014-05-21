@@ -28,7 +28,7 @@ $TRAINING_TREE->setURL('/training/jsontree/');
 $TRAINING_TREE->setSaveUrl('/training/jsonsave/');
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-$statusId = isset($_GET["statusId"])?$_GET["statusId"]:"";
+$statusId = isset($_GET["statusId"]) ? addText($_GET["statusId"]):"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $facette = $this->facette;
 

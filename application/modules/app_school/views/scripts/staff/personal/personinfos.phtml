@@ -22,7 +22,7 @@ $OBJECT_GRID = new CamemisGrid("STAFF", "LIST");
 $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
 $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
 
-$isCancel = isset($_GET["isCancel"])?$_GET["isCancel"]:"";
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $columndata = Utiles::getGridColumnData("STAFF_LIST_ID");
 

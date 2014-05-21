@@ -26,7 +26,7 @@ $OBJECT_FORM->setLoadUrl("/note/jsonload/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$isCancel = isset($_GET["isCancel"])?$_GET["isCancel"]:"";
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
 
 ?>
 <style>

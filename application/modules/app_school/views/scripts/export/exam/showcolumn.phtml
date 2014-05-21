@@ -36,8 +36,8 @@ $params='';
 switch ($bnt){
    
      case '1':
-        $objectId=isset($_GET['objectId'])?$_GET['objectId']:'';
-        $academic=isset($_GET['academicId'])?$_GET['academicId']:'';
+        $objectId=isset($_GET['objectId']) ? addText($_GET["objectId"]):'';
+        $academic=isset($_GET['academicId']) ? addText($_GET["academicId"]):'';
         $params='&objectId='.$objectId;
         $params.='&academicId='.$academic;
         $params.='&type='.$this->type;

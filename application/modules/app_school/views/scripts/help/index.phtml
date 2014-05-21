@@ -10,7 +10,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$key = isset($_GET['key'])?$_GET['key']:"";
+$key = isset($_GET['key'])?addText($_GET['key']):"";
 
 $DB_ACCESS = Zend_Registry::get('ADMIN_DB_ACCESS');
 $SQL = $DB_ACCESS->select();

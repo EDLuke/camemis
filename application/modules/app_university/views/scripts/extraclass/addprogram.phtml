@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("EXTRACLASS");
 $OBJECT_FORM->setSaveUrl('/extraclass/jsonsave/');
 
-$template = isset($_GET["template"])?$_GET["template"]:"";
+$template = isset($_GET["template"]) ? addText($_GET["template"]):"";
 $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"0";
 
 $OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");

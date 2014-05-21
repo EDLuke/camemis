@@ -16,7 +16,7 @@ require_once 'models/app_university/student/StudentAttendanceDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once setUserLoacalization();
   
-$academicId = isset($_GET['academicId'])?$_GET['academicId']:"";
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 $subjectId = isset($_GET['subjectId'])?addText($_GET['subjectId']):"";
 $target = isset($_GET['target'])?addText($_GET['target']):"";
 
