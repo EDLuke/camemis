@@ -144,7 +144,7 @@ Ext.onReady(function() {
 
     if(!$this->facette->EDUCATION_SYSTEM){
         if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT")){
-            if (!$this->classId && !$this->teacherId & !$this->subjectId)
+            if (!$this->teacherId)
             if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
             $OBJECT_TREE->addTBarItems("
                 id: 'ADD_SUBJECT_ID'
