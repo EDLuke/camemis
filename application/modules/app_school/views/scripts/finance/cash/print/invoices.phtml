@@ -14,9 +14,9 @@
 
     $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-    $type = isset($_GET["type"]) ? $_GET["type"] : "";
+    $type = isset($_GET["type"]) ? addText($_GET["type"]) : "";
     $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
-    $schoolyearId = isset($_GET["schoolyearId"]) ? $_GET["schoolyearId"] : "";
+    $schoolyearId = isset($_GET["schoolyearId"]) ? addText($_GET["schoolyearId"]) : "";
     
     if(!$schoolyearId){
          $CURRENT_SCHOOLYEAR = AcademicDateDBAccess::loadCurrentSchoolyear();

@@ -24,7 +24,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
 $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
-$actionType = isset($_GET["actionType"])?$_GET["actionType"]:0;
+$actionType = isset($_GET["actionType"])? addText($_GET["actionType"]):0;
 
 ?>
 <script>
