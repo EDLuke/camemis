@@ -186,12 +186,12 @@ class StaffDBAccess {
     public function queryAllStaffs($params, $groupby = false)
     {
 
-        $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? $params["STAFF_SCHOOL_ID"] : false;
+        $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? addText($params["STAFF_SCHOOL_ID"]) : false;
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : false;
         $status = isset($params["status"]) ? addText($params["status"]) : false;
-        $searchTutor = isset($params["searchTutor"]) ? $params["searchTutor"] : false;
-        $isTutor = isset($params["isTutor"]) ? $params["isTutor"] : false;
-        $isInstructor = isset($params["isInstuctor"]) ? $params["isInstuctor"] : false;
+        $searchTutor = isset($params["searchTutor"]) ? addText($params["searchTutor"]) : false;
+        $isTutor = isset($params["isTutor"]) ? addText($params["isTutor"]) : false;
+        $isInstructor = isset($params["isInstuctor"]) ? addText($params["isInstuctor"]) : false;
         $isTraining = isset($params["isTraining"]) ? addText($params["isTraining"]) : "";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : false;
         $choosegrade = isset($params["choosegrade"]) ? addText($params["choosegrade"]) : false;
@@ -214,10 +214,10 @@ class StaffDBAccess {
         $searchEthnic = isset($params["ETHNIC"]) ? addText($params["ETHNIC"]) : "";
         $nationality = isset($params["NATIONALITY"]) ? addText($params["NATIONALITY"]) : "";
         $searchReligion = isset($params["RELIGION"]) ? addText($params["RELIGION"]) : "";
-        $searchUserRole = isset($params["USER_ROLE"]) ? $params["USER_ROLE"] : false;
-        $subjectTraining = isset($params["subjectTraining"]) ? $params["subjectTraining"] : "";
+        $searchUserRole = isset($params["USER_ROLE"]) ? addText($params["USER_ROLE"]) : false;
+        $subjectTraining = isset($params["subjectTraining"]) ? addText($params["subjectTraining"]) : "";
         $attendance_type = isset($params["attendance_type"]) ? addText($params["attendance_type"]) : "";
-        $teacherType = isset($params["teacherType"]) ? $params["teacherType"] : "";
+        $teacherType = isset($params["teacherType"]) ? addText($params["teacherType"]) : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
         $major = isset($params["MAJOR"]) ? addText($params["MAJOR"]) : "";
@@ -1713,7 +1713,7 @@ class StaffDBAccess {
     {
 
         $data = array();
-        $term = isset($params["gradingterm"]) ? $params["gradingterm"] : "";
+        $term = isset($params["gradingterm"]) ? addText($params["gradingterm"]) : "";
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
@@ -2105,7 +2105,7 @@ class StaffDBAccess {
 
         $data = array();
 
-        $staffId = isset($params["staffId"]) ? $params["staffId"] : "0";
+        $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "0";
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
 
@@ -2143,7 +2143,7 @@ class StaffDBAccess {
 
         $CAMPUS_DATA = array();
 
-        $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
+        $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
 
         $Id = isset($params["id"]) ? addText($params["id"]) : "";

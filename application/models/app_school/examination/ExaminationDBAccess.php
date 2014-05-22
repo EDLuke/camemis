@@ -429,7 +429,7 @@ class ExaminationDBAccess {
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $subjectId = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
+        $subjectId = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $startTime = isset($params["START_TIME"]) ? timeStrToSecond($params["START_TIME"]) : "";
@@ -681,10 +681,10 @@ class ExaminationDBAccess {
 
     public static function jsonAllExamRooms($params) {
 
-        $schoolyear_Id = isset($params["schoolyear_Id"]) ? $params["schoolyear_Id"] : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $startTime = isset($params["startTime"]) ? $params["startTime"] : "";
-        $endTime = isset($params["endTime"]) ? $params["endTime"] : "";
+        $schoolyear_Id = isset($params["schoolyear_Id"]) ? addText($params["schoolyear_Id"]) : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $startTime = isset($params["startTime"]) ? addText($params["startTime"]) : "";
+        $endTime = isset($params["endTime"]) ? addText($params["endTime"]) : "";
 
         $data = array();
 

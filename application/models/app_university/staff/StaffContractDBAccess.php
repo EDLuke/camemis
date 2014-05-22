@@ -104,8 +104,8 @@ class StaffContractDBAccess {
     public static function sqlGetStaffContact($params){
         
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
         
         $code = isset($params["code"]) ? addText($params["code"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";

@@ -1476,8 +1476,8 @@ class AcademicDBAccess {
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
 
         $SQL = "SELECT DISTINCT
 		C.NAME as CLASS_NAME

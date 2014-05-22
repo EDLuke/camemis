@@ -70,16 +70,16 @@ class StaffStatusDBAccess extends StaffDBAccess {
     public static function jsonActionSaveLastStaffStatus($params)
     {
 
-        $statusId = isset($params["STAFF_STATUS"]) ? $params["STAFF_STATUS"] : "";
+        $statusId = isset($params["STAFF_STATUS"]) ? addText($params["STAFF_STATUS"]) : "";
 
         $SAVEDATA = array();
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $chooseId = isset($params["chooseId"]) ? $params["chooseId"] : "";
+        $chooseId = isset($params["chooseId"]) ? addText($params["chooseId"]) : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
         $singleDate = isset($params["SINGLE_START_DATE"]) ? setDate2DB($params["SINGLE_START_DATE"]) : "";
-        $description = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : "";
+        $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
         $staffStatusObject = self::getSQLCurrentStaffStatus($staffId);
 
@@ -250,11 +250,11 @@ class StaffStatusDBAccess extends StaffDBAccess {
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
-        $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? $params["STAFF_SCHOOL_ID"] : "";
-        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
-        $staffstatusType = isset($params["STAFF_STATUS"]) ? $params["STAFF_STATUS"] : "";
-        $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
+        $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? addText($params["STAFF_SCHOOL_ID"]) : "";
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : "";
+        $staffstatusType = isset($params["STAFF_STATUS"]) ? addText($params["STAFF_STATUS"]) : "";
+        $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "";
 
         $SELECTION_A = array(
             "ID AS STAFF_ID"

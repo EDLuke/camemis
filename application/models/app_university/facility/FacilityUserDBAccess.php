@@ -168,11 +168,11 @@ class FacilityUserDBAccess {
         $ACTION_TYPE = isset($params['ACTION_TYPE']) ? $params['ACTION_TYPE'] : '';
         $ITEM_ACTION_TYPE = isset($params['ITEM_ACTION_TYPE']) ? $params['ITEM_ACTION_TYPE'] : '';
         $USER_INVOICE_ID = isset($params['objectId']) ? addText($params['objectId']) : '';
-        $FIRST_NAME = isset($params['FIRSTNAME']) ? $params['FIRSTNAME'] : '';
-        $LAST_NAME = isset($params['LASTNAME']) ? $params['LASTNAME'] : '';
-        $CODE = isset($params['CODE']) ? $params['CODE'] : '';
-        $GENDER = isset($params['GENDER']) ? $params['GENDER'] : '';
-        $TARGET_USER = isset($params['REF_ID']) ? $params['REF_ID'] : '';
+        $FIRST_NAME = isset($params['FIRSTNAME']) ? addText($params["FIRSTNAME"]) : '';
+        $LAST_NAME = isset($params['LASTNAME']) ? addText($params["LASTNAME"]) : '';
+        $CODE = isset($params['CODE']) ? addText($params["CODE"]) : '';
+        $GENDER = isset($params['GENDER']) ? addText($params["GENDER"]) : '';
+        $TARGET_USER = isset($params['REF_ID']) ? addText($params["REF_ID"]) : '';
 
         $SELECTION_A = array(
             "REFERENCE_NUMBER AS REFERENCE_NUMBER"

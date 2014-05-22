@@ -637,7 +637,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
     public static function actionRemoveStudentTraining($params) {
 
-        $studentId = isset($params["chooseId"]) ? $params["chooseId"] : "";
+        $studentId = isset($params["chooseId"]) ? addText($params["chooseId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
         $CONDITION = array("STUDENT='" . $studentId . "'", "TRAINING='" . $trainingId . "'");
@@ -1975,7 +1975,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
        
         $fieldValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
-        $comment = isset($params["comment"]) ? $params["comment"] : "";
+        $comment = isset($params["comment"]) ? addText($params["comment"]) : "";
 
         $this->classObject = $this->getClassObject();
         $this->classSubject = $this->getClassSubject();

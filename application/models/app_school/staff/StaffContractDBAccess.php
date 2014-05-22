@@ -102,7 +102,7 @@ class StaffContractDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
         $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
 
         $code = isset($params["code"]) ? addText($params["code"]) : "";

@@ -151,9 +151,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
         $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
         $target = isset($params["TARGET"]) ? addText($params["TARGET"]) : "";
-        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";      
-        $chooseSubject = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : ""; 
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : "";      
+        $chooseSubject = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) : ""; 
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
 
         if ($searchGrade)
@@ -1337,7 +1337,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
     {
 
         $field = isset($params["field"]) ? addText($params["field"]) : "";
-        $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
+        $absentType = isset($params["absentType"]) ? addText($params["absentType"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";

@@ -318,7 +318,7 @@
 
             $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
             $parent = isset($params["parent"]) ? addText($params["parent"]) : "";
-            $objctType = isset($params["objctType"]) ? $params["objctType"] : "";
+            $objctType = isset($params["objctType"]) ? addText($params["objctType"]) : "";
 
             $facette = self::findTrainingFromId($objectId);
 

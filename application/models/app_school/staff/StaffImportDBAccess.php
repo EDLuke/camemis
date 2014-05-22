@@ -147,9 +147,9 @@ class StaffImportDBAccess {
     public function importXLS($params) {
 
         $xls = new Spreadsheet_Excel_Reader($_FILES["xlsfile"]['tmp_name']);
-        $campusId = isset($params["CAMPUS"]) ? $params["CAMPUS"] : "0";
-        $programId = isset($params["PROGRAM"]) ? $params["PROGRAM"] : "0";
-        $roleId = isset($params["USER_ROLE"]) ? $params["USER_ROLE"] : "0";
+        $campusId = isset($params["CAMPUS"]) ? addText($params["CAMPUS"]) : "0";
+        $programId = isset($params["PROGRAM"]) ? addText($params["PROGRAM"]) : "0";
+        $roleId = isset($params["USER_ROLE"]) ? addText($params["USER_ROLE"]) : "0";
         $dates = isset($params["CREATED_DATE"]) ? addText($params["CREATED_DATE"])  : "";
 
         for ($iCol = 1; $iCol <= $xls->sheets[0]['numCols']; $iCol++) {

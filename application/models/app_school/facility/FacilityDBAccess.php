@@ -214,7 +214,7 @@ class FacilityDBAccess {
         $SAVEDATA['SHORT'] = isset($params["SHORT"]) ? addText($params["SHORT"]) : "";
         $SAVEDATA['SORTKEY'] = isset($params["SORTKEY"]) ? addText($params["SORTKEY"]) : 0;
         $SAVEDATA['COLOR'] = isset($params["COLOR"]) ? addText($params["COLOR"]) : 0;
-        $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : "";
+        $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
         if ($objectId == 'new') {
             $SAVEDATA['PARENT'] = isset($params["parentId"]) ? addText($params["parentId"]) : 0;

@@ -213,8 +213,8 @@ class StudentFeePrepaidDBAccess {
         $FEE_AMOUNT = isset($params["FEES"]) ? addText($params["FEES"]) : "";
         $DESCRIPTION = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
         $INCOME_CATEGORY = isset($params["HIDDEN_INCOME_CATEGORY"]) ? $params["HIDDEN_INCOME_CATEGORY"] : "";
-        $start_date = isset($params['START_DATE']) ? $params['START_DATE'] : '';
-        $end_date = isset($params['END_DATE']) ? $params['END_DATE'] : '';
+        $start_date = isset($params['START_DATE']) ? addText($params["START_DATE"]) : '';
+        $end_date = isset($params['END_DATE']) ? addText($params["END_DATE"]) : '';
 
         if ($program) {
             $object_school_year = self::findAllTermTraining();

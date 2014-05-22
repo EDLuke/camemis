@@ -109,7 +109,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : '';
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $choosedate = isset($params["choosedate"]) ? $params["choosedate"] : '';
+        $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : '';
         $teacherId = isset($params["TEACHER_HIDDEN"]) ? addText($params["TEACHER_HIDDEN"]) : '';
         $roomId = isset($params["ROOM_HIDDEN"]) ? addText($params["ROOM_HIDDEN"]) : '';
         $type = isset($params["type"]) ? addText($params["type"]) : '';
@@ -557,7 +557,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $subjectId = isset($params["SUBJECT"]) ? addText($params["SUBJECT"]) : false;
         $roomId = isset($params["ROOM_HIDDEN"]) ? addText($params["ROOM_HIDDEN"]) : false;
         $teacherId = isset($params["TEACHER_HIDDEN"]) ? addText($params["TEACHER_HIDDEN"]) : false;
-        $description = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : false;
+        $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : false;
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 

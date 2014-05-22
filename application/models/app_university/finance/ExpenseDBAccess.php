@@ -248,8 +248,8 @@
         public static function sqlSearchExpense($params) {
 
             $transactionNumber = isset($params["transactionNumber"]) ? addText($params["transactionNumber"]) : "";
-            $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-            $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+            $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+            $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
             $categoryId = isset($params["categoryId"]) ? $params["categoryId"] : "";
             $financeDescription = isset($params["financeDescription"]) ? addText($params["financeDescription"]) : "";
             $name=isset($params["name"]) ? addText($params["name"]) : "";

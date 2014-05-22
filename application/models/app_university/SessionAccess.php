@@ -253,7 +253,7 @@ class SessionAccess {
     }
 
     public function jsonDeleteUserOnline($params) {
-        $Id = isset($params["Id"]) ? $params["Id"] : "0";
+        $Id = isset($params["Id"]) ? addText($params["Id"]) : "0";
         if ($Id) {
             $condition = array(
                 'ID = ? ' => $Id

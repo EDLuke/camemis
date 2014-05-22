@@ -227,9 +227,9 @@ class SubjectHomeworkDBAccess {
     public static function jsonAddStudentHomework($params) {
 
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $title_name = isset($params["TITLE_NAME"]) ? $params["TITLE_NAME"] : "";
-        $content = isset($params["CONTENT_STUDENT"]) ? $params["CONTENT_STUDENT"] : "";
-        $homeworkId = isset($params["homeworkId"]) ? $params["homeworkId"] : "";
+        $title_name = isset($params["TITLE_NAME"]) ? addText($params["TITLE_NAME"]) : "";
+        $content = isset($params["CONTENT_STUDENT"]) ? addText($params["CONTENT_STUDENT"]) : "";
+        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $SAVEDATA['STUDENT_ID'] = $studentId;
@@ -254,7 +254,7 @@ class SubjectHomeworkDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $gradingterm = isset($params["gradingterm"]) ? $params["gradingterm"] : "";
+        $gradingterm = isset($params["gradingterm"]) ? addText($params["gradingterm"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
        
@@ -749,7 +749,7 @@ class SubjectHomeworkDBAccess {
 
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $homeworkId = isset($params["homeworkId"]) ? $params["homeworkId"] : "";
+        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
 

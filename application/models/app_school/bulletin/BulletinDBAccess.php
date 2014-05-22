@@ -560,8 +560,8 @@ class BulletinDBAccess {
 
         $subjectBulletin = isset($params["subject_bulletin"]) ? $params["subject_bulletin"] : "";
         $choose_status = isset($params["choose_status"]) ? $params["choose_status"] : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
         $recipient = isset($params["recipient"]) ? $params["recipient"] : "";
 
         $SQL = "";

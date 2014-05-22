@@ -270,7 +270,7 @@ class OrganizationDBAccess {
 
     public function assignedUserOrganization($params) {
 
-        $userId = isset($params["userId"]) ? $params["userId"] : 0;
+        $userId = isset($params["userId"]) ? addText($params["userId"]) : 0;
 
         $SQL = "";
         $SQL .= " SELECT A.ID AS ID";
@@ -313,7 +313,7 @@ class OrganizationDBAccess {
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $organizationId = isset($params["id"]) ? addText($params["id"]) : 0;
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : 0;
-        $userId = isset($params["userId"]) ? $params["userId"] : "";
+        $userId = isset($params["userId"]) ? addText($params["userId"]) : "";
 
         switch ($field) {
             case "POSITION":

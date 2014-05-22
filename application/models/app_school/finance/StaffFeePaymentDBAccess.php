@@ -310,8 +310,8 @@
 
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $startDate = isset($params["startDate"]) ? $params["startDate"] :"";
-            $endDate = isset($params["endDate"]) ? $params["endDate"] :"";
+            $startDate = isset($params["startDate"]) ? addText($params["startDate"]) :"";
+            $endDate = isset($params["endDate"]) ? addText($params["endDate"]) :"";
             $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
             $paistatus = isset($params["paistatus"]) ? $params["paistatus"] : "";
             $staffCode = isset($params["staffCode"]) ? $params["staffCode"] : "";

@@ -291,8 +291,8 @@ class ExtraClassDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $parent = isset($params["parent"]) ? addText($params["parent"]) : "";
-        $objctType = isset($params["objctType"]) ? $params["objctType"] : "";
-        $date = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
+        $objctType = isset($params["objctType"]) ? addText($params["objctType"]) : "";
+        $date = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
 
 
         $errors = array();
@@ -659,8 +659,8 @@ class ExtraClassDBAccess {
     public function jsonListExtraClass($params) {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $studentId = isset($params["studentId"]) ? $params["studentId"] : "";
-        $teacherId = isset($params["teacherId"]) ? $params["teacherId"] : "";
+        $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
+        $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_extraclass'));

@@ -402,11 +402,11 @@
 
             $data = array();
 
-            $searchParent = isset($params["searchParent"]) ? $params["searchParent"] : "";
+            $searchParent = isset($params["searchParent"]) ? addText($params["searchParent"]) : "";
             $treeSearch = isset($params["treeSearch"]) ? $params["treeSearch"] : "";
             $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-            $node = isset($params["node"]) ? $params["node"] : 0;
-            $defaultRole = isset($params["key"]) ? $params["key"] : 1;
+            $node = isset($params["node"]) ? addText($params["node"]) : 0;
+            $defaultRole = isset($params["key"]) ? addText($params["key"]) : 1;
 
             switch ($treeSearch) {
                 case "treefolder":
@@ -703,8 +703,8 @@
 
         public static function jsonActionUserRight($params) {
 
-            $roleId = isset($params["roleId"]) ? $params["roleId"] : "";
-            $rightId = isset($params["rightId"]) ? $params["rightId"] : "";
+            $roleId = isset($params["roleId"]) ? addText($params["roleId"]) : "";
+            $rightId = isset($params["rightId"]) ? addText($params["rightId"]) : "";
             $checked = $params["checked"];
 
             $facette = self::findUserRightFromId($rightId);

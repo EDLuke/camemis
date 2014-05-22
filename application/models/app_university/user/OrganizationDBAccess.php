@@ -164,7 +164,7 @@
 
         public function jsonTreeAllOrganizations($params) {
 
-            $userId = isset($params["userId"]) ? $params["userId"] : "";
+            $userId = isset($params["userId"]) ? addText($params["userId"]) : "";
             $result = $this->getAllOrganizationsQuery($params);
 
             $data = array();
@@ -283,7 +283,7 @@
 
         public function actionUserOrganization($params) {
 
-            $Id = isset($params["Id"]) ? $params["Id"] : "";
+            $Id = isset($params["Id"]) ? addText($params["Id"]) : "";
             $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
             $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
 
