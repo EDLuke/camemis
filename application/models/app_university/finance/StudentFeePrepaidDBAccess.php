@@ -545,7 +545,7 @@ class StudentFeePrepaidDBAccess {
         $studentPrePaymentId = isset($params['studentPrePaymentId']) ? $params['studentPrePaymentId'] : '';
         $feePrePayment = isset($params['feePrePaymentId']) ? $params['feePrePaymentId'] : '';
         $studentId = isset($params['objectId']) ? $params['objectId'] : '';
-        $training = isset($params['training']) ? $params['training'] : 'false';
+        $training = isset($params['training']) ? addText($params["training"]) : 'false';
         //error_log('dfsfsdfsdf');
         $facette = self::findStudentPrePaymentById($studentPrePaymentId);
 

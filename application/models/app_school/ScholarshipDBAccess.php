@@ -71,15 +71,15 @@ class ScholarshipDBAccess {
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
         $scholarshipType = isset($params["scholarshipType"]) ? addText($params["scholarshipType"]) : "";
-        $campusId = isset($params["campus"])?$params["campus"]:"";
-        $classId = isset($params["classId"])?$params["classId"]:"";
-        $gradeId = isset($params["gradeId"])?$params["gradeId"]:"";
-        $trainingId = isset($params["trainingId"])?$params["trainingId"]:"";
-        $programId = isset($params["programId"])?$params["programId"]:"";
-        $levelId = isset($params["levelId"])?$params["levelId"]:"";
-        $termId = isset($params["termId"])?$params["termId"]:"";
-        $trainingclassId = isset($params["trainingclassId"])?$params["trainingclassId"]:"";
-        
+        $campusId = isset($params["campus"]) ? $params["campus"] : "";
+        $classId = isset($params["classId"]) ? $params["classId"] : "";
+        $gradeId = isset($params["gradeId"]) ? $params["gradeId"] : "";
+        $trainingId = isset($params["trainingId"]) ? $params["trainingId"] : "";
+        $programId = isset($params["programId"]) ? $params["programId"] : "";
+        $levelId = isset($params["levelId"]) ? $params["levelId"] : "";
+        $termId = isset($params["termId"]) ? $params["termId"] : "";
+        $trainingclassId = isset($params["trainingclassId"]) ? $params["trainingclassId"] : "";
+
         if ($academicId) {
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             switch ($academicObject->OBJECT_TYPE) {
@@ -101,10 +101,10 @@ class ScholarshipDBAccess {
                     break;
             }
         }
-        
-        if($trainingId){
+
+        if ($trainingId) {
             $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
-            
+
             switch ($trainingObject->OBJECT_TYPE) {
                 case "PROGRAM":
                     $programId = $trainingObject->ID;
@@ -118,14 +118,14 @@ class ScholarshipDBAccess {
                 case "CLASS":
                     $trainingclassId = $trainingObject->ID;
                     break;
-            }    
+            }
         }
-        
+
         $SELECTION_A = array(
             "ID AS STUDENT_SCOLARSHIP_ID"
-            ,"CAMPUS AS CAMPUS"
-            ,"SCHOOLYEAR AS T_SCOLARSHIP_SCHOOLYEAR"
-            ,"TERM AS T_SCOLARSHIP_TERM"
+            , "CAMPUS AS CAMPUS"
+            , "SCHOOLYEAR AS T_SCOLARSHIP_SCHOOLYEAR"
+            , "TERM AS T_SCOLARSHIP_TERM"
         );
 
         $SELECTION_B = array(
@@ -148,7 +148,7 @@ class ScholarshipDBAccess {
         );
         $SELECTION_C = array(
             "NAME AS SCHOLARSHIP"
-            ,"SCHOLARSHIP_VALUE AS SCHOLARSHIP_VALUE"
+            , "SCHOLARSHIP_VALUE AS SCHOLARSHIP_VALUE"
         );
         $SELECTION_D = array(
             "NAME AS SCHOOL_YEAR_NAME"
@@ -164,51 +164,51 @@ class ScholarshipDBAccess {
             , "PRESENTATIVE AS PRESENTATIVE"
             , "TRANSFER AS TRANSFER"
         );
-        
+
         $SELECT_F = array(
             'ID AS STUDENT_TRAINING_ID'
         );
-        
+
         $SELECT_G = array(
             'NAME AS TRAINING_NAME'
             , 'START_DATE'
             , 'END_DATE'
         );
-  
+
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_scholarship'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT', $SELECTION_B);
         $SQL->joinLeft(array('C' => 't_scholarship'), 'A.SCHOLARSHIP=C.ID', $SELECTION_C);
         $SQL->joinLeft(array('D' => 't_academicdate'), 'D.ID=A.SCHOOLYEAR', $SELECTION_D);
-        if($academicId){
-            if($academicObject->EDUCATION_SYSTEM){
+        if ($academicId) {
+            if ($academicObject->EDUCATION_SYSTEM) {
                 $SQL->joinLeft(array('E' => 't_student_schoolyear_subject'), 'B.ID=E.STUDENT_ID', array());
-            }else{
+            } else {
                 $SQL->joinLeft(array('E' => 't_student_schoolyear'), 'B.ID=E.STUDENT', $SELECTION_E);
             }
         }
-        
-        if($trainingId){
+
+        if ($trainingId) {
             $SQL->joinLeft(array('F' => 't_student_training'), 'B.ID=F.STUDENT', $SELECT_F);
             $SQL->joinLeft(array('G' => 't_training'), 'G.ID=F.TRAINING', $SELECT_G);
         }
-        
-        if($campusId){
-            if($academicObject->EDUCATION_SYSTEM){
-                $SQL->where("E.CAMPUS_ID= '" . $campusId . "'"); 
-            }else{
-                $SQL->where("E.CAMPUS= '" . $campusId . "'");    
-            }   
+
+        if ($campusId) {
+            if ($academicObject->EDUCATION_SYSTEM) {
+                $SQL->where("E.CAMPUS_ID= '" . $campusId . "'");
+            } else {
+                $SQL->where("E.CAMPUS= '" . $campusId . "'");
+            }
         }
         if ($classId) {
-            if($academicObject->EDUCATION_SYSTEM){
+            if ($academicObject->EDUCATION_SYSTEM) {
                 $SQL->where("E.CLASS_ID= '" . $classId . "'");
-            }else{
-                $SQL->where("E.CLASS= '" . $classId . "'");    
+            } else {
+                $SQL->where("E.CLASS= '" . $classId . "'");
             }
         }
         if ($gradeId)
-            $SQL->where("E.GRADE='" . $gradeId . "'");   
+            $SQL->where("E.GRADE='" . $gradeId . "'");
         ////
         if ($programId)
             $SQL->where("F.PROGRAM = '" . $programId . "'");
@@ -218,11 +218,11 @@ class ScholarshipDBAccess {
 
         if ($levelId)
             $SQL->where("F.LEVEL = '" . $levelId . "'");
-            
+
         if ($trainingclassId)
-            $SQL->where("F.TRAINING = '" . $trainingclassId . "'"); 
+            $SQL->where("F.TRAINING = '" . $trainingclassId . "'");
         ///
-            
+
         if ($studentId)
             $SQL->where("B.ID='" . $studentId . "'");
 
@@ -259,10 +259,10 @@ class ScholarshipDBAccess {
             $SEARCH .= " ) ";
             $SQL->where($SEARCH);
         }
-        if($academicId)
-        $SQL->where("A.SCHOOLYEAR != ''");
-        if($trainingId)
-        $SQL->where("A.TERM != ''");
+        if ($academicId)
+            $SQL->where("A.SCHOOLYEAR != ''");
+        if ($trainingId)
+            $SQL->where("A.TERM != ''");
         $SQL->group('A.ID');
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -420,7 +420,7 @@ class ScholarshipDBAccess {
                     } else {
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                     }
-                    
+
                     $data[$i]['parentId'] = $value->PARENT;
                 }
                 $i++;
@@ -492,9 +492,9 @@ class ScholarshipDBAccess {
 
     public static function addStudentSchoolar($params) {
 
-        $compusId = isset($params["compusId"]) ? $params["compusId"] : "0";
+        $compusId = isset($params["compusId"]) ? addText($params["compusId"]) : "0";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "0";
-        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? $params["CHOOSE_SCHOLARSHIP"] : "0";
+        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? addText($params["CHOOSE_SCHOLARSHIP"]) : "0";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "0";
 
         $check = self::checkStudentScholarship($studentId, $schoolyear, $compusId, false);

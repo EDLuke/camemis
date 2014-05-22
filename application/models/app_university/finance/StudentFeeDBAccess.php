@@ -168,10 +168,10 @@ class StudentFeeDBAccess extends FeeDBAccess {
         if ($trainingId)
             $SQL->where("TRAINING = '" . $trainingId . "'");
 
-        if ($paymentRemove){
+        if ($paymentRemove) {
             $SQL->where("PAYMENT_REMOVE = '1'");
-        }else{
-            $SQL->where("PAYMENT_REMOVE = '0'");    
+        } else {
+            $SQL->where("PAYMENT_REMOVE = '0'");
         }
 
         //error_log($SQL->__toString());
@@ -217,18 +217,18 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $chooseOption = isset($params["CHOOSE_OPTION"]) ? $params["CHOOSE_OPTION"] : "";
-        $feeId = isset($params["feeId"]) ? $params["feeId"] : "";
+        $chooseOption = isset($params["CHOOSE_OPTION"]) ? addText($params["CHOOSE_OPTION"]) : "";
+        $feeId = isset($params["feeId"]) ? addText($params["feeId"]) : "";
 
         //@veasna
-        $taxFormular = isset($params["taxFormular"]) ? $params["taxFormular"] : "";
-        $taxAmount = isset($params["HIDDEN_TAX_AMOUNT"]) ? $params["HIDDEN_TAX_AMOUNT"] : "";
+        $taxFormular = isset($params["taxFormular"]) ? addText($params["taxFormular"]) : "";
+        $taxAmount = isset($params["HIDDEN_TAX_AMOUNT"]) ? addText($params["HIDDEN_TAX_AMOUNT"]) : "";
         //
         $amount = isset($params["HIDDEN_FEE_AMOUNT"]) ? str2no($params["HIDDEN_FEE_AMOUNT"]) : "";
-        $income_amount = isset($params["HIDDEN_TOTAL_PAY"]) ? $params["HIDDEN_TOTAL_PAY"] : "";
-        $scholarshipPercent = isset($params["SCHOLARSHIP_PERCENT"]) ? $params["SCHOLARSHIP_PERCENT"] : "0";
-        $scholarshipAmount = isset($params["HIDDEN_SCHOLARSHIP_AMOUNT"]) ? $params["HIDDEN_SCHOLARSHIP_AMOUNT"] : "0";
-        $discount_amount = isset($params["HIDDEN_DISCOUNT_AMOUNT"]) ? $params["HIDDEN_DISCOUNT_AMOUNT"] : "0";
+        $income_amount = isset($params["HIDDEN_TOTAL_PAY"]) ? addText($params["HIDDEN_TOTAL_PAY"]) : "";
+        $scholarshipPercent = isset($params["SCHOLARSHIP_PERCENT"]) ? addText($params["SCHOLARSHIP_PERCENT"]) : "0";
+        $scholarshipAmount = isset($params["HIDDEN_SCHOLARSHIP_AMOUNT"]) ? addText($params["HIDDEN_SCHOLARSHIP_AMOUNT"]) : "0";
+        $discount_amount = isset($params["HIDDEN_DISCOUNT_AMOUNT"]) ? addText($params["HIDDEN_DISCOUNT_AMOUNT"]) : "0";
 
         /////scholarship
         $SAVEDATA["AMOUNT"] = addText($amount);
@@ -290,7 +290,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $SAVEDATA['AMOUNT_TAX'] = $taxAmount;
         $SAVEDATA['FORMULAR_TAX'] = $taxFormular;
         $SAVEDATA['DISCOUNT'] = $discount_amount;
-        $SAVEDATA['DISCOUNT_PERCENT'] = isset($params["DISCOUNT"]) ? $params["DISCOUNT"] : "0";
+        $SAVEDATA['DISCOUNT_PERCENT'] = isset($params["DISCOUNT"]) ? addText($params["DISCOUNT"]) : "0";
         //error_log($SAVEDATA['AMOUNT_TAX']);
 
         if ($studentId) {
@@ -378,8 +378,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
     public static function setStudentPaymentOption($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $feeId = isset($params["feeId"]) ? $params["feeId"] : "";
-        $chooseOption = isset($params["CHOOSE_OPTION"]) ? $params["CHOOSE_OPTION"] : "";
+        $feeId = isset($params["feeId"]) ? addText($params["feeId"]) : "";
+        $chooseOption = isset($params["CHOOSE_OPTION"]) ? addText($params["CHOOSE_OPTION"]) : "";
 
         $WHERE = array();
 
@@ -400,9 +400,9 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function jsonActionStudentPayment($params) {
 
-        $payment_type = isset($params['PAYMENT']) ? $params['PAYMENT'] : '';
+        $payment_type = isset($params['PAYMENT']) ? addText($params["PAYMENT"]) : '';
         $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
-        $isTraing = isset($params['training']) ? $params['training'] : false;
+        $isTraing = isset($params['training']) ? addText($params["training"]) : false;
         if ($payment_type) {
             switch ($payment_type) {
                 case "NORMAL":
@@ -437,7 +437,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $services = isset($params["services"]) ? $params["services"] : "0";
+        $services = isset($params["services"]) ? addText($params["services"]) : "0";
 
         $SQL = self::dbSelectAccess();
         $SQL->distinct();
@@ -566,7 +566,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $feeId = isset($params["feeId"]) ? $params["feeId"] : "";
+        $feeId = isset($params["feeId"]) ? addText($params["feeId"]) : "";
 
         $result = self::getSQLStudentPayments($studentId, $trainingId, $feeId, false);
 
@@ -591,16 +591,16 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
                 $data[$i]["TRANSACTION_NUMBER"] = displayNumberFormat($value->TRANSACTION_NUMBER);
                 $data[$i]["AMOUNT"] = displayNumberFormat($value->AMOUNT) . " " . self::getCurrency();
-                $data[$i]["INCOME_AMOUNT"]= displayNumberFormat($value->INCOME_AMOUNT) . " " . self::getCurrency();
-                
-                $scholarship='';
-                if($value->SCHOLARSHIP_PERCENT){
-                $scholarship=", ".SCHOLARSHIP." ".displayNumberFormat($value->SCHOLARSHIP_PERCENT)."%: ".displayNumberFormat($value->SCHOLARSHIP_AMOUNT). " " . self::getCurrency();    
+                $data[$i]["INCOME_AMOUNT"] = displayNumberFormat($value->INCOME_AMOUNT) . " " . self::getCurrency();
+
+                $scholarship = '';
+                if ($value->SCHOLARSHIP_PERCENT) {
+                    $scholarship = ", " . SCHOLARSHIP . " " . displayNumberFormat($value->SCHOLARSHIP_PERCENT) . "%: " . displayNumberFormat($value->SCHOLARSHIP_AMOUNT) . " " . self::getCurrency();
                 }
-                $taxPercent=IncomeCategoryDBAccess::findTaxByCategory($value->INCOME_CATEGORY);
-                $data[$i]["STATUS"]= TOTAL.": ".displayNumberFormat($value->INCOME_AMOUNT) . " " . self::getCurrency()."<BR/>".AMOUNT.": ".displayNumberFormat($value->AMOUNT) . " " . self::getCurrency()
-                                    ." (".DISCOUNT." ".displayNumberFormat($value->DISCOUNT_PERCENT)."%: ".displayNumberFormat($value->DISCOUNT). " " . self::getCurrency().", "
-                                    .TAX." ".$taxPercent."%: ".displayNumberFormat($value->AMOUNT_TAX). " " . self::getCurrency().$scholarship.")";
+                $taxPercent = IncomeCategoryDBAccess::findTaxByCategory($value->INCOME_CATEGORY);
+                $data[$i]["STATUS"] = TOTAL . ": " . displayNumberFormat($value->INCOME_AMOUNT) . " " . self::getCurrency() . "<BR/>" . AMOUNT . ": " . displayNumberFormat($value->AMOUNT) . " " . self::getCurrency()
+                        . " (" . DISCOUNT . " " . displayNumberFormat($value->DISCOUNT_PERCENT) . "%: " . displayNumberFormat($value->DISCOUNT) . " " . self::getCurrency() . ", "
+                        . TAX . " " . $taxPercent . "%: " . displayNumberFormat($value->AMOUNT_TAX) . " " . self::getCurrency() . $scholarship . ")";
                 $data[$i]["CREATED_DATE"] = $value->CREATED_DATE;
                 $data[$i]["CREATED_DATE"] .= '<br>';
                 $data[$i]["CREATED_DATE"] .= $value->CREATED_BY;
@@ -782,7 +782,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $services = isset($params["services"]) ? $params["services"] : "";
+        $services = isset($params["services"]) ? addText($params["services"]) : "";
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -886,13 +886,13 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function getSQLSearchCasshStudent($params) {
 
-        $studentCode = isset($params["studentCode"]) ? $params["studentCode"] : "";
+        $studentCode = isset($params["studentCode"]) ? addText($params["studentCode"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
-        $feeCode = isset($params["feeCode"]) ? $params["feeCode"] : "";
-        $feeName = isset($params["feeName"]) ? $params["feeName"] : "";
-        $paymentStatus = isset($params["paymentStatus"]) ? $params["paymentStatus"] : "";
-        $searchService = isset($params["searchService"]) ? $params["searchService"] : "";
+        $feeCode = isset($params["feeCode"]) ? addText($params["feeCode"]) : "";
+        $feeName = isset($params["feeName"]) ? addText($params["feeName"]) : "";
+        $paymentStatus = isset($params["paymentStatus"]) ? addText($params["paymentStatus"]) : "";
+        $searchService = isset($params["searchService"]) ? addText($params["searchService"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
@@ -1002,14 +1002,14 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     //
     public static function getSQLCheckCasshStudent($params) {
-        $studentCode = isset($params["studentCode"]) ? $params["studentCode"] : "";
+        $studentCode = isset($params["studentCode"]) ? addText($params["studentCode"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
-        $feeCode = isset($params["feeCode"]) ? $params["feeCode"] : "";
-        $feeName = isset($params["feeName"]) ? $params["feeName"] : "";
-        $paymentStatus = isset($params["paymentStatus"]) ? $params["paymentStatus"] : "";
-        $scholarship = isset($params["scholarship"]) ? $params["scholarship"] : "";
-        $searchService = isset($params["searchService"]) ? $params["searchService"] : "";
+        $feeCode = isset($params["feeCode"]) ? addText($params["feeCode"]) : "";
+        $feeName = isset($params["feeName"]) ? addText($params["feeName"]) : "";
+        $paymentStatus = isset($params["paymentStatus"]) ? addText($params["paymentStatus"]) : "";
+        $scholarship = isset($params["scholarship"]) ? addText($params["scholarship"]) : "";
+        $searchService = isset($params["searchService"]) ? addText($params["searchService"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
@@ -1125,7 +1125,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
                     $data[$i]["STUDENT_SERVICES"] = $value->STUDENT_SERVICES;
                     $data[$i]["SCHOLARSHIP"] = "---";
                     //veasna
-                    
+
                     $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                     $data[$i]["STUDENT_CODE"] = $value->STUDENT_CODE;
                     $data[$i]["LASTNAME"] = $value->LASTNAME;
@@ -1173,9 +1173,8 @@ class StudentFeeDBAccess extends FeeDBAccess {
                             break;
                     }
 
-                    
+
                     $data[$i]["PRINT_URL"] = "/finance/printfee?objectId=" . $value->STUDENT_ID . "&fee=" . $value->FEE_ID . "&feeprepay=" . $studentPrePay->FEE_PREPAYMENT_ID . "";
-                    
                 } else {
 
                     if (!$value->STUDENT_SERVICES) {
@@ -1396,7 +1395,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
             //@veasna
 
-             if ($firstOptionFee) {
+            if ($firstOptionFee) {
                 $SQL .= ",TOTAL_AMOUNT='" . $firstOptionFee->AMOUNT . "'";
                 $SQL .= ",AMOUNT_OWED='" . $firstOptionFee->AMOUNT . "'";
             } else {
@@ -1559,9 +1558,9 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $paymentId = isset($params["id"]) ? addText($params["id"]) : "0";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
-        $feeId = isset($params["feeId"]) ? $params["feeId"] : "0";
+        $feeId = isset($params["feeId"]) ? addText($params["feeId"]) : "0";
         //@veasna
-        $type=isset($params["type"])?strtoupper($params["type"]):"REFUND";
+        $type = isset($params["type"]) ? strtoupper($params["type"]) : "REFUND";
         //
 
         $PAYMENT_OBJECT = IncomeDBAccess::findIncomeFromId($paymentId);
@@ -1573,10 +1572,10 @@ class StudentFeeDBAccess extends FeeDBAccess {
             $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
             if ($facette && $studentObject && $feeObject) {
-                 if($type=="REFUND"){
-                ////////////////////////////////////////////////////////////////
-                //Add into t_expense...
-                ////////////////////////////////////////////////////////////////
+                if ($type == "REFUND") {
+                    ////////////////////////////////////////////////////////////////
+                    //Add into t_expense...
+                    ////////////////////////////////////////////////////////////////
                     $SAVEDATA["GUID"] = generateGuid();
                     $SAVEDATA["TRANSACTION_NUMBER"] = ExpenseDBAccess::getTNExpense("REF");
                     $SAVEDATA["STUDENT"] = $studentId;
@@ -1585,17 +1584,17 @@ class StudentFeeDBAccess extends FeeDBAccess {
                     $SAVEDATA["NAME"] = "(" . $studentObject->CODE . ") ";
                     $SAVEDATA["NAME"] .= $studentObject->LASTNAME . " " . $studentObject->FIRSTNAME;
 
-                    /*if ($PAYMENT_OBJECT->SCHOLARSHIP_INDEX == 100) {
-                        $SAVEDATA["AMOUNT"] = "0";
-                    } else {
-                        $SAVEDATA["AMOUNT"] = displayNumberFormat($PAYMENT_OBJECT->AMOUNT) ? $PAYMENT_OBJECT->AMOUNT : "0";
-                    } */
+                    /* if ($PAYMENT_OBJECT->SCHOLARSHIP_INDEX == 100) {
+                      $SAVEDATA["AMOUNT"] = "0";
+                      } else {
+                      $SAVEDATA["AMOUNT"] = displayNumberFormat($PAYMENT_OBJECT->AMOUNT) ? $PAYMENT_OBJECT->AMOUNT : "0";
+                      } */
                     $SAVEDATA["AMOUNT"] = displayNumberFormat($PAYMENT_OBJECT->INCOME_AMOUNT) ? $PAYMENT_OBJECT->INCOME_AMOUNT : "0";
                     $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
                     $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
                     self::dbAccess()->insert('t_expense', $SAVEDATA);
-                ////////////////////////////////////////////////////////////////
-                 }
+                    ////////////////////////////////////////////////////////////////
+                }
                 $UPDATE_STUDENT_FEE = "UPDATE t_student_fee";
                 $UPDATE_STUDENT_FEE .= " SET";
 
@@ -1604,15 +1603,15 @@ class StudentFeeDBAccess extends FeeDBAccess {
                 } else {
                     $UPDATE_STUDENT_FEE .= " CHOOSE_SERVICE = '1'";
                 }
-                
+
                 $TOTAL_AMOUNT = $facette->TOTAL_AMOUNT;
                 $DELETE_AMOUNT = $PAYMENT_OBJECT->INCOME_AMOUNT;
-               
+
                 if ($facette->AMOUNT_PAID > $DELETE_AMOUNT) {
 
                     $CALL_AMOUNT_PAID = $facette->AMOUNT_PAID - $DELETE_AMOUNT;
                     $CALL_AMOUNT_OWED = $facette->AMOUNT_OWED + $PAYMENT_OBJECT->AMOUNT;
-                    
+
                     if ($CALL_AMOUNT_PAID == 0) {
                         $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
                         $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
@@ -1631,41 +1630,41 @@ class StudentFeeDBAccess extends FeeDBAccess {
                     $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
                 }
 
-                /*$TOTAL_AMOUNT = $facette->TOTAL_AMOUNT;
-                $SCHOLARSHIP_AMOUNT = $facette->SCHOLARSHIP_AMOUNT;
-                $DELETE_AMOUNT = $PAYMENT_OBJECT->AMOUNT;
+                /* $TOTAL_AMOUNT = $facette->TOTAL_AMOUNT;
+                  $SCHOLARSHIP_AMOUNT = $facette->SCHOLARSHIP_AMOUNT;
+                  $DELETE_AMOUNT = $PAYMENT_OBJECT->AMOUNT;
 
-                if ($SCHOLARSHIP_AMOUNT) {
-                    $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
-                    $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
-                    $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
-                    $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
-                } else {
-                    if ($facette->AMOUNT_PAID > $DELETE_AMOUNT) {
+                  if ($SCHOLARSHIP_AMOUNT) {
+                  $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
+                  } else {
+                  if ($facette->AMOUNT_PAID > $DELETE_AMOUNT) {
 
-                        $CALL_AMOUNT_PAID = $facette->AMOUNT_PAID - $DELETE_AMOUNT;
-                        $CALL_AMOUNT_OWED = $TOTAL_AMOUNT - $CALL_AMOUNT_PAID;
+                  $CALL_AMOUNT_PAID = $facette->AMOUNT_PAID - $DELETE_AMOUNT;
+                  $CALL_AMOUNT_OWED = $TOTAL_AMOUNT - $CALL_AMOUNT_PAID;
 
-                        //error_log("Call paid: ".$CALL_AMOUNT_PAID." Call owed: ".$CALL_AMOUNT_OWED);
+                  //error_log("Call paid: ".$CALL_AMOUNT_PAID." Call owed: ".$CALL_AMOUNT_OWED);
 
-                        if ($CALL_AMOUNT_PAID == 0) {
-                            $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
-                            $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
-                            $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
-                            $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
-                        } else {
-                            $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '1'";
-                            $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'PARTLY_PAID'";
-                            $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '" . $CALL_AMOUNT_PAID . "'";
-                            $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $CALL_AMOUNT_OWED . "'";
-                        }
-                    } else {
-                        $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
-                        $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
-                    }
-                } */
+                  if ($CALL_AMOUNT_PAID == 0) {
+                  $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
+                  } else {
+                  $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '1'";
+                  $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'PARTLY_PAID'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '" . $CALL_AMOUNT_PAID . "'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $CALL_AMOUNT_OWED . "'";
+                  }
+                  } else {
+                  $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
+                  $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
+                  }
+                  } */
 
 
                 $UPDATE_STUDENT_FEE .= " WHERE";
@@ -1675,15 +1674,15 @@ class StudentFeeDBAccess extends FeeDBAccess {
                 self::dbAccess()->query($UPDATE_STUDENT_FEE);
 
                 ///////////////////////////////////////
-                if($type=="REFUND"){
+                if ($type == "REFUND") {
                     $UPDATE_INCOME = "UPDATE t_income";
                     $UPDATE_INCOME .= " SET";
                     $UPDATE_INCOME .= " PAYMENT_REMOVE = '1'";
                     $UPDATE_INCOME .= " WHERE";
                     $UPDATE_INCOME .= " GUID= '" . $paymentId . "'";
                     self::dbAccess()->query($UPDATE_INCOME);
-                }elseif($type=="DELETE"){
-                    self::dbAccess()->delete('t_income', array("GUID='" . $paymentId . "'"));    
+                } elseif ($type == "DELETE") {
+                    self::dbAccess()->delete('t_income', array("GUID='" . $paymentId . "'"));
                 }
             }
         }

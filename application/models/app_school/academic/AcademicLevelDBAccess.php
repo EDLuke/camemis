@@ -35,15 +35,15 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     public static function getSQLAllAcademics($params) {
 
         $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
-        $parentCampus = isset($params["parentCampus"]) ? $params["parentCampus"] : "";
-        $parentGrade = isset($params["parentGrade"]) ? $params["parentGrade"] : "";
-        $gradeSchoolyearId = isset($params["gradeSchoolyearId"]) ? $params["gradeSchoolyearId"] : 0;
+        $parentCampus = isset($params["parentCampus"]) ? addText($params["parentCampus"]) : "";
+        $parentGrade = isset($params["parentGrade"]) ? addText($params["parentGrade"]) : "";
+        $gradeSchoolyearId = isset($params["gradeSchoolyearId"]) ? addText($params["gradeSchoolyearId"]) : 0;
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
-        $objectTypeIn = isset($params["objectTypeIn"]) ? $params["objectTypeIn"] : "";
+        $objectTypeIn = isset($params["objectTypeIn"]) ? addText($params["objectTypeIn"]) : "";
 
-        $searchCampus = isset($params["searchCampus"]) ? $params["searchCampus"] : "";
-        $searchGrade = isset($params["searchGrade"]) ? $params["searchGrade"] : "";
-        $searchSchoolyear = isset($params["searchSchoolyear"]) ? $params["searchSchoolyear"] : "";
+        $searchCampus = isset($params["searchCampus"]) ? addText($params["searchCampus"]) : "";
+        $searchGrade = isset($params["searchGrade"]) ? addText($params["searchGrade"]) : "";
+        $searchSchoolyear = isset($params["searchSchoolyear"]) ? addText($params["searchSchoolyear"]) : "";
 
         $parentNode = '';
 
@@ -51,10 +51,10 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             $GRADE_SCHOOLYEAR_OBJECT = AcademicDBAccess::findGradeFromId($gradeSchoolyearId);
             $schoolyearId = $GRADE_SCHOOLYEAR_OBJECT->SCHOOL_YEAR;
         } else {
-            $schoolyearId = isset($params["SCHOOLYEAR"]) ? $params["SCHOOLYEAR"] : 0;
+            $schoolyearId = isset($params["SCHOOLYEAR"]) ? addText($params["SCHOOLYEAR"]) : 0;
         }
 
-        $schoolyearId = isset($params["SCHOOLYEAR"]) ? $params["SCHOOLYEAR"] : 0;
+        $schoolyearId = isset($params["SCHOOLYEAR"]) ? addText($params["SCHOOLYEAR"]) : 0;
 
         $parent = $params["node"];
         $academicObject = AcademicDBAccess::findGradeFromId($parent);
@@ -192,7 +192,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
     public function getTreeTraditionalEducationSystem($params) {
 
-        $isClassCheckbox = isset($params["isClassCheckbox"]) ? $params["isClassCheckbox"] : "";
+        $isClassCheckbox = isset($params["isClassCheckbox"]) ? addText($params["isClassCheckbox"]) : "";
 
         $schoolyearObject = AcademicDateDBAccess::getInstance();
         $params["educationSystem"] = 0;
@@ -297,7 +297,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     public function getTreeCreditEducationSystem($params) {
 
-        $isClassCheckbox = isset($params["isClassCheckbox"]) ? $params["isClassCheckbox"] : "";
+        $isClassCheckbox = isset($params["isClassCheckbox"]) ? addText($params["isClassCheckbox"]) : "";
 
         $schoolyearObject = AcademicDateDBAccess::getInstance();
         $params["educationSystem"] = 1;

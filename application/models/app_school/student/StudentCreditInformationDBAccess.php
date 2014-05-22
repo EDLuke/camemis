@@ -51,7 +51,7 @@ class StudentCreditInformationDBAccess {
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-        $creditStatus = isset($params["creditStatus"]) ? $params["creditStatus"] : "";
+        $creditStatus = isset($params["creditStatus"]) ? addText($params["creditStatus"]) : "";
         $creditNumber = isset($params["creditNumber"]) ? $params["creditNumber"] : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
@@ -354,7 +354,7 @@ class StudentCreditInformationDBAccess {
 
     public static function changeStudentSubjectCreditInfo($params) {
 
-        $objectId = isset($params['studentSubjectId']) ? $params['studentSubjectId'] : '';
+        $objectId = isset($params['studentSubjectId']) ? addText($params["studentSubjectId"]) : '';
         $studentSubjectObject = self::getStudentSchoolYearSubjectById($objectId);
         $error = "";
         $SAVEDATA = array();

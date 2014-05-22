@@ -26,36 +26,30 @@ class StaffDBAccess {
     public $out = array();
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public function getSaffDataFromId($Id)
-    {
+    public function getSaffDataFromId($Id) {
 
         $data = array();
 
         $result = self::findStaffFromId($Id);
 
-        if ($result)
-        {
+        if ($result) {
 
             $USER_DB_ACCESS = UserMemberDBAccess::getInstance();
             $USER_OBJECT = $USER_DB_ACCESS->findUserFromId($Id);
 
-            if (!$USER_OBJECT->SUPERUSER)
-            {
+            if (!$USER_OBJECT->SUPERUSER) {
                 $data["IS_PASSWORD"] = $USER_OBJECT->PASSWORD ? true : false;
                 $data["PASSWORD"] = "**********";
                 $data["PASSWORD_REPEAT"] = "**********";
@@ -114,8 +108,7 @@ class StaffDBAccess {
      * Object student by StaffId...
      */
     //@ Visal
-    public static function checkStaffFromId($Id)
-    {
+    public static function checkStaffFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_staff', 'COUNT(*) AS C');
         $SQL->where("ID = '" . $Id . "'");
@@ -125,8 +118,7 @@ class StaffDBAccess {
     }
 
     //
-    public static function findStaffFromId($Id)
-    {
+    public static function findStaffFromId($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff", array("*"));
@@ -135,8 +127,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function findStaffFromCodeId($codeId)
-    {
+    public function findStaffFromCodeId($codeId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff", array("*"));
@@ -144,17 +135,13 @@ class StaffDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getUserNameByCode($codeId)
-    {
+    public function getUserNameByCode($codeId) {
 
         $facette = $this->findStaffFromCodeId($codeId);
 
-        if ($facette)
-        {
+        if ($facette) {
             return $facette->LASTNAME . " " . $facette->FIRSTNAME;
-        }
-        else
-        {
+        } else {
             return "---";
         }
     }
@@ -162,19 +149,15 @@ class StaffDBAccess {
     /**
      * JSON: Staff by StaffId....
      */
-    public function loadStaffFromId($Id)
-    {
+    public function loadStaffFromId($Id) {
         $result = self::findStaffFromId($Id);
 
-        if ($result)
-        {
+        if ($result) {
             $o = array(
                 "success" => true
                 , "data" => $this->getSaffDataFromId($Id)
             );
-        }
-        else
-        {
+        } else {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -183,8 +166,7 @@ class StaffDBAccess {
         return $o;
     }
 
-    public function queryAllStaffs($params, $groupby = false)
-    {
+    public function queryAllStaffs($params, $groupby = false) {
 
         $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? addText($params["STAFF_SCHOOL_ID"]) : false;
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : false;
@@ -224,11 +206,9 @@ class StaffDBAccess {
         $qualification_degree = isset($params["QUALIFICATION_DEGREE"]) ? addText($params["QUALIFICATION_DEGREE"]) : "";
         $facette = AcademicDBAccess::findGradeFromId($choosegrade);
 
-        if ($facette)
-        {
+        if ($facette) {
 
-            switch ($facette->OBJECT_TYPE)
-            {
+            switch ($facette->OBJECT_TYPE) {
                 case "CAMPUS":
                     $campusId = $facette->ID;
                     break;
@@ -249,12 +229,10 @@ class StaffDBAccess {
         $levelId = "";
         $termId = "";
         $class = "";
-        if ($chooseTraining)
-        {
+        if ($chooseTraining) {
             $DB_TRAINING = TrainingDBAccess::findTrainingFromId($chooseTraining);
 
-            switch ($DB_TRAINING->OBJECT_TYPE)
-            {
+            switch ($DB_TRAINING->OBJECT_TYPE) {
                 case "PROGRAM":
                     $programId = $DB_TRAINING->ID;
                     break;
@@ -281,17 +259,13 @@ class StaffDBAccess {
         $person_description_entries = DescriptionDBAccess::sqlDescription("ALL", "STAFF", false);
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
-        if ($person_description_entries)
-        {
-            foreach ($person_description_entries as $value)
-            {
-                if (isset($params["CHECKBOX_" . $value->ID . ""]))
-                {
+        if ($person_description_entries) {
+            foreach ($person_description_entries as $value) {
+                if (isset($params["CHECKBOX_" . $value->ID . ""])) {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
                 }
 
-                if (isset($params["RADIOBOX_" . $value->ID . ""]))
-                {
+                if (isset($params["RADIOBOX_" . $value->ID . ""])) {
                     $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
                 }
             }
@@ -307,12 +281,9 @@ class StaffDBAccess {
         $SQL .= " ,A.TUTOR AS TUTOR";
         $SQL .= " ,A.CODE AS CODE";
         $SQL .= " ,A.STAFF_SCHOOL_ID AS STAFF_SCHOOL_ID";
-        if (!SchoolDBAccess::displayPersonNameInGrid())
-        {
+        if (!SchoolDBAccess::displayPersonNameInGrid()) {
             $SQL .= " ,CONCAT(A.LASTNAME,' ',A.FIRSTNAME) AS NAME";
-        }
-        else
-        {
+        } else {
             $SQL .= " ,CONCAT(A.FIRSTNAME,' ',A.LASTNAME) AS NAME";
         }
         $SQL .= " ,A.FIRSTNAME AS FIRSTNAME";
@@ -343,8 +314,7 @@ class StaffDBAccess {
         $SQL .= " ,A.ENABLED_DATE AS ENABLED_DATE";
         $SQL .= " ,A.DISABLED_DATE AS DISABLED_DATE";
 
-        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor)
-        {
+        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor) {
             $SQL .= " ,C.NAME AS INSTRUCTOR";
         }
 
@@ -356,37 +326,32 @@ class StaffDBAccess {
         $SQL .= " ,D.SUPERUSER AS SUPERUSER";
 
         //@soda
-        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor || $subjectId)
-        {
+        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor || $subjectId) {
             $SQL .= " ,W.NAME AS CURRENT_NAME ";
             $SQL .= " ,U.NAME AS LEVEL_NAME_TRAINING";
             $SQL .= " ,V.NAME AS SCHOOL_YEAR_GENERAL";
         }
 
-        if ($chooseTraining)
-        {
+        if ($chooseTraining) {
             $SQL .= " ,K.NAME AS CURRENT_NAME";
             $SQL .= " ,CONCAT(K.START_DATE,' ',K.END_DATE) AS GRADE_NAME";
             $SQL .= " ,Z.NAME AS LEVEL_NAME_TRAINING";
         }
 
-        if ($isTraining || $subjectTraining)
-        {
+        if ($isTraining || $subjectTraining) {
             $SQL .= " ,K.NAME AS CURRENT_NAME";
             $SQL .= " ,CONCAT(K.START_DATE,' ',K.END_DATE) AS GRADE_NAME";
             $SQL .= " ,Z.NAME AS LEVEL_NAME_TRAINING";
         }
         //
-        if ($searchOrganizationChart)
-        {
+        if ($searchOrganizationChart) {
             $SQL .= " ,H.ORGANIZATION_ID AS ORGANIZATION_CHART";
         }
 
         $SQL .= " FROM";
         $SQL .= " t_staff AS A";
 
-        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor || $subjectId)
-        {
+        if ($schoolyearId || $gradeId || $classId || $educationType || $searchTutor || $isTutor || $subjectId) {
             $SQL .= " LEFT JOIN t_teacher_subject AS B ON A.ID=B.TEACHER";
             $SQL .= " LEFT JOIN t_subject AS I ON I.ID=B.SUBJECT";
             $SQL .= " LEFT JOIN t_grade AS C ON A.ID=C.INSTRUCTOR";
@@ -396,48 +361,41 @@ class StaffDBAccess {
         $SQL .= " LEFT JOIN t_memberrole AS E ON E.ID = D.ROLE";
         $SQL .= " LEFT JOIN t_person_infos AS Z ON Z.USER_ID = A.ID";
 
-        if ($schoolyearId || $campusId || $gradeId || $classId || $educationType || $searchTutor || $isTutor)
-        {
+        if ($schoolyearId || $campusId || $gradeId || $classId || $educationType || $searchTutor || $isTutor) {
             $SQL .= " LEFT JOIN t_subject_teacher_class AS F ON A.ID=F.TEACHER";
             $SQL .= " LEFT JOIN t_academicdate AS V ON V.ID=F.SCHOOLYEAR";
             $SQL .= " LEFT JOIN t_grade AS W ON W.ID=F.ACADEMIC";
             $SQL .= " LEFT JOIN t_grade AS U ON U.ID=F.GRADE";
         }
 
-        if ($searchOrganizationChart)
-        {
+        if ($searchOrganizationChart) {
             $SQL .= " LEFT JOIN t_user_organization AS H ON A.ID=H.USER_ID";
             $SQL .= " LEFT JOIN T_ORGANIZATION AS G ON G.ID=H.ORGANIZATION_ID";
         }
 
-        if ($chooseTraining)
-        {
+        if ($chooseTraining) {
             $SQL .= " LEFT JOIN T_SUBJECT_TEACHER_TRAINING AS J ON A.ID=J.TEACHER";
             $SQL .= " LEFT JOIN T_TRAINING AS K ON K.ID=J.TRAINING";
             $SQL .= " LEFT JOIN T_TRAINING AS Z ON Z.ID=J.LEVEL"; //@SODA
         }
 
-        if ($isTraining || $subjectTraining)
-        {
+        if ($isTraining || $subjectTraining) {
             $SQL .= " RIGHT JOIN T_SUBJECT_TEACHER_TRAINING AS J ON A.ID=J.TEACHER";
             $SQL .= " LEFT JOIN T_TRAINING AS K ON K.ID=J.TRAINING";
             $SQL .= " LEFT JOIN T_TRAINING AS Z ON Z.ID=J.LEVEL"; //@SODA
         }
 
-        if ($PERSON_DES_IDS)
-        {
+        if ($PERSON_DES_IDS) {
             $SQL .= " LEFT JOIN t_person_description_item AS PERSON_DES ON PERSON_DES.PERSON_ID=A.ID";
         }
 
-        if ($attendance_type)
-        {
+        if ($attendance_type) {
             $SQL .= " RIGHT JOIN t_staff_attendance AS ATT ON ATT.STAFF_ID=A.ID";
         }
 
         $SQL .= " WHERE 1=1";
 
-        if ($searchUserRole)
-        {
+        if ($searchUserRole) {
             $SQL .= " AND D.ROLE=" . $searchUserRole . "";
         }
 
@@ -465,10 +423,8 @@ class StaffDBAccess {
         if ($searchOrganizationChart)
             $SQL .= " AND H.ORGANIZATION_ID=" . $searchOrganizationChart . "";
 
-        if ($teacherType)
-        {
-            switch ($teacherType)
-            {
+        if ($teacherType) {
+            switch ($teacherType) {
                 case 1:
                     $SQL .= " AND A.TUTOR='1'";
                     break;
@@ -481,11 +437,9 @@ class StaffDBAccess {
             }
         }
 
-        if ($searchTutor)
-        {
+        if ($searchTutor) {
 
-            switch ($this->getTutorByRoleId($searchTutor))
-            {
+            switch ($this->getTutorByRoleId($searchTutor)) {
                 case 1:
                     $SQL .= " AND A.TUTOR='1'";
                     break;
@@ -498,13 +452,11 @@ class StaffDBAccess {
             }
         }
 
-        if ($isInstructor)
-        {
+        if ($isInstructor) {
             $SQL .= " AND E.ID='2'";
         }
 
-        if ($status)
-        {
+        if ($status) {
             $SQL .= " AND A.STATUS IN (1)";
         }
 
@@ -526,8 +478,7 @@ class StaffDBAccess {
         if ($searchEthnic)
             $SQL .= " AND A.ETHNIC='" . $searchEthnic . "' ";
 
-        if ($campusId && $gradeId == "")
-        {
+        if ($campusId && $gradeId == "") {
             $SQL .= " AND F.GRADE IN (SELECT ID FROM t_grade WHERE GRADE_ID=0 AND CAMPUS_ID=" . $campusId . ")";
         }
 
@@ -543,13 +494,11 @@ class StaffDBAccess {
         if ($subjectId)
             $SQL .= " AND B.SUBJECT=" . $subjectId . "";
 
-        if ($teacherId)
-        {
+        if ($teacherId) {
             $SQL .= " AND A.ID='" . $teacherId . "'";
         }
 
-        if ($globalSearch)
-        {
+        if ($globalSearch) {
             $SQL .= " AND ((A.NAME LIKE '" . $globalSearch . "%')";
             $SQL .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
             $SQL .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
@@ -557,70 +506,55 @@ class StaffDBAccess {
             $SQL .= " ) ";
         }
 
-        if ($subjectTraining)
-        {
+        if ($subjectTraining) {
             $SQL .= " AND J.SUBJECT=" . $subjectTraining;
         }
 
-        if ($programId)
-        {
+        if ($programId) {
             $SQL .= " AND K.PROGRAM=" . $programId;
         }
 
-        if ($levelId)
-        {
+        if ($levelId) {
             $SQL .= " AND K.LEVEL=" . $levelId;
         }
 
-        if ($termId)
-        {
+        if ($termId) {
             $SQL .= " AND K.TERM=" . $termId;
         }
 
-        if ($class)
-        {
+        if ($class) {
             $SQL .= " AND K.ID=" . $class;
         }
 
-        if ($country_province)
-        {
+        if ($country_province) {
             $SQL .= " AND COUNTRY_PROVINCE=" . $country_province;
         }
 
-        if ($town_city)
-        {
+        if ($town_city) {
             $SQL .= " AND TOWN_CITY=" . $town_city;
         }
 
-        if ($attendance_type)
-        {
+        if ($attendance_type) {
             $SQL .= " AND ATTENDANCE_TYPE=" . $attendance_type;
-            if ($dateStart != "" && $dateEnd != "")
-            {
+            if ($dateStart != "" && $dateEnd != "") {
                 $SQL .= " AND ( (ATT.start_date between '" . $dateStart . "' AND '" . $dateEnd . "') or (ATT.end_date between '" . $dateStart . "' AND '" . $dateEnd . "') )";
             }
         }
 
-        if ($startDate && $endDate)
-        {
+        if ($startDate && $endDate) {
             $SQL .= " AND (DATE(A.CREATED_DATE) >= '" . $startDate . "' AND DATE(A.CREATED_DATE) <= '" . $endDate . "')";
         }
 
-        if ($PERSON_DES_IDS)
-        {
+        if ($PERSON_DES_IDS) {
             $SQL .= " AND PERSON_DES.ITEM IN (" . $PERSON_DES_IDS . ")";
         }
 
-        if ($groupby)
-        {
+        if ($groupby) {
             $SQL .= " GROUP BY " . $groupby . "";
-        }
-        else
-        {
+        } else {
             $SQL .= " GROUP BY A.ID";
         }
-        switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY)
-        {
+        switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
             default:
                 $SQL .= " ORDER BY A.STAFF_SCHOOL_ID DESC";
                 break;
@@ -636,8 +570,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function searchStaffs($params, $isJson = true)
-    {
+    public function searchStaffs($params, $isJson = true) {
 
         /**
          * Advanced Search Staff....
@@ -646,13 +579,10 @@ class StaffDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         //@veasna
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        if ($studentId)
-        {
+        if ($studentId) {
             $results = StudentAcademicDBAccess::getCurrentClassByStudentID($studentId);
-            if ($results)
-            {
-                foreach ($results as $values)
-                {
+            if ($results) {
+                foreach ($results as $values) {
                     $arr[] = $values->CLASS_ID;
                 }
                 $classId = implode(",", $arr);
@@ -668,8 +598,7 @@ class StaffDBAccess {
         $data = array();
 
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["ASSIGNED_SUBJECTS"] = $this->subjectsByTeacher($value->ID, true);
@@ -678,12 +607,9 @@ class StaffDBAccess {
                 $data[$i]["STAFF_SCHOOL_ID"] = setShowText($value->STAFF_SCHOOL_ID);
                 $data[$i]["CODE"] = $value->CODE;
                 $data[$i]["STATUS"] = $value->STATUS;
-                if (!SchoolDBAccess::displayPersonNameInGrid())
-                {
+                if (!SchoolDBAccess::displayPersonNameInGrid()) {
                     $data[$i]["FULL_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-                }
-                else
-                {
+                } else {
                     $data[$i]["FULL_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
                 }
                 $data[$i]["NAME"] = setShowText($value->NAME);
@@ -710,12 +636,9 @@ class StaffDBAccess {
                 $data[$i]["ETHNIC"] = $this->setEthnic($value->ETHNIC);
                 $data[$i]["NATIONALITY"] = $this->setNationality($value->NATIONALITY);
 
-                if (isset($value->ORGANIZATION_CHART))
-                {
+                if (isset($value->ORGANIZATION_CHART)) {
                     $data[$i]["ORGANIZATION_CHART"] = $this->setOrganization($value->ORGANIZATION_CHART);
-                }
-                else
-                {
+                } else {
                     $data[$i]["ORGANIZATION_CHART"] = "---";
                 }
 
@@ -745,37 +668,25 @@ class StaffDBAccess {
                 $data[$i]["DISABLED_BY"] = setShowText($value->DISABLED_BY);
                 //@soda
 
-                if (isset($value->CURRENT_NAME))
-                {
+                if (isset($value->CURRENT_NAME)) {
                     $data[$i]["CURRENT_CLASS"] = setShowText($value->CURRENT_NAME);
-                }
-                else
-                {
+                } else {
                     $data[$i]["CURRENT_CLASS"] = '---';
                 }
-                if (isset($value->GRADE_NAME))
-                {
+                if (isset($value->GRADE_NAME)) {
                     $data[$i]["GRADE"] = $value->GRADE_NAME;
-                }
-                else
-                {
+                } else {
                     $data[$i]["GRADE"] = '---';
                 }
-                if (isset($value->LEVEL_NAME_TRAINING))
-                {
+                if (isset($value->LEVEL_NAME_TRAINING)) {
                     $data[$i]["LEVEL_NAME"] = setShowText($value->LEVEL_NAME_TRAINING);
-                }
-                else
-                {
+                } else {
                     $data[$i]["LEVEL_NAME"] = '---';
                 }
 
-                if (isset($value->SCHOOL_YEAR_GENERAL))
-                {
+                if (isset($value->SCHOOL_YEAR_GENERAL)) {
                     $data[$i]["SCHOOL_YEAR"] = setShowText($value->SCHOOL_YEAR_GENERAL);
-                }
-                else
-                {
+                } else {
                     $data[$i]["SCHOOL_YEAR"] = '---';
                 }
                 //
@@ -783,8 +694,7 @@ class StaffDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -795,18 +705,14 @@ class StaffDBAccess {
             , "rows" => $a
         );
 
-        if ($isJson)
-        {
+        if ($isJson) {
             return $this->dataforjson;
-        }
-        else
-        {
+        } else {
             return $data;
         }
     }
 
-    public function updateStaff($params)
-    {
+    public function updateStaff($params) {
 
         $errors = array();
 
@@ -864,20 +770,17 @@ class StaffDBAccess {
         if (isset($params["TOWN_CITY"]))
             $SAVEDATA['TOWN_CITY'] = addText($params["TOWN_CITY"]);
 
-        if (isset($params["PHONE"]))
-        {
+        if (isset($params["PHONE"])) {
             $SAVEDATA['PHONE'] = addText($params["PHONE"]);
             $SAVEDATA['MOBIL_PHONE'] = addText($params["PHONE"]);
         }
 
-        if (isset($params["MOBIL_PHONE"]))
-        {
+        if (isset($params["MOBIL_PHONE"])) {
             $SAVEDATA['MOBIL_PHONE'] = addText($params["MOBIL_PHONE"]);
             $SAVEDATA['PHONE'] = addText($params["MOBIL_PHONE"]);
         }
 
-        if (isset($params["COUNTRY_PROVINCE"]))
-        {
+        if (isset($params["COUNTRY_PROVINCE"])) {
             $SAVEDATA['COUNTRY_PROVINCE'] = addText($params["COUNTRY_PROVINCE"]);
         }
 
@@ -899,8 +802,7 @@ class StaffDBAccess {
         if (isset($params["WORK_EXPERIENCE"]))
             $SAVEDATA['WORK_EXPERIENCE'] = addText($params["WORK_EXPERIENCE"]);
 
-        if (isset($params["FIRSTNAME"]) && isset($params["LASTNAME"]))
-        {
+        if (isset($params["FIRSTNAME"]) && isset($params["LASTNAME"])) {
             $SAVEDATA['NAME'] = addText($params["LASTNAME"]) . " " . addText($params["FIRSTNAME"]);
         }
 
@@ -920,11 +822,9 @@ class StaffDBAccess {
 
         $SAVEDATA['TS'] = time();
 
-        if (!$errors)
-        {
+        if (!$errors) {
 
-            if (isset($params["objectId"]))
-            {
+            if (isset($params["objectId"])) {
 
                 $USER_OBJECT = UserMemberDBAccess::findUserFromId($params["objectId"]);
 
@@ -949,8 +849,7 @@ class StaffDBAccess {
                 if (isset($params["TUTOR"]))
                     $USERDATA['ROLE'] = $params["TUTOR"];
 
-                if (isset($params["LASTNAME"]) && isset($params["FIRSTNAME"]))
-                {
+                if (isset($params["LASTNAME"]) && isset($params["FIRSTNAME"])) {
                     $USERDATA['NAME'] = addText($params["LASTNAME"]) . " " . addText($params["FIRSTNAME"]);
                 }
 
@@ -961,29 +860,21 @@ class StaffDBAccess {
                 $password_repeat = isset($params["PASSWORD_REPEAT"]) ? addText($params["PASSWORD_REPEAT"]) : "";
                 $USERDATA['UMCPANL'] = isset($params["UMCPANL"]) ? 1 : 0;
                 $USERDATA['UCNCP'] = isset($params["UCNCP"]) ? 1 : 0;
-                if ($password != "" && $password_repeat != "")
-                {
-                    if (strlen($password) < UserAuth::getMinPasswordLength())
-                    {
+                if ($password != "" && $password_repeat != "") {
+                    if (strlen($password) < UserAuth::getMinPasswordLength()) {
                         $errors['PASSWORD'] = PASSWORD_IS_TOO_SHORT;
-                    }
-                    else
-                    {
-                        if (UserAuth::isPasswordComplexityRequirements())
-                        {
-                            if (!preg_match("#[0-9]+#", $password))
-                            {
+                    } else {
+                        if (UserAuth::isPasswordComplexityRequirements()) {
+                            if (!preg_match("#[0-9]+#", $password)) {
                                 $errors['PASSWORD'] = PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_NUMBER;
                             }
 
-                            if (!preg_match("#[a-zA-Z]+#", $password))
-                            {
+                            if (!preg_match("#[a-zA-Z]+#", $password)) {
                                 $errors['PASSWORD'] = PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_LETTER;
                             }
                         }
                     }
-                    if ($password == $password_repeat)
-                    {
+                    if ($password == $password_repeat) {
                         $USERDATA['CHANGE_PASSWORD'] = 1;
                         $USERDATA['UMCPANL'] = 0;
                         $USERDATA['CHANGE_PASSWORD_DATE'] = time();
@@ -991,24 +882,19 @@ class StaffDBAccess {
                     }
                 }
                 ////////////////////////////////////////////////////////////////
-                if (isset($params["USER_ROLE"]))
-                {
+                if (isset($params["USER_ROLE"])) {
                     $USERDATA['ROLE'] = $params["USER_ROLE"];
                 }
 
                 $USERDATA['MODIFY_DATE'] = getCurrentDBDateTime();
                 $USERDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
 
-                if ($USER_OBJECT)
-                {
+                if ($USER_OBJECT) {
                     $objectId = $params["objectId"];
-                    if ($loginName != "")
-                    {
+                    if ($loginName != "") {
                         $loginObject = self::findLoginName($loginName);
-                        if ($loginObject)
-                        {
-                            if ($objectId != $loginObject->ID)
-                            {
+                        if ($loginObject) {
+                            if ($objectId != $loginObject->ID) {
                                 $errors['LOGINNAME'] = LOGINNAME_NOT_AVAILABLE;
                             }
                         }
@@ -1018,19 +904,16 @@ class StaffDBAccess {
                     $WHERE[] = "ID = '" . $objectId . "'";
                     if (!$errors)
                         self::dbAccess()->update('t_members', $USERDATA, $WHERE);
-                } else
-                {
+                } else {
 
                     if (isset($params["objectId"]))
                         $INSERT_USER['ID'] = $params["objectId"];
 
-                    if (isset($params["USER_ROLE"]))
-                    {
+                    if (isset($params["USER_ROLE"])) {
                         $INSERT_USER['ROLE'] = $params["USER_ROLE"];
                     }
 
-                    if (isset($params["FIRSTNAME"]) && isset($params["LASTNAME"]))
-                    {
+                    if (isset($params["FIRSTNAME"]) && isset($params["LASTNAME"])) {
                         $INSERT_USER['NAME'] = addText($params["LASTNAME"]) . " " . addText($params["FIRSTNAME"]);
                     }
 
@@ -1054,20 +937,16 @@ class StaffDBAccess {
             }
         }
 
-        if (sizeof($errors))
-        {
+        if (sizeof($errors)) {
             $o = array("success" => false, "errors" => $errors);
-        }
-        else
-        {
+        } else {
             $o = array("success" => true);
         }
 
         return $o;
     }
 
-    public function releaseObject($params)
-    {
+    public function releaseObject($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
@@ -1080,8 +959,7 @@ class StaffDBAccess {
         $SQL .= " t_staff";
         $SQL .= " SET";
 
-        switch ($status)
-        {
+        switch ($status) {
             case 0:
                 $newStatus = 1;
                 $USERDATA["STATUS"] = 1;
@@ -1112,8 +990,7 @@ class StaffDBAccess {
     /**
      * registrationRecord
      */
-    public function registrationRecord($params)
-    {
+    public function registrationRecord($params) {
 
         if (isset($params["firstname"]))
             $SAVEDATA['FIRSTNAME'] = addText($params["firstname"]);
@@ -1121,8 +998,7 @@ class StaffDBAccess {
         if (isset($params["lastname"]))
             $SAVEDATA['LASTNAME'] = addText($params["lastname"]);
 
-        if (isset($params["firstname"]) && isset($params["lastname"]))
-        {
+        if (isset($params["firstname"]) && isset($params["lastname"])) {
             $SAVEDATA['NAME'] = addText($params["firstname"]) . ", " . addText($params["lastname"]);
         }
 
@@ -1194,10 +1070,9 @@ class StaffDBAccess {
 
         if (isset($params["userRole"]))
             $SAVEDATA['TUTOR'] = $this->getTutorByRoleId($params["userRole"]);
-            
+
         $SAVEDATA['ID'] = $params["staffId"];
-        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
-        {
+        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
             $SAVEDATA['STATUS'] = 1;
         }
         $SAVEDATA['CODE'] = createCode();
@@ -1208,26 +1083,24 @@ class StaffDBAccess {
 
         $STAFF_OBJECT = self::findStaffFromId($params["staffId"]);
 
-        if (!$STAFF_OBJECT)
-        {
+        if (!$STAFF_OBJECT) {
 
             self::dbAccess()->insert('t_staff', $SAVEDATA);
-            
+
             ///////////////////////////////////////////////
             /// create staff contract 
             /// @veasna
             ///////////////////////////////////////////////
-            if (isset($params["CONTRACT_TYPE"])){
-                
-                $contract_params['NAME']= addText($params["NAME"]);
-                $contract_params['CONTRACT_TYPE']= $params["CONTRACT_TYPE"]; 
-                $contract_params['START_DATE']= $params["START_DATE"];
-                $contract_params['EXPIRED_DATE']= $params["EXPIRED_DATE"];
-                $contract_params['STAFF_ID']= $params["staffId"];
+            if (isset($params["CONTRACT_TYPE"])) {
+
+                $contract_params['NAME'] = addText($params["NAME"]);
+                $contract_params['CONTRACT_TYPE'] = $params["CONTRACT_TYPE"];
+                $contract_params['START_DATE'] = $params["START_DATE"];
+                $contract_params['EXPIRED_DATE'] = $params["EXPIRED_DATE"];
+                $contract_params['STAFF_ID'] = $params["staffId"];
                 $contract_params['CREATED_DATE'] = getCurrentDBDateTime();
                 $contract_params['CREATED_BY'] = Zend_Registry::get('USER')->ID;
-                self::dbAccess()->insert('t_staff_contract', $contract_params);  
-                   
+                self::dbAccess()->insert('t_staff_contract', $contract_params);
             }
 
             ///////////////////////////////////////////////////
@@ -1245,12 +1118,9 @@ class StaffDBAccess {
             $SAVEDATA_USER['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA_USER['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $password = '123'; //@Math Man
-            if (Zend_Registry::get('SCHOOL')->SET_DEFAULT_PASSWORD)
-            {
+            if (Zend_Registry::get('SCHOOL')->SET_DEFAULT_PASSWORD) {
                 $SAVEDATA_USER['PASSWORD'] = md5("123-D99A6718-9D2A-8538-8610-E048177BECD5");
-            }
-            else
-            { //@Math Man
+            } else { //@Math Man
                 $password = createpassword();
                 $SAVEDATA_USER['PASSWORD'] = md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5");
             }
@@ -1261,8 +1131,7 @@ class StaffDBAccess {
             // END
             ///////////////////////////////////////////////////
             //@Math Man
-            if (isset($params["email"]))
-            {
+            if (isset($params["email"])) {
                 $result = SchoolDBAccess::getSchool();
                 $sendTo = addText($params["email"]);
                 $recipientName = addText($params["lastname"]) . " " . addText($params["firstname"]);
@@ -1278,14 +1147,11 @@ class StaffDBAccess {
                 $content_email .= "\r\n" . $result->SIGNATURE_EMAIL . "\r\n";
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-                if ($result->SMS_DISPLAY)
-                {
+                if ($result->SMS_DISPLAY) {
                     $headers .= 'From:' . $result->SMS_DISPLAY . "\r\n" .
                             'Reply-To:' . $result->SMS_DISPLAY . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
-                }
-                else
-                {
+                } else {
                     $headers .= 'From: noreply@camemis.com' . "\r\n" .
                             'Reply-To: noreply@camemis.com' . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
@@ -1298,8 +1164,7 @@ class StaffDBAccess {
         return array("success" => true, "Id" => $params["staffId"]);
     }
 
-    public function allTeachersByGrade()
-    {
+    public function allTeachersByGrade() {
 
         $utiles = Utiles::getInstance();
         $gradeId = $utiles->getValueRegistry("GRADE_ID");
@@ -1319,21 +1184,17 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function academicHistoryTree($params)
-    {
+    public function academicHistoryTree($params) {
 
         $data = array();
 
         $teacherId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "0";
 
-        if (substr($params["node"], 8))
-        {
+        if (substr($params["node"], 8)) {
             $isClass = true;
             $node = str_replace('CAMEMIS_', '', $params["node"]);
-        }
-        else
-        {
+        } else {
             $isClass = false;
             $node = $params["node"];
         }
@@ -1341,8 +1202,7 @@ class StaffDBAccess {
         $schoolyearObject = AcademicDateDBAccess::findAcademicDateFromId($node);
         $classObject = AcademicDBAccess::findGradeFromId($node);
 
-        if (is_numeric($node) && $node == 0)
-        {
+        if (is_numeric($node) && $node == 0) {
 
             $FIRST_DATA = array();
 
@@ -1357,10 +1217,8 @@ class StaffDBAccess {
             //error_log($SQL);
             $result1 = self::dbAccess()->fetchAll($SQL1);
 
-            if ($result1)
-            {
-                foreach ($result1 as $value)
-                {
+            if ($result1) {
+                foreach ($result1 as $value) {
                     $FIRST_DATA[$value->SCHOOLYEAR_ID] = $value->SCHOOLYEAR_NAME;
                 }
             }
@@ -1378,26 +1236,19 @@ class StaffDBAccess {
             //error_log($SQL);
             $result2 = self::dbAccess()->fetchAll($SQL2);
 
-            if ($result2)
-            {
-                foreach ($result2 as $value)
-                {
+            if ($result2) {
+                foreach ($result2 as $value) {
                     $SECND_DATA[$value->SCHOOLYEAR_ID] = $value->SCHOOLYEAR_NAME;
                 }
             }
 
             $result = array_unique($FIRST_DATA + $SECND_DATA);
-        }
-        else
-        {
+        } else {
 
-            if ($schoolyearObject && !$classObject)
-            {
+            if ($schoolyearObject && !$classObject) {
 
                 $result = self::getClassesByTutor($teacherId, $node);
-            }
-            elseif (!$schoolyearObject && $classObject)
-            {
+            } elseif (!$schoolyearObject && $classObject) {
                 $SQL = "";
                 $SQL .= " 
 				SELECT A.ID AS TASK_ID
@@ -1428,13 +1279,10 @@ class StaffDBAccess {
             }
         }
 
-        if (is_numeric($node) && $node == 0)
-        {
+        if (is_numeric($node) && $node == 0) {
             $i = 0;
-            if ($result)
-            {
-                foreach ($result as $key => $value)
-                {
+            if ($result) {
+                foreach ($result as $key => $value) {
                     $data[$i]['leaf'] = false;
                     $data[$i]['iconCls'] = "icon-bricks";
                     $data[$i]['treeType'] = "SCHOOLYEAR";
@@ -1443,17 +1291,12 @@ class StaffDBAccess {
                     ++$i;
                 }
             }
-        }
-        else
-        {
+        } else {
 
-            if ($schoolyearObject && !$classObject)
-            {
+            if ($schoolyearObject && !$classObject) {
                 $i = 0;
-                if ($result)
-                {
-                    foreach ($result as $value)
-                    {
+                if ($result) {
+                    foreach ($result as $value) {
 
                         $data[$i]['id'] = "CAMEMIS_" . $value->ID;
                         $data[$i]['text'] = $value->NAME;
@@ -1466,14 +1309,10 @@ class StaffDBAccess {
                         ++$i;
                     }
                 }
-            }
-            elseif (!$schoolyearObject && $classObject)
-            {
-                if ($result)
-                {
+            } elseif (!$schoolyearObject && $classObject) {
+                if ($result) {
                     $i = 0;
-                    foreach ($result as $value)
-                    {
+                    foreach ($result as $value) {
                         //// chungveng
                         $gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
                                         false
@@ -1505,8 +1344,7 @@ class StaffDBAccess {
         return $data;
     }
 
-    public function findTaskFromId($Id)
-    {
+    public function findTaskFromId($Id) {
 
         $SQL = "";
         $SQL .= " SELECT A.GRADE AS GRADE_ID, A.SUBJECT AS SUBJECT_ID, A.ACADEMIC AS CLASS_ID";
@@ -1516,8 +1354,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected function checkStaffInSchedule($Id)
-    {
+    protected function checkStaffInSchedule($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array("C" => "COUNT(*)"));
@@ -1529,8 +1366,7 @@ class StaffDBAccess {
     ///////////////////////////////////////////////////////
     // Finde, ob diese Belegschaft bei Anwesenheitslist vorhandelt.
     ///////////////////////////////////////////////////////
-    protected function checkStaffInSubjectTeacherClass($Id)
-    {
+    protected function checkStaffInSubjectTeacherClass($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -1542,8 +1378,7 @@ class StaffDBAccess {
     ///////////////////////////////////////////////////////
     // Staff in Grade (Instructor)....
     ///////////////////////////////////////////////////////
-    public function gettStaffInGrade($Id, $schoolyearId)
-    {
+    public function gettStaffInGrade($Id, $schoolyearId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
@@ -1554,28 +1389,23 @@ class StaffDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected function checkStaffInGrade($Id, $schoolyearId)
-    {
+    protected function checkStaffInGrade($Id, $schoolyearId) {
 
         $facette = $this->gettStaffInGrade($Id, $schoolyearId);
         return $facette ? 1 : 0;
     }
 
-    public function jsonRemoveStaffFromSchool($params)
-    {
+    public function jsonRemoveStaffFromSchool($params) {
 
         $removeId = $params["removeId"];
 
         $check = $this->checkStaffAssignment($removeId);
         $in_use = false;
 
-        if ($check)
-        {
+        if ($check) {
             $removeStatus = false;
             $in_use = true;
-        }
-        else
-        {
+        } else {
             $removeStatus = true;
             self::dbAccess()->delete('t_staff', array("ID = '" . $removeId . "'"));
             self::dbAccess()->delete('t_members', array("ID = '" . $removeId . "'"));
@@ -1590,8 +1420,7 @@ class StaffDBAccess {
         );
     }
 
-    public function teachersByClassANDSubject($params, $isJson = true)
-    {
+    public function teachersByClassANDSubject($params, $isJson = true) {
 
         $data = array();
 
@@ -1617,8 +1446,7 @@ class StaffDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $data[$i]["ID"] = $value->TEACHER_ID;
                 $data[$i]["NAME"] = $value->TEACHER_NAME;
@@ -1636,29 +1464,22 @@ class StaffDBAccess {
             return $data[0];
     }
 
-    public function getSQLSubjectTeacherClass($subjectId, $teacherId, $classId, $gradeId, $term, $schoolyearId)
-    {
+    public function getSQLSubjectTeacherClass($subjectId, $teacherId, $classId, $gradeId, $term, $schoolyearId) {
 
         $SQL = "";
         $SQL .= " SELECT A.ID AS TEACHER_ID";
         $SQL .= " ,A.STAFF_SCHOOL_ID AS STAFF_SCHOOL_ID";
         $SQL .= " ,A.CODE AS TEACHER_CODE";
         $SQL .= " ,A.ID AS ID_TEACHER";
-        if (!SchoolDBAccess::displayPersonNameInGrid())
-        {
+        if (!SchoolDBAccess::displayPersonNameInGrid()) {
             $SQL .= " ,CONCAT(A.LASTNAME,' ',A.FIRSTNAME) AS TEACHER_NAME";
-        }
-        else
-        {
+        } else {
             $SQL .= " ,CONCAT(A.FIRSTNAME,' ',A.LASTNAME) AS TEACHER_NAME";
         }
 
-        if (!SchoolDBAccess::displayPersonNameInGrid())
-        {
+        if (!SchoolDBAccess::displayPersonNameInGrid()) {
             $SQL .= " ,CONCAT(A.LASTNAME,' ',A.FIRSTNAME) AS FULL_NAME"; //@soda
-        }
-        else
-        {
+        } else {
             $SQL .= " ,CONCAT(A.FIRSTNAME,' ',A.LASTNAME) AS FULL_NAME"; //@soda
         }
         $SQL .= " ,A.LASTNAME AS LASTNAME";
@@ -1678,8 +1499,7 @@ class StaffDBAccess {
         $SQL .= " LEFT JOIN t_subject AS C ON C.ID=B.SUBJECT_ID";
         $SQL .= " WHERE 1=1";
 
-        if ($term != "ALL")
-        {
+        if ($term != "ALL") {
             $SQL .= " AND B.TERM= '" . $term . "'";
         }
 
@@ -1698,8 +1518,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    protected function checkTeacherANADSubject($teacherId, $schoolyearId)
-    {
+    protected function checkTeacherANADSubject($teacherId, $schoolyearId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -1709,8 +1528,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonAssignedTeachersByClass($params, $isJson = true)
-    {
+    public function jsonAssignedTeachersByClass($params, $isJson = true) {
 
         $data = array();
         $term = isset($params["gradingterm"]) ? addText($params["gradingterm"]) : "";
@@ -1720,11 +1538,9 @@ class StaffDBAccess {
         $classIds = isset($params["classIds"]) ? addText($params["classIds"]) : "";
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-        if ($academicObject)
-        {
+        if ($academicObject) {
 
-            switch ($academicObject->OBJECT_TYPE)
-            {
+            switch ($academicObject->OBJECT_TYPE) {
                 case "GRADE":
                     $gradeId = $academicObject->ID;
                     $classId = "";
@@ -1743,9 +1559,7 @@ class StaffDBAccess {
                     , $term
                     , $schoolyearId
             );
-        }
-        elseif ($classIds)
-        {
+        } elseif ($classIds) {
             $result = $this->getSQLSubjectTeacherClass(
                     $subjectId
                     , false
@@ -1758,10 +1572,8 @@ class StaffDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
-                if ($value->TEACHER_ID == UserAuth::userId())
-                {  //@veasna
+            foreach ($result as $value) {
+                if ($value->TEACHER_ID == UserAuth::userId()) {  //@veasna
                     continue;
                 } ///
 
@@ -1772,8 +1584,7 @@ class StaffDBAccess {
                         , $term
                 );
 
-                if ($value->TEACHER_ID && $value->SUBJECT_NAME)
-                {
+                if ($value->TEACHER_ID && $value->SUBJECT_NAME) {
                     $data[$i]["ID"] = $value->TEACHER_ID;
                     $data[$i]["SUBJECT_ID"] = $value->SUBJECT_ID;
                     $data[$i]["SUBJECT_NAME"] = $value->SUBJECT_NAME;
@@ -1782,7 +1593,7 @@ class StaffDBAccess {
                     $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
                     $data[$i]["LASTNAME"] = $value->LASTNAME;
                     $data[$i]["TEACHER_NAME"] = $value->TEACHER_NAME . " (" . $value->TEACHER_CODE . ")";
-                    
+
                     $data[$i]["FULL_NAME"] = $value->FULL_NAME;
                     $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
                     $data[$i]["LASTNAME_LATIN"] = $value->LASTNAME_LATIN;
@@ -1790,8 +1601,7 @@ class StaffDBAccess {
                     $data[$i]["DATE_BIRTH"] = $value->DATE_BIRTH;
                     $data[$i]["SUBJECT"] = $value->SUBJECT_NAME . " (" . $COUNT_SUBJECT . ")";
 
-                    switch ($term)
-                    {
+                    switch ($term) {
                         case "ALL":
                             $data[$i]["TERM"] = "---";
                             break;
@@ -1818,8 +1628,7 @@ class StaffDBAccess {
             return $data;
     }
 
-    public function gradingtermByTeacher($Id, $classId, $subjectId, $gradingterm)
-    {
+    public function gradingtermByTeacher($Id, $classId, $subjectId, $gradingterm) {
 
         $SQL = "SELECT GRADINGTERM";
         $SQL .= " FROM t_schedule";
@@ -1835,16 +1644,14 @@ class StaffDBAccess {
         return $result ? displaySchoolTerm($result->GRADINGTERM) : "---";
     }
 
-    public function lessonCountByTeacher($Id, $classId, $subjectId, $gradingterm)
-    {
+    public function lessonCountByTeacher($Id, $classId, $subjectId, $gradingterm) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
         $SQL->where("TEACHER_ID = '" . $Id . "'");
         $SQL->where("ACADEMIC_ID = '" . $classId . "'");
         $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
-        if ($gradingterm != "ALL")
-        {
+        if ($gradingterm != "ALL") {
             $SQL->where("TERM = '" . $gradingterm . "'");
         }
         //error_log($SQL->__toString());
@@ -1852,8 +1659,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function getSubstittue($teacherId, $classId, $subjectId, $term)
-    {
+    public function getSubstittue($teacherId, $classId, $subjectId, $term) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("*"));
@@ -1865,8 +1671,7 @@ class StaffDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
 
         $show = "";
-        if (isset($result->SUBSTITUTE_ID))
-        {
+        if (isset($result->SUBSTITUTE_ID)) {
 
             $show = $result->SUBSTITUTE_NAME . " (" . $result->SUBSTITUTE_CODE . ")";
             $show .= "<br>" . getShowDate($result->SUBSTITUTE_START) . " - " . getShowDate($result->SUBSTITUTE_END);
@@ -1875,8 +1680,7 @@ class StaffDBAccess {
         return $show;
     }
 
-    public function totalLessonCountByTeacher($Id, $schoolyearId, $term = false)
-    {
+    public function totalLessonCountByTeacher($Id, $schoolyearId, $term = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
@@ -1888,8 +1692,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function subjectsByTeacher($Id, $subjectName = false)
-    {
+    public function subjectsByTeacher($Id, $subjectName = false) {
 
         $SQL = "SELECT A.SUBJECT AS SUBJECT, B.NAME AS SUBJECT_NAME";
         $SQL .= " FROM t_teacher_subject AS A";
@@ -1903,24 +1706,19 @@ class StaffDBAccess {
         $withID = array();
         $withSUBJECT_NAME = array();
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $withID[$value->SUBJECT] = $value->SUBJECT;
                 $withSUBJECT_NAME[$value->SUBJECT] = $value->SUBJECT_NAME;
             }
-        if ($subjectName)
-        {
+        if ($subjectName) {
             return implode("<br>", $withSUBJECT_NAME);
-        }
-        else
-        {
+        } else {
             return implode(",", $withID);
         }
     }
 
-    public static function checkSubjectByTeacher($teacherId, $subjectId)
-    {
+    public static function checkSubjectByTeacher($teacherId, $subjectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_subject", array("C" => "COUNT(*)"));
@@ -1930,8 +1728,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function addTeacherSubject($teacherId, $subjectId)
-    {
+    protected function addTeacherSubject($teacherId, $subjectId) {
 
         $SQL = "
 		INSERT INTO t_teacher_subject
@@ -1942,14 +1739,12 @@ class StaffDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    protected function removeSubjectFromTeacher($teacherId)
-    {
+    protected function removeSubjectFromTeacher($teacherId) {
 
         self::dbAccess()->delete('t_teacher_subject', array("TEACHER = '" . $teacherId . "'"));
     }
 
-    protected function subjectsTeaching($teacherId)
-    {
+    protected function subjectsTeaching($teacherId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("*"));
@@ -1957,78 +1752,58 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    protected function checkStaffSchoolId($staffId, $staff_school_id)
-    {
+    protected function checkStaffSchoolId($staffId, $staff_school_id) {
 
         $STAFF_OBJECT = self::findStaffFromId($staffId);
 
-        if ($STAFF_OBJECT)
-        {
-            if ($STAFF_OBJECT->STAFF_SCHOOL_ID == $staff_school_id)
-            {
+        if ($STAFF_OBJECT) {
+            if ($STAFF_OBJECT->STAFF_SCHOOL_ID == $staff_school_id) {
                 return false;
-            }
-            else
-            {
+            } else {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_staff", array("C" => "COUNT(*)"));
                 $SQL->where("STAFF_SCHOOL_ID = '" . $staff_school_id . "'");
                 $result = self::dbAccess()->fetchRow($SQL);
-                if ($result)
-                {
-                    if ($result->C)
-                    {
+                if ($result) {
+                    if ($result->C) {
                         return true;
                     }
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
-        }
-        else
-        {
+        } else {
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_staff", array("C" => "COUNT(*)"));
             $SQL->where("STAFF_SCHOOL_ID = '" . $staff_school_id . "'");
             $result = self::dbAccess()->fetchRow($SQL);
 
-            if ($result)
-            {
-                if ($result->C)
-                {
+            if ($result) {
+                if ($result->C) {
                     return true;
                 }
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     }
 
-    public function checkStaffAssignment($Id)
-    {
+    public function checkStaffAssignment($Id) {
 
         $check1 = $this->checkStaffInSubjectTeacherClass($Id);
         $check2 = $this->checkStaffInSchedule($Id);
         $check3 = $this->checkStaffInGrade($Id, false);
 
-        if ($check1 || $check2 || $check3)
-        {
+        if ($check1 || $check2 || $check3) {
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    protected static function checkTeacherInClass($teacherId, $classId)
-    {
+    protected static function checkTeacherInClass($teacherId, $classId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -2042,8 +1817,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkTeacherBySubjectSchoolyear($teacherId, $subjectId, $schoolyearId)
-    {
+    protected function checkTeacherBySubjectSchoolyear($teacherId, $subjectId, $schoolyearId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -2058,35 +1832,29 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonCheckStaffSchoolID($params)
-    {
+    public function jsonCheckStaffSchoolID($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $staffSchoolId = isset($params["staffSchoolId"]) ? $params["staffSchoolId"] : 0;
+        $staffSchoolId = isset($params["staffSchoolId"]) ? addText($params["staffSchoolId"]) : 0;
 
         $check = $this->checkStaffSchoolId($objectId, $staffSchoolId);
 
-        if ($check)
-        {
+        if ($check) {
             $o = array("success" => false, "status" => false, "errors" => setICONV(SCHOOL_ID_EXISTS));
-        }
-        else
-        {
+        } else {
             $o = array("success" => true, "status" => true);
         }
 
         return $o;
     }
 
-    public static function findCampusByStaff($staffId, $Id, $type)
-    {
+    public static function findCampusByStaff($staffId, $Id, $type) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_campus", array("C" => "COUNT(*)"));
         $SQL->where("STAFF = '" . $staffId . "'");
 
-        switch ($type)
-        {
+        switch ($type) {
             case "CAMPUS":
                 $SQL->where("CAMPUS = '" . $Id . "'");
                 break;
@@ -2100,8 +1868,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonStaffCampus($params)
-    {
+    public function jsonStaffCampus($params) {
 
         $data = array();
 
@@ -2116,8 +1883,7 @@ class StaffDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["CAMPUS"] = getEducationType($value->EDUCATION_TYPE);
                 $data[$i]["ASSIGNED"] = self::findCampusByStaff($staffId, $value->ID, "CAMPUS");
@@ -2125,8 +1891,7 @@ class StaffDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -2138,8 +1903,7 @@ class StaffDBAccess {
         );
     }
 
-    public function actionsStaffCampus($params)
-    {
+    public function actionsStaffCampus($params) {
 
         $CAMPUS_DATA = array();
 
@@ -2151,8 +1915,7 @@ class StaffDBAccess {
         $campusId = "";
         $programId = "";
 
-        switch (strtoupper($target))
-        {
+        switch (strtoupper($target)) {
             case "CAMPUS":
                 $check = self::findCampusByStaff($staffId, $Id, "CAMPUS");
                 $campusId = $Id;
@@ -2163,10 +1926,8 @@ class StaffDBAccess {
                 break;
         }
 
-        if ($params["newValue"] == 1)
-        {
-            if (!$check)
-            {
+        if ($params["newValue"] == 1) {
+            if (!$check) {
                 $CAMPUS_DATA['STAFF'] = $staffId;
                 if ($campusId)
                     $CAMPUS_DATA['CAMPUS'] = $campusId;
@@ -2175,10 +1936,8 @@ class StaffDBAccess {
                 $this->insert(Zend_Registry::get('T_STAFF_CAMPUS'), $CAMPUS_DATA);
             }
         }
-        if ($params["newValue"] == 0)
-        {
-            switch (strtoupper($target))
-            {
+        if ($params["newValue"] == 0) {
+            switch (strtoupper($target)) {
                 case "CAMPUS":
                     $condi = array("STAFF = '" . $staffId . "'", "CAMPUS = '" . $Id . "'");
                     break;
@@ -2193,26 +1952,21 @@ class StaffDBAccess {
         return array("success" => true);
     }
 
-    public function getTutorByRoleId($Id)
-    {
+    public function getTutorByRoleId($Id) {
         $SQL = "SELECT TUTOR";
         $SQL .= " FROM t_memberrole";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND ID = '" . $Id . "'";
         //echo $SQL;
         $result = self::dbAccess()->fetchRow($SQL);
-        if ($result)
-        {
+        if ($result) {
             return $result->TUTOR;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public function getUserRoleByStaffId($Id)
-    {
+    public function getUserRoleByStaffId($Id) {
 
         $SQL = "SELECT B.ID AS ID";
         $SQL .= " FROM t_members AS A";
@@ -2224,8 +1978,7 @@ class StaffDBAccess {
         return $result ? $result->ID : '---';
     }
 
-    public function treeAllTutors($params)
-    {
+    public function treeAllTutors($params) {
 
         if (isset($params["campusId"]))
             $_params["campusId"] = $params["campusId"];
@@ -2238,11 +1991,9 @@ class StaffDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
-                if ($value->CODE)
-                {
+                if ($value->CODE) {
 
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = $value->CODE . " " . setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
@@ -2256,8 +2007,7 @@ class StaffDBAccess {
         return $data;
     }
 
-    public function jsonAllInstructors($params)
-    {
+    public function jsonAllInstructors($params) {
 
         $data = array();
 
@@ -2284,23 +2034,19 @@ class StaffDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $INSTRUCTOR_CLASS = $this->gettStaffInGrade($value->TEACHER_ID, $facette->SCHOOL_YEAR);
 
                 $data[$i]["ID"] = $value->TEACHER_ID;
                 $data[$i]["CODE"] = $value->CODE;
 
-                if ($INSTRUCTOR_CLASS)
-                {
+                if ($INSTRUCTOR_CLASS) {
                     $data[$i]["IS_INCLASS"] = 0;
                     $data[$i]["STATUS_ICON"] = iconTeacherInClass(0);
                     $data[$i]["INSTRUCTOR"] = $INSTRUCTOR_CLASS->NAME;
                     $data[$i]["EDUCATION_TYPE"] = getEducationType($INSTRUCTOR_CLASS->EDUCATION_TYPE);
-                }
-                else
-                {
+                } else {
                     $data[$i]["IS_INCLASS"] = 1;
                     $data[$i]["STATUS_ICON"] = iconTeacherInClass(1);
                     $data[$i]["INSTRUCTOR"] = "---";
@@ -2313,8 +2059,7 @@ class StaffDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -2326,35 +2071,30 @@ class StaffDBAccess {
         );
     }
 
-    public function setOrganization($organizationId)
-    {
+    public function setOrganization($organizationId) {
         $facette = CamemisTypeDBAccess::findObjectFromId($organizationId);
         return $facette ? $facette->NAME : "---";
     }
 
-    public function setReligion($religionId)
-    {
+    public function setReligion($religionId) {
 
         $facette = CamemisTypeDBAccess::findObjectFromId($religionId);
         return $facette ? $facette->NAME : "---";
     }
 
-    public function setEthnic($ethnicId)
-    {
+    public function setEthnic($ethnicId) {
 
         $facette = CamemisTypeDBAccess::findObjectFromId($ethnicId);
         return $facette ? $facette->NAME : "---";
     }
 
-    public function setNationality($nationalityId)
-    {
+    public function setNationality($nationalityId) {
 
         $facette = CamemisTypeDBAccess::findObjectFromId($nationalityId);
         return $facette ? $facette->NAME : "---";
     }
 
-    public function jsonActionTeacherChange($params)
-    {
+    public function jsonActionTeacherChange($params) {
 
         $SAVEDATA_A = array();
         $WHERE_A = array();
@@ -2379,8 +2119,7 @@ class StaffDBAccess {
         return array("success" => true);
     }
 
-    public function checkTeacherInTeaching()
-    {
+    public function checkTeacherInTeaching() {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -2389,8 +2128,7 @@ class StaffDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function comboAllTutor()
-    {
+    public function comboAllTutor() {
 
         $SQL = "";
         $SQL .= " SELECT A.ID, CONCAT('(',A.CODE,') ',A.LASTNAME, ' ', A.FIRSTNAME) AS NAME";
@@ -2405,16 +2143,14 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function setMappingCode_LoginName($Id, $code)
-    {
+    public function setMappingCode_LoginName($Id, $code) {
         $SAVEDATA = array();
         $SAVEDATA['LOGINNAME'] = $code;
         $WHERE = self::dbAccess()->quoteInto("ID = ?", $Id);
         self::dbAccess()->update('t_members', $SAVEDATA, $WHERE);
     }
 
-    public function findClassInstructorByTeacherId($Id)
-    {
+    public function findClassInstructorByTeacherId($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade');
@@ -2423,8 +2159,7 @@ class StaffDBAccess {
         return $stmt->fetch();
     }
 
-    public static function findTeacherInEducationTypes($Id)
-    {
+    public static function findTeacherInEducationTypes($Id) {
 
         $SQL = "";
         $SQL .= " SELECT A.EDUCATION_TYPE AS EDUCATION_TYPE";
@@ -2437,10 +2172,8 @@ class StaffDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
                 $data[$value->EDUCATION_TYPE] = $value->EDUCATION_TYPE;
             }
         }
@@ -2450,18 +2183,15 @@ class StaffDBAccess {
     ///////////////////////////////////////////////////////
     //Begin of Skill....
     ///////////////////////////////////////////////////////
-    public static function actionStaffSkill($params)
-    {
+    public static function actionStaffSkill($params) {
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
 
         $SAVEDATA = array();
-        if ($objectId)
-        {
-            switch ($field)
-            {
+        if ($objectId) {
+            switch ($field) {
                 case "DELETE":
                     self::dbAccess()->delete("t_staff_skill", "ID='" . $objectId . "'");
                     break;
@@ -2471,9 +2201,7 @@ class StaffDBAccess {
                     self::dbAccess()->update("t_staff_skill", $SAVEDATA, $WHERE);
                     break;
             }
-        }
-        else
-        {
+        } else {
             $SAVEDATA["" . $field . ""] = $newValue;
             $SAVEDATA["STAFF_ID"] = $staffId;
             self::dbAccess()->insert('t_staff_skill', $SAVEDATA);
@@ -2485,8 +2213,7 @@ class StaffDBAccess {
 
         $facette = self::dbAccess()->fetchRow("SELECT * FROM t_staff_skill WHERE ID='" . $objectId . "'");
 
-        switch ($field)
-        {
+        switch ($field) {
             case "DELETE":
                 $SUCCESS_DATA["DELETE"] = true;
                 break;
@@ -2501,8 +2228,7 @@ class StaffDBAccess {
         return $SUCCESS_DATA;
     }
 
-    public static function jsonStaffSkill($params)
-    {
+    public static function jsonStaffSkill($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -2513,11 +2239,9 @@ class StaffDBAccess {
 
         $i = 0;
         $data = array();
-        if ($result)
-        {
+        if ($result) {
 
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = setShowText($value->NAME);
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
@@ -2538,18 +2262,15 @@ class StaffDBAccess {
     ///////////////////////////////////////////////////////
     //Experience....
     ///////////////////////////////////////////////////////
-    public static function actionStaffExperience($params)
-    {
+    public static function actionStaffExperience($params) {
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
 
         $SAVEDATA = array();
-        if ($objectId)
-        {
-            switch ($field)
-            {
+        if ($objectId) {
+            switch ($field) {
                 case "DELETE":
                     self::dbAccess()->delete("t_staff_experience", "ID='" . $objectId . "'");
                     break;
@@ -2559,9 +2280,7 @@ class StaffDBAccess {
                     self::dbAccess()->update("t_staff_experience", $SAVEDATA, $WHERE);
                     break;
             }
-        }
-        else
-        {
+        } else {
             $SAVEDATA["" . $field . ""] = $newValue;
             $SAVEDATA["STAFF_ID"] = $staffId;
             self::dbAccess()->insert('t_staff_experience', $SAVEDATA);
@@ -2573,8 +2292,7 @@ class StaffDBAccess {
 
         $facette = self::dbAccess()->fetchRow("SELECT * FROM t_staff_experience WHERE ID='" . $objectId . "'");
 
-        switch ($field)
-        {
+        switch ($field) {
             case "DELETE":
                 $SUCCESS_DATA["DELETE"] = true;
                 break;
@@ -2590,8 +2308,7 @@ class StaffDBAccess {
         return $SUCCESS_DATA;
     }
 
-    public static function jsonStaffExperience($params)
-    {
+    public static function jsonStaffExperience($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -2602,11 +2319,9 @@ class StaffDBAccess {
 
         $i = 0;
         $data = array();
-        if ($result)
-        {
+        if ($result) {
 
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = setShowText($value->NAME);
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
@@ -2627,18 +2342,15 @@ class StaffDBAccess {
     ///////////////////////////////////////////////////////
     //Begin of Staff Qualification...
     ///////////////////////////////////////////////////////
-    public static function actionStaffQualification($params)
-    {
+    public static function actionStaffQualification($params) {
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
 
         $SAVEDATA = array();
-        if ($objectId)
-        {
-            switch ($field)
-            {
+        if ($objectId) {
+            switch ($field) {
                 case "DELETE":
                     self::dbAccess()->delete("t_staff_qualification", "ID='" . $objectId . "'");
                     break;
@@ -2648,9 +2360,7 @@ class StaffDBAccess {
                     self::dbAccess()->update("t_staff_qualification", $SAVEDATA, $WHERE);
                     break;
             }
-        }
-        else
-        {
+        } else {
             $SAVEDATA["" . $field . ""] = $newValue;
             $SAVEDATA["STAFF_ID"] = $staffId;
             self::dbAccess()->insert('t_staff_qualification', $SAVEDATA);
@@ -2662,8 +2372,7 @@ class StaffDBAccess {
 
         $facette = self::dbAccess()->fetchRow("SELECT * FROM t_staff_qualification WHERE ID='" . $objectId . "'");
 
-        switch ($field)
-        {
+        switch ($field) {
             case "DELETE":
                 $SUCCESS_DATA["DELETE"] = true;
                 break;
@@ -2678,8 +2387,7 @@ class StaffDBAccess {
         return $SUCCESS_DATA;
     }
 
-    public static function jsonStaffQualification($params)
-    {
+    public static function jsonStaffQualification($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -2690,11 +2398,9 @@ class StaffDBAccess {
 
         $i = 0;
         $data = array();
-        if ($result)
-        {
+        if ($result) {
 
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = setShowText($value->NAME);
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
@@ -2712,8 +2418,7 @@ class StaffDBAccess {
     }
 
     //End of Staff Qualification...
-    public static function actionStaffDescription($params)
-    {
+    public static function actionStaffDescription($params) {
 
         $SAVEDATA = array();
 
@@ -2728,21 +2433,17 @@ class StaffDBAccess {
 
         self::dbAccess()->delete('t_person_description_item', array("PERSON_ID='" . $objectId . "'"));
 
-        if ($result && $objectId)
-        {
-            foreach ($result as $value)
-            {
+        if ($result && $objectId) {
+            foreach ($result as $value) {
 
                 $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
                 $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? addText($params["RADIOBOX_" . $value->PARENT . ""]) : "";
                 $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? addText($params["INPUTFIELD_" . $value->ID . ""]) : "";
                 $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? addText($params["TEXTAREA_" . $value->ID . ""]) : "";
 
-                switch ($value->CHOOSE_TYPE)
-                {
+                switch ($value->CHOOSE_TYPE) {
                     case 1:
-                        if ($CHECKBOX == "on")
-                        {
+                        if ($CHECKBOX == "on") {
                             $SAVEDATA['ITEM'] = $value->ID;
                             $SAVEDATA['PERSON_ID'] = $objectId;
                             if (!self::checkUseDescriptionItem($objectId, $value->ID))
@@ -2750,8 +2451,7 @@ class StaffDBAccess {
                         }
                         break;
                     case 2:
-                        if ($RADIOBOX)
-                        {
+                        if ($RADIOBOX) {
                             $SAVEDATA['ITEM'] = $RADIOBOX;
                             $SAVEDATA['PERSON_ID'] = $objectId;
                             if (!self::checkUseDescriptionItem($objectId, $RADIOBOX))
@@ -2759,8 +2459,7 @@ class StaffDBAccess {
                         }
                         break;
                     case 3:
-                        if ($INPUTFIELD)
-                        {
+                        if ($INPUTFIELD) {
                             $SAVEDATA['ITEM'] = $value->ID;
                             $SAVEDATA['PERSON_ID'] = $objectId;
                             $SAVEDATA['DESCRIPTION'] = $INPUTFIELD;
@@ -2768,8 +2467,7 @@ class StaffDBAccess {
                         }
                         break;
                     case 4:
-                        if ($TEXTAREA)
-                        {
+                        if ($TEXTAREA) {
                             $SAVEDATA['ITEM'] = $value->ID;
                             $SAVEDATA['PERSON_ID'] = $objectId;
                             $SAVEDATA['DESCRIPTION'] = $TEXTAREA;
@@ -2784,14 +2482,12 @@ class StaffDBAccess {
         );
     }
 
-    public function loadStaffDescripton($Id)
-    {
+    public function loadStaffDescripton($Id) {
 
         $facette = self::findStaffFromId($Id);
         $data = array();
 
-        if ($facette)
-        {
+        if ($facette) {
 
             $SQL = self::dbAccess()->select();
             $SQL->from(array('A' => 't_person_description_item'), array('ITEM', 'DESCRIPTION'));
@@ -2801,10 +2497,8 @@ class StaffDBAccess {
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
 
-            foreach ($result as $value)
-            {
-                switch ($value->CHOOSE_TYPE)
-                {
+            foreach ($result as $value) {
+                switch ($value->CHOOSE_TYPE) {
                     case 1:
                         $data["CHECKBOX_" . $value->ITEM] = true;
                         break;
@@ -2827,8 +2521,7 @@ class StaffDBAccess {
         );
     }
 
-    public static function jsonStaffTrainingPrograms($Id)
-    {
+    public static function jsonStaffTrainingPrograms($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
@@ -2836,11 +2529,9 @@ class StaffDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["PROGRAM"] = setShowText($value->NAME);
                 $data[$i]["ASSIGNED"] = self::findCampusByStaff($Id, $value->ID, "PROGRAM");
@@ -2855,19 +2546,16 @@ class StaffDBAccess {
         );
     }
 
-    public static function actionStaffProfil($params)
-    {
+    public static function actionStaffProfil($params) {
 
         $SQL = "";
         $SQL .= "UPDATE ";
         $SQL .= " t_staff";
         $SQL .= " SET";
-        switch ($params["field"])
-        {
+        switch ($params["field"]) {
             case "DATE_BIRTH":
                 $date = str_replace("/", ".", $params["newValue"]);
-                if ($date)
-                {
+                if ($date) {
                     $explode = explode(".", $date);
                     $d = isset($explode[0]) ? trim($explode[0]) : "00";
                     $m = isset($explode[1]) ? trim($explode[1]) : "00";
@@ -2888,8 +2576,7 @@ class StaffDBAccess {
         return array("success" => true);
     }
 
-    public static function getClassesByTutor($teacherId, $schoolyearId)
-    {
+    public static function getClassesByTutor($teacherId, $schoolyearId) {
 
         $FIRST_DATA = array();
 
@@ -2909,10 +2596,8 @@ class StaffDBAccess {
         //error_log($SQL1);
         $result1 = self::dbAccess()->fetchAll($SQL1);
 
-        if ($result1)
-        {
-            foreach ($result1 as $value)
-            {
+        if ($result1) {
+            foreach ($result1 as $value) {
                 $FIRST_DATA[$value->CLASS_ID] = $value->CLASS_ID;
             }
         }
@@ -2933,10 +2618,8 @@ class StaffDBAccess {
         $SQL2 .= " GROUP BY A.CLASS ORDER BY B.SORTKEY ASC";
         $result2 = self::dbAccess()->fetchAll($SQL2);
 
-        if ($result2)
-        {
-            foreach ($result2 as $value)
-            {
+        if ($result2) {
+            foreach ($result2 as $value) {
                 $SECOND_DATA[$value->CLASS_ID] = $value->CLASS_ID;
             }
         }
@@ -2954,8 +2637,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getClassTeachingSession($teacherId, $schoolyearId)
-    {
+    public static function getClassTeachingSession($teacherId, $schoolyearId) {
 
         $SQL = "";
         $SQL .= "SELECT C.ID AS CLASS_ID,C.NAME AS CLASS_NAME";
@@ -2971,8 +2653,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getSubjectTeacherClass($teacherId)
-    {
+    public static function getSubjectTeacherClass($teacherId) {
 
         $SQL = "";
         $SQL .= "SELECT";
@@ -2986,16 +2667,14 @@ class StaffDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function findLoginName($loginname)
-    {
+    protected static function findLoginName($loginname) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_members", array('*'));
         $SQL->where("LOGINNAME='" . $loginname . "'");
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function checkUseDescriptionItem($Id, $item)
-    {
+    protected static function checkUseDescriptionItem($Id, $item) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_person_description_item", array("C" => "COUNT(*)"));
         $SQL->where("PERSON_ID='" . $Id . "'");
@@ -3005,8 +2684,7 @@ class StaffDBAccess {
     }
 
     //@Math Man 24.12.2013
-    public static function findStaffLoginNameOrEmail($loginNameOrEmail)
-    {
+    public static function findStaffLoginNameOrEmail($loginNameOrEmail) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_members", array("*"));
         $SQL->where("LOGINNAME='" . $loginNameOrEmail . "'");
@@ -3016,8 +2694,7 @@ class StaffDBAccess {
         return $result;
     }
 
-    public static function resetNewPassword($params)
-    {
+    public static function resetNewPassword($params) {
         $DATA['PASSWORD'] = addText($params['PASSWORD']);
         $WHERE[] = "LOGINNAME = '" . addText($params['LOGINNAME']) . "'";
         self::dbAccess()->update('t_members', $DATA, $WHERE);
@@ -3025,8 +2702,7 @@ class StaffDBAccess {
 
     ///////////////////
     //SEAPENG 28.02.2014
-    public static function treeAllStaffs($params)
-    {
+    public static function treeAllStaffs($params) {
 
         $parent = $params["node"];
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
@@ -3035,20 +2711,17 @@ class StaffDBAccess {
 
         $data = array();
 
-        if ($parent == 0)
-        {
+        if ($parent == 0) {
 
             $i = 0;
             if ($result)
-                foreach ($result as $i => $value)
-                {
+                foreach ($result as $i => $value) {
 
                     $data[$i]['id'] = $value->ID;
                     $data[$i]['cls'] = "nodeTextBoldBlue";
                     $data[$i]['text'] = stripslashes($value->NAME);
 
-                    switch ($value->ID)
-                    {
+                    switch ($value->ID) {
                         case 1:
                         case 2:
                         case 3:
@@ -3068,8 +2741,7 @@ class StaffDBAccess {
         return $data;
     }
 
-    public static function getAllStaffsQuery()
-    {
+    public static function getAllStaffsQuery() {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('t_memberrole'));
@@ -3077,8 +2749,7 @@ class StaffDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function checkFileStaff($objectId, $Id)
-    {
+    public static function checkFileStaff($objectId, $Id) {
 
         $userRoleObject = UserRoleDBAccess::findUserRoleFromId($Id);
 
@@ -3089,20 +2760,16 @@ class StaffDBAccess {
 
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if ($result)
-        {
+        if ($result) {
             return $result->C ? true : false;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     //PERSON INFOS
     ////////////////////////////////////////////////////////////////////////////
-    public static function actionPersonInfos($params)
-    {
+    public static function actionPersonInfos($params) {
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
@@ -3111,10 +2778,8 @@ class StaffDBAccess {
         $object = isset($params["object"]) ? addText($params["object"]) : "";
 
         $SAVEDATA = array();
-        if ($objectId)
-        {
-            switch ($field)
-            {
+        if ($objectId) {
+            switch ($field) {
                 case "DELETE":
                     self::dbAccess()->delete("t_person_infos", "ID='" . $objectId . "'");
                     break;
@@ -3124,9 +2789,7 @@ class StaffDBAccess {
                     self::dbAccess()->update("t_person_infos", $SAVEDATA, $WHERE);
                     break;
             }
-        }
-        else
-        {
+        } else {
             $SAVEDATA["" . $field . ""] = addText($newValue);
             $SAVEDATA["USER_ID"] = $staffId;
             $SAVEDATA["OBJECT_TYPE"] = $object;
@@ -3140,8 +2803,7 @@ class StaffDBAccess {
 
         $facette = self::dbAccess()->fetchRow("SELECT * FROM t_person_infos WHERE ID='" . $objectId . "'");
 
-        switch ($field)
-        {
+        switch ($field) {
             case "DELETE":
                 $SUCCESS_DATA["DELETE"] = true;
                 break;
@@ -3159,8 +2821,7 @@ class StaffDBAccess {
         return $SUCCESS_DATA;
     }
 
-    public static function jsonListPersonInfos($params)
-    {
+    public static function jsonListPersonInfos($params) {
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -3171,11 +2832,9 @@ class StaffDBAccess {
 
         $i = 0;
         $data = array();
-        if ($result)
-        {
+        if ($result) {
 
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
                 $data[$i]["OCCUPATION"] = $value->OCCUPATION;
@@ -3227,6 +2886,7 @@ class StaffDBAccess {
             , "rows" => $data
         );
     }
+
     ////////////////////////////////////////////////////////////////////////////
 }
 

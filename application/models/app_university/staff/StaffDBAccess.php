@@ -1848,7 +1848,7 @@ class StaffDBAccess {
     public function jsonCheckStaffSchoolID($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $staffSchoolId = isset($params["staffSchoolId"]) ? $params["staffSchoolId"] : 0;
+        $staffSchoolId = isset($params["staffSchoolId"]) ? addText($params["staffSchoolId"]) : 0;
 
         $check = $this->checkStaffSchoolId($objectId, $staffSchoolId);
 

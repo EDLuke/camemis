@@ -306,7 +306,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         }
 
         $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
-        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
+        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
 
         if (isset($params["SCORE_MIN"]))
             $SAVEDATA['SCORE_MIN'] = addText($params["SCORE_MIN"]);

@@ -95,10 +95,10 @@ class FacilityDBAccess {
 
     public static function getAllFacilityQuery($params) {
 
-        $END_DATE = isset($params['endDate']) ? $params['endDate'] : '';
-        $START_DATE = isset($params['startDate']) ? $params['startDate'] : '';
-        $NAME = isset($params['name']) ? $params['name'] : '';
-        $BARCODE = isset($params['barcode']) ? $params['barcode'] : '';
+        $END_DATE = isset($params['endDate']) ? addText($params["endDate"]) : '';
+        $START_DATE = isset($params['startDate']) ? addText($params["startDate"]) : '';
+        $NAME = isset($params['name']) ? addText($params["name"]) : '';
+        $BARCODE = isset($params['barcode']) ? addText($params["barcode"]) : '';
 
         $SQL = "";
         $SQL .= " SELECT DISTINCT";

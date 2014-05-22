@@ -492,9 +492,9 @@ class ScholarshipDBAccess {
 
     public static function addStudentSchoolar($params) {
 
-        $compusId = isset($params["compusId"]) ? $params["compusId"] : "0";
+        $compusId = isset($params["compusId"]) ? addText($params["compusId"]) : "0";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "0";
-        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? $params["CHOOSE_SCHOLARSHIP"] : "0";
+        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? addText($params["CHOOSE_SCHOLARSHIP"]) : "0";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "0";
 
         $check = self::checkStudentScholarship($studentId, $schoolyear, $compusId, false);

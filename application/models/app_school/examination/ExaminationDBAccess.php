@@ -425,7 +425,7 @@ class ExaminationDBAccess {
         $error = false;
         $errors = array();
 
-        $assignmentId = isset($params["CHOOSE_ASSIGNMENT"]) ? $params["CHOOSE_ASSIGNMENT"] : "";
+        $assignmentId = isset($params["CHOOSE_ASSIGNMENT"]) ? addText($params["CHOOSE_ASSIGNMENT"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
@@ -827,13 +827,13 @@ class ExaminationDBAccess {
     public static function jsonActionSaveMainExam($params) {
 
         $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
-        $ENROLL_EXAM_NAME = isset($params['ENROLL_EXAM_NAME']) ? $params['ENROLL_EXAM_NAME'] : '';
-        $ENROLL_FULL_SCORE = isset($params['ENROLL_FULL_SCORE']) ? $params['ENROLL_FULL_SCORE'] : '0';
-        $ENROLL_EXAM_EXPECTED_SCORE = isset($params['ENROLL_EXAM_EXPECTED_SCORE']) ? $params['ENROLL_EXAM_EXPECTED_SCORE'] : '0';
-        $ENROLL_TOTAL_STUDENTS = isset($params['ENROLL_TOTAL_STUDENTS']) ? $params['ENROLL_TOTAL_STUDENTS'] : '0';
-        $ENROLL_STUDENTS = isset($params['ENROLL_STUDENTS']) ? $params['ENROLL_STUDENTS'] : '0';
-        $ENROLL_SCORE_EDITABLE = isset($params['ENROLL_SCORE_EDITABLE']) ? $params['ENROLL_SCORE_EDITABLE'] : '';
-        $ENROLL_EXAM_DES = isset($params['ENROLL_EXAM_DES']) ? $params['ENROLL_EXAM_DES'] : '';
+        $ENROLL_EXAM_NAME = isset($params['ENROLL_EXAM_NAME']) ? addText($params["ENROLL_EXAM_NAME"]) : '';
+        $ENROLL_FULL_SCORE = isset($params['ENROLL_FULL_SCORE']) ? addText($params["ENROLL_FULL_SCORE"]) : '0';
+        $ENROLL_EXAM_EXPECTED_SCORE = isset($params['ENROLL_EXAM_EXPECTED_SCORE']) ? addText($params["ENROLL_EXAM_EXPECTED_SCORE"]) : '0';
+        $ENROLL_TOTAL_STUDENTS = isset($params['ENROLL_TOTAL_STUDENTS']) ? addText($params["ENROLL_TOTAL_STUDENTS"]) : '0';
+        $ENROLL_STUDENTS = isset($params['ENROLL_STUDENTS']) ? addText($params["ENROLL_STUDENTS"]) : '0';
+        $ENROLL_SCORE_EDITABLE = isset($params['ENROLL_SCORE_EDITABLE']) ? addText($params["ENROLL_SCORE_EDITABLE"]) : '';
+        $ENROLL_EXAM_DES = isset($params['ENROLL_EXAM_DES']) ? addText($params["ENROLL_EXAM_DES"]) : '';
 
         $editAble = 0;
 

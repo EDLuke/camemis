@@ -2113,7 +2113,7 @@ class ScheduleDBAccess {
     public static function actionSharingSchedule2Academic($params) {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "0";
-        $selectedId = isset($params["selectedId"]) ? $params["selectedId"] : "";
+        $selectedId = isset($params["selectedId"]) ? addText($params["selectedId"]) : "";
         $scheduleObject = self::findScheduleFromGuId($scheduleId);
         if ($scheduleObject) {
             if ($selectedId) {

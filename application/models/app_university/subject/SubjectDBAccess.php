@@ -181,7 +181,7 @@ class SubjectDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $requisiteId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
-        $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? $params["gradeSubjectGradId"] : "";
+        $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? addText($params["gradeSubjectGradId"]) : "";
 
         $node = $params["node"];
 
@@ -596,7 +596,7 @@ class SubjectDBAccess {
         $SAVEDATA['COEFF_VALUE'] = isset($params["COEFF_VALUE"]) ? addText($params["COEFF_VALUE"]) : 1;
 
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
-        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
+        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
 
         if ($objectId != "new") {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();

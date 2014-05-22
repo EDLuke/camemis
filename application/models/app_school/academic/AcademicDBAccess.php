@@ -564,7 +564,7 @@ class AcademicDBAccess {
                 $SAVEDATA['SA'] = isset($params["SA"]) ? 1 : 0;
                 $SAVEDATA['SU'] = isset($params["SU"]) ? 1 : 0;
 
-                $subjectId = isset($params["SUBJECT_ID"]) ? $params["SUBJECT_ID"] : "";
+                $subjectId = isset($params["SUBJECT_ID"]) ? addText($params["SUBJECT_ID"]) : "";
                 $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
                 if ($subjectObject) {
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $subjectObject->NAME;

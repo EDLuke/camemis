@@ -150,7 +150,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
     public static function jsonActionSaveLastStudentStatus($params)
     {
 
-        $statusId = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
+        $statusId = isset($params["STUDENT_STATUS"]) ? addText($params["STUDENT_STATUS"]) : "";
 
         $SAVEDATA = array();
 
@@ -332,7 +332,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $endDate = isset($params["END_DATE"]) ? substr($params["END_DATE"], 0, 10) : "";
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
-        $studentstatusType = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
+        $studentstatusType = isset($params["STUDENT_STATUS"]) ? addText($params["STUDENT_STATUS"]) : "";
         $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";

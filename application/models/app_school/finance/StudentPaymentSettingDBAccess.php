@@ -136,7 +136,7 @@ class StudentPaymentSettingDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
+        $feeId = isset($params["feeID"]) ? addText($params["feeID"]) : '';
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : '';
 
         $result = self::findStudentsByFeeID($params);
@@ -260,7 +260,7 @@ class StudentPaymentSettingDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
+        $feeId = isset($params["feeID"]) ? addText($params["feeID"]) : '';
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : '';
         $studentReminds = isset($params["studentReminds"]) ? $params["studentReminds"] : '';
         
@@ -624,7 +624,7 @@ class StudentPaymentSettingDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
+        $feeId = isset($params["feeID"]) ? addText($params["feeID"]) : '';
 
         $trainingArray = self::gettrainingbyFee($feeId);
         $trainingId = implode(",", $trainingArray);
@@ -712,7 +712,7 @@ class StudentPaymentSettingDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
+        $feeId = isset($params["feeID"]) ? addText($params["feeID"]) : '';
 
         $result = self::findStudentsTrainingFee($params);
 
@@ -824,7 +824,7 @@ class StudentPaymentSettingDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $feeId = isset($params["feeID"]) ? $params["feeID"] : '';
+        $feeId = isset($params["feeID"]) ? addText($params["feeID"]) : '';
 
         $result = self::findStudentsTrainingFee($params);
 
