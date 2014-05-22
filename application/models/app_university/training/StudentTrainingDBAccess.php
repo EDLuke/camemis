@@ -679,7 +679,10 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , 'DATE_BIRTH'
         );
 
-        $SELECT_C = array('NAME AS TRAINING_NAME');
+        $SELECT_C = array(
+            'NAME AS TRAINING_NAME'
+            , 'START_DATE'
+        );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'), $SELECT_A);
@@ -692,11 +695,10 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             $SEARCH .= " OR (A.FIRSTNAME_LATIN LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.CODE LIKE '" . strtoupper($globalSearch) . "%')";
+            $SEARCH .= " OR (C.NAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " ) ";
             $SQL->where($SEARCH);
         }
-
-        //echo $SQL->__toString();
         $SQL->group("A.ID");
         switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
             default:
@@ -709,6 +711,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $SQL .= " ORDER BY A.FIRSTNAME DESC";
                 break;
         }
+        
+        //error_log($SQL);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
@@ -729,6 +733,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                     $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
                     $data[$i]["GENDER"] = getGenderName($value->GENDER);
                     $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                    $data[$i]["CURRENT_CLASS"] = setShowText($value->TRAINING_NAME);
                     $i++;
                 }
             }
