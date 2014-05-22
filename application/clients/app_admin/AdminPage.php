@@ -566,7 +566,7 @@ class AdminPage {
 
         $ret = $script;
         $ret.= "?camemisId=" . camemisId() . "";
-        $ret.= "&pageId=" . Zend_Registry::get('SESSIONID') . "";
+        $ret.= "&pageId=" . addText(Zend_Registry::get('SESSIONID')) . "";
         $ret.= "&";
 
         if (is_array($parms)) {

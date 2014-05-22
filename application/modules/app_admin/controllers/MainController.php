@@ -77,7 +77,7 @@ class MainController extends Zend_Controller_Action {
         switch ($this->REQUEST->getPost('cmd')) {
             case "jsonLogout":
                 $con = array(
-                    'ID = ? ' => Zend_Registry::get('SESSIONID')
+                    'ID = ? ' => addText(Zend_Registry::get('SESSIONID'))
                 );
                 Zend_Registry::get('DB_ACCESS')->delete('t_sessions', $con);
                 $jsondata = array("success" => true);

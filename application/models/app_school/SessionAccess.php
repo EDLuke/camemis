@@ -151,7 +151,7 @@ class SessionAccess {
         if ($result)
             foreach ($result as $value) {
 
-                if ($value->ID != Zend_Registry::get('SESSIONID')) {
+                if ($value->ID != addText(Zend_Registry::get('SESSIONID'))) {
                     $condition = array(
                         'ID = ? ' => $value->ID
                     );

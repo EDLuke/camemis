@@ -414,12 +414,12 @@ class SchoolDBAccess {
 
         $SAVEDATA = array();
         $SAVEDATA["DATE_END"] = getCurrentDBDateTime();
-        $loginObject = SessionAccess::dataSession(Zend_Registry::get('SESSIONID'));
+        $loginObject = SessionAccess::dataSession(addText(Zend_Registry::get('SESSIONID')));
 
         if ($loginObject) {
-            $WHERE = self::dbAccess()->quoteInto("SESSION_ID = ?", Zend_Registry::get('SESSIONID'));
+            $WHERE = self::dbAccess()->quoteInto("SESSION_ID = ?", addText(Zend_Registry::get('SESSIONID')));
             self::dbAccess()->update('t_logininfo', $SAVEDATA, $WHERE);
-            self::dbAccess()->delete('t_session', array("ID='" . Zend_Registry::get('SESSIONID') . "'"));
+            self::dbAccess()->delete('t_session', array("ID='" . addText(Zend_Registry::get('SESSIONID')) . "'"));
         }
     }
 

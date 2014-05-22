@@ -83,7 +83,7 @@ class UserAuth {
 
     static function userIdFromSessionId() {
         $member = UserDBAccess::getInstance();
-        $userObject = $member->getMemberBySessionId(Zend_Registry::get('SESSIONID'));
+        $userObject = $member->getMemberBySessionId(addText(Zend_Registry::get('SESSIONID')));
 
         if ($userObject) {
             return $userObject->ID;
@@ -93,9 +93,9 @@ class UserAuth {
     }
 
     public static function mainidentify() {
-        if (Zend_Registry::get('SESSIONID')) {
+        if (addText(Zend_Registry::get('SESSIONID'))) {
             $member = UserDBAccess::getInstance();
-            $isRun = $member->checkMemberConstraints(Zend_Registry::get('SESSIONID'));
+            $isRun = $member->checkMemberConstraints(addText(Zend_Registry::get('SESSIONID')));
             if ($isRun && self::userId() == self::userIdFromSessionId()) {
                 return true;
             }
@@ -105,9 +105,9 @@ class UserAuth {
     }
 
     public static function identify() {
-        if (Zend_Registry::get('SESSIONID')) {
+        if (addText(Zend_Registry::get('SESSIONID'))) {
             $member = UserDBAccess::getInstance();
-            $isRun = $member->checkMemberConstraints(Zend_Registry::get('SESSIONID'));
+            $isRun = $member->checkMemberConstraints(addText(Zend_Registry::get('SESSIONID')));
             if ($isRun && self::userId() == self::userIdFromSessionId()) {
                 return true;
             }
@@ -301,7 +301,7 @@ class UserAuth {
     static function isVerifyTime() {
 
         $sessionObject = SessionAccess::getInstance();
-        return $sessionObject->verifyTime(Zend_Registry::get('SESSIONID'));
+        return $sessionObject->verifyTime(addText(Zend_Registry::get('SESSIONID')));
     }
 
     static function getAddedUserRole() {
