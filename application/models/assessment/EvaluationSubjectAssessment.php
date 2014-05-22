@@ -400,7 +400,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "term" => $this->term
                     , "month" => self::NO_MONTH
                     , "year" => self::NO_YEAR
-                    , "section" => "SEMESTER"
+                    , "section" => $this->getNameSectionByTerm()
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "evaluationType" => $this->getSettingEvaluationType()
         );

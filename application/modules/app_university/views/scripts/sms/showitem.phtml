@@ -26,7 +26,7 @@ $OBJECT_GRID->setSaveUrl('sms/jsonsave/');
 $OBJECT_DATA = $this->OBJECT_DATA;
 
 $academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
-$sendTo = isset($_GET['sendTo'])?$_GET['sendTo']:"";
+$sendTo = isset($_GET['sendTo'])? addText($_GET["sendTo"]):"";
 $sent = isset($OBJECT_DATA['SENT'])?$OBJECT_DATA['SENT']:"";
 
 $HIDDEN_COPY = 'true';
