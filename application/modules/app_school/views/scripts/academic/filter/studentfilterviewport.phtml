@@ -95,13 +95,9 @@ class StudentFilterViewPort{
                 $this->setStudentFilterColumn($columns);
                 break;
             case 'STUDENT_ATTENDANCE_FILTER':
-                $this->setStudentAttendanceFilterColumn($columns);
-                break;
             case 'STUDENT_DISCIPLINE_FILTER':
-                $this->setStudentDisciplineFilterColumn($columns);
-                break;
             case 'STUDENT_ADVISORY_FILTER':
-                $this->setStudentAdvisoryFilterColumn($columns);
+                $this->setStudentCountFilterColumn($columns);
                 break;
                 
         }
@@ -181,155 +177,76 @@ class StudentFilterViewPort{
         
     }
     
-    public function setStudentAttendanceFilterColumn($columns){
+    public function setStudentCountFilterColumn($columns){
         
         $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $stdClass['personType']="STUDENT";
-        $stdClass['status']=1;
-        $objectAttendanceType = SQLStudentFilterReport::getAttendanceType((object)$stdClass); 
-        if($objectAttendanceType){
-            foreach($objectAttendanceType as $value){
-                $this->OBJECT_GRID->addReadField("name: 'ATTENDANCE_".$value->ID."'");
-            }
-        }
-        $i=1;
-        switch($this->objectType){
-            case 'CAMPUS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
-                break;
-            case 'GRADE':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE_CLASS."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'  
-                ");
-                break;
-            case 'CLASS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".FULL_NAME."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , renderer: renderTextBold
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
-                break;      
-        }
-        $i++;
-        foreach($objectAttendanceType as $value){
-            $this->OBJECT_GRID->addColumn("
-                header: '<b>".$value->NAME."</b>'
-                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                ,  sortable: true
-                , dataIndex: 'ATTENDANCE_".$value->ID."'
-            ");
-            $i++;
-        }    
-    }
-    
-    public function setStudentDisciplineFilterColumn($columns){
         
-        $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $objectDisciplineType = SQLStudentFilterReport::getDisciplineType(); 
-        if($objectDisciplineType){
-            foreach($objectDisciplineType as $value){
-                $this->OBJECT_GRID->addReadField("name: 'DISCIPLINE_".$value->ID."'");
-            }
-        }
-        $i=1;
-        switch($this->objectType){
-            case 'CAMPUS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
+        switch($this->gridType){
+            case 'STUDENT_ATTENDANCE_FILTER':
+                $stdClass['personType']="STUDENT";
+                $stdClass['status']=1;
+                $objectCAMEMISType = SQLStudentFilterReport::getAttendanceType((object)$stdClass); 
+                $Prefix = "ATTENDANCE";
                 break;
-            case 'GRADE':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE_CLASS."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'  
-                ");
+            case 'STUDENT_DISCIPLINE_FILTER':
+                $objectCAMEMISType = SQLStudentFilterReport::getDisciplineType(); 
+                $Prefix = "DISCIPLINE";
                 break;
-            case 'CLASS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".FULL_NAME."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , renderer: renderTextBold
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
-                break;      
+            case 'STUDENT_ADVISORY_FILTER':
+                $objectCAMEMISType = SQLStudentFilterReport::getAdvisoryType(); 
+                $Prefix = "ADVISORY";
+                break;
+                
         }
-        $i++;
-        foreach($objectDisciplineType as $value){
-            $this->OBJECT_GRID->addColumn("
-                header: '<b>".$value->NAME."</b>'
-                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                ,  sortable: true
-                , dataIndex: 'DISCIPLINE_".$value->ID."'
-            ");
-            $i++;
-        }    
-    }
     
-    public function setStudentAdvisoryFilterColumn($columns){
+        if($objectCAMEMISType){
+            foreach($objectCAMEMISType as $value){
+                $this->OBJECT_GRID->addReadField("name: '".$Prefix."_".$value->ID."'");
+            }
+            
+            $i=1;
+            switch($this->objectType){
+                case 'CAMPUS':
+                    $this->OBJECT_GRID->addColumn("
+                        header: '<b>".GRADE."</b>'
+                        , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                        , sortable: true
+                        , dataIndex: 'FIRST_CULUMN'
+                    ");
+                    break;
+                case 'GRADE':
+                    $this->OBJECT_GRID->addColumn("
+                        header: '<b>".GRADE_CLASS."</b>'
+                        , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                        , sortable: true
+                        , dataIndex: 'FIRST_CULUMN'  
+                    ");
+                    break;
+                case 'CLASS':
+                    $this->OBJECT_GRID->addColumn("
+                        header: '<b>".FULL_NAME."</b>'
+                        , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                        , renderer: renderTextBold
+                        , sortable: true
+                        , dataIndex: 'FIRST_CULUMN'
+                    ");
+                    break;      
+            }
+            $i++;
+            foreach($objectCAMEMISType as $value){
+                $this->OBJECT_GRID->addColumn("
+                    header: '<b>".$value->NAME."</b>'
+                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
+                    ,  sortable: true
+                    , dataIndex: '".$Prefix."_".$value->ID."'
+                ");
+                $i++;
+            } 
         
-        $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $objectAdvisoryType = SQLStudentFilterReport::getAdvisoryType(); 
-        if($objectAdvisoryType){
-            foreach($objectAdvisoryType as $value){
-                $this->OBJECT_GRID->addReadField("name: 'ADVISORY_".$value->ID."'");
-            }
-        }
-        $i=1;
-        switch($this->objectType){
-            case 'CAMPUS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
-                break;
-            case 'GRADE':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".GRADE_CLASS."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'  
-                ");
-                break;
-            case 'CLASS':
-                $this->OBJECT_GRID->addColumn("
-                    header: '<b>".FULL_NAME."</b>'
-                    , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                    , renderer: renderTextBold
-                    , sortable: true
-                    , dataIndex: 'FIRST_CULUMN'
-                ");
-                break;      
-        }
-        $i++;
-        foreach($objectAdvisoryType as $value){
-            $this->OBJECT_GRID->addColumn("
-                header: '<b>".$value->NAME."</b>'
-                , width: 160, hidden:".checkColHidden($i, $this->columndata)."
-                ,  sortable: true
-                , dataIndex: 'ADVISORY_".$value->ID."'
-            ");
-            $i++;
-        }    
+        }     
     }
     
+   
     public function setCmd(){
     
         $this->cmdParams = "start:0";
