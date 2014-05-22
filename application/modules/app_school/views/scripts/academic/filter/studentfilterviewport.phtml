@@ -2,7 +2,6 @@
 ///////////////////////////////////////////////////////////
 // @Sor Veasna
 // Date: 17.05.2014
-// 
 ///////////////////////////////////////////////////////////
 require_once 'utiles/Utiles.php';
 require_once 'models/UserAuth.php';
@@ -11,7 +10,7 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/student_filter/StudentFilterReportDBAccess.php';
+require_once 'models/student_filter/SQLStudentFilterReport.php';
 require_once setUserLoacalization();
 
 class StudentFilterViewPort{
@@ -184,11 +183,10 @@ class StudentFilterViewPort{
     
     public function setStudentAttendanceFilterColumn($columns){
         
-        $studentStatistic = new StudentFilterReportDBAccess();
         $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $studentStatistic->personType="STUDENT";
-        $studentStatistic->status=1;
-        $objectAttendanceType = $studentStatistic->getAttendanceType(); 
+        $stdClass['personType']="STUDENT";
+        $stdClass['status']=1;
+        $objectAttendanceType = SQLStudentFilterReport::getAttendanceType((object)$stdClass); 
         if($objectAttendanceType){
             foreach($objectAttendanceType as $value){
                 $this->OBJECT_GRID->addReadField("name: 'ATTENDANCE_".$value->ID."'");
@@ -235,9 +233,9 @@ class StudentFilterViewPort{
     }
     
     public function setStudentDisciplineFilterColumn($columns){
-        $studentStatistic = new StudentFilterReportDBAccess();
+        
         $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $objectDisciplineType = $studentStatistic->getDisciplineType(); 
+        $objectDisciplineType = SQLStudentFilterReport::getDisciplineType(); 
         if($objectDisciplineType){
             foreach($objectDisciplineType as $value){
                 $this->OBJECT_GRID->addReadField("name: 'DISCIPLINE_".$value->ID."'");
@@ -284,9 +282,9 @@ class StudentFilterViewPort{
     }
     
     public function setStudentAdvisoryFilterColumn($columns){
-        $studentStatistic = new StudentFilterReportDBAccess();
+        
         $this->OBJECT_GRID->addReadField("name: 'FIRST_CULUMN'");
-        $objectAdvisoryType = $studentStatistic->getAdvisoryType(); 
+        $objectAdvisoryType = SQLStudentFilterReport::getAdvisoryType(); 
         if($objectAdvisoryType){
             foreach($objectAdvisoryType as $value){
                 $this->OBJECT_GRID->addReadField("name: 'ADVISORY_".$value->ID."'");
