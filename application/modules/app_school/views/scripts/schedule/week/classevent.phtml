@@ -75,43 +75,10 @@ $setparamsSU .= "&shortday=SU";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-function getExtCopyTerm($academicId, $term, $executeRight){
-    
-    switch($term){
-        case "FIRST_SEMESTER":
-            $type = "APPLY_ALL_OF_THE_FIRST_SEMESTER";
-            $fromterm = "FIRST_SEMESTER";
-            $toterm = "SECOND_SEMESTER";
-        break;
-        case "FIRST_TERM":
-            $type = "APPLY_ALL_OF_THE_FIRST_TERM";
-            $fromterm = "FIRST_TERM";
-            $toterm = "SECOND_TERM";
-        break;
-        case "SECOND_TERM":
-            $type = "APPLY_ALL_OF_THE_SECOND_TERM";
-            $fromterm = "SECOND_TERM";
-            $toterm = "THIRD_TERM";
-        break;
-        case "FIRST_QUARTER":
-            $type = "APPLY_ALL_OF_THE_FIRST_QUARTER";
-            $fromterm = "FIRST_QUARTER";
-            $toterm = "SECOND_QUARTER";
-        break;
-        case "SECOND_QUARTER":
-            $type = "APPLY_ALL_OF_THE_SECOND_QUARTER";
-            $fromterm = "SECOND_QUARTER";
-            $toterm = "THIRD_QUARTER";
-        break;
-        case "THIRD_QUARTER":
-            $type = "APPLY_ALL_OF_THE_THIRD_QUARTER";
-            $fromterm = "THIRD_QUARTER";
-            $toterm = "FOUR_QUARTER";
-        break;
-    }
+function getExtCopyTerm($academicId, $title, $fromTerm, $toTerm, $executeRight){
     
     return "{
-        text: '".constant($type)."'
+        text: '".constant($title)."'
         ,disabled:".$executeRight."
         ,iconCls:'icon-database_copy'
         ,handler: function(){
@@ -129,8 +96,8 @@ function getExtCopyTerm($academicId, $term, $executeRight){
                             ,params: {
                                 cmd: 'copyScheduleFromPreviousTerm'
                                 ,academicId: '".$academicId."'
-                                ,fromterm: '".$fromterm."'
-                                ,toterm: '".$toterm."'
+                                ,fromterm: '".$fromTerm."'
+                                ,toterm: '".$toTerm."'
                             }
                             ,success: function(response, options) {
                                 ".CamemisPage::setRequestURI()."
@@ -153,34 +120,34 @@ switch ($TERM_NUMBER) {
     case 1:
         switch($term){
             case "SECOND_TERM":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_TERM",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_TERM", "FIRST_TERM", "SECOND_TERM", $EXECUTE_RIGHT);
                 break;
             case "THIRD_TERM":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_TERM",$EXECUTE_RIGHT);
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "SECOND_TERM",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_TERM", "FIRST_TERM", "THIRD_TERM", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_TERM", "SECOND_TERM", "THIRD_TERM", $EXECUTE_RIGHT);
             break;
         }
         break;
     case 2:
         switch($term){
             case "SECOND_QUARTER":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_QUARTER",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "SECOND_QUARTER", $EXECUTE_RIGHT);
                 break;
             case "THIRD_QUARTER":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_QUARTER",$EXECUTE_RIGHT);
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "SECOND_QUARTER",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "THIRD_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_QUARTER", "SECOND_QUARTER", "THIRD_QUARTER", $EXECUTE_RIGHT);
                 break;
             case "FOUR_QUARTER":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_QUARTER",$EXECUTE_RIGHT);
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "SECOND_QUARTER",$EXECUTE_RIGHT);
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "THIRD_QUARTER",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_QUARTER", "SECOND_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_THIRD_QUARTER", "THIRD_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
             break;
         }
         break;
     default:
         switch($term){
             case "SECOND_SEMESTER":
-                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "FIRST_SEMESTER",$EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_SEMESTER", "FIRST_SEMESTER", "SECOND_SEMESTER", $EXECUTE_RIGHT);
             break;
         }
     break;
