@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("SCHOOL");
 $OBJECT_FORM->setSaveUrl("/school/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/school/jsonload/");
 
-$target = isset($_GET["target"])?strtoupper($_GET["target"]):"";
+$target = isset($_GET["target"])?strtoupper(addText($_GET["target"])):"";
 
 if(!$target){
     header("Location: /main/permission/");

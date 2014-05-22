@@ -18,7 +18,7 @@
     require_once 'models/app_school/room/RoomDBAccess.php';
     
     $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
-    $bnt=isset($_GET["bnt"])?$_GET["bnt"]:"";
+    $bnt=isset($_GET["bnt"])? addText($_GET["bnt"]):"";
     $header=false;
     $footer=false;
     $exportToExcel=new CamemisExportToExcel();
@@ -83,22 +83,22 @@
                 ///
                 $filename="List Of Students Results"; 
                 $STUDENT = array('CANDIDATE_CODE', 'FULL_NAME', 'FIRSTNAME', 'LASTNAME', 'LASTNAME_LATIN', 'FIRSTNAME_LATIN','GENDER','ROOM','EXAM_RESULT', 'DATE_BIRTH', 'PHONE', 'EMAIL','SIGNATURE_STUDENT_SUBMISSION','HEAD_NAME','SIGNATURE');              
-                $STUDENT_RESULT_FILDS = array(
-                                'CANDIDATE_CODE'=>'STUDENT_CODE'
-                                , 'FULL_NAME'=>'FULL_NAME'
-                                , 'FIRSTNAME'=>'FIRSTNAME'
-                                , 'LASTNAME'=>'LASTNAME'
-                                , 'LASTNAME_LATIN'=>'LASTNAME_LATIN'
-                                , 'FIRSTNAME_LATIN'=>'FIRSTNAME_LATIN'
-                                , 'GENDER'=>'GENDER'
-                                , 'DATE_BIRTH'=>'DATE_BIRTH'
-                                , 'PHONE'=>'PHONE'
-                                , 'EMAIL'=>'EMAIL'
-                                , 'ROOM'=>'ROOM_NAME'
-                                , 'EXAM_RESULT'=>'POINTS'
-                                , 'SIGNATURE_STUDENT_SUBMISSION'=>'SIGNATURE_STUDENT_SUBMISSION'
-                );
                 
+                $STUDENT_RESULT_FILDS = array(
+                    'CANDIDATE_CODE'=>'STUDENT_CODE'
+                    , 'FULL_NAME'=>'FULL_NAME'
+                    , 'FIRSTNAME'=>'FIRSTNAME'
+                    , 'LASTNAME'=>'LASTNAME'
+                    , 'LASTNAME_LATIN'=>'LASTNAME_LATIN'
+                    , 'FIRSTNAME_LATIN'=>'FIRSTNAME_LATIN'
+                    , 'GENDER'=>'GENDER'
+                    , 'DATE_BIRTH'=>'DATE_BIRTH'
+                    , 'PHONE'=>'PHONE'
+                    , 'EMAIL'=>'EMAIL'
+                    , 'ROOM'=>'ROOM_NAME'
+                    , 'EXAM_RESULT'=>'POINTS'
+                    , 'SIGNATURE_STUDENT_SUBMISSION'=>'SIGNATURE_STUDENT_SUBMISSION'
+                );
                 
                 foreach ($STUDENT as $index) {
                     $CHECK = isset($_GET[$index]) ? $_GET[$index] : 0;
@@ -148,21 +148,22 @@
            ///filds result
            $filename="List Of Students";
            $STUDENT = array('CANDIDATE_CODE', 'FULL_NAME', 'FIRSTNAME', 'LASTNAME', 'LASTNAME_LATIN', 'FIRSTNAME_LATIN', 'GENDER', 'DATE_BIRTH', 'PHONE', 'EMAIL','SUBJECT','AVERAGE','EXAM_RESULT','HEAD_NAME','SIGNATURE','SIGNATURE_STUDENT_SUBMISSION');
+           
            $STUDENT_RESULT_FILDS = array(
-                            'CANDIDATE_CODE'=>'STUDENT_SCHOOL_ID'
-                            , 'FULL_NAME'=>'FULL_NAME'
-                            , 'FIRSTNAME'=>'FIRSTNAME'
-                            , 'LASTNAME'=>'LASTNAME'
-                            , 'LASTNAME_LATIN'=>'LASTNAME_LATIN'
-                            , 'FIRSTNAME_LATIN'=>'FIRSTNAME_LATIN'
-                            , 'GENDER'=>'GENDER'
-                            , 'DATE_BIRTH'=>'DATE_BIRTH'
-                            , 'PHONE'=>'PHONE'
-                            , 'EMAIL'=>'EMAIL'
-                            , 'AVERAGE'=>'ENROLL_AVG'
-                            , 'EXAM_RESULT'=>'RESULT'
-                            , 'SIGNATURE_STUDENT_SUBMISSION'=>'SIGNATURE_STUDENT_SUBMISSION'
-                            );
+                'CANDIDATE_CODE'=>'STUDENT_SCHOOL_ID'
+                , 'FULL_NAME'=>'FULL_NAME'
+                , 'FIRSTNAME'=>'FIRSTNAME'
+                , 'LASTNAME'=>'LASTNAME'
+                , 'LASTNAME_LATIN'=>'LASTNAME_LATIN'
+                , 'FIRSTNAME_LATIN'=>'FIRSTNAME_LATIN'
+                , 'GENDER'=>'GENDER'
+                , 'DATE_BIRTH'=>'DATE_BIRTH'
+                , 'PHONE'=>'PHONE'
+                , 'EMAIL'=>'EMAIL'
+                , 'AVERAGE'=>'ENROLL_AVG'
+                , 'EXAM_RESULT'=>'RESULT'
+                , 'SIGNATURE_STUDENT_SUBMISSION'=>'SIGNATURE_STUDENT_SUBMISSION'
+            );
             
             $myParams=array();
             $myParams["type"]=isset($_GET["enrollExamType"]) ? addText($_GET["enrollExamType"]) : "";
