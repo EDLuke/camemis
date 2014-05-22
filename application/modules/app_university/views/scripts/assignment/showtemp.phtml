@@ -241,15 +241,6 @@ Ext.onReady(function() {
         ,parentId: '".$this->parentId."'
     ");
     
-    /*$OBJECT_FORM->setOnEmbeddedReleaseEvents("
-        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
-        myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID');
-        myNode = myTree.getNodeById('CAMEMIS_".$this->parentId."');
-        myNode.reload();
-        myNode.expand(true, false); 
-        ".camemisPage::setRequestURI()."
-    "); */
-    
     $OBJECT_FORM->isObjectDefaultOnLoad = $this->facette?true:false;
 
     $OBJECT_FORM->labelAlign = "left";
