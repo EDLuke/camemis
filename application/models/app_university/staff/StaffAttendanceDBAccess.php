@@ -484,7 +484,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
         $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
         $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $object = isset($params["object"]) ? $params["object"] : "";
+        $object = isset($params["object"]) ? addText($params["object"]) : "";
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
         $searchSubjecttype = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
         $contract_type = isset($params["CONTRACT_TYPE"]) ? $params["CONTRACT_TYPE"] : "";

@@ -242,10 +242,10 @@ class StaffStatusDBAccess extends StaffDBAccess {
     public static function getSqlStaffStatus($params)
     {
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $gender = isset($params["GENDER"]) ? $params["GENDER"] : "";
-        $code = isset($params["CODE"]) ? $params["CODE"] : "";
-        $firstname = isset($params["FIRSTNAME"]) ? $params["FIRSTNAME"] : "";
-        $lastname = isset($params["LASTNAME"]) ? $params["LASTNAME"] : "";
+        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
         $staff_school_id = isset($params["STAFF_SCHOOL_ID"]) ? $params["STAFF_SCHOOL_ID"] : "";
         $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
         $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";

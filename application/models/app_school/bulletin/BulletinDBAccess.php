@@ -772,7 +772,7 @@ class BulletinDBAccess {
     public static function jsonActionAcademicToBulletin($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $checked = isset($params["checked"]) ? $params["checked"] : "";
+        $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
         $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
 
         $facette = self::findBulletinFromId($objectId);

@@ -300,7 +300,7 @@ class TrainingDBAccess {
         $SAVEDATA = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $parent = isset($params["parent"]) ? $params["parent"] : "";
+        $parent = isset($params["parent"]) ? addText($params["parent"]) : "";
         $objctType = isset($params["objctType"]) ? $params["objctType"] : "";
 
         $facette = self::findTrainingFromId($objectId);

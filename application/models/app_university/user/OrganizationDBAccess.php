@@ -284,8 +284,8 @@
         public function actionUserOrganization($params) {
 
             $Id = isset($params["Id"]) ? $params["Id"] : "";
-            $staffId = isset($params["setId"]) ? $params["setId"] : "";
-            $checked = isset($params["checked"]) ? $params["checked"] : "";
+            $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
+            $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
 
             $msg = ACTION_SUCCESSFULLY_SAVED;
 

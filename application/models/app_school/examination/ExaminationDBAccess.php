@@ -826,7 +826,7 @@ class ExaminationDBAccess {
 
     public static function jsonActionSaveMainExam($params) {
 
-        $academicId = isset($params['academicId']) ? $params['academicId'] : '';
+        $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
         $ENROLL_EXAM_NAME = isset($params['ENROLL_EXAM_NAME']) ? $params['ENROLL_EXAM_NAME'] : '';
         $ENROLL_FULL_SCORE = isset($params['ENROLL_FULL_SCORE']) ? $params['ENROLL_FULL_SCORE'] : '0';
         $ENROLL_EXAM_EXPECTED_SCORE = isset($params['ENROLL_EXAM_EXPECTED_SCORE']) ? $params['ENROLL_EXAM_EXPECTED_SCORE'] : '0';

@@ -116,7 +116,7 @@ class SubjectDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "0";
         $department = isset($params["department"]) ? $params["department"] : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
@@ -176,7 +176,7 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     public function treeAllSubjects($params) {
 
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $department = isset($params["department"]) ? $params["department"] : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $requisiteId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
@@ -910,9 +910,9 @@ class SubjectDBAccess {
 
     public function actionTeacherSubject($params) {
 
-        $teacherId = isset($params["setId"]) ? $params["setId"] : "";
+        $teacherId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $subjectId = isset($params["Id"]) ? $params["Id"] : "";
-        $checked = isset($params["checked"]) ? $params["checked"] : "";
+        $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
 
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
@@ -1098,7 +1098,7 @@ class SubjectDBAccess {
     public function treeAllTrainingSubjects($params = false) {
 
         $params["target"] = "TRAINING";
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $result = self::getAllSubjectsQuery($params);
 
         $data = array();

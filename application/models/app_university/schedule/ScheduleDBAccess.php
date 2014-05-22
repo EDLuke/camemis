@@ -2240,8 +2240,8 @@ class ScheduleDBAccess {
     //@veasna
     public static function getCreditClassInAcademicSubject($params) {
 
-        $academicId = isset($params['academicId']) ? $params['academicId'] : '';
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : '';
+        $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
+        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : '';
         $teacherId = isset($params['teacherId']) ? $params['teacherId'] : '';
 
         $SQL = self::dbAccess()->select();

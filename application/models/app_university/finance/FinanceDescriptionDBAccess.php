@@ -210,7 +210,7 @@
         public static function jsonTreeAllDescription($params) {
 
             $node = isset($params["node"]) ? addText($params["node"]) : 0;
-            $filter = isset($params["filter"]) ? $params["filter"] : 0;
+            $filter = isset($params["filter"]) ? addText($params["filter"]) : 0;
 
             $data = array();
             $result = self::sqlDescription($node, false, $filter);

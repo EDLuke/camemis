@@ -1263,7 +1263,7 @@ class AcademicDBAccess {
 
     public function jsonLoadScoreDeadLine($params) {
 
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : "";
+        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : "";
 
         $DB_ACADEMIC = AcademicDateDBAccess::getInstance();
         $DB_STUDENT = StudentDBAccess::getInstance();

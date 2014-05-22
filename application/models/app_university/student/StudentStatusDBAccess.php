@@ -326,14 +326,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
     public static function getSqlStudentStatus($params)
     {
 
-        $studentSchoolId = isset($params["STUDENT_SCHOOL_ID"]) ? $params["STUDENT_SCHOOL_ID"] : "";
-        $code = isset($params["CODE"]) ? $params["CODE"] : "";
+        $studentSchoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
         $startDate = isset($params["START_DATE"]) ? substr($params["START_DATE"], 0, 10) : "";
         $endDate = isset($params["END_DATE"]) ? substr($params["END_DATE"], 0, 10) : "";
-        $firstname = isset($params["FIRSTNAME"]) ? $params["FIRSTNAME"] : "";
-        $lastname = isset($params["LASTNAME"]) ? $params["LASTNAME"] : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
         $studentstatusType = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
-        $gender = isset($params["GENDER"]) ? $params["GENDER"] : "";
+        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 

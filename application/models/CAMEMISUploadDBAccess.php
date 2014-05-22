@@ -127,8 +127,8 @@ class CAMEMISUploadDBAccess {
         $username = isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : ""; // using an authentication mechanisim
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $fileArea = isset($params["area"]) ? $params["area"] : "";
-        $academicId = isset($params["class"]) ? $params["class"] : ""; //@THORN Visal
+        $fileArea = isset($params["area"]) ? addText($params["area"]) : "";
+        $academicId = isset($params["class"]) ? addText($params["class"]) : ""; //@THORN Visal
 
 
         $this->fileArea = strtoupper($fileArea);
@@ -384,7 +384,7 @@ class CAMEMISUploadDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $object = isset($params["object"]) ? $params["object"] : "";
+        $object = isset($params["object"]) ? addText($params["object"]) : "";
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));

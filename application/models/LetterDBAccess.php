@@ -631,7 +631,7 @@ class LetterDBAccess {
 	public function showAllStudentsOrStaffs($params) {
 		$start = isset($params["start"]) ? (int) $params["start"] : "0";
 		$limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-		$objectId = isset($params["objectId"]) ? $params["objectId"] : "";
+		$objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 		$personType = isset($params["personType"]) ? addText($params["personType"]) : "";
 		$type = isset($params["type"]) ? addText($params["type"]) : "";
         

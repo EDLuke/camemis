@@ -74,8 +74,8 @@
 
         public function treeAllUserrole($params) {
 
-            $searchAdmin = isset($params["searchAdmin"]) ? $params["searchAdmin"] : "";
-            $academicId = isset($params["objectId"]) ? $params["objectId"] : "";
+            $searchAdmin = isset($params["searchAdmin"]) ? addText($params["searchAdmin"]) : "";
+            $academicId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
             if ($academicId)
                 $permissionList = AcademicDBAccess::getListStaffsScorePermission($academicId);
@@ -179,9 +179,9 @@
 
         public static function getAllUserRoleQuery($params) {
 
-            $globalSearch = isset($params["query"]) ? $params["query"] : "";
-            $parent = isset($params["parent"]) ? $params["parent"] : "0";
-            $educationType = isset($params["educationType"]) ? $params["educationType"] : "0";
+            $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
+            $parent = isset($params["parent"]) ? addText($params["parent"]) : "0";
+            $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : "0";
 
             $SQL = "";
             $SQL .= " SELECT DISTINCT";
@@ -241,8 +241,8 @@
 
             $SAVEDATA = array();
 
-            $objectId = isset($params["objectId"]) ? $params["objectId"] : '';
-            $name = isset($params["name"]) ? $params["name"] : '';
+            $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
+            $name = isset($params["name"]) ? addText($params["name"]) : '';
 
             $SAVEDATA['NAME'] = addText($name);
             if (isset($params["short"]))
@@ -306,7 +306,7 @@
 
         public function removeObject($params) {
 
-            $removeId = isset($params["objectId"]) ? $params["objectId"] : "";
+            $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
             $SQL = "DELETE FROM t_memberrole";
             $SQL .= " WHERE";
@@ -320,7 +320,7 @@
 
             $newStatus = 0;
 
-            $objectId = isset($params["objectId"]) ? $params["objectId"] : 0;
+            $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
             $facette = $this->findUserRoleFromId($objectId);
             $status = $facette->STATUS;
@@ -404,7 +404,7 @@
 
             $searchParent = isset($params["searchParent"]) ? $params["searchParent"] : "";
             $treeSearch = isset($params["treeSearch"]) ? $params["treeSearch"] : "";
-            $objectId = isset($params["objectId"]) ? $params["objectId"] : "";
+            $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
             $node = isset($params["node"]) ? $params["node"] : 0;
             $defaultRole = isset($params["key"]) ? $params["key"] : 1;
 

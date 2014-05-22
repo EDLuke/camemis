@@ -51,8 +51,8 @@ class StudentFeePrepaidDBAccess {
         $code = isset($params['code']) ? $params['code'] : '';
         $name = isset($params['FEE_NAME']) ? $params['FEE_NAME'] : '';
         $type = isset($params["type"]) ? $param["type"] : "";
-        $campusId = isset($params["campusId"]) ? $params["campusId"] : '';
-        $programId = isset($params["programId"]) ? $params["programId"] : '';
+        $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : '';
+        $programId = isset($params["programId"]) ? addText($params["programId"]) : '';
 
         $SELECTION_A = array(
             "ID AS ID"
@@ -147,7 +147,7 @@ class StudentFeePrepaidDBAccess {
     public static function jsonLoadFeePrePayment($params) {
 
         $objectId = isset($params['objectId']) ? $params['objectId'] : '';
-        $campusId = isset($params['campusId']) ? $params['campusId'] : '';
+        $campusId = isset($params['campusId']) ? addText($params["campusId"]) : '';
         $program = isset($params['program']) ? $params['program'] : '';
         $facette = self::findFeePrePaymentById($objectId);
 

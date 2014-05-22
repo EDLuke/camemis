@@ -235,7 +235,7 @@ Class AcademicAdditionalDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $additionalId = isset($params["additionalId"]) ? $params["additionalId"] : "";
-        $checked = isset($params["checked"]) ? $params["checked"] : "";
+        $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($objectId);
         

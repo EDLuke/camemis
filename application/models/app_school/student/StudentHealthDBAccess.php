@@ -263,13 +263,13 @@ class StudentHealthDBAccess {
     public static function sqlStudentHealth($params) {
 
         $studentId = isset($params['studentId']) ? $params['studentId'] : "";
-        $code = isset($params["CODE"]) ? $params["CODE"] : "";
-        $schoolCode = isset($params["STUDENT_SCHOOL_ID"]) ? $params["STUDENT_SCHOOL_ID"] : "";
-        $firstname = isset($params["FIRSTNAME"]) ? $params["FIRSTNAME"] : "";
-        $lastname = isset($params["LASTNAME"]) ? $params["LASTNAME"] : "";
-        $gender = isset($params["GENDER"]) ? $params["GENDER"] : "";
-        $religion = isset($params["RELIGION"]) ? $params["RELIGION"] : "";
-        $ethnic = isset($params["ETHNIC"]) ? $params["ETHNIC"] : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
+        $schoolCode = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
+        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
+        $religion = isset($params["RELIGION"]) ? addText($params["RELIGION"]) : "";
+        $ethnic = isset($params["ETHNIC"]) ? addText($params["ETHNIC"]) : "";
         $nationality = isset($params["NATIONALITY"]) ? $params["NATIONALITY"] : "";
         $healthItems = isset($params["healthItems"]) ? $params["healthItems"] : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";

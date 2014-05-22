@@ -669,9 +669,9 @@ class CamemisEvaluationDBAccess {
     public static function jsonActionAcademicToEvaluation($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $checked = isset($params["checked"]) ? $params["checked"] : "";
+        $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
         $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
-        $userroleId = isset($params["userroleId"]) ? $params["userroleId"] : "";
+        $userroleId = isset($params["userroleId"]) ? addText($params["userroleId"]) : "";
 
         if ($checked == "true") {
             if ($academicId) {
