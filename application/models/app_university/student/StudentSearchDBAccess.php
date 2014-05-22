@@ -157,10 +157,10 @@ class StudentSearchDBAccess {
             }
         }
 
-        if ($this->searchDescription) {
-            $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
-            $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
-        }
+//        if ($this->searchDescription) {
+//            $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
+//            $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
+//        }
 
         if ($this->firstname)
             $SQL->where('STUDENT.FIRSTNAME LIKE ?', "" . $this->firstname . "%");
