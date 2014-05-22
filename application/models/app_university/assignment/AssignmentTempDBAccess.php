@@ -92,6 +92,9 @@ class AssignmentTempDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : false;
 
+        if (isset($params["educationType"]))
+            $SAVEDATA["EDUCATION_TYPE"] = (int) $params["educationType"];
+
         if (isset($params["SHORT"]))
             $SAVEDATA["SHORT"] = addText($params["SHORT"]);
 
@@ -103,6 +106,9 @@ class AssignmentTempDBAccess {
 
         if (isset($params["COEFF_VALUE"]))
             $SAVEDATA["COEFF_VALUE"] =  addText($params["COEFF_VALUE"]);
+
+        if (isset($params["EVALUATION_TYPE"]))
+            $SAVEDATA["EVALUATION_TYPE"] = (int) $params["EVALUATION_TYPE"];
 
         if (isset($params["WEIGHTING"])) {
             $SAVEDATA["WEIGHTING"] =  addText($params["WEIGHTING"]);
