@@ -45,15 +45,22 @@ class jsonAcademicPerformances extends AcademicPerformances {
         if (isset($params["field"]))
             $this->actionField = addText($params["field"]);
 
-        if (isset($params["newValue"]))
+        if (isset($params["newValue"])) {
+            unset($params["comboValue"]);
             $this->actionValue = addText($params["newValue"]);
+        }
 
         if (isset($params["section"]))
             $this->section = addText($params["section"]);
+
+        if (isset($params["comboValue"])) {
+            unset($params["newValue"]);
+            $this->actionValue = addText($params["comboValue"]);
+        }
     }
 
     public function jsonListStudentsMonthAcademicPerformance($encrypParams) {
-        
+
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 

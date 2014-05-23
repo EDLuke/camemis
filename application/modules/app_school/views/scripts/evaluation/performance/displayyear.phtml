@@ -85,6 +85,7 @@ Ext.onReady(function() {
                     replaceValue = combo.getValue();
                     var newDisplay = record.get('chooseDisplay');
                     combo.setValue(newDisplay);
+                    comboValue = replaceValue;
                 }
             }
         })
@@ -220,6 +221,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+        ,comboValue:comboValue
     ");
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 

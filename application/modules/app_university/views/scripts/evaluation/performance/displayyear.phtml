@@ -1,7 +1,7 @@
 <?
 ////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 18.04.2014
+// Date: 02.05.2014
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
@@ -66,36 +66,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#333;background:#FFF;">' + value + '</div>';
     }
     
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#E0FFFF;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 1px;">' + value + '</div>';
-    }
-    
-    function cssDefaultSemester(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height:15px;background:#E0FFFF;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
-    }
-    
     <?
     ////////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -115,6 +85,7 @@ Ext.onReady(function() {
                     replaceValue = combo.getValue();
                     var newDisplay = record.get('chooseDisplay');
                     combo.setValue(newDisplay);
+                    comboValue = replaceValue;
                 }
             }
         })
@@ -156,8 +127,8 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
@@ -224,72 +195,6 @@ Ext.onReady(function() {
             break;
     }
     
-    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-        case "VIETNAMESE": $width = 125;break;
-        default: $width = 85;break;
-    }
-    
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
-    
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL'");
-    
-    switch(UserAuth::getUserType()){
-        case "SUPERADMIN":
-        case "ADMIN":
-        case 'INSTRUCTOR':
-        case 'TEACHER':
-            $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
-                , width: 130
-                , align: 'right'
-                , sortable: true
-                , dataIndex: 'ASSESSMENT_TOTAL'
-                , renderer:cssDefault
-                , editor: ".$comboEditor."
-            ");
-            break;
-         case 'STUDENT':
-            $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
-                , width: 120
-                , align: 'center'
-                , sortable: true
-                , dataIndex: 'ASSESSMENT_TOTAL'
-                , renderer:cssDefault
-            ");
-            break;  
-    }
-    
-    switch($TERM_NUMBER){
-        case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_FIRST_TERM'");
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FIRST_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_SECOND_TERM'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'SECOND_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_THIRD_TERM'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'ASSESSMENT_THIRD_TERM_RESULT'");
-            break;
-        case 2:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_FIRST_QUARTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FIRST_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_SECOND_QUARTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'SECOND_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_THIRD_QUARTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'THIRD_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER."</b>', width: 110, align: 'right', renderer:cssDefaultSemester, dataIndex: 'ASSESSMENT_FOURTH_QUARTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssDefault, dataIndex: 'FOURTH_QUARTER_RESULT'");
-            break;
-        default:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER."</b>', align: 'right', width: 130, sortable: true, renderer: cssDefaultSemester, dataIndex: 'ASSESSMENT_FIRST_SEMESTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssDefault, dataIndex: 'FIRST_SEMESTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER."</b>', align: 'right', width: 130, sortable: true, renderer: cssDefaultSemester, dataIndex: 'ASSESSMENT_SECOND_SEMESTER'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', align: 'right', width: 130, sortable: true, renderer: cssDefault, dataIndex: 'SECOND_SEMESTER_RESULT'");
-            break;
-    }
-    
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
         case "ADMIN":
@@ -316,6 +221,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentAcademicPerformance'
         ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+        ,comboValue:comboValue
     ");
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
@@ -379,6 +285,7 @@ Ext.onReady(function() {
         echo $js;
     }
     ?>
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?
