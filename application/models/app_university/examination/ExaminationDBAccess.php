@@ -445,11 +445,11 @@ class ExaminationDBAccess {
         $error = false;
         $errors = array();
 
-        $assignmentId = isset($params["CHOOSE_ASSIGNMENT"]) ? $params["CHOOSE_ASSIGNMENT"] : "";
+        $assignmentId = isset($params["CHOOSE_ASSIGNMENT"]) ? addText($params["CHOOSE_ASSIGNMENT"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $type = isset($params["type"]) ? addText($params["type"]) : "";
-        $subjectId = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
+        $subjectId = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $startTime = isset($params["START_TIME"]) ? timeStrToSecond($params["START_TIME"]) : "";
@@ -482,11 +482,6 @@ class ExaminationDBAccess {
 
         if (isset($params["TERM"]))
             $SAVEDATA['TERM'] = addText($params["TERM"]);
-
-//        if ($CHECK_DATE) {
-//            $error = true;
-//            $errors["START_DATE"] = CHECK_DATE_PAST;
-//        }
 
         if ($objectId == "new") {
 
@@ -699,10 +694,10 @@ class ExaminationDBAccess {
 
     public static function jsonAllExamRooms($params) {
 
-        $schoolyear_Id = isset($params["schoolyear_Id"]) ? $params["schoolyear_Id"] : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $startTime = isset($params["startTime"]) ? $params["startTime"] : "";
-        $endTime = isset($params["endTime"]) ? $params["endTime"] : "";
+        $schoolyear_Id = isset($params["schoolyear_Id"]) ? addText($params["schoolyear_Id"]) : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $startTime = isset($params["startTime"]) ? addText($params["startTime"]) : "";
+        $endTime = isset($params["endTime"]) ? addText($params["endTime"]) : "";
 
         $data = array();
 
@@ -844,15 +839,15 @@ class ExaminationDBAccess {
 
     public static function jsonActionSaveMainExam($params) {
 
-        $academicId = isset($params['academicId']) ? $params['academicId'] : '';
-        $ENROLL_EXAM_NAME = isset($params['ENROLL_EXAM_NAME']) ? $params['ENROLL_EXAM_NAME'] : '';
-        $ENROLL_FULL_SCORE = isset($params['ENROLL_FULL_SCORE']) ? $params['ENROLL_FULL_SCORE'] : '0';
-        $ENROLL_EXAM_EXPECTED_SCORE = isset($params['ENROLL_EXAM_EXPECTED_SCORE']) ? $params['ENROLL_EXAM_EXPECTED_SCORE'] : '0';
-        $ENROLL_TOTAL_STUDENTS = isset($params['ENROLL_TOTAL_STUDENTS']) ? $params['ENROLL_TOTAL_STUDENTS'] : '0';
-        $ENROLL_STUDENTS = isset($params['ENROLL_STUDENTS']) ? $params['ENROLL_STUDENTS'] : '0';
-        $ENROLL_SCORE_EDITABLE = isset($params['ENROLL_SCORE_EDITABLE']) ? $params['ENROLL_SCORE_EDITABLE'] : '';
-        $ENROLL_EXAM_DES = isset($params['ENROLL_EXAM_DES']) ? $params['ENROLL_EXAM_DES'] : '';
-        $objectId = isset($params['HIDDEN_OBJECT_ID']) ? $params['HIDDEN_OBJECT_ID'] : '';
+        $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
+        $ENROLL_EXAM_NAME = isset($params['ENROLL_EXAM_NAME']) ? addText($params["ENROLL_EXAM_NAME"]) : '';
+        $ENROLL_FULL_SCORE = isset($params['ENROLL_FULL_SCORE']) ? addText($params["ENROLL_FULL_SCORE"]) : '0';
+        $ENROLL_EXAM_EXPECTED_SCORE = isset($params['ENROLL_EXAM_EXPECTED_SCORE']) ? addText($params["ENROLL_EXAM_EXPECTED_SCORE"]) : '0';
+        $ENROLL_TOTAL_STUDENTS = isset($params['ENROLL_TOTAL_STUDENTS']) ? addText($params["ENROLL_TOTAL_STUDENTS"]) : '0';
+        $ENROLL_STUDENTS = isset($params['ENROLL_STUDENTS']) ? addText($params["ENROLL_STUDENTS"]) : '0';
+        $ENROLL_SCORE_EDITABLE = isset($params['ENROLL_SCORE_EDITABLE']) ? addText($params["ENROLL_SCORE_EDITABLE"]) : '';
+        $ENROLL_EXAM_DES = isset($params['ENROLL_EXAM_DES']) ? addText($params["ENROLL_EXAM_DES"]) : '';
+        $objectId = isset($params['HIDDEN_OBJECT_ID']) ? addText($params["HIDDEN_OBJECT_ID"]) : '';
         $editAble = 0;
 
         if ($ENROLL_SCORE_EDITABLE == 'on') {
@@ -877,20 +872,6 @@ class ExaminationDBAccess {
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $academicId);
             self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);
         }
-
-        /* else{
-          $SAVEDATA['NAME']= $ENROLL_EXAM_NAME;
-          $SAVEDATA['FULL_SCORE']= $ENROLL_FULL_SCORE;
-          $SAVEDATA['EXPECTED_SCORE']= $ENROLL_EXAM_EXPECTED_SCORE;
-          $SAVEDATA['ACADEMIC_ID']= $academicId;
-          $SAVEDATA['MAX_STUDENT']= $ENROLL_TOTAL_STUDENTS;
-          $SAVEDATA['ENROLLED_STUDENT']= $ENROLL_STUDENTS;
-          $SAVEDATA['EDITABLE']= $editAble;
-          $SAVEDATA['DESCRIPTION']= $ENROLL_EXAM_DES;
-
-          self::dbAccess()->insert('t_enrollment_exam_setting', $SAVEDATA);
-          $objectId = self::dbAccess()->lastInsertId();
-          } */
         return array("success" => true, 'Id' => $academicId);
     }
 

@@ -173,7 +173,7 @@ class SubjectTeachingReportDBAccess {
              
             $SAVEDATA['TITLE'] = isset($params["TITLE"]) ? addText($params["TITLE"]) : "";
             $SAVEDATA['CREATED_DATE'] = $CREATEDATE ? $CREATEDATE : getCurrentDBDate();
-            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? $params["CONTENT"] : "";
+            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "";
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_subject_teaching_report', $SAVEDATA, $WHERE);  
         }else{
@@ -183,7 +183,7 @@ class SubjectTeachingReportDBAccess {
             $SAVEDATA['TEACHER']=Zend_Registry::get('USER')->ID;       
             $SAVEDATA['TITLE'] = isset($params["TITLE"]) ? addText($params["TITLE"]) : "";
             $SAVEDATA['CREATED_DATE'] = $CREATEDATE ? $CREATEDATE : getCurrentDBDate();
-            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? $params["CONTENT"] : "";
+            $SAVEDATA['CONTENT'] = isset($params["CONTENT"]) ? addText($params["CONTENT"]) : "";
             self::dbAccess()->insert('t_subject_teaching_report', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
         }

@@ -147,7 +147,7 @@
         public static function jsonLoadFeePrePayment($params){
             
             $objectId=isset($params['objectId'])?$params['objectId']:'';
-            $campusId=isset($params['campusId'])?$params['campusId']:'';
+            $campusId=isset($params['campusId'])? addText($params["campusId"]):'';
             $program=isset($params['program'])?$params['program']:'';
             $facette = self::findFeePrePaymentById($objectId);
             

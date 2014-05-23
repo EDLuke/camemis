@@ -346,7 +346,7 @@ class UserMemberDBAccess {
     public function sessionExpired() {
 
         $session = SessionAccess::getInstance();
-        $status = $session->verifyTime(Zend_Registry::get('SESSIONID'));
+        $status = $session->verifyTime(addText(Zend_Registry::get('SESSIONID')));
 
         return array("success" => true, "status" => $status);
     }

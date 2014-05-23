@@ -761,6 +761,8 @@ function setShowTextExtjs($text) {
 
 function setShowText($text) {
     if (isUTF8($text)) {
+        $text = str_replace("&lt;", "<", ($text));
+        $text = str_replace("&gt;", ">", ($text));
         return $text ? htmlspecialchars_decode(stripslashes(trim($text))) : "";
     } else {
         return "?";
@@ -768,6 +770,19 @@ function setShowText($text) {
 }
 
 function addText($text) {
+
+    $text = str_replace("<", "&lt;", ($text));
+    $text = str_replace("%3C", "&lt;", ($text));
+    $text = str_replace("%253c", "&lt;", ($text));
+    $text = str_replace("+ADw-", "&lt;", ($text));
+    $text = str_replace("&#60;", "&lt;", ($text));
+    $text = str_replace(">", "&gt;", ($text));
+    $text = str_replace("%253e", "&gt;", ($text));
+    $text = str_replace("+AD4-", "&gt;", ($text));
+    $text = str_replace("&#62;", "&gt;", ($text));
+    $text = str_replace("%3E", "&gt;", ($text));
+    $text = str_ireplace('%3Cscript', '', $text);
+
     return addslashes(htmlspecialchars(trim($text)));
 }
 
@@ -2419,15 +2434,15 @@ function returndup($array) {
 }
 
 function diplayNameMonthYear($str) {
-    
+
     $output = "---";
     $explode = explode("_", $str);
-    if($explode){
-        $month = isset($explode[0])?$explode[0]:"";
-        $year = isset($explode[1])?$explode[1]:"";
-        $output = constant($month)." (".$year.")";
+    if ($explode) {
+        $month = isset($explode[0]) ? $explode[0] : "";
+        $year = isset($explode[1]) ? $explode[1] : "";
+        $output = constant($month) . " (" . $year . ")";
     }
-    
+
     return $output;
 }
 

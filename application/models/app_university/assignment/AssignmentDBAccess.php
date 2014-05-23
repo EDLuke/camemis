@@ -518,7 +518,7 @@ class AssignmentDBAccess {
         $SAVEDATA = Array();
         $WHERE = Array();
         $assignmentId = $params["assignmentId"] ? addText($params["assignmentId"]) : "0";
-        $academicIds = $params["academicIds"] ? $params["academicIds"] : "0";
+        $academicIds = $params["academicIds"] ? addText($params["academicIds"]) : "0";
 
         $SAVEDATA['CLASS_IDS'] = $academicIds;
         $WHERE[] = "ID = '" . $assignmentId . "'";

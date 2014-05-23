@@ -34,7 +34,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-        $nextSchoolyearId = isset($params["nextSchoolyearId"]) ? $params["nextSchoolyearId"] : "";
+        $nextSchoolyearId = isset($params["nextSchoolyearId"]) ? addText($params["nextSchoolyearId"]) : "";
 
         $result = self::getSQLStudentEnrollment($params);
         //
@@ -171,12 +171,12 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
 
     public static function addStudentHistoryAcademic($params) {
 
-        $SAVEDATA['REF_ID'] = isset($params['REF_ID']) ? $params['REF_ID'] : '';
-        $SAVEDATA['CAMPUS'] = isset($params['CAMPUS']) ? $params['CAMPUS'] : '';
-        $SAVEDATA['GRADE'] = isset($params['GRADE']) ? $params['GRADE'] : '';
-        $SAVEDATA['SCHOOLYEAR'] = isset($params['SCHOOLYEAR']) ? $params['SCHOOLYEAR'] : '';
-        $SAVEDATA['CLASS'] = isset($params['CLASS']) ? $params['CLASS'] : '';
-        $SAVEDATA['TYPE'] = isset($params['TYPE']) ? $params['TYPE'] : '';
+        $SAVEDATA['REF_ID'] = isset($params['REF_ID']) ? addText($params["REF_ID"]) : '';
+        $SAVEDATA['CAMPUS'] = isset($params['CAMPUS']) ? addText($params["CAMPUS"]) : '';
+        $SAVEDATA['GRADE'] = isset($params['GRADE']) ? addText($params["GRADE"]) : '';
+        $SAVEDATA['SCHOOLYEAR'] = isset($params['SCHOOLYEAR']) ? addText($params["SCHOOLYEAR"]) : '';
+        $SAVEDATA['CLASS'] = isset($params['CLASS']) ? addText($params["CLASS"]) : '';
+        $SAVEDATA['TYPE'] = isset($params['TYPE']) ? addText($params["TYPE"]) : '';
         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
@@ -191,7 +191,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $gradeLeftId = isset($params["gradeLeftId"]) ? $params["gradeLeftId"] : "";
-        $schoolyearLeftId = isset($params["schoolyearLeftId"]) ? $params["schoolyearLeftId"] : "";
+        $schoolyearLeftId = isset($params["schoolyearLeftId"]) ? addText($params["schoolyearLeftId"]) : "";
 
         $SAVEDATA = array();
         $selectedCount = 0;
@@ -324,15 +324,15 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
     //@veasna
     public static function getAllStudentsHistory($params) {
 
-        $search = isset($params['query']) ? $params['query'] : '';
-        $studentSchoolId = isset($params['STUDENT_SCHOOL_ID']) ? $params['STUDENT_SCHOOL_ID'] : '';
-        $code = isset($params['CODE']) ? $params['CODE'] : '';
-        $lastName = isset($params['LASTNAME']) ? $params['LASTNAME'] : '';
-        $firstName = isset($params['FIRSTNAME']) ? $params['FIRSTNAME'] : '';
-        $gender = isset($params['GENDER']) ? $params['GENDER'] : '';
-        $startDate = isset($params['START_DATE']) ? $params['START_DATE'] : '';
-        $endDate = isset($params['END_DATE']) ? $params['END_DATE'] : '';
-        $choose_type = isset($params['CHOOSE_OPTION']) ? $params['CHOOSE_OPTION'] : '';
+        $search = isset($params['query']) ? addText($params["query"]) : '';
+        $studentSchoolId = isset($params['STUDENT_SCHOOL_ID']) ? addText($params["STUDENT_SCHOOL_ID"]) : '';
+        $code = isset($params['CODE']) ? addText($params["CODE"]) : '';
+        $lastName = isset($params['LASTNAME']) ? addText($params["LASTNAME"]) : '';
+        $firstName = isset($params['FIRSTNAME']) ? addText($params["FIRSTNAME"]) : '';
+        $gender = isset($params['GENDER']) ? addText($params["GENDER"]) : '';
+        $startDate = isset($params['START_DATE']) ? addText($params["START_DATE"]) : '';
+        $endDate = isset($params['END_DATE']) ? addText($params["END_DATE"]) : '';
+        $choose_type = isset($params['CHOOSE_OPTION']) ? addText($params["CHOOSE_OPTION"]) : '';
 
 
         $SELECTION_A = array(

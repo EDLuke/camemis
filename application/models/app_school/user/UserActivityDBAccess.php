@@ -30,9 +30,9 @@ class UserActivityDBAccess {
 
     protected function getSQLUserActivity($params) {
 
-        $userId = isset($params["userId"]) ? $params["userId"] : "";
-        $start_date = isset($params["start_date"]) ? $params["start_date"] : "";
-        $end_date = isset($params["end_date"]) ? $params["end_date"] : "";
+        $userId = isset($params["userId"]) ? addText($params["userId"]) : "";
+        $start_date = isset($params["start_date"]) ? addText($params["start_date"]) : "";
+        $end_date = isset($params["end_date"]) ? addText($params["end_date"]) : "";
 
         $SQL = "";
         $SQL .= " SELECT ";

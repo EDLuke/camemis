@@ -564,7 +564,7 @@ class AcademicDBAccess {
                 $SAVEDATA['SA'] = isset($params["SA"]) ? 1 : 0;
                 $SAVEDATA['SU'] = isset($params["SU"]) ? 1 : 0;
 
-                $subjectId = isset($params["SUBJECT_ID"]) ? $params["SUBJECT_ID"] : "";
+                $subjectId = isset($params["SUBJECT_ID"]) ? addText($params["SUBJECT_ID"]) : "";
                 $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
                 if ($subjectObject) {
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $subjectObject->NAME;
@@ -1263,7 +1263,7 @@ class AcademicDBAccess {
 
     public function jsonLoadScoreDeadLine($params) {
 
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : "";
+        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : "";
 
         $DB_ACADEMIC = AcademicDateDBAccess::getInstance();
         $DB_STUDENT = StudentDBAccess::getInstance();
@@ -1467,8 +1467,8 @@ class AcademicDBAccess {
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $term = isset($params["term"]) ? addText($params["term"]) : "";
-        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+        $startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+        $endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
 
         $SQL = "SELECT DISTINCT
 		C.NAME as CLASS_NAME

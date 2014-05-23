@@ -150,7 +150,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
     public static function jsonActionSaveLastStudentStatus($params)
     {
 
-        $statusId = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
+        $statusId = isset($params["STUDENT_STATUS"]) ? addText($params["STUDENT_STATUS"]) : "";
 
         $SAVEDATA = array();
 
@@ -158,7 +158,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
         $singleDate = isset($params["SINGLE_START_DATE"]) ? setDate2DB($params["SINGLE_START_DATE"]) : "";
-        $description = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : "";
+        $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
         $studentStatusObject = self::getSQLCurrentStudentStatus($studentId);
 
@@ -326,14 +326,14 @@ class StudentStatusDBAccess extends StudentDBAccess {
     public static function getSqlStudentStatus($params)
     {
 
-        $studentSchoolId = isset($params["STUDENT_SCHOOL_ID"]) ? $params["STUDENT_SCHOOL_ID"] : "";
-        $code = isset($params["CODE"]) ? $params["CODE"] : "";
+        $studentSchoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
+        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
         $startDate = isset($params["START_DATE"]) ? substr($params["START_DATE"], 0, 10) : "";
         $endDate = isset($params["END_DATE"]) ? substr($params["END_DATE"], 0, 10) : "";
-        $firstname = isset($params["FIRSTNAME"]) ? $params["FIRSTNAME"] : "";
-        $lastname = isset($params["LASTNAME"]) ? $params["LASTNAME"] : "";
-        $studentstatusType = isset($params["STUDENT_STATUS"]) ? $params["STUDENT_STATUS"] : "";
-        $gender = isset($params["GENDER"]) ? $params["GENDER"] : "";
+        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
+        $studentstatusType = isset($params["STUDENT_STATUS"]) ? addText($params["STUDENT_STATUS"]) : "";
+        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 

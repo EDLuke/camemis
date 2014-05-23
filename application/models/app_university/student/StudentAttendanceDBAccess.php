@@ -122,7 +122,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
-        $academicId= isset($params["classId"]) ? (int) $params["classId"] : "";
+        $academicId = isset($params["classId"]) ? (int) $params["classId"] : "";
         $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "";
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
@@ -138,9 +138,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
         $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
         $target = isset($params["TARGET"]) ? addText($params["TARGET"]) : "";
-        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
-        $chooseSubject = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : ""; 
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : "";
+        $chooseSubject = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) : "";
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
 
         if ($searchGrade) {
@@ -159,7 +159,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                     $gradeId = $academicObject->GRADE_ID;
                     break;
                 case "CLASS":
-                    $academicId= $academicObject->ID;
+                    $academicId = $academicObject->ID;
                     break;
             }
 
@@ -171,7 +171,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         }
 
         if ($academicId)
-            $academicId= $academicId;
+            $academicId = $academicId;
 
         $SQL = "";
         $SQL .= " SELECT DISTINCT";
@@ -282,7 +282,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         if ($gender)
             $SQL .= " AND B.GENDER = " . $gender;
         if ($academicId)
-            $SQL .= " AND A.CLASS_ID = " . $academicId. "";
+            $SQL .= " AND A.CLASS_ID = " . $academicId . "";
         if ($studentId)
             $SQL .= " AND A.STUDENT_ID = '" . $studentId . "'";
         if ($term)
@@ -304,7 +304,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         if ($actionType)
             $SQL .= " AND A.ACTION_TYPE = '" . $actionType . "'";
-        
+
         if ($chooseSubject)
             $SQL .= " AND A.SUBJECT_ID = '" . $chooseSubject . "'";
 
@@ -322,15 +322,13 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                 $SQL .= " AND A.TRAINING_ID<>0";
                 break;
         }
-        
-        if ($globalSearch)
-        {
+
+        if ($globalSearch) {
             $SQL .= " AND ((B.FIRSTNAME like '%" . $globalSearch . "%')) ";
             $SQL .= " OR ((B.LASTNAME like '%" . $globalSearch . "%')) ";
             $SQL .= " OR ((B.CODE like '%" . $globalSearch . "%')) ";
             //$SQL .= " OR ((T.NAME like '%" . $globalSearch . "%')) ";
             //$SQL .= " OR ((E.NAME like '%" . $globalSearch . "%')) ";
-            
         }
 
         //error_log($SQL);
@@ -495,7 +493,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
             $SQL .= " AND ABSENT_TYPE = $type";
         if ($subjectId)
             $SQL .= " AND SUBJECT = $subjectId";
-        $SQL .= " AND CLASS = '" . $academicId. "'";
+        $SQL .= " AND CLASS = '" . $academicId . "'";
         $SQL .= " ORDER BY FIRSTNAME";
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -599,7 +597,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         return $data;
     }
 
-    public function getSemesterTermByStartDateSchoolyear($start_date,$academicId,$schoolyear_id) {
+    public function getSemesterTermByStartDateSchoolyear($start_date, $academicId, $schoolyear_id) {
 
         return AcademicDBAccess::getNameOfSchoolTermByDate($start_date, $academicId, $schoolyear_id);
     }
@@ -698,7 +696,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         if ($facette && $date) {
 
             $schoolyearId = $facette->SCHOOLYEAR_ID;
-            $academicId= $facette->CLASS_ID;
+            $academicId = $facette->CLASS_ID;
             $term = AcademicDBAccess::getNameOfSchoolTermByDate($date, $facette->CLASS_ID);
 
             if ($term != "TERM_ERROR") {
@@ -744,7 +742,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $data_caldate = array();
 
-        if ($academicId&& $schoolyearId) {
+        if ($academicId && $schoolyearId) {
 
             $DB_EVENTS = SchooleventDBAccess::getInstance();
             $paramsSchoolEvent['schoolyearId'] = $schoolyearId;
@@ -840,7 +838,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
             $schoolyearId = $academicObject ? $academicObject->SCHOOL_YEAR : "";
         } else {
             $studentId = $facette->STUDENT_ID;
-            $academicId= $facette->CLASS_ID;
+            $academicId = $facette->CLASS_ID;
             $trainingId = $facette->TRAINING_ID;
             $actionType = $facette->ACTION_TYPE;
             $schoolyearId = $facette->SCHOOLYEAR_ID;
@@ -869,8 +867,8 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $CHECK_COUNT_EXISTING_DATE = count($CHECK_EXISTING_DATE);
 
-        if ($academicId&& $schoolyearId) {
-            $SEMESTER_TERM = $this->getSemesterTermByStartDateSchoolyear($START_DATE,$academicId,$schoolyearId);
+        if ($academicId && $schoolyearId) {
+            $SEMESTER_TERM = $this->getSemesterTermByStartDateSchoolyear($START_DATE, $academicId, $schoolyearId);
             $SAVEDATA['TERM'] = $SEMESTER_TERM;
             $CHECK_ERROR_TERM = $SEMESTER_TERM ? 0 : 1;
         } else {
@@ -1029,7 +1027,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $SQL->where("STUDENT_ID = '" . $studentId . "'");
 
         if ($academicId)
-            $SQL->where("CLASS_ID = '" . $academicId. "'");
+            $SQL->where("CLASS_ID = '" . $academicId . "'");
         if ($trainingId)
             $SQL->where("TRAINING_ID = '" . $trainingId . "'");
 
@@ -1091,7 +1089,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                 $isDisabled = $scheduleObject ? "" : "disabled";
         }
 
-        $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
+        $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT', 1);
 
         $data = array();
 
@@ -1184,9 +1182,9 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
     public function jsonActionStudentDailyAttendance($params) {
 
         $field = isset($params["field"]) ? addText($params["field"]) : "";
-        $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
+        $absentType = isset($params["absentType"]) ? addText($params["absentType"]) : "";
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
-        $academicId= isset($params["academicId"]) ? addText($params["academicId"]) : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
@@ -1236,7 +1234,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
                     $WHERE[] = "STUDENT_ID = '" . $studentId . "'";
                     $WHERE[] = "START_DATE = '" . $absentDate . "'";
                     if ($academicId)
-                        $WHERE[] = "CLASS_ID = '" . $academicId. "'";
+                        $WHERE[] = "CLASS_ID = '" . $academicId . "'";
                     if ($trainingId)
                         $WHERE[] = "TRAINING_ID = '" . $trainingId . "'";
                     $WHERE[] = "SCHEDULE_ID = '" . $scheduleObject->ID . "'";
@@ -1380,10 +1378,6 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
         $paramsSchoolEvent['status'] = 1;
         $paramsSchoolEvent['dayoffschool'] = 1;
         $school_events = $DB_EVENTS->allSchoolevents($paramsSchoolEvent, false);
-
-        /* $paramsClassEvent['classId'] = $academicId;
-          $paramsClassEvent['dayoffschool'] = 1;
-          $class_events = $DB_EVENTS->allSchoolevents($paramsClassEvent, false); */
 
         $result = $school_events;
         $events = array();

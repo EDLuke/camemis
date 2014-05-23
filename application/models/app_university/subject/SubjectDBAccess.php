@@ -116,9 +116,9 @@ class SubjectDBAccess {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "0";
-        $department = isset($params["department"]) ? $params["department"] : "";
+        $department = isset($params["department"]) ? addText($params["department"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $parent = isset($params["node"]) ? addText($params["node"]) : "";
         $node = isset($params["node"]) ? addText($params["node"]) : "";
@@ -176,12 +176,12 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     public function treeAllSubjects($params) {
 
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
-        $department = isset($params["department"]) ? $params["department"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
+        $department = isset($params["department"]) ? addText($params["department"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $requisiteId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "";
-        $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? $params["gradeSubjectGradId"] : "";
+        $gradeSubjectGradId = isset($params["gradeSubjectGradId"]) ? addText($params["gradeSubjectGradId"]) : "";
 
         $node = $params["node"];
 
@@ -596,7 +596,7 @@ class SubjectDBAccess {
         $SAVEDATA['COEFF_VALUE'] = isset($params["COEFF_VALUE"]) ? addText($params["COEFF_VALUE"]) : 1;
 
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
-        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
+        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
 
         if ($objectId != "new") {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
@@ -910,9 +910,9 @@ class SubjectDBAccess {
 
     public function actionTeacherSubject($params) {
 
-        $teacherId = isset($params["setId"]) ? $params["setId"] : "";
-        $subjectId = isset($params["Id"]) ? $params["Id"] : "";
-        $checked = isset($params["checked"]) ? $params["checked"] : "";
+        $teacherId = isset($params["setId"]) ? addText($params["setId"]) : "";
+        $subjectId = isset($params["Id"]) ? addText($params["Id"]) : "";
+        $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
 
         $type = isset($params["type"]) ? addText($params["type"]) : "";
 
@@ -1098,7 +1098,7 @@ class SubjectDBAccess {
     public function treeAllTrainingSubjects($params = false) {
 
         $params["target"] = "TRAINING";
-        $staffId = isset($params["setId"]) ? $params["setId"] : "";
+        $staffId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $result = self::getAllSubjectsQuery($params);
 
         $data = array();

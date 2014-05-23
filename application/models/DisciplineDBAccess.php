@@ -279,11 +279,11 @@ class DisciplineDBAccess extends StudentDBAccess {
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : '';
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : '';
         $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : '';
-        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : '';
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : '';
-        $campusId = isset($params["campusId"]) ? $params["campusId"] : '';
-        $schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : '';
-        $gradeId = isset($params["gradeId"]) ? $params["gradeId"] : '';
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : '';
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : '';
+        $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : '';
+        $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : '';
+        $gradeId = isset($params["gradeId"]) ? addText($params["gradeId"]) : '';
         $classId = isset($params["classId"]) ? (int) $params["classId"] : '';
         //@Math Man 11.02.2014
         $personType = isset($params["personType"]) ? addText($params["personType"]) : '';

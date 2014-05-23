@@ -29,19 +29,17 @@ require_once 'config/CAMEMISModulConfig.php';
 require_once 'config/CAMEMISLoginLanguage.php';
 require_once 'config/CAMEMISRegistry.php';
 require_once 'models/CamemisURLEncryption.php';
+require_once 'include/Common.inc.php';
 
-$tokenId = isset($_COOKIE['tokenId']) ? $_COOKIE['tokenId'] : '';
+$tokenId = isset($_COOKIE['tokenId']) ? addText($_COOKIE['tokenId']) : '';
 
-if (isset($_COOKIE['languageId']))
-{
-    $languageId = ($_COOKIE['languageId'] != 'undefined') ? $_COOKIE['languageId'] : 'ENGLISH';
-}
-else
-{
+if (isset($_COOKIE['languageId'])) {
+    $languageId = ($_COOKIE['languageId'] != 'undefined') ? addText($_COOKIE['languageId']) : 'ENGLISH';
+} else {
     $languageId = 'ENGLISH';
 }
 
-$getLanguageId = isset($_GET['languageId']) ? $_GET['languageId'] : '';
+$getLanguageId = isset($_GET['languageId']) ? addText($_GET['languageId']) : '';
 
 Zend_Registry::set('SESSIONID', "");
 Zend_Registry::set('SERVER_NAME', $_SERVER['SERVER_NAME']);
@@ -56,17 +54,14 @@ Zend_Registry::set('TITLE', "CAMEMIS Easy and Efficient Education Management");
 Zend_Registry::set('EXTJS_VERSION', CAMEMISConfigBasic::EXTJS_VERSION);
 
 $registry = Zend_Registry::getInstance();
-if (isset($tokenId))
-{
+if (isset($tokenId)) {
 
-    if (!isset($registry["MODUL_API"]))
-    {
+    if (!isset($registry["MODUL_API"])) {
         echo "<h1>Please register " . $_SERVER['SERVER_NAME'] . "<h1>";
         exit;
     }
 
-    switch (Zend_Registry::get('MODUL_API'))
-    {
+    switch (Zend_Registry::get('MODUL_API')) {
         case "dfe34ef0f0b812ea32d12866dbe9e3cb":
 
             require_once 'models/app_admin/AdminSessionAccess.php';
@@ -75,8 +70,7 @@ if (isset($tokenId))
             $SESSION_OBJECT->setSessionId($tokenId);
             $SESSION = $SESSION_OBJECT->getSession();
 
-            if ($SESSION)
-            {
+            if ($SESSION) {
                 Zend_Registry::set('SESSIONID', $SESSION->ID);
                 Zend_Registry::set('SESSION', $SESSION);
             }
@@ -86,20 +80,14 @@ if (isset($tokenId))
 
             Zend_Registry::set('MODUL_API_PATH', "app_school");
 
-            if ($languageId)
-            {
+            if ($languageId) {
 
-                if ($getLanguageId)
-                {
+                if ($getLanguageId) {
                     Zend_Registry::set('SYSTEM_LANGUAGE', $getLanguageId);
-                }
-                else
-                {
+                } else {
                     Zend_Registry::set('SYSTEM_LANGUAGE', $languageId);
                 }
-            }
-            else
-            {
+            } else {
                 Zend_Registry::set('SYSTEM_LANGUAGE', CAMEMISLoginLanguage::getLoginLanguage($tokenId));
             }
 
@@ -113,8 +101,7 @@ if (isset($tokenId))
             $SCHOOL_DB = SchoolDBAccess::getInstance();
             $SESSION_OBJECT = $SESSION_DB->dataSession($sessionId);
 
-            if ($SESSION_OBJECT)
-            {
+            if ($SESSION_OBJECT) {
 
                 Zend_Registry::set('SESSION_OBJECT', $SESSION_DB);
                 $MEMBER_DB = UserDBAccess::getInstance();
@@ -126,16 +113,12 @@ if (isset($tokenId))
                 SessionAccess::makeSchoolRegistry($SCHOOL_OBJECT, $SESSION_OBJECT);
                 SessionAccess::makeModulRegistry();
 
-                if (is_numeric($MEMBER_OBJECT->ROLE))
-                {
+                if (is_numeric($MEMBER_OBJECT->ROLE)) {
                     UserRoleDBAccess::setACLData($MEMBER_OBJECT->ROLE);
                     $USER_ROLE_OBJECT = $MEMBER_ROLE_DB->getObjectUserRole($MEMBER_OBJECT->ROLE);
                     $ACL_DATA = UserRoleDBAccess::getACLData($MEMBER_OBJECT->ROLE);
-                }
-                else
-                {
-                    switch ($MEMBER_OBJECT->ROLE)
-                    {
+                } else {
+                    switch ($MEMBER_OBJECT->ROLE) {
                         case "STUDENT":
                             Zend_Registry::set('USER_TYPE', 'STUDENT');
                             $USER_ROLE_OBJECT = $MEMBER_ROLE_DB->getObjectUserRole(4);
@@ -159,20 +142,14 @@ if (isset($tokenId))
             Zend_Registry::set('MODUL_API_PATH', "app_university");
             Zend_Registry::set('SYSTEM_LANGUAGE', CAMEMISLoginLanguage::getLoginLanguage($tokenId));
 
-            if ($languageId)
-            {
+            if ($languageId) {
 
-                if ($getLanguageId)
-                {
+                if ($getLanguageId) {
                     Zend_Registry::set('SYSTEM_LANGUAGE', $getLanguageId);
-                }
-                else
-                {
+                } else {
                     Zend_Registry::set('SYSTEM_LANGUAGE', $languageId);
                 }
-            }
-            else
-            {
+            } else {
                 Zend_Registry::set('SYSTEM_LANGUAGE', CAMEMISLoginLanguage::getLoginLanguage($tokenId));
             }
 
@@ -186,8 +163,7 @@ if (isset($tokenId))
             $SCHOOL_DB = SchoolDBAccess::getInstance();
             $SESSION_OBJECT = $SESSION_DB->dataSession($sessionId);
 
-            if ($SESSION_OBJECT)
-            {
+            if ($SESSION_OBJECT) {
 
                 Zend_Registry::set('SESSION_OBJECT', $SESSION_DB);
                 $MEMBER_DB = UserDBAccess::getInstance();
@@ -199,16 +175,12 @@ if (isset($tokenId))
                 SessionAccess::makeSchoolRegistry($SCHOOL_OBJECT, $SESSION_OBJECT);
                 SessionAccess::makeModulRegistry();
 
-                if (is_numeric($MEMBER_OBJECT->ROLE))
-                {
+                if (is_numeric($MEMBER_OBJECT->ROLE)) {
                     UserRoleDBAccess::setACLData($MEMBER_OBJECT->ROLE);
                     $USER_ROLE_OBJECT = $MEMBER_ROLE_DB->getObjectUserRole($MEMBER_OBJECT->ROLE);
                     $ACL_DATA = UserRoleDBAccess::getACLData($MEMBER_OBJECT->ROLE);
-                }
-                else
-                {
-                    switch ($MEMBER_OBJECT->ROLE)
-                    {
+                } else {
+                    switch ($MEMBER_OBJECT->ROLE) {
                         case "STUDENT":
                             Zend_Registry::set('USER_TYPE', 'STUDENT');
                             $USER_ROLE_OBJECT = $MEMBER_ROLE_DB->getObjectUserRole(4);
@@ -234,25 +206,18 @@ if (isset($tokenId))
 
 $frontController = Zend_Controller_Front::getInstance();
 
-switch (Zend_Registry::get('MODUL_API'))
-{
+switch (Zend_Registry::get('MODUL_API')) {
     case "dfe34ef0f0b812ea32d02866dbe9e3cb":
-        if (strpos(ltrim($_SERVER["REQUEST_URI"], '/'), 'elearning') !== FALSE)
-        {
+        if (strpos(ltrim($_SERVER["REQUEST_URI"], '/'), 'elearning') !== FALSE) {
             $application_type = '../application/modules/app_elearning/controllers';
-        }
-        else
-        {
+        } else {
             $application_type = '../application/modules/app_school/controllers';
         }
         break;
     case "dfe34ef0f0b812ea32d92866dbe9e3cb":
-        if (strpos(ltrim($_SERVER["REQUEST_URI"], '/'), 'elearning') !== FALSE)
-        {
+        if (strpos(ltrim($_SERVER["REQUEST_URI"], '/'), 'elearning') !== FALSE) {
             $application_type = '../application/modules/app_elearning/controllers';
-        }
-        else
-        {
+        } else {
             $application_type = '../application/modules/app_university/controllers';
         }
         break;

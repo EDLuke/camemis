@@ -745,7 +745,7 @@ class CommunicationDBAccess {
     public function jsonTreeAllCommunicationSubject($params) {
 
         $params["parentId"] = isset($params["node"]) ? addText($params["node"]) : "0";
-        $userId = isset($params["userId"]) ? $params["userId"] : "";
+        $userId = isset($params["userId"]) ? addText($params["userId"]) : "";
         $result = self::getAllCommunicationSubjectQuery($params);
 
         $data = array();

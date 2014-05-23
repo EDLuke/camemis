@@ -113,7 +113,7 @@
 
             $startdate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
             $enddate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
-            $paymentType = isset($params["paymentType"]) ? $params["paymentType"] : "";
+            $paymentType = isset($params["paymentType"]) ? addText($params["paymentType"]) : "";
 
             $errors = array();
 
@@ -310,15 +310,15 @@
 
             $start = isset($params["start"]) ? (int) $params["start"] : "0";
             $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-            $startDate = isset($params["startDate"]) ? $params["startDate"] :"";
-            $endDate = isset($params["endDate"]) ? $params["endDate"] :"";
+            $startDate = isset($params["startDate"]) ? addText($params["startDate"]) :"";
+            $endDate = isset($params["endDate"]) ? addText($params["endDate"]) :"";
             $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-            $paistatus = isset($params["paistatus"]) ? $params["paistatus"] : "";
-            $staffCode = isset($params["staffCode"]) ? $params["staffCode"] : "";
+            $paistatus = isset($params["paistatus"]) ? addText($params["paistatus"]) : "";
+            $staffCode = isset($params["staffCode"]) ? addText($params["staffCode"]) : "";
             $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
             $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
-            $number = isset($params["number"]) ? $params["number"] : "";
-            $paymentType = isset($params["paymentType"]) ? $params["paymentType"] : "";
+            $number = isset($params["number"]) ? addText($params["number"]) : "";
+            $paymentType = isset($params["paymentType"]) ? addText($params["paymentType"]) : "";
 
             $SELECTION_A = array(
                 "ID AS STAFF_ID"

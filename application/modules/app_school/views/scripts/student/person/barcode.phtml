@@ -3,7 +3,7 @@
 require_once 'Zend/Barcode.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
 
-$studentId = isset($_GET["v"]) ? $_GET["v"] : "";
+$studentId = isset($_GET["v"]) ? addText($_GET["v"]) : "";
 
 $STUDENT_OBJECT = StudentDBAccess::findStudentFromId($studentId);
 

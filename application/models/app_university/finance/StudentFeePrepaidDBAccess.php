@@ -51,8 +51,8 @@ class StudentFeePrepaidDBAccess {
         $code = isset($params['code']) ? $params['code'] : '';
         $name = isset($params['FEE_NAME']) ? $params['FEE_NAME'] : '';
         $type = isset($params["type"]) ? $param["type"] : "";
-        $campusId = isset($params["campusId"]) ? $params["campusId"] : '';
-        $programId = isset($params["programId"]) ? $params["programId"] : '';
+        $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : '';
+        $programId = isset($params["programId"]) ? addText($params["programId"]) : '';
 
         $SELECTION_A = array(
             "ID AS ID"
@@ -147,7 +147,7 @@ class StudentFeePrepaidDBAccess {
     public static function jsonLoadFeePrePayment($params) {
 
         $objectId = isset($params['objectId']) ? $params['objectId'] : '';
-        $campusId = isset($params['campusId']) ? $params['campusId'] : '';
+        $campusId = isset($params['campusId']) ? addText($params["campusId"]) : '';
         $program = isset($params['program']) ? $params['program'] : '';
         $facette = self::findFeePrePaymentById($objectId);
 
@@ -213,8 +213,8 @@ class StudentFeePrepaidDBAccess {
         $FEE_AMOUNT = isset($params["FEES"]) ? addText($params["FEES"]) : "";
         $DESCRIPTION = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
         $INCOME_CATEGORY = isset($params["HIDDEN_INCOME_CATEGORY"]) ? $params["HIDDEN_INCOME_CATEGORY"] : "";
-        $start_date = isset($params['START_DATE']) ? $params['START_DATE'] : '';
-        $end_date = isset($params['END_DATE']) ? $params['END_DATE'] : '';
+        $start_date = isset($params['START_DATE']) ? addText($params["START_DATE"]) : '';
+        $end_date = isset($params['END_DATE']) ? addText($params["END_DATE"]) : '';
 
         if ($program) {
             $object_school_year = self::findAllTermTraining();
@@ -545,7 +545,7 @@ class StudentFeePrepaidDBAccess {
         $studentPrePaymentId = isset($params['studentPrePaymentId']) ? $params['studentPrePaymentId'] : '';
         $feePrePayment = isset($params['feePrePaymentId']) ? $params['feePrePaymentId'] : '';
         $studentId = isset($params['objectId']) ? $params['objectId'] : '';
-        $training = isset($params['training']) ? $params['training'] : 'false';
+        $training = isset($params['training']) ? addText($params["training"]) : 'false';
         //error_log('dfsfsdfsdf');
         $facette = self::findStudentPrePaymentById($studentPrePaymentId);
 

@@ -24,7 +24,7 @@ $TRAINING_GRID = new CamemisGrid("SCHEDULE", "TRAINING");
 $TRAINING_GRID->setLoadUrl("/schedule/jsonload/");
 $TRAINING_GRID->setSaveUrl("/schedule/jsonsave/");
 
-$chooseId = isset($_GET["chooseId"])?$_GET["chooseId"]:"";
+$chooseId = isset($_GET["chooseId"])? addText($_GET["chooseId"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

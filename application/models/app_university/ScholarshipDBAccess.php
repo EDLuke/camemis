@@ -70,7 +70,7 @@ class ScholarshipDBAccess {
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
-        $scholarshipType = isset($params["scholarshipType"]) ? $params["scholarshipType"] : "";
+        $scholarshipType = isset($params["scholarshipType"]) ? addText($params["scholarshipType"]) : "";
         $campusId = isset($params["campus"])?$params["campus"]:"";
         $classId = isset($params["classId"])?$params["classId"]:"";
         $gradeId = isset($params["gradeId"])?$params["gradeId"]:"";
@@ -276,10 +276,10 @@ class ScholarshipDBAccess {
         $lastname = isset($params["lastname"]) ? addText($params["lastname"]) : "";
         $firstname = isset($params["firstname"]) ? addText($params["firstname"]) : "";
         $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
-        $scholarshipType = isset($params["scholarshipType"]) ? $params["scholarshipType"] : "";
-        $programId = isset($params["programId"]) ? $params["programId"] : "";
-        $termId = isset($params["termId"]) ? $params["termId"] : "";
-        $levelId = isset($params["levelId"]) ? $params["levelId"] : "";
+        $scholarshipType = isset($params["scholarshipType"]) ? addText($params["scholarshipType"]) : "";
+        $programId = isset($params["programId"]) ? addText($params["programId"]) : "";
+        $termId = isset($params["termId"]) ? addText($params["termId"]) : "";
+        $levelId = isset($params["levelId"]) ? addText($params["levelId"]) : "";
 
         $SELECT_A = array(
             'CODE'
@@ -492,9 +492,9 @@ class ScholarshipDBAccess {
 
     public static function addStudentSchoolar($params) {
 
-        $compusId = isset($params["compusId"]) ? $params["compusId"] : "0";
+        $compusId = isset($params["compusId"]) ? addText($params["compusId"]) : "0";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "0";
-        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? $params["CHOOSE_SCHOLARSHIP"] : "0";
+        $scholarship = isset($params["CHOOSE_SCHOLARSHIP"]) ? addText($params["CHOOSE_SCHOLARSHIP"]) : "0";
         $schoolyear = isset($params["schoolyear"]) ? addText($params["schoolyear"]) : "0";
 
         $check = self::checkStudentScholarship($studentId, $schoolyear, $compusId, false);

@@ -2113,7 +2113,7 @@ class ScheduleDBAccess {
     public static function actionSharingSchedule2Academic($params) {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "0";
-        $selectedId = isset($params["selectedId"]) ? $params["selectedId"] : "";
+        $selectedId = isset($params["selectedId"]) ? addText($params["selectedId"]) : "";
         $scheduleObject = self::findScheduleFromGuId($scheduleId);
         if ($scheduleObject) {
             if ($selectedId) {
@@ -2160,8 +2160,8 @@ class ScheduleDBAccess {
     //@veasna
     public static function getCreditClassInAcademicSubject($params) {
 
-        $academicId = isset($params['academicId']) ? $params['academicId'] : '';
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : '';
+        $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
+        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : '';
         $teacherId = isset($params['teacherId']) ? $params['teacherId'] : '';
 
         $SQL = self::dbAccess()->select();

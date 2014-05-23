@@ -328,7 +328,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SAVEDATA['USED_IN_CLASS'] = $academicObject->EDUCATION_SYSTEM ? 0 : 1;
         $SAVEDATA['NATIONAL_EXAM'] = isset($params["NATIONAL_EXAM"]) ? 1 : 0;
         $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
-        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? $params["SCORE_TYPE"] : 1;
+        $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
 
         $WHERE = array();
         $WHERE[] = self::dbAccess()->quoteInto('ID = ?', $gradesubjectId);

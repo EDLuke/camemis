@@ -17,7 +17,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $studentObject = StudentDBAccess::findStudentFromId($objectId);
 $FULL_NAME=$studentObject->LASTNAME . ' '. $studentObject->FIRSTNAME;
-$PAGE_NAME = isset($_GET["page_name"])?$_GET["page_name"]:"";
+$PAGE_NAME = isset($_GET["page_name"])? addText($_GET["page_name"]):"";
 
 $OBJECT_FORM = new CamemisForm("COMMUNICATION");
 $OBJECT_FORM->setLoadUrl('/communication/jsonload/');

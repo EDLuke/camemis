@@ -68,8 +68,8 @@ class StudentStatisticsDBAccess {
     {
 
         $studentstatusType = isset($params["studentstatusType"]) ? addText($params["studentstatusType"]) : "";
-        $isStudentStatus = isset($params["isStudentStatus"]) ? $params["isStudentStatus"] : "";
-        $isStudentAbsence = isset($params["isStudentAbsence"]) ? $params["isStudentAbsence"] : "";
+        $isStudentStatus = isset($params["isStudentStatus"]) ? addText($params["isStudentStatus"]) : "";
+        $isStudentAbsence = isset($params["isStudentAbsence"]) ? addText($params["isStudentAbsence"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";    // Chuy Thong 19/08/2012
         $SQL = "";
         $SQL .= "SELECT DD.NAME,
@@ -123,15 +123,15 @@ class StudentStatisticsDBAccess {
 
     public function getSqlAcadamicGenderStatistics($params)
     {
-        $campusId = isset($params['campusId']) ? $params['campusId'] : '';
-        $choosegrade = isset($params['choosegrade']) ? $params['choosegrade'] : '';
-        $schoolYearStart = isset($params['schoolYearStart']) ? $params['schoolYearStart'] : '';
-        $schoolYearEnd = isset($params['schoolYearEnd']) ? $params['schoolYearEnd'] : '';
-        $schoolyearId = isset($params['schoolyearId']) ? $params['schoolyearId'] : '';
-        $academicId = isset($params['academicId']) ? $params['academicId'] : '';
+        $campusId = isset($params['campusId']) ? addText($params["campusId"]) : '';
+        $choosegrade = isset($params['choosegrade']) ? addText($params["choosegrade"]) : '';
+        $schoolYearStart = isset($params['schoolYearStart']) ? addText($params["schoolYearStart"]) : '';
+        $schoolYearEnd = isset($params['schoolYearEnd']) ? addText($params["schoolYearEnd"]) : '';
+        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : '';
+        $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
         $studentstatusType = isset($params["studentstatusType"]) ? addText($params["studentstatusType"]) : "";
-        $isStudentStatus = isset($params["isStudentStatus"]) ? $params["isStudentStatus"] : "";
-        $isStudentAbsence = isset($params["isStudentAbsence"]) ? $params["isStudentAbsence"] : "";
+        $isStudentStatus = isset($params["isStudentStatus"]) ? addText($params["isStudentStatus"]) : "";
+        $isStudentAbsence = isset($params["isStudentAbsence"]) ? addText($params["isStudentAbsence"]) : "";
 
         if (!$schoolyearId)
         {
@@ -457,12 +457,12 @@ class StudentStatisticsDBAccess {
     ////@veasna
     public static function getCountStudentDiscipline($params){
         
-        $disciplineType = isset($params['disciplineType'])?$params['disciplineType']:'';
-        $campusId = isset($params['campusId'])?$params['campusId']:'';
-        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
-        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
-        $MONTH = isset($params['MONTH'])?$params['MONTH']:'';
-        $YEAR = isset($params['YEAR'])?$params['YEAR']:'';
+        $disciplineType = isset($params['disciplineType'])? addText($params["disciplineType"]):'';
+        $campusId = isset($params['campusId'])? addText($params["campusId"]):'';
+        $gradeId = isset($params['gradeId'])? addText($params["gradeId"]):'';
+        $schoolyearId = isset($params['schoolyearId'])? addText($params["schoolyearId"]):'';
+        $MONTH = isset($params['MONTH'])? addText($params["MONTH"]):'';
+        $YEAR = isset($params['YEAR'])? addText($params["YEAR"]):'';
         
         $SQL = self::dbAccess()->select();    
         $SQL->from(array("A"=>"t_discipline"), array("TOTAL" => "COUNT(*)"));
@@ -701,13 +701,13 @@ class StudentStatisticsDBAccess {
 
     public static function getSqlStudentDisciplineByMonthType($month, $year, $disciplineType, $studentId)
     {
-        $campusId = isset($params['campusId'])?$params['campusId']:'';
-        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
-        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
-        $month = isset($params['MONTH'])?$params['MONTH']:'';
-        $year = isset($params['YEAR'])?$params['YEAR']:'';
-        $disciplineType = isset($params['disciplineType'])?$params['disciplineType']:'';
-        $studentId = isset($params['studentId'])?$params['studentId']:'';
+        $campusId = isset($params['campusId'])? addText($params["campusId"]):'';
+        $gradeId = isset($params['gradeId'])? addText($params["gradeId"]):'';
+        $schoolyearId = isset($params['schoolyearId'])? addText($params["schoolyearId"]):'';
+        $month = isset($params['MONTH'])? addText($params["MONTH"]):'';
+        $year = isset($params['YEAR'])? addText($params["YEAR"]):'';
+        $disciplineType = isset($params['disciplineType'])? addText($params["disciplineType"]):'';
+        $studentId = isset($params['studentId'])? addText($params["studentId"]):'';
         
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_discipline'), array("C" => "COUNT(*)"));
@@ -790,11 +790,11 @@ class StudentStatisticsDBAccess {
     public static function getCountStudentAttendance($params){
         
         $absenceType = isset($params['absenceType'])?$params['absenceType']:'';
-        $campusId = isset($params['campusId'])?$params['campusId']:'';
-        $gradeId = isset($params['gradeId'])?$params['gradeId']:'';
-        $schoolyearId = isset($params['schoolyearId'])?$params['schoolyearId']:'';
-        $MONTH = isset($params['MONTH'])?$params['MONTH']:'';
-        $YEAR = isset($params['YEAR'])?$params['YEAR']:'';
+        $campusId = isset($params['campusId'])? addText($params["campusId"]):'';
+        $gradeId = isset($params['gradeId'])? addText($params["gradeId"]):'';
+        $schoolyearId = isset($params['schoolyearId'])? addText($params["schoolyearId"]):'';
+        $MONTH = isset($params['MONTH'])? addText($params["MONTH"]):'';
+        $YEAR = isset($params['YEAR'])? addText($params["YEAR"]):'';
         
         $SQL = self::dbAccess()->select();    
         $SQL->from(array("A"=>"t_student_attendance"), array("TOTAL" => "COUNT(*)"));

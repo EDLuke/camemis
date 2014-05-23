@@ -95,10 +95,10 @@ class FacilityDBAccess {
 
     public static function getAllFacilityQuery($params) {
 
-        $END_DATE = isset($params['endDate']) ? $params['endDate'] : '';
-        $START_DATE = isset($params['startDate']) ? $params['startDate'] : '';
-        $NAME = isset($params['name']) ? $params['name'] : '';
-        $BARCODE = isset($params['barcode']) ? $params['barcode'] : '';
+        $END_DATE = isset($params['endDate']) ? addText($params["endDate"]) : '';
+        $START_DATE = isset($params['startDate']) ? addText($params["startDate"]) : '';
+        $NAME = isset($params['name']) ? addText($params["name"]) : '';
+        $BARCODE = isset($params['barcode']) ? addText($params["barcode"]) : '';
 
         $SQL = "";
         $SQL .= " SELECT DISTINCT";
@@ -214,7 +214,7 @@ class FacilityDBAccess {
         $SAVEDATA['SHORT'] = isset($params["SHORT"]) ? addText($params["SHORT"]) : "";
         $SAVEDATA['SORTKEY'] = isset($params["SORTKEY"]) ? addText($params["SORTKEY"]) : 0;
         $SAVEDATA['COLOR'] = isset($params["COLOR"]) ? addText($params["COLOR"]) : 0;
-        $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? $params["DESCRIPTION"] : "";
+        $SAVEDATA['DESCRIPTION'] = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
         if ($objectId == 'new') {
             $SAVEDATA['PARENT'] = isset($params["parentId"]) ? addText($params["parentId"]) : 0;

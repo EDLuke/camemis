@@ -20,7 +20,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("DISCIPLINE", "GENERAL");
 $OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
 $OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
-$view=isset($_GET['view'])? $_GET['view']:0;
+$view=isset($_GET['view'])? addText($_GET["view"]):0;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

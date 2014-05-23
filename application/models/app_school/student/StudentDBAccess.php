@@ -1382,7 +1382,7 @@ class StudentDBAccess {
     public function jsonCheckStudentSchoolID($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $studentSchoolId = isset($params["studentSchoolId"]) ? $params["studentSchoolId"] : 0;
+        $studentSchoolId = isset($params["studentSchoolId"]) ? addText($params["studentSchoolId"]) : 0;
 
         $check = $this->checkStudentSchoolId($objectId, $studentSchoolId);
 
@@ -1399,8 +1399,8 @@ class StudentDBAccess {
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : 0;
-        $chooseSchoolyearId = isset($params["chooseSchoolyearId"]) ? $params["chooseSchoolyearId"] : 0;
-        $nextSchoolyearId = isset($params["nextSchoolyearId"]) ? $params["nextSchoolyearId"] : 0;
+        $chooseSchoolyearId = isset($params["chooseSchoolyearId"]) ? addText($params["chooseSchoolyearId"]) : 0;
+        $nextSchoolyearId = isset($params["nextSchoolyearId"]) ? addText($params["nextSchoolyearId"]) : 0;
         $result = self::queryStudentByClass($classId, $chooseSchoolyearId);
 
         $STUDENT_IN_NEXT_SCHOOLYEAR = $this->findStudentsInSchoolyear($nextSchoolyearId);

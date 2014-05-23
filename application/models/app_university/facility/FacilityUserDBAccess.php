@@ -158,21 +158,21 @@ class FacilityUserDBAccess {
 
     public static function getSqlUserCheckOutItems($params) {
 
-        $BARCODE = isset($params['BARCODE']) ? $params['BARCODE'] : '';
+        $BARCODE = isset($params['BARCODE']) ? addText($params["BARCODE"]) : '';
         $END_DATE = isset($params['END_DATE']) ? setDate2DB($params['END_DATE']) : '';
         $START_DATE = isset($params['START_DATE']) ? setDate2DB($params['START_DATE']) : '';
         $DEAD_LINE_END_DATE = isset($params['DEADLINE_END']) ? setDate2DB($params['DEADLINE_END']) : '';
         $DEAD_LINE_START_DATE = isset($params['DEADLINE_START']) ? setDate2DB($params['DEADLINE_START']) : '';
-        $NAME = isset($params['NAME']) ? $params['NAME'] : '';
-        $ITEM_NAME = isset($params['ITEM_NAME']) ? $params['ITEM_NAME'] : '';
-        $ACTION_TYPE = isset($params['ACTION_TYPE']) ? $params['ACTION_TYPE'] : '';
-        $ITEM_ACTION_TYPE = isset($params['ITEM_ACTION_TYPE']) ? $params['ITEM_ACTION_TYPE'] : '';
+        $NAME = isset($params['NAME']) ? addText($params["NAME"]) : '';
+        $ITEM_NAME = isset($params['ITEM_NAME']) ? addText($params["ITEM_NAME"]) : '';
+        $ACTION_TYPE = isset($params['ACTION_TYPE']) ? addText($params["ACTION_TYPE"]) : '';
+        $ITEM_ACTION_TYPE = isset($params['ITEM_ACTION_TYPE']) ? addText($params["ITEM_ACTION_TYPE"]) : '';
         $USER_INVOICE_ID = isset($params['objectId']) ? addText($params['objectId']) : '';
-        $FIRST_NAME = isset($params['FIRSTNAME']) ? $params['FIRSTNAME'] : '';
-        $LAST_NAME = isset($params['LASTNAME']) ? $params['LASTNAME'] : '';
-        $CODE = isset($params['CODE']) ? $params['CODE'] : '';
-        $GENDER = isset($params['GENDER']) ? $params['GENDER'] : '';
-        $TARGET_USER = isset($params['REF_ID']) ? $params['REF_ID'] : '';
+        $FIRST_NAME = isset($params['FIRSTNAME']) ? addText($params["FIRSTNAME"]) : '';
+        $LAST_NAME = isset($params['LASTNAME']) ? addText($params["LASTNAME"]) : '';
+        $CODE = isset($params['CODE']) ? addText($params["CODE"]) : '';
+        $GENDER = isset($params['GENDER']) ? addText($params["GENDER"]) : '';
+        $TARGET_USER = isset($params['REF_ID']) ? addText($params["REF_ID"]) : '';
 
         $SELECTION_A = array(
             "REFERENCE_NUMBER AS REFERENCE_NUMBER"
@@ -399,10 +399,10 @@ class FacilityUserDBAccess {
 
     public static function jsonSaveFacilityUserItems($params) {
 
-        $FACUSER_ID = isset($params['facUserId']) ? $params['facUserId'] : '';
+        $FACUSER_ID = isset($params['facUserId']) ? addText($params["facUserId"]) : '';
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
-        $choose_FacilityId = isset($params["CHOOSE_ITEM"]) ? $params["CHOOSE_ITEM"] : '';
-        $deadline = isset($params["DEADLINE"]) ? $params["DEADLINE"] : '';
+        $choose_FacilityId = isset($params["CHOOSE_ITEM"]) ? addText($params["CHOOSE_ITEM"]) : '';
+        $deadline = isset($params["DEADLINE"]) ? addText($params["DEADLINE"]) : '';
         $type = isset($params["type"]) ? addText($params["type"]) : 1;
         $old_user_facility = '';
         $old_user_facility_quality = '';
@@ -660,7 +660,7 @@ class FacilityUserDBAccess {
         if ($newValue) {
             $subparams['CHOOSE_ITEM'] = $object->FACILITY_ID;
             $subparams['objectId'] = 'new';
-            $subparams['facUserId'] = isset($params['facUserId']) ? $params['facUserId'] : '';
+            $subparams['facUserId'] = isset($params['facUserId']) ? addText($params["facUserId"]) : '';
             $facUserObject = self::findFacilityUserById($params['facUserId']);
             $subparams['type'] = isset($params['type']) ? addText($params['type']) : '';
             $subparams['LOCATION'] = $newValue;

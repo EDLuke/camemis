@@ -444,8 +444,8 @@ class LetterDBAccess {
 		$name = isset($params["name"]) ? addText($params["name"]) : "";
 		$number = isset($params["number"]) ? addText($params["number"]) : "";
 		$type = isset($params["type"]) ? addText($params["type"]) : "";
-		$startDate = isset($params["startDate"]) ? $params["startDate"] : "";
-		$endDate = isset($params["endDate"]) ? $params["endDate"] : "";
+		$startDate = isset($params["startDate"]) ? addText($params["startDate"]) : "";
+		$endDate = isset($params["endDate"]) ? addText($params["endDate"]) : "";
 		/*$personId = isset($params["personId"]) ? $params["personId"] : "";
 		$personType = isset($params["personType"]) ? $params["personType"] : "";
 		if ($personType) {
@@ -631,7 +631,7 @@ class LetterDBAccess {
 	public function showAllStudentsOrStaffs($params) {
 		$start = isset($params["start"]) ? (int) $params["start"] : "0";
 		$limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-		$objectId = isset($params["objectId"]) ? $params["objectId"] : "";
+		$objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 		$personType = isset($params["personType"]) ? addText($params["personType"]) : "";
 		$type = isset($params["type"]) ? addText($params["type"]) : "";
         

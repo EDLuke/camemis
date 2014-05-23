@@ -22,8 +22,8 @@ $OBJECT_FORM = new CamemisForm("LETTER");
 $OBJECT_FORM->setLoadUrl('/letter/jsonload/');
 $OBJECT_FORM->setSaveUrl('/letter/jsonsave/');
 
-$personType = isset($_GET["personType"]) ? $_GET["personType"] : "";
-$personId = isset($_GET["personId"]) ? $_GET["personId"] : "";
+$personType = isset($_GET["personType"]) ? addText($_GET["personType"]) : "";
+$personId = isset($_GET["personId"]) ? addText($_GET["personId"]) : "";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

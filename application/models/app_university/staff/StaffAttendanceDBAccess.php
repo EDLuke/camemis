@@ -256,7 +256,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
     public function jsonActionStaffDailyAttendance($params) {
 
-        $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
+        $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "";
         $absentDate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
@@ -357,13 +357,13 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
-        $absentType = isset($params["absentType"]) ? $params["absentType"] : "";
+        $absentType = isset($params["absentType"]) ? addText($params["absentType"]) : "";
         $choosedate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";
 
         $facette = self::findAttendanceFromId($objectId);
 
         if (!$facette) {
-            $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
+            $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "";
             $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
         } else {
             $staffId = $facette->STAFF_ID;
@@ -476,18 +476,18 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
     public static function sqlStaffAttendance($params) {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
-        $absentType = isset($params["ABSENT_TYPE"]) ? $params["ABSENT_TYPE"] : "";
+        $absentType = isset($params["ABSENT_TYPE"]) ? addText($params["ABSENT_TYPE"]) : "";
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
-        $staffSchoolId = isset($params["STAFF_SCHOOL_ID"]) ? $params["STAFF_SCHOOL_ID"] : "";
-        $startDate = isset($params["START_DATE"]) ? $params["START_DATE"] : "";
-        $endDate = isset($params["END_DATE"]) ? $params["END_DATE"] : "";
+        $staffSchoolId = isset($params["STAFF_SCHOOL_ID"]) ? addText($params["STAFF_SCHOOL_ID"]) : "";
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : "";
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $object = isset($params["object"]) ? $params["object"] : "";
+        $object = isset($params["object"]) ? addText($params["object"]) : "";
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : "";
-        $searchSubjecttype = isset($params["CHOOSE_SUBJECT"]) ? $params["CHOOSE_SUBJECT"] : "";
-        $contract_type = isset($params["CONTRACT_TYPE"]) ? $params["CONTRACT_TYPE"] : "";
+        $searchSubjecttype = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) : "";
+        $contract_type = isset($params["CONTRACT_TYPE"]) ? addText($params["CONTRACT_TYPE"]) : "";
         
         $SELECTION_A = array(
             "STAFF_INDEX"
@@ -735,9 +735,9 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
         $DB_ACCESS = TeacherScheduleDBAccess::getInstance();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $choosedate = isset($params["choosedate"]) ? $params["choosedate"] : "";
+        $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "";
-        $staffId = isset($params["staffId"]) ? $params["staffId"] : "";
+        $staffId = isset($params["staffId"]) ? addText($params["staffId"]) : "";
 
         $searchParams["teacherId"] = $staffId;
         $searchParams["startdt"] = $choosedate;

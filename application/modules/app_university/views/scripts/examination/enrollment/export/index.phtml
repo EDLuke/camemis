@@ -18,7 +18,7 @@
     require_once 'models/app_university/room/RoomDBAccess.php';
     
     $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
-    $bnt=isset($_GET["bnt"])?$_GET["bnt"]:"";
+    $bnt=isset($_GET["bnt"])? addText($_GET["bnt"]):"";
     $exportToExcel=new CamemisExportToExcel();
     
     //school information
@@ -32,11 +32,11 @@
     if($bnt==5){ ///studnet enrollment exam result
     
         $myParams=array();
-        $myParams["type"]=isset($_GET["enrollExamType"]) ? $_GET["enrollExamType"] : "";
+        $myParams["type"]=isset($_GET["enrollExamType"]) ? addText($_GET["enrollExamType"]) : "";
         $myParams["objectType"]=isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
-        $myParams["campus"]=isset($_GET["campus"]) ? $_GET["campus"] : "";
-        $myParams["gender"]=isset($_GET["gender"]) ? $_GET["gender"] : "";
-        $myParams["examResult"]=isset($_GET["examResult"]) ? $_GET["examResult"] : "";
+        $myParams["campus"]=isset($_GET["campus"]) ? addText($_GET["campus"]) : "";
+        $myParams["gender"]=isset($_GET["gender"]) ? addText($_GET["gender"]) : "";
+        $myParams["examResult"]=isset($_GET["examResult"]) ? addText($_GET["examResult"]) : "";
         if($myParams["campus"]){
             $academicObject = AcademicDBAccess::findGradeFromId($myParams["campus"]);
             

@@ -52,9 +52,9 @@ class ForumDBAccess {
     public static function sqlForum($params){
         
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
-        $CAMEMIS_TYPE = isset($params["CAMEMIS_TYPE"]) ? $params["CAMEMIS_TYPE"] : "";
-        $object_type = isset($params["object_type"]) ? $params["object_type"] : "";
-        $objectId = isset($params["ID"]) ? $params["ID"] : "";
+        $CAMEMIS_TYPE = isset($params["CAMEMIS_TYPE"]) ? addText($params["CAMEMIS_TYPE"]) : "";
+        $object_type = isset($params["object_type"]) ? addText($params["object_type"]) : "";
+        $objectId = isset($params["ID"]) ? addText($params["ID"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         
         $SQL = self::dbAccess()->select();

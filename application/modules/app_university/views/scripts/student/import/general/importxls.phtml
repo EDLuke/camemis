@@ -26,7 +26,7 @@ $GENERAL_EDU_TREE->setSaveUrl('/academic/jsonsave/');
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$educationSystem = isset($_GET["educationSystem"])?$_GET["educationSystem"]:"0";
+$educationSystem = isset($_GET["educationSystem"])? addText($_GET["educationSystem"]):"0";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
 $disabledButton = $this->facette > 0 ? false : true; //@Math Man
