@@ -75,8 +75,8 @@ class myExportDBAccess extends CamemisExportDBAccess {
             $content .= getShowDate($this->date);
             $content .= "\r";
         }
-        
-        if($this->monthyear){
+
+        if ($this->monthyear) {
             $content .= diplayNameMonthYear($this->monthyear);
             $content .= "\r";
         }
@@ -84,7 +84,7 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $content .= $this->evaluation->getSubject()->SUBJECT_NAME;
         $content .= "\r";
         $content .= $this->evaluation->getSubjectScorePossible();
-        
+
         if ($this->assignmentId) {
             $content .= "\r";
             $content .= $this->evaluation->getAssignment()->NAME;
@@ -109,6 +109,13 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $this->setFontStyle(2, 2, true, 11, "000000");
         $this->setFullStyle(2, 2, "DFE3E8");
         $this->setCellStyle(2, 2, 20, 30);
+
+        if ($this->evaluation->getSettingEvaluationOption()) {
+            $this->setCellContent(3, 2, RANK);
+            $this->setFontStyle(3, 2, true, 11, "000000");
+            $this->setFullStyle(3, 2, "DFE3E8");
+            $this->setCellStyle(3, 2, 20, 30);
+        }
     }
 
     public function setTableContent() {

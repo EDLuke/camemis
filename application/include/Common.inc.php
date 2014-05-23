@@ -2432,4 +2432,25 @@ function diplayNameMonthYear($str) {
     return $output;
 }
 
+function mimeTypes($type) {
+
+    $data = array();
+
+    switch ($type) {
+        case "EXCEL":
+            $data = array(
+                0 => "application/vnd.ms-excel"
+                ,1 => "application/msexcel"
+                ,2 => "application/x-msexcel"
+                ,3 => "application/x-ms-excel"
+                ,4 => "application/x-excel"
+                ,5 => "application/x-dos_ms_excel"
+                ,5 => "application/xls"
+                ,5 => "application/x-xls"
+            );
+            break;
+    }
+
+    return $data;
+}
 ?>
