@@ -7,19 +7,25 @@ require_once 'filterviewport.phtml';
 require_once setUserLoacalization();
 class StudentFilterViewPort extends filterviewport{
     
-    public function __construct($params) {
-        parent::__construct($params);
-        $this->difineGride();                 
+    public function __construct($stdClass) {
+        $this->campusId = isset($stdClass->campusId) ? addText($stdClass->campusId): "";
+        $this->classId = isset($stdClass->classId) ? addText($stdClass->classId) : "";
+        $this->gradeId = isset($stdClass->gradeId) ? addText($stdClass->gradeId) : "";
+        $this->schoolyearId = isset($stdClass->schoolyearId) ? addText($stdClass->schoolyearId) : "";
+        $this->objectType = isset($stdClass->objectType) ? addText($stdClass->objectType) : "";
+        $this->gridType = isset($stdClass->gridType) ? addText($stdClass->gridType) : "";//example: STUDENT_ATTENDANCE_FILTER
+        parent::__construct();
+        $this->difineGrid();                 
     }
 
     public function setGridCulumn($columns){
+        
         $this->OBJECT_GRID->addCellRenderer("
             function renderTextBold(v, p, record, rowIndex){
                 var str = '<span style=\"font-weight:bold;color:#061f83;white-space:normal;\">' + v + '</span>';
                 return str;
             }
         ");
-
         $this->OBJECT_GRID->addCellRenderer("
             function renderText(v, p, record, rowIndex){
                 var str = '<span style=\"font-weight:normal;color:#555;white-space:normal;\">' + v + '</span>';
@@ -41,6 +47,7 @@ class StudentFilterViewPort extends filterviewport{
     
     public function setCmd(){
         
+        $this->cmdParams = $this->setCmdParams();
         switch($this->gridType){
             case 'STUDENT_FILTER':
                 $this->cmdParams .=",displayCurrentAcademic:2";
@@ -66,11 +73,22 @@ class StudentFilterViewPort extends filterviewport{
         }    
         $this->OBJECT_GRID->baseParams = $this->cmdParams;
         if($this->exportExcel)
-            $this->tbarExport();    
+            $this->tbarExport($this->cmdParams);    
+    }
+    
+    public function setChartParams(){
+        $params = "";
+        $params .= "objectType=".$this->objectType."";
+        $params .= "&campusId=".$this->campusId."";
+        $params .= "&gradeId=".$this->gradeId."";
+        $params .= "&schoolyearId=".$this->schoolyearId."";
+        if($this->gradeId)
+        $params .= "&academicId=".$this->gradeId."";
+        return $params;    
     }
     
     public function redererViewPortJs(){
-        $this->redererViewPort();      
+        $this->redererViewPort($this->setChartParams());      
     }      
 }
 //////////////////////
@@ -102,8 +120,7 @@ if (strpos($objectId, "CAMPUS_") !== false) {
 }
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-
-$filterObject = new StudentFilterViewPort(array('campusId'=>$campusId,'classId'=>$classId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId,'objectType'=>$objectType,'gridType'=>$this->gridType));
+$filterObject = new StudentFilterViewPort((object)array('campusId'=>$campusId,'classId'=>$classId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId,'objectType'=>$objectType,'gridType'=>$this->gridType));
 ?>
 <style>
     .filter-row-grid .x-grid3-header {

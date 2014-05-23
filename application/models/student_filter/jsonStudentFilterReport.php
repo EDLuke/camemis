@@ -46,14 +46,7 @@ class jsonStudentFilterReport extends StudentFilterData {
     public function getGridData($params) {
         
         $this->setParams($params);
-
         $data = $this->getFilterData();
-
-        $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
-            if (isset($data[$i]))
-                $a[] = $data[$i];
-        }
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {

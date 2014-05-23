@@ -16,33 +16,10 @@ require_once setUserLoacalization();
 abstract class filterviewport{
     
     public $datafield = array();
-    public $campusId = null;
-    public $gradeId = null;
-    public $schoolyearId = null;
-    public $classId = null;
-    public $objectType = null;
-    public $OBJECT_GRID = null;
     public $exportExcel = false;
-    public function __construct($params) {
-        
-        $this->campusId = isset($params["campusId"]) ? $params["campusId"] : "";
-        $this->classId = isset($params["classId"]) ? $params["classId"] : "";
-        $this->gradeId = isset($params["gradeId"]) ? $params["gradeId"] : "";
-        $this->schoolyearId = isset($params["schoolyearId"]) ? $params["schoolyearId"] : "";
-        $this->objectType = isset($params["objectType"]) ? $params["objectType"] : "";
-        $this->gridType = isset($params["gridType"]) ? $params["gridType"] : "";//example: STUDENT_ATTENDANCE_FILTER
-        
-        $this->cmdParams = "start:0";
-        $this->cmdParams .=",limit:100";
-        if($this->campusId)
-        $this->cmdParams .=",campusId: '".$this->campusId."'";
-        if($this->gradeId)
-        $this->cmdParams .=",gradeId: '".$this->gradeId."'";
-        if($this->schoolyearId)
-        $this->cmdParams .=",schoolyearId: '".$this->schoolyearId."'";
-        if($this->classId)
-        $this->cmdParams .=",classId: '".$this->classId."'";
-        $this->urlEncryp = new URLEncryption();              
+    
+    public function __construct() {
+                      
     }
     
     public function __get($name) {
@@ -64,7 +41,7 @@ abstract class filterviewport{
         unset($this->datafield[$name]);
     }
     
-    public function difineGride(){
+    public function difineGrid(){
         
         $this->OBJECT_GRID = new CamemisGrid($this->gridType,$this->objectType);
         switch($this->gridType){
@@ -87,6 +64,22 @@ abstract class filterviewport{
                 
         }
         $this->columndata = Utiles::getGridColumnData($this->OBJECT_GRID->getObjectId());     
+        $this->urlEncryp = new URLEncryption();
+    }
+    
+    public function setCmdParams(){
+        $cmdParams = "start:0";
+        $cmdParams .=",limit:100";
+        if($this->campusId)
+        $cmdParams .=",campusId: '".$this->campusId."'";
+        if($this->gradeId)
+        $cmdParams .=",gradeId: '".$this->gradeId."'";
+        if($this->schoolyearId)
+        $cmdParams .=",schoolyearId: '".$this->schoolyearId."'";
+        if($this->classId)
+        $cmdParams .=",classId: '".$this->classId."'";
+        
+        return $cmdParams;
     }
     
     public function getObjectCAMEMISType(){
@@ -234,7 +227,7 @@ abstract class filterviewport{
         }     
     }
     
-   public function tbarExport(){
+   public function tbarExport($cmdParams){
         if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
             $this->OBJECT_GRID->addTBarItems("
                 tbar.add([{
@@ -254,7 +247,7 @@ abstract class filterviewport{
                             url: '/export/jsonexcel/'
                             ,method: 'POST'
                             ,timeout: 600000
-                            ,params:{".$this->cmdParams.",objectId:'".$this->OBJECT_GRID->getObjectId()."'}
+                            ,params:{".$cmdParams.",objectId:'".$this->OBJECT_GRID->getObjectId()."'}
                             ,success: function(response, options) {
                                 Ext.MessageBox.hide();
                                 window.location='/export/openstudentlist/'
@@ -266,15 +259,8 @@ abstract class filterviewport{
         }  
     }
     
-    public function getChart(){
+    public function getChart($params){
         
-        $params = "";
-        $params .= "objectType=".$this->objectType."";
-        $params .= "&campusId=".$this->campusId."";
-        $params .= "&gradeId=".$this->gradeId."";
-        $params .= "&schoolyearId=".$this->schoolyearId."";
-        if($this->gradeId)
-        $params .= "&academicId=".$this->gradeId."";
         switch($this->gridType){
             case 'STUDENT_FILTER':
                 $js = ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=".$this->urlEncryp->encryptedGet($params)."'})]";
@@ -295,7 +281,7 @@ abstract class filterviewport{
         return $js;    
     }
     
-    public function redererViewPort(){
+    public function redererViewPort($params){
         $js = "";
             $js .= "viewport = new Ext.Viewport({";
                 $js .= "layout: 'fit'";
@@ -317,7 +303,7 @@ abstract class filterviewport{
                         $js .= ",minSize:300";
                         $js .= ",maxSize:300";
                         $js .= ",layout: 'fit'";
-                        $js .= $this->getChart();
+                        $js .= $this->getChart($params);
                     $js .= "},{";
                         $js .= "collapsible: false";
                         $js .= ",id: 'center'";
