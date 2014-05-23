@@ -823,19 +823,23 @@ class AcademicController extends Zend_Controller_Action {
     // STUDENT FILTER...
     ////////////////////////////////////////////////////////////////////////////
     public function studentfilterAction() {
-        $this->_helper->viewRenderer("filter/studentlist");
+        $this->_helper->viewRenderer("filter/studentfilterviewport");
+        $this->view->gridType = "STUDENT_FILTER";
     }
-
+    
     public function studentattendancefilterAction() {
-        $this->_helper->viewRenderer("filter/studentattendancelist");
+        $this->_helper->viewRenderer("filter/studentfilterviewport");
+        $this->view->gridType = "STUDENT_ATTENDANCE_FILTER";
     }
 
     public function studentdisciplinefilterAction() {
-        $this->_helper->viewRenderer("filter/studentdisciplinelist");
+        $this->_helper->viewRenderer("filter/studentfilterviewport");
+        $this->view->gridType = "STUDENT_DISCIPLINE_FILTER";
     }
 
     public function studentadvisoryfilterAction() {
-        $this->_helper->viewRenderer("filter/studentadvisorylist");
+        $this->_helper->viewRenderer("filter/studentfilterviewport");
+        $this->view->gridType = "STUDENT_ADVISORY_FILTER";
     }
 
     public function jsonloadAction() {

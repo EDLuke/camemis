@@ -3,7 +3,7 @@
 // @Sor Veasna
 // Date: 21.05.2014
 ////////////////////////////////////////////////////////////////////////////////
-require_once 'models/student_filter/StudentFilterData.php';
+require_once 'models/filter/StudentFilterData.php';
 
 class jsonStudentFilterReport extends StudentFilterData {
 
