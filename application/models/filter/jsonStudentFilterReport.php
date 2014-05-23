@@ -1,4 +1,5 @@
 <?php
+
 ////////////////////////////////////////////////////////////////////////////////
 // @Sor Veasna
 // Date: 21.05.2014
@@ -20,31 +21,31 @@ class jsonStudentFilterReport extends StudentFilterData {
 
         if (isset($params["campusId"]))
             $this->campusId = addText($params["campusId"]);
-        
+
         if (isset($params["classId"]))
             $this->classId = addText($params["classId"]);
-        
+
         if (isset($params["gradeId"]))
             $this->gradeId = addText($params["gradeId"]);
-        
+
         if (isset($params["schoolyearId"]))
             $this->schoolyearId = addText($params["schoolyearId"]);
-            
+
         if (isset($params["objectType"]))
             $this->objectType = addText($params["objectType"]);
-        
+
         if (isset($params["personType"]))
             $this->personType = addText($params["personType"]);
-            
+
         if (isset($params["status"]))
             $this->status = addText($params["status"]);
-            
+
         if (isset($params["gridType"]))
             $this->gridType = addText($params["gridType"]);
     }
 
     public function getGridData($params) {
-        
+
         $this->setParams($params);
         $data = $this->getFilterData();
 
@@ -60,6 +61,7 @@ class jsonStudentFilterReport extends StudentFilterData {
             , "rows" => $a
         );
     }
+
 }
 
 ?>

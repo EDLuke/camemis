@@ -161,7 +161,7 @@ class ExaminationDBAccess {
             $SQL->where('A.GRADE_ID = ?', $gradeId);
 
         if ($parentId) {
-            $SQL->where("A.PARENT = '" . $parentId . "'");
+            $SQL->where("A.PARENT = ?",$parentId);
         } else {
             $SQL->where('A.PARENT = 0');
         }

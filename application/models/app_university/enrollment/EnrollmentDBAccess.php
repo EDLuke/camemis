@@ -146,7 +146,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $SQL = self::dbSelectAccess();
         $SQL->from(array('A' => 't_student_assignment'), array('*'));
         $SQL->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', array('TEMP_ID'));
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("A.STUDENT_ID = ?",$studentId);
         $SQL->where("A.CLASS_ID = '" . $oldAcademicId . "'");
         //error_log($SQL->__toString());
         $myresult = self::dbAccess()->fetchAll($SQL);

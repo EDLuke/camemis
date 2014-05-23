@@ -133,7 +133,7 @@ class FacilityDBAccess {
         $SQL->from('t_facility_type', array('*'));
 
         if ($parentId) {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         } else {
             $SQL->where("PARENT='0'");
         }
@@ -307,7 +307,7 @@ class FacilityDBAccess {
         $SQL->from('t_facility', array('*'));
 
         if ($parentId) {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         } else {
             $SQL->where("PARENT='0'");
         }

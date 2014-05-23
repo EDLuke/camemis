@@ -55,7 +55,7 @@ class FileDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
-        $SQL->where("GUID = ?",$GuId);
+        $SQL->where("GUID = ?", $GuId);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -156,7 +156,7 @@ class FileDBAccess {
             case "SUPERADMIN":
             case "ADMIN":
                 if ($parentId) {
-                    $SQL->where("A.PARENT='" . $parentId . "'");
+                    $SQL->where("A.PARENT = ?",$parentId);
                 } else {
                     $SQL->where("A.PARENT=0");
                 }
@@ -280,7 +280,7 @@ class FileDBAccess {
     public static function checkFileRecipient($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
-        $SQL->where("FILE = '" . $GuId . "'");
+        $SQL->where("FILE = ?",$GuId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -368,7 +368,7 @@ class FileDBAccess {
             $SQL->where("GRADE = '" . $academicObject->GRADE_ID . "'");
         }
         $SQL->where("SCHOOLYEAR_ID = '" . $academicObject->SCHOOL_YEAR . "'");
-        $SQL->where("FILE = '" . $objectId . "'");
+        $SQL->where("FILE = ?",$objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
 

@@ -1181,7 +1181,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($trainingId)
             $SQL->where("A.TRAINING = '" . $trainingId . "'");
         if ($subjectId)
-            $SQL->where("A.SUBJECT = '" . $subjectId . "'");
+            $SQL->where("A.SUBJECT = ?",$subjectId);
        
         if ($includeInEvaluation) {
             $SQL->where("A.INCLUDE_IN_EVALUATION >0");

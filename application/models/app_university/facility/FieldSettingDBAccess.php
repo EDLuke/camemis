@@ -118,7 +118,7 @@ Class FieldSettingDBAccess {
             if ($node == 0) {
                 $SQL->where("PARENT=0");
             } else {
-                $SQL->where("PARENT=" . $node . "");
+                $SQL->where("PARENT = ?",$node);
             }
         }
 

@@ -1430,7 +1430,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         if ($teacherId)
             $SQL->where("TEACHER_ID = ?", $teacherId);
         if ($gradingterm)
-            $SQL->where("TERM = '" . $gradingterm . "'");
+            $SQL->where("TERM = ?",$gradingterm);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result->C ? 1 : 0;

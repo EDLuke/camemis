@@ -417,11 +417,11 @@ class AssignmentDBAccess {
         $SQL->joinLeft(Array('D' => 't_grade'), 'A.GRADE=D.ID', Array());
 
         if ($subjectId)
-            $SQL->where("A.SUBJECT = '" . $subjectId . "'");
+            $SQL->where("A.SUBJECT = ?",$subjectId);
         if ($gradeId)
-            $SQL->where("A.GRADE = '" . $gradeId . "'");
+            $SQL->where("A.GRADE = ?",$gradeId);
         if ($schoolyearId)
-            $SQL->where("A.SCHOOLYEAR = '" . $schoolyearId . "'");
+            $SQL->where("A.SCHOOLYEAR = ?",$schoolyearId);
 
         if ($academicObject) {
             if ($academicObject->EDUCATION_SYSTEM) {
@@ -681,7 +681,7 @@ class AssignmentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array('*'));
         $SQL->where("SUBJECT = ?",$subjectId);
-        $SQL->where("GRADE = '" . $gradeId . "'");
+        $SQL->where("GRADE = ?",$gradeId);
         $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         $SQL->where("USED_IN_CLASS = '" . $usedInClass . "'");
         //error_log($SQL->__toString());
@@ -726,7 +726,7 @@ class AssignmentDBAccess {
         if ($academicId)
             $SQL->where("CLASS = '" . $academicId . "'");
         if ($gradeId)
-            $SQL->where("GRADE = '" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
         if ($schoolyearId)
             $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         if ($tempId)

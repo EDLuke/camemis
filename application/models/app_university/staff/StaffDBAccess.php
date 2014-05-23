@@ -1665,7 +1665,7 @@ class StaffDBAccess {
         $SQL->where("ACADEMIC_ID = ?",$classId);
         $SQL->where("SUBJECT_ID = ?",$subjectId);
         if ($gradingterm != "ALL") {
-            $SQL->where("TERM = '" . $gradingterm . "'");
+            $SQL->where("TERM = ?",$gradingterm);
         }
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -2769,7 +2769,7 @@ class StaffDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
         $SQL->where("USER_ROLE_ID = '" . $userRoleObject->ID . "'");
-        $SQL->where("FILE = '" . $objectId . "'");
+        $SQL->where("FILE = ?",$objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
 

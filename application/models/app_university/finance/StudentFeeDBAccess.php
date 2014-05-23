@@ -960,13 +960,13 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         if ($studentId && $searchService) {
             $SQL->where("B.STUDENT_SERVICES='1'");
-            $SQL->where("A.STUDENT ='" . $studentId . "'");
+            $SQL->where("A.STUDENT = ?",$studentId);
         } else {
             $SQL->where("A.CHOOSE_SERVICE IN (1,2)");
         }
 
         if ($studentId && $gradeId && $schoolyearId) {
-            $SQL->where("A.STUDENT ='" . $studentId . "'");
+            $SQL->where("A.STUDENT = ?",$studentId);
             $SQL->where("A.GRADE ='" . $gradeId . "'");
             $SQL->where("A.SCHOOLYEAR ='" . $schoolyearId . "'");
         }

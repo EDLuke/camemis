@@ -136,7 +136,7 @@ class CamemisEvaluationDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
         $SQL->order("NAME ASC");
         
@@ -519,7 +519,7 @@ class CamemisEvaluationDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
         $SQL->order("NAME ASC");
         

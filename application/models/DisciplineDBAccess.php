@@ -91,13 +91,13 @@ class DisciplineDBAccess extends StudentDBAccess {
 
                 $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
                 $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
-                
+
                 if (!SchoolDBAccess::displayPersonNameInGrid()) {
                     $data[$i]["FULL_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
                 } else {
                     $data[$i]["FULL_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
                 }
-                
+
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
                 $data[$i]["STATUS"] = $value->STATUS;
                 if ($personType == "staff")
@@ -263,7 +263,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_type", array('*'));
         if (is_numeric($Id)) {
-            $SQL->where("ID = ?",$Id);
+            $SQL->where("ID = ?", $Id);
         }
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -300,7 +300,7 @@ class DisciplineDBAccess extends StudentDBAccess {
                 break;
             default:
                 $SCHOOL_ID = "STUDENT_SCHOOL_ID";
-                $table = "t_student"; 
+                $table = "t_student";
                 $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : '';
                 $studentschoolId = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : '';
                 $disciplineType = isset($params["DISCIPLINE_TYPE_STUDENT"]) ? addText($params["DISCIPLINE_TYPE_STUDENT"]) : '';
@@ -337,11 +337,11 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL .= " LEFT JOIN " . $table . " AS B ON A." . $chooseId . "=B.ID";
         $SQL .= " LEFT JOIN t_camemis_type AS C ON C.ID=A.DISCIPLINE_TYPE";
         $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID";
-        
-        if($campusId || $gradeId || $schoolyearId){ ////@veasna
+
+        if ($campusId || $gradeId || $schoolyearId) { ////@veasna
             $SQL .= " LEFT JOIN t_student_schoolyear AS D ON D.STUDENT=A.STUDENT_ID ";
         }
-       
+
         $SQL .= " WHERE 1=1";
 
         $SQL .= " AND C.OBJECT_TYPE = '" . $DISCIPLINE_TYPE . "'";
@@ -370,17 +370,17 @@ class DisciplineDBAccess extends StudentDBAccess {
         if ($startDate && $endDate) {
             $SQL .= " AND A.INFRACTION_DATE >= '" . setDate2DB($startDate) . "' AND A.INFRACTION_DATE <= '" . setDate2DB($endDate) . "'";
         }
-        
+
         ////@veasna
-        if($campusId || $gradeId || $schoolyearId){
-            if($campusId){
-                $SQL .= " AND D.CAMPUS = '".$campusId."'";      
+        if ($campusId || $gradeId || $schoolyearId) {
+            if ($campusId) {
+                $SQL .= " AND D.CAMPUS = '" . $campusId . "'";
             }
-            if($gradeId){
-                $SQL .= " AND D.GRADE = '".$gradeId."'";    
+            if ($gradeId) {
+                $SQL .= " AND D.GRADE = '" . $gradeId . "'";
             }
-            if($schoolyearId){
-                $SQL .= " AND D.SCHOOL_YEAR = '".$schoolyearId."'";
+            if ($schoolyearId) {
+                $SQL .= " AND D.SCHOOL_YEAR = '" . $schoolyearId . "'";
             }
         }
         ////
@@ -440,8 +440,8 @@ class DisciplineDBAccess extends StudentDBAccess {
                         $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                         $data[$i]["STUDENT"] = $value->STUDENT;
                         $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
-                        
-                        
+
+
 
                         $data[$i]["CURRENT_SCHOOLYEAR"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_SCHOOLYEAR;
                         $data[$i]["CURRENT_ACADEMIC"] = StudentSearchDBAccess::getCurrentAcademic($value->STUDENT_ID)->CURRENT_ACADEMIC;

@@ -314,7 +314,7 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_examination", array("*"));
         $SQL->where("STUDENT_ID = ?",$studentId);
-        $SQL->where("EXAM_ID = '" . $examId . "'");
+        $SQL->where("EXAM_ID = ?",$examId);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -327,9 +327,9 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         if ($studentId)
             $SQL->where("STUDENT_ID = ?",$studentId);
         if ($examId)
-            $SQL->where("EXAM_ID = '" . $examId . "'");
+            $SQL->where("EXAM_ID = ?",$examId);
         if ($roomId) {
-            $SQL->where("ROOM_ID = '" . $roomId . "'");
+            $SQL->where("ROOM_ID = ?",$roomId);
         }/* else{
           $SQL->where("ROOM_ID = '0'");
           } */

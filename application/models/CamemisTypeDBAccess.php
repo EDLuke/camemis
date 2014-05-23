@@ -142,7 +142,7 @@ class CamemisTypeDBAccess {
 
         if ($parentId)
         {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         }
         else
         {

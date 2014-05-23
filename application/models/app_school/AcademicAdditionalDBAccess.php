@@ -114,7 +114,7 @@ Class AcademicAdditionalDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
 
         if ($type)

@@ -1528,7 +1528,7 @@ class StudentDBAccess {
                 $SQL->where("CLASS = '" . $academicId . "'");
 
             if ($gradeId)
-                $SQL->where("GRADE = '" . $gradeId . "'");
+                $SQL->where("GRADE = ?",$gradeId);
 
             if ($schoolyearId)
                 $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);

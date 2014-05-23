@@ -986,7 +986,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL->from('t_assignment', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = ?",$subjectId);
         if ($gradeId)
-            $SQL->where("GRADE = '" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
         if ($classId)
             $SQL->where("CLASS = ?",$classId);
         $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
@@ -1198,7 +1198,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_assignment", array('*'));
             $SQL->where("SUBJECT = ?",$subjectId);
-            $SQL->where("GRADE = '" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
             $SQL->where("CLASS = '0'");
             $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
             $SQL->where("USED_IN_CLASS = '0'");
@@ -1210,7 +1210,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_assignment", array('*'));
             $SQL->where("SUBJECT = ?",$subjectId);
-            $SQL->where("GRADE = '" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
             $SQL->where("CLASS = '" . $copyFrom . "'");
             $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
             $SQL->where("USED_IN_CLASS = '1'");
@@ -1355,7 +1355,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear_subject'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_subject'), 'A.SUBJECT_ID=B.ID', $SELECTION_B);
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("A.STUDENT_ID = ?",$studentId);
         $SQL->where("A.SCHOOLYEAR_ID = '" . $schoolyearId . "'");
 
         //error_log($SQL->__toString());
@@ -1426,7 +1426,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         );
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear_subject'), $SELECTION_A);
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("A.STUDENT_ID = ?",$studentId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;

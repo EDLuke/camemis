@@ -1340,7 +1340,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(Array('B' => 't_assignment_temp'), 'A.ASSIGNMENT_ID=B.ID', Array());
 
         if ($subjectId) {
-            $SQL->where("A.SUBJECT = '" . $subjectId . "'");
+            $SQL->where("A.SUBJECT = ?",$subjectId);
         }
 
         if ($studentId) {
@@ -1466,7 +1466,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => "t_student_subject_training_assessment"), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("A.STUDENT_ID = ?",$studentId);
         $SQL->where("A.SUBJECT_ID = '" . $subjectId . "'");
         $SQL->where("A.TRAINING_ID = '" . $this->trainingId . "'");
 
@@ -1883,7 +1883,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(Array('B' => 't_training_subject'), 'A.SUBJECT_ID=B.SUBJECT', $SELECTION_B);
 
         if ($studentId) {
-            $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+            $SQL->where("A.STUDENT_ID = ?",$studentId);
         }
 
         if ($this->trainingId) {
@@ -1905,7 +1905,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(Array('B' => 't_assignment_temp'), 'A.ASSIGNMENT=B.ID', Array());
 
         if ($subjectId) {
-            $SQL->where("A.SUBJECT = '" . $subjectId . "'");
+            $SQL->where("A.SUBJECT = ?",$subjectId);
         }
 
         if ($studentId) {
@@ -2400,7 +2400,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->from(array('A' => 't_student_training_assignment'), $SELECTION);
         $SQL->joinLeft(array('B' => 't_assignment_temp'), 'B.ID=A.ASSIGNMENT', array());
         $SQL->where("A.STUDENT = '" . $studentId . "'");
-        $SQL->where("A.SUBJECT = '" . $subjectId . "'");
+        $SQL->where("A.SUBJECT = ?",$subjectId);
         $SQL->where("A.TRAINING = '" . $trainingId . "'");
 
         $result = self::dbAccess()->fetchRow($SQL);
@@ -2468,7 +2468,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(array('B' => 't_training'), 'B.ID=A.TERM', array('START_DATE', 'END_DATE'));
         $SQL->joinLeft(array('C' => 't_training'), 'C.ID=A.LEVEL', array('NAME AS LEVEL_NAME'));
         $SQL->joinLeft(array('D' => 't_training'), 'D.ID=A.PROGRAM', array('NAME AS PROGRAMM_NAME'));
-        $SQL->where("A.PARENT='" . $parentId . "'");
+        $SQL->where("A.PARENT = ?",$parentId);
         //echo $SQL->__toString();
         $resultRows = self::dbAccess()->fetchAll($SQL);
 

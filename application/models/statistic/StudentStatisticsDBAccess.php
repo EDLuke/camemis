@@ -947,11 +947,11 @@ class StudentStatisticsDBAccess {
                 break;
             case "GRADE":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 break;
             case "CLASS":
                 $SQL->where("OBJECT_TYPE = 'CLASS'");
-                $SQL->where("GRADE_ID = '" . $gradeId . "'");
+                $SQL->where("GRADE_ID = ?",$gradeId);
                 break;
         }
         $SQL->order("SORTKEY ASC");
@@ -1080,7 +1080,7 @@ class StudentStatisticsDBAccess {
                 break;
             case "SUBJECT":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 $SQL->order("SORTKEY ASC");
                 break;
             case "GROUP":
@@ -1468,11 +1468,11 @@ class StudentStatisticsDBAccess {
         {
             case "CAMPUS":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 break;
             case "GRADE":
                 $SQL->where("OBJECT_TYPE = 'CLASS'");
-                $SQL->where("GRADE_ID = '" . $gradeId . "'");
+                $SQL->where("GRADE_ID = ?",$gradeId);
                 $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
                 break;
         }

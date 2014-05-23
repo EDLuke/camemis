@@ -227,7 +227,7 @@ class ScholarshipDBAccess {
             $SQL->where("B.ID='" . $studentId . "'");
 
         if ($schoolyearId)
-            $SQL->where("A.SCHOOLYEAR='" . $schoolyearId . "'");
+            $SQL->where("A.SCHOOLYEAR = ?",$schoolyearId);
 
         if ($studentSchoolCode)
             $SQL->where("B.STUDENT_SCHOOL_ID LIKE '%" . $studentSchoolCode . "%'");
@@ -368,7 +368,7 @@ class ScholarshipDBAccess {
         $SQL->from('t_scholarship', array('*'));
 
         if ($parentId) {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         } else {
             $SQL->where("PARENT='0'");
         }

@@ -1007,7 +1007,7 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        $SQL->where("A.PARENT = '" . $parentId . "'");
+        $SQL->where("A.PARENT = ?",$parentId);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $CHECK_DATA = $this->checkUseRooms($facette);
@@ -2174,7 +2174,7 @@ class ScheduleDBAccess {
         if ($academicId)
             $SQL->where("C.ACADEMIC_ID = '" . $academicId . "'");
         if ($schoolyearId)
-            $SQL->where("A.SCHOOL_YEAR = '" . $schoolyearId . "'");
+            $SQL->where("A.SCHOOL_YEAR = ?",$schoolyearId);
 
         $SQL->where("A.EDUCATION_SYSTEM = '1'");
         //error_log($SQL);

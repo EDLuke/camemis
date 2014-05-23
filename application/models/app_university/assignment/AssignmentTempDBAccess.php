@@ -463,7 +463,7 @@ class AssignmentTempDBAccess {
         $SQL->where("GRADE = ?",$gradeId);
         $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
-        $SQL->where("TEMP_ID='" . $tempId . "'");
+        $SQL->where("TEMP_ID = ?",$tempId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);

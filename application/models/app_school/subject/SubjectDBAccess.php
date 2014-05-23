@@ -1141,7 +1141,7 @@ class SubjectDBAccess {
     public static function findSubjectFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("*"));
-        $SQL->where("GUID = '" . $GuId . "'");
+        $SQL->where("GUID = ?",$GuId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }

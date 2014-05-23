@@ -307,19 +307,19 @@ class AcademicDBAccess {
                 case "CAMPUS":
                     $SQL = self::dbAccess()->select();
                     $SQL->from("t_grade", array('*'));
-                    $SQL->where("CAMPUS_ID = '" . $objectId . "'");
+                    $SQL->where("CAMPUS_ID = ?", $objectId);
                     $allRows = self::dbAccess()->fetchAll($SQL);
                     break;
                 case "GRADE":
                     $SQL = self::dbAccess()->select();
                     $SQL->from("t_grade", array('*'));
-                    $SQL->where("GRADE_ID = '" . $objectId . "'");
+                    $SQL->where("GRADE_ID = ?", $objectId);
                     $allRows = self::dbAccess()->fetchAll($SQL);
                     break;
                 case "SCHOOLYEAR":
                     $SQL = self::dbAccess()->select();
                     $SQL->from("t_grade", array('*'));
-                    $SQL->where("PARENT = '" . $objectId . "'");
+                    $SQL->where("PARENT = ?", $objectId);
                     $allRows = self::dbAccess()->fetchAll($SQL);
                     break;
                 default:
@@ -632,10 +632,10 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("GRADE_ID = '" . $gradeId . "'");
+        $SQL->where("GRADE_ID = ?",$gradeId);
         $SQL->where("OBJECT_TYPE = 'CLASS'");
         if ($schoolyearId)
-            $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+            $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -1557,7 +1557,7 @@ class AcademicDBAccess {
     public static function findAcademicFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("GUID = '" . $GuId . "'");
+        $SQL->where("GUID = ?",$GuId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1583,8 +1583,8 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
-        $SQL->where("CAMPUS_ID = '" . $campusId . "'");
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+        $SQL->where("CAMPUS_ID = ?",$campusId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1593,8 +1593,8 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
-        $SQL->where("GRADE_ID = '" . $gradeId . "'");
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+        $SQL->where("GRADE_ID = ?",$gradeId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1994,8 +1994,8 @@ class AcademicDBAccess {
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
         $SQL->where("EDUCATION_SYSTEM = 1");
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
-        $SQL->where("CAMPUS_ID = '" . $compusId . "'");
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
+        $SQL->where("CAMPUS_ID = ?",$compusId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -2089,7 +2089,7 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array('*'));
-        $SQL->where("PARENT='" . $Id . "'");
+        $SQL->where("PARENT = ?", $Id);
         $SQL->where("OBJECT_TYPE='CLASS'");
         return self::dbAccess()->fetchAll($SQL);
     }

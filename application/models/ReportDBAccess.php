@@ -125,8 +125,8 @@ class ReportDBAccess {
                 case "GRADE":
                     $SQL = self::dbAccess()->select();
                     $SQL->from(array('A' => 't_grade'), $SELECTION_A);
-                    $SQL->where("A.GRADE_ID = '" . $gradeId . "'");
-                    $SQL->where("A.SCHOOL_YEAR = '" . $schoolyearId . "'");
+                    $SQL->where("A.GRADE_ID = ?",$gradeId);
+                    $SQL->where("A.SCHOOL_YEAR = ?",$schoolyearId);
                     $SQL->where("A.OBJECT_TYPE = 'CLASS'");
                     $SQL->order("A.SORTKEY");
                     //error_log($SQL->__toString());

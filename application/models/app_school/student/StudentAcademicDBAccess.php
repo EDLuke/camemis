@@ -752,7 +752,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
         $SQL->where("STUDENT = ?",$studentId);
         if ($gradeId)
-            $SQL->where("GRADE = '" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
         if ($schoolyearId)
             $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
 

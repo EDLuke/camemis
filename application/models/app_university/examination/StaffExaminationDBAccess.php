@@ -34,8 +34,8 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_teacher_examination", array("*"));
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
-            $SQL->where("EXAM_ID = '" . $examId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
+            $SQL->where("EXAM_ID = ?",$examId);
             //error_log($SQL);
             return self::dbAccess()->fetchRow($SQL);
         }
@@ -227,10 +227,10 @@
             $SQL = self::dbAccess()->select();
             $SQL->from("t_teacher_examination", array("C" => "COUNT(*)"));
 
-            if ($staffId) $SQL->where("STAFF_ID = '" . $staffId . "'");
-            if ($examId) $SQL->where("EXAM_ID = '" . $examId . "'");
+            if ($staffId) $SQL->where("STAFF_ID = ?",$staffId);
+            if ($examId) $SQL->where("EXAM_ID = ?",$examId);
             if ($roomId){
-                $SQL->where("ROOM_ID = '" . $roomId . "'");
+                $SQL->where("ROOM_ID = ?",$roomId);
             }else{
                 $SQL->where("ROOM_ID = '0'");
             }

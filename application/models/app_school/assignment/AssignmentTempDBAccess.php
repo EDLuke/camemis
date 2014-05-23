@@ -431,10 +431,10 @@ class AssignmentTempDBAccess {
             $SQL->where("USED_IN_CLASS='0'");
         }
 
-        $SQL->where("GRADE = ?",$gradeId);
-        $SQL->where("SUBJECT = ?",$subjectId);
-        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
-        $SQL->where("TEMP_ID='" . $tempId . "'");
+        $SQL->where("GRADE = ?", $gradeId);
+        $SQL->where("SUBJECT = ?", $subjectId);
+        $SQL->where("SCHOOLYEAR = ?", $schoolyearId);
+        $SQL->where("TEMP_ID = ?",$tempId);
 
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -446,7 +446,7 @@ class AssignmentTempDBAccess {
         $SQL->from("t_student_score_date", array('*'));
         $SQL->where("ASSIGNMENT_ID = ?", $assignmentId);
         $SQL->where("SUBJECT_ID = ?", $subjectId);
-        $SQL->where("TRAINING_ID = ?",$trainingId);
+        $SQL->where("TRAINING_ID = ?", $trainingId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;

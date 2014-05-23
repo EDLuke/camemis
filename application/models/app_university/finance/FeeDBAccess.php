@@ -170,8 +170,8 @@ class FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_fee_training", array("C" => "COUNT(*)"));
-        $SQL->where("FEE = '" . $Id . "'");
-        $SQL->where("TRAINING = '" . $courseId . "'");
+        $SQL->where("FEE = ?",$Id);
+        $SQL->where("TRAINING = ?",$courseId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -181,8 +181,8 @@ class FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_fee_general", array("C" => "COUNT(*)"));
-        $SQL->where("FEE = '" . $Id . "'");
-        $SQL->where("GRADE = '" . $gradeId . "'");
+        $SQL->where("FEE = ?",$Id);
+        $SQL->where("GRADE = ?",$gradeId);
         $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -215,7 +215,7 @@ class FeeDBAccess {
 
                 switch ($academicObject->OBJECT_TYPE) {
                     case "CAMPUS":
-                        $SQL->where("A.PARENT = '" . $node . "'");
+                        $SQL->where("A.PARENT = ?",$node);
                         $SQL->where('A.OBJECT_TYPE = ?', "GRADE");
                         break;
                     case "GRADE":
@@ -233,7 +233,7 @@ class FeeDBAccess {
                 $SQL = self::dbSelectAccess();
                 $SQL->distinct();
                 $SQL->from(array('A' => 't_grade'), array("*"));
-                $SQL->where("A.PARENT = '" . $node . "'");
+                $SQL->where("A.PARENT = ?",$node);
                 $SQL->where('A.OBJECT_TYPE = ?', "GRADE");
                 $SQL->order("A.SORTKEY ASC");
                 //error_log($SQL->__toString());
@@ -319,7 +319,7 @@ class FeeDBAccess {
         if (!$node) {
             $SQL->where('A.OBJECT_TYPE = ?', "PROGRAM");
         } else {
-            $SQL->where("A.PARENT = '" . $node . "'");
+            $SQL->where("A.PARENT = ?",$node);
         }
         //error_log($SQL->__toString());
         $resultRows = self::dbAccess()->fetchAll($SQL);
@@ -819,7 +819,7 @@ class FeeDBAccess {
                 $SQL->joinLeft(array('C' => 't_academicdate'), 'C.ID=A.SCHOOLYEAR', $SELECTION_C);
                 $SQL->joinLeft(array('D' => 't_fee_general'), 'A.ID=D.FEE', array());
                 if ($schoolyearId)
-                    $SQL->where("A.SCHOOLYEAR='" . $schoolyearId . "'");
+                    $SQL->where("A.SCHOOLYEAR = ?",$schoolyearId);
                 if ($gradeId)
                     $SQL->where("D.GRADE='" . $gradeId . "'");
                 $SQL->where("A.TYPE='GENERAL_EDU'");

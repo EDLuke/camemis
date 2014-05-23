@@ -99,10 +99,10 @@ class BulletinDBAccess {
         );
         return $o;
     }
-    
-    public static function findAcademicByTeacherId($teacherId,$type){//@veasna
+
+    public static function findAcademicByTeacherId($teacherId, $type) {//@veasna
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => "t_schedule"), array("ACADEMIC_ID AS ACADEMIC_ID","TRAINING_ID")); 
+        $SQL->from(array('A' => "t_schedule"), array("ACADEMIC_ID AS ACADEMIC_ID", "TRAINING_ID"));
         switch ($type) {
             case 1:
                 $SQL->joinLeft(array('B' => 't_grade'), 'A.ACADEMIC_ID=B.ID', array('*'));
@@ -110,97 +110,97 @@ class BulletinDBAccess {
                 break;
             case 2:
                 break;
-            case 3: 
+            case 3:
                 $SQL->joinLeft(array('B' => 't_grade'), 'A.ACADEMIC_ID=B.ID', array('*'));
                 $SQL->where("B.EDUCATION_SYSTEM ='1'");
                 break;
-        } 
-        $SQL->where("A.TEACHER_ID ='" . $teacherId . "'"); 
+        }
+        $SQL->where("A.TEACHER_ID ='" . $teacherId . "'");
         //error_log("sql:".$SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
-        if($result){
+        if ($result) {
             switch ($type) {
                 case 1:
-                    foreach($result as $value){
-                        if(!in_array($value->PARENT, $data)){
-                            $data[]=$value->PARENT;      
-                        }    
+                    foreach ($result as $value) {
+                        if (!in_array($value->PARENT, $data)) {
+                            $data[] = $value->PARENT;
+                        }
                     }
                     break;
                 case 2:
-                    foreach($result as $value){
-                        if(!in_array($value->TRAINING_ID, $data)){
-                            $data[]=$value->TRAINING_ID;      
-                        }     
+                    foreach ($result as $value) {
+                        if (!in_array($value->TRAINING_ID, $data)) {
+                            $data[] = $value->TRAINING_ID;
+                        }
                     }
                     break;
                 case 3:
-                    foreach($result as $value){
-                        if(!in_array($value->PARENT, $data)){
-                            $data[]=$value->PARENT;    
+                    foreach ($result as $value) {
+                        if (!in_array($value->PARENT, $data)) {
+                            $data[] = $value->PARENT;
                         }
-                        if(!in_array($value->ACADEMIC_ID, $data)){
-                            $data[]=$value->ACADEMIC_ID;    
+                        if (!in_array($value->ACADEMIC_ID, $data)) {
+                            $data[] = $value->ACADEMIC_ID;
                         }
                     }
                     break;
-            }       
+            }
         }
-        return $data;   
+        return $data;
     }
-    
-    public static function findAcademicByStudentId($studentId,$type){//@veasna
-        $SQL = self::dbAccess()->select(); 
+
+    public static function findAcademicByStudentId($studentId, $type) {//@veasna
+        $SQL = self::dbAccess()->select();
         switch ($type) {
             case 1:  ///traditional
                 $SQL->from(array('A' => "t_student_schoolyear"), array("*"));
                 $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS=B.ID', array('PARENT'));
-                $SQL->where("A.STUDENT ='" . $studentId . "'");
+                $SQL->where("A.STUDENT = ?",$studentId);
                 break;
             case 2: //training
                 $SQL->from(array('A' => "t_student_training"), array("*"));
-                $SQL->where("A.STUDENT ='" . $studentId . "'");
+                $SQL->where("A.STUDENT = ?",$studentId);
                 break;
             case 3: //credit
                 $SQL->from(array('A' => "t_student_schoolyear_subject"), array("*"));
                 $SQL->joinLeft(array('B' => 't_grade'), 'A.CREDIT_ACADEMIC_ID=B.ID', array('PARENT'));
-                $SQL->where("A.STUDENT_ID ='" . $studentId . "'");
+                $SQL->where("A.STUDENT_ID = ?",$studentId);
                 break;
-        } 
-         
+        }
+
         //error_log("sql:".$SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
-        if($result){
+        if ($result) {
             switch ($type) {
                 case 1:
-                    foreach($result as $value){
-                        if(!in_array($value->PARENT, $data)){
-                            $data[]=$value->PARENT;      
-                        }    
+                    foreach ($result as $value) {
+                        if (!in_array($value->PARENT, $data)) {
+                            $data[] = $value->PARENT;
+                        }
                     }
                     break;
                 case 2:
-                    foreach($result as $value){
-                        if(!in_array($value->TERM, $data)){
-                            $data[]=$value->TERM;      
-                        }     
+                    foreach ($result as $value) {
+                        if (!in_array($value->TERM, $data)) {
+                            $data[] = $value->TERM;
+                        }
                     }
                     break;
                 case 3:
-                    foreach($result as $value){
-                        if(!in_array($value->PARENT, $data)){
-                            $data[]=$value->PARENT;    
+                    foreach ($result as $value) {
+                        if (!in_array($value->PARENT, $data)) {
+                            $data[] = $value->PARENT;
                         }
-                        if(!in_array($value->CREDIT_ACADEMIC_ID, $data)){
-                            $data[]=$value->CREDIT_ACADEMIC_ID;    
+                        if (!in_array($value->CREDIT_ACADEMIC_ID, $data)) {
+                            $data[] = $value->CREDIT_ACADEMIC_ID;
                         }
                     }
                     break;
-            }       
+            }
         }
-        return $data;   
+        return $data;
     }
 
     public static function sqlUserBulletin($params) {
@@ -215,39 +215,39 @@ class BulletinDBAccess {
         switch (UserAuth::getUserType()) {
             case "INSTRUCTOR":
             case "TEACHER":
-                $data = self::findAcademicByTeacherId(UserAuth::userId(),$type);
-                $academicIds = ($data)?implode(",",$data):'NULL';
-                switch ($type) { 
+                $data = self::findAcademicByTeacherId(UserAuth::userId(), $type);
+                $academicIds = ($data) ? implode(",", $data) : 'NULL';
+                switch ($type) {
                     case 1:
                     case 3:
-                        $SQL->where("A.ACADEMIC IN (".$academicIds.")");
+                        $SQL->where("A.ACADEMIC IN (" . $academicIds . ")");
                         break;
                     case 2:
-                        $SQL->where("A.TRAINING_TERM IN (".$academicIds.")");
+                        $SQL->where("A.TRAINING_TERM IN (" . $academicIds . ")");
                         break;
                 }
-                
+
                 $SQL->where("B.RECIPIENT LIKE '%TEACHER%'");
                 break;
             case "STUDENT":
-                $data = self::findAcademicByStudentId(UserAuth::userId(),$type);
-                $academicIds = ($data)?implode(",",$data):'NULL';
-                switch ($type) { 
+                $data = self::findAcademicByStudentId(UserAuth::userId(), $type);
+                $academicIds = ($data) ? implode(",", $data) : 'NULL';
+                switch ($type) {
                     case 1:
                     case 3:
-                        $SQL->where("A.ACADEMIC IN (".$academicIds.")");
+                        $SQL->where("A.ACADEMIC IN (" . $academicIds . ")");
                         break;
                     case 2:
-                        $SQL->where("A.TRAINING_TERM IN (".$academicIds.")");
+                        $SQL->where("A.TRAINING_TERM IN (" . $academicIds . ")");
                         break;
                 }
-                
+
                 $SQL->where("B.RECIPIENT LIKE '%STUDENT%'");
                 break;
-            case "GUARDIAN":       
-                 $SQL->where("B.RECIPIENT LIKE '%GUARDIAN%'");
-                break;    
-            case "STAFF":    
+            case "GUARDIAN":
+                $SQL->where("B.RECIPIENT LIKE '%GUARDIAN%'");
+                break;
+            case "STAFF":
             case "ADMIN":
             case "SUPERADMIN":
                 $SQL->where("B.RECIPIENT LIKE '%STAFF%'");
@@ -282,7 +282,7 @@ class BulletinDBAccess {
         $data = array();
         $i = 0;
         ///@veasna
-        if (UserAuth::displayTraditionalEducationSystem()){
+        if (UserAuth::displayTraditionalEducationSystem()) {
             $params["type"] = 1;  //traditional
             $result1 = self::sqlUserBulletin($params);
             if ($result1) {
@@ -298,7 +298,7 @@ class BulletinDBAccess {
                 }
             }
         }
-        if (UserAuth::displayRoleTrainingEducation()){
+        if (UserAuth::displayRoleTrainingEducation()) {
             $params["type"] = 2;  //training
             $result2 = self::sqlUserBulletin($params);
             if ($result2) {
@@ -314,7 +314,7 @@ class BulletinDBAccess {
                 }
             }
         }
-        if (UserAuth::displayCreditEducationSystem()){
+        if (UserAuth::displayCreditEducationSystem()) {
             $params["type"] = 3; //credit
             $result3 = self::sqlUserBulletin($params);
             if ($result3) {
@@ -484,7 +484,7 @@ class BulletinDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_bulletin", array('*'));
         if ($Id)
-            $SQL->where("ID = ?",$Id);
+            $SQL->where("ID = ?", $Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result;
     }
@@ -517,22 +517,22 @@ class BulletinDBAccess {
                 $data[$i]["CONTENT"] = $value->CONTENT;
                 $data[$i]["RECIPIENT"] = $value->RECIPIENT;
                 $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
-                if($value->EDUCATION_TYPE){
+                if ($value->EDUCATION_TYPE) {
                     switch ($value->EDUCATION_TYPE) {
                         case "GENERAL":
-                            $data[$i]["CREATED_DATE"] .= " ".TRADITIONAL_EDUCATION_SYSTEM;
+                            $data[$i]["CREATED_DATE"] .= " " . TRADITIONAL_EDUCATION_SYSTEM;
                             break;
                         case "CREDIT":
-                            $data[$i]["CREATED_DATE"] .= " ".CREDIT_EDUCATION_SYSTEM;
+                            $data[$i]["CREATED_DATE"] .= " " . CREDIT_EDUCATION_SYSTEM;
                             break;
                         case "TRAINING":
-                            $data[$i]["CREATED_DATE"] .= " ".TRAINING_PROGRAMS;
+                            $data[$i]["CREATED_DATE"] .= " " . TRAINING_PROGRAMS;
                             break;
-                    }    
+                    }
                 }
                 $data[$i]["CREATED_DATE"] .= "<br>";
                 $data[$i]["CREATED_DATE"] .= $value->CREATED_BY;
-                
+
 
                 $i++;
             }
@@ -606,7 +606,7 @@ class BulletinDBAccess {
         $DATA_FOR_JSON = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : 0;
 
         $result = AcademicLevelDBAccess::getSQLAllAcademics($params);
 
