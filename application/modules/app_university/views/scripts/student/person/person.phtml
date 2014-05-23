@@ -263,7 +263,7 @@ function openStudentStatus($name,$url){
                 ,title: '".PERSONAL_INFORMATION."'
                 ,bodyStyle: 'padding:10px; background:#FFF;'
                 ,items: [
-                    {".CamemisField::Textfield("STUDENT_SCHOOL_ID","STUDENT_SCHOOL_ID",STUDENT_SCHOOL_ID, false, $READONLY)."}
+                    {".CamemisField::Textfield("STUDENT_SCHOOL_ID","STUDENT_SCHOOL_ID",STUDENT_SCHOOL_ID, false, true)."}
                     ,{".CamemisField::Box("CODEID", CODE_ID, $this->objectData["CODE"])."}
                     ,{".CamemisField::Textfield("LASTNAME","LASTNAME",LASTNAME, true, $READONLY)."}
                     ,{".CamemisField::Textfield("FIRSTNAME","FIRSTNAME",FIRSTNAME, true, $READONLY)."}
