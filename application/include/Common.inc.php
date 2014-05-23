@@ -783,7 +783,7 @@ function addText($text) {
     $text = str_replace("%3E", "&gt;", ($text));
     $text = str_ireplace('%3Cscript', '', $text);
 
-    return mysqli_real_escape_string(trim($text));
+    return mysql_real_escape_string(trim($text));
 }
 
 function explodeData($explodestr) {
