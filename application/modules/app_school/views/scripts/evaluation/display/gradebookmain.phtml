@@ -16,7 +16,17 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
+if (isset($_GET["studentId"])){
+    $studentId = addText($_GET["studentId"]);
+}
+
+if (isset($_GET["objectId"])){
+    $studentId = addText($_GET["objectId"]);
+}
+
+if(!UserAuth::myObject($studentId)){
+    {header("Location: /main/permission/");exit;}
+}
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
