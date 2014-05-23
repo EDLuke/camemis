@@ -166,10 +166,10 @@ class CopyScheduleDBAccess extends ScheduleDBAccess {
                     self::copySharedAcademic($value->ID, $newId);
 
                     $ASSIGNED_SUBJECT_TEACHER_CLASS = $this->checkAssignedSubjectTeacherClass(
-                        $value->SUBJECT_ID
-                        , $value->TEACHER_ID
-                        , $value->ACADEMIC_ID
-                        , $toTerm);
+                            $value->SUBJECT_ID
+                            , $value->TEACHER_ID
+                            , $value->ACADEMIC_ID
+                            , $toTerm);
 
                     if (!$ASSIGNED_SUBJECT_TEACHER_CLASS) {
                         $classObject = AcademicDBAccess::findGradeFromId($value->ACADEMIC_ID);
@@ -282,10 +282,10 @@ class CopyScheduleDBAccess extends ScheduleDBAccess {
                     $SCHDEULE_DATA["ACADEMIC_ID"] = $value->ACADEMIC_ID;
 
                     $CHECK = $this->checkAssignedSubjectTeacherClass(
-                        $value->SUBJECT_ID
-                        , $value->TEACHER_ID
-                        , $value->ACADEMIC_ID
-                        , $term);
+                            $value->SUBJECT_ID
+                            , $value->TEACHER_ID
+                            , $value->ACADEMIC_ID
+                            , $term);
 
                     if (!$CHECK) {
                         $classObject = AcademicDBAccess::findGradeFromId($value->ACADEMIC_ID);

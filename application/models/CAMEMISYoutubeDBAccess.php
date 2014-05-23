@@ -32,7 +32,7 @@ class CAMEMISYoutubeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_school_video', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -82,7 +82,7 @@ class CAMEMISYoutubeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_school_video', '*');
-        if ($objectId) $SQL->where("OBJECT_ID = '" . $objectId . "'");
+        if ($objectId) $SQL->where("OBJECT_ID = ?",$objectId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }

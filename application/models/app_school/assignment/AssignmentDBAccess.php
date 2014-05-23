@@ -97,7 +97,7 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -207,7 +207,7 @@ class AssignmentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', '*');
         if ($subjectId)
-            $SQL->where("SUBJECT = '" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?", $subjectId);
         if ($classObject)
             $SQL->where("GRADE = '" . $classObject->GRADE_ID . "'");
         $SQL->where("STATUS = '1'");
@@ -328,7 +328,7 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_student_assignment', 'COUNT(*) AS C');
-        $SQL->where("ASSIGNMENT_ID = '" . $Id . "'");
+        $SQL->where("ASSIGNMENT_ID = ?",$Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -639,7 +639,7 @@ class AssignmentDBAccess {
     public static function findAssignmentDateFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -647,9 +647,9 @@ class AssignmentDBAccess {
     public function checkCountScoreDate($Id, $subjectId, $classId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array("C" => "COUNT(*)"));
-        $SQL->where("ASSIGNMENT_ID = '" . $Id . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("CLASS_ID = '" . $classId . "'");
+        $SQL->where("ASSIGNMENT_ID = ?",$Id);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
+        $SQL->where("CLASS_ID = ?",$classId);
         $SQL->group('SCORE_INPUT_DATE');
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -660,9 +660,9 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array('*'));
-        $SQL->where("ASSIGNMENT_ID = '" . $assignmentId . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("CLASS_ID = '" . $classId . "'");
+        $SQL->where("ASSIGNMENT_ID = ?",$assignmentId);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
+        $SQL->where("CLASS_ID = ?",$classId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
@@ -671,8 +671,8 @@ class AssignmentDBAccess {
     public static function checkAssignmentInClass($subjectId, $classId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", array("C" => "COUNT(*)"));
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
-        $SQL->where("CLASS = '" . $classId . "'");
+        $SQL->where("SUBJECT = ?", $subjectId);
+        $SQL->where("CLASS = ?",$classId);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }

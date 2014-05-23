@@ -86,7 +86,7 @@ Class FieldSettingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility_description", array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -138,7 +138,7 @@ Class FieldSettingDBAccess {
     public static function findChild($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility_description", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -147,7 +147,7 @@ Class FieldSettingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility_description", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

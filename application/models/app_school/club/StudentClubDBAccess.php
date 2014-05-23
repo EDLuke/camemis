@@ -310,7 +310,7 @@ class StudentClubDBAccess extends ClubDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_club", array("C" => "COUNT(*)"));
         if ($studentId)
-            $SQL->where("STUDENT = '" . $studentId . "'");
+            $SQL->where("STUDENT = ?",$studentId);
         if ($clubId)
             $SQL->where("CLUB = '" . $clubId . "'");
         $result = self::dbAccess()->fetchRow($SQL); 

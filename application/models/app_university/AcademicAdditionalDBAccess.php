@@ -83,7 +83,7 @@ Class AcademicAdditionalDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array('*'));
-        $SQL->where("ID=" . $Id . "");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -141,7 +141,7 @@ Class AcademicAdditionalDBAccess {
     public static function findChild($Id){
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);        
     }
@@ -150,7 +150,7 @@ Class AcademicAdditionalDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

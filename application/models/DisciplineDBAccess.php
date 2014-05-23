@@ -263,7 +263,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_type", array('*'));
         if (is_numeric($Id)) {
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
         }
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);

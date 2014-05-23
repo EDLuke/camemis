@@ -78,7 +78,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
     public static function findStudentTrainingFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //echo $SQL->__toString();
         $result = self::dbAccess()->fetchRow($SQL);
         return $result;
@@ -87,7 +87,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
     public static function findStudentTrainingByStudentId($studentId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
@@ -96,7 +96,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("TRAINING = '" . $trainingId . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -736,7 +736,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array("C" => "COUNT(*)"));
         if ($studentId)
-            $SQL->where("STUDENT = '" . $studentId . "'");
+            $SQL->where("STUDENT = ?",$studentId);
         if ($trainingId)
             $SQL->where("TRAINING = '" . $trainingId . "'");
         $result = self::dbAccess()->fetchRow($SQL);
@@ -2379,9 +2379,9 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training_assignment");
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("TRAINING = '" . $training . "'");
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("ASSIGNMENT = '" . $asssignmentId . "'");  
         //error_log($SQL->__toString());
         $stmt = self::dbAccess()->query($SQL);
@@ -2627,7 +2627,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
 
         if ($searchIndex == "TERM") {
             $SQL->where("TERM = '" . $trainingId . "'");

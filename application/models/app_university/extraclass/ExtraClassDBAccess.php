@@ -124,7 +124,7 @@ class ExtraClassDBAccess {
         $SQL->from(array('A' => 't_extraclass'));
         $SQL->joinLeft(array('B' => 't_staff'), 'A.TEACHER_ID=B.ID', array('B.FIRSTNAME', 'B.LASTNAME'));
         $SQL->joinLeft(array('C' => 't_room'), 'A.ROOM_ID=C.ID', array('C.NAME AS ROOM_NAME'));
-        $SQL->where("A.ID = '" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL->__toString());
 
         $stmt = self::dbAccess()->query($SQL);
@@ -135,7 +135,7 @@ class ExtraClassDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_extraclass", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -144,7 +144,7 @@ class ExtraClassDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_extraclass", array('*'));
         if ($parentId) {
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
             if ($objectTypeLevel)
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
         } else
@@ -532,7 +532,7 @@ class ExtraClassDBAccess {
         $facette = self::findExtraClassFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_extraclass", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL->__toString());
 
         $result = self::dbAccess()->fetchAll($SQL);
@@ -551,7 +551,7 @@ class ExtraClassDBAccess {
         $facette = self::findExtraClassFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_extraclass", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL->__toString());
 
         $result = self::dbAccess()->fetchAll($SQL);
@@ -571,7 +571,7 @@ class ExtraClassDBAccess {
         $facette = self::findExtraClassFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_extraclass", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL->__toString());
 
         $result = self::dbAccess()->fetchAll($SQL);

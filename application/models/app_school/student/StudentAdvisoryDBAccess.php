@@ -36,7 +36,7 @@ class StudentAdvisoryDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => 't_advisory'), array('*'));
-        $SQL->where("A.ID='" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -369,7 +369,7 @@ class StudentAdvisoryDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_advisory", array("C" => "COUNT(*)"));
         $SQL->where("ADVISORY_ID = '" . $advisoryId . "'");
-        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("STUDENT_ID = ?",$studentId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);

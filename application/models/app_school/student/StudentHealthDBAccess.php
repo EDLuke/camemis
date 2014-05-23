@@ -250,7 +250,7 @@ class StudentHealthDBAccess {
     public static function findStudentHealth($Id, $studentId = false, $settingId = false) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_medical", array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         if ($settingId)
             $SQL->where("MEDICAL_SETTING_ID='" . $settingId . "'");
         if ($studentId)
@@ -741,7 +741,7 @@ class StudentHealthDBAccess {
     public static function getHealthSetting($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }

@@ -50,7 +50,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
         $SQL->from(array('A' => 't_teaching_session'), $SELECT_DATA);
         $SQL->joinLeft(array('B' => 't_subject'), 'A.SUBJECT_ID=B.ID', array());
         $SQL->joinLeft(array('C' => 't_room'), 'A.ROOM_ID=C.ID', array());
-        $SQL->where("ROOM_ID='" . $roomId . "'");
+        $SQL->where("ROOM_ID = ?",$roomId);
         $SQL->where("TEACHING_DATE='" . $day . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -87,7 +87,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
         $SQL->joinLeft(array('D' => 't_room'), 'A.ROOM_ID=D.ID', array());
 
         if ($shortday)
-            $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+            $SQL->where("A.SHORTDAY = ?",$shortday);
         if ($roomId)
             $SQL->where("A.ROOM_ID = '" . $roomId . "'");
 
@@ -225,7 +225,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
     public static function countRoomSession($roomId, $startDate,$endDate) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_teaching_session'), array("C" => "COUNT(*)"));
-        $SQL->where("ROOM_ID='" . $roomId . "'");
+        $SQL->where("ROOM_ID = ?",$roomId);
         $SQL->where("TEACHING_DATE BETWEEN  '".setDate2DB($startDate)."'  AND '".setDate2DB($endDate)."'");         
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);

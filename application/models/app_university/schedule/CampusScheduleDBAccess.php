@@ -359,7 +359,7 @@ class CampusScheduleDBAccess extends ScheduleDBAccess {
                 $SQL->where("A.TERM='" . $currentTerm . "'");
             } else {
                 $SQL->where("A.TERM = '" . $termBychooseDay . "'");
-                $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+                $SQL->where("A.SHORTDAY = ?",$shortday);
             }
             $SQL->where("A.SCHOOLYEAR_ID = '" . $this->getCurrentSchoolyearId() . "'");
             $SQL->where("E.OBJECT_TYPE = 'CLASS'");

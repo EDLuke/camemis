@@ -50,7 +50,7 @@ class StaffContractDBAccess {
         $SQL->distinct();
         $SQL->from(array('A' => 't_staff_contract'), array('*'));
         $SQL->joinLeft(array('B' => 't_members'), 'A.STAFF_ID= B.ID', array('ID AS MEMBER_ID', 'FIRSTNAME AS STAFF_FIRSTNAME', 'LASTNAME AS STAFF_LASTNAME'));
-        $SQL->where("A.ID='" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);

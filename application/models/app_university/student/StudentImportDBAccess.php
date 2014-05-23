@@ -857,7 +857,7 @@ class StudentImportDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_examination", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("STUDENT_ID = ?",$studentId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

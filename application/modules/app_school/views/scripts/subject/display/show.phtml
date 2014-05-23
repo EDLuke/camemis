@@ -20,9 +20,9 @@ $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 function checkTeacherSchedule($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();
     $SQL->from('t_schedule', 'COUNT(*) AS C');
-    $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+    $SQL->where("SUBJECT_ID = ?",$subjectId);
     $SQL->where("TEACHER_ID = '" . Zend_Registry::get('USER')->ID . "'");
-    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+    $SQL->where("ACADEMIC_ID = ?",$academicId);
     $result = Zend_Registry::get('DB_ACCESS')->fetchRow($SQL);
     //error_log($SQL);
     return $result ? $result->C : 0;
@@ -31,7 +31,7 @@ function checkTeacherSchedule($academicId, $subjectId){
 function checkTeacherSubjectConment($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();
     $SQL->from('t_subject_teacher_content', array('*'));
-    $SQL->where("SUBJECT = '" . $subjectId . "'");
+    $SQL->where("SUBJECT = ?",$subjectId);
     if(UserAuth::getUserType() == 'INSTRUCTOR' || UserAuth::getUserType() == 'TEACHER')
     {
     $SQL->where("TEACHER = '" . Zend_Registry::get('USER')->ID . "'");

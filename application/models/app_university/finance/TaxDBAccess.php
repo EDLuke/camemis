@@ -263,7 +263,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_tax", array("C" => "COUNT(*)"));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
             //error_log($SQL);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;

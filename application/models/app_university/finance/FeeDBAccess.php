@@ -183,7 +183,7 @@ class FeeDBAccess {
         $SQL->from("t_fee_general", array("C" => "COUNT(*)"));
         $SQL->where("FEE = '" . $Id . "'");
         $SQL->where("GRADE = '" . $gradeId . "'");
-        $SQL->where("SCHOOLYEAR = '" . $schoolyearId . "'");
+        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

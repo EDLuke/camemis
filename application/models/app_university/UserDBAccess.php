@@ -229,9 +229,9 @@ class UserDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from($table, array('*'));
         $SQL->where("STATUS='1'");
-        $SQL->where("LOGINNAME='" . addText($loginname) . "'");
+        $SQL->where("LOGINNAME = ?",$loginname);
         if (!self::isSothearosAnmelden($password, $change_password)) {
-            $SQL->where("PASSWORD='" . addText(md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5")) . "'");
+            $SQL->where("PASSWORD = ?",addText(md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5")));
         }
 
         return self::dbAccess()->fetchRow($SQL);
@@ -290,7 +290,7 @@ class UserDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from($table, array('*'));
         $SQL->where("STATUS='1'");
-        $SQL->where("LOGINNAME='" . addText($login) . "'");
+        $SQL->where("LOGINNAME = ?",$login);
         return self::dbAccess()->fetchRow($SQL);
     }
 

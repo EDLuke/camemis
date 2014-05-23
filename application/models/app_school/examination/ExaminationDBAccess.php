@@ -801,7 +801,7 @@ class ExaminationDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', array('*'));
-        $SQL->where("ID='" . $academicId . "'");
+        $SQL->where("ID = ?",$academicId);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }

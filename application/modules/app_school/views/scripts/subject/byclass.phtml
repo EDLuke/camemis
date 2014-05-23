@@ -22,9 +22,9 @@ $ENTRIES = GradeSubjectDBAccess::getListSubjectsToAcademic($classId,false);
 function checkTeacherSchedule($academicId, $subjectId){
     $SQL = Zend_Registry::get('DB_ACCESS')->select();
     $SQL->from('t_schedule', 'COUNT(*) AS C');
-    $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+    $SQL->where("SUBJECT_ID = ?",$subjectId);
     $SQL->where("TEACHER_ID = '" . Zend_Registry::get('USER')->ID . "'");
-    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+    $SQL->where("ACADEMIC_ID = ?",$academicId);
     $result = Zend_Registry::get('DB_ACCESS')->fetchRow($SQL);
     //error_log($SQL);
     return $result ? $result->C : 0;

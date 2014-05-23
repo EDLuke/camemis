@@ -484,7 +484,7 @@ class BulletinDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_bulletin", array('*'));
         if ($Id)
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result;
     }

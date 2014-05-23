@@ -39,7 +39,7 @@ class CamemisTypeDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_camemis_type'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }

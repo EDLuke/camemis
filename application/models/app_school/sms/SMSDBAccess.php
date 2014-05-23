@@ -67,7 +67,7 @@ class SMSDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_sms", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -798,7 +798,7 @@ class SMSDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_sms_subscription", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         $result = self::dbAminAccess()->fetchRow($SQL);
 
         if ($result) {

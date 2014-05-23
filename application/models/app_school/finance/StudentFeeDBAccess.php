@@ -101,7 +101,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_fee", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("FEE = '" . $feeId . "'");
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -110,7 +110,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array('*'));
-        $SQL->where("GUID = '" . $Id . "'");
+        $SQL->where("GUID = ?",$Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -118,7 +118,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("FEE = '" . $feeId . "'");
         $SQL->order('CREATED_DATE DESC');
         $SQL->limit(1);
@@ -130,7 +130,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_fee", array("C" => "SUM(AMOUNT_OWED)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -140,7 +140,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_fee", array("C" => "SUM(AMOUNT_PAID)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -150,7 +150,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("*"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("TRAINING = '" . $trainingId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
@@ -161,7 +161,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("*"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
 
         if ($feeId)
             $SQL->where("FEE = '" . $feeId . "'");
@@ -183,7 +183,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("SUM" => "SUM(AMOUNT)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
 
         if ($feeId)
             $SQL->where("FEE = '" . $feeId . "'");
@@ -202,7 +202,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("FEE = '" . $feeId . "'");
         $SQL->where("PAYMENT_REMOVE = '0'");
         //error_log($SQL->__toString());
@@ -698,7 +698,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_training", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("TRAINING = '" . $trainingId . "'");
         $SQL->where("PAID = '1'");
         $result = self::dbAccess()->fetchRow($SQL);

@@ -93,7 +93,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_income_category", array("*"));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
             //error_log($SQL);
             $result = self::dbAccess()->fetchAll($SQL);
             return $result ? $result: 0;
@@ -303,7 +303,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_income_category", array("C" => "COUNT(*)"));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
             //error_log($SQL);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;

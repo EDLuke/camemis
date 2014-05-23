@@ -142,7 +142,7 @@ class StudentDBAccess {
         $SQL->from(array('A' => 't_student'));
         $SQL->joinLeft(array('B' => 't_student_status'), 'A.ID=B.STUDENT', array('B.STATUS_ID'));
 
-        $SQL->where("A.ID = '" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL->__toString());       
         $stmt = self::dbAccess()->query($SQL);
         return $stmt->fetch();
@@ -476,7 +476,7 @@ class StudentDBAccess {
             if (!$CHECK_TRADITIONAL) {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_schoolyear_subject", array("C" => "COUNT(*)"));
-                $SQL->where("STUDENT_ID = '" . $studentId . "'");
+                $SQL->where("STUDENT_ID = ?",$studentId);
                 $SQL->where("SCHOOLYEAR_ID = '" . $academicObject->SCHOOL_YEAR . "'");
 
                 switch ($academicObject->OBJECT_TYPE) {
@@ -1602,7 +1602,7 @@ class StudentDBAccess {
                 $SQL->where("GRADE = '" . $gradeId . "'");
 
             if ($schoolyearId)
-                $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+                $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
@@ -2156,7 +2156,7 @@ class StudentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
         $SQL->where("STUDENT='" . $studentId . "'");
-        $SQL->where("CLASS='" . $classId . "'");
+        $SQL->where("CLASS = ?",$classId);
         $SQL->where("SECTION='" . $sectionId . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         $COUNT = $result ? $result->C : 0;

@@ -36,7 +36,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility_type', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -45,7 +45,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility_type", array("*"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -54,7 +54,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility_type", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -271,7 +271,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -280,7 +280,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         $SQL->where("STATUS = 'CHECK-IN'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -291,7 +291,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -970,7 +970,7 @@ class FacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

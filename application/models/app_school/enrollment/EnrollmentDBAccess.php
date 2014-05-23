@@ -135,8 +135,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         
         $SQL = self::dbSelectAccess();
         $SQL->from('t_assignment', array('*'));
-        $SQL->where("CLASS = '" . $classId . "'");
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("CLASS = ?",$classId);
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("TEMP_ID = '" . $tmpId . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         //error_log($SQL->__toString());

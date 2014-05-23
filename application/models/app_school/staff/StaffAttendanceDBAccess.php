@@ -106,7 +106,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -901,9 +901,9 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_attendance_subject", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER_ID = '" . $teacherId . "'");
+        $SQL->where("TEACHER_ID = ?",$teacherId);
         $SQL->where("CLASS_ID = '" . $academicId . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+        $SQL->where("SUBJECT_ID = ?",$subjectId);
         $SQL->where("START_TIME = '" . $starttime . "'");
         $SQL->where("END_TIME = '" . $endtime . "'");
         $SQL->where("    ATTENDANCE_DATE = '" . $day . "'");

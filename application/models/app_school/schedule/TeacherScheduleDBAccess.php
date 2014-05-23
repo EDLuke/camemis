@@ -337,7 +337,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                 $SQL->where("A.TERM='" . $currentTerm . "'");
             } else {
                 $SQL->where("A.TERM = '" . $termBychooseDay . "'");
-                $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+                $SQL->where("A.SHORTDAY = ?",$shortday);
             }
             $SQL->where("A.SCHOOLYEAR_ID = '" . $this->getCurrentSchoolyearId() . "'");
             $SQL->where("E.OBJECT_TYPE = 'CLASS'");
@@ -482,7 +482,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
             $SQL->from(array('A' => 't_schedule'), array("C" => "COUNT(*)"));
 
             if ($shortday)
-                $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+                $SQL->where("A.SHORTDAY = ?",$shortday);
             if ($teacherId)
                 $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
             /*
@@ -567,7 +567,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
             $SQL->where("SHORTDAY = '" . $shortDay . "'");
 
         if ($teacherId)
-            $SQL->where("TEACHER_ID = '" . $teacherId . "'");
+            $SQL->where("TEACHER_ID = ?",$teacherId);
 
         $SQL->where("START_DATE<='" . $endDate . "'");
         $SQL->where("END_DATE>='" . $startDate . "'");

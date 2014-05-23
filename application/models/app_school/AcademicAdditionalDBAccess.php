@@ -14,28 +14,23 @@ Class AcademicAdditionalDBAccess {
 
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public static function jsonSaveAcademicAdditional($params)
-    {
+    public static function jsonSaveAcademicAdditional($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
@@ -49,26 +44,21 @@ Class AcademicAdditionalDBAccess {
         if ($type)
             $SAVEDATA['CHOOSE_TYPE'] = $type;
 
-        if ($parentId)
-        {
+        if ($parentId) {
             $facette = self::findAcademicAdditionalFromId($parentId);
             if ($facette)
                 $SAVEDATA['CHOOSE_TYPE'] = $facette->CHOOSE_TYPE;
             $SAVEDATA['OBJECT_TYPE'] = "ITEM";
-        }else
-        {
+        }else {
             $SAVEDATA['OBJECT_TYPE'] = "FOLDER";
         }
 
-        if ($objectId == "new")
-        {
+        if ($objectId == "new") {
             $SAVEDATA['PARENT'] = $parentId;
             self::dbAccess()->insert('t_additional_information', $SAVEDATA);
 
             $objectId = self::dbAccess()->lastInsertId();
-        }
-        else
-        {
+        } else {
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_additional_information', $SAVEDATA, $WHERE);
 
@@ -82,35 +72,30 @@ Class AcademicAdditionalDBAccess {
         );
     }
 
-    public static function updateChildren($parentId, $type)
-    {
+    public static function updateChildren($parentId, $type) {
         $SAVEDATA = array();
-        if ($parentId and $type)
-        {
+        if ($parentId and $type) {
             $SAVEDATA['CHOOSE_TYPE'] = $type;
             $WHERE = self::dbAccess()->quoteInto("PARENT = ?", $parentId);
             self::dbAccess()->update('t_additional_information', $SAVEDATA, $WHERE);
         }
     }
 
-    public static function findAcademicAdditionalFromId($Id)
-    {
+    public static function findAcademicAdditionalFromId($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array('*'));
-        $SQL->where("ID=" . $Id . "");
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function jsonLoadAcademicAdditional($Id)
-    {
+    public static function jsonLoadAcademicAdditional($Id) {
 
         $facette = self::findAcademicAdditionalFromId($Id);
 
         $data = Array();
-        if ($facette)
-        {
+        if ($facette) {
             $data["ID"] = $facette->ID;
             $data["CHOOSE_TYPE"] = $facette->CHOOSE_TYPE;
             $data["NAME"] = setShowText($facette->NAME);
@@ -122,17 +107,13 @@ Class AcademicAdditionalDBAccess {
         );
     }
 
-    public static function sqlAcademicAdditional($node, $type = false)
-    {
+    public static function sqlAcademicAdditional($node, $type = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_additional_information'), array('*'));
-        if (!$node)
-        {
+        if (!$node) {
             $SQL->where("PARENT=0");
-        }
-        else
-        {
+        } else {
             $SQL->where("PARENT=" . $node . "");
         }
 
@@ -143,14 +124,11 @@ Class AcademicAdditionalDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonRemoveAcademicAdditional($Id)
-    {
+    public static function jsonRemoveAcademicAdditional($Id) {
 
         $facette = self::findChild($Id);
-        if ($facette)
-        {
-            foreach ($facette as $value)
-            {
+        if ($facette) {
+            foreach ($facette as $value) {
                 self::dbAccess()->delete('t_additional_information_item', array("ITEM=" . $value->ID . ""));
             }
         }
@@ -162,33 +140,29 @@ Class AcademicAdditionalDBAccess {
         return array("success" => true);
     }
 
-    public static function findChild($Id)
-    {
+    public static function findChild($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function checkChild($Id)
-    {
+    public static function checkChild($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_additional_information", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
 
-    public static function sqlAcademicAdditionalByStudent($studentId, $classId, $target = '')
-    {
+    public static function sqlAcademicAdditionalByStudent($studentId, $classId, $target = '') {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_additional_information'), array('*'));
         $SQL->joinRight(array('B' => 't_academic_additional_information'), 'A.ID=B.ADDITIONAL_INFORMATION', array('GRADE', 'SCHOOL_YEAR'));
-        switch (strtolower($target))
-        { //@Man
+        switch (strtolower($target)) { //@Man
             case 'traditional':
                 $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.GRADE=C.GRADE AND B.SCHOOL_YEAR=C.SCHOOL_YEAR', array());
                 $SQL->joinLeft(array('D' => 't_grade'), 'C.CLASS=D.ID', array());
@@ -211,8 +185,7 @@ Class AcademicAdditionalDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonAllTreeAdditionalInformation($params)
-    {
+    public static function jsonAllTreeAdditionalInformation($params) {
 
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
@@ -220,17 +193,14 @@ Class AcademicAdditionalDBAccess {
         $data = array();
         $result = self::sqlAcademicAdditional($node);
 
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $data[$i]['text'] = $value->NAME;
                 $data[$i]['id'] = $value->ID;
 
-                switch ($value->OBJECT_TYPE)
-                {
+                switch ($value->OBJECT_TYPE) {
                     case "FOLDER":
                         $data[$i]['leaf'] = false;
                         $data[$i]['disabled'] = false;
@@ -253,8 +223,7 @@ Class AcademicAdditionalDBAccess {
         return $data;
     }
 
-    public static function checkAcademicAdditionalInformation($objectId, $Id)
-    {
+    public static function checkAcademicAdditionalInformation($objectId, $Id) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($objectId);
 
@@ -266,18 +235,14 @@ Class AcademicAdditionalDBAccess {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if ($result)
-        {
+        if ($result) {
             return $result->C ? true : false;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public static function jsonAdditionalInformationToAcademic($params)
-    {
+    public static function jsonAdditionalInformationToAcademic($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $additionalId = isset($params["additionalId"]) ? $params["additionalId"] : "";
@@ -285,16 +250,13 @@ Class AcademicAdditionalDBAccess {
 
         $academicObject = AcademicDBAccess::findGradeFromId($objectId);
 
-        if ($checked == "true")
-        {
+        if ($checked == "true") {
             $SAVEDATA["GRADE"] = $academicObject->GRADE_ID;
             $SAVEDATA["SCHOOL_YEAR"] = $academicObject->SCHOOL_YEAR;
             $SAVEDATA["ADDITIONAL_INFORMATION"] = $additionalId;
             self::dbAccess()->insert("t_academic_additional_information", $SAVEDATA);
             $msg = RECORD_WAS_ADDED;
-        }
-        else
-        {
+        } else {
             self::dbAccess()->delete("t_academic_additional_information", array("GRADE='" . $academicObject->GRADE_ID . "'", "SCHOOL_YEAR='" . $academicObject->SCHOOL_YEAR . "'", "ADDITIONAL_INFORMATION='" . $additionalId . "'"));
             $msg = MSG_RECORD_NOT_CHANGED_DELETED;
         }

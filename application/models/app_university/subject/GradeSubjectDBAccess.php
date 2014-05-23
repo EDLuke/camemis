@@ -523,16 +523,16 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         if ($Id)
         {
-            $SQL->where("ID='" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
         }
         else
         {
             if ($subjectId)
-                $SQL->where("SUBJECT='" . $subjectId . "'");
+                $SQL->where("SUBJECT = ?",$subjectId);
             if ($gradeId)
-                $SQL->where("GRADE='" . $gradeId . "'");
+                $SQL->where("GRADE = ?",$gradeId);
             if ($schoolyearId)
-                $SQL->where("SCHOOLYEAR='" . $schoolyearId . "'");
+                $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
             if ($academicId)
             {
                 $SQL->where("CLASS='" . $academicId . "'");
@@ -556,7 +556,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_subject_teacher_content', 'COUNT(*) AS C');
         if ($subjectId)
-            $SQL->where("SUBJECT = '" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?",$subjectId);
         if ($teacher)
             $SQL->where("TEACHER = '" . $teacher . "'");
         if ($academicId)
@@ -571,7 +571,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', array('*'));
-        $SQL->where("SUBJECT='" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("CLASS='" . $academicId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
@@ -583,7 +583,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_subject_teacher_content', array('*'));
         if ($subjectId)
-            $SQL->where("SUBJECT='" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?",$subjectId);
         if ($teacher)
             $SQL->where("TEACHER='" . $teacher . "'");
         if ($academicId)
@@ -597,7 +597,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', array('*'));
-        $SQL->where("SUBJECT='" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("CLASS='0'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
@@ -936,9 +936,9 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
     {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_schedule', 'COUNT(*) AS C');
-        $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("TERM = '" . $term . "'");
+        $SQL->where("ACADEMIC_ID = ?",$academicId);
+        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("TERM = ?",$term);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -1010,12 +1010,12 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', 'COUNT(*) AS C');
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         if ($gradeId)
             $SQL->where("GRADE = '" . $gradeId . "'");
         if ($academicId)
             $SQL->where("CLASS = '" . $academicId . "'");
-        $SQL->where("SCHOOLYEAR = '" . $schoolyearId . "'");
+        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -1098,9 +1098,9 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', array('*'));
         if ($gradeId)
-            $SQL->where("GRADE='" . $gradeId . "'");
+            $SQL->where("GRADE = ?",$gradeId);
         if ($schoolyearId)
-            $SQL->where("SCHOOLYEAR='" . $schoolyearId . "'");
+            $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
         //echo $SQL->__toString();
         $result = self::dbAccess()->fetchAll($SQL);
         if ($result)
@@ -1268,7 +1268,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 break;
         }
 
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1285,10 +1285,10 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $USED_IN_CLASS = 0;
             $SQL = self::dbAccess()->select();
             $SQL->from("t_assignment", array('*'));
-            $SQL->where("SUBJECT = '" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?",$subjectId);
             $SQL->where("GRADE = '" . $gradeId . "'");
             $SQL->where("CLASS = '0'");
-            $SQL->where("SCHOOLYEAR = '" . $schoolyearId . "'");
+            $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
             $SQL->where("USED_IN_CLASS = '0'");
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
@@ -1300,10 +1300,10 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $USED_IN_CLASS = 1;
             $SQL = self::dbAccess()->select();
             $SQL->from("t_assignment", array('*'));
-            $SQL->where("SUBJECT = '" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?",$subjectId);
             $SQL->where("GRADE = '" . $gradeId . "'");
             $SQL->where("CLASS = '" . $copyFromId . "'");
-            $SQL->where("SCHOOLYEAR = '" . $schoolyearId . "'");
+            $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
             $SQL->where("USED_IN_CLASS = '1'");
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);

@@ -118,9 +118,9 @@ class AcademicDateDBAccess {
         $SQL->from("t_grade", array("*"));
 
         if ($academicId)
-            $SQL->where("ID = " . $academicId . "");
+            $SQL->where("ID = ?", $academicId);
         if ($schoolyearId)
-            $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+            $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -470,7 +470,7 @@ class AcademicDateDBAccess {
         $SQL->where("NAME IS NOT NULL");
 
         if ($Id) {
-            $SQL->where("ID='" . $Id . "'");
+            $SQL->where("ID = ?", $Id);
         }
 
         if ($date) {

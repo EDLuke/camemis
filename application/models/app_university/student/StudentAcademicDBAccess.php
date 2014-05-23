@@ -820,11 +820,11 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         if ($gradeId)
             $SQL->where("GRADE = '" . $gradeId . "'");
         if ($schoolyearId)
-            $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+            $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -948,7 +948,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_student_schoolyear', array('*'));
-        $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
         //error_log($SQL->__toString());       
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
@@ -960,7 +960,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_student_schoolyear');
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("CLASS = '" . $academicId . "'");
         //error_log($SQL->__toString());       
         $stmt = self::dbAccess()->query($SQL);

@@ -41,7 +41,7 @@
         public static function getStudentSchoolYearSubjectById($Id){
             $SQL = self::dbAccess()->select();
             $SQL->from(array('t_student_schoolyear_subject'), array('*')); 
-            $SQL->where("ID='" . $Id . "'");   
+            $SQL->where("ID = ?",$Id);   
             //error_log($SQL);
             return self::dbAccess()->fetchRow($SQL);    
         }

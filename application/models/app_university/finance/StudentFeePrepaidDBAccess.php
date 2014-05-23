@@ -138,7 +138,7 @@ class StudentFeePrepaidDBAccess {
 
         $SQL = self::dbSelectAccess();
         $SQL->from('t_fee_prepayment', array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         $resultRows = self::dbAccess()->fetchRow($SQL);
 
         return $resultRows;
@@ -453,7 +453,7 @@ class StudentFeePrepaidDBAccess {
             if ($object) {
                 $SQL = self::dbSelectAccess();
                 $SQL->from(array('t_student_prepayment'), array('*'));
-                $SQL->where("STUDENT_ID = '" . $studentId . "'");
+                $SQL->where("STUDENT_ID = ?",$studentId);
                 $SQL->where("PROGRAM = '" . $object->PROGRAM . "'");
                 //error_log($SQL->__toString());    
                 $facette = self::dbAccess()->fetchAll($SQL);
@@ -474,7 +474,7 @@ class StudentFeePrepaidDBAccess {
             $object = self::findStudentSchoyearAndCampus($studentId);
             $SQL = self::dbSelectAccess();
             $SQL->from(array('t_student_prepayment'), array('*'));
-            $SQL->where("STUDENT_ID = '" . $studentId . "'");
+            $SQL->where("STUDENT_ID = ?",$studentId);
             if (isset($object->CAMPUS))
                 $SQL->where("CAMPUS_ID = '" . $object->CAMPUS . "'");
             if (isset($object->PROGRAM))
@@ -535,7 +535,7 @@ class StudentFeePrepaidDBAccess {
         $SQL->joinLeft(array('C' => 't_income_category'), 'B.INCOME_CATAGORY=C.ID', $SELECTION_C);
         $SQL->joinLeft(array('D' => 't_tax'), 'C.TAX=D.ID', $SELECTION_D);
 
-        $SQL->where("A.ID = '" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -661,7 +661,7 @@ class StudentFeePrepaidDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("*"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("FEE_PREPAYMENT = '" . $feePrePaymentId . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);

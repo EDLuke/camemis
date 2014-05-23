@@ -256,7 +256,7 @@ class SchoolFacilityDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_facility", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }

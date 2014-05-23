@@ -1024,12 +1024,12 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_attendance", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("STUDENT_ID = ?",$studentId);
 
         if ($academicId)
             $SQL->where("CLASS_ID = '" . $academicId . "'");
         if ($trainingId)
-            $SQL->where("TRAINING_ID = '" . $trainingId . "'");
+            $SQL->where("TRAINING_ID = ?",$trainingId);
 
         $SQL->where("ABSENT_TYPE = '" . $absentType . "'");
         $SQL->where("START_DATE <= '" . $absentDate . "' and END_DATE >= '" . $absentDate . "'");
@@ -1046,7 +1046,7 @@ class StudentAttendanceDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_attendance", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("STUDENT_ID = ?",$studentId);
         $SQL->where("SCHEDULE_ID = '" . $scheduleId . "'");
         if ($absentType)
             $SQL->where("ABSENT_TYPE = '" . $absentType . "'");
