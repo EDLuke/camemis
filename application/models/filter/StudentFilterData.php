@@ -3,7 +3,7 @@
 // @Sor Veasna
 // Date: 21.05.2014
 ////////////////////////////////////////////////////////////////////////////////
-require_once 'models/student_filter/StudentFilterProperties.php';
+require_once 'models/filter/StudentFilterProperties.php';
 class StudentFilterData extends StudentFilterProperties {
 
     function __construct() {

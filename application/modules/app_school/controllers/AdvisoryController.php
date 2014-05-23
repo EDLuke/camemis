@@ -9,7 +9,7 @@ require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/UserAuth.php';
 require_once 'models/app_school/student/StudentAdvisoryDBAccess.php';
-require_once 'models/student_filter/jsonStudentFilterReport.php';
+require_once 'models/filter/jsonStudentFilterReport.php';
 
 class AdvisoryController extends Zend_Controller_Action {
 

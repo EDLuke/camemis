@@ -7,7 +7,7 @@
 require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
-require_once 'models/student_filter/SQLStudentFilterReport.php';
+require_once 'models/filter/SQLStudentFilterReport.php';
 require_once setUserLoacalization();
 
 abstract class StudentFilterProperties {
