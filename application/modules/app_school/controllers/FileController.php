@@ -79,10 +79,10 @@ class FileController extends Zend_Controller_Action {
         if ($this->facette) {
             $this->view->parentId = $this->facette->PARENT;
         } else {
-            $this->view->parentId = $this->parentId;
+            $this->view->parentId = $this->parentId=0;
         }
 
-        $this->view->parentObject = FileDBAccess::findFileFromGuId($this->parentId);
+        $this->view->parentObject = FileDBAccess::findFileFromGuId($this->view->parentId);
     }
     
     public function showitemlistAction() {
@@ -102,7 +102,7 @@ class FileController extends Zend_Controller_Action {
             $this->view->parentId = $this->parentId;
         }
 
-        $this->view->parentObject = FileDBAccess::findFileFromGuId($this->parentId);
+        $this->view->parentObject = FileDBAccess::findFileFromGuId($this->view->parentId);
     }
 
     public function jsonloadAction() {
