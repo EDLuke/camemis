@@ -43,7 +43,7 @@ class CAMEMISUploadDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
-        $SQL->where("FILE_SHOW = '" . $Id . "'");
+        $SQL->where("FILE_SHOW = ?",$Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -51,7 +51,7 @@ class CAMEMISUploadDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->GUID : 0;
     }
@@ -61,7 +61,7 @@ class CAMEMISUploadDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_school_upload', 'COUNT(*) AS C');
         if ($academicId)
-            $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+            $SQL->where("ACADEMIC_ID = ?",$academicId);
         $result = self::dbAccess()->fetchRow($SQL);
         //error_log($SQL);
         return $result ? $result->C : 0;
@@ -72,7 +72,7 @@ class CAMEMISUploadDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
         if ($objectId)
-            $SQL->where("OBJECT_ID = '" . $objectId . "'");
+            $SQL->where("OBJECT_ID = ?",$objectId);
 
         if ($objectType)
             $SQL->where("FILE_AREA = '" . $objectType . "'");
@@ -80,14 +80,14 @@ class CAMEMISUploadDBAccess {
         switch ($objectType) {
             case "ACADEMIC_SUBJECT":
                 if ($academicId) {
-                    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+                    $SQL->where("ACADEMIC_ID = ?",$academicId);
                 } else {
                     $SQL->where("ACADEMIC_ID = 0");
                 }
                 break;
             default:
                 if ($academicId)
-                    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+                    $SQL->where("ACADEMIC_ID = ?",$academicId);
                 break;
         }
         //error_log($SQL);
@@ -99,7 +99,7 @@ class CAMEMISUploadDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
         if ($objectId)
-            $SQL->where("OBJECT_ID = '" . $objectId . "'");
+            $SQL->where("OBJECT_ID = ?",$objectId);
         if ($fileIndex)
             $SQL->where("FILE_INDEX = '" . $fileIndex . "'");
         if ($fileArea)
@@ -114,7 +114,7 @@ class CAMEMISUploadDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
         if ($objectId)
-            $SQL->where("OBJECT_ID = '" . $objectId . "'");
+            $SQL->where("OBJECT_ID = ?",$objectId);
         if ($fileIndex)
             $SQL->where("FILE_INDEX = '" . $fileIndex . "'");
         if ($fileArea)
@@ -347,7 +347,7 @@ class CAMEMISUploadDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
-        $SQL->where("OBJECT_ID = '" . $objectId . "'");
+        $SQL->where("OBJECT_ID = ?",$objectId);
         $result = self::dbAccess()->fetchAll($SQL);
 
         if ($result) {
@@ -388,7 +388,7 @@ class CAMEMISUploadDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array('*'));
-        $SQL->where("OBJECT_ID = '" . $objectId . "'");
+        $SQL->where("OBJECT_ID = ?",$objectId);
         $SQL->where("FILE_AREA = '" . strtoupper($object) . "'");
         $result = self::dbAccess()->fetchAll($SQL);
 

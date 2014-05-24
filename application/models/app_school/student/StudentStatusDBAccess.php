@@ -86,7 +86,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_status", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("'" . getCurrentDBDate() . "' BETWEEN START_DATE AND END_DATE");
         if ($status)
             $SQL->where("STUDENT_STATUS = '" . $status . "'");

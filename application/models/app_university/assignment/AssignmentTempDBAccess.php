@@ -454,16 +454,16 @@ class AssignmentTempDBAccess {
         $SQL->from("t_assignment", array("C" => "COUNT(*)"));
 
         if ($classId) {
-            $SQL->where("CLASS='" . $classId . "'");
+            $SQL->where("CLASS = ?",$classId);
             $SQL->where("USED_IN_CLASS='1'");
         } else {
             $SQL->where("USED_IN_CLASS='0'");
         }
 
-        $SQL->where("GRADE='" . $gradeId . "'");
-        $SQL->where("SUBJECT='" . $subjectId . "'");
-        $SQL->where("SCHOOLYEAR='" . $schoolyearId . "'");
-        $SQL->where("TEMP_ID='" . $tempId . "'");
+        $SQL->where("GRADE = ?",$gradeId);
+        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
+        $SQL->where("TEMP_ID = ?",$tempId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -539,9 +539,9 @@ class AssignmentTempDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", array('*'));
-        $SQL->where("ASSIGNMENT_ID = '" . $assignmentId . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("TRAINING_ID = '" . $trainingId . "'");
+        $SQL->where("ASSIGNMENT_ID = ?",$assignmentId);
+        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("TRAINING_ID = ?",$trainingId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;

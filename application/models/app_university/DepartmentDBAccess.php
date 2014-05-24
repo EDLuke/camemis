@@ -210,7 +210,7 @@ class DepartmentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_campus", array("C" => "COUNT(*)"));
         if ($staffId)
-            $SQL->where("STAFF = '" . $staffId . "'");
+            $SQL->where("STAFF = ?",$staffId);
         if ($departmentId)
             $SQL->where("CAMPUS = '" . $departmentId . "'");
         //error_log($SQL);
@@ -223,7 +223,7 @@ class DepartmentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_department", array("C" => "COUNT(*)"));
         if ($Id)
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

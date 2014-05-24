@@ -364,7 +364,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_income", array("C" => "SUM(AMOUNT) AS SUM_AMOUNT"));
-            $SQL->where("FEE = '" . $Id . "'");
+            $SQL->where("FEE = ?",$Id);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->SUM_AMOUNT : 0;

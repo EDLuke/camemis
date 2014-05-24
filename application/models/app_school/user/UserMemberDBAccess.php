@@ -110,7 +110,7 @@ class UserMemberDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_members", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //echo $SQL->__toString();
         return self::dbAccess()->fetchRow($SQL);
     }

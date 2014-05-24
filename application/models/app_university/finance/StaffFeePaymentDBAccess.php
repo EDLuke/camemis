@@ -100,7 +100,7 @@ class StaffFeePaymentDBAccess extends ExpenseDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_expense", array('*'));
-        $SQL->where("GUID = '" . $Id . "'");
+        $SQL->where("GUID = ?",$Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -456,7 +456,7 @@ class StaffFeePaymentDBAccess extends ExpenseDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_expense", array("C" => "COUNT(*)"));
-        $SQL->where("STAFF = '" . $staffId . "'");
+        $SQL->where("STAFF = ?",$staffId);
         $SQL->where("('" . $start . "' BETWEEN START_DATE AND END_DATE) OR ('" . $stop . "' BETWEEN START_DATE AND END_DATE)");
         $SQL->where("PAYMENT_TYPE = '" . $type . "'");
         $SQL->limit(1);
@@ -470,7 +470,7 @@ class StaffFeePaymentDBAccess extends ExpenseDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_expense", array("C" => "COUNT(*)"));
         $SQL->where("PAYMENT_TYPE = 'PAYMENT_FOR_SALARY'");
-        $SQL->where("STAFF = '" . $staffId . "'");
+        $SQL->where("STAFF = ?",$staffId);
         $SQL->where("('" . setDate2DB($startdate) . "' BETWEEN START_DATE AND END_DATE) OR ('" . setDate2DB($enddate) . "' BETWEEN START_DATE AND END_DATE)");
         $SQL->order('TRANSACTION_NUMBER DESC');
         $SQL->limit(1);
@@ -484,7 +484,7 @@ class StaffFeePaymentDBAccess extends ExpenseDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_expense", array("C" => "COUNT(*)"));
         $SQL->where("PAYMENT_TYPE = 'PAYMENT_FOR_TEACHING_SESSION'");
-        $SQL->where("STAFF = '" . $staffId . "'");
+        $SQL->where("STAFF = ?",$staffId);
         $SQL->where("('" . setDate2DB($startdate) . "' BETWEEN START_DATE AND END_DATE) OR ('" . setDate2DB($enddate) . "' BETWEEN START_DATE AND END_DATE)");
         $SQL->order('TRANSACTION_NUMBER DESC');
         $SQL->limit(1);

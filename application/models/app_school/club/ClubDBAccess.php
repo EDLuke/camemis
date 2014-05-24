@@ -57,7 +57,7 @@ class ClubDBAccess {
         $SQL->from(array('A' => 't_club'));
         $SQL->joinLeft(array('B' => 't_staff'), 'A.TEACHER_ID=B.ID', array('B.FIRSTNAME', 'B.LASTNAME'));
 
-        $SQL->where("A.ID = '" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL->__toString());       
         $stmt = self::dbAccess()->query($SQL);
         return $stmt->fetch();
@@ -272,7 +272,7 @@ class ClubDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_club", array("C" => "COUNT(*)"));
         if ($Id)
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

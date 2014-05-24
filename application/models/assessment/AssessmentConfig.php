@@ -16,7 +16,7 @@ class AssessmentConfig {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         if ($type) {

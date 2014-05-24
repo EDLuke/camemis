@@ -715,7 +715,7 @@ class CommunicationDBAccess {
         $SQL->from("t_camemis_type", array("*"));
 
         if ($parentId) {
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?", $parentId);
         } else {
             $SQL->where("PARENT = 0");
         }
@@ -734,7 +734,7 @@ class CommunicationDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_campus", array("C" => "COUNT(*)"));
         if ($staffId)
-            $SQL->where("STAFF = '" . $staffId . "'");
+            $SQL->where("STAFF = ?",$staffId);
         if ($communicationSubjectId)
             $SQL->where("CAMPUS = '" . $communicationSubjectId . "'");
         //error_log($SQL);

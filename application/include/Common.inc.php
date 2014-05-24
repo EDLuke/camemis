@@ -1966,20 +1966,6 @@ function floatArrayCountValues($digits) {
     return array_count_values($newDigits);
 }
 
-function setEncryptId($valueId) {
-    $arr = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "c", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "C", "V", "W", "X", "Y", "Z");
-    $str1 = "";
-    for ($i = 0; $i < strlen($valueId); $i++) {
-        $str2 = "";
-        for ($j = 0; $j < 5; $j++) {
-            $r = rand(0, 50);
-            $str2.=$arr[$r];
-        }
-        $str1.=substr($valueId, $i, 1) . $str2;
-    }
-    return strrev($str1);
-}
-
 function getDescryptId($EncryptId) {
     $str1 = "";
     $str2 = "";
@@ -2446,4 +2432,25 @@ function diplayNameMonthYear($str) {
     return $output;
 }
 
+function mimeTypes($type) {
+
+    $data = array();
+
+    switch ($type) {
+        case "EXCEL":
+            $data = array(
+                0 => "application/vnd.ms-excel"
+                ,1 => "application/msexcel"
+                ,2 => "application/x-msexcel"
+                ,3 => "application/x-ms-excel"
+                ,4 => "application/x-excel"
+                ,5 => "application/x-dos_ms_excel"
+                ,5 => "application/xls"
+                ,5 => "application/x-xls"
+            );
+            break;
+    }
+
+    return $data;
+}
 ?>

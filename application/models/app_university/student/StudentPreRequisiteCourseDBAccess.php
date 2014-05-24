@@ -61,7 +61,7 @@ class StudentPreRequisiteCourseDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear_subject'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS_ID=B.ID', $SELECTION_B);
-        $SQL->where("A.STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("A.STUDENT_ID = ?",$studentId);
         $SQL->where("A.SUBJECT_ID = '" . $subjectId . "'");
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);

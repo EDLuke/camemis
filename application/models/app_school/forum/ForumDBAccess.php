@@ -60,7 +60,7 @@ class ForumDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_forum', array('*'));
         if ($parentId) {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         } else {
             $SQL->where("PARENT='0'");
         }
@@ -150,7 +150,7 @@ class ForumDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_forum", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

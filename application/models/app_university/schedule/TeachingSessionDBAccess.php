@@ -975,7 +975,7 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $SQL->joinLeft(array('B' => 't_link_schedule_academic'), 'A.ID=B.SCHEDULE_ID');
         $SQL->where("B.ACADEMIC_ID = '" . $subjectCreditId . "'");
         $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
-        $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+        $SQL->where("A.SHORTDAY = ?",$shortday);
         $SQL->where("A.TERM = '" . $term . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

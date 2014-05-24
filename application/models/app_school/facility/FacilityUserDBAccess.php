@@ -34,7 +34,7 @@ class FacilityUserDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility_user', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -151,7 +151,7 @@ class FacilityUserDBAccess {
     public static function findFacilityUserById($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility_user', '*');
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -514,7 +514,7 @@ class FacilityUserDBAccess {
         $SQL->from(array('A' => 't_facility_user_item'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_facility'), 'A.FACILITY_ID=B.ID', $SELECTION_B);
         $SQL->joinLeft(array('C' => 't_facility_user'), 'C.ID=A.FACUSER_ID', $SELECTION_C);
-        $SQL->where("A.ID = '" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }

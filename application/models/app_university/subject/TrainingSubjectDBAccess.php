@@ -690,9 +690,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($trainingId)
             $SQL->where("TRAINING = '" . $trainingId . "'");
         if ($subjectId)
-            $SQL->where("SUBJECT = '" . $subjectId . "'");
+            $SQL->where("SUBJECT = ?",$subjectId);
         if ($teacherId)
-            $SQL->where("TEACHER = '" . $teacherId . "'");
+            $SQL->where("TEACHER = ?",$teacherId);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -1030,7 +1030,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                 break;
         }
 
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("ASSIGNMENT = '" . $assignmentId . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);

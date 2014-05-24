@@ -400,7 +400,6 @@ Ext.onReady(function() {
                         ,method: 'POST'
                         ,params: {cmd: 'jsonSetCurrentStudentAcademic'}
                         ,success: function(response, options) {
-                            
                             Ext.MessageBox.hide();
                         }
                         ,failure: function(response, options) {}
@@ -532,6 +531,7 @@ Ext.onReady(function() {
     $SHOW_DETAIL .=",iconCls: 'icon-user'";
     $SHOW_DETAIL .=",handler: function(){";
     $SHOW_DETAIL .="contextMenu.hide();clickOpenPage('center','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID + '&noSudentComboLsit=true');";
+    $SHOW_DETAIL .="Ext.getCmp('WEST_ID').collapse();";
     $SHOW_DETAIL .="}";
     $SHOW_DETAIL .="}";
 

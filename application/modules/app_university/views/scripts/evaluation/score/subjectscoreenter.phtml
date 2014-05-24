@@ -54,8 +54,8 @@ $setParams .= "&date=".$this->date."";
 if($CHECK_STATUS){
     $SQL = UserAuth::dbAccess()->select();
     $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-    $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
-    $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+    $SQL->where("ACADEMIC_ID = ?",$academicId);
+    $SQL->where("SUBJECT_ID = ?",$subjectId);
     $SQL->where("TERM = '" . $TERM_NAME . "'");
     //error_log($SQL);
     $result = UserAuth::dbAccess()->fetchRow($SQL);

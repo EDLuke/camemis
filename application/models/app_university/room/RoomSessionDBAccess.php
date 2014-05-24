@@ -31,7 +31,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_teaching_session'), array("C" => "COUNT(*)"));
         if ($roomId)
-            $SQL->where("ROOM_ID='" . $roomId . "'");
+            $SQL->where("ROOM_ID = ?",$roomId);
 
         $SQL->where("TEACHING_DATE BETWEEN  '" . setDate2DB($startDate) . "'  AND '" . setDate2DB($endDate) . "'");
         //error_log($SQL->__toString());
@@ -68,7 +68,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
         $SQL->where("A.ROOM_ID <> 0");
 
         if ($roomId)
-            $SQL->where("ROOM_ID='" . $roomId . "'");
+            $SQL->where("ROOM_ID = ?",$roomId);
 
         if ($search) {
             $SEARCH = "";
@@ -119,7 +119,7 @@ class RoomSessionDBAccess extends ScheduleDBAccess {
         $SQL->where("A.ROOM_ID <> 0");
 
         if ($shortday)
-            $SQL->where("A.SHORTDAY = '" . $shortday . "'");
+            $SQL->where("A.SHORTDAY = ?",$shortday);
 
         if ($roomId)
             $SQL->where("A.ROOM_ID = '" . $roomId . "'");

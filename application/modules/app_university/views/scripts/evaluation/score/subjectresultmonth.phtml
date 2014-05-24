@@ -148,6 +148,7 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
+                            comboValue = replaceValue;
                         }
                     }
                 })
@@ -178,19 +179,19 @@ Ext.onReady(function() {
                     triggerAction:'all'
                     ,mode:'local'
                     ,store: new Ext.data.JsonStore({
-                            autoDestroy: true
-                            ,fields: ['chooseValue', 'chooseDisplay']
-                            ,data:[".implode($STORE_DATA)."]
-                        })
-                        ,valueField: 'chooseValue'
-                        ,displayField: 'chooseDisplay'
-                        ,editable: false
-                        ,listeners: {
-                            select: function(combo, record, index) {
+                        autoDestroy: true
+                        ,fields: ['chooseValue', 'chooseDisplay']
+                        ,data:[".implode($STORE_DATA)."]
+                    })
+                    ,valueField: 'chooseValue'
+                    ,displayField: 'chooseDisplay'
+                    ,editable: false
+                    ,listeners: {
+                        select: function(combo, record, index) {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            setnewValue = newDisplay;
+                            comboValue = replaceValue;
                         }
                     }
                 })
@@ -303,6 +304,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentSubjectAssessment'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ,comboValue:comboValue
     ");
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 

@@ -35,7 +35,7 @@ class ScholarshipDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_scholarship', array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?", $Id);
 
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -227,7 +227,7 @@ class ScholarshipDBAccess {
             $SQL->where("B.ID='" . $studentId . "'");
 
         if ($schoolyearId)
-            $SQL->where("A.SCHOOLYEAR='" . $schoolyearId . "'");
+            $SQL->where("A.SCHOOLYEAR = ?",$schoolyearId);
 
         if ($studentSchoolCode)
             $SQL->where("B.STUDENT_SCHOOL_ID LIKE '%" . $studentSchoolCode . "%'");
@@ -367,7 +367,7 @@ class ScholarshipDBAccess {
         $SQL->from('t_scholarship', array('*'));
 
         if ($parentId) {
-            $SQL->where("PARENT='" . $parentId . "'");
+            $SQL->where("PARENT = ?", $parentId);
         } else {
             $SQL->where("PARENT='0'");
         }
@@ -385,7 +385,7 @@ class ScholarshipDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_scholarship", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?", $Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

@@ -48,7 +48,7 @@ if($academicObject->EDUCATION_SYSTEM){
 }else{
     $subjectId = $this->subjectId;
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
-}
+} 
 
 if(!is_object($subjectObject)) {header("Location: /main/permission/");}
 
@@ -159,6 +159,7 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
+                            comboValue = replaceValue;
                         }
                     }
                 })
@@ -194,15 +195,15 @@ Ext.onReady(function() {
                             ,fields: ['chooseValue', 'chooseDisplay']
                             ,data:[".implode($STORE_DATA)."]
                         })
-                        ,valueField: 'chooseValue'
-                        ,displayField: 'chooseDisplay'
-                        ,editable: false
-                        ,listeners: {
-                            select: function(combo, record, index) {
+                    ,valueField: 'chooseValue'
+                    ,displayField: 'chooseDisplay'
+                    ,editable: false
+                    ,listeners: {
+                        select: function(combo, record, index) {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            setnewValue = newDisplay;
+                            comboValue = replaceValue;
                         }
                     }
                 })
@@ -349,6 +350,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentSubjectAssessment'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ,comboValue:comboValue
     ");
     
     $OBJECT_GRID->setAftereditCallback("

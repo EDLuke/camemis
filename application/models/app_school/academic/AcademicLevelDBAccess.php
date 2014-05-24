@@ -34,7 +34,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
      */
     public static function getSQLAllAcademics($params) {
 
-        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : 0;
         $parentCampus = isset($params["parentCampus"]) ? addText($params["parentCampus"]) : "";
         $parentGrade = isset($params["parentGrade"]) ? addText($params["parentGrade"]) : "";
         $gradeSchoolyearId = isset($params["gradeSchoolyearId"]) ? addText($params["gradeSchoolyearId"]) : 0;
@@ -427,7 +427,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     public function addNode($params) {
 
-        $parentId =  addText($params["parentId"]);
+        $parentId = addText($params["parentId"]);
 
         $OBJECT_PARENT = AcademicDBAccess::findGradeFromId($parentId);
 
@@ -444,7 +444,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $chooseSubjectId = isset($params["CHOOSE_SUBJECT"]) ? addText($params["CHOOSE_SUBJECT"]) . "" : "";
 
         if (isset($params["SORTKEY"]))
-            $SAVEDATA['SORTKEY'] =  addText($params["SORTKEY"]);
+            $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
 
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
@@ -1424,13 +1424,13 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
         if ($classId)
-            $SQL->where("ACADEMIC_ID = '" . $classId . "'");
+            $SQL->where("ACADEMIC_ID = ?", $classId);
         if ($subjectId)
-            $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+            $SQL->where("SUBJECT_ID = ?", $subjectId);
         if ($teacherId)
-            $SQL->where("TEACHER_ID = '" . $teacherId . "'");
+            $SQL->where("TEACHER_ID = ?", $teacherId);
         if ($gradingterm)
-            $SQL->where("TERM = '" . $gradingterm . "'");
+            $SQL->where("TERM = ?",$gradingterm);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result->C ? 1 : 0;
@@ -1441,11 +1441,11 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
         if ($teacherId)
-            $SQL->where("TEACHER_ID = '" . $teacherId . "'");
+            $SQL->where("TEACHER_ID = ?", $teacherId);
         if ($classId)
-            $SQL->where("ACADEMIC_ID = '" . $classId . "'");
+            $SQL->where("ACADEMIC_ID = ?", $classId);
         if ($schoolyearId)
-            $SQL->where("SCHOOLYEAR_ID = '" . $schoolyearId . "'");
+            $SQL->where("SCHOOLYEAR_ID = ?", $schoolyearId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -1579,7 +1579,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade_subject", array("C" => "COUNT(*)"));
-        $SQL->where("GRADE = '" . $objectId . "'");
+        $SQL->where("GRADE = ?", $objectId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -1589,7 +1589,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
-        $SQL->where("ACADEMIC = '" . $objectId . "'");
+        $SQL->where("ACADEMIC = ?", $objectId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -1599,7 +1599,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
-        $SQL->where("CLASS = '" . $objectId . "'");
+        $SQL->where("CLASS = ?", $objectId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

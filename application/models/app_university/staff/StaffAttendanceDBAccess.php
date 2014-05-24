@@ -93,7 +93,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('*'));
-        $SQL->where("STAFF_ID = '" . $staffId . "'");
+        $SQL->where("STAFF_ID = ?",$staffId);
         $SQL->where("'" . getCurrentDBDate() . "' BETWEEN START_DATE AND END_DATE");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
@@ -106,7 +106,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -115,7 +115,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('*'));
-        $SQL->where("STAFF_ID = '" . $staffId . "'");
+        $SQL->where("STAFF_ID = ?",$staffId);
         $SQL->where("START_DATE='" . $startDate . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
@@ -311,7 +311,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array("C" => "COUNT(*)"));
-        $SQL->where("STAFF_ID = '" . $staffId . "'");
+        $SQL->where("STAFF_ID = ?",$staffId);
         if ($absentType)
             $SQL->where("ABSENT_TYPE = '" . $absentType . "'");
         $SQL->where("START_DATE <= '" . $absentDate . "' and END_DATE >= '" . $absentDate . "'");
@@ -325,7 +325,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array("C" => "COUNT(*)"));
-        $SQL->where("STAFF_ID = '" . $staffId . "'");
+        $SQL->where("STAFF_ID = ?",$staffId);
         if ($absentType)
             $SQL->where("ABSENT_TYPE = '" . $absentType . "'");
         $SQL->where("START_DATE <= '" . $absentDate . "' and END_DATE >= '" . $absentDate . "'");
@@ -339,7 +339,7 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('*'));
-        $SQL->where("STAFF_ID = '" . $staffId . "'");
+        $SQL->where("STAFF_ID = ?",$staffId);
         if ($absentType)
             $SQL->where("ABSENT_TYPE = '" . $absentType . "'");
         $SQL->where("START_DATE <= '" . $absentDate . "' and END_DATE >= '" . $absentDate . "'");
@@ -902,9 +902,9 @@ class StaffAttendanceDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_attendance_subject", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER_ID = '" . $teacherId . "'");
+        $SQL->where("TEACHER_ID = ?",$teacherId);
         $SQL->where("CLASS_ID = '" . $academicId . "'");
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+        $SQL->where("SUBJECT_ID = ?",$subjectId);
         $SQL->where("START_TIME = '" . $starttime . "'");
         $SQL->where("END_TIME = '" . $endtime . "'");
         $SQL->where("    ATTENDANCE_DATE = '" . $day . "'");

@@ -87,9 +87,9 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array('*'));
         if (is_numeric($Id)) {
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
         } else {
-            $SQL->where("GUID = '" . $Id . "'");
+            $SQL->where("GUID = ?",$Id);
         }
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -812,8 +812,8 @@ class SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
-        $SQL->where("TEACHER = '" . $teacherId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("TEACHER = ?",$teacherId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -823,8 +823,8 @@ class SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_training", array("C" => "COUNT(*)"));
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
-        $SQL->where("TEACHER = '" . $teacherId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("TEACHER = ?",$teacherId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -834,8 +834,8 @@ class SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_subject", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER = '" . $teacherId . "'");
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("TEACHER = ?",$teacherId);
+        $SQL->where("SUBJECT = ?",$subjectId);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1139,7 +1139,7 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = '" . $subjecId . "'");
-        $SQL->where("CLASS = '" . $classId . "'");
+        $SQL->where("CLASS = ?",$classId);
         $SQL->where("USED_IN_CLASS = '1'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -1185,7 +1185,7 @@ class SubjectDBAccess {
     public static function findSubjectFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("*"));
-        $SQL->where("GUID = '" . $GuId . "'");
+        $SQL->where("GUID = ?",$GuId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1194,7 +1194,7 @@ class SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

@@ -218,9 +218,9 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
         //Load Teacher by subjectId, classId, term
         $SQL = self::dbAccess()->select();
         $SQL->from('t_schedule', '*');
-        $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+        $SQL->where("SUBJECT_ID = ?",$subjectId);
         $SQL->where("ACADEMIC_ID = '" . $academicObject->ID . "'");
-        $SQL->where("TERM = '" . $term . "'");
+        $SQL->where("TERM = ?",$term);
         $SQL->group("SUBJECT_ID");
         //error_log($SQL->__toString());
         $facette = self::dbAccess()->fetchRow($SQL);
@@ -275,8 +275,8 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_teacher_subject', '*');
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
-        $SQL->where("TEACHER = '" . $teacherId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("TEACHER = ?",$teacherId);
         //error_log($SQL->__toString());
         $facette = self::dbAccess()->fetchRow($SQL);
 
@@ -319,7 +319,7 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_teacher_subject', '*');
-        $SQL->where("SUBJECT = '" . $subjectId . "'");
+        $SQL->where("SUBJECT = ?",$subjectId);
         $SQL->where("TEACHER = '" . $objectId . "'");
         //error_log($SQL->__toString());
         $facette = self::dbAccess()->fetchRow($SQL);

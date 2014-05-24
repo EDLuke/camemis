@@ -32,7 +32,7 @@ class GuardianDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from('t_guardian', array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -419,7 +419,7 @@ class GuardianDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_guardian", array("C" => "COUNT(*)"));
         $SQL->where("GUARDIAN_ID = '" . $guardianId . "'");
-        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("STUDENT_ID = ?",$studentId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);

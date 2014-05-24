@@ -459,7 +459,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("CONTRACT_TYPE = '" . $contractType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -503,7 +503,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("CONTRACT_TYPE = '" . $contractType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -548,7 +548,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("CONTRACT_TYPE = '" . $contractType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -654,7 +654,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -702,7 +702,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -750,7 +750,7 @@ class StaffStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($staffId)
-            $SQL->where("STAFF_ID = '" . $staffId . "'");
+            $SQL->where("STAFF_ID = ?",$staffId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);

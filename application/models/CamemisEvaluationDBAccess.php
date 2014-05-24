@@ -40,7 +40,7 @@ class CamemisEvaluationDBAccess {
         $SQL->distinct();
         $SQL->from(array('A' => 't_evaluation_answer'), array('*'));
         
-        $SQL->where("A.ID='" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -136,7 +136,7 @@ class CamemisEvaluationDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
         $SQL->order("NAME ASC");
         
@@ -186,7 +186,7 @@ class CamemisEvaluationDBAccess {
         $SQL->from(array('A' => 't_evaluation_question'), array('A.ID','A.NAME AS QUESTION_NAME','DESCRIPTION','ANSWERID'));
         $SQL->joinLeft(array('B' => 't_evaluation_answer'), 'B.ID=A.ANSWERID', array('B.NAME AS ANSWER_NAME'));
             
-        $SQL->where("A.ID='" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -463,7 +463,7 @@ class CamemisEvaluationDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_camemis_evaluation'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -473,7 +473,7 @@ class CamemisEvaluationDBAccess {
         $SQL->distinct();
         $SQL->from(array('A' => 't_camemis_evaluation'), array('*'));
         
-        $SQL->where("A.ID='" . $Id . "'");
+        $SQL->where("A.ID = ?",$Id);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
@@ -519,7 +519,7 @@ class CamemisEvaluationDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
         $SQL->order("NAME ASC");
         
@@ -561,7 +561,7 @@ class CamemisEvaluationDBAccess {
     public function checkTopicChild($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_evaluation", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);

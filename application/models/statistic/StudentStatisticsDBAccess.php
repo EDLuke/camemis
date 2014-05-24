@@ -619,7 +619,7 @@ class StudentStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($studentId)
-            $SQL->where("STUDENT_ID = '" . $studentId . "'");
+            $SQL->where("STUDENT_ID = ?",$studentId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -667,7 +667,7 @@ class StudentStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($studentId)
-            $SQL->where("STUDENT_ID = '" . $studentId . "'");
+            $SQL->where("STUDENT_ID = ?",$studentId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -723,7 +723,7 @@ class StudentStatisticsDBAccess {
             $SQL->where("DISCIPLINE_TYPE = '" . $disciplineType . "'");
 
         if ($studentId)
-            $SQL->where("STUDENT_ID = '" . $studentId . "'");
+            $SQL->where("STUDENT_ID = ?",$studentId);
 
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -868,7 +868,7 @@ class StudentStatisticsDBAccess {
             {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_schoolyear_subject", array("C" => "COUNT(*)"));
-                $SQL->where("SCHOOLYEAR_ID = '" . $schoolyearId . "'");
+                $SQL->where("SCHOOLYEAR_ID = ?",$schoolyearId);
 
                 switch ($objectType)
                 {
@@ -889,7 +889,7 @@ class StudentStatisticsDBAccess {
             {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
-                $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+                $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
 
                 switch ($objectType)
                 {
@@ -947,11 +947,11 @@ class StudentStatisticsDBAccess {
                 break;
             case "GRADE":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 break;
             case "CLASS":
                 $SQL->where("OBJECT_TYPE = 'CLASS'");
-                $SQL->where("GRADE_ID = '" . $gradeId . "'");
+                $SQL->where("GRADE_ID = ?",$gradeId);
                 break;
         }
         $SQL->order("SORTKEY ASC");
@@ -1080,12 +1080,12 @@ class StudentStatisticsDBAccess {
                 break;
             case "SUBJECT":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 $SQL->order("SORTKEY ASC");
                 break;
             case "GROUP":
                 $SQL->where("OBJECT_TYPE = 'CLASS'");
-                $SQL->where("SUBJECT_ID = '" . $subjectId . "'");
+                $SQL->where("SUBJECT_ID = ?",$subjectId);
                 $SQL->order("SORTKEY ASC");
                 break;
         }
@@ -1468,12 +1468,12 @@ class StudentStatisticsDBAccess {
         {
             case "CAMPUS":
                 $SQL->where("OBJECT_TYPE = 'GRADE'");
-                $SQL->where("CAMPUS_ID = '" . $campusId . "'");
+                $SQL->where("CAMPUS_ID = ?",$campusId);
                 break;
             case "GRADE":
                 $SQL->where("OBJECT_TYPE = 'CLASS'");
-                $SQL->where("GRADE_ID = '" . $gradeId . "'");
-                $SQL->where("SCHOOL_YEAR = '" . $schoolyearId . "'");
+                $SQL->where("GRADE_ID = ?",$gradeId);
+                $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
                 break;
         }
         $SQL->order("SORTKEY ASC");

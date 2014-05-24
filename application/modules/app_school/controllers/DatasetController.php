@@ -41,8 +41,7 @@ class DatasetController extends Zend_Controller_Action {
     public $dataforjson = null;
     protected $DB_ACADEMIC = null;
 
-    public function init()
-    {
+    public function init() {
 
         $this->getResponse()->setHeader('X-FRAME-OPTIONS', 'SAMEORIGIN');
         $this->REQUEST = $this->getRequest();
@@ -50,8 +49,7 @@ class DatasetController extends Zend_Controller_Action {
 
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds'))
-        {
+        if ($this->_getParam('camIds')) {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
@@ -74,8 +72,7 @@ class DatasetController extends Zend_Controller_Action {
         $this->UTILES = Utiles::getInstance();
     }
 
-    public function loginAction()
-    {
+    public function loginAction() {
 
         $DB_USER = UserDBAccess::getInstance();
 
@@ -85,17 +82,16 @@ class DatasetController extends Zend_Controller_Action {
         $SMG_TEXT_OBJECT = $DB_LOCALIZATION->findLocalizationByConst("MSG_ERROR_LOGIN");
 
         $request = $this->getRequest();
-        $LOGINNAME = htmlentities(strip_tags(trim($request->getPost("login"))));
-        $PASSWORD = htmlentities(strip_tags(trim($request->getPost("password"))));
-        $SYSTEM_LANGUAGE = htmlentities(strip_tags($request->getPost("CHOOSE_LANGUAGE")));
-        $tokenId = isset($_COOKIE['tokenId']) ? $_COOKIE['tokenId'] : '';
+        $LOGINNAME = addText($request->getPost("login"));
+        $PASSWORD = addText($request->getPost("password"));
+        $SYSTEM_LANGUAGE = addText($request->getPost("CHOOSE_LANGUAGE"));
+        $tokenId = isset($_COOKIE['tokenId']) ? addText($_COOKIE['tokenId']) : '';
 
         $richtigerBenutzerName = $DB_USER->checkLoginOk($LOGINNAME);
 
         $isUserOnline = $DB_USER->checkCurrentUserOnline($LOGINNAME, $PASSWORD, $tokenId);
 
-        switch ($SYSTEM_LANGUAGE)
-        {
+        switch ($SYSTEM_LANGUAGE) {
             case "VIETNAMESE":
                 $SMG_TITLE = $SMG_TITLE_OBJECT->VIETNAMESE ? $SMG_TITLE_OBJECT->VIETNAMESE : $SMG_TITLE_OBJECT->ENGLISH;
                 $SMG_TEXT = $SMG_TEXT_OBJECT->VIETNAMESE ? $SMG_TEXT_OBJECT->VIETNAMESE : $SMG_TEXT_OBJECT->ENGLISH;
@@ -135,19 +131,13 @@ class DatasetController extends Zend_Controller_Action {
                 break;
         }
 
-        if ($isUserOnline)
-        {
+        if ($isUserOnline) {
             $json = "{'success':true, 'sessionId':'online'}";
-        }
-        else
-        {
+        } else {
             $secureID = $DB_USER->Login($LOGINNAME, $PASSWORD);
-            if ($secureID)
-            {
+            if ($secureID) {
                 $json = "{'success':true, 'sessionId':'" . htmlentities(strip_tags($secureID)) . "', 'languageId': '" . htmlentities(strip_tags($SYSTEM_LANGUAGE)) . "'}";
-            }
-            else
-            {
+            } else {
                 $json = "{
                     'success':true
                     ,'sessionId':'failed'
@@ -159,30 +149,25 @@ class DatasetController extends Zend_Controller_Action {
             }
         }
 
-        if (isset($json))
-        {
+        if (isset($json)) {
             $this->getResponse()->setBody($json);
         }
 
         $this->getResponse()->setHeader('Content-Type', 'text/javascript');
     }
 
-    public function videoAction()
-    {
+    public function videoAction() {
         $this->view->objectId = $this->objectId;
     }
 
-    public function dataviewAction()
-    {
+    public function dataviewAction() {
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->object = $this->_getParam('object');
     }
 
-    public function dataeditorAction()
-    {
+    public function dataeditorAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -192,97 +177,79 @@ class DatasetController extends Zend_Controller_Action {
         $this->view->object = $this->_getParam('object');
     }
 
-    public function attachmentAction()
-    {
-        if (!UserAuth::identify())
-        {
+    public function attachmentAction() {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function ckeditorAction()
-    {
+    public function ckeditorAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function ckeditoradminAction()
-    {
+    public function ckeditoradminAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function smalleditorAction()
-    {
+    public function smalleditorAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function showcontentAction()
-    {
+    public function showcontentAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function showblobAction()
-    {
+    public function showblobAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function displayfileAction()
-    {
+    public function displayfileAction() {
 
-        if (!UserAuth::identify())
-        {
+        if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
     }
 
-    public function sendemailAction()
-    {
+    public function sendemailAction() {
         
     }
 
-    public function linechartAction()
-    {
+    public function linechartAction() {
         $this->view->setId = $this->_getParam('setId');
     }
 
-    public function listAction()
-    {
+    public function listAction() {
         $this->view->target = $this->target;
-        switch (strtoupper($this->target))
-        {
+        switch (strtoupper($this->target)) {
             case "HEALTHSETTING":
                 $this->_helper->viewRenderer("healthsetting/list");
                 break;
@@ -294,99 +261,85 @@ class DatasetController extends Zend_Controller_Action {
         }
     }
 
-    public function showitemAction()
-    {
+    public function showitemAction() {
         $this->view->target = $this->target;
         $this->view->objectId = $this->objectId;
-        switch (strtoupper($this->target))
-        {
+        switch (strtoupper($this->target)) {
             case "HEALTHSETTING":
                 $this->_helper->viewRenderer("healthsetting/show");
                 break;
         }
     }
 
-    public function addattachmentAction()
-    {
+    public function addattachmentAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->object = $this->_getParam('object');
         $this->_helper->viewRenderer("upload/show");
     }
 
-    public function uploadAction()
-    {
+    public function uploadAction() {
 
         Zend_Registry::set('objectId', $this->_getParam('objectId'));
         Zend_Registry::set('object', $this->_getParam('object'));
         $this->_helper->viewRenderer("upload/action");
     }
 
-    public function attachmentlistAction()
-    {
+    public function attachmentlistAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->object = $this->_getParam('object');
         $this->_helper->viewRenderer("upload/list");
     }
 
-    public function imageAction()
-    {
+    public function imageAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->objectName = $this->_getParam('objectName');
     }
 
-    public function settingAction()
-    {
+    public function settingAction() {
         $this->view->URL_DESCRIPTIOIN = $this->UTILES->buildURL('dataset/alldescription', array('personType' => $this->_getParam('personType')));
         $this->view->URL_DESCRIPTIOIN_TRAINING = $this->UTILES->buildURL('dataset/alldescription', array('personType' => "STUDENT_TRAINING"));
         $this->view->URL_LOCATION = $this->UTILES->buildURL('dataset/alllocation', array());
         $this->view->URL_ABSENT_TYPE = $this->UTILES->buildURL('dataset/allabsenttype', array());
     }
 
-    public function allfacilitiesAction()
-    {
+    public function allfacilitiesAction() {
 
         $this->view->URL_SHOW_FACILITY = $this->UTILES->buildURL('dataset/showfacility', array());
         $this->_helper->viewRenderer("facility/list");
     }
 
-    public function alldescriptionAction()
-    {
+    public function alldescriptionAction() {
 
         $this->view->URL_SHOW_DESCRIPTION = $this->UTILES->buildURL('dataset/showdescription', array());
         $this->_helper->viewRenderer("description/list");
     }
 
-    public function alllocationAction()
-    {
+    public function alllocationAction() {
 
         $this->view->URL_SHOW_LOCATION = $this->UTILES->buildURL('dataset/showlocation', array());
         $this->_helper->viewRenderer("location/list");
     }
 
-    public function allbranchofficesAction()
-    {
+    public function allbranchofficesAction() {
 
         $this->view->URL_SHOW_BRANCH_OFFICE = $this->UTILES->buildURL('dataset/showbranchoffice', array());
         $this->_helper->viewRenderer("branchoffice/list");
     }
 
-    public function allpersonstatusAction()
-    {
+    public function allpersonstatusAction() {
         $this->_helper->viewRenderer("personstatus/list");
     }
 
     //@veasna
-    public function allscholarshiptypeAction()
-    {
+    public function allscholarshiptypeAction() {
         $this->view->URL_SHOW_SCHOLARSHIP_TYPE = $this->UTILES->buildURL('dataset/showsholarshiptype', array());
         $this->_helper->viewRenderer("scholarshiptype/list");
     }
 
-    public function showsholarshiptypeAction()
-    {
+    public function showsholarshiptypeAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->parentId = $this->_getParam('parentId');
@@ -396,74 +349,63 @@ class DatasetController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("scholarshiptype/show");
     }
 
-    public function scholarshipcontentAction()
-    {
+    public function scholarshipcontentAction() {
         $this->_helper->viewRenderer("scholarshiptype/showcontent");
     }
 
     //
-    public function allabsenttypesAction()
-    {
+    public function allabsenttypesAction() {
         $this->view->URL_SHOW_ABSENT_TYPE = $this->UTILES->buildURL('dataset/showabsenttype', array());
         $this->_helper->viewRenderer("absenttype/list");
     }
 
-    public function showabsenttypeAction()
-    {
+    public function showabsenttypeAction() {
         $this->view->objectId = $this->_getParam('objectId');
         $this->_helper->viewRenderer("absenttype/show");
     }
 
-    public function showpersonstatusAction()
-    {
+    public function showpersonstatusAction() {
         $this->view->objectId = $this->_getParam('objectId');
         $this->_helper->viewRenderer("personstatus/show");
     }
 
-    public function showlocationAction()
-    {
+    public function showlocationAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->_helper->viewRenderer("location/show");
     }
 
-    public function showbranchofficeAction()
-    {
+    public function showbranchofficeAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->_helper->viewRenderer("branchoffice/show");
     }
 
-    public function showdescriptionAction()
-    {
+    public function showdescriptionAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->facette = DescriptionDBAccess::findObjectFromId($this->_getParam('objectId'));
         $this->_helper->viewRenderer("description/show");
     }
 
-    public function showfacilityAction()
-    {
+    public function showfacilityAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->facette = SchoolFacilityDBAccess::findObjectFromId($this->_getParam('objectId'));
         $this->_helper->viewRenderer("facility/show");
     }
 
-    public function authenticationAction()
-    {
+    public function authenticationAction() {
         
     }
 
     //@Sea Peng
-    public function camemistypeAction()
-    {
+    public function camemistypeAction() {
         $this->view->URL_SHOW_CAMEMIS_TYPE = $this->UTILES->buildURL('dataset/showcamemistype', array());
         $this->_helper->viewRenderer("camemistype/list");
     }
 
-    public function showcamemistypeAction()
-    {
+    public function showcamemistypeAction() {
         $this->view->parentId = $this->_getParam('parentId');
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->type = $this->_getParam('type');
@@ -471,16 +413,13 @@ class DatasetController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("camemistype/show");
     }
 
-    public function backupAction()
-    {
+    public function backupAction() {
         UserAuth::actionPermint($this->_request, "SCHOOL_SETTING");
     }
 
-    public function remoteAction()
-    {
+    public function remoteAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
             case "jsonUserOnline":
                 $DB_SECURE = SessionAccess::getInstance();
                 $jsondata = $DB_SECURE->jsonUserOnline($this->REQUEST->getPost());
@@ -522,11 +461,9 @@ class DatasetController extends Zend_Controller_Action {
                 $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction()
-    {
+    public function jsontreeAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
             case "treeAllLocations":
                 $jsondata = LocationDBAccess::jsonTreeLocal($this->REQUEST->getPost());
                 break;
@@ -589,11 +526,9 @@ class DatasetController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonloadAction()
-    {
+    public function jsonloadAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "jsonAttachmentList":
                 $jsondata = CAMEMISUploadDBAccess::jsonAttachmentList($this->REQUEST->getPost());
@@ -637,8 +572,7 @@ class DatasetController extends Zend_Controller_Action {
                 break;
 
             case "loadObject":
-                switch ($this->REQUEST->getPost('type'))
-                {
+                switch ($this->REQUEST->getPost('type')) {
                     case "description":
                         $jsondata = DescriptionDBAccess::loadObject($this->REQUEST->getPost('objectId'));
                         break;
@@ -683,11 +617,9 @@ class DatasetController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction()
-    {
+    public function jsonsaveAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "jsonSaveHealthSetting":
                 $jsondata = HealthSettingDBAccess::jsonSaveHealthSetting($this->REQUEST->getPost());
@@ -756,8 +688,7 @@ class DatasetController extends Zend_Controller_Action {
                 break;
 
             case "updateObject":
-                switch ($this->REQUEST->getPost('type'))
-                {
+                switch ($this->REQUEST->getPost('type')) {
                     case "description":
                         $jsondata = DescriptionDBAccess::updateObject($this->REQUEST->getPost());
                         break;
@@ -790,8 +721,7 @@ class DatasetController extends Zend_Controller_Action {
                 break;
 
             case "addObject":
-                switch ($this->REQUEST->getPost('type'))
-                {
+                switch ($this->REQUEST->getPost('type')) {
                     case "description":
                         $jsondata = DescriptionDBAccess::addObject($this->REQUEST->getPost());
                         break;
@@ -820,8 +750,7 @@ class DatasetController extends Zend_Controller_Action {
                 break;
 
             case "removeObject":
-                switch ($this->REQUEST->getPost('type'))
-                {
+                switch ($this->REQUEST->getPost('type')) {
                     case "description":
                         $jsondata = DescriptionDBAccess::removeObject($this->REQUEST->getPost());
                         break;
@@ -866,12 +795,10 @@ class DatasetController extends Zend_Controller_Action {
                 $this->setJSON($jsondata);
     }
 
-    protected function actionDeleteBuckUp()
-    {
+    protected function actionDeleteBuckUp() {
         $filename = UserAuth::getUserPublicRoot() . "_dump.sql.gz";
         $myFile = "../public/users/" . UserAuth::getUserPublicRoot() . "/database/" . $filename . "";
-        if (file_exists($myFile))
-        {
+        if (file_exists($myFile)) {
             unlink($myFile);
         }
         return array(
@@ -879,8 +806,7 @@ class DatasetController extends Zend_Controller_Action {
         );
     }
 
-    protected function actionBuckUp()
-    {
+    protected function actionBuckUp() {
 
         $INCLUDE_TABLES = array();
         $EXCLUDE_TABLES = array();
@@ -908,8 +834,7 @@ class DatasetController extends Zend_Controller_Action {
                 , $dumpSettings
         );
 
-        if (UserAuth::getUserPublicRoot())
-        {
+        if (UserAuth::getUserPublicRoot()) {
             $filename = UserAuth::getUserPublicRoot() . "_dump.sql";
             $CAMEMISMySQLDump->start("../public/users/" . UserAuth::getUserPublicRoot() . "/database/" . $filename . "");
             return array(
@@ -918,8 +843,7 @@ class DatasetController extends Zend_Controller_Action {
         }
     }
 
-    public function setJSON($jsondata)
-    {
+    public function setJSON($jsondata) {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

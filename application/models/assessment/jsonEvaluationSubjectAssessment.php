@@ -50,8 +50,10 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         if (isset($params["id"]))
             $this->studentId = addText($params["id"]);
 
-        if (isset($params["newValue"]))
+        if (isset($params["newValue"])) {
+            unset($params["comboValue"]);
             $this->actionValue = addText($params["newValue"]);
+        }
 
         if (isset($params["section"]))
             $this->section = addText($params["section"]);
@@ -64,9 +66,14 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
 
         if (isset($params["CONTENT"]))
             $this->content = addText($params["CONTENT"]);
-        
+
         if (isset($params["tmp_name"]))
             $this->tmp_name = $params["tmp_name"];
+
+        if (isset($params["comboValue"])) {
+            unset($params["newValue"]);
+            $this->actionValue = addText($params["comboValue"]);
+        }
     }
 
     public function jsonListStudentSubjectAssignments($encrypParams) {
@@ -252,8 +259,10 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $params["tmp_name"] = $_FILES["xlsfile"]['tmp_name'];
 
-        $this->setParams($params);
-        $this->actionScoreImport();
+        if (in_array($_FILES["xlsfile"]["type"], mimeTypes("EXCEL"))) {
+            $this->setParams($params);
+            $this->actionScoreImport();
+        }
 
         return array("success" => true);
     }

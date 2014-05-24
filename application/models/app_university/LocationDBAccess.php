@@ -58,7 +58,7 @@ class LocationDBAccess {
     {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_location", array("*"));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -215,7 +215,7 @@ class LocationDBAccess {
         $SQL->from("t_location", array("*"));
         if ($parentId)
         {
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
         }
         else
         {
@@ -273,7 +273,7 @@ class LocationDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_location", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

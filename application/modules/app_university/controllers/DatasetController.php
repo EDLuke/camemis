@@ -81,10 +81,10 @@ class DatasetController extends Zend_Controller_Action {
         $SMG_TEXT_OBJECT = $DB_LOCALIZATION->findLocalizationByConst("MSG_ERROR_LOGIN");
 
         $request = $this->getRequest();
-        $LOGINNAME = htmlentities(strip_tags(trim($request->getPost("login"))));
-        $PASSWORD = htmlentities(strip_tags(trim($request->getPost("password"))));
-        $SYSTEM_LANGUAGE = htmlentities(strip_tags($request->getPost("CHOOSE_LANGUAGE")));
-        $tokenId = isset($_COOKIE['tokenId']) ? $_COOKIE['tokenId'] : '';
+        $LOGINNAME = addText($request->getPost("login"));
+        $PASSWORD = addText($request->getPost("password"));
+        $SYSTEM_LANGUAGE = addText($request->getPost("CHOOSE_LANGUAGE"));
+        $tokenId = isset($_COOKIE['tokenId']) ? addText($_COOKIE['tokenId']) : '';
 
         $richtigerBenutzerName = $DB_USER->checkLoginOk($LOGINNAME);
 

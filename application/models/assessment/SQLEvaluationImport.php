@@ -46,15 +46,15 @@ class SQLEvaluationImport {
 
                 if ($score) {
                     $stdClass->studentId = $studentId;
-                    $stdClass->actionValue = $score;
-
                     switch ($stdClass->scoreType) {
                         case 1:
-                            if ($score >= $stdClass->scoreMin && $core <= $stdClass->scoreMax) {
+                            $stdClass->actionValue = $score;
+                            if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
                                 SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
                             }
                             break;
                         case 2:
+                            $stdClass->actionValue = strtoupper($score);
                             SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
                             break;
                     }
@@ -69,13 +69,14 @@ class SQLEvaluationImport {
         $xls->setUTFEncoder('iconv');
         $xls->setOutputEncoding('UTF-8');
         $xls->read($stdClass->tmp_name);
-        
+
         $STUDENT_DATA = self::getListStudents($stdClass);
 
         for ($i = 0; $i <= $xls->sheets[0]['numRows']; $i++) {
 
             $code = isset($xls->sheets[0]['cells'][$i + 3][1]) ? $xls->sheets[0]['cells'][$i + 3][1] : "";
             $score = isset($xls->sheets[0]['cells'][$i + 3][3]) ? $xls->sheets[0]['cells'][$i + 3][3] : "";
+            $rank = isset($xls->sheets[0]['cells'][$i + 3][4]) ? $xls->sheets[0]['cells'][$i + 3][4] : "";
 
             $studentId = isset($STUDENT_DATA[$code]) ? $STUDENT_DATA[$code] : "";
 
@@ -83,15 +84,18 @@ class SQLEvaluationImport {
 
                 if (trim($score)) {
                     $stdClass->studentId = $studentId;
+                    if (is_numeric($rank))
+                        $stdClass->actionRank = $rank;
+
                     switch ($stdClass->scoreType) {
                         case 1:
                             $stdClass->average = trim($score);
-                            if ($score >= $stdClass->scoreMin && $core <= $stdClass->scoreMax) {
+                            if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
                                 SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
                             }
                             break;
                         case 2:
-                            $stdClass->mappingValue = trim($score);
+                            $stdClass->mappingValue = strtoupper(trim($score));
                             $stdClass->assessmentId = self::getAssessmentId($score, $stdClass->qualificationType);
                             SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
                             break;

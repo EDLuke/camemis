@@ -31,7 +31,7 @@ class FileDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -55,7 +55,7 @@ class FileDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
-        $SQL->where("GUID='" . $GuId . "'");
+        $SQL->where("GUID = ?", $GuId);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -115,33 +115,32 @@ class FileDBAccess {
         switch (UserAuth::getUserType()) {
             case "STUDENT"://@veasna modify
                 $SQL->joinRight(array('B' => 't_file_user'), 'A.GUID=B.FILE', array('B.FILE', 'B.SCHOOLYEAR_ID'));
-                if($schoolyearId){
+                if ($schoolyearId) {
                     $classObject = Utiles::getStudentClassTraditional($studentId, $schoolyearId);
-                    if($classObject){
+                    if ($classObject) {
                         $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.SCHOOLYEAR_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
                         if ($studentId) {
                             $SQL->where("C.STUDENT='" . $studentId . "'");
                         }
-                        if($schoolyearId){
-                            $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");    
+                        if ($schoolyearId) {
+                            $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");
                         }
-                    }else{
-                        $data = BulletinDBAccess::findAcademicByStudentId($studentId,3);
-                        $academicIds = ($data)?implode(",",$data):'NULL';
-                        $SQL->where("B.CREDIT_ACADEMIC_ID IN (".$academicIds.")");
-                        if($schoolyearId){
-                            $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");    
-                        }    
+                    } else {
+                        $data = BulletinDBAccess::findAcademicByStudentId($studentId, 3);
+                        $academicIds = ($data) ? implode(",", $data) : 'NULL';
+                        $SQL->where("B.CREDIT_ACADEMIC_ID IN (" . $academicIds . ")");
+                        if ($schoolyearId) {
+                            $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");
+                        }
                     }
-                }else{
-                    $data = BulletinDBAccess::findAcademicByStudentId($studentId,3);
-                    $academicIds = ($data)?implode(",",$data):'NULL';
+                } else {
+                    $data = BulletinDBAccess::findAcademicByStudentId($studentId, 3);
+                    $academicIds = ($data) ? implode(",", $data) : 'NULL';
                     $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.SCHOOLYEAR_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
                     if ($studentId) {
                         $SQL->where("C.STUDENT='" . $studentId . "'");
                     }
-                    $SQL->orWhere("B.CREDIT_ACADEMIC_ID IN (".$academicIds.")");
-                        
+                    $SQL->orWhere("B.CREDIT_ACADEMIC_ID IN (" . $academicIds . ")");
                 }
                 break;
 
@@ -157,7 +156,7 @@ class FileDBAccess {
             case "SUPERADMIN":
             case "ADMIN":
                 if ($parentId) {
-                    $SQL->where("A.PARENT='" . $parentId . "'");
+                    $SQL->where("A.PARENT = ?",$parentId);
                 } else {
                     $SQL->where("A.PARENT=0");
                 }
@@ -260,7 +259,7 @@ class FileDBAccess {
         if ($parentId) {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_file", array("C" => "COUNT(*)"));
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?", $parentId);
             //error_log($SQL);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
@@ -272,7 +271,7 @@ class FileDBAccess {
     public static function checkUploadFile($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array("C" => "COUNT(*)"));
-        $SQL->where("OBJECT_ID = '" . $GuId . "'");
+        $SQL->where("OBJECT_ID = ?", $GuId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -281,7 +280,7 @@ class FileDBAccess {
     public static function checkFileRecipient($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
-        $SQL->where("FILE = '" . $GuId . "'");
+        $SQL->where("FILE = ?",$GuId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -292,9 +291,9 @@ class FileDBAccess {
         $DATA_FOR_JSON = array();
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"])  : 0;
+        $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : 0;
         $result = AcademicLevelDBAccess::getSQLAllAcademics($params);
-        
+
 
         if ($result)
             foreach ($result as $value) {
@@ -320,12 +319,12 @@ class FileDBAccess {
                         $data['iconCls'] = "icon-folder_magnify";
                         break;
                     case "SCHOOLYEAR":
-                        if($educationSystem){
-                            $data['leaf'] = false;    
-                        }else{
-                            $data['leaf'] = true;    
+                        if ($educationSystem) {
+                            $data['leaf'] = false;
+                        } else {
+                            $data['leaf'] = true;
                         }
-                        
+
                         $data['text'] = setShowText($value->NAME);
                         $data['cls'] = "nodeTextBlue";
                         $data['iconCls'] = "icon-group_link";
@@ -363,13 +362,13 @@ class FileDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
-        if($academicObject->EDUCATION_SYSTEM){ //@veasna
-            $SQL->where("CREDIT_ACADEMIC_ID = '" . $academicObject->ID . "'");    
-        }else{
+        if ($academicObject->EDUCATION_SYSTEM) { //@veasna
+            $SQL->where("CREDIT_ACADEMIC_ID = '" . $academicObject->ID . "'");
+        } else {
             $SQL->where("GRADE = '" . $academicObject->GRADE_ID . "'");
         }
         $SQL->where("SCHOOLYEAR_ID = '" . $academicObject->SCHOOL_YEAR . "'");
-        $SQL->where("FILE = '" . $objectId . "'");
+        $SQL->where("FILE = ?",$objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -390,10 +389,10 @@ class FileDBAccess {
         if ($checked == "true") {
             if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                if($academicObject->EDUCATION_SYSTEM){
-                    $SAVEDATA["CREDIT_ACADEMIC_ID"] = $academicObject->ID;//@veasna  
-                }else{
-                    $SAVEDATA["GRADE"] = $academicObject->GRADE_ID; 
+                if ($academicObject->EDUCATION_SYSTEM) {
+                    $SAVEDATA["CREDIT_ACADEMIC_ID"] = $academicObject->ID; //@veasna  
+                } else {
+                    $SAVEDATA["GRADE"] = $academicObject->GRADE_ID;
                 }
                 $SAVEDATA["SCHOOLYEAR_ID"] = $academicObject->SCHOOL_YEAR;
             }
@@ -409,9 +408,9 @@ class FileDBAccess {
         } else {
             if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                if($academicObject->EDUCATION_SYSTEM){   //@veasna
-                    self::dbAccess()->delete("t_file_user", array("CREDIT_ACADEMIC_ID='" . $academicObject->ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));    
-                }else{
+                if ($academicObject->EDUCATION_SYSTEM) {   //@veasna
+                    self::dbAccess()->delete("t_file_user", array("CREDIT_ACADEMIC_ID='" . $academicObject->ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
+                } else {
                     self::dbAccess()->delete("t_file_user", array("GRADE='" . $academicObject->GRADE_ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
                 }
             }

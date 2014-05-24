@@ -67,7 +67,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_memberrole", array("*"));
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchRow($SQL);
         }
@@ -370,7 +370,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_memberrole", array("C" => "COUNT(*)"));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
@@ -570,7 +570,7 @@
             $SQL->from("t_school_user_right", array("*"));
 
             if (is_numeric($Id)) {
-                $SQL->where("ID = '" . $Id . "'");
+                $SQL->where("ID = ?",$Id);
             } else {
                 $SQL->where("USER_RIGHT = '" . $Id . "'");
                 $SQL->limit(1);
@@ -760,7 +760,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_school_user_right", array("*"));
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
             $SQL->where("USER_RIGHT = 'READ_RIGHT'");
             $SQL->where("OBJECT_TYPE = 'ITEM'");
             //error_log($SQL->__toString());

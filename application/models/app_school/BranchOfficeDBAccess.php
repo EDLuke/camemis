@@ -217,7 +217,7 @@ class BranchOfficeDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_branch_office", array("C" => "COUNT(*)"));
         if ($Id)
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

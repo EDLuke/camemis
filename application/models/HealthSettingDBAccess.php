@@ -115,7 +115,7 @@ Class HealthSettingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("ID='" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -148,7 +148,7 @@ Class HealthSettingDBAccess {
         if (!$node) {
             $SQL->where("PARENT=0");
         } else {
-            $SQL->where("PARENT=" . $node . "");
+            $SQL->where("PARENT = ?",$node);
         }
 
         if ($type)
@@ -175,7 +175,7 @@ Class HealthSettingDBAccess {
     public static function findChild($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -184,7 +184,7 @@ Class HealthSettingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = '" . $Id . "'");
+        $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

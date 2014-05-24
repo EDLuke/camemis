@@ -1014,7 +1014,7 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        $SQL->where("A.PARENT = '" . $parentId . "'");
+        $SQL->where("A.PARENT = ?",$parentId);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $CHECK_DATA = $this->checkUseRooms($facette);
@@ -1810,7 +1810,7 @@ class ScheduleDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_link_schedule_academic", array("C" => "COUNT(*)"));
         $SQL->where("SCHEDULE_ID = '" . $scheduleId . "'");
-        $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+        $SQL->where("ACADEMIC_ID = ?",$academicId);
         $result = self::dbAccess()->fetchRow($SQL);
 
         if ($result) {
@@ -1989,8 +1989,8 @@ class ScheduleDBAccess {
             $SQL->where("A.TERM = 'FIRST_SEMESTER'");
         } else {
             $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-            $SQL->where("TEACHER_ID = '" . $teacherId . "'");
-            $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+            $SQL->where("TEACHER_ID = ?",$teacherId);
+            $SQL->where("ACADEMIC_ID = ?",$academicId);
             $SQL->where("TERM = 'FIRST_SEMESTER'");
         }
         //error_log($SQL->__toString());
@@ -2009,8 +2009,8 @@ class ScheduleDBAccess {
             $SQL->where("A.TERM = 'SECOND_SEMESTER'");
         } else {
             $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-            $SQL->where("TEACHER_ID = '" . $teacherId . "'");
-            $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+            $SQL->where("TEACHER_ID = ?",$teacherId);
+            $SQL->where("ACADEMIC_ID = ?",$academicId);
             $SQL->where("TERM = 'SECOND_SEMESTER'");
         }
         //error_log($SQL->__toString());
@@ -2153,7 +2153,7 @@ class ScheduleDBAccess {
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_grade", array("*"));
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
             //error_log($SQL);
             $result = self::dbAccess()->fetchAll($SQL);
 
@@ -2254,7 +2254,7 @@ class ScheduleDBAccess {
         if ($academicId)
             $SQL->where("C.ACADEMIC_ID = '" . $academicId . "'");
         if ($schoolyearId)
-            $SQL->where("A.SCHOOL_YEAR = '" . $schoolyearId . "'");
+            $SQL->where("A.SCHOOL_YEAR = ?",$schoolyearId);
 
         $SQL->where("A.EDUCATION_SYSTEM = '1'");
         //error_log($SQL);

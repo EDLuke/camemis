@@ -108,7 +108,7 @@ class StudentPaymentSettingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_income", array("*"));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $SQL->where("FEE = '" . $feeId . "'");
         $SQL->order('CREATED_DATE DESC');
         //error_log($SQL->__toString());

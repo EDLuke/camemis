@@ -136,7 +136,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training");
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
             $stmt = self::dbAccess()->query($SQL);
             return $stmt->fetch();
         }
@@ -145,7 +145,7 @@
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array("C" => "COUNT(*)"));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
         }
@@ -154,7 +154,7 @@
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array('*'));
             if ($parentId) {
-                $SQL->where("PARENT = '" . $parentId . "'");
+                $SQL->where("PARENT = ?",$parentId);
                 if ($objectTypeLevel)
                     $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
             }
@@ -176,7 +176,7 @@
         public static function getObjectTypeLevelByParentId($parentId){
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array('OBJECT_TYPE'));
-            $SQL->where("PARENT = '" . $parentId . "'");
+            $SQL->where("PARENT = ?",$parentId);
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchRow($SQL);        
         }
@@ -538,7 +538,7 @@
             $facette = self::findTrainingFromId($Id);
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array('*'));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
 
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
@@ -557,7 +557,7 @@
             $facette = self::findTrainingFromId($Id);
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array('*'));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
 
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
@@ -577,7 +577,7 @@
             $facette = self::findTrainingFromId($Id);
             $SQL = self::dbAccess()->select();
             $SQL->from("t_training", array('*'));
-            $SQL->where("PARENT = '" . $Id . "'");
+            $SQL->where("PARENT = ?",$Id);
 
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);

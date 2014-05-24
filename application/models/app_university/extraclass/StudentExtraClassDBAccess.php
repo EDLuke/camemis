@@ -22,7 +22,7 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     public static function findStudentExtraClassFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_extraclass", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //echo $SQL->__toString();
         $result = self::dbAccess()->fetchRow($SQL);
         return $result;
@@ -31,7 +31,7 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     public static function findStudentExtraClassByStudentId($studentId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_extraclass", array('*'));
-        $SQL->where("STUDENT = '" . $studentId . "'");
+        $SQL->where("STUDENT = ?",$studentId);
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
@@ -299,7 +299,7 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_extraclass", array("C" => "COUNT(*)"));
         if ($studentId)
-            $SQL->where("STUDENT = '" . $studentId . "'");
+            $SQL->where("STUDENT = ?",$studentId);
         if ($extraClassId)
             $SQL->where("EXTRACLASS = '" . $extraClassId . "'");
         $result = self::dbAccess()->fetchRow($SQL);

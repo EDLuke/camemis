@@ -15,7 +15,7 @@ require_once 'models/app_school/staff/StaffAttendanceDBAccess.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/app_school/AbsentTypeDBAccess.php';
-require_once 'models/student_filter/jsonStudentFilterReport.php';
+require_once 'models/filter/jsonStudentFilterReport.php';
 
 class AttendanceController extends Zend_Controller_Action {
 

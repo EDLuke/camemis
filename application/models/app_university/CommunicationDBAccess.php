@@ -717,7 +717,7 @@ class CommunicationDBAccess{
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_campus", array("C" => "COUNT(*)"));
-        if ($staffId) $SQL->where("STAFF = '" . $staffId . "'");
+        if ($staffId) $SQL->where("STAFF = ?",$staffId);
         if ($communicationSubjectId) $SQL->where("CAMPUS = '" . $communicationSubjectId . "'");
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
@@ -770,7 +770,7 @@ class CommunicationDBAccess{
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_communication_subject", array("C" => "COUNT(*)"));
-        if ($Id) $SQL->where("PARENT = '" . $Id . "'");
+        if ($Id) $SQL->where("PARENT = ?",$Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

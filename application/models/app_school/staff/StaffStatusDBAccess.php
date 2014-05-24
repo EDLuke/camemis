@@ -41,7 +41,7 @@ class StaffStatusDBAccess extends StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_status", array('*'));
-        $SQL->where("ID = '" . $Id . "'");
+        $SQL->where("ID = ?",$Id);
         //echo $SQL->__toString();
         return self::dbAccess()->fetchRow($SQL);
     }

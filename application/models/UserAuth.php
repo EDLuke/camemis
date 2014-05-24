@@ -505,7 +505,6 @@ class UserAuth {
 
         return $folder;
     }
-
 }
 
 ?>

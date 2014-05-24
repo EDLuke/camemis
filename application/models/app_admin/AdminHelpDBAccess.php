@@ -48,7 +48,7 @@ class AdminHelpDBAccess {
         $SQL->from("t_help", array("*"));
 
         if (is_numeric($Id)) {
-            $SQL->where("ID = '" . $Id . "'");
+            $SQL->where("ID = ?",$Id);
         } else {
             $SQL->where("TEXT_KEY = '" . $Id . "'");
         }

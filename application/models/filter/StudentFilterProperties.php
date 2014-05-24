@@ -1,4 +1,5 @@
 <?php
+
 ////////////////////////////////////////////////////////////////////////////////
 // @sor veasna
 // Date: 21.05.2014
@@ -7,7 +8,7 @@
 require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
-require_once 'models/student_filter/SQLStudentFilterReport.php';
+require_once 'models/filter/SQLStudentFilterReport.php';
 require_once setUserLoacalization();
 
 abstract class StudentFilterProperties {
@@ -44,46 +45,46 @@ abstract class StudentFilterProperties {
     public function __unset($name) {
         unset($this->datafield[$name]);
     }
-    
-    public function getCamemisType(){
-        if($this->gridType){
-            switch($this->gridType){
+
+    public function getCamemisType() {
+        if ($this->gridType) {
+            switch ($this->gridType) {
                 case 'STUDENT_ATTENDANCE_FILTER':
-                    $stdClass['personType']="STUDENT";
-                    $stdClass['status']=1;
-                    $typeObject = SQLStudentFilterReport::getAttendanceType((object)$stdClass);
+                    $stdClass['personType'] = "STUDENT";
+                    $stdClass['status'] = 1;
+                    $typeObject = SQLStudentFilterReport::getAttendanceType((object) $stdClass);
                     break;
                 case 'STUDENT_DISCIPLINE_FILTER':
                     $typeObject = SQLStudentFilterReport::getDisciplineType();
                     break;
                 case 'STUDENT_ADVISORY_FILTER':
                     $typeObject = SQLStudentFilterReport::getAdvisoryType();
-                    break;    
+                    break;
             }
         }
         return $typeObject;
     }
 
-    public function getFirstCulumnData(){
+    public function getFirstCulumnData() {
         $data = array();
-        if($this->objectType){
-            switch($this->objectType){
+        if ($this->objectType) {
+            switch ($this->objectType) {
                 case 'CAMPUS':
                     $academicObject = new AcademicDBAccess();
-                    $data = $academicObject->searchGrade(array('campusId'=>$this->campusId)); 
+                    $data = $academicObject->searchGrade(array('campusId' => $this->campusId));
                     break;
                 case 'GRADE':
                     $academicObject = new AcademicDBAccess();
-                    $data = $academicObject->searchClass(array('gradeId'=>$this->gradeId,'schoolyearId'=>$this->schoolyearId));
+                    $data = $academicObject->searchClass(array('gradeId' => $this->gradeId, 'schoolyearId' => $this->schoolyearId));
                     break;
                 case 'CLASS':
                     $studentEnroll = new StudentSearchDBAccess();
                     $studentEnroll->classId = $this->classId;
                     $data = $studentEnroll->queryAllStudents();
-                    break;     
+                    break;
             }
         }
-        return $data;   
+        return $data;
     }
 
 }
