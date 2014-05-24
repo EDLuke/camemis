@@ -12,6 +12,7 @@ require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
 require_once 'utiles/Utiles.php';
 require_once 'models/CAMEMISUploadDBAccess.php';
+require_once 'clients/CamemisDynamicCombo.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -44,18 +45,35 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
          */
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-        
+        //
+        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+        $OBJECT_SCHOOLYEAR->objectTitle = false;
+        $OBJECT_SCHOOLYEAR->allowBlank = "true";
+        $OBJECT_SCHOOLYEAR->width = 150;
+        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+        $OBJECT_SCHOOLYEAR->renderJS();
+        //    
         $STUDENT_TREE->isAsyncTreeNode = false;
         $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh('STUDENT'));
         $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeExpand('STUDENT'));
-        $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse('STUDENT'));
+        $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse('STUDENT')); 
+        $STUDENT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 80
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+        
         if($this->objectId != "new" || $USER_TYPE=='SUPERADMIN'){
             $schoolyearObject = AcademicDateDBAccess::findSchoolyearByCurrentDate();
             $STUDENT_TREE->setBaseParams("
                 cmd: 'getAcademicsByFile'
                 ,objectId:'".$this->objectId."'
                 ,SCHOOLYEAR:'".$schoolyearObject->ID."'
-            ");
+            "); 
         }
         
         $STUDENT_TREE->backgroundColor = "#F9F9F9";
@@ -351,7 +369,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if($this->objectId != "new"){
             
             $js = "";
-            $js .= "var myTree = ".$STUDENT_TREE->ExtgetCmp().";";
+            $js .= "var myTree = ".$STUDENT_TREE->ExtgetCmp().";"; 
+            $js .= "var myTraditionalTree = ".$STUDENT_TREE->ExtgetCmp().";";
+            $js .= "var myCombo = Ext.getCmp('COMBO_ID');";
+            $js .= "if (myCombo)";
+            $js .= "myCombo.on('select', function() {";
+                $js .= "myTraditionalTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();";
+                $js .= "myTraditionalTree.root.reload();";
+                $js .= "myTraditionalTree.getRootNode().expand(true, false);";
+            $js .= "});";
+            
             $js .= "if (myTree) myTree.on('checkchange', function(node, checked){";
             
                 ///////////////////////////////////////////////////////////////////////////
