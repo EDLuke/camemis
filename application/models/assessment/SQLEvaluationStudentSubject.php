@@ -195,6 +195,9 @@ class SQLEvaluationStudentSubject {
 
         if (isset($stdClass->fourthResult))
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
+        
+        if (isset($stdClass->term))
+            $SAVE_DATA["TERM"] = $stdClass->term;
 
         if (isset($stdClass->studentId)) {
             if ($stdClass->studentId) {
@@ -279,6 +282,31 @@ class SQLEvaluationStudentSubject {
             "CLASS_ID='" . $stdClass->academicId . "'"
             , "SUBJECT_ID='" . $stdClass->subjectId . "'")
         );
+    }
+
+    public static function getImplodeQueryMonthSubject($stdClass) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_subject_assessment", array("*"));
+        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
+        $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
+        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
+        $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
+        $SQL->where("TERM = '" . $stdClass->term . "'");
+        $SQL->where("SECTION = 'MONTH'");
+        
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        $data = array();
+
+        if ($result) {
+            foreach ($result as $value) {
+                $data[] = $value->SUBJECT_VALUE;
+            }
+        }
+
+        return $data ? implode("|", $data) : "---";
     }
 
 }

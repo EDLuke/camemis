@@ -89,15 +89,21 @@ class SQLEvaluationImport {
 
                     switch ($stdClass->scoreType) {
                         case 1:
-                            $stdClass->average = trim($score);
-                            if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
-                                SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+                            if (is_numeric($score)) {
+                                $stdClass->average = trim($score);
+                                if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
+                                    SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+                                }
                             }
+
                             break;
                         case 2:
-                            $stdClass->mappingValue = strtoupper(trim($score));
-                            $stdClass->assessmentId = self::getAssessmentId($score, $stdClass->qualificationType);
-                            SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+                            if (!is_numeric($score)) {
+                                $stdClass->mappingValue = strtoupper(trim($score));
+                                $stdClass->assessmentId = self::getAssessmentId($score, $stdClass->qualificationType);
+                                SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+                            }
+
                             break;
                     }
                 }

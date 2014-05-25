@@ -53,13 +53,11 @@ if($academicObject->EDUCATION_SYSTEM){
 if(!is_object($subjectObject)) {header("Location: /main/permission/");}
 
 $evaluation = new EvaluationSubjectAssessment();
-    $evaluation->setAcademicId($academicObject->ID);
-    $evaluation->setSubjectId($subjectObject->SUBJECT_ID);
-    $evaluation->setTerm($term);
-    $evaluation->setSection($section);
-if(!$academicObject->EVALUATION_OPTION){
-    $evaluation->actionDefaultStudentSubjectAssessment("TERM");
-}
+$evaluation->setAcademicId($academicObject->ID);
+$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
+$evaluation->setTerm($term);
+$evaluation->setSection($section);
+$evaluation->actionDefaultStudentSubjectAssessment("TERM");
 ////////////////////////////////////////////////////////////////////////////////
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
@@ -92,6 +90,7 @@ tr.filter-row-header .filter-row-icon input {
 var _chooseValue;
 var _chooseDisplay;
 var term = '<?=$this->term?>';
+var comboValue;
 Ext.onReady(function() {
     
     Ext.Ajax.timeout = 600000;
@@ -159,7 +158,7 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            comboValue = replaceValue;
+                            comboValue = record.get('chooseValue');
                         }
                     }
                 })
@@ -260,12 +259,10 @@ Ext.onReady(function() {
     
     if($academicObject->DISPLAY_MONTH_RESULT){
         
-        if(!$academicObject->EVALUATION_OPTION){
-            if($subjectObject->SCORE_TYPE == 1){
-                $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'MONTH_RESULT'");
-            }
-            $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_MONTH'");
+        if($subjectObject->SCORE_TYPE == 1){
+            $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssDefault, dataIndex: 'MONTH_RESULT'");
         }
+        $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssDefault, dataIndex: 'ASSIGNMENT_MONTH'");
     }
         
     if(!$academicObject->EVALUATION_OPTION){

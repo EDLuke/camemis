@@ -66,6 +66,8 @@ tr.filter-row-header .filter-row-icon input {
 }
 </style>
 <script>
+    
+var comboValue;
 Ext.onReady(function() {
     
     Ext.Ajax.timeout = 600000;
@@ -146,7 +148,7 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            comboValue = replaceValue;
+                            comboValue = record.get('chooseValue');
                         }
                     }
                 })

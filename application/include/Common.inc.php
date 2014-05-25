@@ -2440,17 +2440,35 @@ function mimeTypes($type) {
         case "EXCEL":
             $data = array(
                 0 => "application/vnd.ms-excel"
-                ,1 => "application/msexcel"
-                ,2 => "application/x-msexcel"
-                ,3 => "application/x-ms-excel"
-                ,4 => "application/x-excel"
-                ,5 => "application/x-dos_ms_excel"
-                ,5 => "application/xls"
-                ,5 => "application/x-xls"
+                , 1 => "application/msexcel"
+                , 2 => "application/x-msexcel"
+                , 3 => "application/x-ms-excel"
+                , 4 => "application/x-excel"
+                , 5 => "application/x-dos_ms_excel"
+                , 5 => "application/xls"
+                , 5 => "application/x-xls"
             );
             break;
     }
 
     return $data;
 }
+
+function findTermByMonthYear($data, $monthyear) {
+
+    $CHECK = false;
+    foreach ($data as $value) {
+        if (isset($value["month"]) && isset($value["year"])) {
+            if ($value["year"] != 1970) {
+                $value = strtoupper($value["month"]) . "_" . $value["year"];
+                if ($value == $monthyear) {
+                    $CHECK = true;
+                }
+            }
+        }
+    }
+
+    return $CHECK;
+}
+
 ?>

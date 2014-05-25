@@ -255,7 +255,7 @@ class AcademicDBAccess {
     public static function getQualificationTypeName($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_type", array("NAME" => "NAME"));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -265,7 +265,7 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', '*');
         if (is_numeric($Id)) {
-            $SQL->where("ID = ?",$Id);
+            $SQL->where("ID = ?", $Id);
         } else {
             $SQL->where("GUID='" . $Id . "'");
         }
@@ -642,9 +642,9 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("GRADE_ID = ?",$gradeId);
+        $SQL->where("GRADE_ID = ?", $gradeId);
         $SQL->where("OBJECT_TYPE = 'CLASS'");
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -1459,8 +1459,8 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("*"));
-        $SQL->where("TEACHER = ?",$teacherId);
-        $SQL->where("GRADE = ?",$gradeId);
+        $SQL->where("TEACHER = ?", $teacherId);
+        $SQL->where("GRADE = ?", $gradeId);
         $SQL->where("GRADINGTERM = '" . $term . "'");
         $SQL->group("SUBJECT");
         //error_log($SQL->__toString());
@@ -1540,7 +1540,7 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array('*'));
-        $SQL->where("PARENT = ?",$Id);
+        $SQL->where("PARENT = ?", $Id);
         $SQL->where("OBJECT_TYPE='CLASS'");
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -1548,7 +1548,7 @@ class AcademicDBAccess {
     public static function findClass($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1576,8 +1576,8 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
-        $SQL->where("CAMPUS_ID = ?",$campusId);
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+        $SQL->where("CAMPUS_ID = ?", $campusId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1586,8 +1586,8 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
-        $SQL->where("GRADE_ID = ?",$gradeId);
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+        $SQL->where("GRADE_ID = ?", $gradeId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1595,7 +1595,7 @@ class AcademicDBAccess {
     public static function findAcademicFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("GUID = ?",$GuId);
+        $SQL->where("GUID = ?", $GuId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -2030,8 +2030,8 @@ class AcademicDBAccess {
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SCHOOLYEAR'");
         $SQL->where("EDUCATION_SYSTEM = 1");
-        $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
-        $SQL->where("CAMPUS_ID = ?",$compusId);
+        $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
+        $SQL->where("CAMPUS_ID = ?", $compusId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -2095,7 +2095,7 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("PARENT = ?",$parentId);
+        $SQL->where("PARENT = ?", $parentId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
@@ -2126,7 +2126,7 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
         $SQL->where("OBJECT_TYPE = 'SUBCLASS'");
-        $SQL->where("PARENT = ?",$parentId);
+        $SQL->where("PARENT = ?", $parentId);
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -2179,7 +2179,7 @@ class AcademicDBAccess {
                 break;
         }
 
-        $SQL->where("ID = ?",$academicId);
+        $SQL->where("ID = ?", $academicId);
         $SQL->limit(1);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -2245,40 +2245,126 @@ class AcademicDBAccess {
         return $flage;
     }
 
+    public static function getTermByMonthYear($academicId, $monthyear) {
+        $SQL = self::dbAccess()->select();
+        $SQL->from('t_grade', '*');
+        $SQL->where("ID = ?", $academicId);
+        $SQL->limit(1);
+        //error_log($SQL->__toString());
+        $facette = self::dbAccess()->fetchRow($SQL);
+
+        $result = "";
+
+        if ($facette) {
+            $termNumber = self::findAcademicTerm($facette->SCHOOL_YEAR);
+            switch ($termNumber) {
+                case 1:
+                    $FIRST_MONTHS = unserialize($facette->FIRST_MONTHS);
+                    $FIRST_TERM = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($FIRST_MONTHS, $monthyear) : "";
+                    $SECOND_MONTHS = unserialize($facette->SECOND_MONTHS);
+                    $SECOND_TERM = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($SECOND_MONTHS, $monthyear) : "";
+                    $THIRD_MONTHS = unserialize($facette->THIRD_MONTHS);
+                    $THIRD_TERM = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($THIRD_MONTHS, $monthyear) : "";
+
+                    if ($FIRST_TERM) {
+                        $result = "FIRST_TERM";
+                    } elseif ($SECOND_SEMESTER) {
+                        $result = "SECOND_TERM";
+                    } elseif ($THIRD_TERM) {
+                        $result = "THIRD_TERM";
+                    }
+                    break;
+                case 2:
+                    $FIRST_MONTHS = unserialize($facette->FIRST_MONTHS);
+                    $FIRST_QUARTER = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($FIRST_MONTHS, $monthyear) : "";
+                    $SECOND_MONTHS = unserialize($facette->SECOND_MONTHS);
+                    $SECOND_QUARTER = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($SECOND_MONTHS, $monthyear) : "";
+                    $THIRD_MONTHS = unserialize($facette->THIRD_MONTHS);
+                    $THIRD_QUARTER = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($THIRD_MONTHS, $monthyear) : "";
+                    $FOURTH_MONTHS = unserialize($facette->FOURTH_MONTHS);
+                    $FOURTH_QUARTER = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($FOURTH_MONTHS, $monthyear) : "";
+
+                    if ($FIRST_QUARTER) {
+                        $result = "FIRST_QUARTER";
+                    } elseif ($SECOND_QUARTER) {
+                        $result = "SECOND_QUARTER";
+                    } elseif ($THIRD_QUARTER) {
+                        $result = "THIRD_QUARTER";
+                    } elseif ($FOURTH_QUARTER) {
+                        $result = "FOURTH_QUARTER";
+                    }
+                    break;
+                default:
+                    $FIRST_MONTHS = unserialize($facette->FIRST_MONTHS);
+                    $FIRST_SEMESTER = findTermByMonthYear($FIRST_MONTHS, $monthyear) ? findTermByMonthYear($FIRST_MONTHS, $monthyear) : "";
+                    $SECOND_MONTHS = unserialize($facette->SECOND_MONTHS);
+                    $SECOND_SEMESTER = findTermByMonthYear($SECOND_MONTHS, $monthyear) ? findTermByMonthYear($SECOND_MONTHS, $monthyear) : "";
+
+                    if ($FIRST_SEMESTER) {
+                        $result = "FIRST_SEMESTER";
+                    } elseif ($SECOND_SEMESTER) {
+                        $result = "SECOND_SEMESTER";
+                    }
+                    break;
+            }
+        }
+
+        return $result;
+    }
+
     public static function getAcademicMonthList($academicId) {
 
         $entries = array();
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', '*');
-        $SQL->where("ID = ?",$academicId);
+        $SQL->where("ID = ?", $academicId);
         $SQL->limit(1);
         //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchRow($SQL);
+        $facette = self::dbAccess()->fetchRow($SQL);
+        $termNumber = self::findAcademicTerm($facette->SCHOOL_YEAR);
 
-        $academicObject = self::findGradeFromId($academicId);
-        $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
+        $SQL = "UPDATE t_grade SET";
 
         switch ($termNumber) {
             case 1:
-                $TERM1_DATA = getMonthsBy2Date(date('Y-m-d', $result->TERM1_START), date('Y-m-d', $result->TERM1_END));
-                $TERM2_DATA = getMonthsBy2Date(date('Y-m-d', $result->TERM2_START), date('Y-m-d', $result->TERM2_END));
-                $TERM3_DATA = getMonthsBy2Date(date('Y-m-d', $result->TERM3_START), date('Y-m-d', $result->TERM3_END));
+                $TERM1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM1_START), date('Y-m-d', $facette->TERM1_END));
+                $TERM2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM2_START), date('Y-m-d', $facette->TERM2_END));
+                $TERM3_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM3_START), date('Y-m-d', $facette->TERM3_END));
                 $entries = array_merge($TERM1_DATA, $TERM2_DATA, $TERM3_DATA);
+
+                $SQL .= " FIRST_MONTHS='" . serialize($TERM1_DATA) . "'";
+                $SQL .= " ,SECOND_MONTHS='" . serialize($TERM2_DATA) . "'";
+                $SQL .= " ,THIRD_MONTHS='" . serialize($TERM3_DATA) . "'";
+
                 break;
             case 2:
-                $QUARTER1_DATA = getMonthsBy2Date(date('Y-m-d', $result->QUARTER1_START), date('Y-m-d', $result->QUARTER1_END));
-                $QUARTER2_DATA = getMonthsBy2Date(date('Y-m-d', $result->QUARTER2_START), date('Y-m-d', $result->QUARTER2_END));
-                $QUARTER3_DATA = getMonthsBy2Date(date('Y-m-d', $result->QUARTER3_START), date('Y-m-d', $result->QUARTER3_END));
-                $QUARTER4_DATA = getMonthsBy2Date(date('Y-m-d', $result->QUARTER4_START), date('Y-m-d', $result->QUARTER4_END));
+                $QUARTER1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER1_START), date('Y-m-d', $facette->QUARTER1_END));
+                $QUARTER2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER2_START), date('Y-m-d', $facette->QUARTER2_END));
+                $QUARTER3_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER3_START), date('Y-m-d', $facette->QUARTER3_END));
+                $QUARTER4_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER4_START), date('Y-m-d', $facette->QUARTER4_END));
                 $entries = array_merge($QUARTER1_DATA, $QUARTER2_DATA, $QUARTER3_DATA, $QUARTER4_DATA);
+
+                $SQL .= " FIRST_MONTHS='" . serialize($QUARTER1_DATA) . "'";
+                $SQL .= " ,SECOND_MONTHS='" . serialize($QUARTER2_DATA) . "'";
+                $SQL .= " ,THIRD_MONTHS='" . serialize($QUARTER3_DATA) . "'";
+                $SQL .= " ,FOURTH_MONTHS='" . serialize($QUARTER4_DATA) . "'";
+
                 break;
             default:
-                $SEMESTER1_DATA = getMonthsBy2Date(date('Y-m-d', $result->SEMESTER1_START), date('Y-m-d', $result->SEMESTER1_END));
-                $SEMESTER2_DATA = getMonthsBy2Date(date('Y-m-d', $result->SEMESTER2_START), date('Y-m-d', $result->SEMESTER2_END));
+                $SEMESTER1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER1_START), date('Y-m-d', $facette->SEMESTER1_END));
+                $SEMESTER2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER2_START), date('Y-m-d', $facette->SEMESTER2_END));
                 $entries = array_merge($SEMESTER1_DATA, $SEMESTER2_DATA);
+
+                $SQL .= " FIRST_MONTHS='" . serialize($SEMESTER1_DATA) . "'";
+                $SQL .= " ,SECOND_MONTHS='" . serialize($SEMESTER2_DATA) . "'";
+
                 break;
         }
+
+        $SQL .= " WHERE ID='" . $academicId . "'";
+        //error_log($SQL);
+        self::dbAccess()->query($SQL);
 
         $CHECK_DATA = array();
         foreach ($entries as $value) {
@@ -2304,7 +2390,7 @@ class AcademicDBAccess {
     public static function getDateBySchoolTerm($academicId, $term) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', '*');
-        $SQL->where("ID = ?",$academicId);
+        $SQL->where("ID = ?", $academicId);
         $SQL->limit(1);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);

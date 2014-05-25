@@ -51,8 +51,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             $this->studentId = addText($params["id"]);
 
         if (isset($params["newValue"])) {
-            unset($params["comboValue"]);
-            $this->actionValue = addText($params["newValue"]);
+            $this->newValue = addText($params["newValue"]);
         }
 
         if (isset($params["section"]))
@@ -71,8 +70,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             $this->tmp_name = $params["tmp_name"];
 
         if (isset($params["comboValue"])) {
-            unset($params["newValue"]);
-            $this->actionValue = addText($params["comboValue"]);
+            $this->comboValue = addText($params["comboValue"]);
         }
     }
 
