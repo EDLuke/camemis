@@ -902,13 +902,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                     case self::SCORE_TYPE_NUMBER:
                         $defaultObject->assessmentId = $this->comboValue;
+                        if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
+                            if ($this->getSubjectValue($defaultObject))
+                                $defaultObject->mappingValue = $this->getSubjectValue($defaultObject);
+                        }
                         break;
                 }
 
-                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
-                    if ($this->getSubjectValue($defaultObject))
-                        $defaultObject->mappingValue = $this->getSubjectValue($defaultObject);
-                }
                 break;
         }
 
@@ -935,10 +935,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $result = $this->calculatedAverageYearSubjectResult($stdClass);
                         break;
                 }
-                break;
-            case self::SCORE_CHAR:
-                $gradingObject = SpecialDBAccess::findGradingSystemFromId($this->actionValue);
-                $result = $gradingObject ? $gradingObject->LETTER_GRADE : "";
                 break;
         }
         return $result;
