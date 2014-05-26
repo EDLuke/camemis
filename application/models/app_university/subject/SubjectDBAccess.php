@@ -1151,7 +1151,7 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
-        if (self::checkUseSubjectInClass($subjecId, $academicId)) {
+        if (self::checkUseSubjectInClass($subjectId, $academicId)) {
             $SQL->where("USED_IN_CLASS = '1'");
         } else {
             $SQL->where("USED_IN_CLASS = '0'");
