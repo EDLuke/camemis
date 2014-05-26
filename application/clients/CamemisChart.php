@@ -57,6 +57,10 @@ Class CamemisChart {
         return $this->labelType = $value;
     }
 
+    public function setStacked($value) {
+        return $this->stacked = $value;
+    }
+
     public function setChartScript() {
 
         switch ($this->type) {
@@ -64,7 +68,7 @@ Class CamemisChart {
                 $chart = new stackeAreaChart($this->name, $this->dataSet, $this->width, $this->height, $this->chartDiv);
                 break;
             case "MULTIBARCHART":
-                $chart = new multiBarChart($this->name, $this->dataSet, $this->chartSVG, $this->showLegend);
+                $chart = new multiBarChart($this->name, $this->dataSet, $this->chartSVG, $this->showLegend, $this->stacked);
                 break;
             case "PICHCHART":
                 $chart = new picChart($this->name, $this->dataSet, $this->chartSVG, $this->displayType, $this->labelType);
@@ -154,20 +158,22 @@ Class stackeAreaChart {
 
 Class multiBarChart {
 
-    function __construct($name, $dataSet, $chartSVG, $showLegend) {
+    function __construct($name, $dataSet, $chartSVG, $showLegend, $stacked) {
 
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->chartSVG = $chartSVG;
         $this->showLegend = $showLegend;
+        $this->stacked = $stacked ? "true" : "false";
     }
 
     public function rendererChart() {
 
-        $js = "var chart;
+        $js = "var $this->name;
             nv.addGraph(function() {
-            chart = nv.models.multiBarChart()
-            .showLegend(" . $this->showLegend . ")
+            $this->name = nv.models.multiBarChart()
+            .showLegend(" . $this->showLegend . ")//true,false
+            .stacked(" . $this->stacked . ")//true,false
             .showXAxis(true)
             .barColor(d3.scale.category20().range())
             .margin({bottom: 50})
@@ -175,22 +181,22 @@ Class multiBarChart {
             .delay(0)
             .rotateLabels(0)
             .groupSpacing(0.1);
-            chart.multibar
+            $this->name.multibar
             .hideable(true);
-            chart.reduceXTicks(false).staggerLabels(true);
-            chart.xAxis
+            $this->name.reduceXTicks(false).staggerLabels(true);
+            $this->name.xAxis
             .showMaxMin(false)
             .tickFormat(function(d){ return d;});
-            chart.yAxis
+            $this->name.yAxis
             .tickFormat(function(d){ return d;});
             d3.select('#" . $this->chartSVG . " svg')
             .datum(" . $this->dataSet . ")
-            .call(chart);
-            nv.utils.windowResize(chart.update);
-            chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
-            return chart;
+            .call($this->name);
+            nv.utils.windowResize($this->name.update);
+            $this->name.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return $this->name;
         });";
-        
+
         return $js;
     }
 
