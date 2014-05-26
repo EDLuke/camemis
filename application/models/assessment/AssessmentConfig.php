@@ -16,7 +16,7 @@ class AssessmentConfig {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         if ($type) {
@@ -135,11 +135,14 @@ class AssessmentConfig {
         return $result;
     }
 
-    public static function comboGradingSystem($scoreType, $qualificationType) {
+    public static function comboGradingSystem($scoreType, $academicObject) {
+        
+        $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"DESCRIPTION";
+        
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '" . $scoreType . "'");
-        $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
+        $SQL->where("EDUCATION_TYPE = '" . $academicObject->QUALIFICATION_TYPE . "'");
         $SQL->order("SORTKEY ASC");
         #error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
@@ -149,7 +152,7 @@ class AssessmentConfig {
         if ($result) {
             $i = 0;
             foreach ($result as $value) {
-                $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->DESCRIPTION . "'}";
+                $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->$GRADING_TYPE . "'}";
                 $i++;
             }
         }

@@ -18,6 +18,9 @@ class SQLEvaluationStudentSubject {
 
     public static function getCallStudentSubjectEvaluation($stdClass) {
 
+        $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
+        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "GPA" : "DESCRIPTION";
+
         $data = array(
             'SUBJECT_VALUE' => ""
             , 'RANK' => ""
@@ -54,14 +57,14 @@ class SQLEvaluationStudentSubject {
                 if (isset($stdClass->scoreType)) {
                     switch ($stdClass->scoreType) {
                         case 1:
-                            $SELECTION_B = array('DESCRIPTION AS GRADING');
+                            $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING");
                             break;
                         case 2:
                             $SELECTION_B = array('LETTER_GRADE AS GRADING');
                             break;
                     }
                 } else {
-                    $SELECTION_B = array('DESCRIPTION AS GRADING');
+                    $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING");
                 }
 
                 $SQL = self::dbAccess()->select();
@@ -195,7 +198,7 @@ class SQLEvaluationStudentSubject {
 
         if (isset($stdClass->fourthResult))
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
-        
+
         if (isset($stdClass->term))
             $SAVE_DATA["TERM"] = $stdClass->term;
 
@@ -294,7 +297,7 @@ class SQLEvaluationStudentSubject {
         $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
         $SQL->where("TERM = '" . $stdClass->term . "'");
         $SQL->where("SECTION = 'MONTH'");
-        
+
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
 

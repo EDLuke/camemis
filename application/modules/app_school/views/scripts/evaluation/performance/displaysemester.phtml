@@ -41,6 +41,8 @@ switch($this->term){
 
 if(!$academicObject) {header("Location: /main/permission/");}
 
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +105,7 @@ Ext.onReady(function() {
             ,store: new Ext.data.JsonStore({
                 autoDestroy: true
                 ,fields: ['chooseValue', 'chooseDisplay']
-                ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject->QUALIFICATION_TYPE)."]
+                ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject)."]
             })
             ,valueField: 'chooseValue'
             ,displayField: 'chooseDisplay'
@@ -151,7 +153,7 @@ Ext.onReady(function() {
         case 'INSTRUCTOR':
         case 'TEACHER':
              $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
+                header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 130
                 , align: 'right'
                 , sortable: true
@@ -163,7 +165,7 @@ Ext.onReady(function() {
             break;
          case 'STUDENT':
             $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
+                header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 120
                 , align: 'center'
                 , sortable: true

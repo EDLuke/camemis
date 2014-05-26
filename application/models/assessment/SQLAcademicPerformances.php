@@ -59,6 +59,9 @@ class SQLAcademicPerformances {
 
     public static function getCallStudentAcademicPerformance($stdClass) {
 
+        $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
+        $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"DESCRIPTION";
+
         $data["GRADING"] = "---";
         $data["RANK"] = "---";
         $data["TOTAL_RESULT"] = "---";
@@ -81,7 +84,7 @@ class SQLAcademicPerformances {
                     , 'FOURTH_RESULT'
                     , 'TEACHER_COMMENT'
                 );
-                $SELECTION_B = array('DESCRIPTION');
+                $SELECTION_B = array("".$GRADING_TYPE."");
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_learning_performance"), $SELECTION_A);
@@ -115,13 +118,13 @@ class SQLAcademicPerformances {
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
                 if ($result) {
-                    $data["GRADING"] = $result->DESCRIPTION?$result->DESCRIPTION:"---";
-                    $data["RANK"] = $result->RANK?$result->RANK:"---";
-                    $data["TOTAL_RESULT"] = $result->TOTAL_RESULT?$result->TOTAL_RESULT:"---";
-                    $data["FIRST_RESULT"] = $result->FIRST_RESULT?$result->FIRST_RESULT:"---";
-                    $data["SECOND_RESULT"] = $result->SECOND_RESULT?$result->SECOND_RESULT:"---";
-                    $data["THIRD_RESULT"] = $result->THIRD_RESULT?$result->THIRD_RESULT:"---";
-                    $data["FOURTH_RESULT"] = $result->FOURTH_RESULT?$result->FOURTH_RESULT:"---";
+                    $data["GRADING"] = $result->$GRADING_TYPE ? $result->$GRADING_TYPE : "---";
+                    $data["RANK"] = $result->RANK ? $result->RANK : "---";
+                    $data["TOTAL_RESULT"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
+                    $data["FIRST_RESULT"] = $result->FIRST_RESULT ? $result->FIRST_RESULT : "---";
+                    $data["SECOND_RESULT"] = $result->SECOND_RESULT ? $result->SECOND_RESULT : "---";
+                    $data["THIRD_RESULT"] = $result->THIRD_RESULT ? $result->THIRD_RESULT : "---";
+                    $data["FOURTH_RESULT"] = $result->FOURTH_RESULT ? $result->FOURTH_RESULT : "---";
                     $data["ASSESSMENT_ID"] = $result->ASSESSMENT_ID;
                     $data["TEACHER_COMMENT"] = $result->TEACHER_COMMENT;
                 }
