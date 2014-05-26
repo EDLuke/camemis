@@ -34,7 +34,7 @@ $columndata = Utiles::getGridColumnData("ATTENDANCE_REPORT_LIST_ID");
 
 $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
 
-if($error) {header("Location: /main/permission/");}
+if($error) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

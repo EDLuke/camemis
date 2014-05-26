@@ -31,7 +31,7 @@ if(!UserAuth::myObject($studentId)){
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
-if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

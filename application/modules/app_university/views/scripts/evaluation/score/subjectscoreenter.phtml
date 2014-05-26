@@ -24,7 +24,7 @@ $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
@@ -38,7 +38,7 @@ if($academicObject->EDUCATION_SYSTEM){
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
 }
 
-if(!$subjectObject) {header("Location: /main/permission/");}
+if(!$subjectObject) {header("Location: /main/permission/");exit;}
 
 ////////////////////////////////////////////////////////////////////////////////
 $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date,$academicObject->ID);

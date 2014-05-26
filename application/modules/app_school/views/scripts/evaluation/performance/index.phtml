@@ -17,7 +17,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 

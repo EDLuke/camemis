@@ -29,7 +29,7 @@ $PREREQUISITE_TREE = new CamemisTree("SUBJECT", "LIST");
 $PREREQUISITE_TREE->setURL("/subject/jsontree/");
 //
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $gradeId = $this->facette->GRADE_ID;
 $schoolyearId = $this->facette->SCHOOL_YEAR;

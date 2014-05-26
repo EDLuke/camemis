@@ -45,7 +45,7 @@ function checkTeacherSubjectConment($academicId, $subjectId){
 
 
 
-if(!$subjectObject) {header("Location: /main/permission/");}
+if(!$subjectObject) {header("Location: /main/permission/");exit;}
 
 $CHECK = checkTeacherSchedule($classId, $objectId);
 $checkTeacherConment=checkTeacherSubjectConment($classId, $objectId);

@@ -20,7 +20,7 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
 

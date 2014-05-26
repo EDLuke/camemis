@@ -30,7 +30,7 @@ $columndataAssigned = Utiles::getGridColumnData("EXAM_MANAGEMENT_ASSIGNED_ID");
 
 $OBJECT_FORM = new CamemisForm("EXAM_SCORE");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

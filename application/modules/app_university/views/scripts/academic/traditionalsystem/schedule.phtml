@@ -19,7 +19,7 @@ $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 $entries = AcademicDBAccess::classesByGradeSchoolyear($academicObject->GRADE_ID, $academicObject->SCHOOL_YEAR);
 ?>
 <style>

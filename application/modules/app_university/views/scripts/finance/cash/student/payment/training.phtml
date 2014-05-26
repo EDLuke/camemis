@@ -33,7 +33,7 @@ $FEE_OBJECT = FeeDBAccess::findFeeTaxFromId($feeId); //@veasna
 $STUDENT_FEE = StudentFeeDBAccess::getStudentFee($this->objectId, $feeId);
 $STUDENT_FEE_TRAINING = StudentFeeDBAccess::getStudentFee($this->objectId, $feeId);
 
-if(!$STUDENT_FEE_TRAINING) {header("Location: /main/permission/");}
+if(!$STUDENT_FEE_TRAINING) {header("Location: /main/permission/");exit;}
 
 $scholarshipObject=ScholarshipDBAccess::getStudentScholarship($this->objectId,false, false); //check schoolarship
 $fristFeeOption=FeeOptionDBAccess::getFristFeeOptionByFeeId($feeId);//@veasna 

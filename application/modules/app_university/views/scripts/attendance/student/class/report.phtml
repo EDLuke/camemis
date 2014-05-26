@@ -33,7 +33,7 @@ $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 
 $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
 
-if($error) {header("Location: /main/permission/");}
+if($error) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

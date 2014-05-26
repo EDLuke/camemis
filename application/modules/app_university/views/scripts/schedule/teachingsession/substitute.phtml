@@ -39,7 +39,7 @@ $ASSIGNED_ROOM_GRID = new CamemisGrid("SCHEDULE", "ASSIGNED_ROOM");
 $ASSIGNED_ROOM_GRID->setLoadUrl("/schedule/jsonload/");
 $ASSIGNED_ROOM_GRID->setSaveUrl("/schedule/jsonsave/");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $teachingSession = TeachingSessionDBAccess::getTeachingSession(
     $this->facette->START_TIME

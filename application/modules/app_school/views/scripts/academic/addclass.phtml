@@ -27,7 +27,7 @@ $parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"";
 
 $facette = AcademicDBAccess::findGradeFromId($parentId);
 
-if(!$facette) {header("Location: /main/permission/");}
+if(!$facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

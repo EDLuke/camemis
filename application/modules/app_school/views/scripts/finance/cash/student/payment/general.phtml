@@ -32,7 +32,7 @@ $feeId = isset($_GET["fee"]) ? addText($_GET["fee"]):"";
 $FEE_OBJECT = FeeDBAccess::findFeeTaxFromId($feeId); //@veasna
 $STUDENT_FEE = StudentFeeDBAccess::getStudentFee($this->objectId, $feeId);
 
-if(!$STUDENT_FEE && !$FEE_OBJECT && $studentAcademicObject) {header("Location: /main/permission/");}
+if(!$STUDENT_FEE && !$FEE_OBJECT && $studentAcademicObject) {header("Location: /main/permission/");exit;}
 
 $scholarshipObject=ScholarshipDBAccess::getStudentScholarship($this->objectId,false, $STUDENT_FEE->SCHOOLYEAR); //check schoolarship
 $fristFeeOption=FeeOptionDBAccess::getFristFeeOptionByFeeId($feeId);//@veasna 

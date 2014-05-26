@@ -24,7 +24,7 @@ $choosedate = isset($_GET["choosedate"])? addText($_GET["choosedate"]):"";
 
 $CHECK = timeDifference($choosedate, getCurrentDBDate());
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $teachingSession = TeachingSessionDBAccess::getTeachingSessionFromId($this->scheduleId);
 

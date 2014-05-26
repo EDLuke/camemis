@@ -26,7 +26,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm(false,$academicId);
 AssignmentDBAccess::mappingAcademicEvaluationType($academicObject->EVALUATION_TYPE, $objectId);

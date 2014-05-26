@@ -29,7 +29,7 @@ if (strpos($Ids, "CAMPUS") !== false) {
     $selectionType = "";
 }
 
-if(!$selectionType) {header("Location: /main/permission/");}
+if(!$selectionType) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

@@ -56,11 +56,11 @@ $isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
 $status = $this->facette?$this->facette->STATUS:1;
 
 if($objectId !="new"){
-    if(!$this->facette) {header("Location: /main/permission/");}
+    if(!$this->facette) {header("Location: /main/permission/");exit;}
 }
 
 if($this->academicId){
-    if(!$this->academicObject && !$this->facette) {header("Location: /main/permission/");}
+    if(!$this->academicObject && !$this->facette) {header("Location: /main/permission/");exit;}
     
     if($this->academicObject->EDUCATION_SYSTEM){
         $CREDIT_GROUP_GRID = new CamemisGrid("GROUP", "LIST");

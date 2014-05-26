@@ -30,7 +30,7 @@ switch($this->object){
         $template = "SCHOOL_DOCUMENT";
         $facette = FileDBAccess::findFileFromGuId($this->objectId);
         $parentId = $facette->PARENT;
-        if(!$facette) {header("Location: /main/permission/");}
+        if(!$facette) {header("Location: /main/permission/");exit;}
         break;
     ////////////////////////////////////////////////////////////////////////////
     //Subject...
@@ -47,11 +47,11 @@ switch($this->object){
         $explode = explode('48b544b62de6f',$setId);
         $objectId = isset($explode[1])?$explode[1]:"";
         $this->objectId = $objectId;
-        if(!is_numeric($objectId)) {header("Location: /main/permission/");}
+        if(!is_numeric($objectId)) {header("Location: /main/permission/");exit;}
     break;
 }
 
-if(!$template) {header("Location: /main/permission/");}
+if(!$template) {header("Location: /main/permission/");exit;}
 
 $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId);
 

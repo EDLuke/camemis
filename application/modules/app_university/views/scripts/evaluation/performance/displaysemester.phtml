@@ -39,7 +39,7 @@ switch($this->term){
     break;
 }
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
 

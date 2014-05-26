@@ -18,7 +18,7 @@ $OBJECT_FORM = new CamemisForm("CLUB");
 $OBJECT_FORM->setLoadUrl("/club/jsonload/");
 $OBJECT_FORM->setSaveUrl("/club/jsonsave/");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 $STATUS = $this->facette->STATUS;
 
 $removeStatus = true;

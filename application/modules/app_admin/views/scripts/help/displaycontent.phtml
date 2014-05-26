@@ -8,7 +8,7 @@ $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);
 
 $YOUTUBE_KEY_EN = isset($HELP_OBJECT)?$HELP_OBJECT->YOUTUBE_KEY_ENGLISH:"";
 
-if(!$HELP_OBJECT) {header("Location: /main/permission/");}
+if(!$HELP_OBJECT) {header("Location: /main/permission/");exit;}
 
 switch($field){
     case "CONTENT_ENGLISH":

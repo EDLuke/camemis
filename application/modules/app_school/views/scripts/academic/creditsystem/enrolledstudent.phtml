@@ -20,7 +20,7 @@ $ASSIGNED_STUDENTS_GRID = new CamemisGrid("ASSIGNED_STUDENTS", "ENROLLED_STUDENT
 $ASSIGNED_STUDENTS_GRID->setLoadUrl("/student/jsonload/");
 $ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $display = isset($_GET["display"])?addText($_GET["display"]):"";
 

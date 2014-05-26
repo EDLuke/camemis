@@ -20,7 +20,7 @@ $ASSIGNED_STUDENTS_GRID = new CamemisGrid("STUDENT", "LIST_CLASS");
 $ASSIGNED_STUDENTS_GRID->setLoadUrl("/student/jsonload/");
 $ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
     

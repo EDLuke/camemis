@@ -17,7 +17,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-//print_r($this->incomeFee);{header("Location: /main/permission/");}
+//print_r($this->incomeFee);{header("Location: /main/permission/");exit;}
 
 $CATEGORY_OBJECT_TREE = new CamemisTree("DATASET", "CATEGORY");
 $CATEGORY_OBJECT_TREE->setURL("/dataset/jsontree/");

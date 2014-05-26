@@ -18,7 +18,7 @@ $OBJECT_FORM = new CamemisForm("HOMEWORK","LIST");
 $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER.$this->objectId;
 $homework_id = $this->facette->HOMEWORK_ID;

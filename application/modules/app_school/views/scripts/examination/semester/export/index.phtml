@@ -25,7 +25,7 @@
     //Exam Object
     $facette = ExaminationDBAccess::findExamFromId($objectId);
     
-    if (!$facette) {header("Location: /main/permission/");}
+    if (!$facette) {header("Location: /main/permission/");exit;}
     
     $exam=EXAM.": ".$facette->NAME;
     $startDate=START_DATE.': '.$facette->START_DATE;

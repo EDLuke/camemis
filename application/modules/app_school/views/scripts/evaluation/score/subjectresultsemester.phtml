@@ -39,7 +39,7 @@ switch($term){
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
 
@@ -52,7 +52,7 @@ if($academicObject->EDUCATION_SYSTEM){
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
 } 
 
-if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
 $evaluation = new EvaluationSubjectAssessment();
 $evaluation->setAcademicId($academicObject->ID);

@@ -45,7 +45,7 @@ if($monthyear){
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
