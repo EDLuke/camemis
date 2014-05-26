@@ -163,7 +163,7 @@ Class multiBarChart {
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->chartSVG = $chartSVG;
-        $this->showLegend = $showLegend;
+        $this->showLegend = $showLegend ? "true" : "false";
         $this->stacked = $stacked ? "true" : "false";
     }
 
@@ -174,7 +174,7 @@ Class multiBarChart {
             $this->name = nv.models.multiBarChart()
             .showLegend(" . $this->showLegend . ")//true,false
             .stacked(" . $this->stacked . ")//true,false
-            .showXAxis(true)
+            .showXAxis(true)//true,false
             .barColor(d3.scale.category20().range())
             .margin({bottom: 50})
             .transitionDuration(300)

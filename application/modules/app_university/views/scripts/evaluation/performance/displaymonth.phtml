@@ -176,11 +176,11 @@ Ext.onReady(function() {
         case 'INSTRUCTOR':
         case 'TEACHER':
             $OBJECT_GRID->addTBarItems("
-                tbar.add([{
+                tbar.add('-',[{
                     text: '" . REFRESH . "'
                     ,iconCls:'icon-reload'
                     ,handler: function(){
-                        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                        ".CamemisPage::setRequestURI(false)."
                     }
                 }]);
             ");
