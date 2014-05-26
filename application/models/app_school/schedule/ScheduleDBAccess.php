@@ -73,7 +73,7 @@ class ScheduleDBAccess {
             $SQL->where('GUID = ?', $Id);
         }
 
-        //echo $SQL->__toString();
+        //echo $SQL->__toString(); 
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -158,8 +158,8 @@ class ScheduleDBAccess {
         return $o;
     }
 
-    public function saveClassEvent($params) {
-
+    public function saveClassEvent($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
         $SAVEDATA = array();
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
@@ -860,8 +860,8 @@ class ScheduleDBAccess {
         return $result ? secondToHour($result->TIME) : "06:00";
     }
 
-    public function releaseClassEvent($params) {
-
+    public function releaseClassEvent($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
         $facette = self::findScheduleFromGuId($scheduleId);
         $newStatus = 0;
