@@ -1148,14 +1148,17 @@ class SubjectDBAccess {
 
     public static function getAcademicSubject($subjectId, $academicId) {
 
-        //$facette = self::findSubjectFromId($objectId);
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
+        if (self::checkUseSubjectInClass($subjecId, $academicId)) {
+            $SQL->where("USED_IN_CLASS = '1'");
+        } else {
+            $SQL->where("USED_IN_CLASS = '0'");
+        }
         $SQL->where("CLASS = ?", $academicId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
-
         $facette = self::findSubjectFromId($subjectId);
 
         $data = array();
