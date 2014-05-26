@@ -42,7 +42,13 @@ $SHARED_TREE = new CamemisTree("CLASS_GROUP", "LIST");
 $SHARED_TREE->setURL("/schedule/jsontree/");
 $SHARED_TREE->setSaveUrl("/schedule/jsonsave/");
 ////////////////////////////////////////////////////////////////////////////////
-
+$setParams = "";
+$setParams .= "&scheduleId=".$this->scheduleId."";
+$setParams .= "&academicId=".$this->academicId."";
+$setParams .= "&target=".$this->target."";
+$setParams .= "&trainingId=".$this->trainingId."";
+$setParams .= "&term=".$this->term."";
+$setParams .= "&shortday=".$this->shortday."";
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $objectId = isset($_GET["scheduleId"]) ? addText($_GET["scheduleId"]):"";
@@ -233,7 +239,11 @@ Ext.onReady(function() {
             start:0
             ,limit:100
             ,scheduleId: '".$this->scheduleId."'
-            ,cmd: 'availableTeacher'
+            ,academicId: '".$this->academicId."'
+            ,target: '".$this->target."'
+            ,trainingId: '".$this->trainingId."'
+            ,term: '".$this->term."'
+            ,cmd: 'availableTeacher' 
         ";
     }
     
@@ -301,6 +311,10 @@ Ext.onReady(function() {
             start:0
             ,limit:100
             ,scheduleId: '".$this->scheduleId."'
+            ,academicId: '".$this->academicId."'
+            ,target: '".$this->target."'
+            ,trainingId: '".$this->trainingId."'
+            ,term: '".$this->term."'
             ,cmd: 'availableGridRoom'
         ";
         
@@ -858,31 +872,42 @@ Ext.onReady(function() {
         }   
     }
     
-    $OBJECT_FORM->setLoadParams("cmd: 'loadClassEvent',scheduleId: '".$this->scheduleId."'");
-    
-    if ($this->scheduleAction == "INSERT"){
-        $OBJECT_FORM->setSaveParams("
-            cmd: 'saveClassEvent'
+    $OBJECT_FORM->setLoadParams("
+            cmd: 'loadClassEvent'
             ,scheduleId: '".$this->scheduleId."'
             ,academicId: '".$this->academicId."'
             ,target: '".$this->target."'
             ,trainingId: '".$this->trainingId."'
             ,term: '".$this->term."'
-            ,shortday: '".$this->shortday."'
+            ,shortday: '".$this->shortday."'"
+    );
+    
+    if ($this->scheduleAction == "INSERT"){
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'saveClassEvent'
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
         ");
     }else{
         $OBJECT_FORM->setSaveParams("
             cmd: 'saveClassEvent'
-            ,scheduleId: '".$this->scheduleId."'
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
         ");
     }
     
     $OBJECT_FORM->setRemoveParams("
         cmd: 'jsonDeleteDayClassEvent'
         ,scheduleId: '".$this->scheduleId."'
+        ,academicId: '".$this->academicId."'
+        ,target: '".$this->target."'
+        ,trainingId: '".$this->trainingId."'
+        ,term: '".$this->term."'
+        ,shortday: '".$this->shortday."'
     ");
     
-    $OBJECT_FORM->setReleaseParams("cmd: 'releaseClassEvent',scheduleId: '".$this->scheduleId."'"); 
+    $OBJECT_FORM->setReleaseParams("
+        cmd: 'releaseClassEvent'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    "); 
 
     $OBJECT_FORM->setonEmbeddedEvents("
         if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
