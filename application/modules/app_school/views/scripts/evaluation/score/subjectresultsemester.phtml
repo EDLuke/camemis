@@ -307,7 +307,7 @@ Ext.onReady(function() {
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
-                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                ".CamemisPage::setRequestURI(false)."
             }
         }]);
     ");

@@ -262,11 +262,11 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add(['-','<b>".$TITLE."</b>','-',{
+        tbar.add('-',[{
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
-                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                ".CamemisPage::setRequestURI(false)."
             }
         }]);
     ");
