@@ -438,7 +438,7 @@ class AssignmentDBAccess {
         $SQL->group("A.ID");
         $SQL->order('A.SORTKEY ASC');
 
-        error_log($SQL->__toString());
+        //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -569,7 +569,6 @@ class AssignmentDBAccess {
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $displayDate = isset($params["displayDate"]) ? $params["displayDate"] : "";
 
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
@@ -582,6 +581,7 @@ class AssignmentDBAccess {
         }
 
         $facette = self::findAssignmentFromId($node);
+
         if ($facette) {
             if ($classObject->EDUCATION_SYSTEM) {
                 $academicId = $classObject->PARENT;
@@ -604,15 +604,8 @@ class AssignmentDBAccess {
                 if (!$facette) {
 
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "";
-                    $data[$i]['objectId'] = "" . $value->ASSIGNMENT_ID . "";
                     $data[$i]['text'] = "" . $value->NAME . "";
-
-                    if ($displayDate) {
-                        $data[$i]['leaf'] = false;
-                    } else {
-                        $data[$i]['leaf'] = true;
-                    }
-
+                    $data[$i]['leaf'] = false;
                     $data[$i]['isClick'] = true;
                     switch ($value->INCLUDE_IN_EVALUATION) {
                         case 1:
