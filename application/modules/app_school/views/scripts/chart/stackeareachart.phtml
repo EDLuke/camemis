@@ -1,5 +1,4 @@
 <?
-
 require_once 'clients/CamemisChart.php';
 require_once 'models/statistic/UserOnlineStatisticsDBAccess.php';
 
@@ -8,7 +7,6 @@ $dataset = UserOnlineStatisticsDBAccess::getDataSetUserOnline();
 $chart = new CamemisChart("STACKEAREACHART", 'Online1', $dataset);
 $chart->setChartDIV("chart1");
 $chart->setHeight(300);
-
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -17,13 +15,8 @@ $chart->setHeight(300);
 <script src="/public/nvd3/nvd3-camemis.php"></script>
 <body>
 
-
-
-<?
-
-echo $chart->drawChart();
-
-?>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
 
 </body>
 </html>
