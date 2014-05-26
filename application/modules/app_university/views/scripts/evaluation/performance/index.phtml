@@ -185,16 +185,6 @@ $setParams .= "&academicId=".$this->academicId."";
             $CHOOSE_ITEMS = $DISPLAY_ERROR;
         }
         
-        $setYearParams = "";
-        $setYearParams .= $setParams;
-        $YEAR_RESULT = "{
-            title: '".YEAR_RESULT."'
-            ,layout: 'fit'
-            ,items: [new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setYearParams)."'})]
-        }";
-        if($academicObject->DISPLAY_YEAR_RESULT)
-        $PENEL_ITEMS[] = $YEAR_RESULT;
-        
         if($PENEL_ITEMS){
             $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         }else{

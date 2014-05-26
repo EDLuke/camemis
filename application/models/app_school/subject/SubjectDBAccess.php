@@ -1091,10 +1091,10 @@ class SubjectDBAccess {
         return $result ? $result->ID : 0;
     }
 
-    public static function checkUseSubjectInClass($subjecId, $classId) {
+    public static function checkUseSubjectInClass($subjectId, $classId) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', 'COUNT(*) AS C');
-        $SQL->where("SUBJECT = '" . $subjecId . "'");
+        $SQL->where("SUBJECT = '" . $subjectId . "'");
         $SQL->where("CLASS = ?", $classId);
         $SQL->where("USED_IN_CLASS = '1'");
         //error_log($SQL->__toString());
@@ -1107,7 +1107,7 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
-        if (self::checkUseSubjectInClass($subjecId, $academicId)) {
+        if (self::checkUseSubjectInClass($subjectId, $academicId)) {
             $SQL->where("USED_IN_CLASS = '1'");
         } else {
             $SQL->where("USED_IN_CLASS = '0'");
@@ -1136,6 +1136,18 @@ class SubjectDBAccess {
         }
 
         return (object) $data;
+    }
+
+    public static function checkAcademicSubjectSchedule($subjecId, $academicId) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from('t_schedule', 'COUNT(*) AS C');
+        $SQL->where("ACADEMIC_ID = '" . $academicId . "'");
+        $SQL->where("SUBJECT_ID = ?", $subjecId);
+        $SQL->group("SUBJECT_ID");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
     }
 
     public static function findSubjectFromGuId($GuId) {

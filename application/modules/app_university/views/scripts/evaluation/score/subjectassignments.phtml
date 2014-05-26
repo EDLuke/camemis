@@ -20,7 +20,7 @@ $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
 
@@ -29,13 +29,16 @@ $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHO
 
 if($academicObject->EDUCATION_SYSTEM){
     $subjectId = $academicObject->SUBJECT_ID;
-    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+    $academicId = $academicObject->PARENT;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicId);
 }else{
     $subjectId = $this->subjectId;
-    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+    $academicId = $academicObject->ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicId);
 } 
 
-if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+$CHECK_IN_SCHEDULE = SubjectDBAccess::checkAcademicSubjectSchedule($subjectId, $academicId);
+if(!$CHECK_IN_SCHEDULE) {header("Location: /main/permission/");exit;}
 
 $setParams = "";
 $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
