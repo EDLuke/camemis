@@ -904,9 +904,8 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         $SQL->where('TYPE = ?', 'ENROLL');
         $SQL->where('CAMPUS = ?', $campusId);
         $SQL->where('ENROLL_AVG >= ?', $averag);
-        error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        return $result;
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchAll($SQL);
     }
 
     public static function findStudentEnrollSmallerScore($averag, $campusId) {
@@ -915,9 +914,8 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         $SQL->where('TYPE = ?', 'ENROLL');
         $SQL->where('CAMPUS = ?', $campusId);
         $SQL->where('ENROLL_AVG < ?', $averag);
-        error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        return $result;
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchAll($SQL);
     }
 
     ///
