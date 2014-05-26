@@ -300,6 +300,15 @@ abstract class AssessmentProperties {
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->getCurrentClass()->ID);
     }
 
+    public function getTermByMonthYear() {
+
+        if ($this->monthyear) {
+            return AcademicDBAccess::getTermByMonthYear($this->academicId, $this->monthyear);
+        } elseif ($this->term) {
+            return $this->term;
+        }
+    }
+
 }
 
 ?>

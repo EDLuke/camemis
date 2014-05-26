@@ -68,7 +68,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 <script>
 var chooseId;
 var chooseStudent;
-var setnewValue;
+var comboValue;
 var comment;
 
 Ext.onReady(function() {
@@ -207,10 +207,9 @@ Ext.onReady(function() {
                         ,editable: false
                         ,listeners: {
                             select: function(combo, record, index) {
-                            replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            setnewValue = newDisplay;
+                            comboValue = record.get('chooseValue');;
                         }
                     }
                 })
@@ -315,7 +314,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionTeacherScoreEnter'
         ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
-        ,setnewValue:setnewValue
+        ,comboValue:comboValue
     ");
     
     $OBJECT_GRID->setAftereditCallback("

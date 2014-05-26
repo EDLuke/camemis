@@ -643,10 +643,11 @@ class AcademicPerformances extends AssessmentProperties {
 
     public function setActionStudentAcademicPerformance() {
 
+        error_log("Value: ".$this->comboValue);
         $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "studentId" => $this->studentId
-                    , "assessmentId" => $this->actionValue
+                    , "assessmentId" => $this->comboValue
                     , "month" => $this->getMonth()
                     , "year" => $this->getYear()
                     , "term" => $this->term

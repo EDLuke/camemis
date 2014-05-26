@@ -195,9 +195,6 @@ class FileDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
-        if ($parentId)
-            $SAVEDATA['IS_CHILD'] = 1;
-
         if ($objectId == "new") {
             $uniqueId = generateGuid();
             $SAVEDATA['GUID'] = $uniqueId;
@@ -319,7 +316,7 @@ class FileDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
         $SQL->where("GRADE = '" . $academicObject->GRADE_ID . "'");
-        $SQL->where("ACADEMIC_ID = '" . $academicObject->SCHOOL_YEAR . "'");
+        $SQL->where("SCHOOLYEAR_ID = '" . $academicObject->SCHOOL_YEAR . "'");
         $SQL->where("FILE = ?",$objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
@@ -342,7 +339,7 @@ class FileDBAccess {
             if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
                 $SAVEDATA["GRADE"] = $academicObject->GRADE_ID;
-                $SAVEDATA["ACADEMIC_ID"] = $academicObject->SCHOOL_YEAR;
+                $SAVEDATA["SCHOOLYEAR_ID"] = $academicObject->SCHOOL_YEAR;
             }
 
             if ($userroleId) {
@@ -356,7 +353,7 @@ class FileDBAccess {
         } else {
             if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                self::dbAccess()->delete("t_file_user", array("GRADE='" . $academicObject->GRADE_ID . "'", "ACADEMIC_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
+                self::dbAccess()->delete("t_file_user", array("GRADE='" . $academicObject->GRADE_ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
             }
 
             if ($userroleId) {

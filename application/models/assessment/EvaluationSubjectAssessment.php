@@ -238,7 +238,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($stdClass)->ASSESSMENT_ID;
 
                 if ($this->isDisplayMonthResult()) {
-                    $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
+                    if (!$this->getSettingEvaluationOption()) {
+                        $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
+                    }
+
                     $data[$i]["ASSIGNMENT_MONTH"] = $this->getImplodeSubjectAssignmentByAllMonths($stdClass);
                 }
 
@@ -424,11 +427,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
                                 break;
                         }
-
-                        if ($this->isDisplayMonthResult()) {
-                            $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
-                        }
-
                         $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
                         break;
                     case self::EVALUATION_OF_SUBJECT:
@@ -441,6 +439,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
+                if ($this->isDisplayMonthResult()) {
+                    $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
+                }
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
 
                 $i++;
@@ -804,8 +805,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     }
 
     public function getImplodeSubjectAssignmentByAllMonths($stdClass) {
-        $stdClass->assignmentId = self::NO_ASSIGNMENT;
-        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
+
+        if ($this->getSettingEvaluationOption()) {
+            return SQLEvaluationStudentSubject::getImplodeQueryMonthSubject($stdClass);
+        } else {
+            $stdClass->assignmentId = self::NO_ASSIGNMENT;
+            return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
+        }
     }
 
     public function getImplodeSubjectAssignmentByTerm($stdClass) {
@@ -874,7 +880,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "scoreType" => $this->getSubjectScoreType()
                     , "month" => $this->getMonth()
                     , "year" => $this->getYear()
-                    , "term" => $this->term
+                    , "term" => $this->getTermByMonthYear()
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "educationSystem" => $this->getEducationSystem()
                     , "evaluationType" => $this->getSettingEvaluationType()
@@ -882,24 +888,27 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
         switch ($this->actionField) {
             case "AVERAGE":
-                $defaultObject->average = $this->actionValue;
+                $defaultObject->average = $this->newValue;
                 break;
             case "RANK":
-                $defaultObject->actionRank = $this->actionValue;
+                $defaultObject->actionRank = $this->newValue;
                 break;
             case "ASSESSMENT":
 
-                $defaultObject->assessmentId = $this->actionValue;
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_TYPE_CHAR:
-                        $defaultObject->mappingValue = AssessmentConfig::makeGrade($this->actionValue, "LETTER_GRADE");
+                        $defaultObject->assessmentId = $this->comboValue;
+                        $defaultObject->mappingValue = $this->newValue;
+                        break;
+                    case self::SCORE_TYPE_NUMBER:
+                        $defaultObject->assessmentId = $this->comboValue;
+                        if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
+                            if ($this->getSubjectValue($defaultObject))
+                                $defaultObject->mappingValue = $this->getSubjectValue($defaultObject);
+                        }
                         break;
                 }
 
-                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
-                    if ($this->getSubjectValue($defaultObject))
-                        $defaultObject->mappingValue = $this->getSubjectValue($defaultObject);
-                }
                 break;
         }
 
@@ -927,10 +936,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
                 break;
-            case self::SCORE_CHAR:
-                $gradingObject = SpecialDBAccess::findGradingSystemFromId($this->actionValue);
-                $result = $gradingObject ? $gradingObject->LETTER_GRADE : "";
-                break;
         }
         return $result;
     }
@@ -947,7 +952,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "date" => $this->date
                     , "assignmentId" => $this->assignmentId
                     , "actionField" => $this->actionField
-                    , "actionValue" => $this->actionValue
+                    , "actionValue" => $this->newValue
                     , "coeffValue" => $this->getAssignmentCoeff()
                     , "evaluationType" => $this->getSettingEvaluationType()
                     , "include_in_valuation" => $this->getAssignmentInCludeEvaluation()
@@ -1196,19 +1201,19 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         );
 
         if ($this->getSettingEvaluationOption()) {
-            
+
             $stdClass->term = $this->term;
             $stdClass->month = $this->getMonth();
             $stdClass->year = $this->getYear();
-            
+
             if ($this->term) {
                 $stdClass->section = $this->getNameSectionByTerm();
             }
 
-            if($stdClass->month && $stdClass->year){
+            if ($stdClass->month && $stdClass->year) {
                 $stdClass->section = "MONTH";
             }
-            
+
             SQLEvaluationImport::importScoreSubject($stdClass);
         } else {
             $stdClass->assignmentId = $this->assignmentId;

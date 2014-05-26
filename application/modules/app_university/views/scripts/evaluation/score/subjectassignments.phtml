@@ -34,7 +34,7 @@ if($academicObject->EDUCATION_SYSTEM){
     $subjectId = $this->subjectId;
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
 } 
-
+    
 if(!is_object($subjectObject)) {header("Location: /main/permission/");}
 
 $setParams = "";

@@ -13,6 +13,7 @@ require_once setUserLoacalization();
 
 $monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $DB_ASSIGNMENT = AssignmentDBAccess::getInstance();
 
@@ -43,6 +44,7 @@ $evaluation->setSection(1);
 if(!$academicObject->EVALUATION_OPTION){
     $evaluation->actionDefaultStudentSubjectAssessment("MONTH");
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
@@ -75,6 +77,7 @@ tr.filter-row-header .filter-row-icon input {
 }
 </style>
 <script>
+var comboValue;
 Ext.onReady(function() {
     
     Ext.Ajax.timeout = 600000;
@@ -148,7 +151,7 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
-                            comboValue = replaceValue;
+                            comboValue = record.get('chooseValue');
                         }
                     }
                 })
@@ -171,7 +174,6 @@ Ext.onReady(function() {
                     }
                     $i++;
                 }
-                
             }
             
             $comboEditor = "
