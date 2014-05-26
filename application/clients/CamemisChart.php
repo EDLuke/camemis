@@ -33,7 +33,7 @@ Class CamemisChart {
         return $this->chartDiv = $value;
     }
 
-    public function setChartSVG() {
+    public function setChartSVG($value) {
         return $this->chartSVG = $value;
     }
 
@@ -76,15 +76,16 @@ Class CamemisChart {
 
     public function setChartDisplay() {
 
+        $js = "";
+
         switch ($this->type) {
             case "STACKEAREACHART":
-                $js = "";
                 $js .= "<div style=\"height:" . $this->height . "px;\">";
                 $js .= "<svg id=\"" . $this->chartDiv . "\"></svg>";
                 $js .= "</div>";
                 break;
             case "MULTIBARCHART":
-
+                $js .="<div id=\"" . $this->chartSVG . "\" style=\"height:" . $this->height . "px; margin: 10px;\"><svg></svg></div>";
                 break;
             case "PICHCHART":
 
@@ -145,6 +146,7 @@ Class stackeAreaChart {
         $js .= "chart_" . $this->name . ".dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });";
         $js .= "return chart_" . $this->name . ";";
         $js .= "});";
+
         return $js;
     }
 
@@ -152,43 +154,43 @@ Class stackeAreaChart {
 
 Class multiBarChart {
 
-    function __construct($dataSet, $chartSVG, $showLegend) {
+    function __construct($name, $dataSet, $chartSVG, $showLegend) {
 
+        $this->name = $name;
         $this->dataSet = $dataSet;
-        $this->width = $width;
-        $this->height = $height;
+        $this->chartSVG = $chartSVG;
+        $this->showLegend = $showLegend;
     }
 
     public function rendererChart() {
 
-        $js = "";
-        $js .= "var chart_" . $this->name . ";";
-        $js .= "nv.addGraph(function() {";
-        $js .= "chart_" . $this->name . " = nv.models.multiBarChart()";
-        $js .= ".showLegend(" . $this->showLegen . ")";
-        $js .= ".showXAxis(true)";
-        $js .= ".barColor(d3.scale.category20().range())";
-        $js .= ".margin({bottom: 50})";
-        $js .= ".transitionDuration(300)";
-        $js .= ".delay(0)";
-        $js .= ".rotateLabels(0)";
-        $js .= ".chart_" . $this->name . "(0.1);";
-        $js .= "chart_" . $this->name . ".multibar";
-        $js .= ".hideable(true);";
-        $js .= "chart_" . $this->name . ".reduceXTicks(false).staggerLabels(true);";
-        $js .= "chart_" . $this->name . ".xAxis";
-        $js .= ".showMaxMin(false)";
-        $js .= ".tickFormat(function(d){ return d;});";
-        $js .= "chart_" . $this->name . ".yAxis";
-        $js .= ".tickFormat(function(d){ return d;});";
-        $js .= "d3.select('#" . $this->chartSVG . " svg')";
-        $js .= ".datum(" . $this->dataSet . ")";
-        $js .= ".call(chart_" . $this->name . ");";
-        $js .= "nv.utils.windowResize(chart_" . $this->name . ".update);";
-        $js .= "chart_" . $this->name . ".dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });";
-        $js .= "return chart_" . $this->name . ";";
-        $js .= "});";
-
+        $js = "var chart;
+            nv.addGraph(function() {
+            chart = nv.models.multiBarChart()
+            .showLegend(" . $this->showLegend . ")
+            .showXAxis(true)
+            .barColor(d3.scale.category20().range())
+            .margin({bottom: 50})
+            .transitionDuration(300)
+            .delay(0)
+            .rotateLabels(0)
+            .groupSpacing(0.1);
+            chart.multibar
+            .hideable(true);
+            chart.reduceXTicks(false).staggerLabels(true);
+            chart.xAxis
+            .showMaxMin(false)
+            .tickFormat(function(d){ return d;});
+            chart.yAxis
+            .tickFormat(function(d){ return d;});
+            d3.select('#" . $this->chartSVG . " svg')
+            .datum(" . $this->dataSet . ")
+            .call(chart);
+            nv.utils.windowResize(chart.update);
+            chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return chart;
+        });";
+        
         return $js;
     }
 
@@ -227,4 +229,5 @@ Class picChart {
     }
 
 }
+
 ?>
