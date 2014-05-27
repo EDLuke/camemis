@@ -46,7 +46,7 @@ Class CamemisChart {
     }
 
     public function setShowLegend($value) {
-        return $this->showLegend = $value;
+        return $this->showLegend = $value ? "true" : "false";
     }
 
     public function setDisplayType($value) {
@@ -61,17 +61,56 @@ Class CamemisChart {
         return $this->stacked = $value;
     }
 
+    public function setShowValues($value) {
+        return $this->showValues = $value ? "true" : "false";
+    }
+
+    public function setStaggerLabels($value) {
+        return $this->staggerLabels = $value ? "true" : "false";
+    }
+
+    public function setTooltips($value) {
+        return $this->tooltips = $value ? "true" : "false";
+    }
+
     public function setChartScript() {
 
         switch ($this->type) {
             case "STACKEAREACHART":
-                $chart = new stackeAreaChart($this->name, $this->dataSet, $this->width, $this->height, $this->chartDiv);
+                $chart = new stackeAreaChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->width
+                        , $this->height
+                        , $this->chartDiv);
                 break;
             case "MULTIBARCHART":
-                $chart = new multiBarChart($this->name, $this->dataSet, $this->chartSVG, $this->showLegend, $this->stacked);
+                $chart = new multiBarChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->chartSVG
+                        , $this->showLegend
+                        , $this->stacked);
                 break;
             case "PICHCHART":
-                $chart = new picChart($this->name, $this->dataSet, $this->chartSVG, $this->displayType, $this->labelType);
+                $chart = new picChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->chartSVG
+                        , $this->showLegend
+                        , $this->width
+                        , $this->height);
+                break;
+            case "DISCRETEBARCHART":
+                $chart = new discreteBarChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->chartSVG
+                        , $this->showValues
+                        , $this->staggerLabels
+                        , $this->tooltips
+                        , $this->width
+                        , $this->height);
                 break;
         }
 
@@ -92,7 +131,14 @@ Class CamemisChart {
                 $js .="<div id=\"" . $this->chartSVG . "\" style=\"height:" . $this->height . "px; margin: 10px;\"><svg></svg></div>";
                 break;
             case "PICHCHART":
-
+                $js .="<div style='float:left;margin:5px;'>";
+                $js .="<svg id=\"" . $this->chartSVG . "\" style='width:" . $this->width . "px;border: solid 1px #B3B2B2;'></svg>";
+                $js .="</div>";
+                break;
+            case "DISCRETEBARCHART":
+                $js .= "<div style=\"height:" . $this->height . "px;\">";
+                $js .= "<svg id=\"" . $this->chartDiv . "\"></svg>";
+                $js .= "</div>";
                 break;
         }
 
@@ -163,7 +209,7 @@ Class multiBarChart {
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->chartSVG = $chartSVG;
-        $this->showLegend = $showLegend ? "true" : "false";
+        $this->showLegend = $showLegend;
         $this->stacked = $stacked ? "true" : "false";
     }
 
@@ -204,32 +250,125 @@ Class multiBarChart {
 
 Class picChart {
 
-    function __construct($dataSet, $chartSVG, $displayType, $labelType) {
+    function __construct($name, $dataSet, $chartSVG, $showLegend, $width, $height) {
 
-        $this->dataSet = $dataSet;
+        $this->name = $name;
+        $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
         $this->chartSVG = $chartSVG;
-        $this->labelType = $labelType;
-        $this->showLabels = $showLabels;
+        $this->width = $width;
+        $this->height = $height;
+        $this->showLegend = $showLegend;
+    }
+
+    public static function dafaultDataSet() {
+        return "[{
+            key: 'One',y: 5
+        },{
+            key: 'Two',y: 2
+        },{
+            key: 'Three', y: 9
+        },{
+            key: 'Four',y: 7
+        },{
+            key: 'Five',y: 4
+        },{
+            key: 'Six',y: 3
+        },{
+            key: 'Seven',y: .5
+        }]";
     }
 
     public function rendererChart() {
 
-        $js = "";
-        $js .= "chart_$this->name.addGraph(function() {";
-        $js .= "var chart_$this->name = chart.models.pieChart()";
-        $js .= ".x(function(d) { return d.label })";
-        $js .= ".y(function(d) { return d.value })";
-        $js .= ".showLabels(" . $this->showLabels . ")";
-        $js .= ".labelThreshold(.05)";
-        $js .= ".labelType(" . $this->labelType . ")";
-        $js .= ".donut(true)";
-        $js .= ".donutRatio(0.35);";
-        $js .= "d3.select(\"#" . $this->chartSVG . " svg\")";
-        $js .= ".datum(" . $this->dataSet . ")";
-        $js .= ".transition().duration(350)";
-        $js .= ".call(chart_$this->name);";
-        $js .= "return chart_$this->name;";
-        $js .= "});";
+        $js = "nv.addGraph(function() {
+            var width = $this->width,
+            height = $this->height;
+            var $this->name = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.y })
+            .showLegend(" . $this->showLegend . ")
+            .color(d3.scale.category10().range())
+            .width(width)
+            .height(height)
+            .donut(true);
+             $this->name.pie.donutLabelsOutside(true).donut(true);
+            d3.select(\"#" . $this->chartSVG . "\")
+            .datum(" . $this->dataSet . ")
+            .transition().duration(1200)
+            .attr('width', width)
+            .attr('height', height)
+            .call($this->name);
+            $this->name.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return $this->name;
+        });";
+
+        return $js;
+    }
+
+}
+
+Class discreteBarChart {
+
+    function __construct($name, $dataSet, $chartSVG, $showValues, $staggerLabels, $tooltips, $width, $height) {
+
+        $this->name = $name;
+        $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
+        $this->chartSVG = $chartSVG;
+        $this->width = $width;
+        $this->height = $height;
+        $this->showValues = $showValues;
+        $this->staggerLabels = $staggerLabels;
+        $this->tooltips = $tooltips;
+    }
+
+    public static function dafaultDataSet() {
+        return "[{
+          key: 'Cumulative Return',
+          values: [{ 
+              'label' : 'A' ,
+              'value' : 29.765957771107
+            } , { 
+              'label' : 'B' , 
+              'value' : 0
+            } , { 
+              'label' : 'C' , 
+              'value' : 32.807804682612
+            } , { 
+              'label' : 'D' , 
+              'value' : 196.45946739256
+            } , { 
+              'label' : 'E' ,
+              'value' : 0.19434030906893
+            } , { 
+              'label' : 'F' , 
+              'value' : 98.079782601442
+            } , { 
+              'label' : 'G' , 
+              'value' : 13.925743130903
+            } , { 
+              'label' : 'H' , 
+              'value' : 5.1387322875705
+            }]
+        }]";
+    }
+
+    public function rendererChart() {
+
+        $js = "nv.addGraph(function() {  
+            var $this->name = nv.models.discreteBarChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.value })
+            .staggerLabels(" . $this->staggerLabels . ")        // true, false
+            //.staggerLabels(historicalBarChart[0].values.length > 8)
+            .tooltips(" . $this->tooltips . ")                  // true, false
+            .showValues(" . $this->showValues . ")                  // true, false
+            .transitionDuration(250);
+            d3.select('#" . $this->chartSVG . " svg')
+            .datum(" . $this->dataSet . ")
+            .call($this->name);
+            nv.utils.windowResize($this->name.update);
+            return $this->name;
+        });";
 
         return $js;
     }
