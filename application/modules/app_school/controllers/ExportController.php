@@ -15,6 +15,7 @@ require_once 'models/export/StudentPreschoolExportDBAccess.php';
 require_once 'models/export/StudentDisciplineExportDBAccess.php';//@veasna
 require_once 'models/export/StudentStatusExportDBAccess.php';//@Visal
 require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
+require_once 'models/export/TraditionalFilterExportDBAccess.php';//@Visal
 
 class ExportController extends Zend_Controller_Action {
 
@@ -31,6 +32,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STUDENT_STATUS_EXCEL = new StudentStatusExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_ADVISORY_EXCEL = new StudentAdvisoryExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_DISCIPLINE_EXCEL = new StudentDisciplineExportDBAccess($this->_getParam('objectId'));//@veasna
+        $this->TRADITION_FILTER_EXCEL = new TraditionalFilterExportDBAccess($this->_getParam('objectId'));//@Visal
         
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
@@ -175,6 +177,12 @@ class ExportController extends Zend_Controller_Action {
             //@veasna    
             case "jsonSearchStudentDiscipline":
                 $jsondata = $this->STUDENT_DISCIPLINE_EXCEL->jsonSearchStudentDiscipline($this->REQUEST->getPost());
+                break;
+            //@Visal
+            case "getStudentAttendanceData":
+            case "getStudentDisciplineData":
+            case "getStudentAdvisoryData":
+                $jsondata = $this->TRADITION_FILTER_EXCEL->getStudentAttendanceData($this->REQUEST->getPost());
                 break;
         }
 
