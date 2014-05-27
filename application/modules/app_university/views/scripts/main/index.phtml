@@ -224,7 +224,7 @@ $HTML .= "</div>";
         if(UserAuth::getAddedUserRole() || UserAuth::getUserType()=='SUPERADMIN'|| UserAuth::getUserType()=='ADMIN'){
         $js .= "var btIdUserOnline = Ext.get('IdUserOnline');";
         $js .= "btIdUserOnline.on('click', function(){";
-            $js .= "addTab('USER_ONLINE','".USER_ONLINE."','/user/useronline/');";
+            $js .= "addTab('USER_ONLINE','".USER_ONLINE."','/user/stackeareachart/');";
         $js .= "});";
         }
         $js .= "var btIdPersonalInformation = Ext.get('IdPersonalInformation');";

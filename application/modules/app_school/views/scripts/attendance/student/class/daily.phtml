@@ -45,7 +45,7 @@ $columndata = Utiles::getGridColumnData("ATTENDANCE_MANAGEMENT_LIST_ID");
 
 $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
 
-if($error) {header("Location: /main/permission/");}
+if($error) {header("Location: /main/permission/");exit;}
 
 $check = false;
 

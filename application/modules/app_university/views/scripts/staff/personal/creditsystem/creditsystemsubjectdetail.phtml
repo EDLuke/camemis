@@ -18,7 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $classObject = AcademicDBAccess::findGradeFromId($this->classId);
 $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $classObject->CAMPUS_ID,$classObject->SUBJECT_ID,$classObject->SCHOOL_YEAR);
 
-if(!$classObject) {header("Location: /main/permission/");}
+if(!$classObject) {header("Location: /main/permission/");exit;}
     
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

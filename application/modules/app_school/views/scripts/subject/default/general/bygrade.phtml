@@ -27,7 +27,7 @@ $OBJECT_TREE->setSaveUrl("/subject/jsonsave/");
 
 $facette = $this->subjectObject;
 
-if(!$facette) {header("Location: /main/permission/");}
+if(!$facette) {header("Location: /main/permission/");exit;}
 
 $target = isset($_GET["target"])?true:false;
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";

@@ -22,7 +22,7 @@ $academicId = '';
 
 if($this->academicId){
     $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
-    if(!$academicObject) {header("Location: /main/permission/");}
+    if(!$academicObject) {header("Location: /main/permission/");exit;}
     if($academicObject->EDUCATION_SYSTEM){
         switch($academicObject->OBJECT_TYPE){
             case "SUBJECT":

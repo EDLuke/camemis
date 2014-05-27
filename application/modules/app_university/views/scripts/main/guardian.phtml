@@ -16,7 +16,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $guardianId = Zend_Registry::get('USER')->ID;
 $guardianObject = GuardianDBAccess::findObjectFromId($guardianId);
-if(!$guardianObject) {header("Location: /main/permission/");}
+if(!$guardianObject) {header("Location: /main/permission/");exit;}
 
 $OBJECT_TREE = new CamemisTree("GUARDIAN", "LIST");
 $OBJECT_TREE->setURL("/guardian/jsontree/");

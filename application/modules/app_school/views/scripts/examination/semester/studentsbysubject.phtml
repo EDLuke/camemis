@@ -26,7 +26,7 @@ $ASSIGNED_GRID->setLoadUrl("/examination/jsonload/");
 $ASSIGNED_GRID->setSaveUrl("/examination/jsonsave/");
 $columndataAssigned = Utiles::getGridColumnData("EXAM_MANAGEMENT_ASSIGNED_ID");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

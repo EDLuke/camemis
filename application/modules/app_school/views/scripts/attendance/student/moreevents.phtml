@@ -19,7 +19,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("EVENTS_LIST", "LIST");
 $OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

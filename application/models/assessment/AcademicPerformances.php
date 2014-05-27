@@ -386,6 +386,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $AVERAGE = $this->getAverageYearStudentAcademicPerformance($stdClass);
                 $RANK = $this->displayRank($AVERAGE, $scoreList);
+
                 $data[$i]["RANK"] = $RANK ? $RANK : "---";
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT"] = "----";
@@ -533,19 +534,18 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "THIRD_TERM";
                         $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass);
 
-                        if (is_numeric($FIRST) && is_numeric($SECOND) && is_numeric($THIRD)) {
-                            if ($FIRST && !$SECOND && !$THIRD) {
-                                $output = $FIRST;
-                            } elseif (!$FIRST && $SECOND && !$THIRD) {
-                                $output = $SECOND;
-                            } elseif (!$FIRST && !$SECOND && $THIRD) {
-                                $output = $THIRD;
-                            } elseif ($FIRST && $SECOND && $THIRD) {
-                                $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
-                                $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
-                                $output = displayRound($SUM_VALUE / $SUM_COEFF);
-                            }
+                        if ($FIRST && !$SECOND && !$THIRD) {
+                            $output = $FIRST;
+                        } elseif (!$FIRST && $SECOND && !$THIRD) {
+                            $output = $SECOND;
+                        } elseif (!$FIRST && !$SECOND && $THIRD) {
+                            $output = $THIRD;
+                        } elseif ($FIRST && $SECOND && $THIRD) {
+                            $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
+                            $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
+                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
+
                         break;
                 }
 
@@ -583,20 +583,18 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "FOURTH_QUARTER";
                         $FOURTH = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass);
 
-                        if (is_numeric($FIRST) && is_numeric($SECOND) && is_numeric($THIRD) && is_numeric($FOURTH)) {
-                            if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
-                                $output = $FIRST;
-                            } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
-                                $output = $SECOND;
-                            } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
-                                $output = $THIRD;
-                            } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
-                                $output = $FOURTH;
-                            } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
-                                $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
-                                $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
-                                $output = displayRound($SUM_VALUE / $SUM_COEFF);
-                            }
+                        if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
+                            $output = $FIRST;
+                        } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
+                            $output = $SECOND;
+                        } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
+                            $output = $THIRD;
+                        } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
+                            $output = $FOURTH;
+                        } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
+                            $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
+                            $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
+                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
 
                         break;
@@ -621,16 +619,14 @@ class AcademicPerformances extends AssessmentProperties {
                         $stdClass->term = "SECOND_SEMESTER";
                         $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass);
 
-                        if (is_numeric($FIRST) && is_numeric($SECOND)) {
-                            if ($FIRST && !$SECOND) {
-                                $output = $FIRST;
-                            } elseif (!$FIRST && $SECOND) {
-                                $output = $SECOND;
-                            } elseif ($FIRST && $SECOND) {
-                                $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
-                                $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
-                                $output = displayRound($SUM_VALUE / $SUM_COEFF);
-                            }
+                        if ($FIRST && !$SECOND) {
+                            $output = $FIRST;
+                        } elseif (!$FIRST && $SECOND) {
+                            $output = $SECOND;
+                        } elseif ($FIRST && $SECOND) {
+                            $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
+                            $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
+                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
 
                         break;
@@ -643,7 +639,6 @@ class AcademicPerformances extends AssessmentProperties {
 
     public function setActionStudentAcademicPerformance() {
 
-        error_log("Value: ".$this->comboValue);
         $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "studentId" => $this->studentId

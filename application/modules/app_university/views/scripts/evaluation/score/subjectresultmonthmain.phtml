@@ -21,7 +21,7 @@ $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 if($academicObject->EDUCATION_SYSTEM){
     $subjectId = $academicObject->SUBJECT_ID;
@@ -31,7 +31,7 @@ if($academicObject->EDUCATION_SYSTEM){
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
 } 
 
-if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
 $monthList = AcademicDBAccess::getAcademicMonthList($academicObject->ID);
 

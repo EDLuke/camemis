@@ -28,7 +28,7 @@
     $studentAcademicObject = StudentAcademicDBAccess::getCurrentStudentAcademic($objectId, false, false, false);
     
     if (!$studentObject && !$studentAcademicObject)
-        {header("Location: /main/permission/");}
+        {header("Location: /main/permission/");exit;}
 
     function checkStudentServices($objectId) {
         

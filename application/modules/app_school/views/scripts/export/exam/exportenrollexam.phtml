@@ -51,7 +51,7 @@
                 
                 $facette = ExaminationDBAccess::findExamFromId($objectId);
                 
-                if (!$facette) {header("Location: /main/permission/");}
+                if (!$facette) {header("Location: /main/permission/");exit;}
                 if($facette){
                   
                     $exam=EXAM.": ".$facette->NAME;

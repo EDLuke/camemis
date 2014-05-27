@@ -24,7 +24,7 @@ $OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
 $target = isset($_GET["target"])?true:false; 
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
  
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $parentObject = AcademicDBAccess::findGradeSchoolyear($this->facette->GRADE, $this->facette->SCHOOLYEAR);  
 

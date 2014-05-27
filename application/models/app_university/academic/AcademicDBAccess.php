@@ -111,6 +111,7 @@ class AcademicDBAccess {
             $data["CODE"] = $academicObject->CODE;
             $data["STATUS"] = $academicObject->STATUS;
             $data["EVALUATION_OPTION"] = $academicObject->EVALUATION_OPTION;
+            $data["GRADING_TYPE"] = $academicObject->GRADING_TYPE;
             $data["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
 
             $data["SCHOOLYEAR_START"] = getShowDate($academicObject->SCHOOLYEAR_START);
@@ -497,6 +498,9 @@ class AcademicDBAccess {
 
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
+        
+        if (isset($params["GRADING_TYPE"]))
+            $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
 
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -927,6 +931,7 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearObject->DISTRIBUTION_VALUE;
                     $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
+                    $FIRST_SAVEDATA["GRADING_TYPE"] = $schoolyearObject->GRADING_TYPE;
 
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearObject->DISPLAY_FIRST_RESULT;
@@ -1017,6 +1022,7 @@ class AcademicDBAccess {
                     $SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_FOURTH_RESULT;
                     $SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
                     $SAVEDATA["EVALUATION_OPTION"] = $schoolyearsubjectObject->EVALUATION_OPTION;
+                    $SAVEDATA["GRADING_TYPE"] = $schoolyearsubjectObject->GRADING_TYPE;
 
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["MO"] = $schoolyearsubjectObject->MO;

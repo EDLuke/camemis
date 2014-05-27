@@ -39,7 +39,9 @@ switch($this->term){
     break;
 }
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
+
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -103,7 +105,7 @@ Ext.onReady(function() {
             ,store: new Ext.data.JsonStore({
                 autoDestroy: true
                 ,fields: ['chooseValue', 'chooseDisplay']
-                ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject->QUALIFICATION_TYPE)."]
+                ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject)."]
             })
             ,valueField: 'chooseValue'
             ,displayField: 'chooseDisplay'
@@ -151,7 +153,7 @@ Ext.onReady(function() {
         case 'INSTRUCTOR':
         case 'TEACHER':
              $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
+                header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 130
                 , align: 'right'
                 , sortable: true
@@ -163,7 +165,7 @@ Ext.onReady(function() {
             break;
          case 'STUDENT':
             $OBJECT_GRID->addColumn("
-                header: '<b>".ASSESSMENT."</b>'
+                header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 120
                 , align: 'center'
                 , sortable: true
@@ -208,11 +210,11 @@ Ext.onReady(function() {
         case 'INSTRUCTOR':
         case 'TEACHER':
             $OBJECT_GRID->addTBarItems("
-                tbar.add([{
+                tbar.add('-',[{
                     text: '" . REFRESH . "'
                     ,iconCls:'icon-reload'
                     ,handler: function(){
-                        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                        ".CamemisPage::setRequestURI(false)."
                     }
                 }]);
             ");

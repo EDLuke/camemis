@@ -26,7 +26,7 @@ switch (UserAuth::getUserType()) {
 }
 
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
-if(!$studentObject) {header("Location: /main/permission/");}
+if(!$studentObject) {header("Location: /main/permission/");exit;}
 
 $GENERAL_EDUCATION_TREE = new CamemisTree("GENERAL_EDUCATION", "LIST");
 $GENERAL_EDUCATION_TREE->setURL("/student/jsontree/");

@@ -19,7 +19,7 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $monthList = AcademicDBAccess::getAcademicMonthList($academicObject->ID);
 

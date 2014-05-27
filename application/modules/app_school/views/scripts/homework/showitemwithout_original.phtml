@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("HOMEWORK");
 $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 //@SODA
 $DB_ACCESS = Zend_Registry::get('DB_ACCESS');

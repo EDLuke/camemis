@@ -20,7 +20,7 @@ $OBJECT_FORM = new CamemisForm("ACADEMICDATE");
 $OBJECT_FORM->setLoadUrl('/academicdate/jsonload/');
 $OBJECT_FORM->setSaveUrl('/academicdate/jsonsave/');
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $OBJECT_DATA = $this->objectData;
 

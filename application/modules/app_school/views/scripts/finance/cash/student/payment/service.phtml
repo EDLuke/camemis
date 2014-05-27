@@ -31,7 +31,7 @@ $feeId = isset($_GET["fee"]) ? addText($_GET["fee"]):"";
 $FEE_OBJECT = FeeDBAccess::findFeeTaxFromId($feeId); //@veasna
 $STUDENT_FEE = StudentFeeDBAccess::getStudentFee($this->objectId, $feeId);
 
-if(!$STUDENT_FEE && !$FEE_OBJECT && $studentAcademicObject) {header("Location: /main/permission/");}
+if(!$STUDENT_FEE && !$FEE_OBJECT && $studentAcademicObject) {header("Location: /main/permission/");exit;}
 
 $AMOUNT = $FEE_OBJECT->FIRST_AMOUNT;
 $TOTAL_AMOUNT = $FEE_OBJECT->FIRST_TOTAL;

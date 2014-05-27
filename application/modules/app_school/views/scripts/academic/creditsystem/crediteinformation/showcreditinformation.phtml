@@ -19,7 +19,7 @@ $OBJECT_FORM = new CamemisForm("CREDIT_INFROMATION","LIST");
 $OBJECT_FORM->setLoadUrl('/academic/jsonload/');
 $OBJECT_FORM->setSaveUrl('/academic/jsonsave/'); 
 
-if(!$this->studentSubjectObject) {header("Location: /main/permission/");}
+if(!$this->studentSubjectObject) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

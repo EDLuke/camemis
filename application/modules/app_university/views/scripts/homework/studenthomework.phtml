@@ -23,7 +23,7 @@ $studentId = Zend_Registry::get('USER')->ID;
 $teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER;
 $student_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$studentId;   
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 $SQL = "";

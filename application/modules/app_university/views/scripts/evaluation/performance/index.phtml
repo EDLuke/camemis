@@ -17,7 +17,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
@@ -85,7 +85,7 @@ $setParams .= "&academicId=".$this->academicId."";
                 $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
 
                 $setParamsThird = $setParams;
-                $setParamsThird .= "&term=THIRD_RESULT";
+                $setParamsThird .= "&term=THIRD_TERM";
                 $THIRD_TERM_RESULT = "{
                     title: '".THIRD_TERM_RESULT."'
                     ,layout: 'fit'
@@ -173,7 +173,7 @@ $setParams .= "&academicId=".$this->academicId."";
         $YEAR_RESULT = "{
             title: '".YEAR_RESULT."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
         }";
 
         if($academicObject->DISPLAY_YEAR_RESULT)
@@ -184,18 +184,6 @@ $setParams .= "&academicId=".$this->academicId."";
         }else{
             $CHOOSE_ITEMS = $DISPLAY_ERROR;
         }
-
-        $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
-        
-        $setYearParams = "";
-        $setYearParams .= $setParams;
-        $YEAR_RESULT = "{
-            title: '".YEAR_RESULT."'
-            ,layout: 'fit'
-            ,items: [new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setYearParams)."'})]
-        }";
-        if($academicObject->DISPLAY_YEAR_RESULT)
-        $PENEL_ITEMS[] = $YEAR_RESULT;
         
         if($PENEL_ITEMS){
             $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";

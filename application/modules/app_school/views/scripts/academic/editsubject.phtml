@@ -29,7 +29,7 @@ $PREREQUISITE_TREE = new CamemisTree("SUBJECT", "LIST");
 $PREREQUISITE_TREE->setURL("/subject/jsontree/");
 //
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

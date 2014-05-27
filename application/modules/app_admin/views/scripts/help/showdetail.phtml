@@ -18,7 +18,7 @@ print $CAMEMIS_PAGE->showCamemisHeader();
 $HELP_ACCESS = new AdminHelpDBAccess();
 $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);
 
-if(!$HELP_OBJECT) {header("Location: /main/permission/");}
+if(!$HELP_OBJECT) {header("Location: /main/permission/");exit;}
 
 switch($type){
     case 1:

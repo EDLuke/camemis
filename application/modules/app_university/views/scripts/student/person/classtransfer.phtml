@@ -28,7 +28,7 @@ $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 
 $facette = AcademicDBAccess::findGradeFromId($olacademicId);
 
-if(!$facette) {header("Location: /main/permission/");}
+if(!$facette) {header("Location: /main/permission/");exit;}
 
 $gradeId = $facette->GRADE_ID;
 $schoolyearId = $facette->SCHOOL_YEAR;
