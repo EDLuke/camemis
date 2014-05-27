@@ -76,20 +76,18 @@ class FilterData extends FilterProperties {
                 switch ($this->objectType) {
                     case 'CAMPUS':
                         $data[$i]["FIRST_CULUMN"] = $firstCulum->NAME;
-                        $this->gradeId = $firstCulum->ID;
+                        $stdClass->gradeId = $firstCulum->ID;
                         break;
                     case 'GRADE':
                         $data[$i]["FIRST_CULUMN"] = $firstCulum->NAME;
-                        $this->classId = $firstCulum->ID;
+                        $stdClass->classId = $firstCulum->ID;
                         break;
                     case 'CLASS':
                         $data[$i]["FIRST_CULUMN"] = self::getFullName($firstCulum->FIRSTNAME, $firstCulum->LASTNAME);
-                        $this->studentId = $firstCulum->ID;
+                        $stdClass->studentId = $firstCulum->ID;
                         break;
                 }
                 $stdClass->campusId = $this->campusId;
-                $stdClass->classId = $this->classId;
-                $stdClass->gradeId = $this->gradeId;
                 foreach ($typeObject as $value) {
                     if ($this->gridType) {
                         switch ($this->gridType) {
