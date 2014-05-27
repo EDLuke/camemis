@@ -15,7 +15,7 @@ require_once 'models/app_school/staff/StaffAttendanceDBAccess.php';
 require_once 'models/app_school/student/StudentDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/app_school/AbsentTypeDBAccess.php';
-require_once 'models/filter/jsonStudentFilterReport.php';
+require_once 'models/filter/jsonFilterReport.php';
 
 class AttendanceController extends Zend_Controller_Action {
 
@@ -521,8 +521,12 @@ class AttendanceController extends Zend_Controller_Action {
                 break;
             ////@veasna
             case "getStudentAttendanceData":
-                $objectStudentAttendance = new jsonStudentFilterReport();
+                $objectStudentAttendance = new jsonFilterReport();
                 $jsondata = $objectStudentAttendance->getGridData($this->REQUEST->getPost());
+                break;
+            case "getTeacherAttendanceData":
+                $objectTeacherAttendance = new jsonFilterReport();
+                $jsondata = $objectTeacherAttendance->getGridData($this->REQUEST->getPost());
                 break;
             ///
         }

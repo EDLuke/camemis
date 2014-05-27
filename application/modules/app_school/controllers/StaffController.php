@@ -13,6 +13,7 @@ require_once 'models/app_school/staff/StaffImportDBAccess.php';
 require_once 'models/app_school/staff/StaffImportDBAccess.php';
 require_once 'models/app_school/DescriptionDBAccess.php';
 require_once 'models/app_school/schedule/ScheduleDBAccess.php';
+require_once 'models/filter/jsonFilterReport.php';
 
 require_once setUserLoacalization();
 require_once 'models/UserAuth.php';
@@ -526,7 +527,11 @@ class StaffController extends Zend_Controller_Action {
             case "jsonCreditClassInAcademic":
                 $jsondata = ScheduleDBAccess::jsonCreditClassInAcademic($this->REQUEST->getPost());
                 break;
-
+            case "getJsonListAssignedTeacher":
+                $objectAssignedTeacher = new jsonFilterReport();
+                $jsondata = $objectAssignedTeacher->getJsonListAssignedTeacher($this->REQUEST->getPost());
+                break;
+            ///
             case "jsonListPersonInfos":
                 $jsondata = StaffDBAccess::jsonListPersonInfos($this->REQUEST->getPost());
                 break;

@@ -9,7 +9,7 @@ require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/UserAuth.php';
 require_once 'models/app_school/student/StudentAdvisoryDBAccess.php';
-require_once 'models/filter/jsonStudentFilterReport.php';
+require_once 'models/filter/jsonFilterReport.php';
 
 class AdvisoryController extends Zend_Controller_Action {
 
@@ -75,7 +75,7 @@ class AdvisoryController extends Zend_Controller_Action {
                 break;
             ////@veasna
             case "getStudentAdvisoryData":
-                $objectStudentAttendance = new jsonStudentFilterReport();
+                $objectStudentAttendance = new jsonFilterReport();
                 $jsondata = $objectStudentAttendance->getGridData($this->REQUEST->getPost());
                 break;
             ///

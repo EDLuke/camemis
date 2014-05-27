@@ -9,9 +9,10 @@ require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once 'models/filter/SQLStudentFilterReport.php';
+require_once 'models/filter/SQLTeacherFilterReport.php';
 require_once setUserLoacalization();
 
-abstract class StudentFilterProperties {
+abstract class FilterProperties {
 
     public $datafield = array();
 
@@ -59,6 +60,14 @@ abstract class StudentFilterProperties {
                     break;
                 case 'STUDENT_ADVISORY_FILTER':
                     $typeObject = SQLStudentFilterReport::getAdvisoryType();
+                    break;
+                case 'TEACHER_ATTENDANCE_FILTER':
+                    $stdClass['personType']="STAFF";
+                    $stdClass['status']=1;
+                    $typeObject = SQLTeacherFilterReport::getAttendanceType((object)$stdClass);
+                    break;
+                case 'TEACHER_DISCIPLINE_FILTER':
+                    $typeObject = SQLTeacherFilterReport::getDisciplineType();
                     break;
             }
         }

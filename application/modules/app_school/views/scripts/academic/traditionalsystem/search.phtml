@@ -159,13 +159,13 @@ Ext.onReady(function() {
                         $js .= "text: '".ASSIGNED_TEACHERS."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                         $js .= ",handler: function(){";
-                            $js .= "clickOpenPage('center','".ASSIGNED_TEACHERS." &raquo; ' + node.text,'/main/permission/');";
+                            $js .= "clickOpenPage('center','".ASSIGNED_TEACHERS." &raquo; ' + node.text,'/academic/teacherfilter/?objectId=' + node.attributes.id);";
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".STAFF_ATTENDANCE."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                             $js .= ",handler: function(){";
-                                $js .= "clickOpenPage('center','".STAFF_ATTENDANCE." &raquo; ' + node.text,'/main/permission/');";
+                                $js .= "clickOpenPage('center','".STAFF_ATTENDANCE." &raquo; ' + node.text,'/academic/teacherattendancefilter/?objectId=' + node.attributes.id);";
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".STAFF_DISCIPLINE."'";

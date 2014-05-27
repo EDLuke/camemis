@@ -95,7 +95,9 @@ if($STUDENT_FEE){
     }
 }
 //@veasna tax for school fee
-
+$tax_catagory="";
+$tax_amount=0;
+$TAX_TYPE = 0;
 if($FEE_OBJECT->TAX_FORMULAR){
    switch ($FEE_OBJECT->TAX_FORMULAR) {   
     case 1:
