@@ -202,6 +202,7 @@ class AcademicDBAccess {
             $data["DISPLAY_YEAR_RESULT"] = $facette->DISPLAY_YEAR_RESULT ? true : false;
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
+            $data["GRADING_TYPE"] = $facette->GRADING_TYPE;
 
             $data["CREATED_DATE"] = getShowDateTime($facette->CREATED_DATE);
             $data["MODIFY_DATE"] = getShowDateTime($facette->MODIFY_DATE);
@@ -490,6 +491,9 @@ class AcademicDBAccess {
 
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
+
+        if (isset($params["GRADING_TYPE"]))
+            $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
 
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -923,7 +927,8 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["SEMESTER1_WEIGHTING"] = $schoolyearObject->SEMESTER1_WEIGHTING;
                     $FIRST_SAVEDATA["SEMESTER2_WEIGHTING"] = $schoolyearObject->SEMESTER2_WEIGHTING;
                     $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
-
+                    $FIRST_SAVEDATA["GRADING_TYPE"] = $schoolyearObject->GRADING_TYPE;
+                    
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
                 }
@@ -999,6 +1004,7 @@ class AcademicDBAccess {
                     $SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_FOURTH_RESULT;
                     $SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
                     $SAVEDATA["EVALUATION_OPTION"] = $schoolyearsubjectObject->EVALUATION_OPTION;
+                    $SAVEDATA["GRADING_TYPE"] = $schoolyearsubjectObject->GRADING_TYPE;
 
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["MO"] = $schoolyearsubjectObject->MO;
@@ -2283,7 +2289,7 @@ class AcademicDBAccess {
                     break;
             }
         }
-        
+
         return $result;
     }
 

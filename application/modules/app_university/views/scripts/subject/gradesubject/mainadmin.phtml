@@ -27,7 +27,7 @@ $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 $classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
 
 $classObject = AcademicDBAccess::findGradeFromId($classId);
-if(!$classObject) {header("Location: /main/permission/");}
+if(!$classObject) {header("Location: /main/permission/");exit;}
 
 $gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
     false
@@ -37,13 +37,13 @@ $gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
     , $classId
 );
 
-if(!$gradeSubjectObject) {header("Location: /main/permission/");}
+if(!$gradeSubjectObject) {header("Location: /main/permission/");exit;}
 
 $gradeSubjectId = $gradeSubjectObject->ID;
 
 $objectGrade = SubjectTeacherDBAccess::jsonLoadTeachersBySubjectID($gradeSubjectObject->ID,$subjectId,$classId);
 
-if(!$objectGrade) {header("Location: /main/permission/");}
+if(!$objectGrade) {header("Location: /main/permission/");exit;}
 
 ?>
 <script>

@@ -22,7 +22,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $TEACHERLISTADMIN = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->objectId);
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 

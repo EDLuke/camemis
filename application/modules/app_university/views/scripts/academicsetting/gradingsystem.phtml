@@ -31,7 +31,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $result = Zend_Registry::get('DB_ACCESS')->fetchRow("SELECT * FROM t_qualification_type ORDER BY NAME ASC LIMIT 0 ,1");
 
-if(!$result) {header("Location: /main/permission/");}
+if(!$result) {header("Location: /main/permission/");exit;}
 
 ?>
 <script>

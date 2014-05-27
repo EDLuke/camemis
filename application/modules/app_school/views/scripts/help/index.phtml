@@ -19,7 +19,7 @@ $SQL->where("TEXT_KEY = '" . $key . "'");
 //error_log($SQL->__toString());
 $facette = $DB_ACCESS->fetchRow($SQL);
 
-if(!$facette) {header("Location: /main/permission/");}
+if(!$facette) {header("Location: /main/permission/");exit;}
 
 switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
     case "ENGLISH":

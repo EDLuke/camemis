@@ -20,7 +20,7 @@ $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 $OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
 
 $gradeSchoolyearObject = AcademicDBAccess::findGradeFromId($this->academicId);
-if(!$gradeSchoolyearObject) {header("Location: /main/permission/");}
+if(!$gradeSchoolyearObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($gradeSchoolyearObject->SCHOOL_YEAR);
 

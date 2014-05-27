@@ -24,7 +24,7 @@ $monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $studentObject = StudentDBAccess::findStudentFromId($studentId);
 
-if(!$academicObject && !$studentObject) {header("Location: /main/permission/");}
+if(!$academicObject && !$studentObject) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

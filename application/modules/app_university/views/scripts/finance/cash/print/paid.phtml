@@ -19,7 +19,7 @@ $Id = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
 $incomeObject = IncomeDBAccess::findIncomeFromId($Id);
 
 if (!$incomeObject)
-    {header("Location: /main/permission/");}
+    {header("Location: /main/permission/");exit;}
 
 $studentObject = StudentDBAccess::findStudentFromId($incomeObject->STUDENT);
 $studentAcademic = StudentAcademicDBAccess::getCurrentStudentAcademic($incomeObject->STUDENT, false, false, false);

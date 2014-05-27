@@ -587,6 +587,9 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['PRE_REQUIREMENTS'] = $OBJECT_PARENT->PRE_REQUIREMENTS;
                     $SAVEDATA['SEMESTER1_WEIGHTING'] = $OBJECT_PARENT->SEMESTER1_WEIGHTING;
                     $SAVEDATA['SEMESTER2_WEIGHTING'] = $OBJECT_PARENT->SEMESTER2_WEIGHTING;
+                    $SAVEDATA['EVALUATION_OPTION'] = $OBJECT_PARENT->EVALUATION_OPTION;
+                    $SAVEDATA['GRADING_TYPE'] = $OBJECT_PARENT->GRADING_TYPE;
+
                     $name = $OBJECT_SCHOOL_YEAR->NAME . " (" . getTermNumberShort($OBJECT_PARENT->TERM_NUMBER) . ")";
                     $leaf = false;
                     $objecttype = "SCHOOLYEAR";

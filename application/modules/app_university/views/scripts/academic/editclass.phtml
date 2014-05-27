@@ -34,7 +34,7 @@ $INSTRUCTOR_GRID = new CamemisGrid("INSTRUCTOR", "LIST");
 $INSTRUCTOR_GRID->setLoadUrl('/academic/jsonload/');
 $INSTRUCTOR_GRID->setSaveUrl('/academic/jsonsave/');
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $schoolyearId = $this->facette->SCHOOL_YEAR;
 $CURRENT_SCHOOLYEAR = $DB_SCHOOLYEAR->isCurrentSchoolyear($schoolyearId);

@@ -28,7 +28,7 @@ $OBJECT_TREE->setURL('/subject/jsontree/');
 $DEFAULT_SUBJECT_TREE = new CamemisTree("SUBJECT", false);
 $DEFAULT_SUBJECT_TREE->setURL('/subject/jsontree/');
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

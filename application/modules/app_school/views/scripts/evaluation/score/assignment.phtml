@@ -25,7 +25,7 @@ $stdClass = new stdClass();
 $stdClass->setId = $setId;
 $facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
 
-if(!$facette) {header("Location: /main/permission/");}
+if(!$facette) {header("Location: /main/permission/");exit;}
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>

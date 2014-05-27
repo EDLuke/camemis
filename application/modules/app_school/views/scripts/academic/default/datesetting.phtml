@@ -25,7 +25,7 @@ $OBJECT_FORM = new CamemisForm("ACADEMIC");
 $OBJECT_FORM->setLoadUrl('/academic/jsonload/');
 $OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 

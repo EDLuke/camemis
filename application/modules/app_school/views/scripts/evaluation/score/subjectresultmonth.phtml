@@ -23,7 +23,9 @@ $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
+
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
 if($academicObject->EDUCATION_SYSTEM){
@@ -34,7 +36,7 @@ if($academicObject->EDUCATION_SYSTEM){
     $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
 } 
 
-if(!is_object($subjectObject)) {header("Location: /main/permission/");}
+if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
 $evaluation = new EvaluationSubjectAssessment();
 $evaluation->setAcademicId($academicObject->ID);
@@ -141,7 +143,7 @@ Ext.onReady(function() {
                     ,store: new Ext.data.JsonStore({
                         autoDestroy: true
                         ,fields: ['chooseValue', 'chooseDisplay']
-                        ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject->QUALIFICATION_TYPE)."]
+                        ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject)."]
                     })
                     ,valueField: 'chooseValue'
                     ,displayField: 'chooseDisplay'
@@ -204,7 +206,7 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addColumn("
-        header: '<b>".ASSESSMENT."</b>'
+        header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 130
         , align: 'right'
         , sortable: true
@@ -264,7 +266,7 @@ Ext.onReady(function() {
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
-                Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                ".CamemisPage::setRequestURI(false)."
             }
         }]);
     ");
@@ -333,18 +335,18 @@ Ext.onReady(function() {
     
     <?
     
-    if(!$academicObject->EVALUATION_OPTION){
-        $SHOW_DETAIL ="{";
-        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
-        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
-        $SHOW_DETAIL .=",disabled:false";
-        $SHOW_DETAIL .=",handler: function(){";
-        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaymonthsubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
-        $SHOW_DETAIL .="}";
-        $SHOW_DETAIL .="}";
-
-        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
-    }
+//    if(!$academicObject->EVALUATION_OPTION){
+//        $SHOW_DETAIL ="{";
+//        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
+//        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
+//        $SHOW_DETAIL .=",disabled:false";
+//        $SHOW_DETAIL .=",handler: function(){";
+//        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaymonthsubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
+//        $SHOW_DETAIL .="}";
+//        $SHOW_DETAIL .="}";
+//
+//        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+//    }
     
     $TEACHER_COMMENTS ="{";
     $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";

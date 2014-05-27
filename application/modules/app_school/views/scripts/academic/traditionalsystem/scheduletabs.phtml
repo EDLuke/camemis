@@ -18,7 +18,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $setParams = "";
 $setParams .= "&academicId=".$academicId."";

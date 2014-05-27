@@ -28,7 +28,7 @@ $TEACHERLISTADMIN = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RI
 $term = isset($_GET["term"])?addText($_GET["term"]):"ALL";
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->objectId);
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
  
 ?>
 <script>

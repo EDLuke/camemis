@@ -16,7 +16,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $classObject = AcademicDBAccess::findGradeFromId($this->classId);
 
-if(!$classObject) {header("Location: /main/permission/");}
+if(!$classObject) {header("Location: /main/permission/");exit;}
 
 //error_log($this->classId);
 

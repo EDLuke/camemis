@@ -30,7 +30,7 @@ switch($this->objectName){
     break;
 }
 
-if(!$OBJECT_NAME) {header("Location: /main/permission/");}
+if(!$OBJECT_NAME) {header("Location: /main/permission/");exit;}
 
 $BLOB = CAMEMISUploadDBAccess::getFileFromObjectId($this->objectId, 1,"".$OBJECT_NAME."");
 $ATTACHMENT_ITEMS = "[{".CamemisField::Uploadfield("uploaded_file_1", false, false, false)."}]";

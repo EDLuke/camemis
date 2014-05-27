@@ -17,7 +17,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $scheduleObject = ScheduleDBAccess::findScheduleFromGuId($this->scheduleId);
 
-if(!$scheduleObject) {header("Location: /main/permission/");}
+if(!$scheduleObject) {header("Location: /main/permission/");exit;}
 
 $SQL = Zend_Registry::get('DB_ACCESS')->select();
 $SQL->distinct();

@@ -947,7 +947,7 @@ class Utiles {
         {
             case "SUPERADMIN":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                     , "STUDENT" => "/main/dashboardenrolledstudent/"
                     , "STAFF" => "/chart/staffadministration/"
                     , "STUDENT_ATTENDANCE" => "/main/dashboardstudentattendance/"
@@ -960,7 +960,7 @@ class Utiles {
                 break;
             case "ADMIN":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                     , "STUDENT" => "/main/dashboardenrolledstudent/"
                     , "STAFF" => "/chart/staffadministration/"
                     , "STUDENT_ATTENDANCE" => "/main/dashboardstudentattendance/"
@@ -972,7 +972,7 @@ class Utiles {
                 break;
             case "STUDENT":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                     , "ATTENDANCE" => "/main/dashboardstudentattendance/"
                     , "DISCIPLINE" => "/main/dashboardstudentdiscipline/"
                     , "ASSESSMENT" => "/main/dashboardstudentassessment/"
@@ -981,7 +981,7 @@ class Utiles {
                 break;
             case "TEACHER":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                     , "ATTENDANCE" => "/main/dashboardstudentattendance/"
                     , "ASSESSMENT" => "/main/dashboardstudentassessment/"
                     , "NEWS" => "/main/teacherdashboardnews/"
@@ -989,7 +989,7 @@ class Utiles {
                 break;
             case "INSTRUCTOR":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                     , "STUDENT_ATTENDANCE" => "/main/dashboardstudentattendance/"
                     , "ASSESSMENT" => "/main/dashboardstudentassessment/"
                     , "NEWS" => "/main/teacherdashboardnews/"
@@ -997,7 +997,7 @@ class Utiles {
                 break;
             case "GUARDIAN":
                 $data = array(
-                    "USER_ONLINE_LOG" => "/chart/useronline/"
+                    "USER_ONLINE_LOG" => "/chart/stackeareachart/"
                 );
 
                 break;

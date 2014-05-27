@@ -10,7 +10,7 @@
 Class CamemisChart {
 
     public $datafield = array();
-    
+
     public function __get($name) {
         if (array_key_exists($name, $this->datafield)) {
             return $this->datafield[$name];
@@ -30,17 +30,17 @@ Class CamemisChart {
     }
 
     public function setChartDIV($value) {
-        return $this->chartDIV = $value;
+        return $this->chartDiv = $value;
     }
 
-    public function setChartSVG() {
+    public function setChartSVG($value) {
         return $this->chartSVG = $value;
     }
 
     public function setWidth($value) {
         return $this->width = $value;
     }
-    
+
     public function setHeight($value) {
         return $this->height = $value;
     }
@@ -57,53 +57,78 @@ Class CamemisChart {
         return $this->labelType = $value;
     }
 
-    public function drawChart() {
+    public function setStacked($value) {
+        return $this->stacked = $value;
+    }
+
+    public function setChartScript() {
 
         switch ($this->type) {
             case "STACKEAREACHART":
-                $chart = new stackeAreaChart($this->name, $this->dataSet, $this->width, $this->height, $this->chartDIV);
+                $chart = new stackeAreaChart($this->name, $this->dataSet, $this->width, $this->height, $this->chartDiv);
                 break;
             case "MULTIBARCHART":
-                $chart = new multiBarChart($this->name, $this->dataSet, $this->chartSVG, $this->showLegend);
+                $chart = new multiBarChart($this->name, $this->dataSet, $this->chartSVG, $this->showLegend, $this->stacked);
                 break;
             case "PICHCHART":
                 $chart = new picChart($this->name, $this->dataSet, $this->chartSVG, $this->displayType, $this->labelType);
-                break;
-            case "STACKEAREACHART":
-                $chart = new stackeAreaChart($this->name, $this->dataSet, $this->width, $this->height);
                 break;
         }
 
         print $chart->rendererChart();
     }
 
+    public function setChartDisplay() {
+
+        $js = "";
+
+        switch ($this->type) {
+            case "STACKEAREACHART":
+                $js .= "<div style=\"height:" . $this->height . "px;\">";
+                $js .= "<svg id=\"" . $this->chartDiv . "\"></svg>";
+                $js .= "</div>";
+                break;
+            case "MULTIBARCHART":
+                $js .="<div id=\"" . $this->chartSVG . "\" style=\"height:" . $this->height . "px; margin: 10px;\"><svg></svg></div>";
+                break;
+            case "PICHCHART":
+
+                break;
+        }
+
+        print $js;
+    }
+
 }
 
 Class stackeAreaChart {
 
-    function __construct($name, $dataSet, $width, $height, $chartDIV) {
+    function __construct($name, $dataSet, $width, $height, $chartDiv) {
 
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->width = $width;
         $this->height = $height;
-        $this->chartDIV = $chartDIV;
+        $this->chartDiv = $chartDiv;
     }
 
     public function rendererChart() {
 
         $js = "";
-        $js .= "<div style=\"height:".$this->height."px;\">";
-        $js .= "<svg id=\"" . $this->chartDIV . "\"></svg>";
-        $js .= "</div>";
-        
-        $js .= "<script>";
         $js .= "var colors = d3.scale.category20();";
         $js .= "keyColor = function(d, i) {return colors(d.key);};";
         $js .= "var chart_" . $this->name . ";";
         $js .= "nv.addGraph(function() {";
         $js .= "chart_" . $this->name . " = nv.models.stackedAreaChart()";
-        $js .= ".height(".$this->height.")";
+
+        if ($this->height) {
+            $js .= ".height(" . $this->height . ")";
+        }
+
+        if ($this->width) {
+            $js .= ".width(" . $this->width . ")";
+        }
+
         $js .= ".showLegend(false)";
         $js .= ".useInteractiveGuideline(true)";
         $js .= ".x(function(d) { return d[0]; })";
@@ -117,7 +142,7 @@ Class stackeAreaChart {
         $js .= "chart_" . $this->name . ".yAxis";
         //$js .= ".tickFormat(d3.format(',.2f'));";
         $js .= ".tickFormat(function(d){return d;});";
-        $js .= "d3.select('#" . $this->chartDIV . "')";
+        $js .= "d3.select('#" . $this->chartDiv . "')";
         $js .= ".datum(" . $this->dataSet . ")";
         $js .= ".transition().duration(0)";
         $js .= ".call(chart_" . $this->name . ");";
@@ -125,7 +150,7 @@ Class stackeAreaChart {
         $js .= "chart_" . $this->name . ".dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });";
         $js .= "return chart_" . $this->name . ";";
         $js .= "});";
-        $js .= "</script>";
+
         return $js;
     }
 
@@ -133,42 +158,44 @@ Class stackeAreaChart {
 
 Class multiBarChart {
 
-    function __construct($dataSet, $chartSVG, $showLegend) {
+    function __construct($name, $dataSet, $chartSVG, $showLegend, $stacked) {
 
+        $this->name = $name;
         $this->dataSet = $dataSet;
-        $this->width = $width;
-        $this->height = $height;
+        $this->chartSVG = $chartSVG;
+        $this->showLegend = $showLegend ? "true" : "false";
+        $this->stacked = $stacked ? "true" : "false";
     }
 
     public function rendererChart() {
 
-        $js = "";
-        $js .= "var chart_" . $this->name . ";";
-        $js .= "nv.addGraph(function() {";
-        $js .= "chart_" . $this->name . " = nv.models.multiBarChart()";
-        $js .= ".showLegend(" . $this->showLegen . ")";
-        $js .= ".showXAxis(true)";
-        $js .= ".barColor(d3.scale.category20().range())";
-        $js .= ".margin({bottom: 50})";
-        $js .= ".transitionDuration(300)";
-        $js .= ".delay(0)";
-        $js .= ".rotateLabels(0)";
-        $js .= ".chart_" . $this->name . "(0.1);";
-        $js .= "chart_" . $this->name . ".multibar";
-        $js .= ".hideable(true);";
-        $js .= "chart_" . $this->name . ".reduceXTicks(false).staggerLabels(true);";
-        $js .= "chart_" . $this->name . ".xAxis";
-        $js .= ".showMaxMin(false)";
-        $js .= ".tickFormat(function(d){ return d;});";
-        $js .= "chart_" . $this->name . ".yAxis";
-        $js .= ".tickFormat(function(d){ return d;});";
-        $js .= "d3.select('#" . $this->chartSVG . " svg')";
-        $js .= ".datum(" . $this->dataSet . ")";
-        $js .= ".call(chart_" . $this->name . ");";
-        $js .= "nv.utils.windowResize(chart_" . $this->name . ".update);";
-        $js .= "chart_" . $this->name . ".dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });";
-        $js .= "return chart_" . $this->name . ";";
-        $js .= "});";
+        $js = "var $this->name;
+            nv.addGraph(function() {
+            $this->name = nv.models.multiBarChart()
+            .showLegend(" . $this->showLegend . ")//true,false
+            .stacked(" . $this->stacked . ")//true,false
+            .showXAxis(true)//true,false
+            .barColor(d3.scale.category20().range())
+            .margin({bottom: 50})
+            .transitionDuration(300)
+            .delay(0)
+            .rotateLabels(0)
+            .groupSpacing(0.1);
+            $this->name.multibar
+            .hideable(true);
+            $this->name.reduceXTicks(false).staggerLabels(true);
+            $this->name.xAxis
+            .showMaxMin(false)
+            .tickFormat(function(d){ return d;});
+            $this->name.yAxis
+            .tickFormat(function(d){ return d;});
+            d3.select('#" . $this->chartSVG . " svg')
+            .datum(" . $this->dataSet . ")
+            .call($this->name);
+            nv.utils.windowResize($this->name.update);
+            $this->name.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return $this->name;
+        });";
 
         return $js;
     }

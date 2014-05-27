@@ -27,7 +27,7 @@ $ASSIGNED_GRID->setLoadUrl("/examination/jsonload/");
 $ASSIGNED_GRID->setSaveUrl("/examination/jsonsave/");
 $OBJECT_FORM = new CamemisForm("EXAM_SCORE");
 
-if(!$this->facette) {header("Location: /main/permission/");}
+if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

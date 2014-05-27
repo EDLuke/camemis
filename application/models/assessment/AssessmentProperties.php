@@ -289,7 +289,7 @@ abstract class AssessmentProperties {
     }
 
     public function displayRank($average, $scoreList) {
-        return is_int($average) ? getScoreRank($scoreList, $average) : "---";
+        return getScoreRank($scoreList, $average);
     }
 
     public function getSettingQualificationType() {

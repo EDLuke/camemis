@@ -17,7 +17,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");}
+if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
@@ -85,7 +85,7 @@ $setParams .= "&academicId=".$this->academicId."";
                 $PENEL_ITEMS[] = $SECOND_TERM_RESULT;
 
                 $setParamsThird = $setParams;
-                $setParamsThird .= "&term=THIRD_RESULT";
+                $setParamsThird .= "&term=THIRD_TERM";
                 $THIRD_TERM_RESULT = "{
                     title: '".THIRD_TERM_RESULT."'
                     ,layout: 'fit'
