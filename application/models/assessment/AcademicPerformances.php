@@ -386,6 +386,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $AVERAGE = $this->getAverageYearStudentAcademicPerformance($stdClass);
                 $RANK = $this->displayRank($AVERAGE, $scoreList);
+
                 $data[$i]["RANK"] = $RANK ? $RANK : "---";
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["ASSESSMENT"] = "----";
