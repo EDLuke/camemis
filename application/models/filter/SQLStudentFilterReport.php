@@ -35,7 +35,7 @@ class SQLStudentFilterReport {
             $SQL->where("B.GRADE_ID = '" . $stdClass->gradeId . "'");
         }
 
-        if (isset($stdClass->studentId))
+        if (isset($stdClass->personId))
             $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
 
         if (isset($stdClass->classId))
@@ -66,7 +66,7 @@ class SQLStudentFilterReport {
             $SQL->where("B.GRADE = ?",$stdClass->gradeId);
         }
 
-        if (isset($stdClass->studentId))
+        if (isset($stdClass->personId))
             $SQL->where("A.STUDENT_ID = ?",$stdClass->studentId);
 
         if (isset($stdClass->classId))
@@ -97,7 +97,7 @@ class SQLStudentFilterReport {
             $SQL->where("C.GRADE = ?",$stdClass->gradeId);
         }
 
-        if (isset($stdClass->studentId))
+        if (isset($stdClass->personId))
             $SQL->where("A.STUDENT_ID = ?",$stdClass->studentId);
 
         if (isset($stdClass->classId))

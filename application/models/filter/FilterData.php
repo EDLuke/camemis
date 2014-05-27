@@ -84,7 +84,7 @@ class FilterData extends FilterProperties {
                         break;
                     case 'CLASS':
                         $data[$i]["FIRST_CULUMN"] = self::getFullName($firstCulum->FIRSTNAME, $firstCulum->LASTNAME);
-                        $stdClass->studentId = $firstCulum->ID;
+                        $stdClass->personId = $firstCulum->ID;
                         break;
                 }
                 $stdClass->campusId = $this->campusId;
