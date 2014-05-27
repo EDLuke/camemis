@@ -1,26 +1,41 @@
 <?
+
 ///////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
 // Date: 18.07.2009
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////    
+///////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
-require_once 'include/Common.inc.php'; 
+require_once 'include/Common.inc.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisBar.php';
 require_once setUserLoacalization();
 
-$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+//require_once 'models/assessment/StudentAssessmentResults.php';
+//
+//$STUDNET_ASSESSMENT = new StudentAssessmentResults();
+//
+////$this->studentId = "AwHvzXTKtxGPD5LnsFW792a285clD8YD9RR";        
+//$setParams["subjectId"] = "1025";
+//$setParams["classId"] = "40";
+//$setParams["assignmentId"] = "375";
+//$setParams["term"] = "FIRST_SEMESTER";
+//$setParams["date"] = "2013-09-04";
+//$STUDNET_ASSESSMENT->jsonListResultStudentsSubjectAssignment($setParams);
+//
+//exit;
 
 Utiles::setUserPublicRoot();
 Utiles::dbClean();
 
-$schoolName = (Zend_Registry::get('SCHOOL')->NAME)?Zend_Registry::get('SCHOOL')->NAME:"";
-$objectId = Zend_Registry::get('USER')->ID;
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $OBJECT_TREE = new CamemisTree("MAIN", "LIST");
 $OBJECT_TREE->setURL('/staff/jsontree/');
+
+$schoolName = (Zend_Registry::get('SCHOOL')->NAME)?Zend_Registry::get('SCHOOL')->NAME:"";
+$objectId = Zend_Registry::get('USER')->ID;
 
 $HTML = "";
     $HTML .= "<div id=\"initUserNav\" class=\"x-hidden\" style=\"background:#EEE;\">";
@@ -88,30 +103,30 @@ $HTML .= "</div>";
 
 ?>
 <script>
-    
+
     Ext.onReady(function() {
-        
+
         var updateClock = function(){
             Ext.getCmp('clock').setText('<b><?=showCurrentDBDate();?> '+new Date().format('g:i:s A')+'</b>');
-        }
+        };
         var clock = new Ext.Toolbar.TextItem({id:'clock',text: '<b><?=showCurrentDBDate();?> 00:00:00 AM</b>'});
-        
+
         var task = {
             run: updateClock,//the method to run...
             interval: 1000 //every second
-        }
+        };
         var runner = new Ext.util.TaskRunner();
         runner.start(task);
-        
+
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
         if (get_cookie('tokenId')) var tokenId = get_cookie('tokenId');
         <?
         $CAMEMIS_PAGE_OBJECT->setAddTab();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
-        
+
         //@veansa
         //user online
-        $USER_ONLINE="";  
+        $USER_ONLINE="";
         $USER_ONLINE.="var userOnline = {";
              $USER_ONLINE.="run: function(){";
                 $USER_ONLINE.="Ext.Ajax.request({";
@@ -120,14 +135,14 @@ $HTML .= "</div>";
                 $USER_ONLINE.=",params:{cmd: 'jsonCountUsersOnline'}";
                     $USER_ONLINE.=",success: function(result, options) {";
                         $USER_ONLINE.="jsondata = Ext.util.JSON.decode(result.responseText);";
-                        $USER_ONLINE.="Ext.fly('Iduseronline').dom.innerHTML='('+jsondata.totalCount+')';";   
+                        $USER_ONLINE.="Ext.fly('Iduseronline').dom.innerHTML='('+jsondata.totalCount+')';";
                     $USER_ONLINE.="} ";
                 $USER_ONLINE.="});";
             $USER_ONLINE.="}";
             $USER_ONLINE.=",interval: 10000";
         $USER_ONLINE.="};";
         $USER_ONLINE.="Ext.TaskMgr.start(userOnline);";
-        
+
         $INBOX_MESSAGE="";
         $INBOX_MESSAGE.="var inboxMessage = {";
             $INBOX_MESSAGE.="run: function(){";
@@ -149,7 +164,7 @@ $HTML .= "</div>";
                 $INBOX_MESSAGE.=",interval: 20000";
         $INBOX_MESSAGE.="};";
         $INBOX_MESSAGE.="Ext.TaskMgr.start(inboxMessage);";
-        
+
         $BULLETIN="";
         $BULLETIN.="var bulletin = {";
             $BULLETIN.="run: function(){";
@@ -173,11 +188,10 @@ $HTML .= "</div>";
         $BULLETIN.="};";
         $BULLETIN.="Ext.TaskMgr.start(bulletin);";
         ///
-        
+
         $USER_TAB = "";
         $USER_TAB .= "var tabs =  new Ext.TabPanel({";
             $USER_TAB .= "autoTabs:true";
-            #$USER_TAB .= ",border:false";
             $USER_TAB .= ",plain:true";
             $USER_TAB .= ",tabPosition: 'top'";
             $USER_TAB .= ",enableTabScroll:true";
@@ -198,25 +212,25 @@ $HTML .= "</div>";
         $USER_TAB .= "});";
 
         $USER_TAB_LOGIN = $USER_TAB;
-        
+
         echo $USER_TAB_LOGIN;
-        
+
         $js = "";
         $js .= "var btIdBulletinBoard = Ext.get('IdBulletinBoard');";
         $js .= "btIdBulletinBoard.on('click', function(){";
             $js .= "addTab('BULLETIN_BOARD','".BULLETIN_BOARD."','/bulletin/profilebulletin/');";
         $js .= "});";
-        
+
         $js .= "var btIdCommunication = Ext.get('IdCommunication');";
         $js .= "btIdCommunication.on('click', function(){";
             $js .= "addTab('COMMUNICATION','".COMMUNICATION."','/communication/');";
         $js .= "});";
-        
+
         $js .= "var btIdMyAccount = Ext.get('IdMyAccount');";
         $js .= "btIdMyAccount.on('click', function(){";
             $js .= "addTab('MY_ACCOUNT','".MY_ACCOUNT."','/finance/staffaccounthistory/?objectId=".$objectId."');";
         $js .= "});";
-        
+
         $js .= "var btIdIdAbsence = Ext.get('IdAbsence');";
         $js .= "btIdIdAbsence.on('click', function(){";
             $js .= "addTab('ATTENDANCE','".ATTENDANCE."','/attendance/bystaff/?objectId=".$objectId."');";
@@ -224,7 +238,7 @@ $HTML .= "</div>";
         if(UserAuth::getAddedUserRole() || UserAuth::getUserType()=='SUPERADMIN'|| UserAuth::getUserType()=='ADMIN'){
         $js .= "var btIdUserOnline = Ext.get('IdUserOnline');";
         $js .= "btIdUserOnline.on('click', function(){";
-            $js .= "addTab('USER_ONLINE','".USER_ONLINE."','/user/stackeareachart/');";
+            $js .= "addTab('USER_ONLINE','".USER_ONLINE."','/user/useronline/');";
         $js .= "});";
         }
         $js .= "var btIdPersonalInformation = Ext.get('IdPersonalInformation');";
@@ -232,7 +246,7 @@ $HTML .= "</div>";
             $js .= "addTab('PERSONAL_INFORMATION','".MY_PROFILE."','/staff/staffmonitor/?objectId=".$objectId."');";
         $js .= "});";
         echo $js;
-        
+
         $eventJs = "";
         $eventJs .= "function showResult(btn){";
             $eventJs .= "if (btn == \"yes\"){";
@@ -248,7 +262,7 @@ $HTML .= "</div>";
         $eventJs .= "};";
         echo $eventJs;
         ?>
-        
+
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
@@ -291,7 +305,7 @@ $HTML .= "</div>";
                             ,layout: 'fit'
                             ,margins: '0 3 3 3'
                             ,border:false
-                            ,bodyStyle: 'padding-top: 5px;background:#dee7f6;'
+                            ,bodyStyle: 'padding-top:5px;background:#dee7f6;'
                             ,items: [{
                                 border: true
                                 ,bodyStyle: 'background:#dee7f6;'
@@ -313,21 +327,22 @@ $HTML .= "</div>";
                 }]
             }]
         });
-        //Ext.getCmp('MAIN_WEST_ID').toggleCollapse();
         <?
         if(UserAuth::getUserLoginActionStatus()){
             echo "openEasyWindow('".CHANGE_YOUR_PASSWORD."', '/staff/changepassword/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$objectId."&refresh=main")."',500,300);";
         }
+        //@veasna
         if (!Utiles::isLocalServer()){
-            echo $USER_ONLINE; 
+            echo $USER_ONLINE;
             echo $INBOX_MESSAGE;
             echo $BULLETIN;
         }
+        //
         ?>
     });
 </script>
 <style>
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { 
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
     margin:0;
     padding:0;
 }
@@ -339,7 +354,7 @@ table {
     border-collapse:collapse;
     border-spacing:0;
 }
-fieldset,img { 
+fieldset,img {
     border:0;
 }
 input{
@@ -479,10 +494,9 @@ h1 span{
     padding: 0;
     margin: 0px auto;
     width: 220px;
-    
+
 }
 .ca-menu li{
-    font-weight: bold;
     width: 235px;
     height: 60px;
     overflow: hidden;
@@ -628,7 +642,7 @@ h1 span{
     -moz-transition: all 300ms linear;
     -o-transition: all 300ms linear;
     -ms-transition: all 300ms linear;
-    transition: all 300ms linear; 
+    transition: all 300ms linear;
 }
 .ca-menu li:hover{
     border-color: #FFF;
@@ -693,6 +707,6 @@ h1 span{
     </div>
 </div>
 <?
-echo $HTML;
+echo $HTML;   
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>
