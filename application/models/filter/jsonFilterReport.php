@@ -4,9 +4,9 @@
 // @Sor Veasna
 // Date: 21.05.2014
 ////////////////////////////////////////////////////////////////////////////////
-require_once 'models/filter/StudentFilterData.php';
+require_once 'models/filter/FilterData.php';
 
-class jsonStudentFilterReport extends StudentFilterData {
+class jsonFilterReport extends FilterData {
 
     public function __construct() {
         
@@ -60,6 +60,23 @@ class jsonStudentFilterReport extends StudentFilterData {
             , "totalCount" => sizeof($data)
             , "rows" => $a
         );
+    }
+    
+    public function getJsonListAssignedTeacher($params){
+        $this->setParams($params);
+        $data = $this->listAssignedTeacher();
+
+        $a = array();
+        for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $a
+        );    
     }
 
 }
