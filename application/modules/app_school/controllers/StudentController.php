@@ -81,7 +81,7 @@ class StudentController extends Zend_Controller_Action {
         $this->noSudentComboLsit = null;
 
         $this->objectData = array();
-        $this->OBJECT = null;
+        $this->OBJECT = null;  
         if ($this->_getParam('objectId')) {
 
             $this->objectId = $this->_getParam('objectId');
@@ -139,8 +139,8 @@ class StudentController extends Zend_Controller_Action {
 
         if ($this->_getParam('campusId')) {
             $this->campusId = $this->_getParam('campusId');
-        }
-
+        }  
+        
         $this->facette = StudentImportDBAccess::checkAllImportInTemp();
     }
 
@@ -400,20 +400,11 @@ class StudentController extends Zend_Controller_Action {
         $this->view->objectId = $this->objectId;
     }
 
-    public function registrationAction() {
+    public function registrationAction() {  
+        
         UserAuth::actionPermint($this->_request, "STUDENT_REGISTRATION_WIZARD");
         $this->view->gradeId = $this->gradeId;
-
-        $this->db_grade = AcademicDBAccess::getInstance();
-        $gradeObject = $this->db_grade->getGradeDataFromId($this->gradeId);
-
-        if ($gradeObject) {
-
-            $this->view->gradeObject = $gradeObject;
-        } else {
-            $this->view->gradeObject = null;
-        }
-
+        
         $this->view->URL_STUDENT_REGISTRATION = $this->UTILES->buildURL(
                 'student/registration', array(
             "gradeId" => $this->gradeId
