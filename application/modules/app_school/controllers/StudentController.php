@@ -401,6 +401,7 @@ class StudentController extends Zend_Controller_Action {
     }
 
     public function registrationAction() {  
+        
         UserAuth::actionPermint($this->_request, "STUDENT_REGISTRATION_WIZARD");
         $this->view->gradeId = $this->gradeId;
         
