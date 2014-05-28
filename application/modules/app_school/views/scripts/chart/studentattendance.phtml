@@ -41,8 +41,8 @@ $chart->setHeight(230);
 <link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 <body>
     <script src="/public/nvd3/nvd3-camemis.php"></script>
-    <div><? #= $chart->setChartDisplay();      ?></div>
-    <script><? #= $chart->setChartScript();      ?></script>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
 
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     
@@ -83,41 +83,41 @@ $chart->setHeight(230);
         </style>
         <script>
             
-        function extract(a) {
-            return function(d) {
-                var c = [];
-                for (var i = 0, n = a.length; i < n; i++) c.push(d[a[i]]);
-                return c;
-            };
-        }
-
-        rows = [
-            {"Grade":"Value11", "Type1":"Value12", "Type2":"Value13"}
-            ,{"Grade":"Value21", "Type1":"Value22","Type2":"Value23"}
-            ,{"Grade":"Value31", "Type1":"Value32", "Type2":"Value33"}
-        ];
-        columnNames = ["Grade", "Type1", "Type2"];
-
-        table = d3.select("#display");
-
-        //Create a header using the column names
-        table.append("thead").append("tr")
-        .selectAll("th").data(columnNames)
-        .enter().append("th")
-        .text(function(d){return d;});
-
-        //Create one row for each data object
-        rowSelection= table.append("tbody")
-        .selectAll("tr").data(rows)
-        .enter().append("tr");
-
-        //create a table cell, within each row, for each
-        //element in the column names array
-        //
-        cellSelection = rowSelection.selectAll("td")
-        .data(extract(columnNames))
-        .enter().append("td")
-        .html(function(d) {return (d==null)? "N/A": d});
+//        function extract(a) {
+//            return function(d) {
+//                var c = [];
+//                for (var i = 0, n = a.length; i < n; i++) c.push(d[a[i]]);
+//                return c;
+//            };
+//        }
+//
+//        rows = [
+//            {"Grade":"Value11", "Type1":"Value12", "Type2":"Value13"}
+//            ,{"Grade":"Value21", "Type1":"Value22","Type2":"Value23"}
+//            ,{"Grade":"Value31", "Type1":"Value32", "Type2":"Value33"}
+//        ];
+//        columnNames = ["Grade", "Type1", "Type2"];
+//
+//        table = d3.select("#display");
+//
+//        //Create a header using the column names
+//        table.append("thead").append("tr")
+//        .selectAll("th").data(columnNames)
+//        .enter().append("th")
+//        .text(function(d){return d;});
+//
+//        //Create one row for each data object
+//        rowSelection= table.append("tbody")
+//        .selectAll("tr").data(rows)
+//        .enter().append("tr");
+//
+//        //create a table cell, within each row, for each
+//        //element in the column names array
+//        //
+//        cellSelection = rowSelection.selectAll("td")
+//        .data(extract(columnNames))
+//        .enter().append("td")
+//        .html(function(d) {return (d==null)? "N/A": d});
 
         </script>
 </body>
