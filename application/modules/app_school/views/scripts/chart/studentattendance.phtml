@@ -1,18 +1,17 @@
 <?
-
 require_once 'clients/CamemisChart.php';
 require_once 'models/statistic/StudentStatisticsDBAccess.php';
 
-$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
-$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
-$campusId = isset($_GET["campusId"])?addText($_GET["campusId"]):"";
-$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
-$schoolyearId = isset($_GET["schoolyearId"])? addText($_GET["schoolyearId"]):"";
-$target =  isset($_GET["target"])?addText($_GET["target"]):"";
-$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
+$objectType = isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
+$academicId = isset($_GET["academicId"]) ? (int) $_GET["academicId"] : "";
+$campusId = isset($_GET["campusId"]) ? addText($_GET["campusId"]) : "";
+$gradeId = isset($_GET["gradeId"]) ? addText($_GET["gradeId"]) : "";
+$schoolyearId = isset($_GET["schoolyearId"]) ? addText($_GET["schoolyearId"]) : "";
+$target = isset($_GET["target"]) ? addText($_GET["target"]) : "";
+$studentId = isset($_GET["studentId"]) ? addText($_GET["studentId"]) : "";
 
 $dataSet = StudentStatisticsDBAccess::getDataSetStudentAttendance("WEEKLY", $studentId, $academicId, $target);
-switch($objectType){
+switch ($objectType) {
     case "WEEKLY":
         $dataSet = StudentStatisticsDBAccess::getDataSetStudentAttendance("WEEKLY", $studentId, $academicId, $target);
         break;
@@ -22,11 +21,11 @@ switch($objectType){
     case "YEARLY":
         $dataSet = StudentStatisticsDBAccess::getDataSetStudentAttendance("YEARLY", $studentId, $academicId, $target);
     case "CAMPUS":
-        $params = array('campusId'=>$campusId,'schoolyearId'=>$schoolyearId);
+        $params = array('campusId' => $campusId, 'schoolyearId' => $schoolyearId);
         $dataSet = StudentStatisticsDBAccess::getDataAttendance($params);
         break;
     case "GRADE":
-        $params = array('campusId'=>$campusId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId);
+        $params = array('campusId' => $campusId, 'gradeId' => $gradeId, 'schoolyearId' => $schoolyearId);
         $dataSet = StudentStatisticsDBAccess::getDataAttendance($params);
         break;
 }
@@ -38,10 +37,88 @@ $chart->setHeight(230);
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
 <link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 <body>
     <script src="/public/nvd3/nvd3-camemis.php"></script>
-    <div><?= $chart->setChartDisplay(); ?></div>
-    <script><?= $chart->setChartScript(); ?></script>
+    <div><? #= $chart->setChartDisplay();      ?></div>
+    <script><? #= $chart->setChartScript();      ?></script>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <div><div id="mydiv" style='margin-bottom:5px;'></div>
+        
+        <div id="display"></div>
+
+        <style>
+            body {
+                font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+            }
+            
+            th {
+                padding: 5px; /* NOTE: th padding must be set explicitly in order to support IE */
+                text-align: left;
+                text-transform: uppercase;
+                line-height: 2em;
+                color: #FFF;
+                background-color: #555;
+                width:150px;
+                border:solid 1px;
+            }
+
+            tbody td {
+                padding: 5px 5px 20px 5px;
+                line-height: 18px;
+            }
+
+            tbody tr:nth-child(2n) {
+                background-color: #F7F7F7;
+                opacity: 0.8;
+            }
+
+            tbody tr:hover {
+                background-color: #EEEEEE;
+            }
+            
+        </style>
+        <script>
+            
+        function extract(a) {
+            return function(d) {
+                var c = [];
+                for (var i = 0, n = a.length; i < n; i++) c.push(d[a[i]]);
+                return c;
+            };
+        }
+
+        rows = [
+            {"Grade":"Value11", "Type1":"Value12", "Type2":"Value13"}
+            ,{"Grade":"Value21", "Type1":"Value22","Type2":"Value23"}
+            ,{"Grade":"Value31", "Type1":"Value32", "Type2":"Value33"}
+        ];
+        columnNames = ["Grade", "Type1", "Type2"];
+
+        table = d3.select("#display");
+
+        //Create a header using the column names
+        table.append("thead").append("tr")
+        .selectAll("th").data(columnNames)
+        .enter().append("th")
+        .text(function(d){return d;});
+
+        //Create one row for each data object
+        rowSelection= table.append("tbody")
+        .selectAll("tr").data(rows)
+        .enter().append("tr");
+
+        //create a table cell, within each row, for each
+        //element in the column names array
+        //
+        cellSelection = rowSelection.selectAll("td")
+        .data(extract(columnNames))
+        .enter().append("td")
+        .html(function(d) {return (d==null)? "N/A": d});
+
+        </script>
 </body>
 </html>
