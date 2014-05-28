@@ -19,11 +19,14 @@ $EDIT_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT")?"fals
 $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")?"false":"true";
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
 $ADD_STUDENTS_GRID = new CamemisGrid("TRAINING", "SEARCH");
 $ADD_STUDENTS_GRID->setLoadUrl("/training/jsonload/");
 $ADD_STUDENTS_GRID->setSaveUrl("/training/jsonsave/");
+
 $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl("/training/jsonload/");
+$OBJECT_GRID->setSaveUrl("/training/jsonsave/");
 
 function generatedPassword($parentId){
     $js = "";
@@ -61,7 +64,7 @@ function deleteStudent($OBJECT_GRID, $trainingId){
     $js .= ",fn: function(btn, text){
         if (btn == 'yes'){
             Ext.Ajax.request({
-                url: '/training/jsonsave/'
+                url: '/training/jsonsave'
                 ,method: 'POST'
                 ,params: {cmd: 'actionRemoveStudentTraining',chooseId:chooseId, trainingId:'".$trainingId."'}
                 ,success: function(response, options) {
