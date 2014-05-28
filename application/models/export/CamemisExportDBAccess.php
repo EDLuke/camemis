@@ -17,6 +17,7 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/Studen
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAttendanceDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php"; //@Visal
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php"; //@Visal
+require_once "models/filter/FilterData.php"; //@Visal
 
 error_reporting(E_ALL);
 
@@ -28,6 +29,7 @@ abstract class CamemisExportDBAccess {
         $this->EXCEL = new PHPExcel();
         $this->WRITER = PHPExcel_IOFactory::createWriter($this->EXCEL, 'Excel5');
         $this->DB_STUDENT_SEARCH = new StudentSearchDBAccess();
+        $this->DB_FILTER_STUDENT = new FilterData();//@Visal
         $this->DB_STUDENT_PRESCHOOL = StudentPreschoolDBAccess::getInstance(); //@Visal
         $this->DB_STUDENT_ATTENDANCE = StudentAttendanceDBAccess::getInstance(); //@veasna
         $this->DB_STUDENT_STATUS = StudentStatusDBAccess::getInstance(); //@Visal

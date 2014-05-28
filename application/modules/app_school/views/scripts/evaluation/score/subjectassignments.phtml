@@ -39,7 +39,7 @@ if($academicObject->EDUCATION_SYSTEM){
 
 $CHECK_IN_SCHEDULE = SubjectDBAccess::checkAcademicSubjectSchedule($subjectId, $academicId);
 
-if(!$CHECK_IN_SCHEDULE || !property_exists($subjectObject,'SUBJECT_ID')) {
+if(!$CHECK_IN_SCHEDULE) {
     header("Location: /main/permission/");exit;
 }
 

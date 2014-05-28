@@ -35,8 +35,8 @@ class SQLStudentFilterReport {
             $SQL->where("B.GRADE_ID = '" . $stdClass->gradeId . "'");
         }
 
-        if (isset($stdClass->studentId))
-            $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+        if (isset($stdClass->personId))
+            $SQL->where("A.STUDENT_ID = '" . $stdClass->personId . "'");
 
         if (isset($stdClass->classId))
             $SQL->where("A.CLASS_ID = '" . $stdClass->classId . "'");
@@ -59,24 +59,24 @@ class SQLStudentFilterReport {
         $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'A.STUDENT_ID=B.STUDENT', array());
 
         if (isset($stdClass->campusId)) {
-            $SQL->where("B.CAMPUS = '" . $stdClass->campusId . "'");
+            $SQL->where("B.CAMPUS = ?",$stdClass->campusId);
         }
 
         if (isset($stdClass->gradeId)) {
-            $SQL->where("B.GRADE = '" . $stdClass->gradeId . "'");
+            $SQL->where("B.GRADE = ?",$stdClass->gradeId);
         }
 
-        if (isset($stdClass->studentId))
-            $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+        if (isset($stdClass->personId))
+            $SQL->where("A.STUDENT_ID = ?",$stdClass->personId);
 
         if (isset($stdClass->classId))
-            $SQL->where("B.CLASS = '" . $stdClass->classId . "'");
+            $SQL->where("B.CLASS = ?",$stdClass->classId);
 
         if (isset($stdClass->schoolyearId))
-            $SQL->where("B.SCHOOL_YEAR = '" . $stdClass->schoolyearId . "'");
+            $SQL->where("B.SCHOOL_YEAR =?",$stdClass->schoolyearId);
 
         if (isset($stdClass->disciplineType))
-            $SQL->where("A.DISCIPLINE_TYPE = '" . $stdClass->disciplineType . "'");
+            $SQL->where("A.DISCIPLINE_TYPE =?",$stdClass->disciplineType);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -90,24 +90,24 @@ class SQLStudentFilterReport {
         $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'A.STUDENT_ID=C.STUDENT', array());
 
         if (isset($stdClass->campusId)) {
-            $SQL->where("C.CAMPUS = '" . $stdClass->campusId . "'");
+            $SQL->where("C.CAMPUS = ?",$stdClass->campusId);
         }
 
         if (isset($stdClass->gradeId)) {
-            $SQL->where("C.GRADE = '" . $stdClass->gradeId . "'");
+            $SQL->where("C.GRADE = ?",$stdClass->gradeId);
         }
 
-        if (isset($stdClass->studentId))
-            $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+        if (isset($stdClass->personId))
+            $SQL->where("A.STUDENT_ID = ?",$stdClass->personId);
 
         if (isset($stdClass->classId))
-            $SQL->where("C.CLASS = '" . $stdClass->classId . "'");
+            $SQL->where("C.CLASS = ?",$stdClass->classId);
 
         if (isset($stdClass->schoolyearId))
-            $SQL->where("C.SCHOOL_YEAR = '" . $stdClass->schoolyearId . "'");
+            $SQL->where("C.SCHOOL_YEAR = ?",$stdClass->schoolyearId);
 
         if (isset($stdClass->advisoryType))
-            $SQL->where("B.ADVISORY_TYPE = '" . $stdClass->advisoryType . "'");
+            $SQL->where("B.ADVISORY_TYPE = ?",$stdClass->advisoryType);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -121,7 +121,7 @@ class SQLStudentFilterReport {
     public static function getDisciplineType() {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_type", array('*'));
-        $SQL->where("OBJECT_TYPE = 'DISCIPLINE_TYPE_STUDENT'");
+        $SQL->where("OBJECT_TYPE =?","DISCIPLINE_TYPE_STUDENT");
         $SQL->where("PARENT <> 0");
         $SQL->order("ID ASC");
         //error_log($SQL->__toString());
@@ -132,7 +132,7 @@ class SQLStudentFilterReport {
     public static function getAdvisoryType() {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_camemis_type", array('*'));
-        $SQL->where("OBJECT_TYPE = 'ADVISORY_TYPE'");
+        $SQL->where("OBJECT_TYPE =?","ADVISORY_TYPE");
         $SQL->where("PARENT <> 0");
         $SQL->order("ID ASC");
         //error_log($SQL->__toString());

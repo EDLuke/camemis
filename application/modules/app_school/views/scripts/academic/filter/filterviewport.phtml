@@ -11,6 +11,7 @@ require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once 'models/filter/SQLStudentFilterReport.php';
+require_once 'models/filter/SQLTeacherFilterReport.php';
 require_once setUserLoacalization();
 
 abstract class filterviewport{
@@ -61,7 +62,18 @@ abstract class filterviewport{
                 $this->OBJECT_GRID->setLoadUrl('/advisory/jsonload');
                 $this->OBJECT_GRID->setSaveUrl('/advisory/jsonsave/');
                 break;
-                
+            case 'TEACHER_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/staff/jsonload/');
+                $this->OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
+                break;
+            case 'TEACHER_ATTENDANCE_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/attendance/jsonload');
+                $this->OBJECT_GRID->setSaveUrl('/attendance/jsonsave/'); 
+                break;
+            case 'TEACHER_DISCIPLINE_FILTER':
+                $this->OBJECT_GRID->setLoadUrl('/discipline/jsonload');
+                $this->OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+                break;
         }
         $this->columndata = Utiles::getGridColumnData($this->OBJECT_GRID->getObjectId());     
         $this->urlEncryp = new URLEncryption();
@@ -97,6 +109,17 @@ abstract class filterviewport{
             case 'STUDENT_ADVISORY_FILTER':
                 $objectCAMEMISType = SQLStudentFilterReport::getAdvisoryType(); 
                 $this->Prefix = "ADVISORY";
+                break;
+                
+             case 'TEACHER_ATTENDANCE_FILTER':
+                $stdClass['personType']="STAFF";
+                $stdClass['status']=1;
+                $objectCAMEMISType = SQLTeacherFilterReport::getAttendanceType((object)$stdClass); 
+                $this->Prefix = "ATTENDANCE";
+                break;
+            case 'TEACHER_DISCIPLINE_FILTER':
+                $objectCAMEMISType = SQLTeacherFilterReport::getDisciplineType(); 
+                $this->Prefix = "DISCIPLINE";
                 break;
                 
         }

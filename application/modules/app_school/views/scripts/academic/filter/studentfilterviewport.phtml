@@ -172,10 +172,11 @@ Ext.onReady(function() {
                 $dataColumn[]='RELIGION';
                 $dataColumn[]='ETHNIC_GROUPS';
                 $filterObject->OBJECT_GRID->isFilterRow = true;
-                $filterObject->exportExcel=true;
+                
                 break; 
         }
-    
+        
+        $filterObject->exportExcel=true;
         $filterObject->setGridCulumn($dataColumn);
         $filterObject->setCmd();
         $filterObject->OBJECT_GRID->addTBarItems("tbar.add('->');");
