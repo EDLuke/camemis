@@ -59,7 +59,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $data["NUMBER_SESSION"] = $facette->NUMBER_SESSION;
 
             $data["AVERAGE_FROM_SEMESTER"] = $facette->AVERAGE_FROM_SEMESTER;
-            $data["COLOR"] = $facette->COLOR ? $facette->COLOR : "#FFFFFF";
+            $data["COLOR"] = $subjectObject->COLOR ? $subjectObject->COLOR : "#FFFFFF";
             $data["SUBJECT_TYPE"] = $facette->SUBJECT_TYPE;
             $data["EDUCATION_TYPE"] = $facette->EDUCATION_TYPE;
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE ? $facette->EVALUATION_TYPE : 1;

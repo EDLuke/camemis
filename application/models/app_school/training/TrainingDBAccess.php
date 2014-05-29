@@ -137,16 +137,15 @@ class TrainingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training");
-        $SQL->where("ID = ?",$Id);  
-        $stmt = self::dbAccess()->query($SQL);
-        return $stmt->fetch();
+        $SQL->where("ID = ?", $Id?$Id:0);
+        return self::dbAccess()->fetchRow($SQL);
     }
-    
+
     public static function checkCount($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array("C" => "COUNT(*)"));
-        $SQL->where("PARENT = ?",$Id);
+        $SQL->where("PARENT = ?", $Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -155,7 +154,7 @@ class TrainingDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
         if ($parentId) {
-            $SQL->where("PARENT = ?",$parentId);
+            $SQL->where("PARENT = ?", $parentId);
             if ($objectTypeLevel)
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
         } else
@@ -255,7 +254,7 @@ class TrainingDBAccess {
                         case "TERM":
                             $programObject = self::findTrainingFromId($value->PROGRAM);
                             $levelObject = self::findTrainingFromId($value->LEVEL);
-                           // $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
+                            // $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
                             $data[$i]['leaf'] = false;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
@@ -312,12 +311,12 @@ class TrainingDBAccess {
 
         if (isset($params["GRADE_LEVEL"]))
             $SAVEDATA["GRADE_LEVEL"] = addText($params["GRADE_LEVEL"]);
-            
+
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA["EVALUATION_TYPE"] = $params["EVALUATION_TYPE"];
-            
+
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
+            $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
 
         if (isset($params["MAX_STUDENTS"]))
             $SAVEDATA["MAX_STUDENTS"] = addText($params["MAX_STUDENTS"]);
@@ -348,7 +347,7 @@ class TrainingDBAccess {
 
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
-            
+
         if (isset($params["START_DATE"]) && isset($params["END_DATE"])) {
             $SAVEDATA["START_DATE"] = setDate2DB($params["START_DATE"]);
             $SAVEDATA["END_DATE"] = setDate2DB($params["END_DATE"]);
@@ -359,7 +358,7 @@ class TrainingDBAccess {
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['CERTIFICATE'] = isset($params["CERTIFICATE"]) ? 1 : 0;
         $SAVEDATA['EVALUATION'] = isset($params["EVALUATION"]) ? 1 : 0;
-    
+
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['POINTS_POSSIBLE'] = isset($params["POINTS_POSSIBLE"]) ? $params["POINTS_POSSIBLE"] : 10;
 
@@ -524,7 +523,7 @@ class TrainingDBAccess {
         $facette = self::findTrainingFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
-        $SQL->where("PARENT = ?",$Id);
+        $SQL->where("PARENT = ?", $Id);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
@@ -543,7 +542,7 @@ class TrainingDBAccess {
         $facette = self::findTrainingFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
-        $SQL->where("PARENT = ?",$Id);
+        $SQL->where("PARENT = ?", $Id);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
@@ -563,7 +562,7 @@ class TrainingDBAccess {
         $facette = self::findTrainingFromId($Id);
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
-        $SQL->where("PARENT = ?",$Id);
+        $SQL->where("PARENT = ?", $Id);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);

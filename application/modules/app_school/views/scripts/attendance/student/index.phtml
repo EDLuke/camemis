@@ -239,10 +239,15 @@ $columndata = Utiles::getGridColumnData("STUDENT_ATTENDANCE_LIST_ID");
             myTree.getRootNode().expand(true, false);
 
             if (myTree) myTree.on('click', function(node, e){   
-                if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' ){
+                if(node.attributes.objecttype == 'SCHOOLYEAR'){
                     Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
                     Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
                     Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();    
+                }
+                if(node.attributes.objecttype == 'CLASS') {
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title + '(' + node.parentNode.text + ')' );
+                    Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
                 }
             });
         ";
