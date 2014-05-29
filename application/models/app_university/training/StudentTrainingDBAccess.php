@@ -640,7 +640,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $studentId = isset($params["chooseId"]) ? addText($params["chooseId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
-        $CONDITION = array("STUDENT='" . $studentId . "'", "TRAINING='" . $trainingId . "'");
+        $CONDITION = array("STUDENT='" . $studentId . "'", "TRAINING=" . $trainingId . "");
         self::dbAccess()->delete('t_student_training', $CONDITION);
         self::dbAccess()->delete('t_student_training_assignment', $CONDITION);
 
@@ -663,7 +663,9 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $data = array();
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
-
+        $startDate = isset($params["startDate"]) ? setDate2DB($params["startDate"]) : "";
+        $endDate = isset($params["endDate"]) ? setDate2DB($params["endDate"]) : "0";
+        
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -679,13 +681,22 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , 'DATE_BIRTH'
         );
 
-        $SELECT_C = array('NAME AS TRAINING_NAME');
+        $SELECT_C = array(
+            'NAME AS TRAINING_NAME'
+            , 'START_DATE'
+            , 'END_DATE'
+        );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'), $SELECT_A);
         $SQL->joinLeft(array('B' => 't_student_training'), 'A.ID=B.STUDENT', array());
         $SQL->joinLeft(array('C' => 't_training'), 'C.ID=B.TRAINING', $SELECT_C);
-
+        
+        if ($startDate and $endDate){
+            $SQL->where("C.START_DATE <= '".$startDate."'");
+            $SQL->where("C.END_DATE >= '".$endDate."'");   
+        } 
+            
         if ($globalSearch) {
             $SEARCH = " ((A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
@@ -695,8 +706,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             $SEARCH .= " ) ";
             $SQL->where($SEARCH);
         }
-
-        //echo $SQL->__toString();
         $SQL->group("A.ID");
         switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
             default:
@@ -709,6 +718,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $SQL .= " ORDER BY A.FIRSTNAME DESC";
                 break;
         }
+        
+        //error_log($SQL);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
@@ -729,6 +740,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                     $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
                     $data[$i]["GENDER"] = getGenderName($value->GENDER);
                     $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                    $data[$i]["CURRENT_CLASS"] = setShowText($value->TRAINING_NAME);
                     $i++;
                 }
             }

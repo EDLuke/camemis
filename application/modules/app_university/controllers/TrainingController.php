@@ -46,6 +46,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->subjectId = null;
         $this->setId = null;
         $this->date = null;
+        $this->startDate = null;
+        $this->endDate = null;
 
         if ($this->_getParam('setId'))
             $this->setId = $this->_getParam('setId');
@@ -55,6 +57,12 @@ class TrainingController extends Zend_Controller_Action {
         
          if ($this->_getParam('date'))
             $this->date = $this->_getParam('date');
+            
+         if ($this->_getParam('startDate'))
+            $this->startDate = $this->_getParam('startDate');
+            
+         if ($this->_getParam('endDate'))
+            $this->endDate = $this->_getParam('endDate');
                 
         if ($this->_getParam('trainingId')){
             
@@ -84,6 +92,7 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->URL_LEVEL = $this->UTILES->buildURL('training/level', array());
         $this->view->URL_TERM = $this->UTILES->buildURL('training/term', array());
         $this->view->URL_CLASS = $this->UTILES->buildURL('training/class', array());
+        
     }
 
     public function programAction() {
@@ -125,9 +134,9 @@ class TrainingController extends Zend_Controller_Action {
     }
 
     public function studentlistAction() {
-
+        
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
-
+        //exit();error_log('hello');
         $this->view->objectId = $this->objectId;
         $this->view->target = $this->target;
         $this->view->objectData = $this->objectData;
@@ -147,7 +156,7 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
         $this->view->facette = $this->facette;
-
+        
         $this->view->URL_STUDENT_LIST = $this->UTILES->buildURL('training/studentlist'
                 , array("objectId" => $this->objectId, "target" => "TERM")
         );

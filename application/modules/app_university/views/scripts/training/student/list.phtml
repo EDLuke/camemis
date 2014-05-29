@@ -142,9 +142,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, sortable: true, dataIndex: 'DATE_BIRTH'");
         $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, sortable: true, dataIndex: 'CURRENT_CLASS'");
 
-        $ADD_STUDENTS_GRID->isQuickySearch = true;
-        $ADD_STUDENTS_GRID->isGridEditing = true;
-        $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
         $ADD_STUDENTS_GRID->baseParams = "
             start:0
             ,limit:100
@@ -159,6 +156,52 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             Ext.getCmp('" . $ADD_STUDENTS_GRID->getObjectId() . "').store.reload();
             Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
         ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('-','<b>".START_DATE."</b>&nbsp;',[{
+                xtype:'datefield'
+                ,width:100
+                ,id:'START_DATE'
+                ,name: 'START_DATE'
+                ,format: '".setExtDatafieldFormat()."'
+                
+            }]);
+        ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('-','<b>".END_DATE."</b>&nbsp;',[{
+                xtype:'datefield'
+                ,width:100
+                ,id:'END_DATE'
+                ,name: 'END_DATE'
+                ,format: '".setExtDatafieldFormat()."'
+                
+            }]);
+        ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add([{
+                id: 'FIND_ID'
+                ,text: '".FIND."'
+                ,iconCls:'icon-magnifier'
+                ,scope:this
+                ,handler: function(){
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('startDate',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('endDate',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.reload();   
+                }
+            }]);
+        ");
+    
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('->');
+        ");
+        
+        $ADD_STUDENTS_GRID->isQuickySearch = true;
+        $ADD_STUDENTS_GRID->isGridEditing = true;
+        $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
         $ADD_STUDENTS_GRID->forceFit = "false";
         $ADD_STUDENTS_GRID->renderJS();
 
@@ -210,7 +253,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,scope:this
                         ,disabled: false
                         ,handler: function(){
-                            openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(70),percentHeight(85));
+                            openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(80),percentHeight(85));
                             Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.load();
                         }
                     }]);
