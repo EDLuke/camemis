@@ -224,6 +224,7 @@ class AcademicDBAccess {
             $data["DISPLAY_THIRD_RESULT"] = $academicObject->DISPLAY_THIRD_RESULT ? true : false;
             $data["DISPLAY_FOURTH_RESULT"] = $academicObject->DISPLAY_FOURTH_RESULT ? true : false;
             $data["DISPLAY_YEAR_RESULT"] = $academicObject->DISPLAY_YEAR_RESULT ? true : false;
+            $data["DISPLAY_GPA"] = $academicObject->DISPLAY_GPA ? true : false;
             $data["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
             $data["YEAR_RESULT"] = $academicObject->YEAR_RESULT;
 
@@ -495,10 +496,11 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_THIRD_RESULT'] = isset($params["DISPLAY_THIRD_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
+        $SAVEDATA['DISPLAY_GPA'] = isset($params["DISPLAY_GPA"]) ? 1 : 0;
 
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
-        
+
         if (isset($params["GRADING_TYPE"]))
             $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
 

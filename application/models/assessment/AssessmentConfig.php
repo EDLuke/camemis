@@ -137,7 +137,7 @@ class AssessmentConfig {
 
     public static function comboGradingSystem($scoreType, $academicObject) {
         
-        $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"DESCRIPTION";
+        $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"DESCRIPTION";
         
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));

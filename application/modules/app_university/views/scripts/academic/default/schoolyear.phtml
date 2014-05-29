@@ -250,6 +250,7 @@ $viewportItem = new ViewportItem(
                     break;    
             }
             $DISPLAYING .= ",{".CamemisField::Checkbox("DISPLAY_YEAR_RESULT","DISPLAY_YEAR_RESULT",YEAR_RESULT, 1, false, false)."}";
+            $DISPLAYING .= ",{".CamemisField::Checkbox("DISPLAY_GPA","DISPLAY_GPA","GPA", 1, false, false)."}";
         $DISPLAYING .= "]";
 
         $WEIGHTING = "[";
@@ -298,7 +299,7 @@ $viewportItem = new ViewportItem(
                         ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
                         ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
-                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".GPA.")",1, false)."}
+                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
                     ]
                 }]
             },{
