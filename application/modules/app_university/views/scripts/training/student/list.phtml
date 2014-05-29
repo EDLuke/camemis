@@ -184,32 +184,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 id: 'FIND_ID'
                 ,text: '".FIND."'
                 ,iconCls:'icon-magnifier'
-                ,formBind:true
                 ,scope:this
-                ,handler:function(){
-                    var _startDate = Ext.getCmp('START_DATE').getValue();
-                    if(_startDate){
-                        startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
-                    }else{
-                        startDate = '';
-                    }
-                    
-                    var _endDate = Ext.getCmp('END_DATE').getValue(); 
-                    if(_endDate){
-                        endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
-                    }else{
-                        endDate = ''; 
-                    }
-                    
-                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.baseParams = {
-                        start:0
-                        ,limit:100
-                        ,cmd: 'jsonListStudentInSchool'
-                        ,endDate: endDate
-                        ,startDate: startDate
-                    };
-                    
-                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.reload();
+                ,handler: function(){
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('startDate',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('endDate',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.reload();   
                 }
             }]);
         ");
