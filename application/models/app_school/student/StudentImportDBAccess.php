@@ -736,6 +736,16 @@ class StudentImportDBAccess {
                                 $STUDENT_SCHOOLYEAR_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
                                 self::dbAccess()->insert('t_student_schoolyear', $STUDENT_SCHOOLYEAR_DATA);
+                                $feeObject = new FeeDBAccess(); //@veasna
+                                //@veasna 
+                                //check fee and add students to fee
+                                $objectCheck = $feeObject->getFeesByGradeSchoolyear($facette->GRADE_ID, $facette->SCHOOL_YEAR, '');
+
+                                if ($objectCheck) {
+                                    StudentFeeDBAccess::addStudent2Fee($value->ID, $objectCheck[0]->ID, $facette->GRADE_ID, $facette->SCHOOL_YEAR, false, true);
+                                }
+
+                                //
                             }
                         }
                         if ($value->TYPE == 'ENROLL') {
