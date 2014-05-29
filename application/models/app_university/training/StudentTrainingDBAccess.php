@@ -719,7 +719,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 break;
         }
         
-        error_log($SQL);
+        //error_log($SQL);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
