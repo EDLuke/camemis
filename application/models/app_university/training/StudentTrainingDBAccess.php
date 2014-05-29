@@ -664,8 +664,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $startDate = isset($params["startDate"]) ? setDate2DB($params["startDate"]) : "";
-        $start = isset($params["start"]) ? (int) $params["start"] : "0";
-
+        $endDate = isset($params["endDate"]) ? setDate2DB($params["endDate"]) : "0";
+        
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -684,13 +684,19 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SELECT_C = array(
             'NAME AS TRAINING_NAME'
             , 'START_DATE'
+            , 'END_DATE'
         );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'), $SELECT_A);
         $SQL->joinLeft(array('B' => 't_student_training'), 'A.ID=B.STUDENT', array());
         $SQL->joinLeft(array('C' => 't_training'), 'C.ID=B.TRAINING', $SELECT_C);
-
+        
+        if ($startDate and $endDate){
+            $SQL->where("C.START_DATE <= '".$startDate."'");
+            $SQL->where("C.END_DATE >= '".$endDate."'");   
+        } 
+            
         if ($globalSearch) {
             $SEARCH = " ((A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
@@ -713,7 +719,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 break;
         }
         
-        //error_log($SQL);
+        error_log($SQL);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
