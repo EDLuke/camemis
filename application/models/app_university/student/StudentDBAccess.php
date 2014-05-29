@@ -601,7 +601,7 @@ class StudentDBAccess {
                     //check fee and add students to fee
                     $objectCheck = $feeObject->getFeesByGradeSchoolyear($academicObject->GRADE_ID, $academicObject->SCHOOL_YEAR, '');
                     if ($objectCheck) {
-                        StudentFeeDBAccess::addStudent2Fee($studentId, $objectCheck[0]->ID, $academicObject->GRADE_ID, $academicObject->SCHOOL_YEAR, false, false);
+                        StudentFeeDBAccess::addStudent2Fee($studentId, $objectCheck[0]->ID, $academicObject->GRADE_ID, $academicObject->SCHOOL_YEAR, false, true);
                     }
                     $selectedCount++;
                 }
