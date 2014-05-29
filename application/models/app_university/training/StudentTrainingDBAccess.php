@@ -640,7 +640,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $studentId = isset($params["chooseId"]) ? addText($params["chooseId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
 
-        $CONDITION = array("STUDENT='" . $studentId . "'", "TRAINING='" . $trainingId . "'");
+        $CONDITION = array("STUDENT='" . $studentId . "'", "TRAINING=" . $trainingId . "");
         self::dbAccess()->delete('t_student_training', $CONDITION);
         self::dbAccess()->delete('t_student_training_assignment', $CONDITION);
 
@@ -663,6 +663,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $data = array();
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        $startDate = isset($params["startDate"]) ? setDate2DB($params["startDate"]) : "";
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -695,7 +697,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             $SEARCH .= " OR (A.FIRSTNAME_LATIN LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.CODE LIKE '" . strtoupper($globalSearch) . "%')";
-            $SEARCH .= " OR (C.NAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " ) ";
             $SQL->where($SEARCH);
         }
