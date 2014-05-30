@@ -664,13 +664,22 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , 'DATE_BIRTH'
         );
 
-        $SELECT_C = array('NAME AS TRAINING_NAME');
+        $SELECT_C = array(
+            'NAME AS TRAINING_NAME'
+            , 'START_DATE'
+            , 'END_DATE'
+        );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student'), $SELECT_A);
         $SQL->joinLeft(array('B' => 't_student_training'), 'A.ID=B.STUDENT', array());
         $SQL->joinLeft(array('C' => 't_training'), 'C.ID=B.TRAINING', $SELECT_C);
-
+        
+        if ($startDate and $endDate){
+            $SQL->where("C.START_DATE <= '".$startDate."'");
+            $SQL->where("C.END_DATE >= '".$endDate."'");   
+        }
+        
         if ($globalSearch) {
             $SEARCH = " ((A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
@@ -713,6 +722,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                     $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
                     $data[$i]["GENDER"] = getGenderName($value->GENDER);
                     $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                    $data[$i]["CURRENT_CLASS"] = setShowText($value->TRAINING_NAME);
                     $i++;
                 }
             }
