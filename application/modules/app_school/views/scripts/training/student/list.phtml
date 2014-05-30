@@ -92,6 +92,19 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         color:#333;
         white-space:normal;
     }
+    .filter-row-grid .x-grid3-header {
+        background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+    }
+
+    .filter-row-grid .filter-row-header {
+        height: 26px;
+    }
+
+    tr.filter-row-header .filter-row-icon input {
+        background-image: url(/public/images/filter-row-icon.png);
+        background-repeat: no-repeat;
+        padding-left: 16px;
+    }
 </style>
 <script>
     
@@ -137,15 +150,12 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,off: 0
         ");
         
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, hidden:".checkColHidden(1, $columndataStudentGrid).", dataIndex: 'CODE'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataStudentGrid).",sortable: true, dataIndex: 'STUDENT'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100,  hidden:".checkColHidden(3, $columndataStudentGrid).",sortable: true, dataIndex: 'GENDER'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, hidden:".checkColHidden(4, $columndataStudentGrid).", sortable: true, dataIndex: 'DATE_BIRTH'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, hidden:".checkColHidden(5, $columndataStudentGrid).", sortable: true, dataIndex: 'CURRENT_CLASS'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, hidden:".checkColHidden(1, $columndataStudentGrid).", dataIndex: 'CODE',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200, hidden:".checkColHidden(2, $columndataStudentGrid).",sortable: true, dataIndex: 'STUDENT',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100,  hidden:".checkColHidden(3, $columndataStudentGrid).",sortable: true, dataIndex: 'GENDER',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, hidden:".checkColHidden(4, $columndataStudentGrid).", sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, hidden:".checkColHidden(5, $columndataStudentGrid).", sortable: true, dataIndex: 'CURRENT_CLASS',filter:{}");
         
-        $ADD_STUDENTS_GRID->isQuickySearch = true;
-        $ADD_STUDENTS_GRID->isGridEditing = true;
-        $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
         $ADD_STUDENTS_GRID->baseParams = "
             start:0
             ,limit:100
@@ -160,7 +170,53 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             Ext.getCmp('" . $ADD_STUDENTS_GRID->getObjectId() . "').store.reload();
             Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
         ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('-','<b>".START_DATE."</b>&nbsp;',[{
+                xtype:'datefield'
+                ,width:100
+                ,id:'START_DATE'
+                ,name: 'START_DATE'
+                ,format: '".setExtDatafieldFormat()."'
+                
+            }]);
+        ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('-','<b>".END_DATE."</b>&nbsp;',[{
+                xtype:'datefield'
+                ,width:100
+                ,id:'END_DATE'
+                ,name: 'END_DATE'
+                ,format: '".setExtDatafieldFormat()."'
+                
+            }]);
+        ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add([{
+                id: 'FIND_ID'
+                ,text: '".FIND."'
+                ,iconCls:'icon-magnifier'
+                ,scope:this
+                ,handler: function(){
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('startDate',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    if(Ext.getCmp('END_DATE').getValue())
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').getStore().setBaseParam('endDate',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                    Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.reload();   
+                }
+            }]);
+        ");
+    
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add('->');
+        ");
+        $ADD_STUDENTS_GRID->isQuickySearch = true;
+        $ADD_STUDENTS_GRID->isGridEditing = true;
+        $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
         $ADD_STUDENTS_GRID->forceFit = "false";
+        $ADD_STUDENTS_GRID->isFilterRow = true;
         $ADD_STUDENTS_GRID->renderJS();
         
         $OBJECT_GRID->addCellRenderer("
@@ -211,7 +267,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,scope:this
                         ,disabled: false
                         ,handler: function(){
-                            openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(70),percentHeight(85));
+                            openWinXType('WinXType','".ADD_STUDENTS."', '".$ADD_STUDENTS_GRID->getObjectXType()."',percentWidth(80),percentHeight(85));
                             Ext.getCmp('".$ADD_STUDENTS_GRID->getObjectId()."').store.load();
                         }
                     }]);
