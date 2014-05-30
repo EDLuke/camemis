@@ -24,6 +24,8 @@ $educationType = isset($_GET["parent"])?addText($_GET["parent"]):"";
 
 if(!$educationType) {header("Location: /main/permission/");exit;}
 
+$reloadId = "QUALIFICATION_TYPE_".$educationType;
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 
@@ -81,14 +83,13 @@ Ext.onReady(function() {
     ");
     
     $OBJECT_FORM->setonEmbeddedEvents("
-        
-        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
-        if(window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID'))
-        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
-        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').getRootNode().expand(true, false);
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+        myNode = myTree.getNodeById('".$reloadId."');
+        myNode.reload();
+        myNode.expand(true, false); 
         var result = Ext.util.JSON.decode(action.response.responseText);
         window.location='/subject/showitem/?objectId='+result.objectId;
-
     ");
     
     if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))

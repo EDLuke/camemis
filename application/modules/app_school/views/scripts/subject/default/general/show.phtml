@@ -47,25 +47,17 @@ if($scoreType == 1){
     $HIDDEN_EVALUATION_IN_COMMENT = "true";
 }
 
-$removeStatus = true;
-if ($this->facette) {
-    $status = $this->facette->STATUS;
-    $reloadId = $this->facette->PARENT;
-    if ($status){
-        $removeStatus = false;
-    }else{
-        $removeStatus = true;
-    }
-    
-    $HIDDEN_SCORE_ON_NUMBER = ($this->facette->SCORE_TYPE==1)?"false":"true";
-    $HIDDEN_SCORE_ON_ALPHABET = ($this->facette->SCORE_TYPE==2)?"false":"true";
-    
-} else {
-    $reload = $this->parentId;
-    $status = false;
-    $HIDDEN_SCORE_ON_NUMBER = "true";
-    $HIDDEN_SCORE_ON_ALPHABET = "true";
+$status = $this->facette->STATUS;
+if ($status){
+    $removeStatus = false;
+}else{
+    $removeStatus = true;
 }
+
+$HIDDEN_SCORE_ON_NUMBER = ($this->facette->SCORE_TYPE==1)?"false":"true";
+$HIDDEN_SCORE_ON_ALPHABET = ($this->facette->SCORE_TYPE==2)?"false":"true";
+
+$reloadId = "QUALIFICATION_TYPE_".$this->facette->EDUCATION_TYPE;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -356,56 +348,33 @@ Ext.onReady(function() {
     ");
 
     $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
-
-    if($this->facette){
-        $OBJECT_FORM->setonEmbeddedEvents("
-            myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
-            myNode = getTreeNode(myTree);
-            if(myNode){
-                myNode.reload();
-                myNode.expand(true, false);
-            }
-            ".camemisPage::setRequestURI()."
-        ");
-        
-        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
-             myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
-            myNode = getTreeNode(myTree);
-            if(myNode){
-                myNode.reload();
-                myNode.expand(true, false);
-            }
-            ".camemisPage::setRequestURI()."
-        ");
-        
-        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
-             myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
-            myNode = getTreeNode(myTree);
-            if(myNode){
-                myNode.reload();
-                myNode.expand(true, false);
-            }
-            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
-        ");
-        
-    }else{
-        $OBJECT_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
-            myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
-            myNode = getTreeNode(myTree);
-            if(myNode){
-                myNode.reload();
-                myNode.expand(true, false);
-            }else{
-                window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
-            }
-            var result = Ext.util.JSON.decode(action.response.responseText);
-            var objectId = result.objectId;
-            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
-        "); 
-    }
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+        myNode = myTree.getNodeById('".$reloadId."');
+        myNode.reload();
+        myNode.expand(true, false); 
+        window.location='" . $_SERVER["REQUEST_URI"] . "';
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+        myNode = myTree.getNodeById('".$reloadId."');
+        myNode.reload();
+        myNode.expand(true, false); 
+        window.location='" . $_SERVER["REQUEST_URI"] . "';
+    ");    
+    
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+        myTree = window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID');
+        myNode = myTree.getNodeById('".$reloadId."');
+        myNode.reload();
+        myNode.expand(true, false); 
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
     
     $OBJECT_FORM->setRemoveParams("
         cmd: 'removeObject'
@@ -451,33 +420,6 @@ Ext.onReady(function() {
             Ext.getCmp('SCORE_ON_NUMBER').hide();    
         }
         if (Ext.getCmp('MAX_POSSIBLE_SCORE_ID')) Ext.getCmp('MAX_POSSIBLE_SCORE_ID').setValue('');  
-    });
-    
-    Ext.getCmp('SUBJECT_TYPE_ID').on('select', function() {
-        
-        subjectType = Ext.getCmp('SUBJECT_TYPE_ID').getValue();
-        
-//        if(subjectType == 0){
-//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-//            Ext.getCmp('EVALUATION_SETTINGS').hide();
-//        }else if(subjectType == 1){
-//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-//            Ext.getCmp('EVALUATION_SETTINGS').show();
-//        }else if(subjectType == 2){
-//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
-//            Ext.getCmp('EVALUATION_SETTINGS').hide();
-//        }else if(subjectType == 3){
-//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').show();
-//            Ext.getCmp('EVALUATION_SETTINGS').show();
-//        }else if(subjectType == 4){
-//            Ext.getCmp('EVALUATION_TYPE_SELECTIVE_SUBJECT').hide();
-//            Ext.getCmp('EVALUATION_SETTINGS').hide();
-//            Ext.getCmp('MAX_POSSIBLE_SCORE').hide();
-//            Ext.getCmp('COEFFICIENT_SETTING').hide();
-//            Ext.getCmp('ADDITIONAL_EVALUATION').hide();
-//            Ext.getCmp('EVALUATION_SETTINGS').hide();
-//            Ext.getCmp('EVALUATION_IN_COMMENT').hide();
-//        }
     });
     
     var tree = Ext.getCmp('<?=$PREREQUISITE_TREE->getObjectId()?>');
