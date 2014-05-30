@@ -265,14 +265,14 @@ class AcademicDBAccess {
     public static function findGradeFromId($Id) {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from('t_grade', '*');
+        $SQL->from("t_grade", array('*'));
         if (is_numeric($Id)) {
             $SQL->where("ID = ?", $Id ? $Id : 0);
         } else {
-            $SQL->where("GUID='" . $Id ? $Id : 0);
+            $SQL->where("GUID = ?", $Id ? $Id : 0);
         }
-        $SQL->limit(1);
-        //error_log($SQL->__toString());
+        
+        //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
 

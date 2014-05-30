@@ -1,4 +1,6 @@
 <?
+
+require_once 'clients/CamemisChart.php';
 require_once 'models/statistic/StudentStatisticsDBAccess.php';
 
 $objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
@@ -15,65 +17,18 @@ switch($objectType){
         $dataSet = StudentStatisticsDBAccess::getDataSetStudentAdvisory("YEARLY", $studentId);
         break;
 }
+
+$chart = new CamemisChart("MULTIBARCHART", 'chart1', $dataSet);
+$chart->setChartSVG("display");
+$chart->setHeight(230);
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
-
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
 <link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
-
-<style>
-
-body {
-    overflow-y:scroll;
-}
-
-text {
-    font: 11px tahoma,verdana,arial,sans-serif,Hanuman;
-}
-
-#chart1 {
-    height:230px; 
-    margin: 10px;
-    min-width: 100px;
-    min-height: 100px;
-    /*
-    Minimum height and width is a good idea to prevent negative SVG dimensions...
-    For example width should be =< margin.left + margin.right + 1,
-    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-    */
-}
-
-</style>
 <body>
-
-<div id="chart1"><svg></svg></div>
-<script src="/public/nvd3/nvd3-camemis.php"></script>
-<script>
-
-var chart;
-nv.addGraph(function() {
-    chart = nv.models.multiBarChart()
-    .showLegend(false)
-    .barColor(d3.scale.category20().range())
-    .margin({bottom: 50})
-    .transitionDuration(300)
-    .delay(0)
-    .rotateLabels(0)
-    .groupSpacing(0.1)
-    ;
-    chart.multibar
-    .hideable(true);
-    chart.reduceXTicks(false).staggerLabels(true);
-    chart.xAxis
-    .showMaxMin(false)
-    .tickFormat(function(d){ return d;});
-    chart.yAxis
-    .tickFormat(function(d){ return d;});
-    d3.select('#chart1 svg')
-    .datum(<?=$dataSet?>)
-    .call(chart);
-    nv.utils.windowResize(chart.update);
-    chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
-    return chart;
-});
-</script>
+    <script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
+</body>
+</html>
