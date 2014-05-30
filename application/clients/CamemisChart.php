@@ -176,6 +176,7 @@ Class stackeAreaChart {
         }
 
         $js .= ".showLegend(false)";
+        $js .=" .showControls(false)";
         $js .= ".useInteractiveGuideline(true)";
         $js .= ".x(function(d) { return d[0]; })";
         $js .= ".y(function(d) { return d[1];})";
@@ -209,7 +210,7 @@ Class multiBarChart {
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->chartSVG = $chartSVG;
-        $this->showLegend = $showLegend;
+        $this->showLegend = $showLegend ? "true" : "false";
         $this->stacked = $stacked ? "true" : "false";
     }
 
@@ -218,6 +219,7 @@ Class multiBarChart {
         $js = "var $this->name;
             nv.addGraph(function() {
             $this->name = nv.models.multiBarChart()
+            .showControls(false)
             .showLegend(" . $this->showLegend . ")//true,false
             .stacked(" . $this->stacked . ")//true,false
             .showXAxis(true)//true,false

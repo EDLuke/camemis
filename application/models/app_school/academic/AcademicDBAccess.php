@@ -225,9 +225,9 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array('*'));
         if (is_numeric($Id)) {
-            $SQL->where("ID = ?", $Id);
+            $SQL->where("ID = ?", $Id ? $Id : 0);
         } else {
-            $SQL->where("GUID = ?", $Id);
+            $SQL->where("GUID = ?", $Id ? $Id : 0);
         }
 
         //error_log($SQL);
@@ -491,7 +491,7 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_GPA'] = isset($params["DISPLAY_GPA"]) ? 1 : 0;
-        
+
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
 
@@ -523,7 +523,7 @@ class AcademicDBAccess {
                 $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
                 $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
                 $SAVEDATA['END_OF_GRADE'] = isset($params["END_OF_GRADE"]) ? 1 : 0;
-                
+
                 $WHERE[] = "ID = '" . $academicObject->ID . "'";
                 self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);
 
@@ -855,7 +855,7 @@ class AcademicDBAccess {
 
         if ($entries) {
             foreach ($entries as $value) {
-                
+
                 $SAVEDATA["END_OF_GRADE"] = $gradeObject->END_OF_GRADE;
                 $SAVEDATA["NUMBER_CREDIT"] = $gradeObject->NUMBER_CREDIT;
                 $SAVEDATA["LEVEL"] = $gradeObject->LEVEL;
@@ -889,7 +889,7 @@ class AcademicDBAccess {
 
             if ($firstEntries) {
                 foreach ($firstEntries as $value) {
-                    
+
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["NUMBER_CREDIT"] = $schoolyearObject->NUMBER_CREDIT;
                     $FIRST_SAVEDATA["FIRST_SCORE_START"] = $schoolyearObject->FIRST_SCORE_START;
@@ -931,12 +931,12 @@ class AcademicDBAccess {
                         $FIRST_SAVEDATA["SA"] = $schoolyearObject->SA;
                         $FIRST_SAVEDATA["SU"] = $schoolyearObject->SU;
                     }
-                    
+
                     $FIRST_SAVEDATA["SEMESTER1_WEIGHTING"] = $schoolyearObject->SEMESTER1_WEIGHTING;
                     $FIRST_SAVEDATA["SEMESTER2_WEIGHTING"] = $schoolyearObject->SEMESTER2_WEIGHTING;
                     $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
                     $FIRST_SAVEDATA["GRADING_TYPE"] = $schoolyearObject->GRADING_TYPE;
-                    
+
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
                 }

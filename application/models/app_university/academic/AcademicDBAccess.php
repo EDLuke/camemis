@@ -267,9 +267,9 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', '*');
         if (is_numeric($Id)) {
-            $SQL->where("ID = ?", $Id);
+            $SQL->where("ID = ?", $Id ? $Id : 0);
         } else {
-            $SQL->where("GUID='" . $Id . "'");
+            $SQL->where("GUID='" . $Id ? $Id : 0);
         }
         $SQL->limit(1);
         //error_log($SQL->__toString());
