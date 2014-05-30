@@ -252,9 +252,11 @@ class SubjectDBAccess {
                                     $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
                                     $data[$i]['isUsed'] = false;
                                 } else {
-                                    $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
-                                    $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
-                                    $data[$i]['isUsed'] = $CHECK_USED ? true : false;
+                                    if (isset($gradeId) && isset($schoolyearId) && isset($classId)) {
+                                        $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
+                                        $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
+                                        $data[$i]['isUsed'] = $CHECK_USED ? true : false;
+                                    }
                                 }
                                 $data[$i]['educationType'] = $value->EDUCATION_TYPE;
                                 $data[$i]['text'] = "(" . $value->SHORT . ") " . setShowText($value->NAME);
@@ -277,9 +279,11 @@ class SubjectDBAccess {
                                 $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
                                 $data[$i]['isUsed'] = false;
                             } else {
-                                $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
-                                $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
-                                $data[$i]['isUsed'] = $CHECK_USED ? true : false;
+                                if (isset($gradeId) && isset($schoolyearId) && isset($classId)) {
+                                    $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
+                                    $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
+                                    $data[$i]['isUsed'] = $CHECK_USED ? true : false;
+                                }
                             }
 
                             $data[$i]['educationType'] = $value->EDUCATION_TYPE;

@@ -20,7 +20,9 @@ $OBJECT_FORM = new CamemisForm("SUBJECT");
 $OBJECT_FORM->setLoadUrl('/subject/jsonload/');
 $OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
 
-$educationType = isset($_GET["educationType"])?addText(["educationType"]):"";
+$educationType = isset($_GET["parent"])?addText($_GET["parent"]):"";
+
+if(!$educationType) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -54,7 +56,6 @@ Ext.onReady(function() {
                     {".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}
                     ,{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
                     ,{".CamemisField::Numberfield("NUMBER_CREDIT", "NUMBER_CREDIT", NUMBER_CREDIT, false, false, false) . "}
-                    ,{".CamemisField::ComboSubjectType(TYPE, false, false, false)."}
                     ,{".CamemisField::Colorfield("COLOR", COLOR, false)."}
                     ,{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 80)."}
                 ]

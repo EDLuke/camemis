@@ -138,7 +138,7 @@ Ext.onReady(function() {
                 ,disabled:addDisabled
                 ,hidden:<?=$EDIT_RIGHT;?>
                 ,handler: function(){
-                    clickOpenPage('center',node.text, '<?=$this->URL_ADD_ITEM?>objectId=new&educationType=' + node.attributes.parentId);
+                    clickOpenPage('center',node.text, '<?=$this->URL_ADD_ITEM?>objectId=new&parent=' + node.attributes.parentId);
                 }
             },{
                 text: '<?=SHOW_DETAIL?> &raquo; ' + node.text

@@ -19,6 +19,8 @@ $OBJECT_FORM = new CamemisForm("SUBJECT");
 $OBJECT_FORM->setLoadUrl('/subject/jsonload/');
 $OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
 
+if(!$this->facette) {header("Location: /main/permission/");exit;}
+
 $PREREQUISITE_TREE = new CamemisTree("SUBJECT", "LIST");
 $PREREQUISITE_TREE->setURL("/subject/jsontree/");
 
