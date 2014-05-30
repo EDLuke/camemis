@@ -9,6 +9,21 @@
 
 Class CamemisChart {
 
+    const MULTIBARHIRIZONTALCHART = "MULTIBARHIRIZONTALCHART";
+    const DISCRETEBARCHART = "DISCRETEBARCHART";
+    const PICHCHART = "PICHCHART";
+
+    public $staggerLabels = "false";
+    public $showLegend = "false";
+    public $displayType = "false";
+    public $labelType = "false";
+    public $stacked = "false";
+    public $showValues = "false";
+    public $tooltips = "false";
+    public $height = null;
+    public $width = null;
+    public $chartDiv = "default";
+    public $chartSVG = "default";
     public $datafield = array();
 
     public function __get($name) {
@@ -27,50 +42,6 @@ Class CamemisChart {
         $this->type = strtoupper($type);
         $this->name = strtoupper($name);
         $this->dataSet = $dataSet;
-    }
-
-    public function setChartDIV($value) {
-        return $this->chartDiv = $value;
-    }
-
-    public function setChartSVG($value) {
-        return $this->chartSVG = $value;
-    }
-
-    public function setWidth($value) {
-        return $this->width = $value;
-    }
-
-    public function setHeight($value) {
-        return $this->height = $value;
-    }
-
-    public function setShowLegend($value) {
-        return $this->showLegend = $value ? "true" : "false";
-    }
-
-    public function setDisplayType($value) {
-        return $this->displayType = $value;
-    }
-
-    public function setLabelType($value) {
-        return $this->labelType = $value;
-    }
-
-    public function setStacked($value) {
-        return $this->stacked = $value;
-    }
-
-    public function setShowValues($value) {
-        return $this->showValues = $value ? "true" : "false";
-    }
-
-    public function setStaggerLabels($value) {
-        return $this->staggerLabels = $value ? "true" : "false";
-    }
-
-    public function setTooltips($value) {
-        return $this->tooltips = $value ? "true" : "false";
     }
 
     public function setChartScript() {
@@ -92,7 +63,7 @@ Class CamemisChart {
                         , $this->showLegend
                         , $this->stacked);
                 break;
-            case "PICHCHART":
+            case self::PICHCHART:
                 $chart = new picChart(
                         $this->name
                         , $this->dataSet
@@ -101,16 +72,23 @@ Class CamemisChart {
                         , $this->width
                         , $this->height);
                 break;
-            case "DISCRETEBARCHART":
+            case self::DISCRETEBARCHART:
                 $chart = new discreteBarChart(
                         $this->name
                         , $this->dataSet
                         , $this->chartSVG
                         , $this->showValues
                         , $this->staggerLabels
-                        , $this->tooltips
-                        , $this->width
-                        , $this->height);
+                        , $this->tooltips);
+                break;
+            case self::MULTIBARHIRIZONTALCHART:
+                $chart = new discreteBarChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->chartSVG
+                        , $this->showValues
+                        , $this->staggerLabels
+                        , $this->tooltips);
                 break;
         }
 
@@ -130,15 +108,18 @@ Class CamemisChart {
             case "MULTIBARCHART":
                 $js .="<div id=\"" . $this->chartSVG . "\" style=\"height:" . $this->height . "px; margin: 10px;\"><svg></svg></div>";
                 break;
-            case "PICHCHART":
+            case self::PICHCHART:
                 $js .="<div style='float:left;margin:5px;'>";
                 $js .="<svg id=\"" . $this->chartSVG . "\" style='width:" . $this->width . "px;border: solid 1px #B3B2B2;'></svg>";
                 $js .="</div>";
                 break;
-            case "DISCRETEBARCHART":
+            case self::DISCRETEBARCHART:
                 $js .= "<div style=\"height:" . $this->height . "px;\">";
                 $js .= "<svg id=\"" . $this->chartDiv . "\"></svg>";
                 $js .= "</div>";
+                break;
+            case self::MULTIBARHIRIZONTALCHART:
+                $js .="<div id=\"" . $this->chartSVG . "\" style=\"height:" . $this->height . "px; margin: 10px;\"><svg></svg></div>";
                 break;
         }
 
@@ -210,8 +191,8 @@ Class multiBarChart {
         $this->name = $name;
         $this->dataSet = $dataSet;
         $this->chartSVG = $chartSVG;
-        $this->showLegend = $showLegend ? "true" : "false";
-        $this->stacked = $stacked ? "true" : "false";
+        $this->showLegend = $showLegend;
+        $this->stacked = $stacked;
     }
 
     public function rendererChart() {
@@ -311,13 +292,11 @@ Class picChart {
 
 Class discreteBarChart {
 
-    function __construct($name, $dataSet, $chartSVG, $showValues, $staggerLabels, $tooltips, $width, $height) {
+    function __construct($name, $dataSet, $chartSVG, $showValues, $staggerLabels, $tooltips) {
 
         $this->name = $name;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
         $this->chartSVG = $chartSVG;
-        $this->width = $width;
-        $this->height = $height;
         $this->showValues = $showValues;
         $this->staggerLabels = $staggerLabels;
         $this->tooltips = $tooltips;
@@ -371,6 +350,115 @@ Class discreteBarChart {
             nv.utils.windowResize($this->name.update);
             return $this->name;
         });";
+
+        return $js;
+    }
+
+}
+
+class multiBarHorizontalChart {
+
+    function __construct($name, $dataSet, $chartSVG, $showValues, $showControls, $tooltips, $stacked) {
+
+        $this->name = $name;
+        $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
+        $this->chartSVG = $chartSVG;
+        $this->showValues = $showValues;
+        $this->tooltips = $tooltips;
+        $this->showControls = $showControls;
+        $this->stacked = $stacked;
+    }
+
+    public static function dafaultDataSet() {
+        return "[{
+            key: 'Series1',
+            color: '#d62728',
+            values: [{ 
+                'label' : 'Group A' ,
+                'value' : 1.8746444827653
+              },{ 
+                'label' : 'Group B' ,
+                'value' : 8.0961543492239
+              },{ 
+                'label' : 'Group C' ,
+                'value' : 0.57072943117674
+              },{ 
+                'label' : 'Group D' ,
+                'value' : 2.4174010336624
+              },{ 
+                'label' : 'Group E' ,
+                'value' : 0.72009071426284
+              },{ 
+                'label' : 'Group F' ,
+                'value' : 0.77154485523777
+              },{ 
+                'label' : 'Group G' ,
+                'value' : 0.90152097798131
+              },{ 
+                'label' : 'Group H' ,
+                'value' : 0.91445417330854
+              },{ 
+                'label' : 'Group I' ,
+                'value' : 0.055746319141851
+              }]
+        },{ 
+            key: 'Series2',
+            color: '#1f77b4',
+            values: [{ 
+                'label' : 'Group A' ,
+                'value' : 25.307646510375
+              },{  
+                'label' : 'Group B' ,
+                'value' : 16.756779544553
+              },{ 
+                'label' : 'Group C' ,
+                'value' : 18.451534877007
+              },{ 
+                'label' : 'Group D' ,
+                'value' : 8.6142352811805
+              },{ 
+                'label' : 'Group E' ,
+                'value' : 7.8082472075876
+              },{ 
+                'label' : 'Group F' ,
+                'value' : 5.259101026956
+              },{ 
+                'label' : 'Group G' ,
+                'value' : 0.30947953487127
+              },{ 
+                'label' : 'Group H' ,
+                'value' : 0
+              },{ 
+                'label' : 'Group I' ,
+                'value' : 0 
+              }]
+          }]";
+    }
+
+    public function rendererChart() {
+
+        $js = "var $this->name;
+        nv.addGraph(function() {
+            $this->name = nv.models.multiBarHorizontalChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.value })
+            .margin({top: 30, right: 20, bottom: 50, left: 175})
+            .showValues(" . $this->showValues . ")
+            .tooltips(" . $this->tooltips . ")
+            .barColor(d3.scale.category20().range())
+            .transitionDuration(250)
+            .stacked(" . $this->stacked . ")
+            .showControls(" . $this->showControls . ");
+            $this->name.yAxis
+            .tickFormat(function(d){ return d;});
+            d3.select('#" . $this->chartSVG . " svg')
+            .datum(" . $this->dataSet . ")
+            .call($this->name);
+            nv.utils.windowResize(chart.update);
+            $this->name.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return $this->name;
+        });
+        ";
 
         return $js;
     }

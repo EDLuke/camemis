@@ -5,8 +5,8 @@ require_once 'models/statistic/UserOnlineStatisticsDBAccess.php';
 $dataset = UserOnlineStatisticsDBAccess::getDataSetUserOnline();
 
 $chart = new CamemisChart("STACKEAREACHART", 'Online1', $dataset);
-$chart->setChartDIV("chart1");
-$chart->setHeight(300);
+$chart->chartDiv = "chart1";
+$chart->height = 300;
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">

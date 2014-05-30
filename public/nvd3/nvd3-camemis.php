@@ -36,7 +36,7 @@ $files = array(
     , "" . $PHAT_PUBLIC . "/src/models/stackedAreaChart.js"
     , "" . $PHAT_PUBLIC . "/src/models/multiBarHorizontal.js"
     , "" . $PHAT_PUBLIC . "/src/models/multiBarHorizontalChart.js"
-    , "" . $PHAT_PUBLIC . "/examples/stream_layers.js"
+    , "" . $PHAT_PUBLIC . "/src/models/stream_layers.js"
     , "" . $PHAT_PUBLIC . "/src/models/multiBar.js"
     , "" . $PHAT_PUBLIC . "/src/models/multiBarChart.js"
     , "" . $PHAT_PUBLIC . "/src/models/line.js"
