@@ -114,7 +114,7 @@ class StaffDBAccess {
     public static function checkStaffFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_staff', 'COUNT(*) AS C');
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -125,7 +125,7 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff", array("*"));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -483,9 +483,10 @@ class StaffDBAccess {
         if ($searchEthnic)
             $SQL .= " AND A.ETHNIC='" . $searchEthnic . "' ";
 
-        if ($campusId && $gradeId == "") {
-            $SQL .= " AND F.GRADE IN (SELECT ID FROM t_grade WHERE GRADE_ID=0 AND CAMPUS_ID=" . $campusId . ")";
-        }
+//        //What is this? Vibolrith. 30.05.2014
+//        if (isset($campusId)) {
+//            $SQL .= " AND F.GRADE IN (SELECT ID FROM t_grade WHERE GRADE_ID=0 AND CAMPUS_ID=" . $campusId . ")";
+//        }
 
         if ($gradeId)
             $SQL .= " AND F.GRADE=" . $gradeId;
@@ -1371,7 +1372,7 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER_ID = ?",$Id);
+        $SQL->where("TEACHER_ID = ?", $Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1397,7 +1398,7 @@ class StaffDBAccess {
         $SQL->from("t_grade", array("*"));
         $SQL->where("INSTRUCTOR = '" . $Id . "'");
         if ($schoolyearId)
-            $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+            $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -1535,8 +1536,8 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
-        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
-        $SQL->where("TEACHER = ?",$teacherId);
+        $SQL->where("SCHOOLYEAR = ?", $schoolyearId);
+        $SQL->where("TEACHER = ?", $teacherId);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1661,11 +1662,11 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER_ID = ?",$Id);
-        $SQL->where("ACADEMIC_ID = ?",$classId);
-        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("TEACHER_ID = ?", $Id);
+        $SQL->where("ACADEMIC_ID = ?", $classId);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
         if ($gradingterm != "ALL") {
-            $SQL->where("TERM = ?",$gradingterm);
+            $SQL->where("TERM = ?", $gradingterm);
         }
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -1676,10 +1677,10 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("*"));
-        $SQL->where("TEACHER_ID = ?",$teacherId);
-        $SQL->where("ACADEMIC_ID = ?",$classId);
-        $SQL->where("TERM = ?",$term);
-        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("TEACHER_ID = ?", $teacherId);
+        $SQL->where("ACADEMIC_ID = ?", $classId);
+        $SQL->where("TERM = ?", $term);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
         $SQL->where("SUBSTITUTE_ID<>");
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -1697,10 +1698,10 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER_ID = ?",$Id);
-        $SQL->where("SCHOOLYEAR_ID = ?",$schoolyearId);
+        $SQL->where("TEACHER_ID = ?", $Id);
+        $SQL->where("SCHOOLYEAR_ID = ?", $schoolyearId);
         if ($term)
-            $SQL->where("TERM = ?",$term);
+            $SQL->where("TERM = ?", $term);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1735,8 +1736,8 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_subject", array("C" => "COUNT(*)"));
-        $SQL->where("TEACHER = ?",$teacherId);
-        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("TEACHER = ?", $teacherId);
+        $SQL->where("SUBJECT = ?", $subjectId);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
@@ -1761,7 +1762,7 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("*"));
-        $SQL->where("TEACHER = ?",$teacherId);
+        $SQL->where("TEACHER = ?", $teacherId);
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -1821,9 +1822,9 @@ class StaffDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
         if ($teacherId)
-            $SQL->where("TEACHER = ?",$teacherId);
+            $SQL->where("TEACHER = ?", $teacherId);
         if ($classId)
-            $SQL->where("ACADEMIC = ?",$classId);
+            $SQL->where("ACADEMIC = ?", $classId);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -1835,11 +1836,11 @@ class StaffDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
         if ($teacherId)
-            $SQL->where("TEACHER = ?",$teacherId);
+            $SQL->where("TEACHER = ?", $teacherId);
         if ($subjectId)
-            $SQL->where("SUBJECT = ?",$subjectId);
+            $SQL->where("SUBJECT = ?", $subjectId);
         if ($schoolyearId)
-            $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
+            $SQL->where("SCHOOLYEAR = ?", $schoolyearId);
         $result = self::dbAccess()->fetchRow($SQL);
 
         return $result ? $result->C : 0;
@@ -1865,11 +1866,11 @@ class StaffDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_campus", array("C" => "COUNT(*)"));
-        $SQL->where("STAFF = ?",$staffId);
+        $SQL->where("STAFF = ?", $staffId);
 
         switch ($type) {
             case "CAMPUS":
-                $SQL->where("CAMPUS = ?",$Id);
+                $SQL->where("CAMPUS = ?", $Id);
                 break;
             case "PROGRAM":
                 $SQL->where("PROGRAM = '" . $Id . "'");
@@ -2769,7 +2770,7 @@ class StaffDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
         $SQL->where("USER_ROLE_ID = '" . $userRoleObject->ID . "'");
-        $SQL->where("FILE = ?",$objectId);
+        $SQL->where("FILE = ?", $objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
 
