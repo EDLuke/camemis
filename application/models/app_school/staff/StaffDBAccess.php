@@ -478,9 +478,9 @@ class StaffDBAccess {
         if ($searchEthnic)
             $SQL .= " AND A.ETHNIC='" . $searchEthnic . "' ";
 
-        if ($campusId && $gradeId == "") {
-            $SQL .= " AND F.GRADE IN (SELECT ID FROM t_grade WHERE GRADE_ID=0 AND CAMPUS_ID=" . $campusId . ")";
-        }
+//        if ($campusId && $gradeId == "") {
+//            $SQL .= " AND F.GRADE IN (SELECT ID FROM t_grade WHERE GRADE_ID=0 AND CAMPUS_ID=" . $campusId . ")";
+//        }
 
         if ($gradeId)
             $SQL .= " AND F.GRADE=" . $gradeId;
