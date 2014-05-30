@@ -4,7 +4,7 @@ require_once 'models/statistic/UserOnlineStatisticsDBAccess.php';
 
 $dataset = UserOnlineStatisticsDBAccess::getDataSetUserOnline();
 
-$chart = new CamemisChart("STACKEAREACHART", 'Online1', $dataset);
+$chart = new CamemisChart("STACKE_AREA_CHART", 'Online1', $dataset);
 $chart->chartDiv = "chart1";
 $chart->height = 300;
 ?>
