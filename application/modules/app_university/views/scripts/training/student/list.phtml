@@ -91,6 +91,20 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         color:#333;
         white-space:normal;
     }
+    
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+    }
+
+    .filter-row-grid .filter-row-header {
+        height: 26px;
+    }
+
+    tr.filter-row-header .filter-row-icon input {
+        background-image: url(/public/images/filter-row-icon.png);
+        background-repeat: no-repeat;
+        padding-left: 16px;
+    }
 </style>
 <script>
 
@@ -136,11 +150,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,off: 0
         ");
 
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, dataIndex: 'CODE'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200,sortable: true, dataIndex: 'STUDENT'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100, sortable: true, dataIndex: 'GENDER'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, sortable: true, dataIndex: 'DATE_BIRTH'");
-        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, sortable: true, dataIndex: 'CURRENT_CLASS'");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', width: 80, dataIndex: 'CODE',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', width: 200,sortable: true, dataIndex: 'STUDENT',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . GENDER . "</b>', width: 100, sortable: true, dataIndex: 'GENDER',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 100, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+        $ADD_STUDENTS_GRID->addColumn("header: '<b>" . CURRENT_CLASS . "</b>', width: 100, sortable: true, dataIndex: 'CURRENT_CLASS',filter:{}");
 
         $ADD_STUDENTS_GRID->baseParams = "
             start:0
@@ -203,6 +217,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $ADD_STUDENTS_GRID->isGridEditing = true;
         $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;
         $ADD_STUDENTS_GRID->forceFit = "false";
+        $ADD_STUDENTS_GRID->isFilterRow = true;
         $ADD_STUDENTS_GRID->renderJS();
 
         $OBJECT_GRID->addCellRenderer("
