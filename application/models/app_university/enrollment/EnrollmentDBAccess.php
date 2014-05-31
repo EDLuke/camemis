@@ -428,6 +428,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             foreach ($result as $value) {
 
                 $oldGrade = explode('&raquo;', $value->TITLE);
+                $object="";
+                if($value->NEW_CLASS)
                 $object = AcademicDBAccess::findClass($value->NEW_CLASS);
                 $newGrade = $object?explode('&raquo;', $object->TITLE):array();
 
