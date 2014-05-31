@@ -749,7 +749,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
     public static function checkStudentEnrolledTraditionalSystem($studentId, $gradeId, $schoolyearId) {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
+        $SQL->from("t_student_schoolyear", array("*"));
         $SQL->where("STUDENT = ?",$studentId);
         if ($gradeId)
             $SQL->where("GRADE = ?",$gradeId);
@@ -758,7 +758,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
+        return $result ? $result: 0;
     }
 
     //@veasna
