@@ -2301,59 +2301,77 @@ class AcademicDBAccess {
         return $result;
     }
 
-    public static function getAcademicMonthList($academicId) {
+    public static function setAcademicMonthList($academicId) {
 
-        $entries = array();
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from('t_grade', '*');
-        $SQL->where("ID = ?", $academicId);
-        $SQL->limit(1);
-        //error_log($SQL->__toString());
-        $facette = self::dbAccess()->fetchRow($SQL);
+        $facette = self::findGradeFromId($academicId);
         $termNumber = self::findAcademicTerm($facette->SCHOOL_YEAR);
 
-        $SQL = "UPDATE t_grade SET";
+        $SAVEDATA['ID'] = $academicId;
 
         switch ($termNumber) {
             case 1:
-                $TERM1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM1_START), date('Y-m-d', $facette->TERM1_END));
-                $TERM2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM2_START), date('Y-m-d', $facette->TERM2_END));
-                $TERM3_DATA = getMonthsBy2Date(date('Y-m-d', $facette->TERM3_START), date('Y-m-d', $facette->TERM3_END));
-                $entries = array_merge($TERM1_DATA, $TERM2_DATA, $TERM3_DATA);
+                $DATA1 = getMonthsBy2Date(date('Y-m-d', $facette->TERM1_START), date('Y-m-d', $facette->TERM1_END));
+                $DATA2 = getMonthsBy2Date(date('Y-m-d', $facette->TERM2_START), date('Y-m-d', $facette->TERM2_END));
+                $DATA3 = getMonthsBy2Date(date('Y-m-d', $facette->TERM3_START), date('Y-m-d', $facette->TERM3_END));
 
-                $SQL .= " FIRST_MONTHS='" . serialize($TERM1_DATA) . "'";
-                $SQL .= " ,SECOND_MONTHS='" . serialize($TERM2_DATA) . "'";
-                $SQL .= " ,THIRD_MONTHS='" . serialize($TERM3_DATA) . "'";
+                $SAVEDATA['FIRST_MONTHS'] = serialize($DATA1);
+                $SAVEDATA['SECOND_MONTHS'] = serialize($DATA2);
+                $SAVEDATA['THIRD_MONTHS'] = serialize($DATA3);
 
                 break;
             case 2:
-                $QUARTER1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER1_START), date('Y-m-d', $facette->QUARTER1_END));
-                $QUARTER2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER2_START), date('Y-m-d', $facette->QUARTER2_END));
-                $QUARTER3_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER3_START), date('Y-m-d', $facette->QUARTER3_END));
-                $QUARTER4_DATA = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER4_START), date('Y-m-d', $facette->QUARTER4_END));
-                $entries = array_merge($QUARTER1_DATA, $QUARTER2_DATA, $QUARTER3_DATA, $QUARTER4_DATA);
+                $DATA1 = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER1_START), date('Y-m-d', $facette->QUARTER1_END));
+                $DATA2 = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER2_START), date('Y-m-d', $facette->QUARTER2_END));
+                $DATA3 = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER3_START), date('Y-m-d', $facette->QUARTER3_END));
+                $DATA4 = getMonthsBy2Date(date('Y-m-d', $facette->QUARTER4_START), date('Y-m-d', $facette->QUARTER4_END));
 
-                $SQL .= " FIRST_MONTHS='" . serialize($QUARTER1_DATA) . "'";
-                $SQL .= " ,SECOND_MONTHS='" . serialize($QUARTER2_DATA) . "'";
-                $SQL .= " ,THIRD_MONTHS='" . serialize($QUARTER3_DATA) . "'";
-                $SQL .= " ,FOURTH_MONTHS='" . serialize($QUARTER4_DATA) . "'";
+                $SAVEDATA['FIRST_MONTHS'] = serialize($DATA1);
+                $SAVEDATA['SECOND_MONTHS'] = serialize($DATA2);
+                $SAVEDATA['THIRD_MONTHS'] = serialize($DATA3);
+                $SAVEDATA['FOURTH_MONTHS'] = serialize($DATA4);
 
                 break;
             default:
-                $SEMESTER1_DATA = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER1_START), date('Y-m-d', $facette->SEMESTER1_END));
-                $SEMESTER2_DATA = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER2_START), date('Y-m-d', $facette->SEMESTER2_END));
-                $entries = array_merge($SEMESTER1_DATA, $SEMESTER2_DATA);
+                $DATA1 = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER1_START), date('Y-m-d', $facette->SEMESTER1_END));
+                $DATA2 = getMonthsBy2Date(date('Y-m-d', $facette->SEMESTER2_START), date('Y-m-d', $facette->SEMESTER2_END));
 
-                $SQL .= " FIRST_MONTHS='" . serialize($SEMESTER1_DATA) . "'";
-                $SQL .= " ,SECOND_MONTHS='" . serialize($SEMESTER2_DATA) . "'";
+                $SAVEDATA['FIRST_MONTHS'] = serialize($DATA1);
+                $SAVEDATA['SECOND_MONTHS'] = serialize($DATA2);
 
                 break;
         }
 
-        $SQL .= " WHERE ID='" . $academicId . "'";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL);
+        $WHERE[] = "ID = '" . $academicId . "'";
+        self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);
+    }
+
+    public static function getAcademicMonthList($academicId) {
+
+        self::setAcademicMonthList($academicId);
+        $facette = self::findGradeFromId($academicId);
+        $entries = array();
+
+        $termNumber = self::findAcademicTerm($facette->SCHOOL_YEAR);
+        switch ($termNumber) {
+            case 1:
+                $DATA1 = unserialize($facette->FIRST_MONTHS);
+                $DATA2 = unserialize($facette->SECOND_MONTHS);
+                $DATA3 = unserialize($facette->THIRD_MONTHS);
+                $entries = array_merge($DATA1, $DATA2, $DATA3);
+                break;
+            case 2:
+                $DATA1 = unserialize($facette->FIRST_MONTHS);
+                $DATA2 = unserialize($facette->SECOND_MONTHS);
+                $DATA3 = unserialize($facette->THIRD_MONTHS);
+                $DATA4 = unserialize($facette->FOURTH_MONTHS);
+                $entries = array_merge($DATA1, $DATA2, $DATA3, $DATA4);
+                break;
+            default:
+                $DATA1 = unserialize($facette->FIRST_MONTHS);
+                $DATA2 = unserialize($facette->SECOND_MONTHS);
+                $entries = array_merge($DATA1, $DATA2);
+                break;
+        }
 
         $CHECK_DATA = array();
         foreach ($entries as $value) {

@@ -30,45 +30,9 @@ switch ($objectType) {
         break;
 }
 
-/*
 $chart = new CamemisChart("MULTI_BAR_CHART", 'chart1', $dataSet);
 $chart->chartSVG = "display";
 $chart->height = 230;
-*/
-
-$chart = new CamemisChart("CUMULATIVE_LINE_CHART", 'chart1', false);
-$chart->chartSVG = "display";
-$chart->height = 230;
-$chart->width = 650;
-
-$chart2 = new CamemisChart("CUMULATIVE_LINE_CHART", 'chart2', false);
-$chart2->chartSVG = "display1";
-$chart2->height = 230;
-$chart2->width = 650;
-
-$chart3 = new CamemisChart("PIC_CHART", 'chart3', false);
-$chart3->chartSVG = "display2";
-$chart3->height = 230;
-$chart3->width = 230;
-
-$chart3 = new CamemisChart("PIC_CHART", 'chart3', false);
-$chart3->chartSVG = "display2";
-$chart3->height = 230;
-$chart3->width = 230;
-
-$chart4 = new CamemisChart("PIC_CHART", 'chart4', false);
-$chart4->chartSVG = "display3";
-$chart4->height = 230;
-$chart4->width = 230;
-
-
-$chart5 = new CamemisChart("PIC_CHART", 'chart5', false);
-$chart5->chartSVG = "display4";
-$chart5->height = 230;
-$chart5->width = 230;
-
-
-
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -78,17 +42,5 @@ $chart5->width = 230;
     <script src="/public/nvd3/nvd3-camemis.php"></script>
     <div><?= $chart->setChartDisplay(); ?></div>
     <script><?= $chart->setChartScript(); ?></script>
-    <div><?= $chart2->setChartDisplay(); ?></div>
-    <script><?= $chart2->setChartScript(); ?></script>
-    
-    <div><?= $chart3->setChartDisplay(); ?></div>
-    <script><?= $chart3->setChartScript(); ?></script>
-    
-    <div><?= $chart4->setChartDisplay(); ?></div>
-    <script><?= $chart4->setChartScript(); ?></script>
-    
-    <div><?= $chart5->setChartDisplay(); ?></div>
-    <script><?= $chart5->setChartScript(); ?></script>
-    
 </body>
 </html>
