@@ -21,7 +21,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
 if($academicObject->EDUCATION_SYSTEM){
@@ -33,13 +33,6 @@ if($academicObject->EDUCATION_SYSTEM){
 } 
 
 if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
-
-$evaluation = new EvaluationSubjectAssessment();
-$evaluation->setAcademicId($academicObject->ID);
-$evaluation->setSubjectId($subjectObject->SUBJECT_ID);
-$evaluation->setSection(3);
-$evaluation->actionDefaultStudentSubjectAssessment("YEAR");
-////////////////////////////////////////////////////////////////////////////////
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
@@ -100,6 +93,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'GPA'");
     
     switch($TERM_NUMBER){
         case 1:
@@ -132,8 +126,41 @@ Ext.onReady(function() {
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
+            
+            if($academicObject->DISPLAY_GPA){
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".GPA."</b>'
+                    , width: 130
+                    , align: 'right'
+                    , sortable: true
+                    , dataIndex: 'GPA'
+                    , renderer:cssDefault
+                    , editor: new Ext.form.ComboBox({
+                        triggerAction:'all'
+                        ,mode:'local'
+                        ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:[".AssessmentConfig::comboGPA($academicObject)."]
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                                replaceValue = combo.getValue();
+                                var newDisplay = record.get('chooseDisplay');
+                                combo.setValue(newDisplay);
+                                comboValue = record.get('chooseValue');
+                            }
+                        }
+                    })
+                    ,filter:{}
+                ");
+            }
+            
             ////////////////////////////////////////////////////////////////////
-            $comboEditor = "
+            $comboAssessment = "
                 new Ext.form.ComboBox({
                     triggerAction:'all'
                     ,mode:'local'
@@ -176,7 +203,7 @@ Ext.onReady(function() {
                 }
             }
             
-            $comboEditor = "
+            $comboAssessment = "
                 new Ext.form.ComboBox({
                     triggerAction:'all'
                     ,mode:'local'
@@ -209,7 +236,7 @@ Ext.onReady(function() {
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
-        , editor: ".$comboEditor."
+        , editor: ".$comboAssessment."
         ,filter:{}
     ");
     
@@ -262,6 +289,38 @@ Ext.onReady(function() {
         }]);
     ");
     
+    $setActionPareams = $setParams;
+    $setActionPareams .= "&target=YEAR";
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: '" . CALCULATION . "'
+            ,iconCls:'icon-calculator_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url: '/evaluation/jsonsave/'
+                    ,method: 'POST'
+                    ,params:{
+                        cmd: 'jsonActionCalculationSubjectEvaluation'
+                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
+                    }
+                    ,success: function() {
+                        Ext.MessageBox.hide();
+                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+                    }
+                });
+            }
+        }]);
+    ");
+    
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
@@ -298,19 +357,6 @@ Ext.onReady(function() {
     });
     
     <?
-    
-//    if(!$academicObject->EVALUATION_OPTION){
-//        $SHOW_DETAIL ="{";
-//        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
-//        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
-//        $SHOW_DETAIL .=",disabled:false";
-//        $SHOW_DETAIL .=",handler: function(){";
-//        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaysemestersubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(60));";
-//        $SHOW_DETAIL .="}";
-//        $SHOW_DETAIL .="}";
-//
-//        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
-//    }
     
     $TEACHER_COMMENTS ="{";
     $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";

@@ -22,14 +22,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
-
-////////////////////////////////////////////////////////////////////////////////
-$evaluation = new AcademicPerformances();
-$evaluation->setAcademicId($academicObject->ID);
-$evaluation->setSection(3);
-$evaluation->actionDefaultStudentAcademicPerformance("YEAR");
-////////////////////////////////////////////////////////////////////////////////
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -101,7 +94,8 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'"); 
     $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");  
-    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");  
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");
+    $OBJECT_GRID->addReadField("name: 'GPA'");  
     
     switch($TERM_NUMBER){
         case 1:
@@ -131,6 +125,38 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
+    
+    if($academicObject->DISPLAY_GPA){
+        $OBJECT_GRID->addColumn("
+            header: '<b>".GPA."</b>'
+            , width: 130
+            , align: 'right'
+            , sortable: true
+            , dataIndex: 'GPA'
+            , renderer:cssDefault
+            , editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:[".AssessmentConfig::comboGPA($academicObject)."]
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = record.get('chooseValue');
+                    }
+                }
+            })
+            ,filter:{}
+        ");
+    }
     
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
@@ -213,6 +239,37 @@ Ext.onReady(function() {
             ");
         break;
     }
+    
+    $setActionPareams = $setParams;
+    $setActionPareams .= "&target=YEAR";
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: '" . CALCULATION . "'
+            ,iconCls:'icon-calculator_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url: '/evaluation/jsonsave/'
+                    ,method: 'POST'
+                    ,params:{
+                        cmd: 'jsonActionCalculationPerformanceEvaluation'
+                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
+                    }
+                    ,success: function() {
+                        Ext.MessageBox.hide();
+                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+                    }
+                });
+            }
+        }]);
+    ");
     
     $OBJECT_GRID->baseParams = "
         start:0

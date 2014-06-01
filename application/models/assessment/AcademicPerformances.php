@@ -653,8 +653,8 @@ class AcademicPerformances extends AssessmentProperties {
         SQLAcademicPerformances::getActionStudentAcademicPerformance($stdClass);
     }
 
-    public function actionDefaultStudentAcademicPerformance($type) {
-        switch ($type) {
+    public function actionCalculationPerformanceEvaluation() {
+        switch ($this->target) {
             case "MONTH":
                 $entries = $this->getListStudentsMonthAcademicPerformance();
                 break;

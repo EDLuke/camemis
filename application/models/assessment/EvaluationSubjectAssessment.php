@@ -1077,9 +1077,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function actionDefaultStudentSubjectAssessment($type) {
+    public function actionCalculationSubjectEvaluation() {
 
-        switch ($type) {
+        switch ($this->target) {
             case "MONTH":
                 $entries = $this->getSubjectMonthResult();
                 $section = "MONTH";
@@ -1138,7 +1138,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                             $stdClass->mappingValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
                             break;
                         case self::SCORE_CHAR:
-                            switch ($type) {
+                            switch ($this->target) {
                                 case "MONTH":
                                 case "TERM":
                                     $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
@@ -1151,7 +1151,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     $stdClass->studentId = $studentId;
                     $stdClass->section = $section;
 
-                    switch ($type) {
+                    switch ($this->target) {
                         case "TERM":
                             $stdClass->monthResult = isset($entries[$i]["MONTH_RESULT"]) ? $entries[$i]["MONTH_RESULT"] : "";
                             $stdClass->termResult = isset($entries[$i]["TERM_RESULT"]) ? $entries[$i]["TERM_RESULT"] : "";

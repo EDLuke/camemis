@@ -55,6 +55,10 @@ class jsonAcademicPerformances extends AcademicPerformances {
         if (isset($params["comboValue"])) {
             $this->comboValue = addText($params["comboValue"]);
         }
+        
+        if (isset($params["target"])) {
+            $this->target = addText($params["target"]);
+        }
     }
 
     public function jsonListStudentsMonthAcademicPerformance($encrypParams) {
@@ -121,6 +125,17 @@ class jsonAcademicPerformances extends AcademicPerformances {
         $this->setParams($params);
 
         $this->setActionStudentAcademicPerformance();
+
+        return array(
+            "success" => true
+        );
+    }
+
+    public function jsonActionCalculationPerformanceEvaluation($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+
+        $this->actionCalculationPerformanceEvaluation();
 
         return array(
             "success" => true

@@ -135,10 +135,31 @@ class AssessmentConfig {
         return $result;
     }
 
+    public static function comboGPA($academicObject) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_gradingsystem", array("*"));
+        $SQL->where("EDUCATION_TYPE = '" . $academicObject->QUALIFICATION_TYPE . "'");
+        $SQL->order("SORTKEY ASC");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        $data[0] = "{chooseValue: '0', chooseDisplay: '---'}";
+
+        if ($result) {
+            $i = 0;
+            foreach ($result as $value) {
+                $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->GPA . "'}";
+                $i++;
+            }
+        }
+        return implode(",", $data);
+    }
+
     public static function comboGradingSystem($scoreType, $academicObject) {
-        
-        $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"DESCRIPTION";
-        
+
+        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '" . $scoreType . "'");

@@ -72,6 +72,10 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         if (isset($params["comboValue"])) {
             $this->comboValue = addText($params["comboValue"]);
         }
+        
+        if (isset($params["target"])) {
+            $this->target = addText($params["target"]);
+        }
     }
 
     public function jsonListStudentSubjectAssignments($encrypParams) {
@@ -250,6 +254,15 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             "success" => true
             , "data" => $this->loadContentTeacherScoreInputDate()
         );
+    }
+
+    public function jsonActionCalculationSubjectEvaluation($encrypParams) {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->setParams($params);
+
+        $this->actionCalculationSubjectEvaluation();
+
+        return array("success" => true);
     }
 
     public function jsonScoreImport($encrypParams) {
