@@ -309,6 +309,28 @@ abstract class AssessmentProperties {
         }
     }
 
+    public static function setGradingScale() {
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_gradingsystem", array("*"));
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+        if ($result) {
+            foreach ($result as $value) {
+                if (strpos($value->NUMERIC_GRADE, "<") !== false) {
+                    $SAVEDATA["SCORE_MIN"] = 0;
+                    $SAVEDATA["SCORE_MAX"] = substr($value->NUMERIC_GRADE, 1);
+                } else {
+                    $explode = explode("-", $value->NUMERIC_GRADE);
+                    $SAVEDATA["SCORE_MIN"] = isset($explode[0]) ? $explode[0] : 0;
+                    $SAVEDATA["SCORE_MAX"] = isset($explode[1]) ? $explode[1] : 0;
+                }
+
+                $WHERE[] = "ID = '" . $value->ID . "'";
+                self::dbAccess()->update('t_gradingsystem', $SAVEDATA, $WHERE);
+            }
+        }
+    }
+
 }
 
 ?>

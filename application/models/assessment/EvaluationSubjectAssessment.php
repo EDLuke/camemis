@@ -1077,6 +1077,57 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
+    public function actionScoreImport() {
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "scoreMax" => $this->getSubjectScoreMax()
+                    , "scoreMin" => $this->getSubjectScoreMin()
+                    , "scoreType" => $this->getSubjectScoreType()
+                    , "schoolyearId" => $this->getSchoolyearId()
+                    , "qualificationType" => $this->getSettingQualificationType()
+                    , "listStudents" => $this->listClassStudents()
+                    , "tmp_name" => $this->tmp_name
+        );
+
+        if ($this->getSettingEvaluationOption()) {
+
+            $stdClass->term = $this->term;
+            $stdClass->month = $this->getMonth();
+            $stdClass->year = $this->getYear();
+
+            if ($this->term) {
+                $stdClass->section = $this->getNameSectionByTerm();
+            }
+
+            if ($stdClass->month && $stdClass->year) {
+                $stdClass->section = "MONTH";
+            }
+
+            SQLEvaluationImport::importScoreSubject($stdClass);
+        } else {
+            $stdClass->assignmentId = $this->assignmentId;
+            $stdClass->date = $this->date;
+            $stdClass->month = $this->getMonth();
+            $stdClass->year = $this->getYear();
+            $stdClass->coeffValue = $this->getAssignmentCoeff();
+            $stdClass->include_in_valuation = $this->getAssignmentInCludeEvaluation();
+            $stdClass->educationSystem = $this->getEducationSystem();
+            $stdClass->term = $this->getTermByDateAcademicId();
+            $stdClass->actionField = "SCORE";
+            SQLEvaluationImport::importScoreAssignment($stdClass);
+        }
+    }
+
+    public function calculatedSubjectAssessment($stdClass) {
+        
+    }
+
+    public function calculatedSubjectGPA($stdClass) {
+        
+    }
+
     public function actionCalculationSubjectEvaluation() {
 
         switch ($this->target) {
@@ -1183,49 +1234,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
                 }
             }
-        }
-    }
-
-    public function actionScoreImport() {
-
-        $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "subjectId" => $this->subjectId
-                    , "scoreMax" => $this->getSubjectScoreMax()
-                    , "scoreMin" => $this->getSubjectScoreMin()
-                    , "scoreType" => $this->getSubjectScoreType()
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "qualificationType" => $this->getSettingQualificationType()
-                    , "listStudents" => $this->listClassStudents()
-                    , "tmp_name" => $this->tmp_name
-        );
-
-        if ($this->getSettingEvaluationOption()) {
-
-            $stdClass->term = $this->term;
-            $stdClass->month = $this->getMonth();
-            $stdClass->year = $this->getYear();
-
-            if ($this->term) {
-                $stdClass->section = $this->getNameSectionByTerm();
-            }
-
-            if ($stdClass->month && $stdClass->year) {
-                $stdClass->section = "MONTH";
-            }
-
-            SQLEvaluationImport::importScoreSubject($stdClass);
-        } else {
-            $stdClass->assignmentId = $this->assignmentId;
-            $stdClass->date = $this->date;
-            $stdClass->month = $this->getMonth();
-            $stdClass->year = $this->getYear();
-            $stdClass->coeffValue = $this->getAssignmentCoeff();
-            $stdClass->include_in_valuation = $this->getAssignmentInCludeEvaluation();
-            $stdClass->educationSystem = $this->getEducationSystem();
-            $stdClass->term = $this->getTermByDateAcademicId();
-            $stdClass->actionField = "SCORE";
-            SQLEvaluationImport::importScoreAssignment($stdClass);
         }
     }
 

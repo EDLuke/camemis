@@ -23,6 +23,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
+AssessmentProperties::setGradingScale();
 
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 $schoolyearObject = $DB_SCHOOLYEAR->findAcademicDateFromId($academicObject->SCHOOL_YEAR);

@@ -312,6 +312,22 @@ class SQLEvaluationStudentSubject {
         return $data ? implode("|", $data) : "---";
     }
 
+    public static function calculateStudentGradingScale($stdClass) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_gradingsystem", array("*"));
+        $SQL->where("EDUCATION_TYPE = '" . $stdClass->classObject->QUALIFICATION_TYPE . "'");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+        if ($result) {
+            if ($stdClass->average >= $value->SCORE_MIN && $stdClass->average <= $value->SCORE_MAX) {
+
+                $output = $value->ID;
+                
+            }
+        }
+    }
+
 }
 
 ?>
