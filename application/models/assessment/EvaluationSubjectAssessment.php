@@ -183,6 +183,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $AVERAGE = $this->averageMonthSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
+                        $data[$i]["AVERAGE_PERCENT"] = getPercent($AVERAGE, $this->getSubjectScoreMax());
                         break;
                 }
 
@@ -226,6 +227,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $AVERAGE = $this->calculatedAverageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                         $data[$i]["AVERAGE"] = $AVERAGE;
+                        $data[$i]["AVERAGE_PERCENT"] = getPercent($AVERAGE, $this->getSubjectScoreMax());
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass, self::WITH_FORMAT);
                         $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::WITH_FORMAT);
                         break;
@@ -284,6 +286,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $AVERAGE = $this->calculatedAverageYearSubjectResult($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE"] = $AVERAGE;
+                $data[$i]["AVERAGE_PERCENT"] = getPercent($AVERAGE, $this->getSubjectScoreMax());
 
                 switch ($this->getTermNumber()) {
                     case 1:
@@ -373,6 +376,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
+                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
                     if ($this->getCurrentClassAssignments()) {
@@ -442,7 +446,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 if ($this->isDisplayMonthResult()) {
                     $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
                 }
-                $data[$i]["ASSESSMENT"] = $facette->GRADING;
+
+                $data[$i]["ASSESSMENT"] = $facette->GRADING ? $facette->GRADING : "---";
+                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 $i++;
             }
@@ -503,6 +509,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
+                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 $i++;
             }
@@ -1172,6 +1179,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "schoolyearId" => $this->getSchoolyearId()
                     , "educationSystem" => $this->getEducationSystem()
                     , "evaluationType" => $this->getSettingEvaluationType()
+                    , "qualificationType" => $this->getSettingQualificationType()
         );
 
         if ($entries) {
@@ -1187,6 +1195,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         case self::SCORE_NUMBER:
                             $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
                             $stdClass->mappingValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
+                            $stdClass->averagePercent = isset($entries[$i]["AVERAGE_PERCENT"]) ? $entries[$i]["AVERAGE_PERCENT"] : "";
                             break;
                         case self::SCORE_CHAR:
                             switch ($this->target) {

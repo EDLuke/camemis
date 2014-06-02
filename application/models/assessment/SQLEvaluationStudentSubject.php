@@ -19,12 +19,13 @@ class SQLEvaluationStudentSubject {
     public static function getCallStudentSubjectEvaluation($stdClass) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
-        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "GPA" : "DESCRIPTION";
+        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
 
         $data = array(
             'SUBJECT_VALUE' => ""
             , 'RANK' => ""
             , 'GRADING' => ""
+            , 'GPA' => ""
             , 'ASSESSMENT_ID' => ""
             , 'TEACHER_COMMENT' => ""
             , 'MONTH_RESULT' => ""
@@ -57,14 +58,14 @@ class SQLEvaluationStudentSubject {
                 if (isset($stdClass->scoreType)) {
                     switch ($stdClass->scoreType) {
                         case 1:
-                            $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING");
+                            $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA");
                             break;
                         case 2:
-                            $SELECTION_B = array('LETTER_GRADE AS GRADING');
+                            $SELECTION_B = array('LETTER_GRADE AS GRADING','GPA');
                             break;
                     }
                 } else {
-                    $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING");
+                    $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA");
                 }
 
                 $SQL = self::dbAccess()->select();
@@ -101,6 +102,7 @@ class SQLEvaluationStudentSubject {
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
                         , 'RANK' => $result->RANK ? $result->RANK : "---"
                         , 'GRADING' => $result->GRADING ? $result->GRADING : "---"
+                        , 'GPA' => $result->GPA
                         , 'ASSESSMENT_ID' => $result->ASSESSMENT_ID
                         , 'TEACHER_COMMENT' => $result->TEACHER_COMMENT
                         , 'MONTH_RESULT' => $result->MONTH_RESULT
@@ -164,8 +166,17 @@ class SQLEvaluationStudentSubject {
             $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->mappingValue;
         }
 
-        if (isset($stdClass->assessmentId))
-            $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+        if (isset($stdClass->averagePercent)) {
+            $SAVE_DATA["SUBJECT_VALUE_PERCENT"] = $stdClass->averagePercent;
+            $SAVE_DATA["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale(
+                            $stdClass->averagePercent
+                            , $stdClass->qualificationType
+            );
+        } else {
+            if (isset($stdClass->assessmentId)) {
+                $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+            }
+        }
 
         if (isset($stdClass->actionRank)) {
             if ($stdClass->actionRank)
@@ -310,22 +321,6 @@ class SQLEvaluationStudentSubject {
         }
 
         return $data ? implode("|", $data) : "---";
-    }
-
-    public static function calculateStudentGradingScale($stdClass) {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_gradingsystem", array("*"));
-        $SQL->where("EDUCATION_TYPE = '" . $stdClass->classObject->QUALIFICATION_TYPE . "'");
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            if ($stdClass->average >= $value->SCORE_MIN && $stdClass->average <= $value->SCORE_MAX) {
-
-                $output = $value->ID;
-                
-            }
-        }
     }
 
 }

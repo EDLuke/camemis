@@ -2471,4 +2471,15 @@ function findTermByMonthYear($data, $monthyear) {
     return $CHECK;
 }
 
+function getPercent($a, $b) {
+
+    $result = "";
+    if (is_numeric($a) && is_numeric($b)) {
+        if ($b)
+            $result = $a * 100 / $b;
+    }
+
+    return $result;
+}
+
 ?>
