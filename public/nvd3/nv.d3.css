@@ -35,7 +35,7 @@
     z-index: 10000;
 
     font-family: tahoma,verdana,arial,sans-serif,Hanuman;
-    font-size: 13px;
+    font-size: 11px;
     text-align: left;
     pointer-events: none;
 
@@ -542,7 +542,7 @@ svg .title {
 .nvd3.nv-bullet .nv-range.nv-s0 { fill: #eee; }
 .nvd3.nv-bullet .nv-range.nv-s1 { fill: #ddd; }
 .nvd3.nv-bullet .nv-range.nv-s2 { fill: #ccc; }
-.nvd3.nv-bullet .nv-title { font-size: 12px; font-weight: bold; }
+.nvd3.nv-bullet .nv-title { font-size: 10px; font-weight: bold; }
 .nvd3.nv-bullet .nv-subtitle { fill: #999; }
 
 
