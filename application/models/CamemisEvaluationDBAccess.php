@@ -428,6 +428,14 @@ class CamemisEvaluationDBAccess {
         );
     }
     
+    public function jsonRemoveQuestionFromTopic($Id) {
+        self::dbAccess()->delete('t_camemis_evaluation_question', array("ID='" . $Id . "'"));
+        
+        return array(
+            "success" => true
+        );    
+    }
+    
     //////////////////////////////////////////////////////////////////////////////
     //TOPIC SETTING
     /////////////////////////////////////////////////////////////////////////////
