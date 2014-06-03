@@ -24,12 +24,48 @@ $STUDENT_TREE->setURL('/camemisevaluation/jsontree/');
 
 $STAFF_TREE = new CamemisTree("EVALUATION", "STAFF_LIST");
 $STAFF_TREE->setURL('/camemisevaluation/jsontree/');
+
+$QUESTION_GRID = new CamemisGrid("QUESTION", "LIST");
+$QUESTION_GRID->setLoadUrl("/camemisevaluation/jsonload/");
+$QUESTION_GRID->setSaveUrl("/camemisevaluation/jsonsave/");
+
+$ADD_QUESTION_GRID = new CamemisGrid("ADD_QUESTION", "LIST");
+$ADD_QUESTION_GRID->setLoadUrl("/camemisevaluation/jsonload/");
+$ADD_QUESTION_GRID->setSaveUrl("/camemisevaluation/jsonsave/");
 $USER_TYPE=UserAuth::getUserType();
 
 if($this->objectId == "new"){
     $parentId = isset($_GET['parentId'])?addText($_GET['parentId']):'';
 }else{
     $parentId = $this->facette?$this->facette->PARENT:'';
+}
+
+function deleteQuestion($QUESTION_GRID){
+    
+    $js = "";
+    $js .= "window.parent.Ext.MessageBox.show({";
+    $js .= "title:'" . STATUS . "'";
+    $js .= ",width: 350";
+    $js .= ",msg: '" . DELETE_THIS_ITEM . "'";
+    $js .= ",buttons: Ext.MessageBox.YESNOCANCEL";
+    $js .= ",icon: Ext.MessageBox.WARNING";
+    $js .= ",fn: function(btn, text){
+        if (btn == 'yes'){
+            Ext.Ajax.request({
+                url: '/camemisevaluation/jsonsave/'
+                ,method: 'POST'
+                ,params: {cmd: 'jsonRemoveQuestionFromTopic',objectId:record.data.ID}
+                ,success: function(response, options) {
+                    XMsg('".STATUS."','".WAR_REMOVED_SUCCESSFULLY."');
+                    Ext.getCmp('" . $QUESTION_GRID->getObjectId() . "').store.reload();
+                }
+                ,failure: function(response, options) {}
+            });
+        }
+    }";
+    $js .= "});";
+    
+    return $js;
 }    
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -37,12 +73,98 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 <script>
 Ext.onReady(function() {
     
+    function renderText(value,record){
+        return '<div style=\"font-weight:normal; color:#000000; padding: 5px; height:15px;background:#FFFFFF;\">' + value + '</div>';
+    }
+    
     <?
     /**
     * Extjs: s.gif
     */
+    
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    //ADD QUESTION GRID
+    ///////////////////////////////////////////////////////////////////////////////
+    $ADD_QUESTION_GRID->addReadField("name: 'ID'");
+    $ADD_QUESTION_GRID->addReadField("name: 'QUESTION_NAME'");
+    
+    $ADD_QUESTION_GRID->addColumn("header: '<b>" . QUESTION . "</b>', align:'left', width: 600, dataIndex: 'QUESTION_NAME'");
+    
+    $ADD_QUESTION_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonLoadUnassignedQuestionToTopic'
+        ,objectId: '" . $this->objectId . "'
+    ";
+
+    $ADD_QUESTION_GRID->setSelectionParams("
+        cmd: 'jsonActionAddQuestionToTopic'
+        ,objectId: '" . $this->objectId . "'
+    ");
+        
+    $ADD_QUESTION_GRID->addTBarItems("
+        tbar.add([{
+            id: 'APLY_ID'
+            ,text: '<b>" . APPLY . "</b>'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,handler: this.onSelection
+        }]);
+    ");
+    
+    $ADD_QUESTION_GRID->setSelectionEmbeddedEvents("
+        Ext.getCmp('".$QUESTION_GRID->getObjectId()."').store.reload();
+    ");
+    
+    $ADD_QUESTION_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+       
+    $ADD_QUESTION_GRID->loadMask = true;
+    $ADD_QUESTION_GRID->isPagingToolbar = true;
+    $ADD_QUESTION_GRID->isQuickySearch = true;
+    $ADD_QUESTION_GRID->isCheckboxSelect = true;
+    $ADD_QUESTION_GRID->forceFit = "false";
+    $ADD_QUESTION_GRID->renderJS();
+    ///////////////////////////////////////////////////////////////////////////////
+    //QUESTION GRID
+    ///////////////////////////////////////////////////////////////////////////////
+    $QUESTION_GRID->addReadField("name: 'ID'");
+    $QUESTION_GRID->addReadField("name: 'QUESTION_NAME'");
+    $QUESTION_GRID->addReadField("name: 'ANSWER_NAME'");
+    
+    $QUESTION_GRID->addColumn("header: '<b>" . QUESTION . "</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:400, dataIndex: 'QUESTION_NAME'");
+    $QUESTION_GRID->addColumn("header: '<b>" . ANSWER . "</b>', align:'left', renderer: renderText, width: 150, dataIndex: 'ANSWER_NAME'");
+    
+    $QUESTION_GRID->addTBarItems("
+        tbar.add([{
+            id: 'ADD_ID'
+            ,scope:this
+            ,text:'".QUESTION."'
+            ,tooltip:'".QUESTION."'
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+                openWinXType('ADD_QUESTION_LIST','".QUESTION."', '".$ADD_QUESTION_GRID->getObjectXType()."', percentWidth(80), percentHeight(80));           
+            }
+        }]);
+    ");
+    
+    $QUESTION_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonLoadEvaluationQuestionByTopic'
+        ,objectId: '" . $this->objectId . "'
+    ";
+    
+    $QUESTION_GRID->loadMask = true;
+    $QUESTION_GRID->isPagingToolbar = true;
+    $QUESTION_GRID->isGroupingView = true;
+    $QUESTION_GRID->groupField = "QUESTION_NAME";
+    $QUESTION_GRID->forceFit = "false";
+    $QUESTION_GRID->renderJS();
     
     ///////////////////////////////////////////////////////////////////////////////
     //STAFF TREE
@@ -189,7 +311,7 @@ Ext.onReady(function() {
                         title:'".QUESTION."'
                         ,border: false
                         ,height:percentHeight(100)
-                        ,contentEl: 'initCenter'
+                        ,items: [{xtype: '".$QUESTION_GRID->getObjectXType()."'}]
                     },{ 
                         title: '".STUDENT."'   
                         ,layout:'fit' 
@@ -222,66 +344,28 @@ Ext.onReady(function() {
             ,items: <?=$VIEWPORT_ITEMS;?>
         }]
     });
+    
     <?
-    if($this->objectId != "new"){
-        
         $js = "";
-        $js .= "var myTraditionalTree = ".$STUDENT_TREE->ExtgetCmp().";";
-        $js .= "if (myTraditionalTree) myTraditionalTree.on('checkchange', function(node, checked){";
-        
-            ////////////////////////////////////////////////////////////////////////////////////////
-            $js .= "myTraditionalTree = window.parent.Ext.getCmp('TREE.EVALUATION_TOPIC_LIST_ID');";
-            $js .= "myNode = myTraditionalTree.getNodeById('".$parentId."');";
-            $js .= "if(myNode.parentNode==null){";
-                $js .= "myTraditionalTree.root.reload();";
-            $js .= "}else{";
-                $js .= "var parentId = myNode.parentNode.id";
-                $js .= "myPerentNode = myTraditionalTree.getNodeById(parentId);";
-                $js .= "if(myNode.isLeaf()){";
-                    $js .= "if(myPerentNode){";
-                        $js .= "myPerentNode.reload();";
-                        $js .= "myPerentNode.expand(true, false);";
-                    $js .= "}else{";
-                        $js .= "myTraditionalTree.root.reload();";
-                    $js .= "}";
-                $js .= "}else{";
-                    $js .= "if (myNode.hasChildNodes()) {";
-                        $js .= "myNode.reload();";
-                        $js .= "myNode.expand(true, false);";
-                    $js .= "}";
-                $js .= "}";
-            $js .= "}";
-            ///////////////////////////////////////////////////////////////////////////////////////
-            
-            $js .= "Ext.Ajax.request({";
-                $js .= "url:'/camemisevaluation/jsonsave/'";
-                $js .= ",method:'POST'";
-                $js .= ",params:{";
-                    $js .= "cmd:'jsonActionAcademicToEvaluation'";
-                    $js .= ",checked: checked";
-                    $js .= ",academic: node.id";
-                    $js .= ",objectId: '".$this->objectId."'";
-                $js .= "}";
-                $js .= ",success: function(response, options) {";
-                    $js .= "result = Ext.util.JSON.decode(response.responseText);";
-                    $js .= "XMsg('".STATUS."',result.msg);";
-                $js .= "}";
+        $js .= "var myGrid = Ext.getCmp('".$QUESTION_GRID->getObjectId()."');";
+        $js .= "if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $js .= "var record = grid.store.getAt(rowIndex);";
+            $js .= "var chooseId = record.data.ID;";
+            $js .= "var contextMenu = new Ext.menu.Menu({";
+                $js .="items: [{";
+                    $js .="text: '".REMOVE." &raquo; ' + record.data.QUESTION_NAME";
+                    $js .=",iconCls:'icon-delete'";
+                    $js .=",handler:function(){".deleteQuestion($QUESTION_GRID)."}";
+                $js .="}]";
             $js .= "});";
-            
-        $js .= "});";    
-        print $js;   
-    }
+            $js .= "event.stopEvent();";
+            $js .= "contextMenu.showAt(event.xy);";
+        $js .= "});";
+        
+        echo $js;
     ?>
 });
 </script>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>
-
-<html>
-<body bgcolor="#FFFFFF">
-    <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:80px">
-        <h1 class="headerError">You do not have permission to access this object.!</h1>
-    </div>
-</body>
-</html>
