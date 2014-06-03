@@ -18,9 +18,14 @@ class SQLAcademicPerformances {
         return false::dbAccess()->select();
     }
 
-    public static function getSQLAverageStudentAcademicPerformance($stdClass, $type) {
+    public static function getSQLAverageStudentAcademicPerformance($stdClass, $type = false, $term = false) {
 
-        $SELECTION_A = array("SUM(A.SUBJECT_VALUE*B.COEFF_VALUE) AS SUM_VALUE");
+        if ($type) {
+            $SELECTION_A = array("SUM(A.SUBJECT_VALUE_PERCENT*B.COEFF_VALUE) AS SUM_VALUE");
+        } else {
+            $SELECTION_A = array("SUM(A.SUBJECT_VALUE*B.COEFF_VALUE) AS SUM_VALUE");
+        }
+
         $SELECTION_B = array("IF( B.COEFF_VALUE =0, B.COEFF_VALUE =1, B.COEFF_VALUE )", "SUM(B.COEFF_VALUE) AS SUM_COEFF");
 
         $SQL = self::dbAccess()->select();
@@ -37,9 +42,13 @@ class SQLAcademicPerformances {
                 $SQL->where("A.YEAR = '" . $stdClass->year . "'");
         }
 
-        if (!isset($stdClass->month) && !isset($stdClass->year)) {
-            if (isset($stdClass->term))
-                $SQL->where("A.TERM = '" . $stdClass->term . "'");
+        if ($term) {
+            $SQL->where("A.TERM = '" . $term . "'");
+        } else {
+            if (!isset($stdClass->month) && !isset($stdClass->year)) {
+                if (isset($stdClass->term))
+                    $SQL->where("A.TERM = '" . $stdClass->term . "'");
+            }
         }
 
         $SQL->group("A.TERM");
@@ -60,10 +69,11 @@ class SQLAcademicPerformances {
     public static function getCallStudentAcademicPerformance($stdClass) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
-        $GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"DESCRIPTION";
+        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
 
         $data["GRADING"] = "---";
         $data["RANK"] = "---";
+        $data["GPA"] = "---";
         $data["TOTAL_RESULT"] = "---";
         $data["FIRST_RESULT"] = "---";
         $data["SECOND_RESULT"] = "---";
@@ -84,7 +94,8 @@ class SQLAcademicPerformances {
                     , 'FOURTH_RESULT'
                     , 'TEACHER_COMMENT'
                 );
-                $SELECTION_B = array("".$GRADING_TYPE."");
+
+                $SELECTION_B = array("" . $GRADING_TYPE . "", "GPA");
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_learning_performance"), $SELECTION_A);
@@ -120,6 +131,7 @@ class SQLAcademicPerformances {
                 if ($result) {
                     $data["GRADING"] = $result->$GRADING_TYPE ? $result->$GRADING_TYPE : "---";
                     $data["RANK"] = $result->RANK ? $result->RANK : "---";
+                    $data["GPA"] = $result->GPA ? $result->GPA : "---";
                     $data["TOTAL_RESULT"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
                     $data["FIRST_RESULT"] = $result->FIRST_RESULT ? $result->FIRST_RESULT : "---";
                     $data["SECOND_RESULT"] = $result->SECOND_RESULT ? $result->SECOND_RESULT : "---";
@@ -171,7 +183,7 @@ class SQLAcademicPerformances {
         if ($listStudents) {
             foreach ($listStudents as $value) {
                 $stdClass->studentId = $value->ID;
-                $data[] = self::getSQLAverageStudentAcademicPerformance($stdClass);
+                $data[] = self::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
             }
         }
         return $data;
@@ -183,8 +195,16 @@ class SQLAcademicPerformances {
             $SAVE_DATA["TOTAL_RESULT"] = $stdClass->average;
         }
 
-        if (isset($stdClass->assessmentId)) {
-            $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+        if (isset($stdClass->averagePercent)) {
+            $SAVE_DATA["TOTAL_RESULT_PERCENT"] = $stdClass->averagePercent;
+            $SAVE_DATA["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale(
+                            $stdClass->averagePercent
+                            , $stdClass->qualificationType
+            );
+        } else {
+            if (isset($stdClass->assessmentId)) {
+                $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+            }
         }
 
         if (isset($stdClass->rank)) {
@@ -205,6 +225,22 @@ class SQLAcademicPerformances {
 
         if (isset($stdClass->fourthResult)) {
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
+        }
+
+        if (isset($stdClass->firstResultPercent)) {
+            $SAVE_DATA["FIRST_RESULT_PERCENT"] = $stdClass->firstResultPercent;
+        }
+
+        if (isset($stdClass->secondResultPercent)) {
+            $SAVE_DATA["SECOND_RESULT_PERCENT"] = $stdClass->secondResultPercent;
+        }
+
+        if (isset($stdClass->thirdResultPercent)) {
+            $SAVE_DATA["THIRD_RESULT_PERCENT"] = $stdClass->thirdResultPercent;
+        }
+
+        if (isset($stdClass->fourthResultPercent)) {
+            $SAVE_DATA["FOURTH_RESULT_PERCENT"] = $stdClass->fourthResultPercent;
         }
 
         if (self::checkStudentAcademicPerformance($stdClass)) {

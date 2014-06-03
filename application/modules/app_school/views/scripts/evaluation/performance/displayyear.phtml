@@ -26,6 +26,10 @@ $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$setParams = "";
+$setParams .= "&academicId=".$this->academicId."";
+$setParams .="&section=3";
+
 ?>
 <style>
     .filter-row-grid .x-grid3-header {
@@ -275,11 +279,11 @@ Ext.onReady(function() {
         start:0
         ,limit:100
         ,cmd: 'jsonListStudentsYearAcademicPerformance'
-        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     $OBJECT_GRID->setSaveParams("
         cmd: 'jsonActionStudentAcademicPerformance'
-        ,camIds: '".$this->urlEncryp->encryptedGet("&academicId=".$this->academicId."&section=3")."'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
         ,comboValue:comboValue
     ");
     $OBJECT_GRID->setAftereditCallback("

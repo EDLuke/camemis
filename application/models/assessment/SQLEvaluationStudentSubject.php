@@ -61,7 +61,7 @@ class SQLEvaluationStudentSubject {
                             $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA");
                             break;
                         case 2:
-                            $SELECTION_B = array('LETTER_GRADE AS GRADING','GPA');
+                            $SELECTION_B = array('LETTER_GRADE AS GRADING', 'GPA');
                             break;
                     }
                 } else {
