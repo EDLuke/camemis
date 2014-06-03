@@ -18,7 +18,7 @@ class SQLAcademicPerformances {
         return false::dbAccess()->select();
     }
 
-    public static function getSQLAverageStudentAcademicPerformance($stdClass) {
+    public static function getSQLAverageStudentAcademicPerformance($stdClass, $type) {
 
         $SELECTION_A = array("SUM(A.SUBJECT_VALUE*B.COEFF_VALUE) AS SUM_VALUE");
         $SELECTION_B = array("IF( B.COEFF_VALUE =0, B.COEFF_VALUE =1, B.COEFF_VALUE )", "SUM(B.COEFF_VALUE) AS SUM_COEFF");
