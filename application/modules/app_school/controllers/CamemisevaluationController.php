@@ -106,7 +106,15 @@ class CamemisevaluationController extends Zend_Controller_Action {
                 
             case "jsonLoadEvaluationTopic":
                 $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonLoadEvaluationTopic($this->REQUEST->getPost("objectId"));
-                break;                                                                  
+                break;
+                
+            case "jsonLoadUnassignedQuestionToTopic":
+                $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonLoadUnassignedQuestionToTopic($this->REQUEST->getPost());
+                break;
+                
+            case "jsonLoadEvaluationQuestionByTopic":
+                $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonLoadEvaluationQuestionByTopic($this->REQUEST->getPost());
+                break;                                                                        
         }
         if (isset($jsondata))
             $this->setJSON($jsondata);
@@ -141,7 +149,15 @@ class CamemisevaluationController extends Zend_Controller_Action {
                 
             case "jsonActionAcademicToEvaluation":
                 $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonActionAcademicToEvaluation($this->REQUEST->getPost());
-                break;                                                                                      
+                break;
+                
+            case "jsonActionAddQuestionToTopic":
+                $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonActionAddQuestionToTopic($this->REQUEST->getPost());
+                break;
+                
+            case "jsonRemoveQuestionFromTopic":
+                $jsondata = $this->DB_CAMEMIS_EVALUATION->jsonRemoveQuestionFromTopic($this->REQUEST->getPost("objectId"));
+                break;                                                                                           
         }
         if (isset($jsondata))
             $this->setJSON($jsondata);
