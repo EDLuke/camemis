@@ -321,8 +321,10 @@ Ext.onReady(function() {
         layout: 'fit'
         ,border: false
         ,items:[{
-            layout:'fit'
-            ,border: false
+            border: false
+            ,id:'center'
+            ,layout:'card'
+            ,activeItem: 0
             ,items:[{xtype: '<?=$ASSIGNED_STUDENTS_GRID->getObjectXtype();?>'}]
         }]
     });
@@ -336,7 +338,7 @@ Ext.onReady(function() {
             ,iconCls: 'icon-user'
             ,disabled:false
             ,handler: function(){
-                openWinMax('".SHOW_DETAIL." &raquo; ' + record.data.LASTNAME+ ' ' + record.data.FIRSTNAME,'/student/studentmonitor/?objectId=' + record.data.ID);
+                clickOpenPage('center','".SHOW_DETAIL." &raquo; ' + record.data.LASTNAME+ ' ' + record.data.FIRSTNAME,'/student/studentmonitor/?target=".camemisId()."&objectId=' + record.data.ID);
             }
         }
         ";

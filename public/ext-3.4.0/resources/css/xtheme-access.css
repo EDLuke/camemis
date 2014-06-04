@@ -108,7 +108,7 @@ ul.x-tab-strip-bottom{
 }
 
 .x-tab-strip span.x-tab-strip-text {
-	font:normal 14px tahoma,arial,helvetica;
+	font:normal 14px Helvetica,arial,helvetica;
 	color:#fff;
 }
 
@@ -1255,19 +1255,19 @@ td.x-date-mp-sep {
 }
 
 .x-tip .x-tip-mc {
-    font: normal 14px tahoma,arial,helvetica,sans-serif;
+    font: normal 14px Helvetica,arial,sans-serif;
 }
 .x-tip .x-tip-ml {
 	background-color: #fff;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 14px tahoma,arial,helvetica,sans-serif;
+    font: bold 14px Helvetica,arial,sans-serif;
     color:#ffd;
 }
 
 .x-tip .x-tip-body {
-    font: normal 14px tahoma,arial,helvetica,sans-serif;
+    font: normal 14px Helvetica,arial,sans-serif;
     color:#000;
 }
 
@@ -1295,7 +1295,7 @@ td.x-date-mp-sep {
 }
 
 .x-menu-list-item{
-	font:normal 14px tahoma,arial, sans-serif;
+	font:normal 14px Helvetica,arial, sans-serif;
 }
 
 .x-menu-item-arrow{
@@ -1471,7 +1471,7 @@ a.x-menu-item {
     color:#fff;
     font-weight:bold; 
     font-size: 14px;
-    font-family: tahoma,arial,verdana,sans-serif;
+    font-family: Helvetica,arial,verdana,sans-serif;
     border-color:#18181a;
     background-image: url(../images/access/panel/white-top-bottom.gif);
 }
@@ -1502,7 +1502,7 @@ a.x-menu-item {
 
 .x-panel-tl .x-panel-header {
     color:#fff;
-    font:bold 14px tahoma,arial,verdana,sans-serif;
+    font:bold 14px Helvetica,arial,verdana,sans-serif;
 }
 
 .x-panel-tc {
@@ -1519,7 +1519,7 @@ a.x-menu-item {
 }
 
 .x-panel-mc {
-    font: normal 14px tahoma,arial,helvetica,sans-serif;
+    font: normal 14px Helvetica,arial,sans-serif;
     background-color:#3f4757;
 }
 
@@ -1557,7 +1557,7 @@ a.x-menu-item {
 
 .x-window-tl .x-window-header {
     color:#fff;
-	font:bold 14px tahoma,arial,verdana,sans-serif;
+	font:bold 14px Helvetica,arial,verdana,sans-serif;
 }
 
 .x-window-tc {
@@ -1586,7 +1586,7 @@ a.x-menu-item {
 
 .x-window-mc {
     border-color:#18181a;
-    font: normal 14px tahoma,arial,helvetica,sans-serif;
+    font: normal 14px Helvetica,arial,sans-serif;
     background-color:#1f2833;
 }
 
@@ -1796,7 +1796,7 @@ body.x-body-masked .x-window-plain .x-window-mc {
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 15px tahoma,arial,helvetica,sans-serif;
+    font:normal 15px Helvetica,arial,sans-serif;
 }
 
 .x-window-dlg .x-msg-box-wait {

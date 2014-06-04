@@ -43,41 +43,41 @@ span.textBoldBlue{
     color:#061f83;
 }
 span.textBoldBlue14{
-    font:bold 14px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 14px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 
 h1.header{
-    font:bold 15px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 15px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#555;
 }
 h1.installHeader{
-    font:bold 18px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 18px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 
 }
 h2.installSubHeader{
-    font:bold 14px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 14px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 
 }
 h1.headerError{
-    font:bold 16px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 16px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#CC0000;
 }
 h1.headerInfo{
-    font:bold 12px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 12px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#CC0000;
 }
 h1.modulName{
-    font:bold 9px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 9px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#FFFFFF;
     text-align: right;
 }
 h1.schoolName{
-    font:bold 14px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 14px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#FFFFFF;
     text-align: right;
 }
 h1.camemis{
-    font:bold 15px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 15px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color:#FFFFFF;
     text-align: left;
 }
@@ -103,7 +103,7 @@ table.show{
     */
 }
 th.header{
-    font:bold 12px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:bold 12px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     color: #333333;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
@@ -180,7 +180,7 @@ td.tdNormal{
     padding: 5px;
 }
 .textNormal {
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 
 }
 ul.list{
@@ -193,11 +193,11 @@ ul.list{
     list-style:square;
 }
 input.show-btn{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     padding: 5px;
 }
 .header .x-panel-body{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 
 .disabled2{
@@ -216,7 +216,7 @@ label.x-form-item-label{
     text-decoration:none;
 }
 .x-grid3-row td,.x-grid3-summary-row td{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 .x-tree-node{
     font:normal 11px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
@@ -232,7 +232,7 @@ label.x-form-item-label{
 }
 .x-panel-header-text {
     text-decoration:none;
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 .details-panel .x-panel-body{
     padding: 11px;
@@ -306,7 +306,7 @@ p.details {padding: 11px;}
     font:normal 11px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 .x-tree-node {
-    font:tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 .x-tab-strip span.x-tab-strip-text {
     font:bold 11px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
@@ -432,7 +432,7 @@ p.details {padding: 11px;}
 }
 
 .x-grid3-td-topic b {
-    font:normal 16px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 16px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
     display:block;
 }
 .x-grid3-td-topic b i {
@@ -504,7 +504,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 /* Left Panel background */
 .x-vr-tab-panel {
     background: #CEDFF5;
-    font: 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 /* Left Panel */
@@ -564,7 +564,7 @@ Kaom
 */
 
 .x-tab-strip span.x-tab-strip-text {
-    font: bold 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: bold 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-form-field {
@@ -595,7 +595,7 @@ Kaom
     font:bold 11px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 .x-btn{
-    font:normal 11px ttahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px tHelvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 
 .x-btn button{
@@ -607,11 +607,11 @@ Kaom
 }
 
 .x-grid3-row td, .x-grid3-summary-row td{
-    font:normal 11px/13px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px/13px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 
 .x-grid3-hd-row td {
-    font:normal 11px/15px tahoma,verdana,arial,sans-serif,Zawgyi-One;
+    font:normal 11px/15px Helvetica,verdana,arial,sans-serif,Zawgyi-One;
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
@@ -653,15 +653,15 @@ Kaom
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: normal 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: bold 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: normal 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-menu-list-item{
@@ -689,7 +689,7 @@ Kaom
 
     font-weight:bold; 
     font-size: 11px;
-    font-family: tahoma,arial,verdana,sans-serif,Zawgyi-One;
+    font-family: Helvetica,arial,verdana,sans-serif,Zawgyi-One;
 }
 
 .x-panel-tl .x-panel-header {
@@ -697,7 +697,7 @@ Kaom
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: normal 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
@@ -711,7 +711,7 @@ Kaom
 
 .x-window-mc {
 
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font: normal 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-list-header-inner div em {
@@ -723,7 +723,7 @@ Kaom
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 11px Helvetica,arial,helvetica,sans-serif,Zawgyi-One;
+    font:normal 11px Helvetica,arial,sans-serif,Zawgyi-One;
 }
 
 .x-tree {

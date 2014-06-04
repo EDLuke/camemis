@@ -34,7 +34,7 @@
     border: 1px solid rgba(0,0,0,.2);
     z-index: 10000;
 
-    font-family: tahoma,verdana,arial,sans-serif,Hanuman;
+    font-family: Helvetica,verdana,arial,sans-serif,Hanuman;
     font-size: 11px;
     text-align: left;
     pointer-events: none;

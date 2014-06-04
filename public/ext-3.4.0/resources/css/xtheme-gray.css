@@ -1135,19 +1135,19 @@ td.x-date-mp-sep {
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif;
+    font: normal 11px Helvetica,arial,sans-serif;
 }
 .x-tip .x-tip-ml {
 	background-color: #fff;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,helvetica,sans-serif;
+    font: bold 11px Helvetica,arial,sans-serif;
     color:#444;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif;
+    font: normal 11px Helvetica,arial,sans-serif;
     color:#444;
 }
 
@@ -1350,7 +1350,7 @@ a.x-menu-item {
     color:#333;
 	font-weight:bold; 
     font-size: 11px;
-    font-family: tahoma,arial,verdana,sans-serif;
+    font-family: Helvetica,arial,verdana,sans-serif;
     border-color:#d0d0d0;
     background-image: url(../images/gray/panel/white-top-bottom.gif);
 }
@@ -1391,7 +1391,7 @@ a.x-menu-item {
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif;
+    font: normal 11px Helvetica,arial,sans-serif;
     background-color:#f1f1f1;
 }
 
@@ -1459,7 +1459,7 @@ a.x-menu-item {
 
 .x-window-mc {
     border-color:#d0d0d0;
-    font: normal 11px Helvetica,arial,helvetica,sans-serif;
+    font: normal 11px Helvetica,arial,sans-serif;
     background-color:#e8e8e8;
 }
 
@@ -1658,7 +1658,7 @@ body.x-body-masked .x-window-plain .x-window-mc {
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 12px tahoma,arial,helvetica,sans-serif;
+    font:normal 12px Helvetica,arial,sans-serif;
 }
 
 .x-window-dlg .x-msg-box-wait {

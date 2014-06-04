@@ -38,44 +38,44 @@ span.textBoldBlue{
     color:#061f83;
 }
 span.textBoldBlue14{
-    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 14px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#061f83;
 }
 
 h1.header{
-    font:bold 15px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 15px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#555;
 }
 h1.installHeader{
-    font:bold 18px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 18px Helvetica,verdana,arial,sans-serif,Hanuman;
 
 }
 h2.installSubHeader{
-    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 14px Helvetica,verdana,arial,sans-serif,Hanuman;
 
 }
 h1.headerError{
-    font:bold 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 16px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#CC0000;
 }
 
 h1.headerInfo{
-    font:bold 12px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 12px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#061f83;
 }
 
 h1.modulName{
-    font:bold 9px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 9px  Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#FFFFFF;
     text-align: right;
 }
 h1.schoolName{
-    font:bold 14px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 14px  Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#FFFFFF;
     text-align: right;
 }
 h1.camemis{
-    font:bold 15px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 15px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#FFFFFF;
     text-align: left;
 }
@@ -101,7 +101,7 @@ table.show{
     */
 }
 th.header{
-    font:bold 12px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 12px Helvetica,verdana,arial,sans-serif,Hanuman;
     color: #333333;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
@@ -178,7 +178,7 @@ td.tdNormal{
     padding: 5px;
 }
 .textNormal {
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Hanuman;
 
 }
 ul.list{
@@ -191,11 +191,11 @@ ul.list{
     list-style:square;
 }
 input.show-btn{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Hanuman;
     padding: 5px;
 }
 .header .x-panel-body{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 .disabled2{
@@ -214,7 +214,7 @@ label.x-form-item-label{
     text-decoration:none;
 }
 .x-grid3-row td,.x-grid3-summary-row td{
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 .x-tree-node{
     font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
@@ -230,7 +230,7 @@ label.x-form-item-label{
 }
 .x-panel-header-text {
     text-decoration:none;
-    font:normal 11px  tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px  Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 .details-panel .x-panel-body{
     padding: 11px;
@@ -304,7 +304,7 @@ p.details {padding: 11px;}
     font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 .x-tree-node {
-    font:tahoma,verdana,arial,sans-serif,Hanuman;
+    font:Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 .x-tab-strip span.x-tab-strip-text {
     font:bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
@@ -437,7 +437,7 @@ p.details {padding: 11px;}
 }
 
 .x-grid3-td-topic b {
-    font:normal 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 16px Helvetica,verdana,arial,sans-serif,Hanuman;
     display:block;
 }
 .x-grid3-td-topic b i {
@@ -509,7 +509,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 /* Left Panel background */
 .x-vr-tab-panel {
     background: #CEDFF5;
-    font: 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 /* Left Panel */
@@ -569,7 +569,7 @@ Kaom
 */
 
 .x-tab-strip span.x-tab-strip-text {
-    font: bold 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: bold 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-form-field {
@@ -600,7 +600,7 @@ Kaom
     font:bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 .x-btn{
-    font:normal 11px ttahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px tHelvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 .x-btn button{
@@ -613,11 +613,11 @@ Kaom
 }
 
 .x-grid3-row td, .x-grid3-summary-row td{
-    font:normal 11px/13px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px/13px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 .x-grid3-hd-row td {
-    font:normal 11px/15px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px/15px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
@@ -659,15 +659,15 @@ Kaom
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: normal 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: bold 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: normal 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-menu-list-item{
@@ -695,7 +695,7 @@ Kaom
 
     font-weight:bold; 
     font-size: 11px;
-    font-family: tahoma,arial,verdana,sans-serif,Hanuman;
+    font-family: Helvetica,arial,verdana,sans-serif,Hanuman;
 }
 
 .x-panel-tl .x-panel-header {
@@ -703,7 +703,7 @@ Kaom
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: normal 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
@@ -717,7 +717,7 @@ Kaom
 
 .x-window-mc {
 
-    font: normal 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font: normal 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-list-header-inner div em {
@@ -729,7 +729,7 @@ Kaom
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 11px Helvetica,arial,helvetica,sans-serif,Hanuman;
+    font:normal 11px Helvetica,arial,sans-serif,Hanuman;
 }
 
 .x-tree {
@@ -847,7 +847,7 @@ textarea.editStyle:focus {
 }
 
 table.EventCalendar {
-    font-family: tahoma,verdana,arial,sans-serif,Hanuman;
+    font-family: Helvetica,verdana,arial,sans-serif,Hanuman;
     border-collapse: collapse; }
 table.EventCalendar th {
     background: #efefef;

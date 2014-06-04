@@ -12,7 +12,7 @@
     color:#15428b;
 	font-weight:bold; 
     font-size: 11px;
-    font-family: tahoma,arial,verdana,sans-serif;
+    font-family: Helvetica,arial,verdana,sans-serif;
     border-color:#99bbe8;
     background-image: url(../images/default/panel/white-top-bottom.gif);
 }
@@ -53,7 +53,7 @@
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,helvetica,sans-serif;
+    font: normal 11px Helvetica,arial,sans-serif;
     background-color:#dfe8f6;
 }
 

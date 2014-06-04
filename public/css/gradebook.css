@@ -8,12 +8,12 @@
     width:100%;
 }
 h2.grade_title{
-    font:bold 18px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 18px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#155bb9;text-align:center;margin-bottom:10px;
     clear: both;
 }	
 h3.title_name{
-    font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 14px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 h3.title_name span,span.name{
     font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
@@ -56,7 +56,7 @@ h3.title_name span,span.name{
     text-align:left;padding-left:5px;
 }
 .grade_book table td.sub-title{
-    font:normal 16px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 16px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#155bb9;
 }
 .grade_book table td.none_bor{
