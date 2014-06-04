@@ -201,7 +201,7 @@ ul.x-tab-strip-bottom{
 .x-tab-panel-bbar .x-toolbar, .x-tab-panel-tbar .x-toolbar {
     border-color:#99bbe8;
 }.x-form-field {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-text, textarea.x-form-field {
@@ -280,11 +280,11 @@ ul.x-tab-strip-bottom{
 }
 
 .x-form-grow-sizer {
-	font:normal 12px tahoma, arial, helvetica, sans-serif;
+	font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-item {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-invalid-msg {
@@ -1290,7 +1290,7 @@ a.x-menu-item {
 }.x-combo-list {
     border-color:#98c0f4;
     background-color:#ddecfe;
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-combo-list-inner {

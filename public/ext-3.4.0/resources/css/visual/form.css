@@ -5,7 +5,7 @@
  * http://www.sencha.com/license
  */
 .x-form-field {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-text, textarea.x-form-field {
@@ -84,11 +84,11 @@
 }
 
 .x-form-grow-sizer {
-	font:normal 12px tahoma, arial, helvetica, sans-serif;
+	font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-item {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 12px helvetica, tahoma, arial, sans-serif;
 }
 
 .x-form-invalid-msg {
