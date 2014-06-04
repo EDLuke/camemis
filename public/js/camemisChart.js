@@ -684,7 +684,7 @@ function drawPie(pieName, dataSet, selectString, colors, margin, outerRadius, in
         return "pie-" + pieName + "-legendText-index-" + i;
     })
     .style("fill", "Blue")
-    .style("font", "normal 11px tahoma,verdana,arial,sans-serif")
+    .style("font", "normal 11px Helvetica,verdana,arial,sans-serif")
     .on('mouseover', synchronizedMouseOver)
     .on("mouseout", synchronizedMouseOut);
 }

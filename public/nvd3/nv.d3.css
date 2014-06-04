@@ -158,11 +158,11 @@ svg {
 
 
 svg text {
-    font: normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font: normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 svg .title {
-    font: bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font: bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
 }
 
 .nvd3 .nv-background {

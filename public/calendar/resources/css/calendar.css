@@ -768,7 +768,7 @@ td.ext-cal-dtitle-today div {
 /* StatusProxy override styles */
 .ext-dd-ghost-ct {
     color:#000;
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     border: 1px solid;
     border-color: #ddd #bbb #bbb #ddd;
     background-color:#fff;

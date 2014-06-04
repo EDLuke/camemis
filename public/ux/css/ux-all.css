@@ -657,7 +657,7 @@ li.x-menu-list-item div {
     background: transparent no-repeat 3px 2px;
 }
 .x-status-error-list {
-    font: 11px tahoma,arial,verdana,sans-serif;
+    font: 11px Helvetica,arial,verdana,sans-serif;
     position: absolute;
     z-index: 9999;
     border-top: 1px solid;

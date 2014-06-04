@@ -15,7 +15,7 @@
 }
 
 .x-combo-list-hd {
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
+    font:bold 11px Helvetica, arial, helvetica, sans-serif;
     color:#15428b;
     background-image: url(../images/default/layout/panel-title-light-bg.gif);
     border-bottom-color:#98c0f4;
@@ -39,5 +39,5 @@
 }
 
 .x-combo-list-small {
-    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    font:normal 11px Helvetica, arial, helvetica, sans-serif;
 }

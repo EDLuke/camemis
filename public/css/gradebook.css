@@ -1,5 +1,5 @@
 .grade_book{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     background:#fff;padding:10px;
     position: relative;
 }
@@ -16,11 +16,11 @@ h3.title_name{
     font:bold 14px tahoma,verdana,arial,sans-serif,Hanuman;
 }
 h3.title_name span,span.name{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     color:#155bb9;
 }
 .grade_book table{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     border:1px solid #ccc;background:#fff;margin-top:5px;border-left:none;border-bottom: none;
 }
 .grade_book table th.sm1,.grade_book table td.sm1{
@@ -48,11 +48,11 @@ h3.title_name span,span.name{
     background: #ffe6a6;
 }
 .grade_book table th,.grade_book table td{
-    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     border-bottom:1px solid #ccc;border-left:1px solid #ccc;text-align:center;padding:5px 0px;
 }
 .grade_book table td.normal{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     text-align:left;padding-left:5px;
 }
 .grade_book table td.sub-title{
@@ -60,11 +60,11 @@ h3.title_name span,span.name{
     color:#155bb9;
 }
 .grade_book table td.none_bor{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     border-bottom:none;text-align:center;
 }
 .grade_book table td.border{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     text-align:center;
 }
 /*
@@ -94,7 +94,7 @@ For Record Book
     padding: 2px;
 }
 .grade_book table td.nall{
-    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
     border:none;text-align:left;
 }
 h2.cc{
