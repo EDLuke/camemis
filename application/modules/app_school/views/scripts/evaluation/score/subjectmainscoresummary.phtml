@@ -18,6 +18,7 @@ $subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
 
 if(!$academicObject && !$subjectObject) {header("Location: /main/permission/");exit;}
 
+AssessmentProperties::setGradingScale($academicObject);
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
 $DISPLAY_ERROR = "{

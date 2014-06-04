@@ -309,24 +309,27 @@ abstract class AssessmentProperties {
         }
     }
 
-    public static function setGradingScale() {
+    public static function setGradingScale($academicObject) {
+
+        $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
+        $SQL->where("EDUCATION_TYPE = '" . $EDUCATION_TYPE . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         if ($result) {
             foreach ($result as $value) {
-                if (strpos($value->NUMERIC_GRADE, "<") !== false) {
-                    $SAVEDATA["SCORE_MIN"] = 0;
-                    $SAVEDATA["SCORE_MAX"] = substr($value->NUMERIC_GRADE, 1);
+                if (strpos(trim($value->MARK), "<") !== false) {
+                    $UPDATE = "UPDATE t_gradingsystem SET SCORE_MIN=0, SCORE_MAX='" . substr(trim($value->MARK), 1) . "' WHERE ID='" . $value->ID . "'";
+                    self::dbAccess()->query($UPDATE);
                 } else {
-                    $explode = explode("-", $value->NUMERIC_GRADE);
-                    $SAVEDATA["SCORE_MIN"] = isset($explode[0]) ? $explode[0] : 0;
-                    $SAVEDATA["SCORE_MAX"] = isset($explode[1]) ? $explode[1] : 0;
+                    $explode = explode("-", trim($value->MARK));
+                    $MIN = isset($explode[0]) ? $explode[0] : 0;
+                    $MAX = isset($explode[1]) ? $explode[1] : 0;
+                    $UPDATE = "UPDATE t_gradingsystem SET SCORE_MIN='" . $MIN . "', SCORE_MAX='" . $MAX . "' WHERE ID='" . $value->ID . "'";
+                    self::dbAccess()->query($UPDATE);
                 }
-
-                $WHERE[] = "ID = '" . $value->ID . "'";
-                self::dbAccess()->update('t_gradingsystem', $SAVEDATA, $WHERE);
             }
         }
     }

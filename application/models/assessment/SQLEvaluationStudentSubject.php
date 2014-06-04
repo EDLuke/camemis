@@ -16,7 +16,7 @@ class SQLEvaluationStudentSubject {
         return false::dbAccess()->select();
     }
 
-    public static function getCallStudentSubjectEvaluation($stdClass) {
+    public static function getCallStudentSubjectEvaluation($stdClass, $staticTerm = false) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
@@ -88,8 +88,14 @@ class SQLEvaluationStudentSubject {
                     case "TERM":
                     case "QUARTER":
                     case "SEMESTER":
-                        if (isset($stdClass->term))
-                            $SQL->where("A.TERM = '" . $stdClass->term . "'");
+
+                        if ($staticTerm) {
+                            $SQL->where("A.TERM = '" . $staticTerm . "'");
+                        } else {
+                            if (isset($stdClass->term))
+                                $SQL->where("A.TERM = '" . $stdClass->term . "'");
+                        }
+
                         break;
                 }
 
@@ -174,10 +180,13 @@ class SQLEvaluationStudentSubject {
                             $stdClass->averagePercent
                             , $stdClass->qualificationType
             );
+            
         } else {
             if (isset($stdClass->assessmentId)) {
                 $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
             }
+            
+            error_log("B");
         }
 
         if (isset($stdClass->actionRank)) {

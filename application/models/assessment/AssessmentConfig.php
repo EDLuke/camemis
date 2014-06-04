@@ -200,7 +200,7 @@ class AssessmentConfig {
         }
         return implode(",", $data);
     }
-    
+
     public static function calculateGradingScale($checkValue, $qualificationType) {
 
         $output = "";
@@ -210,7 +210,7 @@ class AssessmentConfig {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         if ($result) {
-            foreach ($result as $value) {                
+            foreach ($result as $value) {
                 if ($checkValue >= $value->SCORE_MIN && $checkValue <= $value->SCORE_MAX) {
                     $output = $value->ID;
                     break;
@@ -220,6 +220,7 @@ class AssessmentConfig {
 
         return $output;
     }
+
 }
 
 ?>

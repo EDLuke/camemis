@@ -40,7 +40,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ID'");
     $OBJECT_GRID->addReadField("name: 'ENGLISH'");
     $OBJECT_GRID->addReadField("name: 'LETTER_GRADE'");
-    $OBJECT_GRID->addReadField("name: 'NUMERIC_GRADE'");
+    #$OBJECT_GRID->addReadField("name: 'NUMERIC_GRADE'");
     $OBJECT_GRID->addReadField("name: 'MARK'");
     $OBJECT_GRID->addReadField("name: 'GPA'");
     $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
@@ -57,13 +57,14 @@ Ext.onReady(function() {
         ,width: 120
     ");
     
-    $OBJECT_GRID->addColumn("
-        align: 'center'
-        ,renderer: showText
-        ,header: '<b>".NUMERIC_GRADE."</b>'
-        ,dataIndex: 'NUMERIC_GRADE'
-        ,width: 150
-    ");
+//    $OBJECT_GRID->addColumn("
+//        align: 'center'
+//        ,renderer: showText
+//        ,header: '<b>".NUMERIC_GRADE."</b>'
+//        ,dataIndex: 'NUMERIC_GRADE'
+//        ,width: 150
+//    ");
+    
     $OBJECT_GRID->addColumn("
         align: 'center'
         ,renderer: showText
