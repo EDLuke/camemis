@@ -599,6 +599,15 @@ function getCompletedIcon($value) {
     }
 }
 
+function showPassFailStatus($value) {
+    
+    error_log($value);
+    switch ($value) {
+        case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/breakpoint_down.png' border='0'>";
+        case 0: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/breakpoint_up.png' border='0'>";
+    }
+}
+
 function getTransferAssessmentIcon($value) {
     switch ($value) {
         case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user1_into.png' border='0'>";

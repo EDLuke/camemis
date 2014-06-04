@@ -73,6 +73,7 @@ class SQLAcademicPerformances {
 
         $data["GRADING"] = "---";
         $data["RANK"] = "---";
+        $data["IS_FAIL"] = "";
         $data["GPA"] = "---";
         $data["TOTAL_RESULT"] = "---";
         $data["FIRST_RESULT"] = "---";
@@ -86,6 +87,7 @@ class SQLAcademicPerformances {
             if ($stdClass->studentId) {
                 $SELECTION_A = array(
                     'RANK'
+                    , 'IS_FAIL'
                     , 'ASSESSMENT_ID'
                     , 'TOTAL_RESULT'
                     , 'FIRST_RESULT'
@@ -131,6 +133,7 @@ class SQLAcademicPerformances {
                 if ($result) {
                     $data["GRADING"] = $result->$GRADING_TYPE ? $result->$GRADING_TYPE : "---";
                     $data["RANK"] = $result->RANK ? $result->RANK : "---";
+                    $data["IS_FAIL"] = $result->IS_FAIL;
                     $data["GPA"] = $result->GPA ? $result->GPA : "---";
                     $data["TOTAL_RESULT"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
                     $data["FIRST_RESULT"] = $result->FIRST_RESULT ? $result->FIRST_RESULT : "---";

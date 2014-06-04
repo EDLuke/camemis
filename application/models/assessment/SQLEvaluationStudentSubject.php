@@ -26,6 +26,7 @@ class SQLEvaluationStudentSubject {
             , 'RANK' => ""
             , 'GRADING' => ""
             , 'GPA' => ""
+            , 'IS_FAIL' => ""
             , 'ASSESSMENT_ID' => ""
             , 'TEACHER_COMMENT' => ""
             , 'MONTH_RESULT' => ""
@@ -43,6 +44,7 @@ class SQLEvaluationStudentSubject {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
                     , 'RANK'
+                    , 'IS_FAIL'
                     , 'ASSESSMENT_ID'
                     , 'TEACHER_COMMENT'
                     , 'MONTH_RESULT'
@@ -103,6 +105,7 @@ class SQLEvaluationStudentSubject {
                         , 'RANK' => $result->RANK ? $result->RANK : "---"
                         , 'GRADING' => $result->GRADING ? $result->GRADING : "---"
                         , 'GPA' => $result->GPA
+                        , 'IS_FAIL' => $result->IS_FAIL
                         , 'ASSESSMENT_ID' => $result->ASSESSMENT_ID
                         , 'TEACHER_COMMENT' => $result->TEACHER_COMMENT
                         , 'MONTH_RESULT' => $result->MONTH_RESULT

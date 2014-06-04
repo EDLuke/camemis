@@ -368,7 +368,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                        $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL)." ".$facette->SUBJECT_VALUE;
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getSubjectMonthAssessment($stdClass)->GRADING;
@@ -426,7 +426,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         switch ($this->getSubjectScoreType()) {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
-                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL)." ".$facette->SUBJECT_VALUE;
                                 $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
                                 $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
                                 break;
@@ -437,7 +437,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         switch ($this->getSubjectScoreType()) {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
-                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL)." ".$facette->SUBJECT_VALUE;
                                 break;
                         }
                         break;
@@ -487,7 +487,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                        $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL)." ".$facette->SUBJECT_VALUE;
                         break;
                 }
                 switch ($this->getTermNumber()) {
