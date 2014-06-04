@@ -17,7 +17,7 @@ Class SpecialDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array('*'));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -134,8 +134,11 @@ Class SpecialDBAccess {
         if (isset($params["SCORE_TYPE"]))
             $SAVEDATA["SCORE_TYPE"] = addText($params["SCORE_TYPE"]);
 
+        if (isset($params["IS_FAIL"]))
+            $SAVEDATA["IS_FAIL"] = addText($params["IS_FAIL"]);
+
         if (isset($params["SORTKEY"]))
-            $SAVEDATA["SORTKEY"] =  addText($params["SORTKEY"]);
+            $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
 
         $facette = self::findGradingSystemFromId($objectId);
         if ($facette) {
@@ -224,6 +227,7 @@ Class SpecialDBAccess {
             $data['GPA'] = $facette->GPA ? $facette->GPA : "---";
             $data['NUMERIC_GRADE'] = $facette->NUMERIC_GRADE ? $facette->NUMERIC_GRADE : "---";
             $data['SORTKEY'] = $facette->SORTKEY;
+            $data['IS_FAIL'] = $facette->IS_FAIL;
             $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN);
             $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX);
         }

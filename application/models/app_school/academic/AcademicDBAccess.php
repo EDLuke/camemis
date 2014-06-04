@@ -906,7 +906,7 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearObject->QUALIFICATION_TYPE;
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["DISPLAY_GPA"] = $schoolyearObject->DISPLAY_GPA;
-                    
+
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearObject->DISTRIBUTION_VALUE;
 
@@ -2121,65 +2121,77 @@ class AcademicDBAccess {
 
     public static function getTermByDateAcademic($date, $academicId, $type) {
 
+        $output = 0;
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', 'COUNT(*) AS C');
 
         $academicObject = self::findGradeFromId($academicId);
-        $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
-        switch ($termNumber) {
-            case 1:
-                switch ($type) {
-                    case "FIRST_TERM":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM1_START AND TERM1_END");
-                        break;
-                    case "SECOND_TERM":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM2_START AND TERM2_END");
-                        break;
-                    case "THIRD_TERM":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM3_START AND TERM3_END");
-                        break;
-                }
-                break;
-            case 2:
-                switch ($type) {
-                    case "FIRST_QUARTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER1_START AND QUARTER1_END");
-                        break;
-                    case "SECOND_QUARTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER2_START AND QUARTER2_END");
-                        break;
-                    case "THIRD_QUARTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER3_START AND QUARTER3_END");
-                        break;
-                    case "FOURTH_QUARTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER4_START AND QUARTER4_END");
-                        break;
-                }
-                break;
-            default:
-                switch ($type) {
-                    case "FIRST_SEMESTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN SEMESTER1_START AND SEMESTER1_END");
-                        break;
-                    case "SECOND_SEMESTER":
-                        $SQL->where("'" . setDateToSecond($date) . "' BETWEEN SEMESTER2_START AND SEMESTER2_END");
-                        break;
-                }
-                break;
+        if ($academicObject) {
+            $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
+
+            switch ($termNumber) {
+                case 1:
+                    switch ($type) {
+                        case "FIRST_TERM":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM1_START AND TERM1_END");
+                            break;
+                        case "SECOND_TERM":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM2_START AND TERM2_END");
+                            break;
+                        case "THIRD_TERM":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN TERM3_START AND TERM3_END");
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch ($type) {
+                        case "FIRST_QUARTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER1_START AND QUARTER1_END");
+                            break;
+                        case "SECOND_QUARTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER2_START AND QUARTER2_END");
+                            break;
+                        case "THIRD_QUARTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER3_START AND QUARTER3_END");
+                            break;
+                        case "FOURTH_QUARTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN QUARTER4_START AND QUARTER4_END");
+                            break;
+                    }
+                    break;
+                default:
+                    switch ($type) {
+                        case "FIRST_SEMESTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN SEMESTER1_START AND SEMESTER1_END");
+                            break;
+                        case "SECOND_SEMESTER":
+                            $SQL->where("'" . setDateToSecond($date) . "' BETWEEN SEMESTER2_START AND SEMESTER2_END");
+                            break;
+                    }
+                    break;
+            }
+
+            $SQL->where("ID = ?", $academicId);
+            $SQL->limit(1);
+            //error_log($SQL->__toString());
+            $result = self::dbAccess()->fetchRow($SQL);
+
+            $output = $result ? $result->C : 0;
         }
 
-        $SQL->where("ID = ?", $academicId);
-        $SQL->limit(1);
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
+        return $output;
     }
 
     public static function getNameOfSchoolTermByDate($date, $academicId, $schoolyearId = false) {
 
+        $termNumber = "";
+
         $academicObject = self::findGradeFromId($academicId);
-        $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
+
+        if ($academicObject) {
+            $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
+        }
 
         if ($schoolyearId) {
             $termNumber = self::findAcademicTerm($schoolyearId);

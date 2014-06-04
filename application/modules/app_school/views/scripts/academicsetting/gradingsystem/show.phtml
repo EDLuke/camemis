@@ -46,7 +46,7 @@ Ext.onReady(function() {
             ,bodyStyle: 'background:#FFF;padding:10px'
             ,items: [
                 {".CamemisField::Textfield("LETTER_GRADE", "LETTER_GRADE", LETTER_GRADE)."}
-                ,{".CamemisField::Textfield("MARK", "MARK", MARK)."}
+                ,{".CamemisField::Textfield("MARK", "MARK", MARK." (".PERCEN_TAGE_POINTS.")")."}
                 ,{".CamemisField::comboScoreType(false, false)."}
                 ,{".CamemisField::Textfield("GPA","GPA", GPA, false, false, false, false)."}
                 ,{".CamemisField::Textfield("ENGLISH", "ENGLISH", ENGLISH)."}
@@ -79,6 +79,28 @@ Ext.onReady(function() {
     }
     ";
     
+    $PASS_FAIL_TYPE = "
+    {
+        title: '".PASS_FAIL_TYPE."'
+        ,id:'PASS_FAIL_TYPE'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items: [
+                {".CamemisField::Radio("IS_FAIL_1", "IS_FAIL", PASS,0, false)."}
+                ,{".CamemisField::Radio("IS_FAIL_2", "IS_FAIL", FAIL,1, false)."}
+            ]
+        }]
+    }
+    ";
+    
     $items = "
         border: false
         ,id: 'FORM_ITEMS'
@@ -86,6 +108,7 @@ Ext.onReady(function() {
         ,items: [
             ".$DETAIL_INFORMATION."
             ,".$SCORE_NUMBER."
+            ,".$PASS_FAIL_TYPE."
         ]
     ";
     $OBJECT_FORM->addObjectItems($items);
@@ -134,7 +157,7 @@ Ext.onReady(function() {
     ");
 	
     $OBJECT_FORM->labelAlign = "left";
-    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->labelWidth = 150;
     $OBJECT_FORM->renderJS();
     ?>
     viewport = new Ext.Viewport({
