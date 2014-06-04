@@ -87,7 +87,6 @@ class SQLAcademicPerformances {
             if ($stdClass->studentId) {
                 $SELECTION_A = array(
                     'RANK'
-                    , 'IS_FAIL'
                     , 'ASSESSMENT_ID'
                     , 'TOTAL_RESULT'
                     , 'FIRST_RESULT'
@@ -97,7 +96,7 @@ class SQLAcademicPerformances {
                     , 'TEACHER_COMMENT'
                 );
 
-                $SELECTION_B = array("" . $GRADING_TYPE . "", "GPA");
+                $SELECTION_B = array("" . $GRADING_TYPE . "", "GPA", "IS_FAIL");
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_learning_performance"), $SELECTION_A);

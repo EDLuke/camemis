@@ -44,7 +44,6 @@ class SQLEvaluationStudentSubject {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
                     , 'RANK'
-                    , 'IS_FAIL'
                     , 'ASSESSMENT_ID'
                     , 'TEACHER_COMMENT'
                     , 'MONTH_RESULT'
@@ -60,14 +59,14 @@ class SQLEvaluationStudentSubject {
                 if (isset($stdClass->scoreType)) {
                     switch ($stdClass->scoreType) {
                         case 1:
-                            $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA");
+                            $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA", "IS_FAIL");
                             break;
                         case 2:
-                            $SELECTION_B = array('LETTER_GRADE AS GRADING', 'GPA');
+                            $SELECTION_B = array('LETTER_GRADE AS GRADING', 'GPA', "IS_FAIL");
                             break;
                     }
                 } else {
-                    $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA");
+                    $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "GPA", "IS_FAIL");
                 }
 
                 $SQL = self::dbAccess()->select();

@@ -364,7 +364,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
-
+                error_log($facette->IS_FAIL." Fail?");
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
