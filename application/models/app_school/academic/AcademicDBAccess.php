@@ -193,7 +193,6 @@ class AcademicDBAccess {
             $data["QUARTER4_START"] = showSeconds2Date($facette->QUARTER4_START);
             $data["QUARTER4_END"] = showSeconds2Date($facette->QUARTER4_END);
 
-            $data["DISTRIBUTION_VALUE"] = $facette->DISTRIBUTION_VALUE;
             $data["DISPLAY_MONTH_RESULT"] = $facette->DISPLAY_MONTH_RESULT ? true : false;
             $data["DISPLAY_FIRST_RESULT"] = $facette->DISPLAY_FIRST_RESULT ? true : false;
             $data["DISPLAY_SECOND_RESULT"] = $facette->DISPLAY_SECOND_RESULT ? true : false;
@@ -205,6 +204,13 @@ class AcademicDBAccess {
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
             $data["GRADING_TYPE"] = $facette->GRADING_TYPE;
+
+            $data["FIRST_RESULT_DIVISION_VALUE"] = $facette->FIRST_RESULT_DIVISION_VALUE;
+            $data["SECOND_RESULT_DIVISION_VALUE"] = $facette->SECOND_RESULT_DIVISION_VALUE;
+            $data["THIRD_RESULT_DIVISION_VALUE"] = $facette->THIRD_RESULT_DIVISION_VALUE;
+            $data["FOURTH_RESULT_DIVISION_VALUE"] = $facette->FOURTH_RESULT_DIVISION_VALUE;
+            $data["FORMULA_TERM"] = $facette->FORMULA_TERM;
+            $data["FORMULA_YEAR"] = $facette->FORMULA_YEAR;
 
             $data["CREATED_DATE"] = getShowDateTime($facette->CREATED_DATE);
             $data["MODIFY_DATE"] = getShowDateTime($facette->MODIFY_DATE);
@@ -473,9 +479,6 @@ class AcademicDBAccess {
         if (isset($params["TERM2_WEIGHTING"]))
             $SAVEDATA['TERM2_WEIGHTING'] = addText($params["TERM2_WEIGHTING"]);
 
-        if (isset($params["DISTRIBUTION_VALUE"]))
-            $SAVEDATA['DISTRIBUTION_VALUE'] = addText($params["DISTRIBUTION_VALUE"]);
-
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
 
@@ -497,6 +500,19 @@ class AcademicDBAccess {
 
         if (isset($params["GRADING_TYPE"]))
             $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
+
+        if (isset($params["FIRST_RESULT_DIVISION_VALUE"]))
+            $SAVEDATA['FIRST_RESULT_DIVISION_VALUE'] = addText($params["FIRST_RESULT_DIVISION_VALUE"]);
+        if (isset($params["SECOND_RESULT_DIVISION_VALUE"]))
+            $SAVEDATA['SECOND_RESULT_DIVISION_VALUE'] = addText($params["SECOND_RESULT_DIVISION_VALUE"]);
+        if (isset($params["THIRD_RESULT_DIVISION_VALUE"]))
+            $SAVEDATA['THIRD_RESULT_DIVISION_VALUE'] = addText($params["THIRD_RESULT_DIVISION_VALUE"]);
+        if (isset($params["FOURTH_RESULT_DIVISION_VALUE"]))
+            $SAVEDATA['FOURTH_RESULT_DIVISION_VALUE'] = addText($params["FOURTH_RESULT_DIVISION_VALUE"]);
+        if (isset($params["FORMULA_TERM"]))
+            $SAVEDATA['FORMULA_TERM'] = addText($params["FORMULA_TERM"]);
+        if (isset($params["FORMULA_YEAR"]))
+            $SAVEDATA['FORMULA_YEAR'] = addText($params["FORMULA_YEAR"]);
 
         $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
@@ -908,8 +924,6 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["DISPLAY_GPA"] = $schoolyearObject->DISPLAY_GPA;
 
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
-                    $FIRST_SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearObject->DISTRIBUTION_VALUE;
-
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearObject->DISPLAY_FIRST_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearObject->DISPLAY_SECOND_RESULT;
@@ -938,6 +952,13 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["SEMESTER2_WEIGHTING"] = $schoolyearObject->SEMESTER2_WEIGHTING;
                     $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
                     $FIRST_SAVEDATA["GRADING_TYPE"] = $schoolyearObject->GRADING_TYPE;
+
+                    $FIRST_SAVEDATA["FIRST_RESULT_DIVISION_VALUE"] = $schoolyearObject->FIRST_RESULT_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["SECOND_RESULT_DIVISION_VALUE"] = $schoolyearObject->SECOND_RESULT_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["THIRD_RESULT_DIVISION_VALUE"] = $schoolyearObject->THIRD_RESULT_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["FOURTH_RESULT_DIVISION_VALUE"] = $schoolyearObject->FOURTH_RESULT_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["FORMULA_TERM"] = $schoolyearObject->FORMULA_TERM;
+                    $FIRST_SAVEDATA["FORMULA_YEAR"] = $schoolyearObject->FORMULA_YEAR;
 
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
@@ -1005,7 +1026,6 @@ class AcademicDBAccess {
                     $SAVEDATA["SEMESTER2_WEIGHTING"] = $schoolyearsubjectObject->SEMESTER2_WEIGHTING;
                     $SAVEDATA["YEAR_RESULT"] = $schoolyearsubjectObject->YEAR_RESULT;
                     $SAVEDATA["EVALUATION_TYPE"] = $schoolyearsubjectObject->EVALUATION_TYPE;
-                    $SAVEDATA["DISTRIBUTION_VALUE"] = $schoolyearsubjectObject->DISTRIBUTION_VALUE;
 
                     $SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearsubjectObject->DISPLAY_MONTH_RESULT;
                     $SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearsubjectObject->DISPLAY_FIRST_RESULT;
@@ -1015,6 +1035,13 @@ class AcademicDBAccess {
                     $SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearsubjectObject->DISPLAY_YEAR_RESULT;
                     $SAVEDATA["EVALUATION_OPTION"] = $schoolyearsubjectObject->EVALUATION_OPTION;
                     $SAVEDATA["GRADING_TYPE"] = $schoolyearsubjectObject->GRADING_TYPE;
+
+                    $SAVEDATA["FIRST_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->FIRST_RESULT_DIVISION_VALUE;
+                    $SAVEDATA["SECOND_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->SECOND_RESULT_DIVISION_VALUE;
+                    $SAVEDATA["THIRD_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->THIRD_RESULT_DIVISION_VALUE;
+                    $SAVEDATA["FOURTH_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->FOURTH_RESULT_DIVISION_VALUE;
+                    $SAVEDATA["FORMULA_TERM"] = $schoolyearsubjectObject->FORMULA_TERM;
+                    $SAVEDATA["FORMULA_YEAR"] = $schoolyearsubjectObject->FORMULA_YEAR;
 
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["MO"] = $schoolyearsubjectObject->MO;
