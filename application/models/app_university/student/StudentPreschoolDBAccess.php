@@ -262,12 +262,9 @@ class StudentPreschoolDBAccess {
             
         if ($objectId == "new") {
             $SAVEDATA['ID'] = generateGuid();
-            $GETDATA['PRESTUDENT'] = $SAVEDATA['ID'];
-            $GETDATA['OBJECT_TYPE'] = "REFERENCE";
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
             
-            self::dbAccess()->insert('t_student_preschooltype', $GETDATA);
             self::dbAccess()->insert('t_student_preschool', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
         } else {
@@ -328,20 +325,28 @@ class StudentPreschoolDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_preschool'), array('*'));
-        $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
-        $SQL->joinLeft(array('C' => 't_camemis_type'), 'B.CAMEMIS_TYPE = C.ID', array('NAME AS CAM_NAME', 'OBJECT_TYPE'));
-        $SQL->joinLeft(array('D' => 't_members'), 'B.CREATED_BY = D.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
-        $SQL->joinLeft(array('E' => 't_camemis_type'), 'B.DEGREE_TYPE = E.ID', array('NAME AS DEGRE_NAME', 'OBJECT_TYPE'));
-        $SQL->joinLeft(array('F' => 't_camemis_type'), 'B.APPLICATION_STATUS = F.ID', array('NAME AS APPLICATION_STATUS', 'OBJECT_TYPE'));
+        if($informationType == "CLEAR"){
+            //$SQL->JOIN_OUTER('t_student_preschooltype AS B', 'A.ID= B.PRESTUDENT WHERE B.PRESTUDENT Is NULL');
+            $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.id = B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
+            //$SQL->where("B.OBJECT_TYPE = 'APPLICATION' && B.OBJECT_TYPE = 'TESTING'");
+            $SQL->where('B.PRESTUDENT IS NULL');
+        }else{
+             $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
+            if ($informationType){
+                $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
+                //$SQL->where("B.CAMEMIS_TYPE != 0");
+            }
+        }
         
+        $SQL->joinLeft(array('C' => 't_camemis_type'), 'B.CAMEMIS_TYPE = C.ID', array('NAME AS CAM_NAME', 'OBJECT_TYPE'));
+             $SQL->joinLeft(array('D' => 't_members'), 'B.CREATED_BY = D.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
+             $SQL->joinLeft(array('E' => 't_camemis_type'), 'B.DEGREE_TYPE = E.ID', array('NAME AS DEGRE_NAME', 'OBJECT_TYPE'));
+             $SQL->joinLeft(array('F' => 't_camemis_type'), 'B.APPLICATION_STATUS = F.ID', array('NAME AS APPLICATION_STATUS', 'OBJECT_TYPE'));
         
         if ($startDate and $endDate) {
                 $SQL->where("B.CREATED_DATE BETWEEN '" . $startDate . "' AND '" . $endDate . "'");
                 //$SQL->where("C.OBJECT_TYPE ='" . $infoType . "'");
         }
-        //error_log($objectId);
-        //if ($objectId)
-            //$SQL->where("A.STUDENT_INDEX ='" . $objectId . "'"); 
             
         if ($gender)
             $SQL->where("A.GENDER ='" . $gender . "'");
@@ -374,21 +379,6 @@ class StudentPreschoolDBAccess {
         if ($cametype)
                 $SQL->where("B.CAMEMIS_TYPE = '" . $cametype . "'");
         
-            
-        if ($informationType){
-            switch($informationType){
-                case "CLEAR":
-                    //$SQL->where("B.OBJECT_TYPE = 'REFERENCE'");
-                    $SQL->where("B.CAMEMIS_TYPE = 0");
-                    break;
-                default:
-                    $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
-                    $SQL->where("B.CAMEMIS_TYPE != 0");
-                    break;
-            }   
-           
- 
-        }
 
         if ($infoType)
             $SQL->where("C.OBJECT_TYPE = '".$infoType."'");
