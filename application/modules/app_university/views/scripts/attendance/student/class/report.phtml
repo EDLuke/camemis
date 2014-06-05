@@ -20,7 +20,7 @@ $academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
 $subjectId = isset($_GET['subjectId'])?addText($_GET['subjectId']):"";
 $target = isset($_GET['target'])?addText($_GET['target']):"";
 
-$error = true;
+//$error = true;
 $isTraining = false;
 $isGeneral = false;
 
@@ -33,7 +33,7 @@ $OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
 
 $ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT');
 
-if($error) {header("Location: /main/permission/");exit;}
+//if($error) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
