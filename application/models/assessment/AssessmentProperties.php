@@ -288,6 +288,14 @@ abstract class AssessmentProperties {
         return $this->getCurrentClass()->EVALUATION_OPTION;
     }
 
+    public function getSettingFormulTermResult() {
+        return $this->getCurrentClass()->FORMULA_TERM;
+    }
+
+    public function getSettingFormulYearResult() {
+        return $this->getCurrentClass()->FORMULA_TERM;
+    }
+
     public function displayRank($average, $scoreList) {
         return getScoreRank($scoreList, $average);
     }

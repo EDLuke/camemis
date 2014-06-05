@@ -515,22 +515,24 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
         $TERM_RESULT = $this->averageTermSubjectResult($stdClass, false);
 
-        if ($this->isDisplayMonthResult()) {
-
-            $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
-            $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass);
-
-            if ($MONTH_RESULT && !$TERM_RESULT) {
-                $result = $MONTH_RESULT;
-            } elseif (!$MONTH_RESULT && $TERM_RESULT) {
+        switch ($this->getSettingFormulTermResult()) {
+            case 1:
                 $result = $TERM_RESULT;
-            } elseif ($MONTH_RESULT && $TERM_RESULT) {
-                $result = ($MONTH_RESULT + $TERM_RESULT) / 2;
-            } else {
-                $result = 0;
-            }
-        } else {
-            $result = $TERM_RESULT;
+                break;
+            default:
+                $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
+                $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass);
+
+                if ($MONTH_RESULT && !$TERM_RESULT) {
+                    $result = $MONTH_RESULT;
+                } elseif (!$MONTH_RESULT && $TERM_RESULT) {
+                    $result = $TERM_RESULT;
+                } elseif ($MONTH_RESULT && $TERM_RESULT) {
+                    $result = ($MONTH_RESULT + $TERM_RESULT) / 2;
+                } else {
+                    $result = 0;
+                }
+                break;
         }
 
         if ($withFormat) {
