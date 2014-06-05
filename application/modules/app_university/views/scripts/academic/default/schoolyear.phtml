@@ -278,17 +278,17 @@ $viewportItem = new ViewportItem(
         switch ($TERM_NUMBER) {
             case 1:
                 $TITLE_FORMULA_TERM_RESULT = TERM_RESULT;
-                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M) + AVG(T)']";
+                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M)+AVG(T)']";
                 $FORMULA_TERM_RESULT_STORE .= ",[1, 'AVG(T)']";
                 break;
             case 2:
                 $TITLE_FORMULA_TERM_RESULT = QUARTER_RESULT;
-                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M) + AVG(Q)']";
+                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M)+AVG(Q)']";
                 $FORMULA_TERM_RESULT_STORE .= ",[1, 'AVG(Q)']";
                 break;
             default:
                 $TITLE_FORMULA_TERM_RESULT = SEMESTER_RESULT;
-                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M) + AVG(S)']";
+                $FORMULA_TERM_RESULT_STORE .= "[0, 'AVG(M)+AVG(S)']";
                 $FORMULA_TERM_RESULT_STORE .= ",[1, 'AVG(S)']";
                 break;   
         }
