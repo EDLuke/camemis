@@ -235,6 +235,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
             }
             ,{".CamemisField::comboCamemisTypes("APPLICATION_TYPE", TYPE, false,150, false)."}
             ,{".CamemisField::comboCamemisTypes("DEGREE_TYPE", DEGREE_TYPE, false,150, false)."}
+            ,{".CamemisField::comboCamemisTypes("SESSION_EVENT", SESSION_EVENT, false,150, false)."}
             ,{".CamemisField::comboCamemisTypes("APPLICATION_STATUS", STATUS, false,150, false)."}
             ]
         ");
@@ -303,6 +304,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'SCORE'");
         $OBJECT_GRID->addReadField("name: 'ID_PRESCHOOLTYPE'");
         $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SESSION_EVENT'");
         $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
         $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
         $OBJECT_GRID->addReadField("name: 'OBJECT_TYPE'");
@@ -315,10 +317,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addColumn("header: '<b>" . TYPE . "</b>', align:'left', width: 120,hidden:".checkColHidden(3, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
         $OBJECT_GRID->addColumn("header: '<b>" . SCORE . "</b>', align:'left', width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'SCORE'");
         $OBJECT_GRID->addColumn("header: '<b>" . DEGREE_TYPE . "</b>', align:'left', width: 100,hidden:".checkColHidden(5, $columndata).", dataIndex: 'DEGREE_TYPE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(6, $columndata).", dataIndex: 'DESCRIPTION'");
-        $OBJECT_GRID->addColumn("header: '<b>" . STATUS . "</b>', align:'left', width: 100,hidden:".checkColHidden(7, $columndata).", dataIndex: 'APPLICATION_STATUS'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(8, $columndata).", dataIndex: 'CREATED_DATE'");
-        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(9, $columndata).", dataIndex: 'CREATED_BY'");
+        $OBJECT_GRID->addColumn("header: '<b>" . SESSION_EVENT . "</b>', align:'left', width: 100,hidden:".checkColHidden(6, $columndata).", dataIndex: 'SESSION_EVENT'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DESCRIPTION . "</b>', align:'left', width: 150,hidden:".checkColHidden(7, $columndata).", dataIndex: 'DESCRIPTION'");
+        $OBJECT_GRID->addColumn("header: '<b>" . STATUS . "</b>', align:'left', width: 100,hidden:".checkColHidden(8, $columndata).", dataIndex: 'APPLICATION_STATUS'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(9, $columndata).", dataIndex: 'CREATED_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(10, $columndata).", dataIndex: 'CREATED_BY'");
+        
         
         
         
@@ -470,6 +474,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(7, false);
                     myGrid.getColumnModel().setHidden(8, false);
                     myGrid.getColumnModel().setHidden(9, false);
+                    myGrid.getColumnModel().setHidden(10, false);
+                    
                     break;
                     
                 case 'TESTING':
@@ -481,10 +487,11 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, false);
                     myGrid.getColumnModel().setHidden(5, true);
-                    myGrid.getColumnModel().setHidden(6, false);
-                    myGrid.getColumnModel().setHidden(7, true);
-                    myGrid.getColumnModel().setHidden(8, false);
+                    myGrid.getColumnModel().setHidden(6, true);
+                    myGrid.getColumnModel().setHidden(7, false);
+                    myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, false);
+                    myGrid.getColumnModel().setHidden(10, false);
                     break
                     
                 case 'REFERENCE':
@@ -496,10 +503,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, true);
                     myGrid.getColumnModel().setHidden(5, true);
-                    myGrid.getColumnModel().setHidden(6, false);
-                    myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(6, true);
+                    myGrid.getColumnModel().setHidden(7, false);
                     myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, true);
+                    myGrid.getColumnModel().setHidden(10, true);
+                    
                     break
                 
                 default:
@@ -511,10 +520,12 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(3, false);
                     myGrid.getColumnModel().setHidden(4, true);
                     myGrid.getColumnModel().setHidden(5, true);
-                    myGrid.getColumnModel().setHidden(6, false);
-                    myGrid.getColumnModel().setHidden(7, true);
+                    myGrid.getColumnModel().setHidden(6, true);
+                    myGrid.getColumnModel().setHidden(7, false);
                     myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, true);
+                    myGrid.getColumnModel().setHidden(10, true);
+                    
                     break;
             }
         });

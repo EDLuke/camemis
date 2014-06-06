@@ -20,6 +20,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $getID = "";
+$refID = "";
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("STUDENT_PRESCHOOL");
 $OBJECT_FORM->setLoadUrl('/studentpreschool/jsonload/');
@@ -91,8 +92,17 @@ function columnDate($header, $dataindex, $width, $hidden){
 
 $objectId = isset($params["objectId"])? addText($params["objectId"]) : $this->objectId;
 $getStd_preschoolId = StudentPreschoolDBAccess::sqlStudentPreschoolId($objectId);
+
 if($getStd_preschoolId){
     $getID = $getStd_preschoolId[0]->ID;
+}
+
+
+$getRef_preschoolId = StudentPreschoolDBAccess::checkReferenceOfStudent($getID);
+if($getRef_preschoolId != 0){
+    $refID = $getID;
+}else{
+    $refID = 'new';
 }
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -147,6 +157,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $APPLICATION_GRID->addReadField("name: 'DEGREE_TYPE'");
         $APPLICATION_GRID->addReadField("name: 'APPLICATION_STATUS'");
         $APPLICATION_GRID->addReadField("name: 'DESCRIPTION'");
+        $APPLICATION_GRID->addReadField("name: 'SESSION_EVENT'");
         $APPLICATION_GRID->addReadField("name: 'DELETE'");
         
         $APPLICATION_GRID->addColumn("
@@ -203,7 +214,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             })
         ");
         
-        $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(2,$columndata)));
+        $APPLICATION_GRID->addColumn(columnProperties(SESSION_EVENT,"SESSION_EVENT",150,checkColHidden(2,$columndata)));
+        $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
         
         $APPLICATION_GRID->addColumn("
             header: '<b>".STATUS."</b>',
@@ -264,6 +276,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     data = {
                         CAMEMIS_TYPE:''
                         ,DEGREE_TYPE:''
+                        ,SESSION_EVENT:''
                         ,DESCRIPTION:''
                         ,APPLICATION_STATUS:''
                     };
@@ -448,12 +461,14 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $REF_FORM->addTBarItems(CamemisBar::tbarSingleSave());
         
-
         $REF_FORM->setSaveParams("
             cmd: 'jsonSaveTypePreschool'
-            ,objectId: '".$getID."'
+            ,objectId: '".$refID."'
+            ,stdId: '".$getID."'
             ,objectType: 'REFERENCE'
         ");
+        
+        
     
          $REF_FORM->setonEmbeddedEvents("
             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
