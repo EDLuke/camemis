@@ -24,6 +24,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     CONST SCORE_CHAR = 2;
     CONST INCLUDE_IN_MONTH = 1;
     CONST INCLUDE_IN_TERM = 2;
+    CONST INCLUDE_MONTH_TERM = "1,2";
     CONST SCORE_TYPE_NUMBER = 1;
     CONST SCORE_TYPE_CHAR = 2;
 
@@ -229,7 +230,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["AVERAGE"] = $AVERAGE;
                         $data[$i]["AVERAGE_PERCENT"] = getPercent($AVERAGE, $this->getSubjectScoreMax());
                         $data[$i]["MONTH_RESULT"] = $this->averageTermSubjectAssignmentByAllMonths($stdClass, self::WITH_FORMAT);
-                        $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::WITH_FORMAT);
+                        $data[$i]["TERM_RESULT"] = $this->averageTermSubjectResult($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getSubjectTermAssessment($stdClass)->GRADING;
@@ -239,16 +240,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 if ($this->getSubjectTermAssessment($stdClass))
                     $data[$i]["ASSESSMENT_ID"] = $this->getSubjectTermAssessment($stdClass)->ASSESSMENT_ID;
 
-                if ($this->isDisplayMonthResult()) {
-                    if (!$this->getSettingEvaluationOption()) {
-                        $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
-                    }
-
-                    $data[$i]["ASSIGNMENT_MONTH"] = $this->getImplodeSubjectAssignmentByAllMonths($stdClass);
+                if (!$this->getSettingEvaluationOption()) {
+                    $data[$i]["ASSIGNMENT_MONTH"] = $this->getImplodeSubjectAssignmentByAllMonths($stdClass, self::INCLUDE_IN_MONTH);
                 }
 
-                $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
-                $data[$i]["ASSIGNMENT_TERM"] = $this->getImplodeSubjectAssignmentByTerm($stdClass);
+                $data[$i]["ASSIGNMENT_TERM"] = $this->getImplodeSubjectAssignmentByTerm($stdClass, self::INCLUDE_IN_TERM);
 
                 $i++;
             }
@@ -372,7 +368,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     if ($this->getCurrentClassAssignments()) {
                         foreach ($this->getCurrentClassAssignments() as $v) {
                             $stdClass->assignmentId = $v->ASSIGNMENT_ID;
-                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass);
+                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass, false);
                         }
                     }
                 }
@@ -433,7 +429,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                if ($this->isDisplayMonthResult()) {
+                if (!$this->getSettingEvaluationOption()) {
                     $data[$i]["ASSIGNMENT_MONTH"] = $facette->ASSIGNMENT_MONTH;
                 }
 
@@ -512,16 +508,14 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function calculatedAverageTermSubjectResult($stdClass, $withFormat = false) {
 
-        $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
-        $TERM_RESULT = $this->averageTermSubjectResult($stdClass, false);
-
-        switch ($this->getSettingFormulTermResult()) {
+        switch ($this->getSettingFormulaTermResult()) {
             case 1:
-                $result = $TERM_RESULT;
+                $result = $this->averageTermSubjectResult($stdClass, self::INCLUDE_MONTH_TERM, false);
                 break;
             default:
-                $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
-                $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass);
+
+                $TERM_RESULT = $this->averageTermSubjectResult($stdClass, self::INCLUDE_IN_TERM, false);
+                $MONTH_RESULT = $this->averageAllMonthsSubjectResult($stdClass, self::INCLUDE_IN_MONTH);
 
                 if ($MONTH_RESULT && !$TERM_RESULT) {
                     $result = $MONTH_RESULT;
@@ -702,7 +696,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     public function averageMonthSubjectResult($stdClass, $withFormat = false) {
 
         $COUNT = "";
-        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
+        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass, false);
 
         if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
@@ -718,13 +712,13 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function averageAllMonthsSubjectResult($stdClass, $withFormat = false) {
+    public function averageAllMonthsSubjectResult($stdClass, $include, $withFormat = false) {
 
         $COUNT = "";
-        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
+        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass, $include);
 
         if ($withFormat) {
-            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
+            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass, $include);
             if (!$COUNT) {
                 $output = "---";
             } else {
@@ -737,14 +731,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function averageTermSubjectResult($stdClass, $withFormat = false) {
+    public function averageTermSubjectResult($stdClass, $include, $withFormat = false) {
 
-        $stdClass->include_in_evaluation = self::INCLUDE_IN_TERM;
-
-        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
+        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass, $include);
 
         if ($withFormat) {
-            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
+            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass, $include);
 
             if (!$COUNT) {
                 $output = "---";
@@ -760,9 +752,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function averageTermSubjectAssignmentByAllMonths($stdClass) {
 
-        $stdClass->include_in_evaluation = self::INCLUDE_IN_MONTH;
         $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
-        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass);
+        $result = SQLEvaluationStudentAssignment::calculatedAverageSubjectResult($stdClass, self::INCLUDE_IN_MONTH);
 
         if (!$COUNT) {
             $output = "---";
@@ -773,24 +764,24 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function getImplodeMonthSubjectAssignment($stdClass) {
+    public function getImplodeMonthSubjectAssignment($stdClass, $include) {
 
-        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
+        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
     }
 
-    public function getImplodeSubjectAssignmentByAllMonths($stdClass) {
+    public function getImplodeSubjectAssignmentByAllMonths($stdClass, $include) {
 
         if ($this->getSettingEvaluationOption()) {
             return SQLEvaluationStudentSubject::getImplodeQueryMonthSubject($stdClass);
         } else {
             $stdClass->assignmentId = self::NO_ASSIGNMENT;
-            return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
+            return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
         }
     }
 
-    public function getImplodeSubjectAssignmentByTerm($stdClass) {
+    public function getImplodeSubjectAssignmentByTerm($stdClass, $include) {
         $stdClass->assignmentId = self::NO_ASSIGNMENT;
-        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass);
+        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
     }
 
     protected function getScoreListSubjectMonthResult($stdClass) {

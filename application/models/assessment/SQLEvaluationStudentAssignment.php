@@ -31,7 +31,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getAverageSubjectAssignment($stdClass) {
+    public static function getAverageSubjectAssignment($stdClass, $include) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("AVG(POINTS) AS AVG"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array());
@@ -51,8 +51,8 @@ class SQLEvaluationStudentAssignment {
         if ($stdClass->term)
             $SQL->where("A.TERM = '" . $stdClass->term . "'");
 
-        if (isset($stdClass->include_in_evaluation))
-            $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
+        if ($include)
+            $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -60,7 +60,7 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->AVG : "";
     }
 
-    public static function getListStudentAssignmentScoreDate($stdClass) {
+    public static function getListStudentAssignmentScoreDate($stdClass, $include) {
         $SELECTION_A = array("ASSIGNMENT_ID");
 
         $SELECTION_B = array(
@@ -86,22 +86,22 @@ class SQLEvaluationStudentAssignment {
         if ($stdClass->term)
             $SQL->where("A.TERM = '" . $stdClass->term . "'");
 
-        if (isset($stdClass->include_in_evaluation))
-            $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
+        if ($include)
+            $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
         $SQL->group("A.ASSIGNMENT_ID");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function calculatedPercentageAverageSubjectResult($stdClass) {
+    public static function calculatedPercentageAverageSubjectResult($stdClass, $include) {
         $SUM_VALUE = 0;
-        $enties = self::getListStudentAssignmentScoreDate($stdClass);
+        $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
         if ($enties) {
             foreach ($enties as $value) {
 
                 $stdClass->assignmentId = $value->ASSIGNMENT_ID;
-                $_VALUE = self::getAverageSubjectAssignment($stdClass);
+                $_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
                 $VALUE = $_VALUE ? $_VALUE : 0;
@@ -112,17 +112,17 @@ class SQLEvaluationStudentAssignment {
         return displayRound($SUM_VALUE);
     }
 
-    public static function calulateNumberAverageSubjectResult($stdClass) {
+    public static function calulateNumberAverageSubjectResult($stdClass, $include) {
         $SUM_VALUE = 0;
         $SUM_COEFF_VALUE = 0;
         $output = 0;
-        $enties = self::getListStudentAssignmentScoreDate($stdClass);
+        $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
 
         if ($enties) {
             foreach ($enties as $value) {
 
                 $stdClass->assignmentId = $value->ASSIGNMENT_ID;
-                $_VALUE = self::getAverageSubjectAssignment($stdClass);
+                $_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
                 $VALUE = $_VALUE ? $_VALUE : 0;
@@ -140,18 +140,18 @@ class SQLEvaluationStudentAssignment {
         return $output;
     }
 
-    public static function calculatedAverageSubjectResult($stdClass) {
+    public static function calculatedAverageSubjectResult($stdClass, $include) {
 
         $output = "";
         switch ($stdClass->evaluationType) {
             case self::EVALUATION_TYPE_NUMBER:
-                $output = self::calulateNumberAverageSubjectResult($stdClass);
+                $output = self::calulateNumberAverageSubjectResult($stdClass, $include);
                 break;
             case self::EVALUATION_TYPE_PERCENT:
                 if (self::CheckComplexPercentage($stdClass)) {
-                    $output = self::calculatedPercentageAverageSubjectResult($stdClass);
+                    $output = self::calculatedPercentageAverageSubjectResult($stdClass, $include);
                 } else {
-                    $output = self::calulateNumberAverageSubjectResult($stdClass);
+                    $output = self::calulateNumberAverageSubjectResult($stdClass, $include);
                 }
                 break;
         }
@@ -159,9 +159,9 @@ class SQLEvaluationStudentAssignment {
         return $output;
     }
 
-    public static function getImplodeQuerySubjectAssignment($stdClass) {
+    public static function getImplodeQuerySubjectAssignment($stdClass, $include) {
 
-        $result = self::getQueryStudentSubjectAssignments($stdClass);
+        $result = self::getQueryStudentSubjectAssignments($stdClass, $include);
 
         $data = array();
 
@@ -174,7 +174,7 @@ class SQLEvaluationStudentAssignment {
         return $data ? implode("|", $data) : "---";
     }
 
-    public static function getQueryStudentSubjectAssignments($stdClass) {
+    public static function getQueryStudentSubjectAssignments($stdClass, $include = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
@@ -203,10 +203,8 @@ class SQLEvaluationStudentAssignment {
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
 
-        if (isset($stdClass->include_in_evaluation)) {
-            if ($stdClass->include_in_evaluation)
-                $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
-        }
+        if ($include)
+            $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -215,24 +213,7 @@ class SQLEvaluationStudentAssignment {
     public static function setActionStudentScoreSubjectAssignment($stdClass) {
 
         $facette = self::getScoreSubjectAssignment($stdClass);
-        
-//        $log = "";
-//        $log .= "\n academicId: ".$stdClass->academicId;
-//        $log .= "\n subjectId: ".$stdClass->subjectId;
-//        $log .= "\n assignmentId: ".$stdClass->assignmentId;
-//        $log .= "\n date: ".$stdClass->date;
-//        $log .= "\n actionValue: ".$stdClass->actionValue;
-//        $log .= "\n actionField: ".$stdClass->actionField;
-//        $log .= "\n scoreType: ".$stdClass->scoreType;
-//        $log .= "\n month: ".$stdClass->month;
-//        $log .= "\n year: ".$stdClass->year;
-//        $log .= "\n coeffValue: ".$stdClass->coeffValue;
-//        $log .= "\n term: ".$stdClass->term;
-//        $log .= "\n date: ".$stdClass->date;
-//        $log .= "\n include_in_valuation: ".$stdClass->include_in_valuation;
-//
-//        error_log($log);
-        
+
         if ($facette) {
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
             $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
@@ -297,7 +278,7 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->C : 0;
     }
 
-    public static function checkExistStudentSubjectAssignment($stdClass) {
+    public static function checkExistStudentSubjectAssignment($stdClass, $include = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("C" => "COUNT(*)"));
@@ -320,10 +301,8 @@ class SQLEvaluationStudentAssignment {
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
 
-        if (isset($stdClass->include_in_evaluation)) {
-            if ($stdClass->include_in_evaluation)
-                $SQL->where("B.INCLUDE_IN_EVALUATION = '" . $stdClass->include_in_evaluation . "'");
-        }
+        if ($include)
+            $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
         if (isset($stdClass->subjectId)) {
             if ($stdClass->subjectId)
