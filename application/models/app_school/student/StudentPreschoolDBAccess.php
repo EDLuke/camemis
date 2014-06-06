@@ -166,33 +166,28 @@ class StudentPreschoolDBAccess {
         return $o;
     }
     
+    public static function checkReferenceOfStudent($Id) {
+     
+        $SQL = "SELECT COUNT(*) AS C";
+        $SQL .= " FROM t_student_preschooltype";
+        $SQL .= " WHERE";
+        $SQL .= " PRESTUDENT = '" . $Id . "'";
+        $SQL .= " AND OBJECT_TYPE = 'REFERENCE'";
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchRow($SQL);
+
+        return $result ? $result->C : 0;
+    }
+
+    
     public static function jsonSaveTypePreschool($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 'new';
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : '';
+        $stdId = isset($params["stdId"]) ? addText($params["stdId"]) : '';
         $SAVEDATA = array();
         
-        switch($objectType){
-            case "TESTING":
-                if (isset($params["TESTING_TYPE"]))
-                    $SAVEDATA["CAMEMIS_TYPE"] = addText($params["TESTING_TYPE"]);
-
-                if (isset($params["SCORE"]))
-                    $SAVEDATA["SCORE"] = addText($params["SCORE"]);
-                    
-                if (isset($params["DESCRIPTION"]))
-                    $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
-                break;
-            
-            case "APPLICATION":
-                if (isset($params["APPLICATION_TYPE"]))
-                    $SAVEDATA["CAMEMIS_TYPE"] = addText($params["APPLICATION_TYPE"]);
-                    
-                if (isset($params["DESCRIPTION"]))
-                    $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
-                break; 
-            
-            case "REFERENCE":
+        
                 if (isset($params["REFERENCE_TYPE"]))
                     $SAVEDATA["CAMEMIS_TYPE"] = addText($params["REFERENCE_TYPE"]);
                     
@@ -210,13 +205,18 @@ class StudentPreschoolDBAccess {
                     
                 if (isset($params["REF_EMAIL"]))
                     $SAVEDATA["EMAIL"] = addText($params["REF_EMAIL"]);
-                break;
-        }
-
-        $WHERE[] = "PRESTUDENT = '" . $objectId . "'";
-        $WHERE[] = "OBJECT_TYPE = '".$objectType."'";
+          
+        if($objectId != 'new'){
+             $WHERE[] = "PRESTUDENT = '" . $objectId . "'";
+             $WHERE[] = "OBJECT_TYPE = '".$objectType."'";
         
-        self::dbAccess()->update('t_student_preschooltype', $SAVEDATA, $WHERE);
+            self::dbAccess()->update('t_student_preschooltype', $SAVEDATA, $WHERE);
+        }else{
+            $SAVEDATA["PRESTUDENT"] = addText($stdId);
+            $SAVEDATA["OBJECT_TYPE"] = addText($objectType);
+            self::dbAccess()->insert('t_student_preschooltype', $SAVEDATA);
+        }
+       
         
         return array(
             "success" => true
@@ -301,6 +301,7 @@ class StudentPreschoolDBAccess {
         $address = isset($params["ADDRESS"]) ? addText($params["ADDRESS"]) : "";
         $phone = isset($params["PHONE"]) ? addText($params["PHONE"]) : "";
         $email = isset($params["EMAIL"]) ? addText($params["EMAIL"]) : "";
+        $session = isset($params["SESSION_EVENT"]) ? addText($params["SESSION_EVENT"]) : "";
         $applicationStatus = isset($params["APPLICATION_STATUS"]) ? addText($params["APPLICATION_STATUS"]) : "";
         $degree = isset($params["DEGREE_TYPE"]) ? addText($params["DEGREE_TYPE"]) : "";
         $dob = isset($params["DATE_BIRTH"]) ? addText($params["DATE_BIRTH"]) : "";
@@ -327,11 +328,11 @@ class StudentPreschoolDBAccess {
         $SQL->from(array('A' => 't_student_preschool'), array('*'));
         if($informationType == "CLEAR"){
             //$SQL->JOIN_OUTER('t_student_preschooltype AS B', 'A.ID= B.PRESTUDENT WHERE B.PRESTUDENT Is NULL');
-            $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.id = B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
+            $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.id = B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT'));
             //$SQL->where("B.OBJECT_TYPE = 'APPLICATION' && B.OBJECT_TYPE = 'TESTING'");
             $SQL->where('B.PRESTUDENT IS NULL');
         }else{
-             $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS'));
+             $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT'));
             if ($informationType){
                 $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
                 //$SQL->where("B.CAMEMIS_TYPE != 0");
@@ -372,6 +373,9 @@ class StudentPreschoolDBAccess {
             
         if ($degree)
             $SQL->where("B.DEGREE_TYPE LIKE '" . $degree . "%'");
+            
+        if ($session)
+            $SQL->where("B.SESSION_EVENT LIKE '" . $session . "%'");
             
         if ($applicationStatus)
             $SQL->where("B.APPLICATION_STATUS LIKE '" . $applicationStatus . "%'");
@@ -419,6 +423,7 @@ class StudentPreschoolDBAccess {
                 
                 $data[$i]['CAMEMIS_TYPE'] = $value->CAM_NAME;
                 $data[$i]['DEGREE_TYPE'] = $value->DEGRE_NAME;
+                $data[$i]['SESSION_EVENT'] = $value->SESSION_EVENT;
                 $data[$i]['APPLICATION_STATUS'] = $value->APPLICATION_STATUS;
                 $data[$i]['DESCRIPTION'] = $value->PRESCHOOLTYPE_DES;
 
