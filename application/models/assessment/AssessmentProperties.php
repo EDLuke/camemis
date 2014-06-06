@@ -317,6 +317,22 @@ abstract class AssessmentProperties {
         }
     }
 
+    public function getSettingFirstDivision() {
+        return $this->getCurrentClass()->FIRST_RESULT_DIVISION_VALUE;
+    }
+
+    public function getSettingSecondDivision() {
+        return $this->getCurrentClass()->SECOND_RESULT_DIVISION_VALUE;
+    }
+
+    public function getSettingThirdDivision() {
+        return $this->getCurrentClass()->THIRD_RESULT_DIVISION_VALUE;
+    }
+
+    public function getSettingFourthDivision() {
+        return $this->getCurrentClass()->FOURTH_RESULT_DIVISION_VALUE;
+    }
+
     public static function setGradingScale($academicObject) {
 
         $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;
@@ -336,6 +352,17 @@ abstract class AssessmentProperties {
                     $MIN = isset($explode[0]) ? $explode[0] : 0;
                     $MAX = isset($explode[1]) ? $explode[1] : 0;
                     $UPDATE = "UPDATE t_gradingsystem SET SCORE_MIN='" . $MIN . "', SCORE_MAX='" . $MAX . "' WHERE ID='" . $value->ID . "'";
+                    self::dbAccess()->query($UPDATE);
+                }
+                
+                if (strpos(trim($value->GPA), "<") !== false) {
+                    $UPDATE = "UPDATE t_gradingsystem SET GPA_MIN=0, GPA_MAX='" . substr(trim($value->GPA), 1) . "' WHERE ID='" . $value->ID . "'";
+                    self::dbAccess()->query($UPDATE);
+                } else {
+                    $explode = explode("-", trim($value->GPA));
+                    $MIN = isset($explode[0]) ? $explode[0] : 0;
+                    $MAX = isset($explode[1]) ? $explode[1] : 0;
+                    $UPDATE = "UPDATE t_gradingsystem SET GPA_MIN='" . $MIN . "', GPA_MAX='" . $MAX . "' WHERE ID='" . $value->ID . "'";
                     self::dbAccess()->query($UPDATE);
                 }
             }

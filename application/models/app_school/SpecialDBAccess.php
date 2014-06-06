@@ -47,7 +47,7 @@ Class SpecialDBAccess {
             foreach ($resultRows as $value) {
 
                 $data[$i]["ID"] = $value->ID;
-                $data[$i]["LETTER_GRADE"] = $value->LETTER_GRADE ? $value->LETTER_GRADE : "---";
+                $data[$i]["LETTER_GRADE"] = $value->LETTER_GRADE ? setShowText($value->LETTER_GRADE) : "---";
                 if ($value->SCORE_MIN && $value->SCORE_MAX) {
                     $data[$i]["NUMERIC_GRADE"] = $value->SCORE_MIN . "-" . $value->SCORE_MAX;
                 } elseif (!$value->SCORE_MIN && $value->SCORE_MAX) {
@@ -55,10 +55,10 @@ Class SpecialDBAccess {
                 } else {
                     $data[$i]["NUMERIC_GRADE"] = "---";
                 }
-                $data[$i]["MARK"] = $value->MARK ? $value->MARK : "---";
-                $data[$i]["GPA"] = $value->GPA ? $value->GPA : "---";
-                $data[$i]["ENGLISH"] = $value->ENGLISH ? $value->ENGLISH : "---";
-                $data[$i]["DESCRIPTION"] = $value->DESCRIPTION ? $value->DESCRIPTION : "---";
+                $data[$i]["MARK"] = $value->MARK ? setShowText($value->MARK) : "---";
+                $data[$i]["GPA"] = $value->GPA ? setShowText($value->GPA) : "---";
+                $data[$i]["ENGLISH"] = $value->ENGLISH ? setShowText($value->ENGLISH) : "---";
+                $data[$i]["DESCRIPTION"] = $value->DESCRIPTION ? setShowText($value->DESCRIPTION) : "---";
 
                 switch ($value->SCORE_TYPE) {
                     case 1:
@@ -218,11 +218,11 @@ Class SpecialDBAccess {
         $data = Array();
         if ($facette) {
             $data['ENGLISH'] = $facette->ENGLISH ? $facette->ENGLISH : "---";
-            $data['LETTER_GRADE'] = $facette->LETTER_GRADE ? $facette->LETTER_GRADE : "---";
+            $data['LETTER_GRADE'] = $facette->LETTER_GRADE ? setShowText($facette->LETTER_GRADE) : "---";
             $data['SCORE_TYPE'] = $facette->SCORE_TYPE ? $facette->SCORE_TYPE : "---";
-            $data['DESCRIPTION'] = $facette->DESCRIPTION ? $facette->DESCRIPTION : "---";
-            $data['MARK'] = $facette->MARK ? $facette->MARK : "---";
-            $data['GPA'] = $facette->GPA ? $facette->GPA : "---";
+            $data['DESCRIPTION'] = $facette->DESCRIPTION ? setShowText($facette->DESCRIPTION) : "---";
+            $data['MARK'] = $facette->MARK ? setShowText($facette->MARK) : "---";
+            $data['GPA'] = $facette->GPA ? setShowText($facette->GPA) : "---";
             $data['NUMERIC_GRADE'] = $facette->NUMERIC_GRADE ? $facette->NUMERIC_GRADE : "---";
             $data['SORTKEY'] = $facette->SORTKEY;
             $data['IS_FAIL'] = $facette->IS_FAIL;

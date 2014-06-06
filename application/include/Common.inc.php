@@ -600,7 +600,7 @@ function getCompletedIcon($value) {
 }
 
 function showPassFailStatus($value) {
-    
+
     switch ($value) {
         case 2: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/breakpoint_down.png' border='0'>";
         case 1: return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/breakpoint_up.png' border='0'>";
@@ -770,9 +770,10 @@ function setShowTextExtjs($text) {
 }
 
 function setShowText($text) {
-    if (isUTF8($text)) {
+    if ($text) {
         $text = str_replace("&lt;", "<", ($text));
         $text = str_replace("&gt;", ">", ($text));
+        $text = str_replace("&amp;lt;", "<", ($text));
         return $text ? htmlspecialchars_decode(stripslashes(trim($text))) : "";
     } else {
         return "?";
