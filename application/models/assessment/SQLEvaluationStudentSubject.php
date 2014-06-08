@@ -24,8 +24,8 @@ class SQLEvaluationStudentSubject {
         $data = array(
             'SUBJECT_VALUE' => ""
             , 'RANK' => ""
+            , 'GRADE_POINTS' => ""
             , 'GRADING' => ""
-            , 'GPA' => ""
             , 'IS_FAIL' => ""
             , 'ASSESSMENT_ID' => ""
             , 'TEACHER_COMMENT' => ""
@@ -44,7 +44,7 @@ class SQLEvaluationStudentSubject {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
                     , 'RANK'
-                    , 'GPA'
+                    , 'GRADE_POINTS'
                     , 'ASSESSMENT_ID'
                     , 'TEACHER_COMMENT'
                     , 'MONTH_RESULT'
@@ -109,8 +109,8 @@ class SQLEvaluationStudentSubject {
                     $data = array(
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
                         , 'RANK' => $result->RANK ? $result->RANK : "---"
+                        , 'GRADE_POINTS' => $result->GRADE_POINTS
                         , 'GRADING' => $result->GRADING ? $result->GRADING : "---"
-                        , 'GPA' => $result->GPA
                         , 'IS_FAIL' => $result->IS_FAIL
                         , 'ASSESSMENT_ID' => $result->ASSESSMENT_ID
                         , 'TEACHER_COMMENT' => $result->TEACHER_COMMENT
@@ -181,7 +181,6 @@ class SQLEvaluationStudentSubject {
                             $stdClass->averagePercent
                             , $stdClass->qualificationType
             );
-            
         } else {
             if (isset($stdClass->assessmentId)) {
                 $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
