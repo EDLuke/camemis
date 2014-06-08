@@ -205,10 +205,12 @@ class AcademicDBAccess {
             $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
             $data["GRADING_TYPE"] = $facette->GRADING_TYPE;
 
-            $data["FIRST_RESULT_DIVISION_VALUE"] = $facette->FIRST_RESULT_DIVISION_VALUE;
-            $data["SECOND_RESULT_DIVISION_VALUE"] = $facette->SECOND_RESULT_DIVISION_VALUE;
-            $data["THIRD_RESULT_DIVISION_VALUE"] = $facette->THIRD_RESULT_DIVISION_VALUE;
-            $data["FOURTH_RESULT_DIVISION_VALUE"] = $facette->FOURTH_RESULT_DIVISION_VALUE;
+            $data["PERFORMANCE_MONTH_DIVISION_VALUE"] = $facette->PERFORMANCE_MONTH_DIVISION_VALUE;
+            $data["PERFORMANCE_FIRST_DIVISION_VALUE"] = $facette->PERFORMANCE_FIRST_DIVISION_VALUE;
+            $data["PERFORMANCE_SECOND_DIVISION_VALUE"] = $facette->PERFORMANCE_SECOND_DIVISION_VALUE;
+            $data["PERFORMANCE_THIRD_DIVISION_VALUE"] = $facette->PERFORMANCE_THIRD_DIVISION_VALUE;
+            $data["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $facette->PERFORMANCE_FOURTH_DIVISION_VALUE;
+            
             $data["FORMULA_TERM"] = $facette->FORMULA_TERM;
             $data["FORMULA_YEAR"] = $facette->FORMULA_YEAR;
 
@@ -501,14 +503,16 @@ class AcademicDBAccess {
         if (isset($params["GRADING_TYPE"]))
             $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
 
-        if (isset($params["FIRST_RESULT_DIVISION_VALUE"]))
-            $SAVEDATA['FIRST_RESULT_DIVISION_VALUE'] = addText($params["FIRST_RESULT_DIVISION_VALUE"]);
-        if (isset($params["SECOND_RESULT_DIVISION_VALUE"]))
-            $SAVEDATA['SECOND_RESULT_DIVISION_VALUE'] = addText($params["SECOND_RESULT_DIVISION_VALUE"]);
-        if (isset($params["THIRD_RESULT_DIVISION_VALUE"]))
-            $SAVEDATA['THIRD_RESULT_DIVISION_VALUE'] = addText($params["THIRD_RESULT_DIVISION_VALUE"]);
-        if (isset($params["FOURTH_RESULT_DIVISION_VALUE"]))
-            $SAVEDATA['FOURTH_RESULT_DIVISION_VALUE'] = addText($params["FOURTH_RESULT_DIVISION_VALUE"]);
+        if (isset($params["PERFORMANCE_MONTH_DIVISION_VALUE"]))
+            $SAVEDATA['PERFORMANCE_MONTH_DIVISION_VALUE'] = addText($params["PERFORMANCE_MONTH_DIVISION_VALUE"]);
+        if (isset($params["PERFORMANCE_FIRST_DIVISION_VALUE"]))
+            $SAVEDATA['PERFORMANCE_FIRST_DIVISION_VALUE'] = addText($params["PERFORMANCE_FIRST_DIVISION_VALUE"]);
+        if (isset($params["PERFORMANCE_SECOND_DIVISION_VALUE"]))
+            $SAVEDATA['PERFORMANCE_SECOND_DIVISION_VALUE'] = addText($params["PERFORMANCE_SECOND_DIVISION_VALUE"]);
+        if (isset($params["PERFORMANCE_THIRD_DIVISION_VALUE"]))
+            $SAVEDATA['PERFORMANCE_THIRD_DIVISION_VALUE'] = addText($params["PERFORMANCE_THIRD_DIVISION_VALUE"]);
+        if (isset($params["PERFORMANCE_FOURTH_DIVISION_VALUE"]))
+            $SAVEDATA['PERFORMANCE_FOURTH_DIVISION_VALUE'] = addText($params["PERFORMANCE_FOURTH_DIVISION_VALUE"]);
         if (isset($params["FORMULA_TERM"]))
             $SAVEDATA['FORMULA_TERM'] = addText($params["FORMULA_TERM"]);
         if (isset($params["FORMULA_YEAR"]))
@@ -953,10 +957,11 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["EVALUATION_OPTION"] = $schoolyearObject->EVALUATION_OPTION;
                     $FIRST_SAVEDATA["GRADING_TYPE"] = $schoolyearObject->GRADING_TYPE;
 
-                    $FIRST_SAVEDATA["FIRST_RESULT_DIVISION_VALUE"] = $schoolyearObject->FIRST_RESULT_DIVISION_VALUE;
-                    $FIRST_SAVEDATA["SECOND_RESULT_DIVISION_VALUE"] = $schoolyearObject->SECOND_RESULT_DIVISION_VALUE;
-                    $FIRST_SAVEDATA["THIRD_RESULT_DIVISION_VALUE"] = $schoolyearObject->THIRD_RESULT_DIVISION_VALUE;
-                    $FIRST_SAVEDATA["FOURTH_RESULT_DIVISION_VALUE"] = $schoolyearObject->FOURTH_RESULT_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["PERFORMANCE_MONTH_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_MONTH_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["PERFORMANCE_FIRST_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_FIRST_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["PERFORMANCE_SECOND_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_SECOND_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["PERFORMANCE_THIRD_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_THIRD_DIVISION_VALUE;
+                    $FIRST_SAVEDATA["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_FOURTH_DIVISION_VALUE;
                     $FIRST_SAVEDATA["FORMULA_TERM"] = $schoolyearObject->FORMULA_TERM;
                     $FIRST_SAVEDATA["FORMULA_YEAR"] = $schoolyearObject->FORMULA_YEAR;
 
@@ -1036,10 +1041,11 @@ class AcademicDBAccess {
                     $SAVEDATA["EVALUATION_OPTION"] = $schoolyearsubjectObject->EVALUATION_OPTION;
                     $SAVEDATA["GRADING_TYPE"] = $schoolyearsubjectObject->GRADING_TYPE;
 
-                    $SAVEDATA["FIRST_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->FIRST_RESULT_DIVISION_VALUE;
-                    $SAVEDATA["SECOND_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->SECOND_RESULT_DIVISION_VALUE;
-                    $SAVEDATA["THIRD_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->THIRD_RESULT_DIVISION_VALUE;
-                    $SAVEDATA["FOURTH_RESULT_DIVISION_VALUE"] = $schoolyearsubjectObject->FOURTH_RESULT_DIVISION_VALUE;
+                    $SAVEDATA["PERFORMANCE_MONTH_DIVISION_VALUE"] = $schoolyearsubjectObject->PERFORMANCE_MONTH_DIVISION_VALUE;
+                    $SAVEDATA["PERFORMANCE_FIRST_DIVISION_VALUE"] = $schoolyearsubjectObject->PERFORMANCE_FIRST_DIVISION_VALUE;
+                    $SAVEDATA["PERFORMANCE_SECOND_DIVISION_VALUE"] = $schoolyearsubjectObject->PERFORMANCE_SECOND_DIVISION_VALUE;
+                    $SAVEDATA["PERFORMANCE_THIRD_DIVISION_VALUE"] = $schoolyearsubjectObject->PERFORMANCE_THIRD_DIVISION_VALUE;
+                    $SAVEDATA["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $schoolyearsubjectObject->PERFORMANCE_FOURTH_DIVISION_VALUE;
                     $SAVEDATA["FORMULA_TERM"] = $schoolyearsubjectObject->FORMULA_TERM;
                     $SAVEDATA["FORMULA_YEAR"] = $schoolyearsubjectObject->FORMULA_YEAR;
 

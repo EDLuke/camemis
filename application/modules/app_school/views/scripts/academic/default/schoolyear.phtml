@@ -188,24 +188,24 @@ $viewportItem = new ViewportItem(
         $FORMULA_TERM_RESULT_STORE .= "]";
         
         $DIVISION_NUMBER_ITEMS = "[";
-            switch ($TERM_NUMBER) {
-                case 1:
-                    $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("FIRST_RESULT_DIVISION_VALUE","SEMESTER1_WEIGHTING", FIRST_TERM_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("SECOND_RESULT_DIVISION_VALUE","SEMESTER2_WEIGHTING", SECOND_TERM_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("THIRD_RESULT_DIVISION_VALUE","TERM1_WEIGHTING", THIRD_TERM_RESULT, false, false)."}";   
-                    break;
-                case 2:
-                    $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("FIRST_RESULT_DIVISION_VALUE","SEMESTER1_WEIGHTING", FIRST_QUARTER_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("SECOND_RESULT_DIVISION_VALUE","SEMESTER2_WEIGHTING", SECOND_QUARTER_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("THIRD_RESULT_DIVISION_VALUE","TERM1_WEIGHTING", THIRD_QUARTER_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("FOURTH_RESULT_DIVISION_VALUE","TERM2_WEIGHTING", FOURTH_QUARTER_RESULT, false, false)."}";
-                    break;
-                default:
-                    $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("THIRD_RESULT_DIVISION_VALUE","SEMESTER1_WEIGHTING", FIRST_SEMESTER_RESULT, false, false)."}";
-                    $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("SECOND_RESULT_DIVISION_VALUE","SEMESTER2_WEIGHTING", SECOND_SEMESTER_RESULT, false, false)."}";
-                    break;   
-            }
-            
+        $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("PERFORMANCE_MONTH_DIVISION_VALUE","PERFORMANCE_MONTH_DIVISION_VALUE", MONTHLY_RESULT, false, false)."}";
+        switch ($TERM_NUMBER) {
+            case 1:
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_TERM_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_TERM_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_TERM_RESULT, false, false)."}";   
+                break;
+            case 2:
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_QUARTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_QUARTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_QUARTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FOURTH_DIVISION_VALUE","PERFORMANCE_FOURTH_DIVISION_VALUE", FOURTH_QUARTER_RESULT, false, false)."}";
+                break;
+            default:
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", FIRST_SEMESTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_SEMESTER_RESULT, false, false)."}";
+                break;   
+        }
         $DIVISION_NUMBER_ITEMS .= "]";
         
         $ACADEMIC_DATE_SETTING = "

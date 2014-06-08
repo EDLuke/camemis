@@ -322,19 +322,19 @@ abstract class AssessmentProperties {
     }
 
     public function getSettingFirstDivision() {
-        return $this->getCurrentClass()->FIRST_RESULT_DIVISION_VALUE;
+        return $this->getCurrentClass()->PERFORMANCE_FIRST_DIVISION_VALUE;
     }
 
     public function getSettingSecondDivision() {
-        return $this->getCurrentClass()->SECOND_RESULT_DIVISION_VALUE;
+        return $this->getCurrentClass()->PERFORMANCE_SECOND_DIVISION_VALUE;
     }
 
     public function getSettingThirdDivision() {
-        return $this->getCurrentClass()->THIRD_RESULT_DIVISION_VALUE;
+        return $this->getCurrentClass()->PERFORMANCE_THIRD_DIVISION_VALUE;
     }
 
     public function getSettingFourthDivision() {
-        return $this->getCurrentClass()->FOURTH_RESULT_DIVISION_VALUE;
+        return $this->getCurrentClass()->PERFORMANCE_FOURTH_DIVISION_VALUE;
     }
 
     public static function setGradingScale($academicObject) {
