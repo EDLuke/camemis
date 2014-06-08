@@ -113,6 +113,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
+                $data[$i]["GPA"] = $facette->GPA;
 
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
@@ -122,97 +123,6 @@ class AcademicPerformances extends AssessmentProperties {
                         }
                     }
                 }
-
-                $i++;
-            }
-        }
-
-        return $data;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    public function getListStudentsMonthAcademicPerformance() {
-
-        $data = array();
-
-        $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
-        );
-
-        if ($this->listClassStudents()) {
-
-            $data = $this->listStudentsData();
-
-            $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
-                            $this->listClassStudents()
-                            , $stdClass
-            );
-
-            $i = 0;
-            foreach ($this->listClassStudents() as $value) {
-
-                $stdClass->studentId = $value->ID;
-
-                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
-                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
-
-                $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
-                $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
-                $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
-
-                if ($this->getListSubjects()) {
-                    foreach ($this->getListSubjects() as $v) {
-                        if ($v->SUBJECT_ID) {
-                            $stdClass->subjectId = $v->SUBJECT_ID;
-                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
-                        }
-                    }
-                }
-
-                $i++;
-            }
-        }
-
-        return $data;
-    }
-
-    public function getListStudentsTermAcademicPerformance() {
-
-        $data = array();
-
-        $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
-        );
-
-        if ($this->listClassStudents()) {
-
-            $data = $this->listStudentsData();
-
-            $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
-                            $this->listClassStudents()
-                            , $stdClass
-            );
-
-            $i = 0;
-            foreach ($this->listClassStudents() as $value) {
-
-                $stdClass->studentId = $value->ID;
-                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
-                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
-                $data[$i]["RANK"] = $this->displayRank($AVERAGE, $scoreList);
-                $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
-                $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
 
                 $i++;
             }
@@ -248,7 +158,8 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
-
+                $data[$i]["GPA"] = $facette->GPA;
+                
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
@@ -291,7 +202,8 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
-
+                $data[$i]["GPA"] = $facette->GPA;
+                
                 switch ($this->getTermNumber()) {
                     case 1:
 
@@ -368,6 +280,101 @@ class AcademicPerformances extends AssessmentProperties {
 
         return $data;
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+
+    public function getListStudentsMonthAcademicPerformance() {
+
+        $data = array();
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "term" => $this->term
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "section" => $this->getSection()
+                    , "educationSystem" => $this->getEducationSystem()
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
+        if ($this->listClassStudents()) {
+
+            $data = $this->listStudentsData();
+
+            $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
+                            $this->listClassStudents()
+                            , $stdClass
+            );
+
+            $i = 0;
+            foreach ($this->listClassStudents() as $value) {
+
+                $stdClass->studentId = $value->ID;
+
+                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
+                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
+
+                $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
+                $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
+                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
+                $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
+                $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
+
+                if ($this->getListSubjects()) {
+                    foreach ($this->getListSubjects() as $v) {
+                        if ($v->SUBJECT_ID) {
+                            $stdClass->subjectId = $v->SUBJECT_ID;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
+                        }
+                    }
+                }
+
+                $i++;
+            }
+        }
+
+        return $data;
+    }
+
+    public function getListStudentsTermAcademicPerformance() {
+
+        $data = array();
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "term" => $this->term
+                    , "educationSystem" => $this->getEducationSystem()
+                    , "section" => $this->getSection()
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
+        if ($this->listClassStudents()) {
+
+            $data = $this->listStudentsData();
+
+            $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
+                            $this->listClassStudents()
+                            , $stdClass
+            );
+
+            $i = 0;
+            foreach ($this->listClassStudents() as $value) {
+
+                $stdClass->studentId = $value->ID;
+                $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
+                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
+                $data[$i]["RANK"] = $this->displayRank($AVERAGE, $scoreList);
+                $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
+                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
+                $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, $this->term);
+                $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
+
+                $i++;
+            }
+        }
+
+        return $data;
+    }
 
     public function getListStudentsYearAcademicPerformance() {
 
@@ -375,6 +382,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId
+                    , "educationSystem" => $this->getEducationSystem()
                     , "section" => $this->getSection()
                     , "schoolyearId" => $this->getSchoolyearId()
         );
@@ -397,6 +405,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
                 $data[$i]["ASSESSMENT"] = "----";
+                $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
 
                 switch ($this->getTermNumber()) {
                     case 1:
@@ -654,6 +663,7 @@ class AcademicPerformances extends AssessmentProperties {
     }
 
     public function actionCalculationPerformanceEvaluation() {
+
         switch ($this->target) {
             case "MONTH":
                 $entries = $this->getListStudentsMonthAcademicPerformance();
@@ -688,6 +698,7 @@ class AcademicPerformances extends AssessmentProperties {
                     $rank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
                     $average = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
                     $stdClass->averagePercent = isset($entries[$i]["AVERAGE_PERCENT"]) ? $entries[$i]["AVERAGE_PERCENT"] : "";
+                    $stdClass->gpaValue = isset($entries[$i]["GPA"]) ? $entries[$i]["GPA"] : "";
 
                     if (is_numeric($average)) {
                         $stdClass->rank = $rank ? $rank : "---";

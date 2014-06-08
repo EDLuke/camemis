@@ -362,7 +362,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
-                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
                     if ($this->getCurrentClassAssignments()) {
@@ -434,7 +433,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING ? $facette->GRADING : "---";
-                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 $i++;
             }
@@ -495,7 +493,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
-                $data[$i]["GPA"] = $facette->GPA ? $facette->GPA : "---";
 
                 $i++;
             }
@@ -1121,8 +1118,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $stdClass = (object) array(
                     "academicId" => $this->academicId
                     , "section" => $this->getSection()
+                    , "creditHours" => $this->getSubjectCreditHours()
                     , "subjectId" => $this->subjectId
                     , "scoreType" => $this->getSubjectScoreType()
+                    , "coeffValue" => $this->getSubjectCoeff()
                     , "month" => $this->getMonth()
                     , "year" => $this->getYear()
                     , "term" => $this->term

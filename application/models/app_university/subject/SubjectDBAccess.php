@@ -1165,6 +1165,7 @@ class SubjectDBAccess {
 
         if ($result) {
             $data["SUBJECT_ID"] = $facette->ID;
+            $data["NUMBER_CREDIT"] = $facette->NUMBER_CREDIT;
             $data["SUBJECT_NAME"] = $facette->NAME;
             $data["SUBJECT_SHORT"] = $facette->SHORT;
             $data["SCORE_TYPE"] = $result->SCORE_TYPE;

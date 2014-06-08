@@ -10,6 +10,9 @@ require_once 'models/assessment/SQLAcademicPerformances.php';
 
 class SQLAcademicPerformances {
 
+    const TRADITIONAL_SYSTEM = 0;
+    const CREDIT_SYSTEM = 1;
+
     public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
@@ -18,41 +21,92 @@ class SQLAcademicPerformances {
         return false::dbAccess()->select();
     }
 
-    public static function getSQLAverageStudentAcademicPerformance($stdClass, $type = false, $term = false) {
+    public static function getSQLStudentGPA($stdClass, $term = false) {
 
-        if ($type) {
-            $SELECTION_A = array("SUM(A.SUBJECT_VALUE_PERCENT*B.COEFF_VALUE) AS SUM_VALUE");
-        } else {
-            $SELECTION_A = array("SUM(A.SUBJECT_VALUE*B.COEFF_VALUE) AS SUM_VALUE");
+        switch ($stdClass->educationSystem) {
+            case self::TRADITIONAL_SYSTEM:
+                $SELECTION = array(
+                    "SUM(GRADE_POINTS) AS SUM_FIRST"
+                    , "COUNT(GRADE_POINTS) AS SUM_SECOND");
+                break;
+            case self::CREDIT_SYSTEM:
+                $SELECTION = array(
+                    "SUM(GRADE_POINTS*CREDIT_HOURS) AS SUM_FIRST"
+                    , "SUM(GRADE_POINTS) AS SUM_SECOND");
+                break;
         }
 
-        $SELECTION_B = array("IF( B.COEFF_VALUE =0, B.COEFF_VALUE =1, B.COEFF_VALUE )", "SUM(B.COEFF_VALUE) AS SUM_COEFF");
-
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student_subject_assessment'), $SELECTION_A);
-        $SQL->joinLeft(array('B' => "t_grade_subject"), 'A.SUBJECT_ID=B.SUBJECT', $SELECTION_B);
-        $SQL->where('A.CLASS_ID = ?', $stdClass->academicId);
-        $SQL->where('A.STUDENT_ID = ?', $stdClass->studentId);
-        $SQL->where('B.SCORE_TYPE = ?', 1);
-
+        $SQL->from("t_student_subject_assessment", $SELECTION);
+        $SQL->where('CLASS_ID = ?', $stdClass->academicId);
+        $SQL->where('STUDENT_ID = ?', $stdClass->studentId);
+        $SQL->where('SCORE_TYPE = ?', 1);
         if (isset($stdClass->month) && isset($stdClass->year)) {
             if ($stdClass->month)
-                $SQL->where("A.MONTH = '" . $stdClass->month . "'");
+                $SQL->where("MONTH = '" . $stdClass->month . "'");
             if ($stdClass->year)
-                $SQL->where("A.YEAR = '" . $stdClass->year . "'");
+                $SQL->where("YEAR = '" . $stdClass->year . "'");
         }
 
         if ($term) {
-            $SQL->where("A.TERM = '" . $term . "'");
+            $SQL->where("TERM = '" . $term . "'");
         } else {
             if (!isset($stdClass->month) && !isset($stdClass->year)) {
                 if (isset($stdClass->term))
-                    $SQL->where("A.TERM = '" . $stdClass->term . "'");
+                    $SQL->where("TERM = '" . $stdClass->term . "'");
             }
         }
 
-        $SQL->group("A.TERM");
+        $SQL->group("TERM");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
 
+        $output = "";
+
+        if ($result) {
+            if ($result->SUM_SECOND)
+                $output = displayRound($result->SUM_FIRST / $result->SUM_SECOND);
+        }
+
+        return $output;
+    }
+
+    public static function getSQLAverageStudentAcademicPerformance($stdClass, $type = false, $term = false) {
+
+        if ($type) {
+            $SELECTION = array(
+                "SUM(SUBJECT_VALUE_PERCENT*COEFF_VALUE) AS SUM_VALUE"
+                , "IF(COEFF_VALUE =0,COEFF_VALUE =1,COEFF_VALUE )"
+                , "SUM(COEFF_VALUE) AS SUM_COEFF");
+        } else {
+            $SELECTION = array(
+                "SUM(SUBJECT_VALUE*COEFF_VALUE) AS SUM_VALUE"
+                , "IF(COEFF_VALUE =0,COEFF_VALUE =1,COEFF_VALUE )"
+                , "SUM(COEFF_VALUE) AS SUM_COEFF");
+        }
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_subject_assessment", $SELECTION);
+        $SQL->where('CLASS_ID = ?', $stdClass->academicId);
+        $SQL->where('STUDENT_ID = ?', $stdClass->studentId);
+        $SQL->where('SCORE_TYPE = ?', 1);
+        if (isset($stdClass->month) && isset($stdClass->year)) {
+            if ($stdClass->month)
+                $SQL->where("MONTH = '" . $stdClass->month . "'");
+            if ($stdClass->year)
+                $SQL->where("YEAR = '" . $stdClass->year . "'");
+        }
+
+        if ($term) {
+            $SQL->where("TERM = '" . $term . "'");
+        } else {
+            if (!isset($stdClass->month) && !isset($stdClass->year)) {
+                if (isset($stdClass->term))
+                    $SQL->where("TERM = '" . $stdClass->term . "'");
+            }
+        }
+
+        $SQL->group("TERM");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -88,6 +142,7 @@ class SQLAcademicPerformances {
                 $SELECTION_A = array(
                     'RANK'
                     , 'ASSESSMENT_ID'
+                    , 'GPA'
                     , 'TOTAL_RESULT'
                     , 'FIRST_RESULT'
                     , 'SECOND_RESULT'
@@ -96,7 +151,7 @@ class SQLAcademicPerformances {
                     , 'TEACHER_COMMENT'
                 );
 
-                $SELECTION_B = array("" . $GRADING_TYPE . "", "GPA", "IS_FAIL");
+                $SELECTION_B = array("" . $GRADING_TYPE . "", "IS_FAIL");
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => "t_student_learning_performance"), $SELECTION_A);
@@ -199,18 +254,22 @@ class SQLAcademicPerformances {
 
         if (isset($stdClass->averagePercent)) {
             $SAVE_DATA["TOTAL_RESULT_PERCENT"] = $stdClass->averagePercent;
-            $SAVE_DATA["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale(
-                            $stdClass->averagePercent
-                            , $stdClass->qualificationType
-            );
+            if ($stdClass->averagePercent) {
+                $SAVE_DATA["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale(
+                                $stdClass->averagePercent
+                                , $stdClass->qualificationType
+                );
+                if (isset($stdClass->rank)) {
+                    $SAVE_DATA["RANK"] = $stdClass->rank;
+                }
+            }
         } else {
             if (isset($stdClass->assessmentId)) {
                 $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
             }
-        }
-
-        if (isset($stdClass->rank)) {
-            $SAVE_DATA["RANK"] = $stdClass->rank;
+            if (isset($stdClass->rank)) {
+                $SAVE_DATA["RANK"] = $stdClass->rank;
+            }
         }
 
         if (isset($stdClass->firstResult)) {
@@ -245,6 +304,10 @@ class SQLAcademicPerformances {
             $SAVE_DATA["FOURTH_RESULT_PERCENT"] = $stdClass->fourthResultPercent;
         }
 
+        if (isset($stdClass->gpaValue)) {
+            $SAVE_DATA["GPA"] = $stdClass->gpaValue;
+        }
+        
         if (self::checkStudentAcademicPerformance($stdClass)) {
 
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";

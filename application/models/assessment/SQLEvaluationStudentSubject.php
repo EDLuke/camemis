@@ -176,11 +176,13 @@ class SQLEvaluationStudentSubject {
         }
 
         if (isset($stdClass->averagePercent)) {
-            $SAVE_DATA["SUBJECT_VALUE_PERCENT"] = $stdClass->averagePercent;
-            $SAVE_DATA["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale(
+            $assessmentId = AssessmentConfig::calculateGradingScale(
                             $stdClass->averagePercent
                             , $stdClass->qualificationType
             );
+            $SAVE_DATA["SUBJECT_VALUE_PERCENT"] = $stdClass->averagePercent;
+            $SAVE_DATA["ASSESSMENT_ID"] = $assessmentId;
+            $SAVE_DATA["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
         } else {
             if (isset($stdClass->assessmentId)) {
                 $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
@@ -221,6 +223,21 @@ class SQLEvaluationStudentSubject {
 
         if (isset($stdClass->term))
             $SAVE_DATA["TERM"] = $stdClass->term;
+
+        if (isset($stdClass->creditHours)) {
+            if ($stdClass->creditHours)
+                $SAVE_DATA["CREDIT_HOURS"] = $stdClass->creditHours;
+        }
+
+        if (isset($stdClass->coeffValue)) {
+            if ($stdClass->coeffValue)
+                $SAVE_DATA["COEFF_VALUE"] = $stdClass->coeffValue;
+        }
+
+        if (isset($stdClass->scoreType)) {
+            if ($stdClass->scoreType)
+                $SAVE_DATA["SCORE_TYPE"] = $stdClass->scoreType;
+        }
 
         if (isset($stdClass->studentId)) {
             if ($stdClass->studentId) {

@@ -87,6 +87,10 @@ abstract class AssessmentProperties {
         return $this->getSubject()->SCORE_MIN;
     }
 
+    public function getSubjectCreditHours() {
+        return $this->getSubject()->NUMBER_CREDIT;
+    }
+
     public function getSubjectScorePossible() {
         return $this->getSubject()->MAX_POSSIBLE_SCORE;
     }

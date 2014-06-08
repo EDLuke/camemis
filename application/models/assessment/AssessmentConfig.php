@@ -12,6 +12,10 @@ class AssessmentConfig {
         return Zend_Registry::get('DB_ACCESS');
     }
 
+    public static function getGradePointsById($Id) {
+        return self::makeGrade($Id, "GRADE_POINTS");
+    }
+
     public static function makeGrade($Id, $type = false) {
 
         $SQL = self::dbAccess()->select();
@@ -221,25 +225,6 @@ class AssessmentConfig {
         return $output;
     }
 
-    public static function calculateGPA($checkValue, $qualificationType) {
-
-        $output = "";
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_gradingsystem", array("*"));
-        $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
-                if ($checkValue >= $value->GPA_MIN && $checkValue <= $value->GPA_MAX) {
-                    $output = $value->ID;
-                    break;
-                }
-            }
-        }
-
-        return $output;
-    }
 }
 
 ?>
