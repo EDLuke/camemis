@@ -252,6 +252,12 @@ class SQLAcademicPerformances {
             $SAVE_DATA["TOTAL_RESULT"] = $stdClass->average;
         }
 
+        if (isset($stdClass->rank)) {
+            if (is_numeric($stdClass->average)) {
+                $SAVE_DATA["RANK"] = $stdClass->rank;
+            }
+        }
+
         if (isset($stdClass->averagePercent)) {
             $SAVE_DATA["TOTAL_RESULT_PERCENT"] = $stdClass->averagePercent;
             if ($stdClass->averagePercent) {
@@ -259,16 +265,10 @@ class SQLAcademicPerformances {
                                 $stdClass->averagePercent
                                 , $stdClass->qualificationType
                 );
-                if (isset($stdClass->rank)) {
-                    $SAVE_DATA["RANK"] = $stdClass->rank;
-                }
             }
         } else {
             if (isset($stdClass->assessmentId)) {
                 $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
-            }
-            if (isset($stdClass->rank)) {
-                $SAVE_DATA["RANK"] = $stdClass->rank;
             }
         }
 
@@ -307,7 +307,7 @@ class SQLAcademicPerformances {
         if (isset($stdClass->gpaValue)) {
             $SAVE_DATA["GPA"] = $stdClass->gpaValue;
         }
-        
+
         if (self::checkStudentAcademicPerformance($stdClass)) {
 
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
