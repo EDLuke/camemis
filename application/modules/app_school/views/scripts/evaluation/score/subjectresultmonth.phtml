@@ -101,7 +101,6 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
-    $OBJECT_GRID->addReadField("name: 'GPA'");
     
     if(!$academicObject->EVALUATION_OPTION){
         if($entries){
@@ -125,38 +124,6 @@ Ext.onReady(function() {
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
-            
-            if($academicObject->DISPLAY_GPA){
-                $OBJECT_GRID->addColumn("
-                    header: '<b>".GPA."</b>'
-                    , width: 130
-                    , align: 'right'
-                    , sortable: true
-                    , dataIndex: 'GPA'
-                    , renderer:cssDefault
-                    , editor: new Ext.form.ComboBox({
-                        triggerAction:'all'
-                        ,mode:'local'
-                        ,store: new Ext.data.JsonStore({
-                            autoDestroy: true
-                            ,fields: ['chooseValue', 'chooseDisplay']
-                            ,data:[".AssessmentConfig::comboGPA($academicObject)."]
-                        })
-                        ,valueField: 'chooseValue'
-                        ,displayField: 'chooseDisplay'
-                        ,editable: false
-                        ,listeners: {
-                            select: function(combo, record, index) {
-                                replaceValue = combo.getValue();
-                                var newDisplay = record.get('chooseDisplay');
-                                combo.setValue(newDisplay);
-                                comboValue = record.get('chooseValue');
-                            }
-                        }
-                    })
-                    ,filter:{}
-                ");
-            }
             
             ////////////////////////////////////////////////////////////////////
             $comboAssessment = "

@@ -48,15 +48,8 @@ Class SpecialDBAccess {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["LETTER_GRADE"] = $value->LETTER_GRADE ? setShowText($value->LETTER_GRADE) : "---";
-                if ($value->SCORE_MIN && $value->SCORE_MAX) {
-                    $data[$i]["NUMERIC_GRADE"] = $value->SCORE_MIN . "-" . $value->SCORE_MAX;
-                } elseif (!$value->SCORE_MIN && $value->SCORE_MAX) {
-                    $data[$i]["NUMERIC_GRADE"] = "0" . "-" . $value->SCORE_MAX;
-                } else {
-                    $data[$i]["NUMERIC_GRADE"] = "---";
-                }
+                $data[$i]["GRADE_POINTS"] = $value->GRADE_POINTS ? setShowText($value->GRADE_POINTS) : "---";
                 $data[$i]["MARK"] = $value->MARK ? setShowText($value->MARK) : "---";
-                $data[$i]["GPA"] = $value->GPA ? setShowText($value->GPA) : "---";
                 $data[$i]["ENGLISH"] = $value->ENGLISH ? setShowText($value->ENGLISH) : "---";
                 $data[$i]["DESCRIPTION"] = $value->DESCRIPTION ? setShowText($value->DESCRIPTION) : "---";
 
@@ -121,13 +114,9 @@ Class SpecialDBAccess {
         $SAVEDATA["ENGLISH"] = isset($params["ENGLISH"]) ? addText($params["ENGLISH"]) : "---";
         $SAVEDATA["LETTER_GRADE"] = isset($params["LETTER_GRADE"]) ? addText($params["LETTER_GRADE"]) : "---";
         $SAVEDATA["MARK"] = isset($params["MARK"]) ? addText($params["MARK"]) : "---";
-        $SAVEDATA["GPA"] = isset($params["GPA"]) ? addText($params["GPA"]) : "---";
-
-        if (isset($params["SCORE_MIN"]) && isset($params["SCORE_MAX"])) {
-            $SAVEDATA["NUMERIC_GRADE"] = addText($params["SCORE_MIN"]) . "-" . addText($params["SCORE_MAX"]);
-            $SAVEDATA["SCORE_MIN"] = addText($params["SCORE_MIN"]);
-            $SAVEDATA["SCORE_MAX"] = addText($params["SCORE_MAX"]);
-        }
+        
+        if (isset($params["GRADE_POINTS"]))
+            $SAVEDATA["GRADE_POINTS"] = addText($params["GRADE_POINTS"]);
 
         if (isset($params["SCORE_TYPE"]))
             $SAVEDATA["SCORE_TYPE"] = addText($params["SCORE_TYPE"]);
@@ -222,8 +211,7 @@ Class SpecialDBAccess {
             $data['SCORE_TYPE'] = $facette->SCORE_TYPE ? $facette->SCORE_TYPE : "---";
             $data['DESCRIPTION'] = $facette->DESCRIPTION ? setShowText($facette->DESCRIPTION) : "---";
             $data['MARK'] = $facette->MARK ? setShowText($facette->MARK) : "---";
-            $data['GPA'] = $facette->GPA ? setShowText($facette->GPA) : "---";
-            $data['NUMERIC_GRADE'] = $facette->NUMERIC_GRADE ? $facette->NUMERIC_GRADE : "---";
+            $data['GRADE_POINTS'] = $facette->GRADE_POINTS ? $facette->GRADE_POINTS : "---";
             $data['SORTKEY'] = $facette->SORTKEY;
             $data['IS_FAIL'] = $facette->IS_FAIL;
             $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN);

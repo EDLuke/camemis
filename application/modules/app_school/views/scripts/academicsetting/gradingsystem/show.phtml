@@ -46,6 +46,7 @@ Ext.onReady(function() {
             ,bodyStyle: 'background:#FFF;padding:10px'
             ,items: [
                 {".CamemisField::Textfield("LETTER_GRADE", "LETTER_GRADE", LETTER_GRADE)."}
+                ,{".CamemisField::Numberfield("GRADE_POINTS", "GRADE_POINTS", GRADE_POINTS, false, false, false)."}
                 ,{".CamemisField::Textfield("MARK", "MARK", MARK." (".PERCEN_TAGE_POINTS.")")."}
                 ,{".CamemisField::comboScoreType(false, false)."}
                 ,{".CamemisField::Textfield("GPA","GPA", GPA, false, false, false, false)."}
@@ -56,28 +57,6 @@ Ext.onReady(function() {
         }]
     }
     ";
-    
-//    $SCORE_NUMBER = "
-//    {
-//        title: '".SCORE_ON_NUMBER."'
-//        ,id:'SCORE_ON_NUMBER'
-//        ,autoHeight: true
-//        ,collapsible: true
-//        ,collapsed: false
-//        ,style: 'padding-bottom: 5px'
-//        ,width: 550
-//        ,items:[{
-//            layout: 'form'
-//            ,border: false
-//            ,autoHeight:true
-//            ,bodyStyle: 'background:#FFF;padding:10px'
-//            ,items: [
-//                {".CamemisField::Numberfield("SCORE_MIN","SCORE_MIN", MIN_POINTS, false, false, false, false)."}
-//                ,{".CamemisField::Numberfield("SCORE_MAX","SCORE_MAX", MAX_POINTS, false, false, false, false)."}
-//            ]
-//        }]
-//    }
-//    ";
     
     $PASS_FAIL_TYPE = "
     {

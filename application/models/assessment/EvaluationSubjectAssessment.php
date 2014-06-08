@@ -1085,14 +1085,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
     }
 
-    public function calculatedSubjectAssessment($stdClass) {
-        
-    }
-
-    public function calculatedSubjectGPA($stdClass) {
-        
-    }
-
     public function actionCalculationSubjectEvaluation() {
 
         switch ($this->target) {

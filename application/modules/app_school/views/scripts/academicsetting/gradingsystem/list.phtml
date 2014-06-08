@@ -18,7 +18,6 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("GRADINGSYSTEM", "EDUCATION");
 $OBJECT_GRID->setLoadUrl('/academicsetting/jsonload/');
 $OBJECT_GRID->setSaveUrl('/academicsetting/jsonsave/');
-$columndata = Utiles::getGridColumnData("GRADINGSYSTEM_EDUCATION_ID");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -41,9 +40,8 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ID'");
     $OBJECT_GRID->addReadField("name: 'ENGLISH'");
     $OBJECT_GRID->addReadField("name: 'LETTER_GRADE'");
-    #$OBJECT_GRID->addReadField("name: 'NUMERIC_GRADE'");
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");
     $OBJECT_GRID->addReadField("name: 'MARK'");
-    $OBJECT_GRID->addReadField("name: 'GPA'");
     $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
     $OBJECT_GRID->addReadField("name: 'SCORE_TYPE'");
     
@@ -56,33 +54,22 @@ Ext.onReady(function() {
         ,header: '<b>".LETTER_GRADE."</b>'
         ,dataIndex: 'LETTER_GRADE'
         ,width: 120
-        ,hidden:".checkColHidden(1, $columndata)."
     ");
-    
-//    $OBJECT_GRID->addColumn("
-//        align: 'center'
-//        ,renderer: showText
-//        ,header: '<b>".NUMERIC_GRADE."</b>'
-//        ,dataIndex: 'NUMERIC_GRADE'
-//        ,width: 150
-//        ,hidden:".checkColHidden(2, $columndata)."
-//    ");
     
     $OBJECT_GRID->addColumn("
         align: 'center'
         ,renderer: showText
-        ,header: '<b>".GPA."</b>'
-        ,dataIndex: 'GPA'
-        ,width: 200
-        ,hidden:".checkColHidden(3, $columndata)."
+        ,header: '<b>".GRADE_POINTS."</b>'
+        ,dataIndex: 'GRADE_POINTS'
+        ,width: 120
     ");
+    
     $OBJECT_GRID->addColumn("
         align: 'center'
         ,renderer: showText
         ,header: '<b>".MARK." (%)</b>'
         ,dataIndex: 'MARK'
-        ,width: 150
-        ,hidden:".checkColHidden(4, $columndata)."
+        ,width: 120
     ");
     
     $OBJECT_GRID->addColumn("
@@ -90,8 +77,7 @@ Ext.onReady(function() {
         ,renderer: showText
         ,header: '<b>".DESCRIPTION."</b>'
         ,dataIndex: 'DESCRIPTION'
-        ,width: 150
-        ,hidden:".checkColHidden(5, $columndata)."
+        ,width: 120
     ");
     
     $OBJECT_GRID->addColumn("
@@ -99,8 +85,7 @@ Ext.onReady(function() {
         ,renderer: showText
         ,header: '<b>".ENGLISH."</b>'
         ,dataIndex: 'ENGLISH'
-        ,width: 150
-        ,hidden:".checkColHidden(6, $columndata)."
+        ,width: 120
     ");
     
     $OBJECT_GRID->addColumn("
@@ -109,7 +94,6 @@ Ext.onReady(function() {
         ,header: '<b>".SCORE_TYPE."</b>'
         ,dataIndex: 'SCORE_TYPE'
         ,width: 200
-        ,hidden:".checkColHidden(7, $columndata)."
     ");
     
     $OBJECT_GRID->setSaveParams("
@@ -125,7 +109,7 @@ Ext.onReady(function() {
     ";
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             text: '" . REFRESH . "'
             ,iconCls:'icon-arrow_refresh'
             ,handler: function(){
@@ -136,7 +120,7 @@ Ext.onReady(function() {
     
     //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             text: '" . ADD_NEW_ITEM . "'
             ,iconCls:'icon-application_form_add'
             ,handler: function(){
