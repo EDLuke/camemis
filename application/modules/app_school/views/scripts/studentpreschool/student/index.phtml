@@ -370,6 +370,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         
         $OBJECT_GRID->isObjectDefaultOnLoad = false;
         $OBJECT_GRID->setUserColumn = true;
+        $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         /////////////////////////////////////////////////
