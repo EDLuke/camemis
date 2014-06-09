@@ -400,8 +400,8 @@ class StudentImportDBAccess {
                     $IMPORT_DATA['LASTNAME_LATIN'] = setImportChartset($LASTNAME_LATIN);
                     break;
                 default:
-                    $IMPORT_DATA['FIRSTNAME'] = addText($FIRSTNAME);
-                    $IMPORT_DATA['LASTNAME'] = addText($LASTNAME);
+                    $IMPORT_DATA['FIRSTNAME'] = setImportChartset($FIRSTNAME);
+                    $IMPORT_DATA['LASTNAME'] = setImportChartset($LASTNAME);
                     $IMPORT_DATA['FIRSTNAME_LATIN'] = setImportChartset($FIRSTNAME_LATIN);
                     $IMPORT_DATA['LASTNAME_LATIN'] = setImportChartset($LASTNAME_LATIN);
                     break;
@@ -416,7 +416,7 @@ class StudentImportDBAccess {
             $IMPORT_DATA['COUNTRY_PROVINCE'] = setImportChartset($COUNTRY_PROVINCE);
             $IMPORT_DATA['TOWN_CITY'] = setImportChartset($TOWN_CITY);
             $IMPORT_DATA['POSTCODE_ZIPCODE'] = setImportChartset($POSTCODE_ZIPCODE);
-            $IMPORT_DATA['STUDENT_SCHOOL_ID'] = addText($STUDENT_SCHOOL_ID);
+            $IMPORT_DATA['STUDENT_SCHOOL_ID'] = setImportChartset($STUDENT_SCHOOL_ID);
 
             if (isset($DATE_BIRTH)) {
                 if ($DATE_BIRTH != "") {
