@@ -79,6 +79,7 @@ function columnDate($header, $dataindex, $width, $hidden){
     $fg = "";
     $fg .= "editor: new Ext.form.DateField({";
         $fg .= "allowBlank: false,format: '" . setExtDatafieldFormat() . "'";
+        $fg .= ",readOnly: true"; 
     $fg .= "})";
     $fg .= ",renderer:Ext.util.Format.dateRenderer('".setExtDatafieldFormat()."')";
     $fg .= ",header: '<b>".$header."</b>'";
@@ -158,6 +159,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $APPLICATION_GRID->addReadField("name: 'APPLICATION_STATUS'");
         $APPLICATION_GRID->addReadField("name: 'DESCRIPTION'");
         $APPLICATION_GRID->addReadField("name: 'SESSION_EVENT'");
+        $APPLICATION_GRID->addReadField("name: 'CREATED_DATE'");
+        $APPLICATION_GRID->addReadField("name: 'CREATED_BY'");
         $APPLICATION_GRID->addReadField("name: 'DELETE'");
         
         $APPLICATION_GRID->addColumn("
@@ -216,6 +219,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $APPLICATION_GRID->addColumn(columnProperties(SESSION_EVENT,"SESSION_EVENT",150,checkColHidden(2,$columndata)));
         $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
+        $APPLICATION_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(4,$columndata)));
+        $APPLICATION_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(5,$columndata)));
         
         $APPLICATION_GRID->addColumn("
             header: '<b>".STATUS."</b>',
@@ -310,7 +315,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             objectId = jsonData.ID;
             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
             window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
-        ");   
+            Ext.getCmp('".$APPLICATION_GRID->getObjectId()."').store.reload();
+        "); 
         
         //if (UserAuth::getACLStudent("EDIT_RIGHT"))
         $APPLICATION_GRID->isGridEditing = true;
@@ -323,11 +329,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $TESTING_GRID->addReadField("name: 'CAMEMIS_TYPE'");
         $TESTING_GRID->addReadField("name: 'SCORE'");
-        $TESTING_GRID->addReadField("name: 'ENTER_BY'");
+        $TESTING_GRID->addReadField("name: 'CREATED_BY'");
         $TESTING_GRID->addReadField("name: 'DESCRIPTION'");
         $TESTING_GRID->addReadField("name: 'LEVEL'");
         $TESTING_GRID->addReadField("name: 'STATUS'");
-        $TESTING_GRID->addReadField("name: 'RESULT_DATE'");
+        $TESTING_GRID->addReadField("name: 'CREATED_DATE'");
         $TESTING_GRID->addReadField("name: 'DELETE'");
         
         $TESTING_GRID->addColumn("
@@ -358,11 +364,12 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         ");
         
         $TESTING_GRID->addColumn(columnProperties(SCORE,"SCORE",150,checkColHidden(2,$columndata)));
-        $TESTING_GRID->addColumn(columnPropertiesReadonly(ENTER_BY,"ENTER_BY",150,checkColHidden(3,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(4,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(5,$columndata)));
-        $TESTING_GRID->addColumn(columnDate(RESULT_DATE,"RESULT_DATE",150,checkColHidden(6,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(7,$columndata)));
+        
+        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(4,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(5,$columndata)));
+        $TESTING_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(6,$columndata)));
+        $TESTING_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(7,$columndata)));
         
         $TESTING_GRID->addColumn("
             xtype: 'checkboxcolumn'
@@ -397,10 +404,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         CAMEMIS_TYPE:''
                         ,SCORE:''
                         ,LEVEL:''
-                        ,RESULT_DATE:''
                         ,STATUS:''
                         ,DESCRIPTION:''
-                        ,ENTER_BY:''
                     };
                     Ext.getCmp('".$TESTING_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
                 }
