@@ -21,7 +21,6 @@ $objectId= isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $academicObject = TrainingDBAccess::findTrainingFromId($classId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
-//if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");exit;}
 
 $firstParams["trainingId"] = $classId;
 $firstParams["include_in_evaluation"] = 1;
