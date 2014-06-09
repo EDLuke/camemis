@@ -53,30 +53,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
     }
     
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#FFFFC2;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#061f83; padding: 1px;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
-    }
-    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
@@ -104,8 +80,6 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, dataIndex: 'CODE'");   
-   
-    //if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 180, hidden:".checkColHidden(3, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT'");
     
    
@@ -114,20 +88,10 @@ Ext.onReady(function() {
     
     if($entries){     
         foreach($entries as $value){    
-            //if ($value->INCLUDE_IN_EVALUATION == 1){
-               
-                $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, hidden:".checkColHidden(6, $columndata).", align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
-            //}
+            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, hidden:".checkColHidden(6, $columndata).", align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
         }
-    }   
-          
-   /* if($entries){
-        foreach($entries as $value){
-            if ($value->INCLUDE_IN_EVALUATION == 0 || $value->INCLUDE_IN_EVALUATION == 1){
-                $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->SHORT)."</b>', width: 130, align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
-            }
-        }
-    } */
+    }
+    
     $OBJECT_GRID->addTBarItems("
         tbar.add([{
             text: '" . REFRESH . "'
