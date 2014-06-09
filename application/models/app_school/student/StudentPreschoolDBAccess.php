@@ -493,18 +493,15 @@ class StudentPreschoolDBAccess {
                 break;
         }
         
+        $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+        $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
+        
         if ($objectId)
         {         
             switch ($field)
             {
                 case "DELETE":
                     self::dbAccess()->delete("t_student_preschooltype", "ID='" . $objectId . "'");
-                    break;
-                case "SCORE":
-                    $SAVEDATA["" . $field . ""] = addText($newValue);
-                    $SAVEDATA['ENTER_BY'] = Zend_Registry::get('USER')->ID;
-                    $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
-                    self::dbAccess()->update("t_student_preschooltype", $SAVEDATA, $WHERE);
                     break;
                 default:
                     $SAVEDATA["" . $field . ""] = addText($newValue);
@@ -513,23 +510,9 @@ class StudentPreschoolDBAccess {
                     break;
             }
         }else{
-            switch ($field)
-            {
-                case "SCORE":
-                    $SAVEDATA["" . $field . ""] = addText($newValue);
-                    $SAVEDATA['ENTER_BY'] = Zend_Registry::get('USER')->ID;
-
-                    break;
-                
-                default:
-                    $SAVEDATA["" . $field . ""] = addText($newValue);
-                    break;
-            }
-
+            $SAVEDATA["" . $field . ""] = addText($newValue);
             $SAVEDATA["PRESTUDENT"] = $studentId;
             $SAVEDATA["OBJECT_TYPE"] = $objectType;
-            $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-            $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->ID;
             
             self::dbAccess()->insert('t_student_preschooltype', $SAVEDATA);
 
@@ -564,7 +547,7 @@ class StudentPreschoolDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_preschooltype'), array('*'));
-        $SQL->joinLeft(array('B' => 't_members'), 'A.ENTER_BY = B.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
+        $SQL->joinLeft(array('B' => 't_members'), 'A.CREATED_BY = B.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
         $SQL->where("PRESTUDENT='" . $studentId . "'");
         $SQL->where("OBJECT_TYPE='" . $objectType . "'");
 
@@ -582,6 +565,12 @@ class StudentPreschoolDBAccess {
                     case "APPLICATION":
                         $data[$i]["ID"] = $value->ID;
                         $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
+                        if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                            $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
+                        } else {
+                            $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
+                        }
+                        $data[$i]["CREATED_DATE"] = $value->CREATED_DATE;
                         if ($value->APPLICATION_STATUS <> 0)
                             $data[$i]["APPLICATION_STATUS"] = CamemisTypeDBAccess::findObjectFromId($value->APPLICATION_STATUS)->NAME;
                         if ($value->DEGREE_TYPE <> 0)
@@ -596,11 +585,11 @@ class StudentPreschoolDBAccess {
                         $data[$i]["LEVEL"] = $value->LEVEL;
                         $data[$i]["STATUS"] = $value->TESTING_STATUS;
                         if (!SchoolDBAccess::displayPersonNameInGrid()) {
-                            $data[$i]["ENTER_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
+                            $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
                         } else {
-                            $data[$i]["ENTER_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
+                            $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_LASTNAME) . " " . setShowText($value->MEMBER_FIRSTNAME);
                         }
-                        $data[$i]["RESULT_DATE"] = $value->RESULT_DATE;
+                        $data[$i]["CREATED_DATE"] = $value->CREATED_DATE;
                         if ($value->CAMEMIS_TYPE <> 0)
                             $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;
                         break;
