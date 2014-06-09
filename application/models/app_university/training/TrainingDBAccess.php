@@ -49,6 +49,7 @@ class TrainingDBAccess {
             $data["ID"] = $result->ID;
             $data["STATUS"] = $result->STATUS;
             $data["NAME"] = setShowText($result->NAME);
+            $data["EVALUATION_TYPE"] = $result->EVALUATION_TYPE;
             $data["SORTKEY"] = $result->SORTKEY;
             $data["EVALUATION"] = $result->EVALUATION ? true : false;
             $data["SHOW_EVALUATION"] = $result->EVALUATION ? YES : NO;
@@ -71,7 +72,6 @@ class TrainingDBAccess {
             $data["PROGRAM"] = $result->PROGRAM;
 
             $data["OBJECT_TYPE"] = $result->OBJECT_TYPE;
-            $data["EVALUATION_TYPE"] = $result->EVALUATION_TYPE;
 
             $data["CONTACT_PERSON"] = setShowText($result->CONTACT_PERSON);
             $data["CONTACT_PHONE"] = setShowText($result->CONTACT_PHONE);
@@ -109,6 +109,7 @@ class TrainingDBAccess {
             $data["MODIFY_BY"] = setShowText($result->MODIFY_BY);
             $data["ENABLED_BY"] = setShowText($result->ENABLED_BY);
             $data["DISABLED_BY"] = setShowText($result->DISABLED_BY);
+            $data["EVALUATION_TYPE"] = setShowText($result->EVALUATION_TYPE);
         }
 
         return $data;
@@ -158,38 +159,21 @@ class TrainingDBAccess {
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
         } else
             $SQL->where("PARENT = '0'");
-
-        switch ($objectTypeLevel) {
-            case 'TERM':
-                $SQL->order('START_DATE DESC');
-                break;
-            default:
-                $SQL->order('SORTKEY ASC');
-                break;
-        }
+        $SQL->order('SORTKEY ASC');
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getObjectTypeLevelByParentId($parentId) {
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_training", array('OBJECT_TYPE'));
-        $SQL->where("PARENT = ?", $parentId);
-        //error_log($SQL->__toString());
-        return self::dbAccess()->fetchRow($SQL);
-    }
-
     public static function jsonTreeAllTrainings($params) {
 
-        //$objectTypeLevel = isset($params["objectType"]) ? addText($params["objectType"]) : false;
+        $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
         $children = isset($params["children"]) ? $params["children"] : false;
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
-        $objectTypeLevel = self::getObjectTypeLevelByParentId($node);
 
         if ($node == 0) {
             $resultRows = self::allTrainingprograms(false);
         } else {
-            $resultRows = self::allTrainingprograms($node, $objectTypeLevel->OBJECT_TYPE);
+            $resultRows = self::allTrainingprograms($node, $objectTypeLevel);
         }
 
         $data = array();
@@ -270,7 +254,7 @@ class TrainingDBAccess {
                         case "TERM":
                             $programObject = self::findTrainingFromId($value->PROGRAM);
                             $levelObject = self::findTrainingFromId($value->LEVEL);
-                            $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
+                            // $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
                             $data[$i]['leaf'] = false;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
@@ -279,9 +263,9 @@ class TrainingDBAccess {
                             } else {
                                 $data[$i]['iconCls'] = "icon-date_edit";
                             }
-                            $data[$i]['cls'] = "nodeTextBold";
                             $data[$i]['parentId'] = $value->PARENT;
                             $data[$i]['termId'] = $value->TERM;
+                            $data[$i]['cls'] = "nodeTextBold";
                             self::updateChildTerm($value->ID);
                             break;
 
@@ -289,7 +273,7 @@ class TrainingDBAccess {
                             $data[$i]['text'] = stripslashes($value->NAME);
                             $programObject = self::findTrainingFromId($value->PROGRAM);
                             $levelObject = self::findTrainingFromId($value->LEVEL);
-                            $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . stripslashes($value->NAME);
+                            //$data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . stripslashes($value->NAME);
                             $data[$i]['leaf'] = true;
                             $data[$i]['objecttype'] = "CLASS";
                             $data[$i]['parentId'] = $value->PARENT;
@@ -322,11 +306,14 @@ class TrainingDBAccess {
 
         if (isset($params["NAME"])) {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
-            $name = addText($params["NAME"]);
+            $name = $params["NAME"];
         }
 
         if (isset($params["GRADE_LEVEL"]))
             $SAVEDATA["GRADE_LEVEL"] = addText($params["GRADE_LEVEL"]);
+
+        if (isset($params["EVALUATION_TYPE"]))
+            $SAVEDATA["EVALUATION_TYPE"] = addText($params["EVALUATION_TYPE"]);
 
         if (isset($params["SORTKEY"]))
             $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
@@ -358,20 +345,15 @@ class TrainingDBAccess {
         if (isset($params["ENDTIME_BLOCK_AFTERNOON"]))
             $SAVEDATA['ENDTIME_BLOCK_AFTERNOON'] = timeStrToSecond($params["ENDTIME_BLOCK_AFTERNOON"]);
 
-        if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA['EVALUATION_TYPE'] = setShowText($params["EVALUATION_TYPE"]);
-
         if (isset($params["START_DATE"]) && isset($params["END_DATE"])) {
             $SAVEDATA["START_DATE"] = setDate2DB($params["START_DATE"]);
             $SAVEDATA["END_DATE"] = setDate2DB($params["END_DATE"]);
-
-            $name = $params["START_DATE"] . "-" . $params["END_DATE"];
+            $name = $params["START_DATE"] . "-" . addText($params["END_DATE"]);
         }
 
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['CERTIFICATE'] = isset($params["CERTIFICATE"]) ? 1 : 0;
         $SAVEDATA['EVALUATION'] = isset($params["EVALUATION"]) ? 1 : 0;
-
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['POINTS_POSSIBLE'] = isset($params["POINTS_POSSIBLE"]) ? $params["POINTS_POSSIBLE"] : 10;
 
@@ -603,6 +585,35 @@ class TrainingDBAccess {
                 self::dbAccess()->update(self::TABLE_TRAINING, $SAVEDATA, $WHERE);
             }
         }
+
+        $UPDATE = "UPDATE t_training_subject SET";
+        $UPDATE .= " PROGRAM='" . $facette->PROGRAM . "'";
+        $UPDATE .= " ,TERM='" . $facette->ID . "'";
+        $UPDATE .= " ,LEVEL='" . $facette->LEVEL . "'";
+        $UPDATE .= " WHERE ID ='" . $facette->ID . "'";
+        self::dbAccess()->query($UPDATE);
+    }
+
+    public static function sqlTrainingStudentFromId($Id) {
+        $SQL = self::dbAccess()->select();
+        $SQL .= " FROM t_training AS A";
+        $SQL .= " WHERE 1=1";
+        $SQL .= " AND A.ID = '" . $Id . "'";
+        //error_log($SQL);
+        return self::dbAccess()->fetchRow($SQL);
+    }
+
+    //////////////////////////////////////////////////////////////
+    //@Sea Peng
+    public static function checkTrainingClass($date, $trainingId) {
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_training", array("C" => "COUNT(*)"));
+        $SQL->where("OBJECT_TYPE='CLASS'");
+        $SQL->where("ID = " . $trainingId . "");
+        $SQL->where("'" . $date . "' BETWEEN START_DATE AND END_DATE");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
     }
 
 }

@@ -28,7 +28,6 @@ $columndataAddSubject = Utiles::getGridColumnData("TRAINING_LIST_OF_SUBJECTS_ID"
 $ADD_ASSIGNMENT_GRID = new CamemisGrid("TRAINING", "LIST_OF_ASSIGNMENTS");
 $ADD_ASSIGNMENT_GRID->setLoadUrl('/training/jsonload/');
 $ADD_ASSIGNMENT_GRID->setSaveUrl('/training/jsonsave/');
-$columndataAddAssignment = Utiles::getGridColumnData("TRAINING_LIST_OF_ASSIGNMENTS_ID");
 
 $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")?"false":"true";
 $EDIT_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT")?"false":"true";
@@ -52,12 +51,10 @@ Ext.onReady(function() {
     }
     ");
     $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
-    $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_TYPE'");
     $ADD_SUBJECT_GRID->addReadField("name: 'SUBJECT_COEFF'");
     
-    $ADD_SUBJECT_GRID->addColumn("header: '".TYPE."', align: 'center', width: 80, hidden:".checkColHidden(1, $columndataAddSubject).", dataIndex: 'SUBJECT_TYPE'");
-    $ADD_SUBJECT_GRID->addColumn("header: '".NAME."', width: 150, hidden:".checkColHidden(2, $columndataAddSubject).", renderer: renderText, sortable: true, dataIndex: 'SUBJECT_NAME'");
-    $ADD_SUBJECT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, hidden:".checkColHidden(3, $columndataAddSubject).", renderer: renderText, sortable: true, dataIndex: 'SUBJECT_COEFF'");
+    $ADD_SUBJECT_GRID->addColumn("header: '".NAME."', width: 200, renderer: renderText, sortable: true, dataIndex: 'SUBJECT_NAME'");
+    $ADD_SUBJECT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, renderer: renderText, sortable: true, dataIndex: 'SUBJECT_COEFF'");
     
     $ADD_SUBJECT_GRID->isGroupingView = false;
     $ADD_SUBJECT_GRID->isQuickySearch = true;
@@ -91,8 +88,8 @@ Ext.onReady(function() {
     $ADD_ASSIGNMENT_GRID->addReadField("name: 'ASSIGNMENT_NAME'");
     $ADD_ASSIGNMENT_GRID->addReadField("name: 'WEIGHTING'");
     
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".NAME."', width: 150,  hidden:".checkColHidden(1, $columndataAddAssignment).",renderer: renderText, sortable: true, dataIndex: 'ASSIGNMENT_NAME'");
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80,  hidden:".checkColHidden(2, $columndataAddAssignment).",renderer: renderText, sortable: true, dataIndex: 'WEIGHTING'");
+    $ADD_ASSIGNMENT_GRID->addColumn("header: '".NAME."', width: 200, renderer: renderText, sortable: true, dataIndex: 'ASSIGNMENT_NAME'");
+    $ADD_ASSIGNMENT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, renderer: renderText, sortable: true, dataIndex: 'WEIGHTING'");
     
     $ADD_ASSIGNMENT_GRID->isGroupingView = false;
     $ADD_ASSIGNMENT_GRID->isQuickySearch = true;

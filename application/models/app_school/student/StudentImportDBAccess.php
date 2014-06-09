@@ -417,7 +417,7 @@ class StudentImportDBAccess {
             $IMPORT_DATA['COUNTRY_PROVINCE'] = setImportChartset($COUNTRY_PROVINCE);
             $IMPORT_DATA['TOWN_CITY'] = setImportChartset($TOWN_CITY);
             $IMPORT_DATA['POSTCODE_ZIPCODE'] = setImportChartset($POSTCODE_ZIPCODE);
-            $IMPORT_DATA['STUDENT_SCHOOL_ID'] = addText($STUDENT_SCHOOL_ID);
+            $IMPORT_DATA['STUDENT_SCHOOL_ID'] = setImportChartset($STUDENT_SCHOOL_ID);
 
             if (isset($DATE_BIRTH)) {
                 if ($DATE_BIRTH != "") {

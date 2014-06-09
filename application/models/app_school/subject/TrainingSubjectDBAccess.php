@@ -28,15 +28,15 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public static function findTrainingSubject($Id) {
 
         $SQL = "";
-        $SQL .= " SELECT A.*,B.*,C.SHORT AS SHORT,C.NAME AS ASSIGNMENTNAME,C.COEFF_VALUE AS COEFF_VALUE,C.SORTKEY AS SORTKEY";  //@veasna
+        $SQL .= " SELECT A.*,B.*,C.SHORT AS SHORT,C.NAME AS ASSIGNMENTNAME,B.COEFF_VALUE AS COEFF_VALUE,C.SORTKEY AS SORTKEY, B.PARENT AS SUBJECT_ID";  //@veasna
         $SQL .= " FROM t_subject AS A";
         $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.SUBJECT";
         $SQL .= " LEFT JOIN t_assignment_temp AS C ON B.ASSIGNMENT=C.ID";   //@veasna
         $SQL .= " WHERE 1=1";
         $SQL .= " AND B.ID='" . $Id . "'";
-
         return self::dbAccess()->fetchRow($SQL);
     }
+
     public static function getListSubjectsForAssessmentTraining($trainingId) {
 
         $academicObject = TrainingDBAccess::findTrainingFromId($trainingId);
@@ -47,6 +47,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             return TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($params);
         }
     }
+
     //$veasna
     public static function findTrainingAssignmentStudent($trainingSubjectId, $studentId) {
         $facette = self::findTrainingSubject($trainingSubjectId);
@@ -60,12 +61,11 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_assignment_temp'), $SELECT_A);
         $SQL->joinLeft(array('B' => 't_student_training_assignment'), 'A.ID=B.ASSIGNMENT', $SELECT_B);
-        //$SQL->joinLeft(array('C' => 't_training'), 'C.ID=B.TRAINING', $SELECT_C);
         $SQL->where("B.STUDENT = '" . $studentId . "'");
         $SQL->where("B.SUBJECT = '" . $facette->SUBJECT . "'");
         $SQL->where("B.ASSIGNMENT = '" . $facette->ASSIGNMENT . "'");
         $results = self::dbAccess()->fetchAll($SQL);
-        //return $results;
+
         $data = array();
 
         if ($results) {
@@ -77,7 +77,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
             $data["GOALS"] = setShowText($facette->GOALS);
             $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION"] = setShowText($facette->EVALUATION);  
+            $data["EVALUATION"] = setShowText($facette->EVALUATION);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
         } else {
             $data["NAME"] = $facette->ASSIGNMENTNAME;
@@ -87,7 +87,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
             $data["GOALS"] = setShowText($facette->GOALS);
             $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION"] = setShowText($facette->EVALUATION); 
+            $data["EVALUATION"] = setShowText($facette->EVALUATION);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
         }
         return array(
@@ -95,7 +95,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             , "data" => $data
         );
     }
-    
+
     public static function loadTrainingSubject($trainingId) {
 
         $facette = self::findTrainingSubject($trainingId);
@@ -114,40 +114,13 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["EVALUATION"] = setShowText($facette->EVALUATION);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
             $data["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION ? true : false;
-            $data["SHORT"] = setShowText($facette->SHORT);           
-            $data["COEFF_VALUE"] =$facette->COEFF_VALUE ? true : false;  
+            $data["SHORT"] = setShowText($facette->SHORT);
+            $data["COEFF_VALUE"] = $facette->COEFF_VALUE;
             $trainingResult = TrainingDBAccess::findTrainingFromId($facette->ID);
-            $data["EVALUATION_TYPE"] =$facette->EVALUATION_TYPE;            
-            $data["SORTKEY"] =setShowText($facette->SORTKEY); 
-            
-        } 
-        /*
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";  
-        $trainingSubjectObject=TrainingDBAccess::findTrainingFromId($trainingId);
-        $data=array();
-        if($trainingSubjectObject){
-            $data["EVALUATION_TYPE"] =$trainingSubjectObject->EVALUATION_TYPE;   
-            if($trainingSubjectObject->ID){
-                $facette = self::findTrainingSubject($trainingSubjectObject->ID);
-                if($facette){
-                    $data["ASSIGNMENTNAME"] = setShowText($facette->ASSIGNMENTNAME);
-                    $data["NAME"] = setShowText($facette->NAME);
-                    $data["MAX_POSSIBLE_SCORE"] = displayNumberFormat($facette->MAX_POSSIBLE_SCORE);
-                    $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN) ? $facette->SCORE_MIN : 0;
-                    $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX) ? $facette->SCORE_MAX : "";
-                    $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
-                    $data["GOALS"] = setShowText($facette->GOALS);
-                    $data["MATERIALS"] = setShowText($facette->MATERIALS);
-                    $data["EVALUATION"] = setShowText($facette->EVALUATION);
-                    $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
-                    $data["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION ? true : false;
-                    $data["SHORT"] = setShowText($facette->SHORT);           
-                    $data["SORTKEY"] =setShowText($facette->SORTKEY); 
-                }
-            }
-           
-        }  */
-        
+            $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
+            $data["SORTKEY"] = setShowText($facette->SORTKEY);
+        }
+
         return array(
             "success" => true
             , "data" => $data
@@ -200,22 +173,21 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
     public static function sqlAssignedSubjectsByTraining($params) {
 
-        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";  
+        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
-        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : ""; 
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $nationalExam = isset($params["nationalExam"]) ? addText($params["nationalExam"]) : "";
         $subjectType = isset($params["subjectType"]) ? addText($params["subjectType"]) : "";
         $include_in_evaluation = isset($params["include_in_evaluation"]) ? (int) $params["include_in_evaluation"] : "0";
-       
+
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
-        
+
         $SQL = "";
         $SQL .= " SELECT ";
-        //$SQL .= " B.ID AS PARENT_ID, A.SHORT AS SHORT, A.ID AS SUBJECT_ID";
         $SQL .= " A.SUBJECT_TYPE AS SUBJECT_TYPE";
         $SQL .= " ,A.NAME AS NAME";
         $SQL .= " ,A.ID AS SUBJECT_ID";
@@ -229,7 +201,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $SQL .= " WHERE 1=1";
         $SQL .= " AND A.STATUS=1";
 
-        if ($globalSearch) {             
+        if ($globalSearch) {
             $SQL .= " AND (A.NAME like '" . $globalSearch . "%') ";
         }
         if ($include_in_evaluation)
@@ -237,32 +209,19 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($subjectId) {
             $SQL .= " AND A.ID = '" . $subjectId . "'";
         }
-        //if ($trainingId)
-           // $SQL .= " AND B.TRAINING ='" . $trainingId . "'";    
-       // $SQL .= " AND A.TRAINING = 1";
-       switch ($facette->OBJECT_TYPE) {
-                case "TERM":
-                    $SQL .= " AND B.TERM='" . $facette->ID . "'";
-                    break;
-                case "CLASS":
-                    $SQL .= " AND B.TRAINING='" . $facette->TERM . "'";
-                    break;
-            }
-        /*switch ($facette->OBJECT_TYPE) {
+
+        switch ($facette->OBJECT_TYPE) {
             case "TERM":
-                $SQL .= " AND B.PROGRAM = '" . $facette->PROGRAM . "'";
-                $SQL .= " AND B.TERM = '" . $facette->ID . "'";
-                $SQL .= " AND B.LEVEL = '" . $facette->LEVEL . "'";
+                $SQL .= " AND B.TERM='" . $facette->ID . "'";
                 break;
             case "CLASS":
-                $SQL .= " AND B.PARENT = '" . $parentId . "'";
-                $SQL .= " AND B.TRAINING = '" . $trainingId . "'";
+                $SQL .= " AND B.TRAINING='" . $facette->TERM . "'";
                 break;
-        }  */
+        }
 
         $SQL .= " GROUP BY A.ID";
         $SQL .= " ORDER BY A.NAME";
-        
+
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -287,7 +246,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                 $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
                 $data[$i]["STATUS"] = $value->STATUS;
                 $data[$i]["DURATION"] = $value->DURATION;
-                
+
                 $i++;
             }
         }
@@ -312,9 +271,11 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         if (isset($params["SCORE_MIN"]))
             $SAVEDATA["SCORE_MIN"] = addText($params["SCORE_MIN"]);
-            
-        $SAVEDATA["SCORE_MAX"] = addText($params["SCORE_MAX"]);
-        if (isset($params["SCORE_MAX"])) {         
+
+        if (isset($params["SCORE_MAX"]))
+            $SAVEDATA["SCORE_MAX"] = addText($params["SCORE_MAX"]);
+
+        if (isset($params["SCORE_MAX"])) {
             $SAVEDATA["MAX_POSSIBLE_SCORE"] = addText($params["SCORE_MAX"]);
         }
 
@@ -327,8 +288,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if (isset($params["MATERIALS"]))
             $SAVEDATA["MATERIALS"] = addText($params["MATERIALS"]);
         if (isset($params["OBJECTIVES"]))
-            $SAVEDATA["OBJECTIVES"] = addText($params["OBJECTIVES"]); 
-        
+            $SAVEDATA["OBJECTIVES"] = addText($params["OBJECTIVES"]);
+        if (isset($params["COEFF_VALUE"]))
+            $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
+
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
         $WHERE = array();
         $WHERE[] = self::dbAccess()->quoteInto('ID = ?', $objectId);
@@ -377,16 +340,12 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
             if ($subjectObject) {
                 $SAVEDATA['SCORE_MIN'] = $subjectObject->SCORE_MIN;
-                $SAVEDATA['SCORE_MAX'] = $subjectObject->SCORE_MAX; 
+                $SAVEDATA['SCORE_MAX'] = $subjectObject->SCORE_MAX;
                 if ($subjectObject->SCORE_TYPE)
-                $SAVEDATA['SCORE_TYPE'] = $subjectObject->SCORE_TYPE;
-                 if ($subjectObject->COEFF_VALUE) {
-                    $SAVEDATA['COEFF_VALUE'] = $subjectObject->COEFF_VALUE;
-                } else {
-                    $SAVEDATA['COEFF_VALUE'] = 1;
-                }
+                    $SAVEDATA['SCORE_TYPE'] = $subjectObject->SCORE_TYPE;
+                $SAVEDATA['COEFF_VALUE'] = $subjectObject->COEFF_VALUE;
             }
-            
+
             $SAVEDATA['PROGRAM'] = $facette->PROGRAM;
             $SAVEDATA['TERM'] = $facette->ID;
             $SAVEDATA['LEVEL'] = $facette->LEVEL;
@@ -450,12 +409,12 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     }
 
     public function jsonTreeAssignedSubjectsByTraining($params) {
-       
+
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : 0;
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
-      
+
         if ($node == 0) {
             $SQL = "";
             $SQL .= " SELECT ";
@@ -486,19 +445,16 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         } else {
             $SQL = "";
             $SQL .= " SELECT ";
-            $SQL .= " A.ID AS ASSIGNMENT_ID, A.NAME AS NAME,B.SUBJECT AS SUBJECT, B.OBJECT_TYPE AS OBJECT_TYPE, B.ID AS RUL_ID";
+            $SQL .= " A.ID AS ASSIGNMENT_ID, A.NAME AS NAME,B.SUBJECT AS SUBJECT, B.OBJECT_TYPE AS OBJECT_TYPE, B.COEFF_VALUE AS COEFF_VALUE, B.ID AS RUL_ID";
             $SQL .= " FROM t_assignment_temp AS A";
             $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.ASSIGNMENT";
             $SQL .= " WHERE 1=1";
             $SQL .= " AND B.PROGRAM='" . $facette->PROGRAM . "'";
             //@veasna
             $SQL .= " AND B.LEVEL='" . $facette->LEVEL . "'";
-            //
-            //$SQL .= " AND B.TERM='" . $facette->TERM . "'";
 
             switch ($facette->OBJECT_TYPE) {
                 case "TERM":
-                    //$SQL .= " AND B.LEVEL='" . $trainingId . "'";
                     //@veasna
                     $SQL .= " AND B.TERM='" . $trainingId . "'";
                     //
@@ -531,7 +487,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                         break;
                     case'ITEM':
                         $data[$i]['id'] = $value->RUL_ID;
-                        $data[$i]['text'] = setShowText($value->NAME);
+                        $data[$i]['text'] = setShowText($value->NAME) . " (" . $value->COEFF_VALUE . ")";
                         $data[$i]['leaf'] = true;
                         $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-flag_blue";
@@ -699,9 +655,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($trainingId)
             $SQL->where("TRAINING = '" . $trainingId . "'");
         if ($subjectId)
-            $SQL->where("SUBJECT = ?",$subjectId);
+            $SQL->where("SUBJECT = ?", $subjectId);
         if ($teacherId)
-            $SQL->where("TEACHER = ?",$teacherId);
+            $SQL->where("TEACHER = ?", $teacherId);
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -778,11 +734,11 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                 $data[$key]["ID"] = $value->TEACHER_ID;
                 $data[$key]["CODE"] = $value->CODE;
                 $data[$key]["FIRSTNAME"] = $value->FIRSTNAME;
-                $data[$key]["LASTNAME"] = $value->LASTNAME;     
-                if(!SchoolDBAccess::displayPersonNameInGrid()){
-                     $data[$key]["FULL_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME;
-                }else{
-                     $data[$key]["FULL_NAME"] = $value->FIRSTNAME . " " . $value->LASTNAME;
+                $data[$key]["LASTNAME"] = $value->LASTNAME;
+                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                    $data[$key]["FULL_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME;
+                } else {
+                    $data[$key]["FULL_NAME"] = $value->FIRSTNAME . " " . $value->LASTNAME;
                 }
                 $data[$key]["SUBJECT_NAME"] = $value->SUBJECT_NAME;
                 $data[$key]["CURRENT_CLASS"] = $value->CURRENT_CLASS;
@@ -831,9 +787,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $SQL .= " LEFT JOIN t_subject_teacher_training AS B ON A.ID=B.TEACHER";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND B.TRAINING IN (" . $trainingId . ")";
-        $SQL .= " GROUP BY TEACHER_ID" ;
+        $SQL .= " GROUP BY TEACHER_ID";
         //error_log($SQL);
-                 
+
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
@@ -847,10 +803,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $trainingId = "";
         $resultRows = '';
-        $arr = array();   
+        $arr = array();
         $results = StudentTrainingDBAccess::getTrainigByStudentID($studentId);
 
-        if ($results) {  
+        if ($results) {
             foreach ($results as $values) {
                 $arr[] = $values->TRAINING_ID;
             }
@@ -925,7 +881,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $selectionIds = $params["selectionIds"];
         $trainingId = $params["trainingId"];
         $subjectId = $params["subjectId"];
-        $parentId =  addText($params["parentId"]);
+        $parentId = addText($params["parentId"]);
 
         $facette = TrainingDBAccess::findTrainingFromId($trainingId);
 
@@ -941,31 +897,26 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                     switch ($facette->OBJECT_TYPE) {
                         case "TERM":
                             $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
-                            //$SAVEDATA["TERM"] = $facette->TERM;
-                            //$SAVEDATA["LEVEL"] = $trainingId;
-                            //@veasna
                             $SAVEDATA["TERM"] = $trainingId;
                             $SAVEDATA["LEVEL"] = $facette->LEVEL;
-                            //$SAVEDATA["TRAINING"] = $trainingId;
-                            //
-                                break;
+                            break;
                         case "CLASS":
                             $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
                             $SAVEDATA["TERM"] = $facette->TERM;
                             $SAVEDATA["LEVEL"] = $facette->LEVEL;
                             $SAVEDATA["TRAINING"] = $trainingId;
                             break;
-                    } 
+                    }
                     $subjectObject = self::findSubjectFromId($subjectId);
-                    
+
                     if ($subjectObject->SCORE_TYPE)
-                    $SAVEDATA['SCORE_TYPE'] = $subjectObject->SCORE_TYPE;
-                     if ($subjectObject->COEFF_VALUE) {
+                        $SAVEDATA['SCORE_TYPE'] = $subjectObject->SCORE_TYPE;
+                    if ($subjectObject->COEFF_VALUE) {
                         $SAVEDATA['COEFF_VALUE'] = $subjectObject->COEFF_VALUE;
                     } else {
                         $SAVEDATA['COEFF_VALUE'] = 1;
                     }
-                    
+
                     $SAVEDATA["SUBJECT"] = $subjectId;
                     $SAVEDATA["PARENT"] = $parentId;
                     $SAVEDATA["ASSIGNMENT"] = $assignmentId;
@@ -975,7 +926,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                     $selectedCount++;
                 }
         } else {
-            $selectedCount = 0;    
+            $selectedCount = 0;
         }
 
         return array("success" => true, 'selectedCount' => $selectedCount);
@@ -1028,9 +979,6 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         switch ($facette->OBJECT_TYPE) {
             case "TERM":
                 $SQL->where("PROGRAM = '" . $facette->PROGRAM . "'");
-                //$SQL->where("TERM = '" . $facette->TERM . "'");
-                //$SQL->where("LEVEL = '" . $facette->ID . "'");
-                //@veasna
                 $SQL->where("TERM = '" . $facette->ID . "'");
                 $SQL->where("LEVEL = '" . $facette->LEVEL . "'");
                 //
@@ -1042,7 +990,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                 break;
         }
 
-        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("SUBJECT = ?", $subjectId);
         $SQL->where("ASSIGNMENT = '" . $assignmentId . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -1118,7 +1066,8 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
-     public function getAllAssignmentQuery($params) {
+
+    public function getAllAssignmentQuery($params) {
 
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
@@ -1126,30 +1075,6 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
         $includeInEvaluation = isset($params["includeInEvaluation"]) ? (int) $params["includeInEvaluation"] : "";
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
-
-       /* if ($academicObject) {
-
-            if ($academicObject->EDUCATION_SYSTEM) {
-                $classId = "";
-                $schoolyearId = $academicObject->SCHOOL_YEAR;
-                $USED_IN_CLASS = 0;
-            } else {
-                switch ($academicObject->OBJECT_TYPE) {
-                    case "CLASS":
-                        $classId = $academicObject->ID;
-                        $gradeId = $academicObject->GRADE_ID;
-                        $schoolyearId = $academicObject->SCHOOL_YEAR;
-                        $USED_IN_CLASS = 1;
-                        break;
-                    case "SCHOOLYEAR":
-                        $classId = "";
-                        $gradeId = $academicObject->GRADE_ID;
-                        $schoolyearId = $academicObject->SCHOOL_YEAR;
-                        $USED_IN_CLASS = 0;
-                        break;
-                }
-            }
-        }  */
 
         if ($subjectObject) {
             $subjectId = $subjectObject->ID;
@@ -1160,14 +1085,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             , "ID AS ASSIGNMENT_ID"
             , "NAME"
             , "SHORT"
-           
             , "SUBJECT"
-           
             , "INCLUDE_IN_EVALUATION"
             , "COEFF_VALUE"
-           
             , "EVALUATION_TYPE"
-            
         );
         $SELECTION_B = array(
             "ID AS SUBJECT_ID"
@@ -1181,29 +1102,30 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($trainingId)
             $SQL->where("A.TRAINING = '" . $trainingId . "'");
         if ($subjectId)
-            $SQL->where("A.SUBJECT = ?",$subjectId);
-       
+            $SQL->where("A.SUBJECT = ?", $subjectId);
+
         if ($includeInEvaluation) {
             $SQL->where("A.INCLUDE_IN_EVALUATION >0");
         }
 
-        //$SQL->where("A.USED_IN_CLASS = '" . $USED_IN_CLASS . "'");
         $SQL->where("A.STATUS = '1'");
         $SQL->order('A.SORTKEY DESC');
 
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
+
     public static function checkUseSubjectInTraining($subjecId, $trainingId) {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_training_subject', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = '" . $subjecId . "'");
         $SQL->where("TRAINING = '" . $trainingId . "'");
-        
+
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
+
     public static function findSubjectTraining($subjectId, $trainingObject) {
 
         $facette = SubjectDBAccess::findSubjectFromId($subjectId);
@@ -1211,10 +1133,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if ($CHECK) {
             $SQL = self::dbAccess()->select();
             $SQL->from('t_training_subject', array("*"));
-            $SQL->where("SUBJECT = '" . $facette->ID . "'");          
+            $SQL->where("SUBJECT = '" . $facette->ID . "'");
             $SQL->where("TRAINING = '" . $trainingObject->ID . "'");
-            
-            
+
             $result = self::dbAccess()->fetchRow($SQL);
         } else {
             $SQL = self::dbAccess()->select();
@@ -1222,10 +1143,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SQL->where("SUBJECT = '" . $facette->ID . "'");
 
             $result = self::dbAccess()->fetchRow($SQL);
-        } 
+        }
         return $result;
     }
-    
+
 }
 
 ?>

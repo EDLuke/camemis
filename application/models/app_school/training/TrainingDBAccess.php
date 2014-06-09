@@ -109,7 +109,7 @@ class TrainingDBAccess {
             $data["MODIFY_BY"] = setShowText($result->MODIFY_BY);
             $data["ENABLED_BY"] = setShowText($result->ENABLED_BY);
             $data["DISABLED_BY"] = setShowText($result->DISABLED_BY);
-            //$data["EVALUATION_TYPE"] = setShowText($result->EVALUATION_TYPE);
+            $data["EVALUATION_TYPE"] = setShowText($result->EVALUATION_TYPE);
         }
 
         return $data;
@@ -137,7 +137,7 @@ class TrainingDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training");
-        $SQL->where("ID = ?", $Id?$Id:0);
+        $SQL->where("ID = ?", $Id ? $Id : 0);
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -313,7 +313,7 @@ class TrainingDBAccess {
             $SAVEDATA["GRADE_LEVEL"] = addText($params["GRADE_LEVEL"]);
 
         if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA["EVALUATION_TYPE"] = $params["EVALUATION_TYPE"];
+            $SAVEDATA["EVALUATION_TYPE"] = addText($params["EVALUATION_TYPE"]);
 
         if (isset($params["SORTKEY"]))
             $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
@@ -325,13 +325,13 @@ class TrainingDBAccess {
             $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
 
         if (isset($params["CONTACT_PERSON"]))
-            $SAVEDATA["CONTACT_PERSON"] = $params["CONTACT_PERSON"];
+            $SAVEDATA["CONTACT_PERSON"] = addText($params["CONTACT_PERSON"]);
 
         if (isset($params["CONTACT_EMAIL"]))
-            $SAVEDATA["CONTACT_EMAIL"] = $params["CONTACT_EMAIL"];
+            $SAVEDATA["CONTACT_EMAIL"] = addText($params["CONTACT_EMAIL"]);
 
         if (isset($params["CONTACT_PHONE"]))
-            $SAVEDATA["CONTACT_PHONE"] = $params["CONTACT_PHONE"];
+            $SAVEDATA["CONTACT_PHONE"] = addText($params["CONTACT_PHONE"]);
 
         if (isset($params["REGISTRATION_START"]))
             $SAVEDATA["REGISTRATION_START"] = setDate2DB($params["REGISTRATION_START"]);
@@ -345,20 +345,15 @@ class TrainingDBAccess {
         if (isset($params["ENDTIME_BLOCK_AFTERNOON"]))
             $SAVEDATA['ENDTIME_BLOCK_AFTERNOON'] = timeStrToSecond($params["ENDTIME_BLOCK_AFTERNOON"]);
 
-        if (isset($params["EVALUATION_TYPE"]))
-            $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
-
         if (isset($params["START_DATE"]) && isset($params["END_DATE"])) {
             $SAVEDATA["START_DATE"] = setDate2DB($params["START_DATE"]);
             $SAVEDATA["END_DATE"] = setDate2DB($params["END_DATE"]);
-
-            $name = $params["START_DATE"] . "-" . $params["END_DATE"];
+            $name = $params["START_DATE"] . "-" . addText($params["END_DATE"]);
         }
 
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['CERTIFICATE'] = isset($params["CERTIFICATE"]) ? 1 : 0;
         $SAVEDATA['EVALUATION'] = isset($params["EVALUATION"]) ? 1 : 0;
-
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['POINTS_POSSIBLE'] = isset($params["POINTS_POSSIBLE"]) ? $params["POINTS_POSSIBLE"] : 10;
 
@@ -590,6 +585,13 @@ class TrainingDBAccess {
                 self::dbAccess()->update(self::TABLE_TRAINING, $SAVEDATA, $WHERE);
             }
         }
+
+        $UPDATE = "UPDATE t_training_subject SET";
+        $UPDATE .= " PROGRAM='" . $facette->PROGRAM . "'";
+        $UPDATE .= " ,TERM='" . $facette->ID . "'";
+        $UPDATE .= " ,LEVEL='" . $facette->LEVEL . "'";
+        $UPDATE .= " WHERE ID ='" . $facette->ID . "'";
+        self::dbAccess()->query($UPDATE);
     }
 
     public static function sqlTrainingStudentFromId($Id) {
