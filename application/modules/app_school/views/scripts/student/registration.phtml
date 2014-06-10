@@ -452,6 +452,7 @@ $STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_W
                 ,method: 'POST'
                 ,success: function (result) {
                     <?=camemisPage::setRequestURI();?>
+                    XMsg('<?=STATUS?>','<?=ACTION_SUCCESSFULLY_SAVED?>');
                 }
             });
         }
