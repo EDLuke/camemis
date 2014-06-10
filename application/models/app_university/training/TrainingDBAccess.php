@@ -148,16 +148,28 @@ class TrainingDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false) {
+    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false, $date = false) {
+
+        $facette = self::findTrainingFromId($parentId);
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
         if ($parentId) {
             $SQL->where("PARENT = ?", $parentId);
             if ($objectTypeLevel)
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
+            switch ($facette->OBJECT_TYPE) {
+                case "LEVEL":
+                    if ($date) {
+                        $SQL->where("START_DATE <= '" . $date . "' AND END_DATE >= '" . $date . "'");
+                    }
+                    break;
+            }
         } else
             $SQL->where("PARENT = '0'");
+
         $SQL->order('SORTKEY ASC');
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -167,11 +179,12 @@ class TrainingDBAccess {
         $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
         $children = isset($params["children"]) ? $params["children"] : false;
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
+        $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : "";
 
         if ($node == 0) {
             $resultRows = self::allTrainingprograms(false);
         } else {
-            $resultRows = self::allTrainingprograms($node, $objectTypeLevel);
+            $resultRows = self::allTrainingprograms($node, $objectTypeLevel, $choosedate);
         }
 
         $data = array();

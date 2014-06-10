@@ -22,6 +22,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
     
+    var choosedate = '<?=date('m-d-Y');?>';
     Ext.onReady(function() {
         var tabs =  new Ext.TabPanel({
             autoTabs:true
@@ -68,8 +69,28 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                  clickOpenPage('center', '".PROGRAM."', '/training/addprogram/?template=PROGRAM');
             }
         ");
+        
+        $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                xtype:'datefield'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,width:120
+                ,name:'choosedate'
+                ,value:'".getShowDate(date('d-m-Y'))."'
+                ,listeners: {
+                    'select' : function(dp, date) {
+                        myTree = ".$OBJECT_TREE->ExtgetCmp().";
+                        myTree.loader.baseParams.choosedate = date.format('Y-m-j');
+                        myTree.root.reload();
+                    }
+                }
+            }]
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllTrainings'
+            ,choosedate:choosedate
         ");
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isTreeExpand = false;
