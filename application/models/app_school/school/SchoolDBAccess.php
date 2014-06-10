@@ -83,7 +83,8 @@ class SchoolDBAccess {
             $data["SMS_DISPLAY"] = $result->SMS_DISPLAY;
             $data["SORT_DISPLAY"] = $result->SORT_DISPLAY;
             $data["SCHOOL_TIMEZONE"] = $result->SCHOOL_TIMEZONE;
-
+            $data["EDUCATION_COUNTRY"] = $result->EDUCATION_COUNTRY;
+            
             //@Math Man
             $data["ACCOUNT_CREATE_SUBJECT"] = $result->ACCOUNT_CREATE_SUBJECT;
             $data["ACCOUNT_CREATE_NOTIFICATION"] = $result->ACCOUNT_CREATE_NOTIFICATION;
@@ -194,6 +195,9 @@ class SchoolDBAccess {
         if (isset($params["FAX"]))
             $SAVEDATA['FAX'] = addText($params["FAX"]);
 
+        if (isset($params["EDUCATION_COUNTRY"]))
+            $SAVEDATA['EDUCATION_COUNTRY'] = addText($params["EDUCATION_COUNTRY"]);
+        
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
@@ -279,16 +283,16 @@ class SchoolDBAccess {
         $SAVEDATA['PMCR'] = isset($params["PMCR"]) ? 1 : 0;
         if (isset($params["ALD"]))
             $SAVEDATA['ALD'] = addText($params["ALD"]);
-        
+
         if (isset($params["ACLL"]))
             $SAVEDATA['ACLL'] = addText($params["ACLL"]);
-        
+
         if (isset($params["MAXPA"]))
             $SAVEDATA['MAXPA'] = addText($params["MAXPA"]);
-        
+
         if (isset($params["MINPA"]))
             $SAVEDATA['MINPA'] = addText($params["MINPA"]);
-        
+
         if (isset($params["MINPL"]))
             $SAVEDATA['MINPL'] = addText($params["MINPL"]);
 
