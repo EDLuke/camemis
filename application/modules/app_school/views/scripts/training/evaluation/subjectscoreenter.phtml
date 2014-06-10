@@ -85,12 +85,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:15px; background:#D1DDEF;">' + value + '</div>';
     }
     
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
-    }
-    
     function cssText(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
@@ -192,70 +186,65 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_".$value->ID."'");
         }
     }
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, dataIndex: 'CODE'");   
-    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssText, width: 200, hidden:".checkColHidden(3, $columndata).", dataIndex: 'STUDENT'");
-    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, hidden:".checkColHidden(4, $columndata).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    /*if($ENTRIES_ASSIGNMENT){ 
-        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-            $OBJECT_GRID->addColumn("header: '<b>" .$value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer:cssFirst, width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-        }
-    } */      
-      
-     switch($subjectObject->SCORE_TYPE){         
-        case 1:      
-            $OBJECT_GRID->addColumn("
-                header: '<b>".SCORE."</b>'
-                , width: 100
-                , hidden:".checkColHidden(5, $columndata)."
-                , sortable: true       
-                , align:'right'
-                , renderer:cssScore
-                , dataIndex: 'SCORE'
-                , editor: new Ext.form.NumberField({
-                    allowBlank: false
-                    ,minValue: 0
-                    //,maxValue: $subjectObject->SCORE_MAX
-                    ,name: 'SCORE'   
-                })      
-                
-            ");  
-            break; 
-        case 2:
-          
-            $STORE_DATA = array();
-            $OBJECT_GRID->addColumn("
-                header: '<b>".SCORE."</b>'
-                , width: 100
-                , sortable: true
-                , align:'center'
-                , renderer:cssScore
-                , dataIndex: 'SCORE'
-                , editor: new Ext.form.ComboBox({
-                    triggerAction:'all'
-                    ,mode:'local'
-                    ,store: new Ext.data.JsonStore({
-                            autoDestroy: true
-                            ,fields: ['chooseValue', 'chooseDisplay']
-                            ,data:[".implode($STORE_DATA)."]
-                        })
-                        ,valueField: 'chooseValue'
-                        ,displayField: 'chooseDisplay'
-                        ,editable: false
-                        ,listeners: {
-                            select: function(combo, record, index) {
-                            replaceValue = combo.getValue();
-                            var newDisplay = record.get('chooseDisplay');
-                            combo.setValue(newDisplay);
-                            setnewValue = newDisplay;
-                        }
-                    }
-                })
-            ");
-            break;
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
+    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssText, width: 200, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+   
+    switch($subjectObject->SCORE_TYPE){         
+       case 1:      
+           $OBJECT_GRID->addColumn("
+               header: '<b>".SCORE."</b>'
+               , width: 100
+               , hidden:".checkColHidden(5, $columndata)."
+               , sortable: true       
+               , align:'right'
+               , renderer:cssScore
+               , dataIndex: 'SCORE'
+               , editor: new Ext.form.NumberField({
+                   allowBlank: false
+                   ,minValue: 0
+                   //,maxValue: $subjectObject->SCORE_MAX
+                   ,name: 'SCORE'   
+               })      
+
+           ");  
+           break; 
+       case 2:
+
+           $STORE_DATA = array();
+           $OBJECT_GRID->addColumn("
+               header: '<b>".SCORE."</b>'
+               , width: 100
+               , sortable: true
+               , align:'center'
+               , renderer:cssScore
+               , dataIndex: 'SCORE'
+               , editor: new Ext.form.ComboBox({
+                   triggerAction:'all'
+                   ,mode:'local'
+                   ,store: new Ext.data.JsonStore({
+                           autoDestroy: true
+                           ,fields: ['chooseValue', 'chooseDisplay']
+                           ,data:[".implode($STORE_DATA)."]
+                       })
+                       ,valueField: 'chooseValue'
+                       ,displayField: 'chooseDisplay'
+                       ,editable: false
+                       ,listeners: {
+                           select: function(combo, record, index) {
+                           replaceValue = combo.getValue();
+                           var newDisplay = record.get('chooseDisplay');
+                           combo.setValue(newDisplay);
+                           setnewValue = newDisplay;
+                       }
+                   }
+               })
+           ");
+           break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, hidden:".checkColHidden(6, $columndata).", sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
+    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
                      
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->baseParams = "
@@ -293,16 +282,7 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    /*$OBJECT_GRID->setAftereditCallback("
-        //e.record.set('SCORE',jsonData.SCORE);
-        if(jsonData.SCHORE_DATE==1){
-            window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID').root.reload();
-            window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID').getRootNode().expand(true, false);
-        }
-        
-        //XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');    
-    ");  */
-   
+    
     $OBJECT_GRID->setAftereditCallback("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
         myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID');
@@ -310,7 +290,6 @@ Ext.onReady(function() {
         myNode.reload();
         myNode.expand(true, false); 
     ");
-   
    
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
@@ -332,11 +311,7 @@ Ext.onReady(function() {
     
     $VIEWPORT->renderJS();
     ?>
-   /* var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
-    grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
-        
-    }); */
-    
+            
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
    
     if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {

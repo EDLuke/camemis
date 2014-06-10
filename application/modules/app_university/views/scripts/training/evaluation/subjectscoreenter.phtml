@@ -10,7 +10,7 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
 require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
 require_once 'utiles/Utiles.php';
 require_once 'clients/CamemisViewport.php';
 require_once setUserLoacalization();
@@ -19,6 +19,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+$columndata = Utiles::getGridColumnData("TRAINING_LIST_ID");
 
 $VIEWPORT = new CamemisViewport();
 
@@ -82,12 +83,6 @@ Ext.onReady(function() {
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:15px; background:#D1DDEF;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
     }
     
     function cssText(value, metadata, record){
@@ -179,7 +174,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'GENDER'");
-
+    //$OBJECT_GRID->addReadField("name: 'ASSIGNMENT_'");
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
     
      switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -195,57 +190,58 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssText, width: 200, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
-    
-     switch($subjectObject->SCORE_TYPE){         
-        case 1:      
-            $OBJECT_GRID->addColumn("
-                header: '<b>".SCORE."</b>'
-                , width: 100
-                , sortable: true       
-                , align:'right'
-                , renderer:cssScore
-                , dataIndex: 'SCORE'
-                , editor: new Ext.form.NumberField({
-                    allowBlank: false
-                    ,minValue: 0
-                    ,maxValue: $subjectObject->SCORE_MAX
-                    ,name: 'SCORE'   
-                })      
-                
-            ");  
-            break; 
-        case 2:
-          
-            $STORE_DATA = array();
-            $OBJECT_GRID->addColumn("
-                header: '<b>".SCORE."</b>'
-                , width: 100
-                , sortable: true
-                , align:'center'
-                , renderer:cssScore
-                , dataIndex: 'SCORE'
-                , editor: new Ext.form.ComboBox({
-                    triggerAction:'all'
-                    ,mode:'local'
-                    ,store: new Ext.data.JsonStore({
-                            autoDestroy: true
-                            ,fields: ['chooseValue', 'chooseDisplay']
-                            ,data:[".implode($STORE_DATA)."]
-                        })
-                        ,valueField: 'chooseValue'
-                        ,displayField: 'chooseDisplay'
-                        ,editable: false
-                        ,listeners: {
-                            select: function(combo, record, index) {
-                            replaceValue = combo.getValue();
-                            var newDisplay = record.get('chooseDisplay');
-                            combo.setValue(newDisplay);
-                            setnewValue = newDisplay;
-                        }
-                    }
-                })
-            ");
-            break;
+   
+    switch($subjectObject->SCORE_TYPE){         
+       case 1:      
+           $OBJECT_GRID->addColumn("
+               header: '<b>".SCORE."</b>'
+               , width: 100
+               , hidden:".checkColHidden(5, $columndata)."
+               , sortable: true       
+               , align:'right'
+               , renderer:cssScore
+               , dataIndex: 'SCORE'
+               , editor: new Ext.form.NumberField({
+                   allowBlank: false
+                   ,minValue: 0
+                   //,maxValue: $subjectObject->SCORE_MAX
+                   ,name: 'SCORE'   
+               })      
+
+           ");  
+           break; 
+       case 2:
+
+           $STORE_DATA = array();
+           $OBJECT_GRID->addColumn("
+               header: '<b>".SCORE."</b>'
+               , width: 100
+               , sortable: true
+               , align:'center'
+               , renderer:cssScore
+               , dataIndex: 'SCORE'
+               , editor: new Ext.form.ComboBox({
+                   triggerAction:'all'
+                   ,mode:'local'
+                   ,store: new Ext.data.JsonStore({
+                           autoDestroy: true
+                           ,fields: ['chooseValue', 'chooseDisplay']
+                           ,data:[".implode($STORE_DATA)."]
+                       })
+                       ,valueField: 'chooseValue'
+                       ,displayField: 'chooseDisplay'
+                       ,editable: false
+                       ,listeners: {
+                           select: function(combo, record, index) {
+                           replaceValue = combo.getValue();
+                           var newDisplay = record.get('chooseDisplay');
+                           combo.setValue(newDisplay);
+                           setnewValue = newDisplay;
+                       }
+                   }
+               })
+           ");
+           break;
     }
     
     $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
@@ -295,7 +291,6 @@ Ext.onReady(function() {
         myNode.expand(true, false); 
     ");
    
-   
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->forceFit = "false";
@@ -316,11 +311,7 @@ Ext.onReady(function() {
     
     $VIEWPORT->renderJS();
     ?>
-   /* var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
-    grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
-        
-    }); */
-    
+            
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
    
     if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
@@ -377,7 +368,7 @@ Ext.onReady(function() {
         ?>
         }
     });
-    
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
