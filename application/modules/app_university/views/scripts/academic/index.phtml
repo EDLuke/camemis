@@ -166,7 +166,7 @@ if($entries){
         $viewport .= "myCombo.on('select', function() {";
             $viewport .= "myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMO_SCHOOLYEAR_ID').getValue();";
             $viewport .= "myTree.root.reload();";
-            $viewport .= "myTree.getRootNode().expand(true, false);";
+            $viewport .= "//myTree.getRootNode().expand(true, false);";
             $viewport .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
         $viewport .= "});";
         print $viewport;

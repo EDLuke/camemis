@@ -149,7 +149,6 @@ class AssignmentTempDBAccess {
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $educationType = isset($params["educationType"]) ? addText($params["educationType"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
        /*
         if ($academicObject) {

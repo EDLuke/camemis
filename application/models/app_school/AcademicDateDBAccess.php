@@ -120,7 +120,7 @@ class AcademicDateDBAccess {
         if ($academicId)
             $SQL->where("ID = ?", $academicId);
         if ($schoolyearId)
-            $SQL->where("SCHOOL_YEAR = ?",$schoolyearId);
+            $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
 
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);

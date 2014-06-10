@@ -173,7 +173,7 @@ if($entries){
         myCombo.on('select', function() {
             myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMO_SCHOOLYEAR_ID').getValue();
             myTree.root.reload();
-            myTree.getRootNode().expand(true, false);
+            //myTree.getRootNode().expand(true, false);
             Ext.getCmp('center').getLayout().setActiveItem(0);
         });
         

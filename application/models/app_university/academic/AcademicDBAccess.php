@@ -231,12 +231,12 @@ class AcademicDBAccess {
             $data["TERM1_WEIGHTING"] = $academicObject->TERM1_WEIGHTING ? $academicObject->TERM1_WEIGHTING : 1;
             $data["TERM2_WEIGHTING"] = $academicObject->TERM2_WEIGHTING ? $academicObject->TERM2_WEIGHTING : 1;
 
-            $data["PERFORMANCE_MONTH_DIVISION_VALUE"] = $facette->PERFORMANCE_MONTH_DIVISION_VALUE;
+            $data["PERFORMANCE_MONTH_DIVISION_VALUE"] = $academicObject->PERFORMANCE_MONTH_DIVISION_VALUE;
             $data["PERFORMANCE_FIRST_DIVISION_VALUE"] = $academicObject->PERFORMANCE_FIRST_DIVISION_VALUE;
             $data["PERFORMANCE_SECOND_DIVISION_VALUE"] = $academicObject->PERFORMANCE_SECOND_DIVISION_VALUE;
             $data["PERFORMANCE_THIRD_DIVISION_VALUE"] = $academicObject->PERFORMANCE_THIRD_DIVISION_VALUE;
             $data["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $academicObject->PERFORMANCE_FOURTH_DIVISION_VALUE;
-            
+
             $data["FORMULA_TERM"] = $academicObject->FORMULA_TERM;
             $data["FORMULA_YEAR"] = $academicObject->FORMULA_YEAR;
 
@@ -2177,6 +2177,8 @@ class AcademicDBAccess {
 
         $output = 0;
 
+        $academicObject = self::findGradeFromId($academicId);
+        
         if ($academicObject) {
             $SQL = self::dbAccess()->select();
             $SQL->from('t_grade', 'COUNT(*) AS C');

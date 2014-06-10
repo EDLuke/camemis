@@ -210,7 +210,7 @@ class AcademicDBAccess {
             $data["PERFORMANCE_SECOND_DIVISION_VALUE"] = $facette->PERFORMANCE_SECOND_DIVISION_VALUE;
             $data["PERFORMANCE_THIRD_DIVISION_VALUE"] = $facette->PERFORMANCE_THIRD_DIVISION_VALUE;
             $data["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $facette->PERFORMANCE_FOURTH_DIVISION_VALUE;
-            
+
             $data["FORMULA_TERM"] = $facette->FORMULA_TERM;
             $data["FORMULA_YEAR"] = $facette->FORMULA_YEAR;
 
@@ -2155,12 +2155,14 @@ class AcademicDBAccess {
     public static function getTermByDateAcademic($date, $academicId, $type) {
 
         $output = 0;
-        $SQL = self::dbAccess()->select();
-        $SQL->from('t_grade', 'COUNT(*) AS C');
 
         $academicObject = self::findGradeFromId($academicId);
 
         if ($academicObject) {
+            $SQL = self::dbAccess()->select();
+            $SQL->from('t_grade', 'COUNT(*) AS C');
+
+            $academicObject = self::findGradeFromId($academicId);
             $termNumber = self::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
             switch ($termNumber) {
@@ -2209,7 +2211,6 @@ class AcademicDBAccess {
             $SQL->limit(1);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
-
             $output = $result ? $result->C : 0;
         }
 

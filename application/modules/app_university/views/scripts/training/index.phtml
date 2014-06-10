@@ -22,6 +22,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
     
+    var choosedate = '<?=date('m-d-Y');?>';
     Ext.onReady(function() {
         var tabs =  new Ext.TabPanel({
             autoTabs:true
@@ -52,7 +53,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
         $CAMEMIS_PAGE_OBJECT->setAddTab();
-
+        
         $OBJECT_TREE->isAsyncTreeNode = false;
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
@@ -68,8 +69,28 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                  clickOpenPage('center', '".PROGRAM."', '/training/addprogram/?template=PROGRAM');
             }
         ");
+        
+        $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                xtype:'datefield'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,width:120
+                ,name:'choosedate'
+                ,value:'".getShowDate(date('d-m-Y'))."'
+                ,listeners: {
+                    'select' : function(dp, date) {
+                        myTree = ".$OBJECT_TREE->ExtgetCmp().";
+                        myTree.loader.baseParams.choosedate = date.format('Y-m-j');
+                        myTree.root.reload();
+                    }
+                }
+            }]
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllTrainings'
+            ,choosedate:choosedate
         ");
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isTreeExpand = false;
@@ -125,7 +146,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode = myTree.getNodeById(node.id);";
                                 $html .= "myNode.reload();";
                                 $html .= "myNode.expand(true, false);";
-                            $html .= "}";  
+                            $html .= "}"; 
+                            
                         $html .= "},{"; 
                             $html .= "text: '".COLLAPSE."'";
                             $html .= ",iconCls: 'icon-collapse-all'";
@@ -133,6 +155,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode = myTree.getNodeById(node.id);";
                                 $html .= "myNode.collapse(true, false);";
                             $html .= "}";  
+                            
                         $html .= "},{"; 
                         $html .= "text: '".MAIN_CONTENT."'";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
@@ -153,6 +176,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode.reload();";
                                 $html .= "myNode.expand(true, false);";
                             $html .= "}";  
+                            
                         $html .= "},{"; 
                             $html .= "text: '".COLLAPSE."'";
                             $html .= ",iconCls: 'icon-collapse-all'";
@@ -160,13 +184,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode = myTree.getNodeById(node.id);";
                                 $html .= "myNode.collapse(true, false);";
                             $html .= "}";  
+                            
                         $html .= "},{";  
                         $html .= "text: '".MAIN_CONTENT."'";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','".$this->URL_LEVEL."objectId=' + node.id);";
-                            $html .= "}";  
+                            $html .= "}"; 
+                            
                         $html .= "}]"; 
                     $html .= "});";
                 $html .= "break;";
@@ -180,6 +206,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode.reload();";
                                 $html .= "myNode.expand(true, false);";
                             $html .= "}";  
+                            
                         $html .= "},{"; 
                             $html .= "text: '".COLLAPSE."'";
                             $html .= ",iconCls: 'icon-collapse-all'";
@@ -187,6 +214,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "myNode = myTree.getNodeById(node.id);";
                                 $html .= "myNode.collapse(true, false);";
                             $html .= "}";  
+                            
                         $html .= "},{"; 
                         $html .= "text: '".MAIN_CONTENT."'";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
@@ -194,6 +222,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','".$this->URL_TERM."objectId=' + node.id);";
                             $html .= "}";
+                            
                         $html .= "},{"; 
                         $html .= "text: '".SUBJECT_AND_ASSIGNMENT."'";
                             $html .= ",iconCls: 'icon-flag_blue'";
@@ -201,6 +230,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','/training/subjectlist/?target=TERM&objectId=' + node.id);";
                             $html .= "}"; 
+                            
                         $html .= "},{"; 
                         $html .= "text: '".ENROLLED_STUDENTS."'";
                             $html .= ",iconCls: 'icon-group'";
@@ -208,6 +238,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','/training/studentlist/?target=TERM&objectId=' + node.id);";
                             $html .= "}";  
+                            
                         $html .= "},{"; 
                         $html .= "text: '".ASSIGNED_TEACHERS."'";
                             $html .= ",iconCls: 'icon-group'";
@@ -228,7 +259,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "clickOpenPage('center','','".$this->URL_CLASS."objectId=' + node.id);";
                             $html .= "}";
                             
-                        $html .= "},{";
+                        $html .= "},{"; 
                         $html .= "text: '".SUBJECT_AND_ASSIGNMENT."'";
                             $html .= ",iconCls: 'icon-flag_blue'";
                             $html .= ",handler: function(){";
@@ -251,7 +282,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','/training/teacherlist/?objectId=' + node.id);";
                             $html .= "}"; 
-                            
                         $html .= "},{"; 
                         $html .= "text: '".SCHEDULE."'";
                             $html .= ",iconCls: 'icon-date'";
@@ -259,23 +289,20 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','','/schedule/byclass/?target=TRAINING&trainingId=' + node.id);";
                             $html .= "}";   
-                            
                         $html .= "},{"; 
                         $html .= "text: '".ASSESSMENT."'";
                             $html .= ",iconCls: 'icon-wand'"; 
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/training/trainingassessment/?objectId=' + node.id);"; 
+                                $html .= "clickOpenPage('center','','/training/trainingassessment/?objectId=' + node.id);";
                             $html .= "}";
-                            
-                        $html .= "},{"; 
+                       $html .= "},{"; 
                         $html .= "text: '".TEACHER_ENTER_SCORE."'";
                             $html .= ",iconCls: 'icon-table_gear'"; 
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/training/evaluationstudenttraining/?objectId=' + node.id);";
+                                $html .= "clickOpenPage('center','','/training/scoremonitortraining/?classId=' + node.id);";
                             $html .= "}"; 
-                            
                         $html .= "},{"; 
                         $html .= "text: '".LIST_OF_ATTENDANCE."'";
                             $html .= ",iconCls: 'icon-date-time'";

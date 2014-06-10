@@ -1009,7 +1009,7 @@ class CamemisField {
         if ($disabled) {
             $js .= ",disabled: true";
         }
-        if ($value){
+        if ($value) {
             $js .= ",inputValue: '" . $value . "'";
             $js .= ",value: '" . $value . "'";
         }
@@ -1216,7 +1216,7 @@ class CamemisField {
             $js .= ",hideLabel: true";
         return $js;
     }
-    
+
     static function Uploadfield($name, $fieldLabel) {
 
         $js = "";
@@ -1389,7 +1389,7 @@ class CamemisField {
 
         return $js;
     }
-    
+
     static function ComboInfractionType($fieldLabel, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataInfractionType();

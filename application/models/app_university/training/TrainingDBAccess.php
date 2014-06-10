@@ -99,7 +99,6 @@ class TrainingDBAccess {
             $data["SHOW_SU"] = $result->SU ? YES : NO;
 
             $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
-
             $data["CREATED_DATE"] = getShowDateTime($result->CREATED_DATE);
             $data["MODIFY_DATE"] = getShowDateTime($result->MODIFY_DATE);
             $data["ENABLED_DATE"] = getShowDateTime($result->ENABLED_DATE);
@@ -109,7 +108,6 @@ class TrainingDBAccess {
             $data["MODIFY_BY"] = setShowText($result->MODIFY_BY);
             $data["ENABLED_BY"] = setShowText($result->ENABLED_BY);
             $data["DISABLED_BY"] = setShowText($result->DISABLED_BY);
-            $data["EVALUATION_TYPE"] = setShowText($result->EVALUATION_TYPE);
         }
 
         return $data;
@@ -150,16 +148,28 @@ class TrainingDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false) {
+    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false, $date = false) {
+
+        $facette = self::findTrainingFromId($parentId);
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
         if ($parentId) {
             $SQL->where("PARENT = ?", $parentId);
             if ($objectTypeLevel)
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
+            switch ($facette->OBJECT_TYPE) {
+                case "LEVEL":
+                    if ($date) {
+                        $SQL->where("START_DATE <= '" . $date . "' AND END_DATE >= '" . $date . "'");
+                    }
+                    break;
+            }
         } else
             $SQL->where("PARENT = '0'");
+
         $SQL->order('SORTKEY ASC');
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -169,11 +179,12 @@ class TrainingDBAccess {
         $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
         $children = isset($params["children"]) ? $params["children"] : false;
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
+        $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : "";
 
         if ($node == 0) {
             $resultRows = self::allTrainingprograms(false);
         } else {
-            $resultRows = self::allTrainingprograms($node, $objectTypeLevel);
+            $resultRows = self::allTrainingprograms($node, $objectTypeLevel, $choosedate);
         }
 
         $data = array();
@@ -254,7 +265,6 @@ class TrainingDBAccess {
                         case "TERM":
                             $programObject = self::findTrainingFromId($value->PROGRAM);
                             $levelObject = self::findTrainingFromId($value->LEVEL);
-                            // $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
                             $data[$i]['leaf'] = false;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
@@ -273,7 +283,6 @@ class TrainingDBAccess {
                             $data[$i]['text'] = stripslashes($value->NAME);
                             $programObject = self::findTrainingFromId($value->PROGRAM);
                             $levelObject = self::findTrainingFromId($value->LEVEL);
-                            //$data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($levelObject->NAME) . " &raquo; " . stripslashes($value->NAME);
                             $data[$i]['leaf'] = true;
                             $data[$i]['objecttype'] = "CLASS";
                             $data[$i]['parentId'] = $value->PARENT;
@@ -555,6 +564,14 @@ class TrainingDBAccess {
     public static function updateChildTerm($Id) {
 
         $facette = self::findTrainingFromId($Id);
+
+        $UPDATE_PARENT = "UPDATE t_training SET";
+        $UPDATE_PARENT .= " LEVEL='" . $facette->PARENT . "'";
+        $UPDATE_PARENT .= " WHERE ID ='" . $facette->ID . "'";
+        self::dbAccess()->query($UPDATE_PARENT);
+
+        $facette = self::findTrainingFromId($Id);
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
         $SQL->where("PARENT = ?", $Id);
@@ -580,18 +597,17 @@ class TrainingDBAccess {
                 $SAVEDATA['FR'] = $facette->FR;
                 $SAVEDATA['SA'] = $facette->SA;
                 $SAVEDATA['SU'] = $facette->SU;
-
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                 self::dbAccess()->update(self::TABLE_TRAINING, $SAVEDATA, $WHERE);
             }
         }
 
-        $UPDATE = "UPDATE t_training_subject SET";
-        $UPDATE .= " PROGRAM='" . $facette->PROGRAM . "'";
-        $UPDATE .= " ,TERM='" . $facette->ID . "'";
-        $UPDATE .= " ,LEVEL='" . $facette->LEVEL . "'";
-        $UPDATE .= " WHERE ID ='" . $facette->ID . "'";
-        self::dbAccess()->query($UPDATE);
+        $UPDATE_SUBJECT = "UPDATE t_training_subject SET";
+        $UPDATE_SUBJECT .= " PROGRAM='" . $facette->PROGRAM . "'";
+        $UPDATE_SUBJECT .= " ,TERM='" . $facette->ID . "'";
+        $UPDATE_SUBJECT .= " ,LEVEL='" . $facette->LEVEL . "'";
+        $UPDATE_SUBJECT .= " WHERE ID ='" . $facette->ID . "'";
+        self::dbAccess()->query($UPDATE_SUBJECT);
     }
 
     public static function sqlTrainingStudentFromId($Id) {

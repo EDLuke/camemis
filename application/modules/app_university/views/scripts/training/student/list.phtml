@@ -28,6 +28,10 @@ $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl("/training/jsonload/");
 $OBJECT_GRID->setSaveUrl("/training/jsonsave/");
 
+$columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());//@CHHE Vathana
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
 function generatedPassword($parentId){
     $js = "";
     $js .= "window.parent.Ext.MessageBox.show({";
@@ -79,7 +83,7 @@ function deleteStudent($OBJECT_GRID, $trainingId){
 
     return $js;
 }
-print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
 ?>
 <style>
     span.showTitle {
@@ -247,15 +251,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addColumn("header: '<b>" . PHONE . "</b>', width: 150, renderer:cssDefault, sortable: true, dataIndex: 'PHONE'");
         $OBJECT_GRID->addColumn("header: '<b>" . EMAIL . "</b>', width: 200, renderer:cssGray, sortable: true, dataIndex: 'EMAIL'");
 
-        $OBJECT_GRID->isQuickySearch = true;
-        $OBJECT_GRID->isObjectDefaultOnLoad = true;
-        $OBJECT_GRID->baseParams = "
-            start:0
-            ,limit:100
-            ,objectId: '".$this->objectId."'
-            ,cmd: 'jsonStudentTraining'
-        ";
-
+        
         switch($this->facette->OBJECT_TYPE){
             case "CLASS":
                 if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
@@ -273,8 +269,46 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         }
                     }]);
                 ");
+                
+                //@CHHE Vathana
+                if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")){
+                    $OBJECT_GRID->addTBarItems("
+                        tbar.add(['->',{
+                            text: '" . EXPORT_TO_EXCEL . "'
+                            ,id: 'EXPORT_TO_EXCEL'
+                            ,iconCls:'icon-page_excel'
+                            ,handler: function(){
+                            Ext.MessageBox.show({
+                                msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                                progressText: 'Saving...',
+                                width:300,
+                                wait:true,
+                                waitConfig: {interval:200},
+                                icon:'ext-mb-download'
+                            });
+                            Ext.Ajax.request({
+                                url: '/export/jsonexcel/'
+                                ,method: 'POST'
+                                ,params:{
+                                    cmd: 'enrolledstudenttrainingonclass'
+                                    ,gridId: '".$OBJECT_GRID->getObjectId()."'
+                                    ,objectId: '".$this->objectId."'
+                                            
+                                        }
+                                ,success: function(response, options) {
+                                    Ext.MessageBox.hide();
+                                    window.location='/export/openenrolledstudenttrainingonclass/'
+                                        }
+                                    });
+                                }
+                            }]);
+                        ");
+                    } 
+                    //End...
+                    
                 break;
             case "TERM":
+            
                 $OBJECT_GRID->addTBarItems("
                     tbar.add([{
                         id: 'GENERATE_PASSWORDS'
@@ -285,8 +319,46 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         }
                     }]);
                 ");
+                
+                //@CHHE Vathana
+                if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")){
+                    $OBJECT_GRID->addTBarItems("
+                        tbar.add(['->',{
+                            text: '" . EXPORT_TO_EXCEL . "'
+                            ,id: 'EXPORT_TO_EXCEL'
+                            ,iconCls:'icon-page_excel'
+                            ,handler: function(){
+                            Ext.MessageBox.show({
+                                msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                                progressText: 'Saving...',
+                                width:300,
+                                wait:true,
+                                waitConfig: {interval:200},
+                                icon:'ext-mb-download'
+                            });
+                            Ext.Ajax.request({
+                                url: '/export/jsonexcel/'
+                                ,method: 'POST'
+                                ,params:{
+                                    cmd: 'enrolledstudenttrainingonterm'
+                                    ,gridId: '".$OBJECT_GRID->getObjectId()."'
+                                    ,objectId: '".$this->objectId."'
+                                            
+                                        }
+                                ,success: function(response, options) {
+                                    Ext.MessageBox.hide();
+                                    window.location='/export/openenrolledstudenttrainingonterm/'
+                                        }
+                                    });
+                                }
+                            }]);
+                        ");
+                    } 
+                    //End...        
                 break;
         }
+        
+        
 
 //        //@soda
 //        if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT"))
@@ -302,7 +374,18 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 //        ");
 //        //
 
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '".$this->objectId."'
+            ,cmd: 'jsonStudentTraining'
+        ";
+        
+        $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->renderJS();
 
         ?>
@@ -314,7 +397,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,id:'center'
                 ,layout: 'card'
                 ,activeItem: 0
-                ,items: [{xtype: '<?= $OBJECT_GRID->getObjectXType(); ?>'}]
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType(); ?>'}]
             }]
         });
         <?
@@ -409,6 +492,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
        ?>
 
+       Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
 </script>
 <?
