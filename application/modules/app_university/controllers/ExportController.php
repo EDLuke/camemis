@@ -15,6 +15,8 @@ require_once 'models/export/StudentPreschoolExportDBAccess.php';
 require_once 'models/export/StudentDisciplineExportDBAccess.php';//@veasna
 require_once 'models/export/StudentStatusExportDBAccess.php';//@Visal
 require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
+require_once 'models/export/StudentTrainingExportDBAccess.php';//@CHHE Vathana
+
 
 class ExportController extends Zend_Controller_Action {
 
@@ -31,6 +33,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STUDENT_STATUS_EXCEL = new StudentStatusExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_ADVISORY_EXCEL = new StudentAdvisoryExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_DISCIPLINE_EXCEL = new StudentDisciplineExportDBAccess($this->_getParam('objectId'));//@veasna
+        $this->STUDENT_TRAINING_EXCEL = new StudentTrainingExportDBAccess($this->_getParam('gridId'));//@CHHE Vathana
         
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
@@ -136,6 +139,20 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
+    
+    //@CHHE Vathana
+    
+    public function openenrolledstudenttrainingontermAction()
+    {
+         
+    }
+    public function openenrolledstudenttrainingonclassAction()
+    {
+         
+    }
+    
+    //End...
+    
     //
     public function jsonexcelAction()
     {
@@ -175,6 +192,15 @@ class ExportController extends Zend_Controller_Action {
             case "jsonSearchStudentDiscipline":
                 $jsondata = $this->STUDENT_DISCIPLINE_EXCEL->jsonSearchStudentDiscipline($this->REQUEST->getPost());
                 break;
+                
+            //@CHHE Vathana
+            case "enrolledstudenttrainingonterm":
+                $jsondata = $this->STUDENT_TRAINING_EXCEL->enrolledstudenttrainingonterm($this->REQUEST->getPost());
+                break;
+            case "enrolledstudenttrainingonclass":
+                $jsondata = $this->STUDENT_TRAINING_EXCEL->enrolledstudenttrainingonclass($this->REQUEST->getPost());
+                break;
+            //End...
         }
 
         if (isset($jsondata))

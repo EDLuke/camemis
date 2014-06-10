@@ -18,6 +18,7 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/Studen
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php"; //@Visal
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php"; //@Visal
 require_once "models/filter/FilterData.php"; //@Visal
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/training/StudentTrainingDBAccess.php"; //@CHHE Vathana
 
 error_reporting(E_ALL);
 
@@ -37,6 +38,8 @@ abstract class CamemisExportDBAccess {
         $this->DB_DAYSCHEDULE = DayScheduleDBAccess::getInstance();
         $this->DB_WEEKSCHEDULE = ScheduleDBAccess::getInstance();
         $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance(); //@Visal
+        $this->DB_STUDENT_TRAINING = StudentTrainingDBAccess::getInstance(); //@CHHE Vathana
+        
     }
 
     public function getFileStaffList() {
@@ -79,6 +82,17 @@ abstract class CamemisExportDBAccess {
     public function getFileStudentDiscipline() {
         return self::getUserPhath("_studentdisciplinelist.xls");
     }
+    //@CHHE Vathana
+    public function getFileEnrolledStudentYearList() {
+        return self::getUserPhath("_enrolledstudentbyyearlist.xls");
+    }
+    public function getEnrolledStudentTrainingOnTermList() {
+        return self::getUserPhath("_enrolledstudentstraningontermlist.xls");
+    }
+    public function getEnrolledStudentTrainingOnClassList() {
+        return self::getUserPhath("_enrolledstudentstraningonclasslist.xls");
+    }
+    //End...
 
     public function startContent() {
         return $this->startHeader + 1;
