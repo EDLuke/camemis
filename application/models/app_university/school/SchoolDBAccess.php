@@ -83,7 +83,7 @@ class SchoolDBAccess {
             $data["SMS_DISPLAY"] = $result->SMS_DISPLAY;
             $data["SORT_DISPLAY"] = $result->SORT_DISPLAY;
             $data["SCHOOL_TIMEZONE"] = $result->SCHOOL_TIMEZONE;
-            $data["EDUCATION_COUNTRY"] = $result->EDUCATION_COUNTRY;
+            $data["COUNTRY_EDUCATION"] = $result->COUNTRY_EDUCATION;
             //@Math Man
             $data["ACCOUNT_CREATE_SUBJECT"] = $result->ACCOUNT_CREATE_SUBJECT;
             $data["ACCOUNT_CREATE_NOTIFICATION"] = $result->ACCOUNT_CREATE_NOTIFICATION;
@@ -196,8 +196,8 @@ class SchoolDBAccess {
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
-        if (isset($params["EDUCATION_COUNTRY"]))
-            $SAVEDATA['EDUCATION_COUNTRY'] = addText($params["EDUCATION_COUNTRY"]);
+        if (isset($params["COUNTRY_EDUCATION"]))
+            $SAVEDATA['COUNTRY_EDUCATION'] = addText($params["COUNTRY_EDUCATION"]);
         
         if (isset($params["SUBJECT_DISPLAY"]))
             $SAVEDATA['SUBJECT_DISPLAY'] = addText($params["SUBJECT_DISPLAY"]);

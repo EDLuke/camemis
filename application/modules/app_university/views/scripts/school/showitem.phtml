@@ -725,11 +725,11 @@ Ext.onReady(function() {
         }
     }";
     
-    $EDUCATION_COUNTRY_STORE = "[
+    $COUNTRY_EDUCATION_STORE = "[
         ['', '---']
         ,['VN', 'Vietnam']
     ]";
-    $EDUCATION_COUNTRY = "
+    $COUNTRY_EDUCATION = "
     {
         title: '".EDUCATION_SYSTEM."'
         ,collapsible: true
@@ -744,7 +744,7 @@ Ext.onReady(function() {
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
             ,items: [
-                {".CamemisField::Combo('EDUCATION_COUNTRY', COUNTRY_NAME, $EDUCATION_COUNTRY_STORE, false, false, false, false,false)."}
+                {".CamemisField::Combo('COUNTRY_EDUCATION', COUNTRY_NAME, $COUNTRY_EDUCATION_STORE, false, false, false, false,false)."}
             ]
         }]
     }";
@@ -765,7 +765,7 @@ Ext.onReady(function() {
             $FORM_ITEMS .= ",".$EMERGENCY_CALL;
             break;
         case "SETTINGS":
-            $FORM_ITEMS .= "".$EDUCATION_COUNTRY;
+            $FORM_ITEMS .= "".$COUNTRY_EDUCATION;
             $FORM_ITEMS .= ",".$PROGRAMM_OPTIONS;
             $FORM_ITEMS .= ",".$SCHOOL_TIMEZONE;
             $CHECK_EDUCATION_SYSTEM = isset($this->objectData["GENERAL_EDUCATION"])?$this->objectData["GENERAL_EDUCATION"]:0;
