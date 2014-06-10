@@ -236,7 +236,7 @@ class AcademicDBAccess {
             $data["PERFORMANCE_SECOND_DIVISION_VALUE"] = $academicObject->PERFORMANCE_SECOND_DIVISION_VALUE;
             $data["PERFORMANCE_THIRD_DIVISION_VALUE"] = $academicObject->PERFORMANCE_THIRD_DIVISION_VALUE;
             $data["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $academicObject->PERFORMANCE_FOURTH_DIVISION_VALUE;
-            
+
             $data["FORMULA_TERM"] = $academicObject->FORMULA_TERM;
             $data["FORMULA_YEAR"] = $academicObject->FORMULA_YEAR;
 
@@ -2177,6 +2177,8 @@ class AcademicDBAccess {
 
         $output = 0;
 
+        $academicObject = self::findGradeFromId($academicId);
+        
         if ($academicObject) {
             $SQL = self::dbAccess()->select();
             $SQL->from('t_grade', 'COUNT(*) AS C');
