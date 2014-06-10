@@ -231,7 +231,7 @@ class AcademicDBAccess {
             $data["TERM1_WEIGHTING"] = $academicObject->TERM1_WEIGHTING ? $academicObject->TERM1_WEIGHTING : 1;
             $data["TERM2_WEIGHTING"] = $academicObject->TERM2_WEIGHTING ? $academicObject->TERM2_WEIGHTING : 1;
 
-            $data["PERFORMANCE_MONTH_DIVISION_VALUE"] = $facette->PERFORMANCE_MONTH_DIVISION_VALUE;
+            $data["PERFORMANCE_MONTH_DIVISION_VALUE"] = $academicObject->PERFORMANCE_MONTH_DIVISION_VALUE;
             $data["PERFORMANCE_FIRST_DIVISION_VALUE"] = $academicObject->PERFORMANCE_FIRST_DIVISION_VALUE;
             $data["PERFORMANCE_SECOND_DIVISION_VALUE"] = $academicObject->PERFORMANCE_SECOND_DIVISION_VALUE;
             $data["PERFORMANCE_THIRD_DIVISION_VALUE"] = $academicObject->PERFORMANCE_THIRD_DIVISION_VALUE;
