@@ -40,7 +40,7 @@ class AssignmentTempDBAccess {
         $query = self::dbAccess()->select();
         $query->from('t_assignment_temp', '*');
         $query->where('ID = ?', $Id);
-        //echo $query->__toString();
+        //echo $query->__toString();    
         return self::dbAccess()->fetchRow($query);
     }
 
@@ -62,7 +62,7 @@ class AssignmentTempDBAccess {
             $data["TRAINING"] = $result->TRAINING;
             $data["NAME"] = setShowText($result->NAME);
             $data["SORTKEY"] = setShowText($result->SORTKEY);
-        }
+        }                                                       
 
         return $data;
     }
@@ -151,11 +151,11 @@ class AssignmentTempDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-
+       /*
         if ($academicObject) {
             $educationType = $academicObject->QUALIFICATION_TYPE;
         }
-
+         */
         $SELECT_DATA = array(
             "A.ID AS ID"
             , "A.EVALUATION_TYPE AS EVALUATION_TYPE"
