@@ -9,20 +9,26 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/UserDBAccess.p
 
 class UserAuth {
 
-    static function userId() {
+    static function userId()
+    {
         $registry = self::getRegistry();
-        if (isset($registry["USERID"])) {
+        if (isset($registry["USERID"]))
+        {
             return $registry["USERID"];
-        } else {
+        }
+        else
+        {
             exit("CAMEMIS: Access denied");
         }
     }
 
-    static function getRegistry() {
+    static function getRegistry()
+    {
         return Zend_Registry::getInstance();
     }
 
-    static function getUserType() {
+    static function getUserType()
+    {
 
         $registry = self::getRegistry();
         $USER_OBJECT = isset($registry["USER"]) ? $registry["USER"] : "";
@@ -30,7 +36,8 @@ class UserAuth {
         $isProvider = isset($registry['IS_PROVIDER']) ? $registry['IS_PROVIDER'] : false;
         $USER_TYPE = isset($registry['USER_TYPE']) ? $registry['USER_TYPE'] : false;
 
-        switch ($USER_TYPE) {
+        switch ($USER_TYPE)
+        {
             case "INSTRUCTOR":
                 $ROLE = "INSTRUCTOR";
                 break;
@@ -44,11 +51,16 @@ class UserAuth {
                 $ROLE = "GUARDIAN";
                 break;
             default:
-                if ($isProvider) {
+                if ($isProvider)
+                {
                     $ROLE = "SUPERADMIN";
-                } else {
-                    if ($USER_OBJECT) {
-                        switch ($USER_OBJECT->ROLE) {
+                }
+                else
+                {
+                    if ($USER_OBJECT)
+                    {
+                        switch ($USER_OBJECT->ROLE)
+                        {
                             case 1:
                                 $ROLE = "SUPERADMIN";
                                 break;
@@ -56,7 +68,9 @@ class UserAuth {
                                 $ROLE = "ADMIN";
                                 break;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $ROLE = "SUPERADMIN";
                     }
                 }
@@ -66,13 +80,16 @@ class UserAuth {
         return $ROLE;
     }
 
-    static function isSuperAdmin() {
+    static function isSuperAdmin()
+    {
         $registry = self::getRegistry();
         return isset($registry['IS_PROVIDER']) ? $registry['IS_PROVIDER'] : false;
     }
 
-    static function isUserTypeAdmin() {
-        switch (self::getUserType()) {
+    static function isUserTypeAdmin()
+    {
+        switch (self::getUserType())
+        {
             case "SUPERADMIN":
             case "ADMIN":
                 return true;
@@ -81,42 +98,57 @@ class UserAuth {
         }
     }
 
-    static function userIdFromSessionId() {
+    static function userIdFromSessionId()
+    {
         $member = UserDBAccess::getInstance();
         $userObject = $member->getMemberBySessionId(addText(Zend_Registry::get('SESSIONID')));
 
-        if ($userObject) {
+        if ($userObject)
+        {
             return $userObject->ID;
-        } else {
+        }
+        else
+        {
             exit("CAMEMIS: Access denied");
         }
     }
 
-    public static function mainidentify() {
-        if (addText(Zend_Registry::get('SESSIONID'))) {
+    public static function mainidentify()
+    {
+        if (addText(Zend_Registry::get('SESSIONID')))
+        {
             $member = UserDBAccess::getInstance();
             $isRun = $member->checkMemberConstraints(addText(Zend_Registry::get('SESSIONID')));
-            if ($isRun && self::userId() == self::userIdFromSessionId()) {
+            if ($isRun && self::userId() == self::userIdFromSessionId())
+            {
                 return true;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static function identify() {
-        if (addText(Zend_Registry::get('SESSIONID'))) {
+    public static function identify()
+    {
+        if (addText(Zend_Registry::get('SESSIONID')))
+        {
             $member = UserDBAccess::getInstance();
             $isRun = $member->checkMemberConstraints(addText(Zend_Registry::get('SESSIONID')));
-            if ($isRun && self::userId() == self::userIdFromSessionId()) {
+            if ($isRun && self::userId() == self::userIdFromSessionId())
+            {
                 return true;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static function loginDialog() {
+    public static function loginDialog()
+    {
         //Your session has expired, please log in again.
         $js = "
             <script>
@@ -127,24 +159,31 @@ class UserAuth {
         print$js;
     }
 
-    static function getACLValue($index) {
+    static function getACLValue($index)
+    {
         $data = Zend_Registry::get('ACL');
         return isset($data["" . $index . ""]) ? $data["" . $index . ""] : false;
     }
 
-    static function actionMyArea($httpRequest, $permitValue) {
+    static function actionMyArea($httpRequest, $permitValue)
+    {
 
         $data = Zend_Registry::get('ACL');
 
-        if ($permitValue) {
+        if ($permitValue)
+        {
 
-            if (isset($data["" . $permitValue . ""])) {
-                if (!$data["" . $permitValue . ""]) {
+            if (isset($data["" . $permitValue . ""]))
+            {
+                if (!$data["" . $permitValue . ""])
+                {
                     $httpRequest->setControllerName('error');
                     $httpRequest->setActionName('permission');
                     $httpRequest->setDispatched(false);
                 }
-            } else {
+            }
+            else
+            {
                 $httpRequest->setControllerName('error');
                 $httpRequest->setActionName('permission');
                 $httpRequest->setDispatched(false);
@@ -152,46 +191,61 @@ class UserAuth {
         }
     }
 
-    static function actionPermint($httpRequest, $permitValue) {
+    static function actionPermint($httpRequest, $permitValue)
+    {
 
         $data = Zend_Registry::get('ACL');
 
-        if ($permitValue) {
-            switch (self::getUserType()) {
+        if ($permitValue)
+        {
+            switch (self::getUserType())
+            {
                 case "TEACHER":
-                    if (isset($data["T_" . $permitValue . ""])) {
-                        if (!$data["T_" . $permitValue . ""]) {
+                    if (isset($data["T_" . $permitValue . ""]))
+                    {
+                        if (!$data["T_" . $permitValue . ""])
+                        {
                             $httpRequest->setControllerName('error');
                             $httpRequest->setActionName('permission');
                             $httpRequest->setDispatched(false);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $httpRequest->setControllerName('error');
                         $httpRequest->setActionName('permission');
                         $httpRequest->setDispatched(false);
                     }
                     break;
                 case "INSTRUCTOR":
-                    if (isset($data["I_" . $permitValue . ""])) {
-                        if (!$data["I_" . $permitValue . ""]) {
+                    if (isset($data["I_" . $permitValue . ""]))
+                    {
+                        if (!$data["I_" . $permitValue . ""])
+                        {
                             $httpRequest->setControllerName('error');
                             $httpRequest->setActionName('permission');
                             $httpRequest->setDispatched(false);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $httpRequest->setControllerName('error');
                         $httpRequest->setActionName('permission');
                         $httpRequest->setDispatched(false);
                     }
                     break;
                 default:
-                    if (isset($data["" . $permitValue . ""])) {
-                        if (!$data["" . $permitValue . ""]) {
+                    if (isset($data["" . $permitValue . ""]))
+                    {
+                        if (!$data["" . $permitValue . ""])
+                        {
                             $httpRequest->setControllerName('error');
                             $httpRequest->setActionName('permission');
                             $httpRequest->setDispatched(false);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $httpRequest->setControllerName('error');
                         $httpRequest->setActionName('permission');
                         $httpRequest->setDispatched(false);
@@ -201,19 +255,25 @@ class UserAuth {
         }
     }
 
-    static function actionPermintGroup($httpRequest, $permitValue1, $permitValue2) {
+    static function actionPermintGroup($httpRequest, $permitValue1, $permitValue2)
+    {
 
         $data = Zend_Registry::get('ACL');
 
-        if ($permitValue1 || $permitValue2) {
+        if ($permitValue1 || $permitValue2)
+        {
 
-            if (isset($data["" . $permitValue1 . ""]) || isset($data["" . $permitValue2 . ""])) {
-                if (!$data["" . $permitValue1 . ""] || !$data["" . $permitValue2 . ""]) {
+            if (isset($data["" . $permitValue1 . ""]) || isset($data["" . $permitValue2 . ""]))
+            {
+                if (!$data["" . $permitValue1 . ""] || !$data["" . $permitValue2 . ""])
+                {
                     $httpRequest->setControllerName('error');
                     $httpRequest->setActionName('permission');
                     $httpRequest->setDispatched(false);
                 }
-            } else {
+            }
+            else
+            {
                 $httpRequest->setControllerName('error');
                 $httpRequest->setActionName('permission');
                 $httpRequest->setDispatched(false);
@@ -221,10 +281,13 @@ class UserAuth {
         }
     }
 
-    static function rolePermint($httpRequest, $permintGroup) {
+    static function rolePermint($httpRequest, $permintGroup)
+    {
 
-        if ($permintGroup) {
-            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup)) {
+        if ($permintGroup)
+        {
+            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup))
+            {
                 $httpRequest->setControllerName('error');
                 $httpRequest->setActionName('permission');
                 $httpRequest->setDispatched(false);
@@ -232,15 +295,18 @@ class UserAuth {
         }
     }
 
-    static function rolePermintTutor($httpRequest) {
+    static function rolePermintTutor($httpRequest)
+    {
 
         $permintGroup = array(
             "INSTRUCTOR"
             , "TEACHER"
         );
 
-        if ($permintGroup) {
-            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup)) {
+        if ($permintGroup)
+        {
+            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup))
+            {
                 $httpRequest->setControllerName('error');
                 $httpRequest->setActionName('permission');
                 $httpRequest->setDispatched(false);
@@ -248,7 +314,8 @@ class UserAuth {
         }
     }
 
-    static function rolePermintSystemANDTutor($httpRequest) {
+    static function rolePermintSystemANDTutor($httpRequest)
+    {
 
         $permintGroup = array(
             "SYSTEM"
@@ -256,8 +323,10 @@ class UserAuth {
             , "TEACHER"
         );
 
-        if ($permintGroup) {
-            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup)) {
+        if ($permintGroup)
+        {
+            if (!in_array(Zend_Registry::get('USER_TYPE'), $permintGroup))
+            {
                 $httpRequest->setControllerName('error');
                 $httpRequest->setActionName('permission');
                 $httpRequest->setDispatched(false);
@@ -265,26 +334,36 @@ class UserAuth {
         }
     }
 
-    static function getACLStudent($index) {
+    static function getACLStudent($index)
+    {
 
         $allACL = Zend_Registry::get('ACL');
 
-        if (isset($allACL["STUDENT_SEARCH"])) {
+        if (isset($allACL["STUDENT_SEARCH"]))
+        {
             $result = isset($allACL["STUDENT_SEARCH_" . $index . ""]) ? $allACL["STUDENT_SEARCH_" . $index . ""] : 0;
-        } elseif (isset($allACL["STUDENT_MODUL"])) {
+        }
+        elseif (isset($allACL["STUDENT_MODUL"]))
+        {
             $result = isset($allACL["STUDENT_MODUL_" . $index . ""]) ? $allACL["STUDENT_MODUL_" . $index . ""] : 0;
-        } elseif (isset($allACL["LIST_OF_STUDENTS"])) {
+        }
+        elseif (isset($allACL["LIST_OF_STUDENTS"]))
+        {
             $result = isset($allACL["LIST_OF_STUDENTS_" . $index . ""]) ? $allACL["LIST_OF_STUDENTS_" . $index . ""] : 0;
-        } else {
+        }
+        else
+        {
             $result = 0;
         }
 
         return $result;
     }
 
-    static function getACLTutorPermint($index) {
+    static function getACLTutorPermint($index)
+    {
         $data = Zend_Registry::get('ACL');
-        switch (self::getUserType()) {
+        switch (self::getUserType())
+        {
             case "TEACHER":
                 return isset($data["T_" . $index . ""]) ? $data["T_" . $index . ""] : false;
             case "INSTRUCTOR":
@@ -294,23 +373,27 @@ class UserAuth {
         }
     }
 
-    static function isUserStudent() {
+    static function isUserStudent()
+    {
         return (Zend_Registry::get('USER_TYPE') == "STUDENT") ? true : false;
     }
 
-    static function isVerifyTime() {
+    static function isVerifyTime()
+    {
 
         $sessionObject = SessionAccess::getInstance();
         return $sessionObject->verifyTime(addText(Zend_Registry::get('SESSIONID')));
     }
 
-    static function getAddedUserRole() {
+    static function getAddedUserRole()
+    {
         $registry = Zend_Registry::getInstance();
         $userObject = isset($registry['USER']) ? $registry['USER'] : false;
         return isset($userObject->ADDITIONAL_ROLE) ? $userObject->ADDITIONAL_ROLE : false;
     }
 
-    static function printCLData() {
+    static function printCLData()
+    {
         print_r(Zend_Registry::get('ACL'));
     }
 
@@ -318,15 +401,21 @@ class UserAuth {
     //UserAuth....
     //Show display General or Training
     ////////////////////////////////////////////////////////////////////////////
-    static function displayRoleGeneralEducation() {
+    static function displayRoleGeneralEducation()
+    {
         $result = false;
-        switch (self::getUserType()) {
+        switch (self::getUserType())
+        {
             case "SUPERADMIN":
             case "ADMIN":
-                if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
-                    if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION")) {
+                if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION)
+                {
+                    if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION"))
+                    {
                         $result = true;
-                    } else {
+                    }
+                    else
+                    {
                         $result = false;
                     }
                 }
@@ -335,7 +424,8 @@ class UserAuth {
             case "INSTRUCTOR":
             case "STUDENT":
             case "GUARDIAN":
-                if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
+                if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION)
+                {
                     $result = true;
                 }
                 break;
@@ -344,16 +434,22 @@ class UserAuth {
         return $result;
     }
 
-    static function displayRoleTrainingEducation() {
+    static function displayRoleTrainingEducation()
+    {
         $result = false;
-        switch (self::getUserType()) {
+        switch (self::getUserType())
+        {
             case "SUPERADMIN":
             case "ADMIN":
             case "GUARDIAN":
-                if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
-                    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS")) {
+                if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS)
+                {
+                    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS"))
+                    {
                         $result = true;
-                    } else {
+                    }
+                    else
+                    {
                         $result = false;
                     }
                 }
@@ -362,7 +458,8 @@ class UserAuth {
             case "TEACHER":
             case "INSTRUCTOR":
             case "STUDENT":
-                if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
+                if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS)
+                {
                     $result = true;
                 }
                 break;
@@ -371,11 +468,14 @@ class UserAuth {
         return $result;
     }
 
-    static function displayCreditEducationSystem() {
+    static function displayCreditEducationSystem()
+    {
 
         $result = false;
-        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
-            if (Zend_Registry::get('SCHOOL')->CREDIT_EDUCATION_SYSTEM) {
+        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION)
+        {
+            if (Zend_Registry::get('SCHOOL')->CREDIT_EDUCATION_SYSTEM)
+            {
                 $result = true;
             }
         }
@@ -383,11 +483,14 @@ class UserAuth {
         return $result;
     }
 
-    static function displayTraditionalEducationSystem() {
+    static function displayTraditionalEducationSystem()
+    {
 
         $result = false;
-        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
-            if (Zend_Registry::get('SCHOOL')->TRADITIONAL_EDUCATION_SYSTEM) {
+        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION)
+        {
+            if (Zend_Registry::get('SCHOOL')->TRADITIONAL_EDUCATION_SYSTEM)
+            {
                 $result = true;
             }
         }
@@ -395,15 +498,21 @@ class UserAuth {
         return $result;
     }
 
-    static function staffPermissionScroe($academicObject) {
+    static function staffPermissionScroe($academicObject)
+    {
         $result = false;
 
-        if (self::getUserType() == "SUPERADMIN") {
+        if (self::getUserType() == "SUPERADMIN")
+        {
             $result = true;
-        } else {
-            if (is_object($academicObject)) {
+        }
+        else
+        {
+            if (is_object($academicObject))
+            {
                 $data = explode(",", $academicObject->STAFF_SCORE_PERMISSION);
-                if (in_array(self::getUserId(), $data)) {
+                if (in_array(self::getUserId(), $data))
+                {
                     $result = true;
                 }
             }
@@ -412,9 +521,11 @@ class UserAuth {
         return $result;
     }
 
-    public static function getUserLoginActionStatus() {
+    public static function getUserLoginActionStatus()
+    {
         $result = false;
-        if (Zend_Registry::get('USER')->UMCPANL) {
+        if (Zend_Registry::get('USER')->UMCPANL)
+        {
             $result = true;
         }
         return $result;
@@ -422,89 +533,117 @@ class UserAuth {
 
     //
 
-    static function getMinPasswordLength() {
+    static function getMinPasswordLength()
+    {
         return Zend_Registry::get('SCHOOL')->MINPL ? Zend_Registry::get('SCHOOL')->MINPL : 8;
     }
 
     //MAXIMUM_PASSWORD_AGE
-    static function getMaxPasswordAge() {
+    static function getMaxPasswordAge()
+    {
         $result = false;
-        if (Zend_Registry::get('SCHOOL')->MAXPA) {
+        if (Zend_Registry::get('SCHOOL')->MAXPA)
+        {
             $CHANGE_PASSWORD_DATE = Zend_Registry::get('USER')->CHANGE_PASSWORD_DATE;
-            if (findDaysFrom2Dates(false, $CHANGE_PASSWORD_DATE) > Zend_Registry::get('SCHOOL')->MAXPA) {
+            if (findDaysFrom2Dates(false, $CHANGE_PASSWORD_DATE) > Zend_Registry::get('SCHOOL')->MAXPA)
+            {
                 $result = true;
             }
         }
     }
 
-    static function isPasswordComplexityRequirements() {
+    static function isPasswordComplexityRequirements()
+    {
         return Zend_Registry::get('SCHOOL')->PMCR ? Zend_Registry::get('SCHOOL')->PMCR : 0;
     }
 
-    static function dbName() {
+    static function dbName()
+    {
         return Zend_Registry::get('CHOOSE_DB_NAME');
     }
 
-    static function dbHost() {
+    static function dbHost()
+    {
         return Zend_Registry::get('CHOOSE_DB_HOST');
     }
 
-    static function dbUser() {
+    static function dbUser()
+    {
         return Zend_Registry::get('CHOOSE_DB_USER');
     }
 
-    static function dbPassword() {
+    static function dbPassword()
+    {
         return Zend_Registry::get('CHOOSE_DB_PWD');
     }
 
-    static function systemLanguage() {
+    static function systemLanguage()
+    {
         return Zend_Registry::get('SYSTEM_LANGUAGE');
     }
 
-    static function dbAccess() {
+    static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    static function tableObject() {
+    static function tableObject()
+    {
         return "Tables_in_" . self::dbName();
     }
 
-    static function getUserPublicRoot() {
+    static function getUserPublicRoot()
+    {
         $result = "";
         $explode = explode(".", $_SERVER['SERVER_NAME']);
-        if (is_array($explode)) {
+        if (is_array($explode))
+        {
             $result = $explode[0];
         }
         return $result;
     }
 
-    static function getFileBackUp() {
+    static function getFileBackUp()
+    {
         $filename = UserAuth::getUserPublicRoot() . "_dump.sql.gz";
         $myFile = "../public/users/" . UserAuth::getUserPublicRoot() . "/database/" . $filename . "";
-        if (file_exists($myFile)) {
+        if (file_exists($myFile))
+        {
             return $filename . " (" . showFileSize($myFile) . ")";
-        } else {
+        }
+        else
+        {
             return "---";
         }
     }
 
-    static function getUserId() {
+    static function getUserId()
+    {
         return Zend_Registry::get('USER')->ID;
     }
 
-    static function myObject($Id) {
+    static function myObject($Id)
+    {
         return (Zend_Registry::get('USER')->ID == $Id) ? true : false;
     }
 
-    public static function getMyFolder() {
+    public static function getMyFolder()
+    {
         $folder = "";
         $explode = explode(".", $_SERVER['SERVER_NAME']);
-        if (is_array($explode)) {
+        if (is_array($explode))
+        {
             $folder = "users/" . $explode[0] . "/attachment/";
         }
 
         return $folder;
     }
+
+    static function getCountryEducation()
+    {
+        return Zend_Registry::get('SCHOOL')->COUNTRY_EDUCATION;
+    }
+
 }
 
 ?>
