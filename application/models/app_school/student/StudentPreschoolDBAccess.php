@@ -340,9 +340,10 @@ class StudentPreschoolDBAccess {
         }
         
         $SQL->joinLeft(array('C' => 't_camemis_type'), 'B.CAMEMIS_TYPE = C.ID', array('NAME AS CAM_NAME', 'OBJECT_TYPE'));
-             $SQL->joinLeft(array('D' => 't_members'), 'B.CREATED_BY = D.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
-             $SQL->joinLeft(array('E' => 't_camemis_type'), 'B.DEGREE_TYPE = E.ID', array('NAME AS DEGRE_NAME', 'OBJECT_TYPE'));
-             $SQL->joinLeft(array('F' => 't_camemis_type'), 'B.APPLICATION_STATUS = F.ID', array('NAME AS APPLICATION_STATUS', 'OBJECT_TYPE'));
+         $SQL->joinLeft(array('D' => 't_members'), 'B.CREATED_BY = D.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
+         $SQL->joinLeft(array('E' => 't_camemis_type'), 'B.DEGREE_TYPE = E.ID', array('NAME AS DEGRE_NAME', 'OBJECT_TYPE'));
+         $SQL->joinLeft(array('G' => 't_camemis_type'), 'B.SESSION_EVENT = G.ID', array('NAME AS SESSION_NAME', 'OBJECT_TYPE'));
+         $SQL->joinLeft(array('F' => 't_camemis_type'), 'B.APPLICATION_STATUS = F.ID', array('NAME AS APPLICATION_STATUS', 'OBJECT_TYPE'));
         
         if ($startDate and $endDate) {
                 $SQL->where("B.CREATED_DATE BETWEEN '" . $startDate . "' AND '" . $endDate . "'");
@@ -423,7 +424,7 @@ class StudentPreschoolDBAccess {
                 
                 $data[$i]['CAMEMIS_TYPE'] = $value->CAM_NAME;
                 $data[$i]['DEGREE_TYPE'] = $value->DEGRE_NAME;
-                $data[$i]['SESSION_EVENT'] = $value->SESSION_EVENT;
+                $data[$i]['SESSION_EVENT'] = $value->SESSION_NAME;
                 $data[$i]['APPLICATION_STATUS'] = $value->APPLICATION_STATUS;
                 $data[$i]['DESCRIPTION'] = $value->PRESCHOOLTYPE_DES;
 
@@ -486,6 +487,9 @@ class StudentPreschoolDBAccess {
                 $newValue = $comboValue;
                 break;
             case "APPLICATION_STATUS":
+                $newValue = $comboValue;
+                break;
+            case "SESSION_EVENT":
                 $newValue = $comboValue;
                 break;
             default:
@@ -575,6 +579,8 @@ class StudentPreschoolDBAccess {
                             $data[$i]["APPLICATION_STATUS"] = CamemisTypeDBAccess::findObjectFromId($value->APPLICATION_STATUS)->NAME;
                         if ($value->DEGREE_TYPE <> 0)
                             $data[$i]["DEGREE_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->DEGREE_TYPE)->NAME;
+                        if ($value->SESSION_EVENT <> 0)
+                            $data[$i]["SESSION_EVENT"] = CamemisTypeDBAccess::findObjectFromId($value->SESSION_EVENT)->NAME;
                         if ($value->CAMEMIS_TYPE <> 0)
                             $data[$i]["CAMEMIS_TYPE"] = CamemisTypeDBAccess::findObjectFromId($value->CAMEMIS_TYPE)->NAME;
                         break;
