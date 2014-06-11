@@ -32,6 +32,7 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getAverageSubjectAssignment($stdClass, $include) {
+
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("AVG(POINTS) AS AVG"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array());
@@ -61,35 +62,49 @@ class SQLEvaluationStudentAssignment {
     }
 
     public static function getListStudentAssignmentScoreDate($stdClass, $include) {
-        $SELECTION_A = array("ASSIGNMENT_ID");
 
-        $SELECTION_B = array(
+        $SELECTION_A = array(
             "COEFF_VALUE AS COEFF_VALUE"
             , "INCLUDE_IN_EVALUATION AS INCLUDE_IN_EVALUATION"
         );
 
+        $SELECTION_B = array(
+            "ASSIGNMENT_ID"
+            , "SCORE_TYPE"
+            , "POINTS"
+        );
+
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
-        $SQL->from(array('A' => "t_student_assignment"), $SELECTION_A)
-                ->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', $SELECTION_B)
-                ->where("A.CLASS_ID = '" . $stdClass->academicId . "'")
-                ->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
+        $SQL->from(array('A' => "t_assignment"), $SELECTION_A)
+                ->joinLeft(array('B' => 't_student_assignment'), 'B.ASSIGNMENT_ID=A.ID', $SELECTION_B)
+                ->where("B.CLASS_ID = '" . $stdClass->academicId . "'")
+                ->where("B.SUBJECT_ID = '" . $stdClass->subjectId . "'");
 
-        $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+        $SQL->where("B.STUDENT_ID = '" . $stdClass->studentId . "'");
 
         if ($stdClass->month)
-            $SQL->where("A.MONTH = '" . $stdClass->month . "'");
+            $SQL->where("B.MONTH = '" . $stdClass->month . "'");
 
         if ($stdClass->year)
-            $SQL->where("A.YEAR = '" . $stdClass->year . "'");
+            $SQL->where("B.YEAR = '" . $stdClass->year . "'");
 
         if ($stdClass->term)
-            $SQL->where("A.TERM = '" . $stdClass->term . "'");
+            $SQL->where("B.TERM = '" . $stdClass->term . "'");
 
         if ($include)
-            $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
+            $SQL->where("A.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
-        $SQL->group("A.ASSIGNMENT_ID");
+        switch (UserAuth::getCountryEducation()) {
+            case "DEFAULT":
+            case "COL":
+            case "KHM":
+            case "PER":
+            case "THA":
+            case "LAO":
+                $SQL->group("A.ID");
+                break;
+        }
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -100,11 +115,23 @@ class SQLEvaluationStudentAssignment {
         if ($enties) {
             foreach ($enties as $value) {
 
-                $stdClass->assignmentId = $value->ASSIGNMENT_ID;
-                $_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                switch (UserAuth::getCountryEducation()) {
+                    case "DEFAULT":
+                    case "COL":
+                    case "KHM":
+                    case "PER":
+                    case "THA":
+                    case "LAO":
+                        $stdClass->assignmentId = $value->ASSIGNMENT_ID;
+                        $NEW_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                        break;
+                    case "VNM":
+                        $NEW_VALUE = $value->POINTS;
+                        break;
+                }
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
-                $VALUE = $_VALUE ? $_VALUE : 0;
+                $VALUE = $NEW_VALUE ? $NEW_VALUE : 0;
                 $SUM_VALUE += ($VALUE * $COEFF_VALUE) / 100;
             }
         }
@@ -121,11 +148,23 @@ class SQLEvaluationStudentAssignment {
         if ($enties) {
             foreach ($enties as $value) {
 
-                $stdClass->assignmentId = $value->ASSIGNMENT_ID;
-                $_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                switch (UserAuth::getCountryEducation()) {
+                    case "DEFAULT":
+                    case "COL":
+                    case "KHM":
+                    case "PER":
+                    case "THA":
+                    case "LAO":
+                        $stdClass->assignmentId = $value->ASSIGNMENT_ID;
+                        $NEW_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                        break;
+                    case "VNM":
+                        $NEW_VALUE = $value->POINTS;
+                        break;
+                }
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
-                $VALUE = $_VALUE ? $_VALUE : 0;
+                $VALUE = $NEW_VALUE ? $NEW_VALUE : 0;
                 $SUM_VALUE += $VALUE * $COEFF_VALUE;
                 $SUM_COEFF_VALUE += $COEFF_VALUE;
             }
