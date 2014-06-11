@@ -154,8 +154,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
-        $APPLICATION_GRID->addReadField("name: 'CAMEMIS_TYPE'");
         $APPLICATION_GRID->addReadField("name: 'DEGREE_TYPE'");
+        $APPLICATION_GRID->addReadField("name: 'CAMEMIS_TYPE'");
         $APPLICATION_GRID->addReadField("name: 'APPLICATION_STATUS'");
         $APPLICATION_GRID->addReadField("name: 'DESCRIPTION'");
         $APPLICATION_GRID->addReadField("name: 'SESSION_EVENT'");
@@ -164,7 +164,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $APPLICATION_GRID->addReadField("name: 'DELETE'");
         
         $APPLICATION_GRID->addColumn("
-            header: '<b>".TYPE."</b>',
+            header: '<b>".MAJOR."</b>',
             dataIndex: 'CAMEMIS_TYPE',
             width: 150,
             align: 'left',
@@ -174,7 +174,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,store: new Ext.data.JsonStore({
                     autoDestroy: true
                     ,fields: ['chooseValue', 'chooseDisplay']
-                    ,data:".CamemisTypeDBAccess::comboxCamemisType('APPLICATION_TYPE')."
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('MAJOR_TYPE')."
                 })
                 ,valueField: 'chooseValue'
                 ,displayField: 'chooseDisplay'
@@ -201,7 +201,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,store: new Ext.data.JsonStore({
                     autoDestroy: true
                     ,fields: ['chooseValue', 'chooseDisplay']
-                    ,data:".CamemisTypeDBAccess::comboxCamemisType('DEGREE_TYPE')."
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('QUALIFICATION_DEGREE_TYPE')."
                 })
                 ,valueField: 'chooseValue'
                 ,displayField: 'chooseDisplay'
@@ -217,7 +217,33 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             })
         ");
         
-        $APPLICATION_GRID->addColumn(columnProperties(SESSION_EVENT,"SESSION_EVENT",150,checkColHidden(2,$columndata)));
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".SESSION_EVENT."</b>',
+            dataIndex: 'SESSION_EVENT',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('SESSION_EVENT')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
         $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
         $APPLICATION_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(4,$columndata)));
         $APPLICATION_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(5,$columndata)));
@@ -279,8 +305,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,iconCls:'icon-application_form_add'
                 ,handler: function(){
                     data = {
-                        CAMEMIS_TYPE:''
-                        ,DEGREE_TYPE:''
+                        DEGREE_TYPE:''
+                        ,CAMEMIS_TYPE:''
                         ,SESSION_EVENT:''
                         ,DESCRIPTION:''
                         ,APPLICATION_STATUS:''
@@ -364,10 +390,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         ");
         
         $TESTING_GRID->addColumn(columnProperties(SCORE,"SCORE",150,checkColHidden(2,$columndata)));
-        
-        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(4,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(5,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(3,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(4,$columndata)));
+        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(5,$columndata)));
         $TESTING_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(6,$columndata)));
         $TESTING_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(7,$columndata)));
         
