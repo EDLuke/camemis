@@ -254,6 +254,9 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $SELECT_A = array(
             'CODE'
+            , 'STATUS_SHORT'
+            , 'STATUS_COLOR'
+            , 'STATUS_COLOR_FONT'
             , 'STUDENT_INDEX'
             , 'CODE AS STUDENT_CODE'
             , 'ID'
@@ -352,7 +355,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(array('B' => 't_student_training'), 'A.ID=B.TRAINING', $SELECTION_B);
 
         $SQL->where("B.STUDENT ='" . $studentId . "'");
-        //$SQL->where("A.START_DATE <='" . date("Y-m-d") . "' AND '" . date("Y-m-d") . "'<=A.END_DATE");
         //error_log($SQL->__toString());          
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -559,6 +561,11 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             foreach ($resultRows as $value) {
 
                 $data[$i]["ID"] = $value->OBJECT_ID;
+
+                $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
+                $data[$i]["BG_COLOR"] = $value->STATUS_COLOR;
+                $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
+
                 $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                 $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
                 $data[$i]["CODE"] = setShowText($value->CODE);
@@ -2015,7 +2022,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                         $data[$i]["SUBJECT_" . $subject->ID . ""] = $AVERAGE ? $AVERAGE : "---";
                     }
                 }
-                
+
                 $data[$i]["PHONE"] = setShowText($value->PHONE);
                 $data[$i]["EMAIL"] = setShowText($value->EMAIL);
                 $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
@@ -2072,7 +2079,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
     }
 
     public function actionTrainingStudentAssignment($params) {
-        
+
         $params = Utiles::setPostDecrypteParams($params);
 
         $this->scoreInput = isset($params["newValue"]) ? addText($params["newValue"]) : "";
@@ -2128,13 +2135,13 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , "SCHORE_DATE" => $SCHORE_DATE
         );
     }
-    
+
     protected function setStudentScoreSubjectAssignment() {
 
         $SAVEDATA = Array();
 
         $SAVEDATA["SCORE"] = $this->scoreInput;
-        
+
         if ($this->checkStudentScoreSubjectAssignment()) {
             $WHERE[] = "ASSIGNMENT = '" . $this->assignmentId . "'";
             $WHERE[] = "SUBJECT= '" . $this->subjectId . "'";
@@ -2469,7 +2476,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , "data" => $data
         );
     }
-    
+
     public static function getCurrentTrainingsByStudent($studentId) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_training'), array('TRAINING AS ID'));

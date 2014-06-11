@@ -13,7 +13,7 @@ require_once 'models/app_university/student/StudentDBAccess.php';
 require_once 'models/app_university/finance/StudentFeeDBAccess.php';
 require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
 require_once 'models/assessment/AssessmentConfig.php';
-require_once 'models/app_university/assignment/AssignmentTempDBAccess.php';//@CHHE Vathana
+require_once 'models/app_university/assignment/AssignmentTempDBAccess.php'; //@CHHE Vathana
 require_once setUserLoacalization();
 
 class StudentTrainingDBAccess extends TrainingDBAccess {
@@ -188,6 +188,9 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SELECT_A = array(
             'CODE'
             , 'ID'
+            , 'STATUS_SHORT'
+            , 'STATUS_COLOR'
+            , 'STATUS_COLOR_FONT'
             , 'STUDENT_INDEX'
             , 'ID AS STUDENT_ID'
             , 'CODE AS STUDENT_CODE'
@@ -525,7 +528,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
                 $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
-                
+
                 $i++;
             }
         }
@@ -542,7 +545,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , "rows" => $a
         );
     }
-    
+
     public static function jsonStudentTraining($params, $isJson = true) {
 
         $data = array();
@@ -569,6 +572,11 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             foreach ($resultRows as $value) {
 
                 $data[$i]["ID"] = $value->OBJECT_ID;
+                
+                $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
+                $data[$i]["BG_COLOR"] = $value->STATUS_COLOR;
+                $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
+
                 $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                 $data[$i]["CODE"] = setShowText($value->CODE);
                 if (!SchoolDBAccess::displayPersonNameInGrid()) {
@@ -997,7 +1005,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                         $data[$key]['leaf'] = true;
                         $data[$key]['cls'] = "nodeTextBold";
                     }
-                    
+
                     break;
             }
         }
@@ -1209,7 +1217,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SAVEDATA = Array();
 
         $SAVEDATA["SCORE"] = $this->scoreInput;
-        
+
         if ($this->checkStudentScoreSubjectAssignment()) {
             $WHERE[] = "ASSIGNMENT = '" . $this->assignmentId . "'";
             $WHERE[] = "SUBJECT= '" . $this->subjectId . "'";
@@ -1488,7 +1496,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $data = Array();
         $entries = $this->listStudentsByTraining();
-        
+
         if ($entries) {
             foreach ($entries as $value) {
                 $data[] = $this->studentAvgAllAssignmentsBySubjectTraining(
@@ -2344,6 +2352,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         //echo $SQL->__toString();
         return self::dbAccess()->fetchAll($SQL);
     }
+
 }
 
 ?>
