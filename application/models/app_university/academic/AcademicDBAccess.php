@@ -223,6 +223,7 @@ class AcademicDBAccess {
             $data["DISPLAY_FOURTH_RESULT"] = $academicObject->DISPLAY_FOURTH_RESULT ? true : false;
             $data["DISPLAY_YEAR_RESULT"] = $academicObject->DISPLAY_YEAR_RESULT ? true : false;
             $data["DISPLAY_GPA"] = $academicObject->DISPLAY_GPA ? true : false;
+            $data["DISPLAY_GRADE_POINTS"] = $academicObject->DISPLAY_GRADE_POINTS ? true : false;
             $data["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
             $data["YEAR_RESULT"] = $academicObject->YEAR_RESULT;
 
@@ -501,6 +502,7 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_GPA'] = isset($params["DISPLAY_GPA"]) ? 1 : 0;
+        $SAVEDATA['DISPLAY_GRADE_POINTS'] = isset($params["DISPLAY_GRADE_POINTS"]) ? 1 : 0;
 
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
@@ -960,6 +962,7 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA['DISPLAY_FOURTH_RESULT'] = $schoolyearObject->DISPLAY_FOURTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_YEAR_RESULT'] = $schoolyearObject->DISPLAY_YEAR_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_GPA'] = $schoolyearObject->DISPLAY_GPA;
+                    $FIRST_SAVEDATA['DISPLAY_GRADE_POINTS'] = $schoolyearObject->DISPLAY_GRADE_POINTS;
 
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["SEMESTER1_WEIGHTING"] = $schoolyearObject->SEMESTER1_WEIGHTING;

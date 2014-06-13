@@ -200,6 +200,7 @@ class AcademicDBAccess {
             $data["DISPLAY_FOURTH_RESULT"] = $facette->DISPLAY_FOURTH_RESULT ? true : false;
             $data["DISPLAY_YEAR_RESULT"] = $facette->DISPLAY_YEAR_RESULT ? true : false;
             $data["DISPLAY_GPA"] = $facette->DISPLAY_GPA ? true : false;
+            $data["DISPLAY_GRADE_POINTS"] = $facette->DISPLAY_GRADE_POINTS ? true : false;
 
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
@@ -496,6 +497,7 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_FOURTH_RESULT'] = isset($params["DISPLAY_FOURTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_GPA'] = isset($params["DISPLAY_GPA"]) ? 1 : 0;
+        $SAVEDATA['DISPLAY_GRADE_POINTS'] = isset($params["DISPLAY_GRADE_POINTS"]) ? 1 : 0;
 
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
@@ -926,6 +928,7 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearObject->QUALIFICATION_TYPE;
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["DISPLAY_GPA"] = $schoolyearObject->DISPLAY_GPA;
+                    $FIRST_SAVEDATA["DISPLAY_GRADE_POINTS"] = $schoolyearObject->DISPLAY_GRADE_POINTS;
 
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
