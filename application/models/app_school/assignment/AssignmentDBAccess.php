@@ -178,6 +178,7 @@ class AssignmentDBAccess {
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE[] = "ID = '" . $facette->ID . "'";
             self::dbAccess()->update('t_assignment', $SAVEDATA, $WHERE);
+            self::updateStudentAssignment($objectId);
         } else {
 
             if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
@@ -681,7 +682,7 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("C" => "COUNT(*)"));
-        $SQL->where("ID = ?",$classId);
+        $SQL->where("ID = ?", $classId);
         switch ($term) {
             case "FIRST_SEMESTER":
                 $SQL->where("FIRST_SCORE_START <= '" . $date . "' AND FIRST_SCORE_END >= '" . $date . "'");
@@ -717,6 +718,18 @@ class AssignmentDBAccess {
             $searchParams["schoolyearId"] = $academicObject->SCHOOL_YEAR;
             return self::getAllAssignmentQuery($searchParams);
         }
+    }
+
+    public static function updateStudentAssignment($objectId) {
+
+        $facette = self::findAssignmentFromId($objectId);
+
+        $WHERE = Array();
+        $SAVEDATA['EVALUATION_TYPE'] = $facette->EVALUATION_TYPE;
+        $SAVEDATA['COEFF_VALUE'] = $facette->COEFF_VALUE;
+        $SAVEDATA['INCLUDE_IN_EVALUATION'] = $facette->INCLUDE_IN_EVALUATION;
+        $WHERE[] = "ASSIGNMENT_ID = '" . $facette->ID . "'";
+        self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
     }
 
 }

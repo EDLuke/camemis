@@ -97,7 +97,7 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', '*');
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -181,6 +181,7 @@ class AssignmentDBAccess {
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE[] = "ID = '" . $facette->ID . "'";
             self::dbAccess()->update('t_assignment', $SAVEDATA, $WHERE);
+            self::updateStudentAssignment($objectId);
         } else {
 
             if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
@@ -210,7 +211,7 @@ class AssignmentDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', '*');
         if ($subjectId)
-            $SQL->where("SUBJECT = ?",$subjectId);
+            $SQL->where("SUBJECT = ?", $subjectId);
         if ($classObject)
             $SQL->where("GRADE = '" . $classObject->GRADE_ID . "'");
         $SQL->where("STATUS = '1'");
@@ -326,7 +327,7 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_student_assignment', 'COUNT(*) AS C');
-        $SQL->where("ASSIGNMENT_ID = ?",$Id);
+        $SQL->where("ASSIGNMENT_ID = ?", $Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -417,11 +418,11 @@ class AssignmentDBAccess {
         $SQL->joinLeft(Array('D' => 't_grade'), 'A.GRADE=D.ID', Array());
 
         if ($subjectId)
-            $SQL->where("A.SUBJECT = ?",$subjectId);
+            $SQL->where("A.SUBJECT = ?", $subjectId);
         if ($gradeId)
-            $SQL->where("A.GRADE = ?",$gradeId);
+            $SQL->where("A.GRADE = ?", $gradeId);
         if ($schoolyearId)
-            $SQL->where("A.SCHOOLYEAR = ?",$schoolyearId);
+            $SQL->where("A.SCHOOLYEAR = ?", $schoolyearId);
 
         if ($academicObject) {
             if ($academicObject->EDUCATION_SYSTEM) {
@@ -638,8 +639,8 @@ class AssignmentDBAccess {
     public function checkCountScoreDate($Id, $subjectId, $academicId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array("C" => "COUNT(*)"));
-        $SQL->where("ASSIGNMENT_ID = ?",$Id);
-        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("ASSIGNMENT_ID = ?", $Id);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
         $SQL->where("CLASS_ID = '" . $academicId . "'");
         $SQL->group('SCORE_INPUT_DATE');
         //error_log($SQL->__toString());
@@ -651,8 +652,8 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array('*'));
-        $SQL->where("ASSIGNMENT_ID = ?",$assignmentId);
-        $SQL->where("SUBJECT_ID = ?",$subjectId);
+        $SQL->where("ASSIGNMENT_ID = ?", $assignmentId);
+        $SQL->where("SUBJECT_ID = ?", $subjectId);
         $SQL->where("CLASS_ID = '" . $academicId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -661,7 +662,7 @@ class AssignmentDBAccess {
     public function checkAssignmentInClass($subjectId, $academicId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array("C" => "COUNT(*)"));
-        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("SUBJECT = ?", $subjectId);
         $SQL->where("CLASS = '" . $academicId . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -673,9 +674,9 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array('*'));
-        $SQL->where("SUBJECT = ?",$subjectId);
-        $SQL->where("GRADE = ?",$gradeId);
-        $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
+        $SQL->where("SUBJECT = ?", $subjectId);
+        $SQL->where("GRADE = ?", $gradeId);
+        $SQL->where("SCHOOLYEAR = ?", $schoolyearId);
         $SQL->where("USED_IN_CLASS = '" . $usedInClass . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
@@ -715,13 +716,13 @@ class AssignmentDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array("C" => "COUNT(*)"));
-        $SQL->where("SUBJECT = ?",$subjectId);
+        $SQL->where("SUBJECT = ?", $subjectId);
         if ($academicId)
             $SQL->where("CLASS = '" . $academicId . "'");
         if ($gradeId)
-            $SQL->where("GRADE = ?",$gradeId);
+            $SQL->where("GRADE = ?", $gradeId);
         if ($schoolyearId)
-            $SQL->where("SCHOOLYEAR = ?",$schoolyearId);
+            $SQL->where("SCHOOLYEAR = ?", $schoolyearId);
         if ($tempId)
             $SQL->where("TEMP_ID = '" . $tempId . "'");
         //error_log($SQL);
@@ -769,6 +770,18 @@ class AssignmentDBAccess {
             $searchParams["schoolyearId"] = $academicObject->SCHOOL_YEAR;
             return self::getAllAssignmentQuery($searchParams);
         }
+    }
+
+    public static function updateStudentAssignment($objectId) {
+
+        $facette = self::findAssignmentFromId($objectId);
+
+        $WHERE = Array();
+        $SAVEDATA['EVALUATION_TYPE'] = $facette->EVALUATION_TYPE;
+        $SAVEDATA['COEFF_VALUE'] = $facette->COEFF_VALUE;
+        $SAVEDATA['INCLUDE_IN_EVALUATION'] = $facette->INCLUDE_IN_EVALUATION;
+        $WHERE[] = "ASSIGNMENT_ID = '" . $facette->ID . "'";
+        self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
     }
 
 }
