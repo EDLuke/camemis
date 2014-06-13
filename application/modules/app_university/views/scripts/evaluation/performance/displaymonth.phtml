@@ -21,7 +21,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$GRADING_TYPE = $academicObject->GRADING_TYPE?"GPA":"ASSESSMENT";
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 $monthyear = isset($_GET["monthyear"])? addText($_GET["monthyear"]):"";
 
@@ -103,7 +103,8 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");   
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");
-    $OBJECT_GRID->addReadField("name: 'GPA'");  
+    $OBJECT_GRID->addReadField("name: 'GPA'");
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
     
     if($entries){
         foreach($entries as $value){
@@ -125,7 +126,7 @@ Ext.onReady(function() {
     if($academicObject->DISPLAY_GPA){
         $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GPA',filter:{}");
     }
-    
+            
     switch(UserAuth::getUserType()){
         case "SUPERADMIN":
         case "ADMIN":
@@ -139,6 +140,7 @@ Ext.onReady(function() {
                 , dataIndex: 'ASSESSMENT_TOTAL'
                 , renderer:cssDefault  
                 , editor: ".$comboEditor."
+                ,filter:{}
             ");
             break;
          case 'STUDENT':
@@ -153,7 +155,27 @@ Ext.onReady(function() {
         break;  
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+    if(!$academicObject->EVALUATION_OPTION){
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+    }else{
+        $OBJECT_GRID->addColumn("
+            header: '<b>".RANK."</b>'
+            , width: 120
+            , align: 'right'
+            , sortable: true
+            , dataIndex: 'RANK'
+            , renderer:cssDefault
+            , editor: new Ext.form.NumberField({
+                allowBlank: false
+                ,name: 'RANK'   
+            })
+            ,filter:{}
+        ");
+    }
+    
+    if($academicObject->DISPLAY_GRADE_POINTS){
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
+    }
     $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     if($entries){
@@ -181,7 +203,7 @@ Ext.onReady(function() {
             ");
         break;
     } 
-    
+     
     $setActionPareams = $setParams;
     $setActionPareams .= "&target=MONTH";
     $OBJECT_GRID->addTBarItems("

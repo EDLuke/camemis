@@ -121,7 +121,8 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");   
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");
-    $OBJECT_GRID->addReadField("name: 'GPA'");  
+    $OBJECT_GRID->addReadField("name: 'GPA'");
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
     
     if($entries){
         foreach($entries as $value){
@@ -189,6 +190,10 @@ Ext.onReady(function() {
             })
             ,filter:{}
         ");
+    }
+    
+    if($academicObject->DISPLAY_GRADE_POINTS){
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
     }
     $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     

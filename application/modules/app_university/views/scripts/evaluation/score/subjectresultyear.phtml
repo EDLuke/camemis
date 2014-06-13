@@ -92,7 +92,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
-    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
     
     switch($TERM_NUMBER){
         case 1:
@@ -224,6 +224,10 @@ Ext.onReady(function() {
                 })
                 ,filter:{}
             ");
+        }
+        
+        if($academicObject->DISPLAY_GRADE_POINTS){
+            $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
         }
         $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
     }

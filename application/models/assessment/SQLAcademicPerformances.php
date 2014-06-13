@@ -127,6 +127,7 @@ class SQLAcademicPerformances {
 
         $data["GRADING"] = "---";
         $data["RANK"] = "---";
+        $data["GRADE_POINTS"] = "---";
         $data["IS_FAIL"] = "";
         $data["GPA"] = "---";
         $data["TOTAL_RESULT"] = "---";
@@ -142,6 +143,7 @@ class SQLAcademicPerformances {
                 $SELECTION_A = array(
                     'RANK'
                     , 'ASSESSMENT_ID'
+                    , 'GRADE_POINTS'
                     , 'GPA'
                     , 'TOTAL_RESULT'
                     , 'FIRST_RESULT'
@@ -189,6 +191,7 @@ class SQLAcademicPerformances {
                     $data["RANK"] = $result->RANK ? $result->RANK : "---";
                     $data["IS_FAIL"] = $result->IS_FAIL;
                     $data["GPA"] = $result->GPA ? $result->GPA : "---";
+                    $data["GRADE_POINTS"] = $result->GRADE_POINTS ? $result->GRADE_POINTS : "---";
                     $data["TOTAL_RESULT"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
                     $data["FIRST_RESULT"] = $result->FIRST_RESULT ? $result->FIRST_RESULT : "---";
                     $data["SECOND_RESULT"] = $result->SECOND_RESULT ? $result->SECOND_RESULT : "---";

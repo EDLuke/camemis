@@ -98,8 +98,10 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STUDENT'");   
     $OBJECT_GRID->addReadField("name: 'RANK'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     
     if(!$academicObject->EVALUATION_OPTION){
         if($entries){
@@ -209,6 +211,11 @@ Ext.onReady(function() {
         
         if(!$academicObject->EVALUATION_OPTION){
             $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+            
+            if($academicObject->DISPLAY_GRADE_POINTS){
+                $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
+            }
+            
             $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
         }else{
             $OBJECT_GRID->addColumn("

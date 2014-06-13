@@ -111,6 +111,7 @@ class AcademicPerformances extends AssessmentProperties {
                 $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
 
                 $data[$i]["RANK"] = $facette->RANK;
+                $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
@@ -156,10 +157,11 @@ class AcademicPerformances extends AssessmentProperties {
                 $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
 
                 $data[$i]["RANK"] = $facette->RANK;
+                $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
-                
+
                 if ($this->getListSubjects()) {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
@@ -200,10 +202,11 @@ class AcademicPerformances extends AssessmentProperties {
                 $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
 
                 $data[$i]["RANK"] = $facette->RANK;
+                $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                 $data[$i]["AVERAGE_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["ASSESSMENT_TOTAL"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
-                
+
                 switch ($this->getTermNumber()) {
                     case 1:
 
@@ -280,7 +283,7 @@ class AcademicPerformances extends AssessmentProperties {
 
         return $data;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
 
     public function getListStudentsMonthAcademicPerformance() {

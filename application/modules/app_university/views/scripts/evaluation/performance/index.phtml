@@ -58,7 +58,7 @@ $setParams .= "&academicId=".$this->academicId."";
         
         if($academicObject->DISPLAY_MONTH_RESULT)
         $PENEL_ITEMS[] = $MONTHLY_RESULT;
-        
+
         switch ($TERM_NUMBER) {
             case 1:
 
@@ -160,7 +160,7 @@ $setParams .= "&academicId=".$this->academicId."";
                 $setParamsSecond = $setParams;
                 $setParamsSecond .= "&term=SECOND_SEMESTER";
                 $SECOND_SEMESTER_RESULT = "{
-                    title: '".SECOND_SEMESTER."'
+                    title: '".SECOND_SEMESTER_RESULT."'
                     ,layout: 'fit'
                     ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER', url: '/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."'})]
                 }";
@@ -168,22 +168,16 @@ $setParams .= "&academicId=".$this->academicId."";
                 $PENEL_ITEMS[] = $SECOND_SEMESTER_RESULT;
             break;
         }
-    
-        $setParamsYear = $setParams;
+        
+        $setYearParams = "";
+        $setYearParams .= $setParams;
         $YEAR_RESULT = "{
             title: '".YEAR_RESULT."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
+            ,items: [new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setYearParams)."'})]
         }";
-
         if($academicObject->DISPLAY_YEAR_RESULT)
         $PENEL_ITEMS[] = $YEAR_RESULT;
-
-        if($PENEL_ITEMS){
-            $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
-        }else{
-            $CHOOSE_ITEMS = $DISPLAY_ERROR;
-        }
         
         if($PENEL_ITEMS){
             $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";

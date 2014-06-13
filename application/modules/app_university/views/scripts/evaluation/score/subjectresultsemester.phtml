@@ -120,7 +120,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_TERM'");
     $OBJECT_GRID->addReadField("name: 'MONTH_RESULT'");
     $OBJECT_GRID->addReadField("name: 'TERM_RESULT'");
-    
+    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
     $OBJECT_GRID->addReadField("name: 'RANG'");
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -221,6 +221,9 @@ Ext.onReady(function() {
         
         if(!$academicObject->EVALUATION_OPTION){
             $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
+            if($academicObject->DISPLAY_GRADE_POINTS){
+                $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
+            }
             $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE',filter:{}");
         }else{
             $OBJECT_GRID->addColumn("
@@ -422,19 +425,6 @@ Ext.onReady(function() {
     });
     
     <?
-    
-//    if(!$academicObject->EVALUATION_OPTION){
-//        $SHOW_DETAIL ="{";
-//        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
-//        $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
-//        $SHOW_DETAIL .=",disabled:false";
-//        $SHOW_DETAIL .=",handler: function(){";
-//        $SHOW_DETAIL .="openWinIFrame('".SHOW_DETAIL." &raquo; ' + record.data.STUDENT,'/evaluation/displaysemestersubject/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(85));";
-//        $SHOW_DETAIL .="}";
-//        $SHOW_DETAIL .="}";
-//
-//        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
-//    }
     
     $TEACHER_COMMENTS ="{";
     $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
