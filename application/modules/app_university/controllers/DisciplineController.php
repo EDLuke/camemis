@@ -11,7 +11,8 @@ require_once setUserLoacalization();
 require_once 'models/app_university/UserDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/app_university/student/StudentDBAccess.php';
-require_once 'models/filter/jsonStudentFilterReport.php';
+//require_once 'models/filter/jsonStudentFilterReport.php';
+require_once 'models/filter/jsonFilterReport.php';
 require_once 'models/DisciplineDBAccess.php';
 
 class DisciplineController extends Zend_Controller_Action {
