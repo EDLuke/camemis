@@ -108,7 +108,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     ,cmd: 'searchStudent'
                     ,classId: '".$this->classId."'
                 ";
-                $OBJECT_GRID->isObjectDefaultOnLoad = false;
+                $OBJECT_GRID->isObjectDefaultOnLoad = true;
             break;
         }
         
@@ -370,16 +370,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             case "ADMIN":
             case "INSTRUCTOR":
             case "TEACHER":
-                if(UserAuth::getACLValue($DISCIPLINE_REMOVE_RIGHT))
+               // if(UserAuth::getACLValue($DISCIPLINE_REMOVE_RIGHT))
                 $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
 
                 if ($this->objectId !="new") {
-                    if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
+                    //if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
                     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
-                    if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
+                    //if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
                     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave()); 
                 }else{
-                    if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT)) 
+                    //if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT)) 
                     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
                 }
             break;
