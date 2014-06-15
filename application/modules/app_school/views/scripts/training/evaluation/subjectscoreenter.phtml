@@ -26,8 +26,8 @@ $academicObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
 $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $academicObject);
 
 $ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(
-    $subjectId
-    , $trainingId
+    $this->subjectId
+    , $this->trainingId
 );
 
 $setParams = "";
