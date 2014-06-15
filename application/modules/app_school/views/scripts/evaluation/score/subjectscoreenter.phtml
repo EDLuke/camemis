@@ -9,9 +9,6 @@ require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_school/AcademicDateDBAccess.php';
-require_once 'models/app_school/assignment/AssignmentDBAccess.php';
-require_once 'models/app_school/academic/AcademicDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -23,6 +20,7 @@ $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+$assignmentObject = AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
@@ -90,7 +88,13 @@ Ext.onReady(function() {
     function cssScore(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="color:#333;background:#FFF;font-weight:normal;">' + value + '</div>';
+        return '<div style="color:#333;background:#FFF;font-weight:bold;">' + value + '</div>';
+    }
+    
+    function cssScoreRepeat(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="color:#CC0000;background:#FFF;font-weight:bold;">' + value + '</div>';
     }
     
     <?
@@ -141,6 +145,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'SCORE'");
+    $OBJECT_GRID->addReadField("name: 'SCORE_REPEAT'");
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
 
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -169,6 +174,24 @@ Ext.onReady(function() {
                     ,name: 'SCORE'   
                 })
             ");
+            
+            if($assignmentObject->INCLUDE_IN_EVALUATION == 2){
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".SCORE." (".REPEAT.")</b>'
+                    , width: 120
+                    , sortable: true
+                    , align:'right'
+                    , renderer:cssScoreRepeat
+                    , dataIndex: 'SCORE_REPEAT'
+                    , editor: new Ext.form.NumberField({
+                        allowBlank: false
+                        ,minValue: 0
+                        ,maxValue: $subjectObject->SCORE_MAX
+                        ,name: 'SCORE_REPEAT'   
+                    })
+                ");
+            }
+            
             break;
         case 2:
             $STORE_DATA = array();
@@ -322,9 +345,13 @@ Ext.onReady(function() {
         myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_LIST_ID');
         myNode = myTree.getNodeById('".$this->assignmentId."');
         myNode.reload();
-        myNode.expand(true, false); 
+        myNode.expand(true, false);
     ");
     
+    $OBJECT_GRID->setAftereditEvent("
+        e.record.set('SCORE',jsonData.SCORE);
+        e.record.set('SCORE_REPEAT',jsonData.SCORE_REPEAT);
+    ");
     $OBJECT_GRID->addTBarItems("tbar.add('->');");
     $OBJECT_GRID->isQuickySearch = true;
     $OBJECT_GRID->isGridEditing = true;

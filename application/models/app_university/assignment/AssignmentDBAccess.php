@@ -729,28 +729,7 @@ class AssignmentDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
-
-    public static function checkScoreEnter($academicId, $term, $date) {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_grade", Array("C" => "COUNT(*)"));
-        $SQL->where("ID = '" . $academicId . "'");
-        switch ($term) {
-            case "FIRST_SEMESTER":
-                $SQL->where("FIRST_SCORE_START <= '" . $date . "' AND FIRST_SCORE_END >= '" . $date . "'");
-                break;
-            case "SECOND_SEMESTER":
-                $SQL->where("SECOND_SCORE_START <= '" . $date . "' AND SECOND_SCORE_END >= '" . $date . "'");
-                break;
-            case "YEAR":
-                $SQL->where("YEAR_SCORE_START <= '" . $date . "' AND YEAR_SCORE_END >= '" . $date . "'");
-                break;
-        }
-        //error_log($SQL);
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
-    }
-
+    
     public static function mappingAcademicEvaluationType($type, $Id) {
         $WHERE = Array();
         $SAVEDATA['EVALUATION_TYPE'] = $type;

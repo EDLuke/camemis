@@ -507,12 +507,6 @@ class CamemisGrid {
                 $js .= ",field: e.field";
                 $js .= ",newValue: e.value";
 
-//                if ($this->comboReplaceValue) {
-//                    $js .= ",newValue: replaceValue?replaceValue:e.value";
-//                } else {
-//                    $js .= ",newValue: e.value";
-//                }
-
                 $js .= "" . $this->saveParams . "";
                 $js .= "}";
                 $js .= ",method: 'POST'";

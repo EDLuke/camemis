@@ -121,7 +121,6 @@ class AcademicDBAccess {
             $data["PHONE"] = setShowText($facette->PHONE);
             $data["LEVEL"] = setShowText($facette->LEVEL);
             $data["PRE_REQUIREMENTS"] = setShowText($facette->PRE_REQUIREMENTS);
-            $data["SCORE_MODIFICATION"] = displayNumberFormat($facette->SCORE_MODIFICATION);
             $data["YEAR_RESULT"] = $facette->YEAR_RESULT;
 
             //@Math Man 17.01.2014
@@ -150,19 +149,6 @@ class AcademicDBAccess {
             $data["SHOW_FR"] = $facette->FR ? YES : NO;
             $data["SHOW_SA"] = $facette->SA ? YES : NO;
             $data["SHOW_SU"] = $facette->SU ? YES : NO;
-
-            $data["FIRST_SCORE_START"] = getShowDate($facette->FIRST_SCORE_START);
-            $data["FIRST_SCORE_END"] = getShowDate($facette->FIRST_SCORE_END);
-            $data["SECOND_SCORE_START"] = getShowDate($facette->SECOND_SCORE_START);
-            $data["SECOND_SCORE_END"] = getShowDate($facette->SECOND_SCORE_END);
-            $data["THIRD_SCORE_START"] = getShowDate($facette->THIRD_SCORE_START);
-            $data["THIRD_SCORE_END"] = getShowDate($facette->THIRD_SCORE_END);
-            $data["FOURTH_SCORE_START"] = getShowDate($facette->FOURTH_SCORE_START);
-            $data["FOURTH_SCORE_END"] = getShowDate($facette->FOURTH_SCORE_END);
-
-            $data["YEAR_SCORE_START"] = getShowDate($facette->YEAR_SCORE_START);
-            $data["YEAR_SCORE_END"] = getShowDate($facette->YEAR_SCORE_END);
-            $data["END_SCHOOL"] = $facette->END_SCHOOL ? true : false;
 
             $data["SEMESTER1_WEIGHTING"] = $facette->SEMESTER1_WEIGHTING ? $facette->SEMESTER1_WEIGHTING : 1;
             $data["SEMESTER2_WEIGHTING"] = $facette->SEMESTER2_WEIGHTING ? $facette->SEMESTER2_WEIGHTING : 1;
@@ -914,16 +900,6 @@ class AcademicDBAccess {
 
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["NUMBER_CREDIT"] = $schoolyearObject->NUMBER_CREDIT;
-                    $FIRST_SAVEDATA["FIRST_SCORE_START"] = $schoolyearObject->FIRST_SCORE_START;
-                    $FIRST_SAVEDATA["FIRST_SCORE_END"] = $schoolyearObject->FIRST_SCORE_END;
-                    $FIRST_SAVEDATA["SECOND_SCORE_START"] = $schoolyearObject->SECOND_SCORE_START;
-                    $FIRST_SAVEDATA["SECOND_SCORE_END"] = $schoolyearObject->SECOND_SCORE_END;
-                    $FIRST_SAVEDATA["THIRD_SCORE_START"] = $schoolyearObject->THIRD_SCORE_START;
-                    $FIRST_SAVEDATA["THIRD_SCORE_END"] = $schoolyearObject->THIRD_SCORE_END;
-                    $FIRST_SAVEDATA["FOURTH_SCORE_START"] = $schoolyearObject->FOURTH_SCORE_START;
-                    $FIRST_SAVEDATA["FOURTH_SCORE_END"] = $schoolyearObject->FOURTH_SCORE_END;
-                    $FIRST_SAVEDATA["YEAR_SCORE_START"] = $schoolyearObject->YEAR_SCORE_START;
-                    $FIRST_SAVEDATA["YEAR_SCORE_END"] = $schoolyearObject->YEAR_SCORE_END;
                     $FIRST_SAVEDATA["EDUCATION_TYPE"] = $schoolyearObject->EDUCATION_TYPE;
                     $FIRST_SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearObject->QUALIFICATION_TYPE;
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
@@ -1018,16 +994,6 @@ class AcademicDBAccess {
             if ($entries) {
                 foreach ($entries as $value) {
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
-                    $SAVEDATA["FIRST_SCORE_START"] = $schoolyearsubjectObject->FIRST_SCORE_START;
-                    $SAVEDATA["FIRST_SCORE_END"] = $schoolyearsubjectObject->FIRST_SCORE_END;
-                    $SAVEDATA["SECOND_SCORE_START"] = $schoolyearsubjectObject->SECOND_SCORE_START;
-                    $SAVEDATA["SECOND_SCORE_END"] = $schoolyearsubjectObject->SECOND_SCORE_END;
-                    $SAVEDATA["THIRD_SCORE_START"] = $schoolyearsubjectObject->THIRD_SCORE_START;
-                    $SAVEDATA["THIRD_SCORE_END"] = $schoolyearsubjectObject->THIRD_SCORE_END;
-                    $SAVEDATA["FOURTH_SCORE_START"] = $schoolyearsubjectObject->FOURTH_SCORE_START;
-                    $SAVEDATA["FOURTH_SCORE_END"] = $schoolyearsubjectObject->FOURTH_SCORE_END;
-                    $SAVEDATA["YEAR_SCORE_START"] = $schoolyearsubjectObject->YEAR_SCORE_START;
-                    $SAVEDATA["YEAR_SCORE_END"] = $schoolyearsubjectObject->YEAR_SCORE_END;
                     $SAVEDATA["EDUCATION_TYPE"] = $schoolyearsubjectObject->EDUCATION_TYPE;
                     $SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearsubjectObject->QUALIFICATION_TYPE;
                     $SAVEDATA["SEMESTER1_WEIGHTING"] = $schoolyearsubjectObject->SEMESTER1_WEIGHTING;
@@ -1174,236 +1140,6 @@ class AcademicDBAccess {
             return $result ? $result->EDUCATION_TYPE : 0;
         else
             return $json;
-    }
-
-    public function actionScoreDuration($params) {
-
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : 0;
-
-        $UPDATE_VALUES['MODIFY_DATE'] = getCurrentDBDateTime();
-        $UPDATE_VALUES['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
-
-        switch ($actionType) {
-            case 1:
-                #$CHECK_ERROR_START_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["FIRST_SCORE_START"]));
-                #$CHECK_ERROR_END_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["FIRST_SCORE_END"]));
-                $CHECK_ERROR_START_END_DATE = timeDifference(setDate2DB($params["FIRST_SCORE_START"]), setDate2DB($params["FIRST_SCORE_END"]));
-
-                $UPDATE_VALUES["FIRST_SCORE_START"] = setDate2DB($params["FIRST_SCORE_START"]);
-                $UPDATE_VALUES["FIRST_SCORE_END"] = setDate2DB($params["FIRST_SCORE_END"]);
-
-                #if ($objectId && !$CHECK_ERROR_START_DATE || !$CHECK_ERROR_END_DATE || !$CHECK_ERROR_START_END_DATE) {
-                if ($objectId && !$CHECK_ERROR_START_END_DATE) {
-                    $WHERE[] = "ID = '" . $objectId . "'";
-                    self::dbAccess()->update('t_grade', $UPDATE_VALUES, $WHERE);
-                }
-
-                $text = DURATION_FOR_SCORE_MANAGEMENT . " (" . FIRST_SEMESTER . ")";
-                SpecialDBAccess::jsonActionLogAcademic($objectId, $text);
-
-                break;
-            case 2:
-
-                #$CHECK_ERROR_START_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["SECOND_SCORE_START"]));
-                #$CHECK_ERROR_END_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["SECOND_SCORE_END"]));
-                $CHECK_ERROR_START_END_DATE = timeDifference(setDate2DB($params["SECOND_SCORE_START"]), setDate2DB($params["SECOND_SCORE_END"]));
-
-                $UPDATE_VALUES["SECOND_SCORE_START"] = setDate2DB($params["SECOND_SCORE_START"]);
-                $UPDATE_VALUES["SECOND_SCORE_END"] = setDate2DB($params["SECOND_SCORE_END"]);
-
-                #if ($objectId && !$CHECK_ERROR_START_DATE || !$CHECK_ERROR_END_DATE || !$CHECK_ERROR_START_END_DATE) {
-                if ($objectId && !$CHECK_ERROR_START_END_DATE) {
-                    $WHERE[] = "ID = '" . $objectId . "'";
-                    self::dbAccess()->update('t_grade', $UPDATE_VALUES, $WHERE);
-                }
-
-                $text = DURATION_FOR_SCORE_MANAGEMENT . " (" . SECOND_SEMESTER . ")";
-                SpecialDBAccess::jsonActionLogAcademic($objectId, $text);
-
-                break;
-            case 3:
-
-                #$CHECK_ERROR_START_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["YEAR_SCORE_START"]));
-                #$CHECK_ERROR_END_DATE = timeDifference(getCurrentDBDate(), setDate2DB($params["YEAR_SCORE_END"]));
-                $CHECK_ERROR_START_END_DATE = timeDifference(setDate2DB($params["YEAR_SCORE_START"]), setDate2DB($params["YEAR_SCORE_END"]));
-
-                $UPDATE_VALUES["YEAR_SCORE_START"] = setDate2DB($params["YEAR_SCORE_START"]);
-                $UPDATE_VALUES["YEAR_SCORE_END"] = setDate2DB($params["YEAR_SCORE_END"]);
-
-                #if ($objectId && !$CHECK_ERROR_START_DATE || !$CHECK_ERROR_END_DATE || !$CHECK_ERROR_START_END_DATE) {
-                if ($objectId && !$CHECK_ERROR_START_END_DATE) {
-                    $WHERE[] = "ID = '" . $objectId . "'";
-                    self::dbAccess()->update('t_grade', $UPDATE_VALUES, $WHERE);
-                }
-
-                $text = DURATION_FOR_SCORE_MANAGEMENT . " (" . YEAR . ")";
-                SpecialDBAccess::jsonActionLogAcademic($objectId, $text);
-
-                break;
-        }
-
-        switch ($actionType) {
-            case 1:
-                /*
-                  if ($CHECK_ERROR_START_DATE) {
-                  $errors["FIRST_SCORE_START"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_END_DATE) {
-                  $errors["FIRST_SCORE_END"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_START_DATE && $CHECK_ERROR_END_DATE) {
-                  $errors["FIRST_SCORE_START"] = CHECK_DATE_PAST;
-                  $errors["FIRST_SCORE_END"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_START_END_DATE) {
-                  $errors["FIRST_SCORE_START"] = ERROR;
-                  $errors["FIRST_SCORE_END"] = ERROR;
-                  } else {
-                  $errors = array();
-                  }
-                 */
-                if ($CHECK_ERROR_START_END_DATE) {
-                    $errors["FIRST_SCORE_START"] = ERROR;
-                    $errors["FIRST_SCORE_END"] = ERROR;
-                } else {
-                    $errors = array();
-                }
-                break;
-            case 2:
-                /*
-                  if ($CHECK_ERROR_START_DATE) {
-                  $errors["SECOND_SCORE_START"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_END_DATE) {
-                  $errors["SECOND_SCORE_END"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_START_DATE && $CHECK_ERROR_END_DATE) {
-                  $errors["SECOND_SCORE_START"] = CHECK_DATE_PAST;
-                  $errors["SECOND_SCORE_END"] = CHECK_DATE_PAST;
-                  } elseif ($CHECK_ERROR_START_END_DATE) {
-                  $errors["SECOND_SCORE_START"] = ERROR;
-                  $errors["SECOND_SCORE_END"] = ERROR;
-                  } else {
-                  $errors = array();
-                  }
-                 */
-                if ($CHECK_ERROR_START_END_DATE) {
-                    $errors["FIRST_SCORE_START"] = ERROR;
-                    $errors["FIRST_SCORE_END"] = ERROR;
-                } else {
-                    $errors = array();
-                }
-                break;
-            case 3:
-
-                if ($CHECK_ERROR_START_END_DATE) {
-                    $errors["YEAR_SCORE_START"] = ERROR;
-                    $errors["YEAR_SCORE_END"] = ERROR;
-                } else {
-                    $errors = array();
-                }
-
-                break;
-        }
-
-        ///
-        $facette = self::findGradeFromId($objectId);
-        self::updateAllSchoolyearChildren($facette);
-
-        if ($errors) {
-            return array("success" => false, "errors" => $errors);
-        } else {
-            return array("success" => true, "errors" => $errors);
-        }
-    }
-
-    public function jsonLoadScoreDeadLine($params) {
-
-        $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : "";
-
-        $DB_ACADEMIC = AcademicDateDBAccess::getInstance();
-        $DB_STUDENT = StudentDBAccess::getInstance();
-
-        $GRADES = array();
-        switch (UserAuth::getUserType()) {
-            case "INSTRUCTOR":
-            case "TEACHER":
-                $evt_params['teacherId'] = Zend_Registry::get('USERID');
-                $evt_params['schoolyearId'] = $DB_ACADEMIC->findCurrentSchoolyear(Zend_Registry::get('SCHOOL_ID'));
-                $teacherGrades = $this->sqlSubjectGradeByTeacherId($evt_params);
-                foreach ($teacherGrades as $key => $value) {
-                    if (!in_array($value->GRADE, $GRADES))
-                        array_push($GRADES, $value->GRADE);
-                }
-                break;
-            case "STUDENT" :
-                $USER = $DB_STUDENT->getStudentDataFromId(Zend_Registry::get('USERID'));
-                $current_gradeId = $USER['CURRENT_GRADE_ID'];
-                if ($current_gradeId)
-                    array_push($GRADES, $current_gradeId);
-                break;
-            case "SYSTEM":
-                $evt_params['schoolyearId'] = $DB_ACADEMIC->findCurrentSchoolyear(Zend_Registry::get('SCHOOL_ID'));
-                $teacherGrades = $this->sqlSubjectGradeByTeacherId($evt_params);
-                foreach ($teacherGrades as $key => $value) {
-                    if (!in_array($value->GRADE, $GRADES))
-                        array_push($GRADES, $value->GRADE);
-                }
-                break;
-            default:
-                break;
-        }
-        if (!$schoolyearId)
-            $schoolyearId = $DB_ACADEMIC->findCurrentSchoolyear(Zend_Registry::get('SCHOOL_ID'));
-        $entries = $this->sqlAllGradesDeadline($schoolyearId);
-
-        $data = array();
-        $USED_GRADE = array();
-        $i = 0;
-        if ($entries) {
-            foreach ($entries as $key => $value) {
-                if (in_array($value->GRADE_ID, $GRADES) && !in_array($value->GRADE_ID, $USED_GRADE)) {
-                    array_push($USED_GRADE, $value->GRADE_ID);
-                    //FIRST_SEMESTER
-                    if ($value->FIRST_SCORE_START && $value->FIRST_SCORE_END) {
-                        $data[$i]["GRADE_NAME"] = $value->GRADE_NAME;
-                        $data[$i]["FIRST_SEMESTER_DATE"] = getShowDate($value->FIRST_SCORE_START) . ' - ' . getShowDate($value->FIRST_SCORE_END);
-                        $data[$i]["SECOND_SEMESTER_DATE"] = getShowDate($value->SECOND_SCORE_START) . ' - ' . getShowDate($value->SECOND_SCORE_END);
-                        $data[$i]["YEAR_DATE"] = getShowDate($value->YEAR_SCORE_START) . ' - ' . getShowDate($value->YEAR_SCORE_END);
-                        $i++;
-                    }
-                }
-            }
-        }
-        if ($data) {
-            $data = arraySortByKeyDate($data, "START_DATE");
-        }
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $data
-        );
-    }
-
-    public function sqlAllGradesDeadline($schoolyearId) {
-
-        $SQL = "SELECT DISTINCT
-		B.NAME as GRADE_NAME,
-		B.ID as GRADE_ID,
-		A.FIRST_SCORE_START as FIRST_SCORE_START,
-		A.FIRST_SCORE_END as FIRST_SCORE_END,
-		A.SECOND_SCORE_START as SECOND_SCORE_START,
-		A.SECOND_SCORE_END as SECOND_SCORE_END,
-		A.YEAR_SCORE_START as YEAR_SCORE_START,
-		A.YEAR_SCORE_END as YEAR_SCORE_END
-		";
-
-        $SQL .= " FROM t_grade AS A ";
-        $SQL .= " LEFT JOIN t_grade AS B on A.GRADE_ID = B.ID ";
-
-        $SQL .= " WHERE A.SCHOOL_YEAR = '" . $schoolyearId . "'";
-        $SQL .= " AND A.OBJECT_TYPE = 'CLASS' ";
-
-        $DB_ACCESS = Zend_Registry::get('DB_ACCESS');
-        $stmt = $DB_ACCESS->query($SQL);
-
-        return $stmt->fetchAll();
     }
 
     public function sqlSubjectGradeByTeacherId($params) {
@@ -1586,26 +1322,7 @@ class AcademicDBAccess {
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
-
-    public function jsonActionScoreModification($Id, $type) {
-
-        if ($Id) {
-            $SQL = "UPDATE t_grade SET SCORE_MODIFICATION='" . $type . "' WHERE ID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
-
-            if (!$type) {
-                $text = ENABLE_SCORE_MODIFICATION;
-            } else {
-                $text = DISABLE_SCORE_MODIFICATION;
-            }
-
-            SpecialDBAccess::jsonActionLogAcademic($Id, $text);
-        }
-        return array(
-            "success" => true
-        );
-    }
-
+    
     public static function findAcademicFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
