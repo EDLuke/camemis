@@ -1120,7 +1120,6 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $SQL->from('t_training_subject', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = '" . $subjecId . "'");
         $SQL->where("TRAINING = '" . $trainingId . "'");
-
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

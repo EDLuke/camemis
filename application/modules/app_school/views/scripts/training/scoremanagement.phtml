@@ -22,7 +22,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 
 <script>
-    var firstId;
+    var choosedate = '<?=date('m-d-Y');?>';
     Ext.onReady(function() {
 
         <?
@@ -34,9 +34,29 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
         
+        $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                xtype:'datefield'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,width:120
+                ,name:'choosedate'
+                ,value:'".getShowDate(date('d-m-Y'))."'
+                ,listeners: {
+                    'select' : function(dp, date) {
+                        myTree = ".$OBJECT_TREE->ExtgetCmp().";
+                        myTree.loader.baseParams.choosedate = date.format('Y-m-j');
+                        myTree.root.reload();
+                    }
+                }
+            }]
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllTrainings'
+            ,choosedate:choosedate
         ");
+        
         $OBJECT_TREE->isOnClickContextMenu = false;
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isTreeExpand = false;
@@ -84,11 +104,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
         myTree.on('click', function(node){
             if(node.isLeaf()){
-                //clickOpenPage('center',node.text, '/training/evaluationstudenttraining/?objectId=' + node.id);
-                //clickOpenPage('center','', '/academic/scoremonitor/?classId=' + node.id);
                 clickOpenPage('center','', '/training/scoremonitortraining/?classId=' + node.id);
                 Ext.getCmp('TRAINING_ID').collapse();
-                
             }
         }); 
     });

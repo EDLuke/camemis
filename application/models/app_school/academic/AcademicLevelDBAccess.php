@@ -21,8 +21,10 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     private $dataforjson = null;
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
@@ -32,7 +34,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     /**
      * TREE: Generaledu....
      */
-    public static function getSQLAllAcademics($params) {
+    public static function getSQLAllAcademics($params)
+    {
 
         $educationSystem = isset($params["educationSystem"]) ? addText($params["educationSystem"]) : 0;
         $parentCampus = isset($params["parentCampus"]) ? addText($params["parentCampus"]) : "";
@@ -47,10 +50,13 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $parentNode = '';
 
-        if ($gradeSchoolyearId) {
+        if ($gradeSchoolyearId)
+        {
             $GRADE_SCHOOLYEAR_OBJECT = AcademicDBAccess::findGradeFromId($gradeSchoolyearId);
             $schoolyearId = $GRADE_SCHOOLYEAR_OBJECT->SCHOOL_YEAR;
-        } else {
+        }
+        else
+        {
             $schoolyearId = isset($params["SCHOOLYEAR"]) ? addText($params["SCHOOLYEAR"]) : 0;
         }
 
@@ -85,80 +91,111 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL .= " LEFT JOIN t_academicdate AS B ON A.SCHOOL_YEAR=B.ID";
         $SQL .= " WHERE 1=1";
 
-        if (!$parentNode) {
-            if ($educationSystem) {
+        if (!$parentNode)
+        {
+            if ($educationSystem)
+            {
                 $SQL .= " AND A.EDUCATION_SYSTEM = 1";
-            } else {
+            }
+            else
+            {
                 $SQL .= " AND A.EDUCATION_SYSTEM = 0";
             }
         }
 
-        if (!$searchCampus || !$searchGrade || !$searchSchoolyear) {
+        if (!$searchCampus || !$searchGrade || !$searchSchoolyear)
+        {
 
-            if ($parentCampus) {
-                if (!$parent) {
+            if ($parentCampus)
+            {
+                if (!$parent)
+                {
                     $SQL .= " AND A.ID = '" . $parentCampus . "'";
-                } else {
+                }
+                else
+                {
                     $SQL .= " AND A.PARENT = '" . $parent . "'";
                 }
-            } elseif ($parentGrade) {
-                if (!$parent) {
+            }
+            elseif ($parentGrade)
+            {
+                if (!$parent)
+                {
                     $SQL .= " AND A.ID = '" . $parentGrade . "'";
-                } else {
+                }
+                else
+                {
                     $SQL .= " AND A.PARENT = '" . $parent . "'";
                 }
-            } else {
+            }
+            else
+            {
                 $SQL .= " AND A.PARENT = '" . $parent . "'";
-                if ($academicObject) {//@veasna
-                    if ($academicObject->OBJECT_TYPE == "CAMPUS" && $academicObject->EDUCATION_SYSTEM == 1) {
-                        if ($schoolyearId) {
+                if ($academicObject)
+                {//@veasna
+                    if ($academicObject->OBJECT_TYPE == "CAMPUS" && $academicObject->EDUCATION_SYSTEM == 1)
+                    {
+                        if ($schoolyearId)
+                        {
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $schoolyearId . "'";
                         }
                     }
                 }
             }
 
-            if ($objectType == "CAMPUS") {
+            if ($objectType == "CAMPUS")
+            {
                 $SQL .= " AND A.OBJECT_TYPE = 'CAMPUS'";
             }
 
-            if ($objectTypeIn) {
+            if ($objectTypeIn)
+            {
                 $SQL .= " AND A.OBJECT_TYPE IN " . $objectTypeIn;
             }
         }
 
-        if ($parent == 0) {
-            if ($searchCampus) {
+        if ($parent == 0)
+        {
+            if ($searchCampus)
+            {
                 $SQL .= " AND A.ID = '" . $searchCampus . "'";
             }
             $SQL .= " ORDER BY A.SORTKEY ASC";
-        } else {
+        }
+        else
+        {
 
-            switch ($objectType) {
+            switch ($objectType)
+            {
                 case "GRADE":
                     $SQL .= " AND A.OBJECT_TYPE = 'GRADE'";
                     break;
             }
 
-            if ($academicObject) {
+            if ($academicObject)
+            {
 
-                switch ($academicObject->OBJECT_TYPE) {
+                switch ($academicObject->OBJECT_TYPE)
+                {
 
                     case "CAMPUS":
 
-                        if ($searchGrade) {
+                        if ($searchGrade)
+                        {
                             $SQL .= " AND A.ID = '" . $searchGrade . "'";
                         }
                         $SQL .= " ORDER BY A.SORTKEY ASC";
 
                         break;
                     case "GRADE":
-                        if ($searchSchoolyear) {
+                        if ($searchSchoolyear)
+                        {
                             $SQL .= " AND A.OBJECT_TYPE = 'SCHOOLYEAR'";
                             $SQL .= " AND A.GRADE_ID = '" . $searchGrade . "'";
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $searchSchoolyear . "'";
                         }
-                        if ($schoolyearId) {
+                        if ($schoolyearId)
+                        {
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $schoolyearId . "'";
                         }
 
@@ -167,7 +204,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         break;
                     case "SCHOOLYEAR":
 
-                        if ($searchSchoolyear) {
+                        if ($searchSchoolyear)
+                        {
                             $SQL .= " AND A.OBJECT_TYPE = 'CLASS'";
                             $SQL .= " AND A.GRADE_ID = '" . $searchGrade . "'";
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $searchSchoolyear . "'";
@@ -190,7 +228,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function getTreeTraditionalEducationSystem($params) {
+    public function getTreeTraditionalEducationSystem($params)
+    {
 
         $isClassCheckbox = isset($params["isClassCheckbox"]) ? addText($params["isClassCheckbox"]) : "";
 
@@ -199,14 +238,18 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $result = self::getSQLAllAcademics($params);
 
         $allowDelete = false;
-        if (Zend_Registry::get('IS_SUPER_ADMIN') == 1) {
+        if (Zend_Registry::get('IS_SUPER_ADMIN') == 1)
+        {
             $allowDelete = true;
-        } elseif (UserAuth::getUserType() == "SUPERADMIN") {
+        }
+        elseif (UserAuth::getUserType() == "SUPERADMIN")
+        {
             $allowDelete = true;
         }
 
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $isCurrentYear = $schoolyearObject->isCurrentSchoolyear($value->SCHOOL_YEAR);
 
@@ -219,7 +262,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $data['educationSystem'] = $value->EDUCATION_SYSTEM;
                 $data['subjectId'] = $value->SUBJECT_ID;
 
-                switch ($value->OBJECT_TYPE) {
+                switch ($value->OBJECT_TYPE)
+                {
 
                     case "CAMPUS":
                         $data['text'] = setShowText($value->NAME);
@@ -245,14 +289,20 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['gradeId'] = $value->GRADE_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
 
-                        if ($isCurrentYear) {
+                        if ($isCurrentYear)
+                        {
                             $data['cls'] = "nodeTextBoldBlue";
-                        } else {
+                        }
+                        else
+                        {
                             $data['cls'] = "nodeTextRedBold";
                         }
-                        if ($value->STATUS == 1) {
+                        if ($value->STATUS == 1)
+                        {
                             $data['iconCls'] = "icon-date";
-                        } else {
+                        }
+                        else
+                        {
                             $data['iconCls'] = "icon-date_edit";
                         }
                         break;
@@ -264,18 +314,25 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['gradeId'] = $value->GRADE_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
                         $data['useOfGroups'] = $value->USE_OF_GROUPS;
-                        if ($isCurrentYear) {
+                        if ($isCurrentYear)
+                        {
                             $data['cls'] = "nodeTextBlue";
-                        } else {
+                        }
+                        else
+                        {
                             $data['cls'] = "nodeTextRedBold";
                         }
-                        if ($value->STATUS == 1) {
+                        if ($value->STATUS == 1)
+                        {
                             $data['iconCls'] = "icon-blackboard";
-                        } else {
+                        }
+                        else
+                        {
                             $data['iconCls'] = "icon-page_white_edit";
                         }
 
-                        if ($isClassCheckbox) {
+                        if ($isClassCheckbox)
+                        {
                             $data['checked'] = false;
                         }
                         $data['click'] = true;
@@ -295,7 +352,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function getTreeCreditEducationSystem($params) {
+    public function getTreeCreditEducationSystem($params)
+    {
 
         $isClassCheckbox = isset($params["isClassCheckbox"]) ? addText($params["isClassCheckbox"]) : "";
 
@@ -304,14 +362,18 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $result = self::getSQLAllAcademics($params);
 
         $allowDelete = false;
-        if (Zend_Registry::get('IS_SUPER_ADMIN') == 1) {
+        if (Zend_Registry::get('IS_SUPER_ADMIN') == 1)
+        {
             $allowDelete = true;
-        } elseif (UserAuth::getUserType() == "SUPERADMIN") {
+        }
+        elseif (UserAuth::getUserType() == "SUPERADMIN")
+        {
             $allowDelete = true;
         }
 
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $isCurrentYear = $schoolyearObject->isCurrentSchoolyear($value->SCHOOL_YEAR);
 
@@ -324,7 +386,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $data['educationSystem'] = $value->EDUCATION_SYSTEM;
                 $data['subjectId'] = $value->SUBJECT_ID;
 
-                switch ($value->OBJECT_TYPE) {
+                switch ($value->OBJECT_TYPE)
+                {
 
                     case "CAMPUS":
                         $data['text'] = setShowText($value->NAME);
@@ -340,14 +403,20 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['campusId'] = $value->CAMPUS_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
 
-                        if ($isCurrentYear) {
+                        if ($isCurrentYear)
+                        {
                             $data['cls'] = "nodeTextBoldBlue";
-                        } else {
+                        }
+                        else
+                        {
                             $data['cls'] = "nodeTextRedBold";
                         }
-                        if ($value->STATUS == 1) {
+                        if ($value->STATUS == 1)
+                        {
                             $data['iconCls'] = "icon-date";
-                        } else {
+                        }
+                        else
+                        {
                             $data['iconCls'] = "icon-date_edit";
                         }
                         break;
@@ -355,14 +424,20 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
                         $subjectObject = SubjectDBAccess::findSubjectFromId($value->SUBJECT_ID);
 
-                        if ($subjectObject) {
+                        if ($subjectObject)
+                        {
                             $data['title'] = $subjectObject->NAME;
-                            if ($subjectObject->SHORT) {
+                            if ($subjectObject->SHORT)
+                            {
                                 $data['text'] = "($subjectObject->SHORT) " . $subjectObject->NAME;
-                            } else {
+                            }
+                            else
+                            {
                                 $data['text'] = $subjectObject->NAME;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             $data['text'] = "?";
                         }
 
@@ -378,7 +453,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     case "CLASS":
                         $subjectObject = SubjectDBAccess::findSubjectFromId($value->SUBJECT_ID);
 
-                        if ($subjectObject) {
+                        if ($subjectObject)
+                        {
                             $data['title'] = setShowText($subjectObject->NAME) . " &raquo; " . setShowText($value->NAME);
                         }
 
@@ -386,18 +462,25 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['classStatus'] = $value->STATUS;
                         $data['campusId'] = $value->CAMPUS_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
-                        if ($isCurrentYear) {
+                        if ($isCurrentYear)
+                        {
                             $data['cls'] = "nodeTextBlue";
-                        } else {
+                        }
+                        else
+                        {
                             $data['cls'] = "nodeTextRedBold";
                         }
-                        if ($value->STATUS == 1) {
+                        if ($value->STATUS == 1)
+                        {
                             $data['iconCls'] = "icon-blackboard";
-                        } else {
+                        }
+                        else
+                        {
                             $data['iconCls'] = "icon-page_white_edit";
                         }
 
-                        if ($isClassCheckbox) {
+                        if ($isClassCheckbox)
+                        {
                             $data['checked'] = false;
                         }
                         $data['click'] = true;
@@ -417,7 +500,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function getCountChildren($Id) {
+    public function getCountChildren($Id)
+    {
         $SQL = "SELECT count(*) AS C FROM t_grade WHERE PARENT = '" . $Id . "'";
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -425,7 +509,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     // Add Node...
     ////////////////////////////////////////////////////////////////////////////
-    public function addNode($params) {
+    public function addNode($params)
+    {
 
         $parentId = addText($params["parentId"]);
 
@@ -449,14 +534,16 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
 
-        switch ($params["objecttype"]) {
+        switch ($params["objecttype"])
+        {
             case "CAMPUS":
                 $name = setShowText($postName);
                 $SAVEDATA['NAME'] = $name;
                 $SAVEDATA['TITLE'] = $name;
                 $SAVEDATA['TREE_TYPE'] = 0;
 
-                if (isset($params["QUALIFICATION_TYPE"])) {
+                if (isset($params["QUALIFICATION_TYPE"]))
+                {
                     $SAVEDATA['EDUCATION_TYPE'] = addText($params["QUALIFICATION_TYPE"]);
                     $SAVEDATA['QUALIFICATION_TYPE'] = addText($params["QUALIFICATION_TYPE"]);
                 }
@@ -489,6 +576,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 if (isset($params["LEVEL"]))
                     $SAVEDATA['LEVEL'] = addText($params["LEVEL"]);
 
+                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
                 $SAVEDATA['CAMPUS_ID'] = $OBJECT_PARENT->ID;
@@ -527,7 +615,9 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $SAVEDATA['TREE_TYPE'] = 0;
                 $OBJECT_SCHOOL_YEAR = AcademicDateDBAccess::findAcademicDateFromId($newSchoolyear);
 
-                if ($OBJECT_SCHOOL_YEAR) {
+                if ($OBJECT_SCHOOL_YEAR)
+                {
+                    $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                     $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                     $SAVEDATA['NAME'] = $OBJECT_SCHOOL_YEAR->NAME;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $OBJECT_SCHOOL_YEAR->NAME . " (" . getTermNumberShort($OBJECT_PARENT->TERM_NUMBER) . ")";
@@ -542,9 +632,12 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
                     $SAVEDATA['GRADE_ID'] = $OBJECT_PARENT->ID;
 
-                    if ($OBJECT_PARENT->EDUCATION_SYSTEM) {
+                    if ($OBJECT_PARENT->EDUCATION_SYSTEM)
+                    {
                         $SAVEDATA['CAMPUS_ID'] = $OBJECT_PARENT->ID;
-                    } else {
+                    }
+                    else
+                    {
                         $SAVEDATA['CAMPUS_ID'] = $OBJECT_PARENT->CAMPUS_ID;
                     }
 
@@ -560,8 +653,9 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $iconCls = "icon-date_add";
                     $navtitle = $OBJECT_PARENT->TITLE . " &raquo; " . $OBJECT_SCHOOL_YEAR->NAME . " (" . getTermNumberShort($OBJECT_PARENT->TERM_NUMBER) . ")";
                     $cls = "nodeTextBoldBlue";
-                } else {
-
+                }
+                else
+                {
                     $name = "";
                     $leaf = false;
                     $objecttype = "SCHOOLYEAR";
@@ -576,7 +670,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
                 $SAVEDATA['NUMBER_CREDIT'] = $OBJECT_PARENT->NUMBER_CREDIT;
 
-                if ($chooseSubjectId) {
+                if ($chooseSubjectId)
+                {
                     $name = $chooseSubjectName . " (?)";
                     $SAVEDATA['NAME'] = $chooseSubjectName;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $chooseSubjectName;
@@ -584,13 +679,16 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['SUBJECT_ID'] = $chooseSubjectId;
 
                     GradeSubjectDBAccess::addSubject2Grade($chooseSubjectId, $OBJECT_PARENT->ID);
-                } else {
+                }
+                else
+                {
                     $name = $postName . " (?)";
                     $SAVEDATA['NAME'] = $postName;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $postName;
                     $SAVEDATA['TREE_TYPE'] = 1;
                 }
 
+                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['LEVEL'] = $OBJECT_PARENT->LEVEL;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
@@ -657,7 +755,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $SAVEDATA["FORMULA_YEAR"] = $OBJECT_PARENT->FORMULA_YEAR;
                 ///
 
-                if ($OBJECT_PARENT->EDUCATION_SYSTEM) {
+                if ($OBJECT_PARENT->EDUCATION_SYSTEM)
+                {
                     $SAVEDATA['SUBJECT_ID'] = $OBJECT_PARENT->SUBJECT_ID;
                 }
 
@@ -672,7 +771,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
                 $SAVEDATA['NUMBER_CREDIT'] = $OBJECT_PARENT->NUMBER_CREDIT;
 
-                if ($chooseSubjectId) {
+                if ($chooseSubjectId)
+                {
                     $name = $chooseSubjectName . " (?)";
                     $SAVEDATA['NAME'] = $chooseSubjectName;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $chooseSubjectName;
@@ -680,13 +780,16 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['SUBJECT_ID'] = $chooseSubjectId;
 
                     GradeSubjectDBAccess::addSubject2Grade($chooseSubjectId, $OBJECT_PARENT->ID);
-                } else {
+                }
+                else
+                {
                     $name = $postName . " (?)";
                     $SAVEDATA['NAME'] = $postName;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $postName;
                     $SAVEDATA['TREE_TYPE'] = 1;
                 }
 
+                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['LEVEL'] = $OBJECT_PARENT->LEVEL;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
@@ -758,7 +861,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         self::dbAccess()->insert('t_grade', $SAVEDATA);
         $objectId = self::dbAccess()->lastInsertId();
 
-        switch ($params["objecttype"]) {
+        switch ($params["objecttype"])
+        {
 
             case "SCHOOLYEAR":
                 $newSchoolyearId = isset($params["NEW_SCHOOLYEAR"]) ? $params["NEW_SCHOOLYEAR"] : "";
@@ -769,20 +873,27 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $gradeId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
                 $newGradeSchoolyearId = $objectId;
 
-                if ($QUESTION == "YES") {
+                if ($QUESTION == "YES")
+                {
                     $ACTION = true;
-                } else {
+                }
+                else
+                {
                     $ACTION = false;
                 }
 
-                if ($COPY_LASTSCHOOLYEAR && $ACTION) {
+                if ($COPY_LASTSCHOOLYEAR && $ACTION)
+                {
 
                     $entriesClass = self::dbAccess()->fetchAll("SELECT * FROM t_grade WHERE SCHOOL_YEAR='" . $COPY_LASTSCHOOLYEAR . "' AND GRADE_ID='" . $gradeId . "' AND OBJECT_TYPE='CLASS'");
 
-                    if ($newSchoolyearId) {
+                    if ($newSchoolyearId)
+                    {
 
-                        if ($entriesClass) {
-                            foreach ($entriesClass as $value) {
+                        if ($entriesClass)
+                        {
+                            foreach ($entriesClass as $value)
+                            {
                                 $SAVE_CLASS_DATA['PARENT'] = $newGradeSchoolyearId;
                                 $SAVE_CLASS_DATA['CODE'] = createCode();
                                 $SAVE_CLASS_DATA['GUID'] = generateGuid();
@@ -822,14 +933,18 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 ////////////////////////////////////////////////////////////////
                 //COPY SUBJECT...
                 ////////////////////////////////////////////////////////////////
-                if ($COPY_SUBJECT && $ACTION) {
+                if ($COPY_SUBJECT && $ACTION)
+                {
 
                     $entriesSubject = self::dbAccess()->fetchAll("SELECT * FROM t_grade_subject WHERE SCHOOLYEAR='" . $COPY_LASTSCHOOLYEAR . "' AND GRADE='" . $gradeId . "'");
 
-                    if ($newSchoolyearId) {
+                    if ($newSchoolyearId)
+                    {
 
-                        if ($entriesSubject) {
-                            foreach ($entriesSubject as $value) {
+                        if ($entriesSubject)
+                        {
+                            foreach ($entriesSubject as $value)
+                            {
 
                                 $SAVE_SUBJECT_DATA['SCHOOLYEAR'] = $newSchoolyearId;
                                 $SAVE_SUBJECT_DATA['ASSIGNED_SUBJECT'] = $value->ASSIGNED_SUBJECT;
@@ -867,12 +982,16 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 ////////////////////////////////////////////////////////////////
                 //COPY ASSIGNMENT...
                 ////////////////////////////////////////////////////////////////
-                if ($COPY_ASSIGNMENT && $ACTION) {
+                if ($COPY_ASSIGNMENT && $ACTION)
+                {
                     $entriesAssignment = self::dbAccess()->fetchAll("SELECT * FROM t_assignment WHERE SCHOOLYEAR='" . $COPY_LASTSCHOOLYEAR . "' AND GRADE='" . $gradeId . "'");
-                    if ($newSchoolyearId) {
+                    if ($newSchoolyearId)
+                    {
 
-                        if ($entriesAssignment) {
-                            foreach ($entriesAssignment as $value) {
+                        if ($entriesAssignment)
+                        {
+                            foreach ($entriesAssignment as $value)
+                            {
 
                                 $SAVE_ASSIGNMENT_DATA['SCHOOLYEAR'] = $newSchoolyearId;
                                 $SAVE_ASSIGNMENT_DATA['GRADE'] = $value->GRADE;
@@ -912,13 +1031,15 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     ///////////////////////////////////////////////////////´////////////////////
     //List: GradingMethods
     ////////////////////////////////////////////////////////////////////////////
-    public function allGradingMethods($params) {
+    public function allGradingMethods($params)
+    {
 
         $this->DB_GRADING_METHOD = GradingMethodDBAccess::getInstance();
         return $this->DB_GRADING_METHOD->allGradingMethods($params);
     }
 
-    public function teachersByGrade($params) {
+    public function teachersByGrade($params)
+    {
 
         $subjectId = $params["subjectId"];
 
@@ -935,24 +1056,31 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data['id'] = "" . $value->ID . "";
                 $data['text'] = $value->NAME;
                 $data['leaf'] = true;
 
                 $check = $this->checkTeacherByGrade($value->ID, $subjectId);
 
-                if ($check) {
+                if ($check)
+                {
                     $data['checked'] = true;
-                } else {
+                }
+                else
+                {
                     $data['checked'] = false;
                 }
 
                 $data['cls'] = "nodeText";
 
-                if ($value->GENDER == 1) {
+                if ($value->GENDER == 1)
+                {
                     $data['iconCls'] = "icon-user_male";
-                } else {
+                }
+                else
+                {
                     $data['iconCls'] = "icon-user_female";
                 }
 
@@ -962,7 +1090,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $this->dataforjson;
     }
 
-    protected function subjectsByGradeQuery($params) {
+    protected function subjectsByGradeQuery($params)
+    {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -973,7 +1102,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL .= " WHERE 1=1";
         $SQL .= " AND B.GRADE = '" . Zend_Registry::get('OBJECT_SCHOOLYEAR')->GRADE_ID . "'";
 
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SQL .= " AND ((A.NAME like '" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
@@ -982,7 +1112,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     }
 
     //vesna
-    public function subjectsByGradeId($id) {
+    public function subjectsByGradeId($id)
+    {
         $SQL = "";
         $SQL .= " SELECT DISTINCT A.ID AS ID ,A.NAME AS NAME";
         $SQL .= " FROM t_subject AS A";
@@ -995,7 +1126,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $i = 0;
         if ($result)
-            while (list($key, $row) = each($result)) {
+            while (list($key, $row) = each($result))
+            {
                 $data[$i]["ID"] = $row->ID;
                 $data[$i]["SUBJECT"] = $row->NAME;
 
@@ -1005,7 +1137,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $data;
     }
 
-    public function subjectsByGradeArray() {
+    public function subjectsByGradeArray()
+    {
 
         $result = $this->subjectsByGradeQuery(false);
 
@@ -1013,7 +1146,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $i = 0;
         if ($result)
-            while (list($key, $row) = each($result)) {
+            while (list($key, $row) = each($result))
+            {
                 $data[$i]["ID"] = $row->ID;
                 $data[$i]["SUBJECT"] = $row->NAME;
 
@@ -1023,7 +1157,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $data;
     }
 
-    public function subjectsByGrade($params) {
+    public function subjectsByGrade($params)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -1033,7 +1168,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $data = array();
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
@@ -1044,7 +1180,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1056,31 +1193,37 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         );
     }
 
-    public function addTeachersInToSchoolyear($params) {
+    public function addTeachersInToSchoolyear($params)
+    {
 
         $selectionIds = $params["checkItems"];
         $subjectId = $params["subjectId"];
 
         $this->removeTeachersFromSchoolYear($subjectId);
 
-        if ($selectionIds != "") {
+        if ($selectionIds != "")
+        {
             $selectedTeachers = explode(",", $selectionIds);
 
             $selectedCount = 0;
             if ($selectedTeachers)
-                foreach ($selectedTeachers as $teacherId) {
+                foreach ($selectedTeachers as $teacherId)
+                {
 
                     $this->addTeacherSchoolYear($teacherId, $subjectId);
                     $selectedCount++;
                 }
-        } else {
+        }
+        else
+        {
             $selectedCount = 0;
         }
 
         return array("success" => true, 'selectedCount' => $selectedCount);
     }
 
-    protected function removeTeachersFromSchoolYear($subjectId) {
+    protected function removeTeachersFromSchoolYear($subjectId)
+    {
 
         $SQL = "
             DELETE FROM t_subject_teacher_class
@@ -1092,7 +1235,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    protected function addTeacherSchoolYear($teacherId, $subjectId) {
+    protected function addTeacherSchoolYear($teacherId, $subjectId)
+    {
 
         $SAVEDATA['TEACHER'] = $teacherId;
         $SAVEDATA['SUBJECT'] = $subjectId;
@@ -1101,7 +1245,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         self::dbAccess()->insert('t_subject_teacher_class', $SAVEDATA);
     }
 
-    protected function checkTeacherByGrade($teacherId, $subjectId) {
+    protected function checkTeacherByGrade($teacherId, $subjectId)
+    {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_subject_teacher_class";
@@ -1114,7 +1259,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result->C ? true : false;
     }
 
-    protected function getTeacherSubjectClass($subjectId) {
+    protected function getTeacherSubjectClass($subjectId)
+    {
 
         $SQL = "SELECT A.ID AS ID, CONCAT(A.LASTNAME,' ',A.FIRSTNAME,' (',C.NAME,')') AS NAME";
         $SQL .= " FROM t_staff AS A";
@@ -1130,7 +1276,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $ii = $i + 1;
                 $data[$i] = $ii . ") " . $value->NAME;
@@ -1141,7 +1288,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return implode("<BR>", $data);
     }
 
-    public function getClassesByGradeId($gradeId, $schoolyearId) {
+    public function getClassesByGradeId($gradeId, $schoolyearId)
+    {
         $SQL = "";
         $SQL .= "SELECT ID, NAME";
         $SQL .= " FROM t_grade";
@@ -1154,7 +1302,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function actionSubjectTeacherClass($params) {
+    public function actionSubjectTeacherClass($params)
+    {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -1174,11 +1323,13 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $data = array();
         $i = 0;
         if ($TEACHER_LIST)
-            foreach ($TEACHER_LIST as $STAFF_OBJECT) {
+            foreach ($TEACHER_LIST as $STAFF_OBJECT)
+            {
 
                 $data[$i]["ID"] = $STAFF_OBJECT->ID;
                 if ($CLASS_LIST)
-                    foreach ($CLASS_LIST as $classObject) {
+                    foreach ($CLASS_LIST as $classObject)
+                    {
 
                         $share = $this->isTeacherInSchedule($STAFF_OBJECT->ID, $classObject->ID, $schoolyearId);
                         $data[$i]["TEACHER"] = iconInSchedule($share) . "&nbsp;" . $STAFF_OBJECT->NAME . "&nbsp;(" . $STAFF_OBJECT->CODE . ")";
@@ -1192,7 +1343,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1207,7 +1359,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     // Set Subject - Teacher - Class
     ////////////////////////////////////////////////////////////////////////////
-    public function setSubjectTeacherClass($params) {
+    public function setSubjectTeacherClass($params)
+    {
 
         $teacherId = isset($params["id"]) ? addText($params["id"]) : 0;
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : 0;
@@ -1218,12 +1371,14 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $checkSchedule = $this->checkTeacherInSchedule($teacherId, $classId, $subjectId);
 
-        if ($newValue == 1) {
+        if ($newValue == 1)
+        {
 
             $check = $this->findSubjectTeacherClass($teacherId, $classId, $subjectId);
             $isSubjectInClass = $this->isSubjectInClass($classId, $subjectId);
 
-            if ($check == 0 && $isSubjectInClass == 0) {
+            if ($check == 0 && $isSubjectInClass == 0)
+            {
 
                 $SQL = "";
                 $SQL .= "INSERT INTO t_subject_teacher_class";
@@ -1236,12 +1391,15 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
                 self::dbAccess()->query($SQL);
             }
-        } else {
+        }
+        else
+        {
 
             ////////////////////////////////////////////////////////////////////
             // Teacher in Schedule?
             ////////////////////////////////////////////////////////////////////
-            if (!$checkSchedule) {
+            if (!$checkSchedule)
+            {
 
                 $SQL = "";
                 $SQL .= "DELETE FROM t_subject_teacher_class";
@@ -1259,7 +1417,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return array("success" => true);
     }
 
-    protected function findSubjectTeacherClass($teacherId, $classId, $subjectId) {
+    protected function findSubjectTeacherClass($teacherId, $classId, $subjectId)
+    {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_subject_teacher_class";
@@ -1271,7 +1430,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function isSubjectInClass($classId, $subjectId) {
+    protected function isSubjectInClass($classId, $subjectId)
+    {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_subject_teacher_class";
@@ -1282,7 +1442,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function removeScheduleFromClass($classId) {
+    protected function removeScheduleFromClass($classId)
+    {
 
         $SQL = "DELETE FROM ";
         $SQL .= " t_schedule";
@@ -1291,7 +1452,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    protected function checkSchoolyearByGrade($gradeId, $schoolyearId) {
+    protected function checkSchoolyearByGrade($gradeId, $schoolyearId)
+    {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_grade";
@@ -1302,12 +1464,14 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function saveWorkingDays($params) {
+    public function saveWorkingDays($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $checkItems = isset($params["checkItems"]) ? $params["checkItems"] : 0;
 
-        if ($checkItems) {
+        if ($checkItems)
+        {
 
             $days = explode(",", $checkItems);
 
@@ -1326,16 +1490,19 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return array("success" => true);
     }
 
-    public function treeWorkingDays($params) {
+    public function treeWorkingDays($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $academicObject = self::findGradeFromId($objectId);
 
         $data = array();
 
-        for ($i = 0; $i <= 6; $i++) {
+        for ($i = 0; $i <= 6; $i++)
+        {
 
-            switch ($i) {
+            switch ($i)
+            {
 
                 case 0:
                     $dayName = MONDAY;
@@ -1384,7 +1551,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $data;
     }
 
-    public function jsonSubjectTeacherClass($params) {
+    public function jsonSubjectTeacherClass($params)
+    {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -1419,7 +1587,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $share = $this->isTeacherInSchedule($value->TEACHER_ID, $value->CLASSS_ID, $schoolyearId);
 
@@ -1432,7 +1601,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1444,7 +1614,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         );
     }
 
-    public function checkTeacherInSchedule($teacherId, $classId, $subjectId, $gradingterm = false) {
+    public function checkTeacherInSchedule($teacherId, $classId, $subjectId, $gradingterm = false)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
@@ -1461,7 +1632,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result->C ? 1 : 0;
     }
 
-    protected function isTeacherInSchedule($teacherId, $classId, $schoolyearId) {
+    protected function isTeacherInSchedule($teacherId, $classId, $schoolyearId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schedule", array("C" => "COUNT(*)"));
@@ -1476,7 +1648,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function gradesByCampus($params) {
+    public function gradesByCampus($params)
+    {
 
         $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "0";
 
@@ -1495,7 +1668,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $data[0]["ID"] = "0";
         $data[0]["NAME"] = "[---]";
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i + 1]["ID"] = $value->ID;
                 $data[$i + 1]["NAME"] = $value->NAME;
@@ -1510,7 +1684,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         );
     }
 
-    public function getSQLSubjectTeacherClass($params, $groupby = false) {
+    public function getSQLSubjectTeacherClass($params, $groupby = false)
+    {
 
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : 0;
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : 0;
@@ -1546,7 +1721,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         if ($schoolyearId)
             $SQL .= " AND C.SCHOOL_YEAR = '" . $schoolyearId . "'";
 
-        if ($groupby) {
+        if ($groupby)
+        {
             $SQL .= " GROUP BY $groupby";
         }
 
@@ -1554,7 +1730,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function jsonAssignedTeachers($params) {
+    public function jsonAssignedTeachers($params)
+    {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -1572,7 +1749,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $share = $this->isTeacherInSchedule($value->TEACHER_ID, $value->CLASSS_ID, $schoolyearId);
 
@@ -1588,7 +1766,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1600,7 +1779,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         );
     }
 
-    public function checkSubjctGrade($objectId) {
+    public function checkSubjctGrade($objectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade_subject", array("C" => "COUNT(*)"));
@@ -1610,7 +1790,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function checkStaffInClass($objectId) {
+    public function checkStaffInClass($objectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -1620,7 +1801,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function checkStudentInClass($objectId) {
+    public function checkStudentInClass($objectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
@@ -1630,16 +1812,19 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonTreeTeacherWorkingClass() {
+    public function jsonTreeTeacherWorkingClass()
+    {
 
         $searchParams["teacherId"] = Zend_Registry::get('USER')->ID;
         $entries = $this->getSQLSubjectTeacherClass($searchParams, "B.CLASS");
 
         $data = array();
 
-        if ($entries) {
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
                 $data[$i]['id'] = $value->CLASS_ID;
                 $data[$i]['text'] = $value->CLASS_NAME;
                 $data[$i]['leaf'] = true;
@@ -1652,7 +1837,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $data;
     }
 
-    public function jsonTreeTeacherWorkingSubject() {
+    public function jsonTreeTeacherWorkingSubject()
+    {
 
         $DB_SCHEDULE = ScheduleDBAccess::getInstance();
 
@@ -1661,16 +1847,19 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
         $data = array();
 
-        if ($entries) {
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
 
                 $CHECK_SUBJECTS_IN_SCHEDULE = $DB_SCHEDULE->getSubjectsInSchedule(
                         Zend_Registry::get('USER')->ID
                         , $value->CLASS_ID
                 );
 
-                if (in_array($value->SUBJECT_ID, $CHECK_SUBJECTS_IN_SCHEDULE)) {
+                if (in_array($value->SUBJECT_ID, $CHECK_SUBJECTS_IN_SCHEDULE))
+                {
 
                     $data[$i]['id'] = $value->SUBJECT_ID;
                     $data[$i]['text'] = $value->SUBJECT_NAME;
@@ -1685,7 +1874,8 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         return $data;
     }
 
-    public static function jsonTreeAllAcademicGradeSchoolyear($params) {
+    public static function jsonTreeAllAcademicGradeSchoolyear($params)
+    {
 
         $data = array();
         $node = isset($params["node"]) ? addText($params["node"]) : "";
@@ -1717,14 +1907,17 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $schoolyearObject = AcademicDateDBAccess::getInstance();
 
         $i = 0;
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
 
                 $isCurrentYear = $schoolyearObject->isCurrentSchoolyear($value->SCHOOL_YEAR);
                 $data[$i]['objectType'] = $value->OBJECT_TYPE;
                 $data[$i]['schoolyearId'] = $value->SCHOOL_YEAR;
 
-                switch ($value->OBJECT_TYPE) {
+                switch ($value->OBJECT_TYPE)
+                {
                     case "CAMPUS":
                         $data[$i]['id'] = $value->ID;
                         $data[$i]['text'] = setShowText($value->NAME);
@@ -1748,9 +1941,12 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data[$i]['text'] = setShowText($value->NAME);
                         $data[$i]['objecttype'] = "SCHOOLYEAR";
 
-                        if ($gradeObject) {
+                        if ($gradeObject)
+                        {
                             $data[$i]['title'] = setShowText($gradeObject->NAME) . " (" . setShowText($value->NAME) . ") ";
-                        } else {
+                        }
+                        else
+                        {
                             $data[$i]['title'] = setShowText($value->NAME);
                         }
 
@@ -1759,15 +1955,21 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data[$i]['gradeId'] = $value->GRADE_ID;
                         $data[$i]['schoolyearId'] = $value->SCHOOL_YEAR;
 
-                        if ($isCurrentYear) {
+                        if ($isCurrentYear)
+                        {
                             $data[$i]['cls'] = "nodeTextBoldBlue";
-                        } else {
+                        }
+                        else
+                        {
                             $data[$i]['cls'] = "nodeTextRedBold";
                         }
 
-                        if ($value->STATUS == 1) {
+                        if ($value->STATUS == 1)
+                        {
                             $data[$i]['iconCls'] = "icon-date";
-                        } else {
+                        }
+                        else
+                        {
                             $data[$i]['iconCls'] = "icon-date_edit";
                         }
 

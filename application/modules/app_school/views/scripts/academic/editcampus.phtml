@@ -53,6 +53,7 @@ Ext.onReady(function() {
     $BASIC_INFORMATION .= ",{".CamemisField::Textfield("SHORT", "SHORT", SHORT)."}";
     $BASIC_INFORMATION .= ",{".CamemisField::Colorfield("COLOR", COLOR, false)."}";
     $BASIC_INFORMATION .= ",{".CamemisField::ComboQualificationType(false, false, false)."}";
+    $BASIC_INFORMATION .= ",{".CamemisField::Checkbox("YEAR_MULTI_ENROLLMENT","YEAR_MULTI_ENROLLMENT",MULTI_ENROLLMENT_YEAR, 1, false, false)."}";
     $BASIC_INFORMATION .= ",{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}";
     $BASIC_INFORMATION .= "]";
 

@@ -18,32 +18,39 @@ class TrainingDBAccess {
     public $data = array();
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public static function getTrainingDataFromId($Id) {
+    public static function getTrainingDataFromId($Id)
+    {
 
         $data = array();
         $result = self::findTrainingFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
 
             $data["CODE"] = $result->CODE;
             $data["ID"] = $result->ID;
@@ -113,16 +120,20 @@ class TrainingDBAccess {
         return $data;
     }
 
-    public function jsonLoadObject($Id) {
+    public function jsonLoadObject($Id)
+    {
 
         $result = self::findTrainingFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => self::getTrainingDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -131,7 +142,8 @@ class TrainingDBAccess {
         return $o;
     }
 
-    public static function findTrainingFromId($Id) {
+    public static function findTrainingFromId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training");
@@ -139,7 +151,8 @@ class TrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function checkCount($Id) {
+    public static function checkCount($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array("C" => "COUNT(*)"));
@@ -148,24 +161,29 @@ class TrainingDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false, $date = false) {
+    public static function allTrainingprograms($parentId = false, $objectTypeLevel = false, $date = false)
+    {
 
         $facette = self::findTrainingFromId($parentId);
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array('*'));
-        if ($parentId) {
+        if ($parentId)
+        {
             $SQL->where("PARENT = ?", $parentId);
             if ($objectTypeLevel)
                 $SQL->where("OBJECT_TYPE='" . $objectTypeLevel . "'");
-            switch ($facette->OBJECT_TYPE) {
+            switch ($facette->OBJECT_TYPE)
+            {
                 case "LEVEL":
-                    if ($date) {
+                    if ($date)
+                    {
                         $SQL->where("START_DATE <= '" . $date . "' AND END_DATE >= '" . $date . "'");
                     }
                     break;
             }
-        } else
+        }
+        else
             $SQL->where("PARENT = '0'");
 
         $SQL->order('SORTKEY ASC');
@@ -174,30 +192,41 @@ class TrainingDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonTreeAllTrainings($params) {
+    public static function jsonTreeAllTrainings($params)
+    {
 
         $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
         $children = isset($params["children"]) ? $params["children"] : false;
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
         $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : "";
 
-        if ($node == 0) {
+        if ($node == 0)
+        {
             $resultRows = self::allTrainingprograms(false);
-        } else {
+        }
+        else
+        {
             $resultRows = self::allTrainingprograms($node, $objectTypeLevel, $choosedate);
         }
 
         $data = array();
         $i = 0;
         if ($resultRows)
-            foreach ($resultRows as $value) {
+            foreach ($resultRows as $value)
+            {
 
-                if (Zend_Registry::get('IS_SUPER_ADMIN') == 1) {
+                if (Zend_Registry::get('IS_SUPER_ADMIN') == 1)
+                {
                     $data[$i]['allowDelete'] = true;
-                } else {
-                    if (self::checkCount($value->ID)) {
+                }
+                else
+                {
+                    if (self::checkCount($value->ID))
+                    {
                         $data[$i]['allowDelete'] = false;
-                    } else {
+                    }
+                    else
+                    {
                         $data[$i]['allowDelete'] = true;
                     }
                 }
@@ -206,8 +235,10 @@ class TrainingDBAccess {
                 $data[$i]['leaf'] = false;
                 $data[$i]['cls'] = "nodeTextBoldBlue";
 
-                if ($children == "TERM") {
-                    switch ($value->OBJECT_TYPE) {
+                if ($children == "TERM")
+                {
+                    switch ($value->OBJECT_TYPE)
+                    {
                         case "PROGRAM":
 
                             $data[$i]['leaf'] = false;
@@ -229,16 +260,22 @@ class TrainingDBAccess {
                             $data[$i]['leaf'] = true;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
-                            if ($value->STATUS == 1) {
+                            if ($value->STATUS == 1)
+                            {
                                 $data[$i]['iconCls'] = "icon-date";
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['iconCls'] = "icon-date_edit";
                             }
                             self::updateChildTerm($value->ID);
                             break;
                     }
-                } else {
-                    switch ($value->OBJECT_TYPE) {
+                }
+                else
+                {
+                    switch ($value->OBJECT_TYPE)
+                    {
                         case "PROGRAM":
                             $data[$i]['text'] = stripslashes($value->NAME);
                             $data[$i]['title'] = stripslashes($value->NAME);
@@ -268,9 +305,12 @@ class TrainingDBAccess {
                             $data[$i]['leaf'] = false;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
-                            if ($value->STATUS == 1) {
+                            if ($value->STATUS == 1)
+                            {
                                 $data[$i]['iconCls'] = "icon-date";
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['iconCls'] = "icon-date_edit";
                             }
                             $data[$i]['parentId'] = $value->PARENT;
@@ -286,10 +326,13 @@ class TrainingDBAccess {
                             $data[$i]['leaf'] = true;
                             $data[$i]['objecttype'] = "CLASS";
                             $data[$i]['parentId'] = $value->PARENT;
-                            if ($value->STATUS == 1) {
+                            if ($value->STATUS == 1)
+                            {
                                 $data[$i]['iconCls'] = "icon-blackboard";
                                 $data[$i]['cls'] = "nodeTextBlue";
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['iconCls'] = "icon-page_white_edit";
                                 $data[$i]['cls'] = "nodeTextRed";
                             }
@@ -303,7 +346,8 @@ class TrainingDBAccess {
         return $data;
     }
 
-    public static function jsonSaveTraining($params) {
+    public static function jsonSaveTraining($params)
+    {
 
         $SAVEDATA = array();
 
@@ -313,7 +357,8 @@ class TrainingDBAccess {
 
         $facette = self::findTrainingFromId($objectId);
 
-        if (isset($params["NAME"])) {
+        if (isset($params["NAME"]))
+        {
             $SAVEDATA["NAME"] = addText($params["NAME"]);
             $name = $params["NAME"];
         }
@@ -354,7 +399,8 @@ class TrainingDBAccess {
         if (isset($params["ENDTIME_BLOCK_AFTERNOON"]))
             $SAVEDATA['ENDTIME_BLOCK_AFTERNOON'] = timeStrToSecond($params["ENDTIME_BLOCK_AFTERNOON"]);
 
-        if (isset($params["START_DATE"]) && isset($params["END_DATE"])) {
+        if (isset($params["START_DATE"]) && isset($params["END_DATE"]))
+        {
             $SAVEDATA["START_DATE"] = setDate2DB($params["START_DATE"]);
             $SAVEDATA["END_DATE"] = setDate2DB($params["END_DATE"]);
             $name = $params["START_DATE"] . "-" . addText($params["END_DATE"]);
@@ -366,11 +412,13 @@ class TrainingDBAccess {
         $SAVEDATA['TRAINING_END'] = isset($params["TRAINING_END"]) ? 1 : 0;
         $SAVEDATA['POINTS_POSSIBLE'] = isset($params["POINTS_POSSIBLE"]) ? $params["POINTS_POSSIBLE"] : 10;
 
-        if ($facette) {
+        if ($facette)
+        {
 
             $parentObject = self::findTrainingFromId($facette->PARENT);
 
-            switch ($facette->OBJECT_TYPE) {
+            switch ($facette->OBJECT_TYPE)
+            {
 
                 case "LEVEL":
                     $TERM_OBJECT = self::findTrainingFromId($parentObject->ID);
@@ -428,10 +476,12 @@ class TrainingDBAccess {
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
 
             self::dbAccess()->update('t_training', $SAVEDATA, $WHERE);
-        } else {
+        } else
+        {
 
             $parentObject = self::findTrainingFromId($parent);
-            switch ($objctType) {
+            switch ($objctType)
+            {
 
                 case "LEVEL":
                     $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
@@ -468,13 +518,15 @@ class TrainingDBAccess {
         return array("success" => true, "text" => setShowText($name));
     }
 
-    public function jsonReleaseTraining($Id) {
+    public function jsonReleaseTraining($Id)
+    {
 
         $SAVEDATA = array();
 
         $facette = self::findTrainingFromId($Id);
         $newStatus = 0;
-        switch ($facette->STATUS) {
+        switch ($facette->STATUS)
+        {
             case 0:
                 $newStatus = 1;
                 $SAVEDATA["STATUS"] = 1;
@@ -496,7 +548,8 @@ class TrainingDBAccess {
         return array("success" => true, "status" => $newStatus);
     }
 
-    public function jsonRemoveTraining($Id) {
+    public function jsonRemoveTraining($Id)
+    {
 
         self::dbAccess()->delete(
                 't_training'
@@ -522,7 +575,8 @@ class TrainingDBAccess {
     }
 
     //All Level....
-    public static function updateChildProgram($Id) {
+    public static function updateChildProgram($Id)
+    {
 
         $facette = self::findTrainingFromId($Id);
         $SQL = self::dbAccess()->select();
@@ -531,8 +585,10 @@ class TrainingDBAccess {
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $SAVEDATA["PROGRAM"] = $facette->ID;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                 self::dbAccess()->update(self::TABLE_TRAINING, $SAVEDATA, $WHERE);
@@ -541,7 +597,8 @@ class TrainingDBAccess {
     }
 
     //All Term...
-    public static function updateChildLevel($Id) {
+    public static function updateChildLevel($Id)
+    {
 
         $facette = self::findTrainingFromId($Id);
         $SQL = self::dbAccess()->select();
@@ -550,8 +607,10 @@ class TrainingDBAccess {
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
                 $SAVEDATA["LEVEL"] = $facette->ID;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
@@ -561,7 +620,8 @@ class TrainingDBAccess {
     }
 
     //All Class....
-    public static function updateChildTerm($Id) {
+    public static function updateChildTerm($Id)
+    {
 
         $facette = self::findTrainingFromId($Id);
 
@@ -578,8 +638,10 @@ class TrainingDBAccess {
 
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
                 $SAVEDATA["TERM"] = $facette->ID;
                 $SAVEDATA["LEVEL"] = $facette->LEVEL;
@@ -610,7 +672,8 @@ class TrainingDBAccess {
         self::dbAccess()->query($UPDATE_SUBJECT);
     }
 
-    public static function sqlTrainingStudentFromId($Id) {
+    public static function sqlTrainingStudentFromId($Id)
+    {
         $SQL = self::dbAccess()->select();
         $SQL .= " FROM t_training AS A";
         $SQL .= " WHERE 1=1";
@@ -621,12 +684,13 @@ class TrainingDBAccess {
 
     //////////////////////////////////////////////////////////////
     //@Sea Peng
-    public static function checkTrainingClass($date, $trainingId) {
+    public static function checkTrainingClass($date, $trainingId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array("C" => "COUNT(*)"));
         $SQL->where("OBJECT_TYPE='CLASS'");
         $SQL->where("ID = " . $trainingId . "");
-        $SQL->where("'" . $date . "' BETWEEN START_DATE AND END_DATE");
+        $SQL->where("START_DATE <= '" . $date . "' AND END_DATE >= '" . $date . "'");
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;

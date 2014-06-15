@@ -10,7 +10,6 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
 require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
 require_once 'utiles/Utiles.php';
 require_once 'clients/CamemisViewport.php';
 require_once setUserLoacalization();
@@ -19,28 +18,17 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
-$columndata = Utiles::getGridColumnData("TRAINING_LIST_ID");
 
 $VIEWPORT = new CamemisViewport();
 
+$CHECK = TrainingDBAccess::checkTrainingClass($this->date, $this->trainingId);
 $academicObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
-
 $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $academicObject);
-
-$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
-$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
-$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
-$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 
 $ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(
     $subjectId
     , $trainingId
 );
-
-/* @soda */ 
-$params["trainingId"] = $trainingId;
-$params["subjectId"] = $subjectId;
-$params["studentId"] = $studentId;
 
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
@@ -70,19 +58,6 @@ Ext.onReady(function() {
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
-    }
-    
-    
-    function cssFirst(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #333; padding: 5px; height:15px; background:#fff4bf;">' + value + '</div>';
-    }
-    
-    function cssSecond(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:15px; background:#D1DDEF;">' + value + '</div>';
     }
     
     function cssText(value, metadata, record){
@@ -174,7 +149,6 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'GENDER'");
-    //$OBJECT_GRID->addReadField("name: 'ASSIGNMENT_'");
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
     
      switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -196,7 +170,6 @@ Ext.onReady(function() {
            $OBJECT_GRID->addColumn("
                header: '<b>".SCORE."</b>'
                , width: 100
-               , hidden:".checkColHidden(5, $columndata)."
                , sortable: true       
                , align:'right'
                , renderer:cssScore
@@ -296,22 +269,37 @@ Ext.onReady(function() {
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->renderJS();
     
-    $VIEWPORT->viewportLayout = "Normal";
-    $VIEWPORT->collapsible = "false";
-    
-    $TBAR_ITEMS = "";
-    $TBAR_ITEMS .= "text:'".CANCEL."'";
-    $TBAR_ITEMS .= ",id:'CANCEL_ID'";
-    $TBAR_ITEMS .= ",iconCls:'icon-cancel'";
-    $TBAR_ITEMS .= ",handler: function(){window.parent.Ext.getCmp('CENTER_CONTENT').getLayout().setActiveItem(0);}";
-    $VIEWPORT->addViewportTbarItem($TBAR_ITEMS);
-    
-    $ITEMS = "xtype:'".$OBJECT_GRID->getObjectXtype()."'";
-    $VIEWPORT->addItem($ITEMS);
-    
-    $VIEWPORT->renderJS();
+    if($CHECK){
+        $VIEWPORT = "[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
+    }else{
+        $VIEWPORT = "
+        [{
+            layout: 'fit'
+            ,border: false
+            ,tbar:[{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                }
+            }]
+            ,contentEl: 'initCenter'
+        }]";
+    }
     ?>
-            
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items:<?=$VIEWPORT?>
+        }]
+    });
+        
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
    
     if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
@@ -368,11 +356,10 @@ Ext.onReady(function() {
         ?>
         }
     });
-    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
-    <h1 class="headerError">No semester Date!</h1>
+    <h1 class="headerError"><?=CHECK_TEACHING_SESSION;?>...!</h1>
 </div>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
