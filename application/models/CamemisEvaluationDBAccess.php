@@ -543,23 +543,20 @@ class CamemisEvaluationDBAccess {
         $i = 0;
         if ($result)
             foreach ($result as $value) {
-
-                if ($value->NAME) {
+                if ($value->NAME){
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['parentId'] = "" . $value->PARENT . "";
                     $data[$i]['text'] = stripslashes($value->NAME);
                     $data[$i]['cls'] = "nodeTextBold";
-
                     if (!self::checkTopicChild($value->ID)) {
                         $data[$i]['leaf'] = true;
-                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-attach";
                     } else {
                         $data[$i]['leaf'] = false;
-                        $data[$i]['iconCls'] = "icon-folder_magnify";
+                        $data[$i]['cls'] = "nodeTextBlue";
+                        $data[$i]['iconCls'] = "icon-folder_magnify"; 
                     }
-
-                    $i++;
+                    $i++;    
                 }
             }
 
