@@ -12,7 +12,6 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_school/assignment/AssignmentTempDBAccess.php';
 
 require_once setUserLoacalization();
 
@@ -21,10 +20,8 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
- 
-$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
-$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
-$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):""; 
+
+$facette = TrainingDBAccess::findTrainingFromId($this->trainingId);
   
 $setParams = "";
 $setParams .= "&trainingId=".$this->trainingId."";
@@ -147,10 +144,10 @@ Ext.onReady(function() {
             }else{
                 Ext.getCmp('center').getLayout().setActiveItem(0);
                 var dateMenu = new Ext.menu.DateMenu({
-                    handler: function(dp, date){
-                        //clickOpenPage('center','', '<?=$this->URL_SUBJECT_SCORE_ENTER;?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
+                    minValue:'<?=getShowDate($facette->START_DATE);?>'
+                    ,maxValue:'<?=getShowDate($facette->END_DATE);?>'
+                    ,handler: function(dp, date){
                          clickOpenPage('center','', '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
-               
                     }
                 });
                 event.stopEvent();

@@ -33,7 +33,7 @@ Ext.onReady(function() {
     $ITEMS .= "{".CamemisField::Displayfield("NAME",NAME,false)."}";
     $ITEMS .= ",{".CamemisField::Displayfield("SCORE",SCORE,false)."}";
     $ITEMS .= ",{".CamemisField::Displayfield("SCORE_MIN",MIN_POINTS,false)."}";
-     $ITEMS .= ",{".CamemisField::Displayfield("SCORE_MAX",MAX_POINTS,false)."}";
+    $ITEMS .= ",{".CamemisField::Displayfield("SCORE_MAX",MAX_POINTS,false)."}";
     $ITEMS .= "]";
     $DETAIL_INFORMATION = "
     {
@@ -139,11 +139,7 @@ Ext.onReady(function() {
     ";
     
     $FORM_ITEMS = "[";
-    $FORM_ITEMS .= $DETAIL_INFORMATION;  
-   /* $FORM_ITEMS .= ",".$GOALS;
-    $FORM_ITEMS .= ",".$BODY_OF_LESSON;
-    $FORM_ITEMS .= ",".$MATERIALS;
-    $FORM_ITEMS .= ",".$EVALUATION; */  
+    $FORM_ITEMS .= $DETAIL_INFORMATION;   
     $FORM_ITEMS .= ",".$DESCRIPTION;
     $FORM_ITEMS .= "]";
     
