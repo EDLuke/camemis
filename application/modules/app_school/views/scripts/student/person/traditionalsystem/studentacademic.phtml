@@ -21,7 +21,6 @@ $OBJECT_FORM->setSaveUrl("/student/jsonsave/");
 
 $SCHOLARSHIP_TREE = new CamemisTree("SCHOLARSHIP", "LIST");
 $SCHOLARSHIP_TREE->setURL('/dataset/jsontree/');
-
 $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$classObject){
@@ -196,15 +195,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_FORM->addObjectItems($items);
         $OBJECT_FORM->setLoadParams("
             cmd: 'jsonStudentAcademicTraditional'
-            ,classId: '".$classObject->GUID."'
-            ,objectId: '".$this->objectId."'
+            ,academicId: '".$classObject->GUID."'
+            ,objectId: '".$this->objectId."' 
+            ,schoolyearId:'".$this->schoolyearId."'
         ");
         
         if ($hasRight){
             $OBJECT_FORM->setSaveParams("
                 cmd: 'jsonActionStudentAcademicTraditional'
-                ,classId: '".$classObject->GUID."'
+                ,academicId: '".$classObject->GUID."'
                 ,objectId: '".$this->objectId."'
+                ,schoolyearId:'".$this->schoolyearId."'
             ");
             $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
             $OBJECT_FORM->setonEmbeddedEvents("
