@@ -174,6 +174,7 @@ class StudentController extends Zend_Controller_Action {
 
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
+        $this->view->schoolyearId = $this->schoolyearId;
         $this->_helper->viewRenderer("person/traditionalsystem/studentacademic");
     }
 
