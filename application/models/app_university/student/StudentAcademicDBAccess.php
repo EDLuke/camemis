@@ -1048,7 +1048,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
                 $saveParams['compusId'] = $academicObject->CAMPUS_ID;
                 $saveParams['studentId'] = $studentId;
                 $saveParams['CHOOSE_SCHOLARSHIP'] = $scholarshipId;
-                $saveParams['schoolyear'] = $academicObject->SCHOOL_YEAR;
+                $saveParams['schoolyearId'] = $academicObject->SCHOOL_YEAR;
                 ScholarshipDBAccess::addStudentSchoolar($saveParams);
             } elseif (is_string($scholarshipId)) {
                 $condition = array(
