@@ -30,13 +30,13 @@ $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$facette = StaffFeePaymentDBAccess::getStaffFeePaymentFromId($this->paymentId);
-$entriesParentCheckbox = FinanceDescriptionDBAccess::sqlDescription(false, 1, 2);
+$facette = isset($this->paymentId)?StaffFeePaymentDBAccess::getStaffFeePaymentFromId($this->paymentId):'';
 
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
 $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
 $actionType = isset($_GET["actionType"])? addText($_GET["actionType"]):0;
 
+$entriesParentCheckbox = FinanceDescriptionDBAccess::sqlDescription(false, 1, 2);
 $CHECKBOX_JS = "";
 $CHECKBOX_DATA = array();
 $CHECKBOX_ITEMS = array();
