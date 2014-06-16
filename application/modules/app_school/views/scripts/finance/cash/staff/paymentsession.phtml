@@ -30,7 +30,7 @@ $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$facette = StaffFeePaymentDBAccess::getStaffFeePaymentFromId($this->paymentId);
+$facette = isset($this->paymentId)?StaffFeePaymentDBAccess::getStaffFeePaymentFromId($this->paymentId):'';
 $entriesParentCheckbox = FinanceDescriptionDBAccess::sqlDescription(false, 1, 2);
 
 $startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
