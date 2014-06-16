@@ -776,8 +776,7 @@ class Utiles {
         {
             foreach ($entries as $value)
             {
-                $schoolyearId = isset($value['ID']) ? $value['ID'] : "";
-        
+                $schoolyearId = isset($value['ID']) ? $value['ID'] : "";       
                 $classObject = self::getStudentClassTraditional($Id, $schoolyearId);
                 if ($classObject)
                 {
