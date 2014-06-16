@@ -906,8 +906,10 @@ class StudentAcademicDBAccess extends StudentDBAccess {
 
         $ACADEMIC = AcademicDBAccess::getInstance();
 
-        $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $classId = isset($params["academicId"]) ? addText( $params["academicId"]) : "";
+        
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $schoolarship = isset($params["SCHOLARSHIP_ID"]) ? addText($params["SCHOLARSHIP_ID"]) : "" ;
 
         $data = $ACADEMIC->getGradeDataFromId($classId);
         $classObject = AcademicDBAccess::findGradeFromId($classId);
@@ -958,12 +960,13 @@ class StudentAcademicDBAccess extends StudentDBAccess {
             , "data" => $data
         );
     }
-
+    
     public static function jsonActionStudentAcademicTraditional($params) {
 
-        $classGuid = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $classGuid = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $scholarshipId = isset($params["SCHOLARSHIP_ID"]) ? $params["SCHOLARSHIP_ID"] : "";
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        
         $academicObject = AcademicDBAccess::findGradeFromId($classGuid);
 
         if ($academicObject) {
@@ -972,7 +975,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
                 $saveParams['compusId'] = $academicObject->CAMPUS_ID;
                 $saveParams['studentId'] = $studentId;
                 $saveParams['CHOOSE_SCHOLARSHIP'] = $scholarshipId;
-                $saveParams['schoolyear'] = $academicObject->SCHOOL_YEAR;
+                $saveParams['schoolyearId'] = $academicObject->SCHOOL_YEAR;
                 ScholarshipDBAccess::addStudentSchoolar($saveParams);
             } elseif (is_string($scholarshipId)) {
                 $condition = array(
