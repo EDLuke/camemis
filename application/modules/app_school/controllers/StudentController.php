@@ -186,6 +186,8 @@ class StudentController extends Zend_Controller_Action {
     public function studentacademictraditionalAction() {
 
         $this->view->objectId = $this->objectId;
+        $this->view->schoolyearId = $this->schoolyearId;
+        //error_log("hello".$this->schoolyearId);
         $this->view->academicId = $this->academicId;
         $this->_helper->viewRenderer("person/traditionalsystem/studentacademic");
     }
@@ -198,7 +200,7 @@ class StudentController extends Zend_Controller_Action {
 
     public function studentgeneraleducationAction() {
 
-        $this->view->objectId = $this->objectId;
+        $this->view->objectId = $this->objectId;   
         $this->_helper->viewRenderer("person/generaleducation");
     }
 
@@ -794,6 +796,9 @@ class StudentController extends Zend_Controller_Action {
 
             case "jsonActionStudentAcademicTraditional":
                 $jsondata = StudentAcademicDBAccess::jsonActionStudentAcademicTraditional($this->REQUEST->getPost());
+                break;
+            case "jsonRemoveStudentAcademicTraditional":
+                $jsondata = StudentAcademicDBAccess::jsonRemoveStudentAcademicTraditional($this->REQUEST->getPost());
                 break;
 
             case "actionRemoveSMSRegistration":
