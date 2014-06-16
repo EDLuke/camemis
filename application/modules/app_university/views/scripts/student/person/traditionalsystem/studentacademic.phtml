@@ -196,15 +196,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_FORM->addObjectItems($items);
         $OBJECT_FORM->setLoadParams("
             cmd: 'jsonStudentAcademicTraditional'
-            ,classId: '".$classObject->GUID."'
+            ,academicId: '".$classObject->GUID."'
             ,objectId: '".$this->objectId."'
+            ,schoolyearId:'".$this->schoolyearId."'
         ");
         
         if ($hasRight){
             $OBJECT_FORM->setSaveParams("
                 cmd: 'jsonActionStudentAcademicTraditional'
-                ,classId: '".$classObject->GUID."'
+                ,academicId: '".$classObject->GUID."'
                 ,objectId: '".$this->objectId."'
+                ,schoolyearId:'".$this->schoolyearId."'
             ");
             $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
             $OBJECT_FORM->setonEmbeddedEvents("
