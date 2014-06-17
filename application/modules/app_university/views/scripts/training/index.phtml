@@ -228,7 +228,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             $html .= ",iconCls: 'icon-flag_blue'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/training/subjectlist/?target=TERM&objectId=' + node.id);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".SUBJECT_AND_ASSIGNMENT."','/training/subjectlist/?target=TERM&objectId=' + node.id);";
                             $html .= "}"; 
                             
                         $html .= "},{"; 
@@ -264,7 +264,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             $html .= ",iconCls: 'icon-flag_blue'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/training/subjectlist/?target=TERM&objectId=' + node.id);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".SUBJECT_AND_ASSIGNMENT."','/training/subjectlist/?target=TERM&objectId=' + node.id);";
                             $html .= "}";
                             
                         $html .= "},{"; 
