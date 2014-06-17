@@ -52,7 +52,7 @@ switch($object){
         
     break;
     case "studenttraining":
-        require_once 'models/app_university/training/StudentTrainingDBAccess.php';
+        require_once 'models/training/StudentTrainingDBAccess.php';
         $facette = StudentTrainingDBAccess::findStudentTrainingFromId($objectId);
         if ($field) $content = isset($facette->$field)?$facette->$field:"";
         

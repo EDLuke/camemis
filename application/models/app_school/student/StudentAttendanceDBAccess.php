@@ -16,7 +16,7 @@ require_once 'models/app_school/student/StudentDBAccess.php';
 require_once 'models/app_school/student/StudentAcademicDBAccess.php';
 require_once 'models/app_school/AcademicDateDBAccess.php';
 require_once 'models/app_school/academic/AcademicDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_school/SchooleventDBAccess.php';
 require_once 'models/app_school/AbsentTypeDBAccess.php';
 require_once 'include/Common.inc.php';

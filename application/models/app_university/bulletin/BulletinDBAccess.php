@@ -12,7 +12,7 @@ require_once 'include/Common.inc.php';
 require_once 'models/CAMEMISUploadDBAccess.php';
 require_once 'models/app_university/academic/AcademicDBAccess.php';
 require_once 'models/app_university/AcademicDateDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_university/student/StudentDBAccess.php';
 require_once setUserLoacalization();
 

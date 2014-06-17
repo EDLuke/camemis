@@ -9,7 +9,7 @@ require_once("Zend/Loader.php");
 require_once 'models/app_university/BuildData.php';
 require_once 'models/app_university/academic/AcademicDBAccess.php';
 require_once 'models/app_university/AcademicDateDBAccess.php';
-require_once 'models/app_university/training/StudentTrainingDBAccess.php';
+require_once 'models/training/StudentTrainingDBAccess.php';
 require_once 'models/app_university/student/StudentSearchDBAccess.php';
 require_once 'models/app_university/student/StudentAcademicDBAccess.php';
 require_once 'models/app_university/student/StudentStatusDBAccess.php';

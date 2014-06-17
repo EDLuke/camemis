@@ -11,7 +11,7 @@
     require_once 'models/app_university/student/StudentSearchDBAccess.php';
     require_once 'models/app_university/finance/ExpenseDBAccess.php';
     require_once 'models/app_university/finance/FeeDBAccess.php';
-    require_once 'models/app_university/training/TrainingDBAccess.php';
+    require_once 'models/training/TrainingDBAccess.php';
     require_once 'models/app_university/CommunicationDBAccess.php';
     require_once setUserLoacalization();
 

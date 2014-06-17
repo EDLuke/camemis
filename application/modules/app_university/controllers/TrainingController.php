@@ -10,9 +10,9 @@ require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_university/DescriptionDBAccess.php';
 require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
-require_once 'models/app_university/training/TeacherTrainingDBAccess.php';
-require_once 'models/app_university/training/StudentTrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
+require_once 'models/training/TeacherTrainingDBAccess.php';
+require_once 'models/training/StudentTrainingDBAccess.php';
 require_once 'models/app_university/assignment/AssignmentTempDBAccess.php'; 
 require_once 'models/UserAuth.php';
 

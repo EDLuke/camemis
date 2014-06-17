@@ -16,7 +16,7 @@ require_once 'models/app_school/subject/SubjectTeacherDBAccess.php';
 require_once 'models/app_school/staff/StaffDBAccess.php';
 require_once 'models/app_school/room/RoomDBAccess.php';
 require_once 'models/app_school/academic/AcademicLevelDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once setUserLoacalization();
 
 class ScheduleDBAccess {

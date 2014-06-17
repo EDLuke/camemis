@@ -10,7 +10,7 @@ require_once 'utiles/Utiles.php';
 require_once('excel/excel_reader2.php');
 require_once 'include/Common.inc.php';
 require_once 'models/app_university/academic/AcademicDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_university/AcademicDateDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/app_university/examination/ExaminationDBAccess.php';

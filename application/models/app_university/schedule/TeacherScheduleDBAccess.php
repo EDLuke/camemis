@@ -10,7 +10,7 @@ require_once 'models/app_university/subject/SubjectDBAccess.php';
 require_once 'models/app_university/room/RoomDBAccess.php';
 require_once 'models/app_university/schedule/ScheduleDBAccess.php';
 require_once 'models/app_university/schedule/TeachingSessionDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once setUserLoacalization();
 
 class TeacherScheduleDBAccess extends ScheduleDBAccess {

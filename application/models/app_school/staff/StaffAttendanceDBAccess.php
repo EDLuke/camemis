@@ -13,7 +13,7 @@ require_once 'utiles/Utiles.php';
 require_once 'models/app_school/staff/StaffDBAccess.php';
 require_once 'models/app_school/AcademicDateDBAccess.php';
 require_once 'models/app_school/academic/AcademicDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_school/SchooleventDBAccess.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();

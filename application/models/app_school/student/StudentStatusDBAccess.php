@@ -14,7 +14,7 @@ require_once 'models/app_school/student/StudentStatusDBAccess.php';
 require_once 'models/app_school/student/StudentSearchDBAccess.php';
 require_once 'models/app_school/PersonStatusDBAccess.php';
 require_once 'models/app_school/academic/AcademicDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 

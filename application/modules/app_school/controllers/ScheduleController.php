@@ -10,7 +10,7 @@ require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_school/UserDBAccess.php';
 require_once 'models/UserAuth.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_school/AcademicDateDBAccess.php';
 require_once 'models/app_school/academic/AcademicDBAccess.php';
 require_once 'models/app_school/schedule/ScheduleDBAccess.php';
