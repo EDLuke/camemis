@@ -8,7 +8,7 @@
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once 'models/UserAuth.php';
-require_once 'models/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php";
 require_once setUserLoacalization();
 
