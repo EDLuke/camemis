@@ -638,7 +638,7 @@ class TrainingDBAccess {
                     $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
                     $SQL .= " ,TERM='" . $facette->ID . "'";
                     $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
-                    $SQL .= " ,EVALUATION='" . $facette->EVALUATION . "'";
+                    $SQL .= " ,EVALUATION='" . $facette->EVALUATION_TYPE . "'";
                     $SQL .= " WHERE TERM ='" . $facette->ID . "'";
                     self::dbAccess()->query($SQL);
                     break;
@@ -647,14 +647,13 @@ class TrainingDBAccess {
                     $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
                     $SQL .= " ,TERM='" . $facette->TERM . "'";
                     $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
-                    $SQL .= " ,EVALUATION='" . $parentObject->EVALUATION . "'";
+                    $SQL .= " ,EVALUATION='" . $parentObject->EVALUATION_TYPE . "'";
                     $SQL .= " WHERE TRAINING ='" . $facette->ID . "'";
                     self::dbAccess()->query($SQL);
                     break;
             }
         }
     }
-
 }
 
 ?>

@@ -11,7 +11,7 @@ require_once 'models/UserAuth.php';
 require_once 'models/training/TrainingDBAccess.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/finance/StudentFeeDBAccess.php";
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/subject/TrainingSubjectDBAccess.php";
+require_once "models/training/TrainingSubjectDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php";
 require_once 'models/assessment/AssessmentConfig.php';
 require_once setUserLoacalization();
@@ -518,7 +518,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
                 $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
-                //$data[$i]["SORTKEY"] = $value->SORTKEY;
                 $i++;
             }
         }

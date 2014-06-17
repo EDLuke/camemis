@@ -16,7 +16,7 @@ require_once 'models/app_university/user/UserRoleDBAccess.php';
 require_once 'models/app_university/user/OrganizationDBAccess.php';
 require_once 'utiles/Utiles.php';
 require_once 'models/app_university/room/RoomDBAccess.php';
-require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'models/training/TrainingSubjectDBAccess.php';
 require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/CamemisTypeDBAccess.php';
 

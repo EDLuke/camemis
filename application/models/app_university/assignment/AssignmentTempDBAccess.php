@@ -8,7 +8,7 @@
 
 require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
-require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'models/training/TrainingSubjectDBAccess.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 

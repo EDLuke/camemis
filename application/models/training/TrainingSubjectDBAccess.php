@@ -9,7 +9,7 @@ require_once("Zend/Loader.php");
 require_once 'utiles/Utiles.php';
 require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/training/StudentTrainingDBAccess.php';
-require_once 'models/app_university/subject/SubjectDBAccess.php';
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/subject/SubjectDBAccess.php";
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
@@ -28,7 +28,14 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
     public static function findTrainingSubject($Id) {
 
         $SQL = "";
-        $SQL .= " SELECT A.*,B.*,C.SHORT AS SHORT,C.NAME AS ASSIGNMENTNAME,B.COEFF_VALUE AS COEFF_VALUE,C.SORTKEY AS SORTKEY, B.PARENT AS SUBJECT_ID";  //@veasna
+        $SQL .= " SELECT 
+                A.*,B.*
+                ,C.SHORT AS SHORT
+                ,C.NAME AS ASSIGNMENTNAME
+                ,B.COEFF_VALUE AS COEFF_VALUE
+                ,B.EVALUATION_TYPE AS EVALUATION_TYPE
+                ,C.SORTKEY AS SORTKEY
+                , B.PARENT AS SUBJECT_ID";
         $SQL .= " FROM t_subject AS A";
         $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.SUBJECT";
         $SQL .= " LEFT JOIN t_assignment_temp AS C ON B.ASSIGNMENT=C.ID";   //@veasna
@@ -77,7 +84,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
             $data["GOALS"] = setShowText($facette->GOALS);
             $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION"] = setShowText($facette->EVALUATION);
+            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
         } else {
             $data["NAME"] = $facette->ASSIGNMENTNAME;
@@ -87,7 +94,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
             $data["GOALS"] = setShowText($facette->GOALS);
             $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION"] = setShowText($facette->EVALUATION);
+            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
         }
         return array(
@@ -111,12 +118,10 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
             $data["GOALS"] = setShowText($facette->GOALS);
             $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION"] = setShowText($facette->EVALUATION);
             $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
             $data["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION ? true : false;
             $data["SHORT"] = setShowText($facette->SHORT);
             $data["COEFF_VALUE"] = $facette->COEFF_VALUE;
-            $trainingResult = TrainingDBAccess::findTrainingFromId($facette->ID);
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["SORTKEY"] = setShowText($facette->SORTKEY);
         }
@@ -281,14 +286,16 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
-        if (isset($params["EVALUATION"]))
-            $SAVEDATA["EVALUATION"] = addText($params["EVALUATION"]);
+        
         if (isset($params["GOALS"]))
             $SAVEDATA["GOALS"] = addText($params["GOALS"]);
+        
         if (isset($params["MATERIALS"]))
             $SAVEDATA["MATERIALS"] = addText($params["MATERIALS"]);
+        
         if (isset($params["OBJECTIVES"]))
             $SAVEDATA["OBJECTIVES"] = addText($params["OBJECTIVES"]);
+        
         if (isset($params["COEFF_VALUE"]))
             $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
 
