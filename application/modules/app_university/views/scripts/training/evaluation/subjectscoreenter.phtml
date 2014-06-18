@@ -57,18 +57,19 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
     }
     
-    function cssText(value, metadata, record){
+    function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="color:#333;background:#FFF;padding:4px;font-weight:normal;">' + value + '</div>';
-    }
-    function cssScore(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<span style="font-weight:bold;color:#061f83; padding: 5px; height: 15px;">' + value + '</span>';
+        return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
     }
     <?
     
@@ -171,7 +172,7 @@ Ext.onReady(function() {
                , width: 100
                , sortable: true       
                , align:'right'
-               , renderer:cssScore
+               , renderer:cssNumber
                , dataIndex: 'SCORE'
                , editor: new Ext.form.NumberField({
                    allowBlank: false
@@ -190,7 +191,7 @@ Ext.onReady(function() {
                , width: 100
                , sortable: true
                , align:'center'
-               , renderer:cssScore
+               , renderer:cssNumber
                , dataIndex: 'SCORE'
                , editor: new Ext.form.ComboBox({
                    triggerAction:'all'

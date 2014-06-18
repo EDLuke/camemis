@@ -585,10 +585,6 @@ class TrainingController extends Zend_Controller_Action {
             case "actionTrainingStudentAssignment":
                 $jsondata = $this->DB_STUDENT_TRAINING->actionTrainingStudentAssignment($this->REQUEST->getPost());
                 break;    
-            
-           /*case "actionTrainingStudentAssignment":
-                $jsondata = StudentTrainingDBAccess::actionTrainingStudentAssignment($this->REQUEST->getPost());
-                break;  */
 
             case "actionStudentTrainingTransfer":
                 $jsondata = StudentTrainingDBAccess::actionStudentTrainingTransfer($this->REQUEST->getPost());

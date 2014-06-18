@@ -76,7 +76,7 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
+        return '<div style="font-weight:normal; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
     }
     
     <?
@@ -139,55 +139,6 @@ Ext.onReady(function() {
         ,studentId:'".$studentId."'
         ,cmd: 'jsonStudentSubjectAssignment'
     ";
-        
-    /* @soda */
-    switch(UserAuth::getUserType()){
-        case "SUPERADMIN":
-        case "ADMIN":
-        case 'INSTRUCTOR':
-        case 'TEACHER':
-                $OBJECT_GRID->addTBarItems("tbar.add('-');");    
-                $OBJECT_GRID->addTBarItems("
-                    tbar.add([{
-                        text: '".SCORE."'
-                        ,iconCls:'icon-database'
-                        ,menu:[{
-                            id: 'IMPORT_FIRST_SEMESTER'
-                            ,disabled: ".$option."
-                            ,text: 'Excel'
-                            ,iconCls:'icon-page_excel'    
-                            ,menu:[{
-                                text: '".IMPORT_FROM_EXCEL."'
-                                ,disabled: false
-                                ,iconCls:'icon-database_go'
-                                ,scope:this
-                                ,handler: function(){
-                                    var goURL = '/evaluation/importassignmentxls/?objectId=".$trainingId."&subjectId=".$subjectId."&teacherId=".$teacherId."&studentId=".$studentId."&target=training';
-                                    openWinIFrame('".IMPORT_FROM_EXCEL."', goURL, 500, 200);
-                                }
-                            },{                                                                                                               
-                                text: '".EXPORT_TO_EXCEL."'
-                                ,disabled: false
-                                ,iconCls:'icon-page_save'
-                                ,scope:this
-                                ,handler: function(){
-                                    window.location ='/evaluation/subjectscoreenterexport/?objectId=".$trainingId."&subjectId=".$subjectId."&studentId=".$studentId."&teacherId=".$teacherId."&target=training&type=subjectscoreentertraining';
-                                }
-                            }]
-                        },{
-                            text: '".PRINTER."'
-                            ,disabled: false
-                            ,iconCls:'icon-printer'
-                            ,scope:this
-                            ,handler: function(){
-                                openWinIFrame('".EXPORT_TO_EXCEL."','/export/subjectscore/?objectId=".$trainingId."&subjectId=".$subjectId."&studentId=".$studentId."&target=subjectresultentertraining&type=subjectscoreentertraining',500,370);
-                            }
-                        }]
-                    }]);
-                ");
-            break;  
-    }
-    /* --- */
         
     $OBJECT_GRID->setSaveParams("
         cmd: 'actionTrainingStudentAssignment'

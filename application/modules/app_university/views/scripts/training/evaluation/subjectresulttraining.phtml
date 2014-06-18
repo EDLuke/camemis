@@ -50,6 +50,12 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
     }
     
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
@@ -79,12 +85,12 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 180, renderer: cssDefault, dataIndex: 'STUDENT'");
     
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'AVERAGE'");
     
     if($entries){     
         foreach($entries as $value){    
-            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, align: 'center', renderer: cssNumber, dataIndex: '".$value->ASSIGNMENT_ID."'");
         }
     }
     
