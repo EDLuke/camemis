@@ -1204,7 +1204,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return array_sum($array) / count($array);
     }
 
-    public function jsonActionPublishSubjectAssessmentTraining($encrypParams) {
+    public function jsonActionCalculationAssessmentTraining($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 

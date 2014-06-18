@@ -626,8 +626,8 @@ class TrainingController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteSingleScoreTraining($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionPublishSubjectAssessmentTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionPublishSubjectAssessmentTraining($this->REQUEST->getPost());
+            case "jsonActionCalculationAssessmentTraining":
+                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionCalculationAssessmentTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteAllScoresSubjectTraining":
