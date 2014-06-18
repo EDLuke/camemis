@@ -20,6 +20,8 @@ $OBJECT_FORM = new CamemisForm("TRAINING");
 $OBJECT_FORM->setLoadUrl("/training/jsonload/");
 $OBJECT_FORM->setSaveUrl("/training/jsonsave/");
 
+TrainingDBAccess::updateChildLevel($this->objectId);
+
 $OBJECT_DATA = $this->objectData;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
