@@ -1310,6 +1310,8 @@ class SubjectDBAccess {
     public static function getAcademicSubject($subjectId, $academicId)
     {
 
+        $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
@@ -1322,7 +1324,7 @@ class SubjectDBAccess {
             $SQL->where("USED_IN_CLASS = '0'");
         }
         $SQL->where("CLASS = ?", $academicId);
-        //error_log($SQL->__toString());
+        error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         $facette = self::findSubjectFromId($subjectId);
 

@@ -838,6 +838,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                     'SUBJECT AS SUBJECT_ID'
                     , 'ID AS ASSSIGNMENT_ID'
                     , 'SHORT AS SHORT'
+                    , 'STATUS AS STATUS'
                     , 'NAME AS ASSIGNMENT_NAME'
                     , 'EVALUATION_TYPE'
                     , 'COEFF_VALUE'
@@ -898,7 +899,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         $data[$i]['subjectId'] = "" . $value->SUBJECT_ID . "";
                         $data[$i]['assignmentId'] = "" . $value->ASSSIGNMENT_ID . "";
                         $data[$i]['leaf'] = true;
-                        $data[$i]['cls'] = "nodeTextBlue";
+                        $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
 
                         if ($value->EVALUATION_TYPE)
                         {
