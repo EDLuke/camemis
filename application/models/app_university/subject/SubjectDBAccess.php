@@ -1315,16 +1315,27 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
-        if (self::checkUseSubjectInClass($subjectId, $academicId))
+
+        switch ($academicObject->EDUCATION_SYSTEM)
         {
-            $SQL->where("USED_IN_CLASS = '1'");
+            case 1:
+                $SQL->where("GRADE = '" . $academicObject->CAMPUS_ID . "'");
+                $SQL->where("USED_IN_CLASS = '0'");
+                break;
+            default:
+                if (self::checkUseSubjectInClass($subjectId, $academicId))
+                {
+                    $SQL->where("USED_IN_CLASS = '1'");
+                }
+                else
+                {
+                    $SQL->where("USED_IN_CLASS = '0'");
+                }
+                $SQL->where("CLASS = ?", $academicId);
+                break;
         }
-        else
-        {
-            $SQL->where("USED_IN_CLASS = '0'");
-        }
-        $SQL->where("CLASS = ?", $academicId);
-        error_log($SQL->__toString());
+
+        //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         $facette = self::findSubjectFromId($subjectId);
 
