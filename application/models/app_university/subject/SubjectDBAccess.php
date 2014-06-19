@@ -401,7 +401,7 @@ class SubjectDBAccess {
                             $data[$i]['parentId'] = $value->PARENT;
                             $data[$i]['type'] = "subject";
                             $data[$i]['text'] = "(" . $value->SHORT . ")" . " - " . setShowText($value->NAME);
-                            $data[$i]['cls'] = $value->STATUS ? "nodeText" : "nodeTextRed";
+                            $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
                             $data[$i]['leaf'] = true;
 
                             if ($staffId)
@@ -428,7 +428,9 @@ class SubjectDBAccess {
                                     $snaParams['academicId'] = $gradeSubjectGradId;
                                     $snaParams['schoolyear'] = $schoolyear;
                                     $snaParams['requisiteId'] = $requisiteId;
-                                    $data[$i]["checked"] = in_array($value->ID, GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
+                                    $data[$i]["checked"] = in_array(
+                                                    $value->ID
+                                                    , GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
                                 }
                                 //
                             }
