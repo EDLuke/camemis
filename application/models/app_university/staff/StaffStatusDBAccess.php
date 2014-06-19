@@ -90,7 +90,7 @@ class StaffStatusDBAccess extends StaffDBAccess {
             $POST_END_DATE = $endDate;
         }
 
-        if ($startDate && !$endDate)
+        if ($singleDate )
         {
             $CAL_POST_START_DATE = $CAL_SINGLE_DATE;
             $CAL_POST_END_DATE = "";

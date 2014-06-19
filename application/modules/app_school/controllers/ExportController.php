@@ -16,6 +16,7 @@ require_once 'models/export/StudentDisciplineExportDBAccess.php';//@veasna
 require_once 'models/export/StudentStatusExportDBAccess.php';//@Visal
 require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
 require_once 'models/export/TraditionalFilterExportDBAccess.php';//@Visal
+require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
 
 class ExportController extends Zend_Controller_Action {
 
@@ -33,6 +34,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STUDENT_ADVISORY_EXCEL = new StudentAdvisoryExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->STUDENT_DISCIPLINE_EXCEL = new StudentDisciplineExportDBAccess($this->_getParam('objectId'));//@veasna
         $this->TRADITION_FILTER_EXCEL = new TraditionalFilterExportDBAccess($this->_getParam('objectId'));//@Visal
+        $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
@@ -138,7 +140,16 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
-    //
+    //@CHHE Vathana
+    public function openenrolledstudentyearlistAction()
+    {
+         
+    }
+    public function openroomlistAction()
+    {
+         
+    }
+    //End...
     public function jsonexcelAction()
     {
 
@@ -148,6 +159,15 @@ class ExportController extends Zend_Controller_Action {
             case "searchStudent":
                 $jsondata = $this->STUDENT_EXCEL->studentSearch($this->REQUEST->getPost());
                 break;
+                
+            //@CHHE Vathana
+            case "enrolledStudentYearSearch":
+                $jsondata = $this->STUDENT_EXCEL->enrolledStudentYearSearch($this->REQUEST->getPost());
+                break;
+            case "allRooms":
+                $jsondata = $this->ROOM_EXCEL->allRooms($this->REQUEST->getPost());
+                break;
+            //End...
             case "jsonSearchStudentPreschool":
                 $jsondata = $this->STUDENT_PRESCHOOL_EXCEL->jsonSearchStudentPreschool($this->REQUEST->getPost());
                 break;

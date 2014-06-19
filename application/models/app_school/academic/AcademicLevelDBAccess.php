@@ -221,6 +221,9 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $schoolyearId . "'";
                         $SQL .= " ORDER BY A.SORTKEY ASC";
                         break;
+                    case "SUBJECT":
+                        $SQL .= " ORDER BY A.SORTKEY ASC";
+                        break;
                 }
             }
         }

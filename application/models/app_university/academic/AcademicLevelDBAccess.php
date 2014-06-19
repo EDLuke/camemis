@@ -175,7 +175,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
             if ($academicObject)
             {
-
                 switch ($academicObject->OBJECT_TYPE)
                 {
 
@@ -225,6 +224,9 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     case "CLASS":
                         if ($schoolyearId)
                             $SQL .= " AND A.SCHOOL_YEAR = '" . $schoolyearId . "'";
+                        $SQL .= " ORDER BY A.SORTKEY ASC";
+                        break;
+                    case "SUBJECT":
                         $SQL .= " ORDER BY A.SORTKEY ASC";
                         break;
                 }

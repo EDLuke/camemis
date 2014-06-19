@@ -176,6 +176,7 @@ Ext.onReady(function() {
     $ASSIGNMENT_TEMP_TREE->setBaseParams("
         cmd: 'jsonTreeAllAssignmentTemp'
         ,type:'1'
+        ,target:'general'
         ,subjectId:subjectId
         ,academicId:'".$this->facette->GUID."'
     ");
@@ -332,7 +333,7 @@ Ext.onReady(function() {
                                     Ext.Ajax.request({
                                         url: '/assignment/jsonsave/'
                                         ,method: 'POST'
-                                        ,params: {cmd: 'jsonAddAssignmentToSubject',  assignmentId:node.id, subjectId:subjectId, academicId:'".$this->facette->GUID."'}
+                                        ,params: {cmd: 'jsonAddAssignmentToSubject',  assignmentId:node.attributes.assignmentId, subjectId:subjectId, academicId:'".$this->facette->GUID."'}
                                         ,success: function(response, options) {
                                             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
                                             myTree = window.Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID');

@@ -358,7 +358,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $TESTING_GRID->addReadField("name: 'CREATED_BY'");
         $TESTING_GRID->addReadField("name: 'DESCRIPTION'");
         $TESTING_GRID->addReadField("name: 'LEVEL'");
-        $TESTING_GRID->addReadField("name: 'STATUS'");
+        $TESTING_GRID->addReadField("name: 'TESTING_STATUS'");
         $TESTING_GRID->addReadField("name: 'CREATED_DATE'");
         $TESTING_GRID->addReadField("name: 'DELETE'");
         
@@ -391,7 +391,32 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $TESTING_GRID->addColumn(columnProperties(SCORE,"SCORE",150,checkColHidden(2,$columndata)));
         $TESTING_GRID->addColumn(columnProperties(LEVEL,"LEVEL",150,checkColHidden(3,$columndata)));
-        $TESTING_GRID->addColumn(columnProperties(STATUS,"STATUS",150,checkColHidden(4,$columndata)));
+        $TESTING_GRID->addColumn("
+            header: '<b>".STATUS."</b>',
+            dataIndex: 'TESTING_STATUS',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('TESTING_STATUS')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
         $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(5,$columndata)));
         $TESTING_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(6,$columndata)));
         $TESTING_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(7,$columndata)));

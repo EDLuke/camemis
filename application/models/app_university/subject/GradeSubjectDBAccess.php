@@ -837,7 +837,8 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 $SQL->from(array('A' => 't_assignment'), array(
                     'SUBJECT AS SUBJECT_ID'
                     , 'ID AS ASSSIGNMENT_ID'
-                    , 'SHORT AS ASSSIGNMENT_SHORT'
+                    , 'SHORT AS SHORT'
+                    , 'STATUS AS STATUS'
                     , 'NAME AS ASSIGNMENT_NAME'
                     , 'EVALUATION_TYPE'
                     , 'COEFF_VALUE'
@@ -888,7 +889,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         }
 
                         $data[$i]['leaf'] = false;
-                        $data[$i]['cls'] = "nodeTextBoldBlue";
+                        $data[$i]['cls'] = "nodeTextBold";
                         $data[$i]['iconCls'] = "icon-star";
                     }
                     else
@@ -898,15 +899,15 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         $data[$i]['subjectId'] = "" . $value->SUBJECT_ID . "";
                         $data[$i]['assignmentId'] = "" . $value->ASSSIGNMENT_ID . "";
                         $data[$i]['leaf'] = true;
-                        $data[$i]['cls'] = "nodeTextBlue";
+                        $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
 
                         if ($value->EVALUATION_TYPE)
                         {
-                            $data[$i]['text'] = "(" . setShowText($value->ASSIGNMENT_SHORT) . ") " . setShowText($value->ASSIGNMENT_NAME) . " (" . $value->COEFF_VALUE . "%)";
+                            $data[$i]['text'] = "(" . setShowText($value->SHORT) . ") " . setShowText($value->ASSIGNMENT_NAME) . " (" . $value->COEFF_VALUE . "%)";
                         }
                         else
                         {
-                            $data[$i]['text'] = "(" . setShowText($value->ASSIGNMENT_SHORT) . ") " . setShowText($value->ASSIGNMENT_NAME) . " (" . $value->COEFF_VALUE . ")";
+                            $data[$i]['text'] = "(" . setShowText($value->SHORT) . ") " . setShowText($value->ASSIGNMENT_NAME) . " (" . $value->COEFF_VALUE . ")";
                         }
 
                         switch ($value->INCLUDE_IN_EVALUATION)

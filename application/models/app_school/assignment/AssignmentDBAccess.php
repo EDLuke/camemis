@@ -638,24 +638,21 @@ class AssignmentDBAccess {
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($classObject && $subjectObject)
+        if ($classObject->EDUCATION_SYSTEM)
         {
-            $academicId = $classObject->ID;
-            $subjectId = $subjectObject->ID;
+            $academicId = $classObject->PARENT;
+            $subjectId = $classObject->SUBJECT_ID;
         }
         else
         {
-            return $data;
+            $academicId = $classObject->ID;
+            $subjectId = $subjectObject->ID;
         }
 
         $facette = self::findAssignmentFromId($node);
 
         if ($facette)
         {
-            if ($classObject->EDUCATION_SYSTEM)
-            {
-                $academicId = $classObject->PARENT;
-            }
             $entries = $this->getAllScoreDate($node, $academicId, $subjectId);
         }
         else
@@ -757,7 +754,7 @@ class AssignmentDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
-    
+
     public static function mappingAcademicEvaluationType($type, $Id)
     {
         $WHERE = Array();

@@ -45,7 +45,7 @@ if(!$CHECK_IN_SCHEDULE) {
 }
 
 $setParams = "";
-$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
+$setParams .="&subjectId=".$subjectId."";
 $setParams .="&academicId=".$academicObject->ID."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
