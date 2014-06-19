@@ -888,7 +888,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         }
 
                         $data[$i]['leaf'] = false;
-                        $data[$i]['cls'] = "nodeTextBoldBlue";
+                        $data[$i]['cls'] = "nodeTextBold";
                         $data[$i]['iconCls'] = "icon-star";
                     }
                     else
