@@ -1,5 +1,4 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 // @sor veasna
 // Date: 21.05.2014
@@ -47,31 +46,15 @@ abstract class FilterProperties {
         unset($this->datafield[$name]);
     }
 
-    public function getCamemisType() {
-        if ($this->gridType) {
-            switch ($this->gridType) {
-                case 'STUDENT_ATTENDANCE_FILTER':
-                    $stdClass['personType'] = "STUDENT";
-                    $stdClass['status'] = 1;
-                    $typeObject = SQLStudentFilterReport::getAttendanceType((object) $stdClass);
-                    break;
-                case 'STUDENT_DISCIPLINE_FILTER':
-                    $typeObject = SQLStudentFilterReport::getDisciplineType();
-                    break;
-                case 'STUDENT_ADVISORY_FILTER':
-                    $typeObject = SQLStudentFilterReport::getAdvisoryType();
-                    break;
-                case 'TEACHER_ATTENDANCE_FILTER':
-                    $stdClass['personType']="STAFF";
-                    $stdClass['status']=1;
-                    $typeObject = SQLTeacherFilterReport::getAttendanceType((object)$stdClass);
-                    break;
-                case 'TEACHER_DISCIPLINE_FILTER':
-                    $typeObject = SQLTeacherFilterReport::getDisciplineType();
-                    break;
-            }
-        }
-        return $typeObject;
+    public static function getCamemisType($camemisType){
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_camemis_type", array('*'));
+        $SQL->where("OBJECT_TYPE =?",$camemisType);
+        $SQL->where("PARENT <> 0");
+        $SQL->order("ID ASC");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;        
     }
 
     public function getFirstCulumnData() {
@@ -95,6 +78,8 @@ abstract class FilterProperties {
         }
         return $data;
     }
+    
+    
 
 }
 

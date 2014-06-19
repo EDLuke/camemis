@@ -12,6 +12,7 @@ Class CamemisChart {
     const MULTI_BAR_HIRIZONTAL_CHART = "MULTI_BAR_HIRIZONTAL_CHART";
     const DISCRETE_BAR_CHART = "DISCRETE_BAR_CHART";
     const PIC_CHART = "PIC_CHART";
+    const DONUT_CHART = "DONUT_CHART";
     const MULTI_BAR_CHART = "MULTI_BAR_CHART";
     const STACKE_AREA_CHART = "STACKE_AREA_CHART";
     const CUMULATIVE_LINE_CHART = "CUMULATIVE_LINE_CHART";
@@ -24,6 +25,7 @@ Class CamemisChart {
     public $showValues = "false";
     public $showControls = "false";
     public $tooltips = "false";
+    public $showXAxis = "true";
     public $height = null;
     public $width = null;
     public $chartDiv = "default";
@@ -76,6 +78,15 @@ Class CamemisChart {
                         , $this->width
                         , $this->height);
                 break;
+            case self::DONUT_CHART:
+                $chart = new donutChart(
+                        $this->name
+                        , $this->dataSet
+                        , $this->chartSVG
+                        , $this->showLegend
+                        , $this->width
+                        , $this->height);
+                break;
             case self::DISCRETE_BAR_CHART:
                 $chart = new discreteBarChart(
                         $this->name
@@ -83,16 +94,18 @@ Class CamemisChart {
                         , $this->chartSVG
                         , $this->showValues
                         , $this->staggerLabels
-                        , $this->tooltips);
+                        , $this->tooltips
+                        , $this->showXAxis);
                 break;
             case self::MULTI_BAR_HIRIZONTAL_CHART:
-                $chart = new discreteBarChart(
+                $chart = new multiBarHorizontalChart(
                         $this->name
                         , $this->dataSet
                         , $this->chartSVG
                         , $this->showValues
-                        , $this->staggerLabels
-                        , $this->tooltips);
+                        , $this->showControls
+                        , $this->tooltips
+                        , $this->stacked);
                 break;
             case self::CUMULATIVE_LINE_CHART:
                 $chart = new cumulativeLineChart(
@@ -126,15 +139,20 @@ Class CamemisChart {
                 $js .="\">";
                 $js .="<svg></svg></div>";
                 break;
+            case self::DONUT_CHART:
             case self::PIC_CHART:
-                $js .="<div style='float:left;margin:5px;'>";
-                $js .="<svg id=\"" . $this->chartSVG . "\" style='width:" . $this->width . "px;border: solid 1px #B3B2B2;'></svg>";
+                $js .="<div style='width:" . $this->width . "px;height:".$this->height."px;float:left;margin:10px;'>";
+                $js .="<svg id=\"" . $this->chartSVG . "\" ></svg>";
                 $js .="</div>";
                 break;
             case self::DISCRETE_BAR_CHART:
-                $js .= "<div style=\"height:" . $this->height . "px;\">";
-                $js .= "<svg id=\"" . $this->chartDiv . "\"></svg>";
-                $js .= "</div>";
+                $js .="<div id=\"" . $this->chartSVG . "\"";
+                $js .=" style=\"height:" . $this->height . "px; margin: 10px;";
+                if ($this->width) {
+                    $js .="width:".$this->width."px;float:left;margin:5px;";
+                }
+                $js .="\">";
+                $js .="<svg></svg></div>";
                 break;
             case self::MULTI_BAR_HIRIZONTAL_CHART:
                 $js .="<div id=\"" . $this->chartSVG . "\"";
@@ -244,7 +262,7 @@ Class multiBarChart {
             .rotateLabels(0)
             .groupSpacing(0.1);
             $this->name.multibar
-            .hideable(true);
+            .hideable(".$this->showLegend.");
             $this->name.reduceXTicks(false).staggerLabels(true);
             $this->name.xAxis
             .showMaxMin(false)
@@ -302,12 +320,10 @@ Class picChart {
             var " . $this->name . " = nv.models.pieChart()
             .x(function(d) { return d.key })
             .y(function(d) { return d.y })
-            .showLegend(true)
+            .showLegend(".$this->showLegend.")
             .color(d3.scale.category10().range())
             .width(width)
-            .height(height)
-            .donut(true);
-             $this->name.pie.donutLabelsOutside(true).donut(true);
+            .height(height);
             d3.select(\"#" . $this->chartSVG . "\")
             .datum(" . $this->dataSet . ")
             .transition().duration(1200)
@@ -323,9 +339,70 @@ Class picChart {
 
 }
 
+
+Class donutChart {
+
+    function __construct($name, $dataSet, $chartSVG, $showLegend, $width, $height) {
+
+        $this->name = $name;
+        $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
+        $this->chartSVG = $chartSVG;
+        $this->width = $width;
+        $this->height = $height;
+        $this->showLegend = $showLegend;
+    }
+
+    public static function dafaultDataSet() {
+        return "[{
+            key: 'One',y: 5
+        },{
+            key: 'Two',y: 2
+        },{
+            key: 'Three', y: 9
+        },{
+            key: 'Four',y: 7
+        },{
+            key: 'Five',y: 4
+        },{
+            key: 'Six',y: 3
+        },{
+            key: 'Seven',y: .5
+        }]";
+    }
+
+    public function rendererChart() {
+
+        $js = "nv.addGraph(function() {
+            var width = $this->width,
+            height = $this->height;
+            var " . $this->name . " = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.y })
+            .showLegend(".$this->showLegend.")
+            .color(d3.scale.category10().range())
+            .width(width)
+            .height(height)
+            .donut(true);
+            $this->name.pie.donutLabelsOutside(true).donut(true);
+            d3.select(\"#" . $this->chartSVG . "\")
+            .datum(" . $this->dataSet . ")
+            .transition().duration(1200)
+            .attr('width', width)
+            .attr('height', height)
+            .call(" . $this->name . ");
+            $this->name.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            return " . $this->name . ";
+        });";
+
+        return $js;
+    }
+
+}
+
+
 Class discreteBarChart {
 
-    function __construct($name, $dataSet, $chartSVG, $showValues, $staggerLabels, $tooltips) {
+    function __construct($name, $dataSet, $chartSVG, $showValues, $staggerLabels, $tooltips, $showXAxis) {
 
         $this->name = $name;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -333,6 +410,7 @@ Class discreteBarChart {
         $this->showValues = $showValues;
         $this->staggerLabels = $staggerLabels;
         $this->tooltips = $tooltips;
+        $this->showXAxis = $showXAxis;
     }
 
     public static function dafaultDataSet() {
@@ -375,7 +453,8 @@ Class discreteBarChart {
             .staggerLabels(" . $this->staggerLabels . ")        // true, false
             //.staggerLabels(historicalBarChart[0].values.length > 8)
             .tooltips(" . $this->tooltips . ")                  // true, false
-            .showValues(" . $this->showValues . ")              // true, false
+            .showValues(" . $this->showValues . ")
+            .showXAxis(".$this->showXAxis.")            // true, false
             .transitionDuration(250);
             d3.select('#" . $this->chartSVG . " svg')
             .datum(" . $this->dataSet . ")
@@ -475,7 +554,7 @@ class multiBarHorizontalChart {
             " . $this->name . " = nv.models.multiBarHorizontalChart()
             .x(function(d) { return d.label })
             .y(function(d) { return d.value })
-            .margin({top: 30, right: 20, bottom: 50, left: 175})
+            .margin({top: 20, right: 20, bottom: 20})
             .showValues(" . $this->showValues . ")
             .tooltips(" . $this->tooltips . ")
             .barColor(d3.scale.category20().range())

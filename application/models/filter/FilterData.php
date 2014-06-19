@@ -20,109 +20,246 @@ class FilterData extends FilterProperties {
         }
     }
     
-    public function listAssignedTeacher(){
-        $data = array();
+    public function getCountStudentFemale(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "gender"  => 2
+        );
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentMale(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "gender"  => 1
+        );
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getTotalStudents(){
+        
         $stdClass = (object) array(
                 "schoolyearId" => $this->schoolyearId
                 , "campusId" => $this->campusId
                 , "gradeId" => $this->gradeId
                 , "classId" => $this->classId
         );
-        $result = SQLTeacherFilterReport::SQLAssignedTeacher($stdClass);
-        $i = 0;
-        if($result)
-        {
-            foreach($result as $value)
-            {
-                $data[$i]["ID"] = $value->ID;
-                $data[$i]["CODE"] = setShowText($value->CODE);  
-                $data[$i]["STAFF_SCHOOL_ID"] = setShowText($value->STAFF_SCHOOL_ID);
-                $data[$i]["FULL_NAME"] = self::getFullName($value->FIRSTNAME, $value->LASTNAME);
-                $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
-                $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
-                $data[$i]["FIRSTNAME_LATIN"] = setShowText($value->FIRSTNAME_LATIN);
-                $data[$i]["LASTNAME_LATIN"] = setShowText($value->LASTNAME_LATIN);
-                $data[$i]["GENDER"] = getGenderName($value->GENDER);
-                $data[$i]["EMAIL"] = setShowText($value->EMAIL);
-                $data[$i]["PHONE"] = setShowText($value->PHONE);
-                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
-                $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
-                $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
-
-                $i++;        
-            }
-        }
-        return $data;    
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;   
     }
-
-    public function getFilterData() {
-
-        $data = array();
-
+    
+    public function getCountStudentActive(){
+        
         $stdClass = (object) array(
-                    "schoolyearId" => $this->schoolyearId
-                    , "objectType" => $this->objectType
-                    , "personType" => $this->personType
-                    , "status" => $this->status
-                    , "gridType" => $this->gridType
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "status"  => 1
         );
-
-        $i = 0;
-
-        $typeObject = $this->getCamemisType();
-        $culumnObject = $this->getFirstCulumnData();
-        if ($culumnObject) {
-            foreach ($culumnObject as $firstCulum) {
-                switch ($this->objectType) {
-                    case 'CAMPUS':
-                        $data[$i]["FIRST_CULUMN"] = $firstCulum->NAME;
-                        $stdClass->gradeId = $firstCulum->ID;
-                        break;
-                    case 'GRADE':
-                        $data[$i]["FIRST_CULUMN"] = $firstCulum->NAME;
-                        $stdClass->classId = $firstCulum->ID;
-                        break;
-                    case 'CLASS':
-                        $data[$i]["FIRST_CULUMN"] = self::getFullName($firstCulum->FIRSTNAME, $firstCulum->LASTNAME);
-                        $stdClass->personId = $firstCulum->ID;
-                        break;
-                }
-                $stdClass->campusId = $this->campusId;
-                foreach ($typeObject as $value) {
-                    if ($this->gridType) {
-                        switch ($this->gridType) {
-                            case 'STUDENT_ATTENDANCE_FILTER':
-                                $stdClass->absentType = $value->ID;
-                                $count = SQLStudentFilterReport::countStudentAttendanceType($stdClass);
-                                $data[$i]['ATTENDANCE_' . $value->ID] = $count;
-                                break;
-                            case 'STUDENT_DISCIPLINE_FILTER':
-                                $stdClass->disciplineType = $value->ID;
-                                $count = SQLStudentFilterReport::countStudentDisciplineType($stdClass);
-                                $data[$i]['DISCIPLINE_' . $value->ID] = $count;
-                                break;
-                            case 'STUDENT_ADVISORY_FILTER':
-                                $stdClass->advisoryType = $value->ID;
-                                $count = SQLStudentFilterReport::countStudentAdvisoryType($stdClass);
-                                $data[$i]['ADVISORY_' . $value->ID] = $count;
-                                break;
-                            case 'TEACHER_ATTENDANCE_FILTER':
-                                $stdClass->absentType = $value->ID;
-                                $count = SQLTeacherFilterReport::countTeacherAttendanceType($stdClass);
-                                $data[$i]['ATTENDANCE_'.$value->ID] = $count;
-                                break;
-                            case 'TEACHER_DISCIPLINE_FILTER':
-                                $stdClass->disciplineType = $value->ID;
-                                $count = SQLTeacherFilterReport::countTeacherDisciplineType($stdClass);
-                                $data[$i]['DISCIPLINE_'.$value->ID] = $count;
-                                break; 
-                        }
-                    }
-                }
-                $i++;
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentDeactive(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "status"  => 0
+        );
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentReligion(){
+        
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['religion'] = $this->religion;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['religion'] = $this->religion;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['religion'] = $this->religion;
+                    break;
             }
         }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentSMS(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['SMS'] = $this->SMS;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['SMS'] = $this->SMS;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['SMS'] = $this->SMS;
+                    break;
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentNationality(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['nationality'] = $this->nationality;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['nationality'] = $this->nationality;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['nationality'] = $this->nationality;
+                    break;
+                
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getCountStudentEthnicity(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['ethnicity'] = $this->ethnicity;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['ethnicity'] = $this->ethnicity;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['ethnicity'] = $this->ethnicity;
+                    break;
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
+    }
+    
+    public function getStudentAge(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+        );
+        $result = SQLStudentFilterReport::getAgeStudentEnroll($stdClass);  
+        return $result;  
+    }
+    
+    public function groupAge(){
+        $data = array();
+        $studetnAge = $this->getStudentAge();
+        foreach($studetnAge as $value){   
+            $data[$value->AGE][]=$value->AGE;
+        }
+        
         return $data;
+    }
+    
+    public function getCountStudentCountryProvince(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['country_province'] = $this->country_province;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['country_province'] = $this->country_province;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['country_province'] = $this->country_province;
+                    break;
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudent($stdClass);
+        
+        return $result;    
     }
 
 }

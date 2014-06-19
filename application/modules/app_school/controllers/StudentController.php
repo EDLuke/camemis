@@ -150,6 +150,10 @@ class StudentController extends Zend_Controller_Action {
 
     public function searchAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_SEARCH");
+        $this->view->campusId = $this->campusId;
+        $this->view->gradeId = $this->gradeId;
+        $this->view->schoolyearId = $this->schoolyearId;
+        $this->view->classId = $this->classId;
         $this->view->URL_SEARCH_RESULT = $this->UTILES->buildURL('student/searchresult', array());
     }
 

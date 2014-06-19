@@ -184,7 +184,7 @@ Ext.onReady(function() {
                     }
                     
                     Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().loadData(jsonData);
-                    loadMask.hide();
+                    //loadMask.hide();
                 }
             });   
         }
@@ -192,7 +192,7 @@ Ext.onReady(function() {
      
     $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
     $OBJECT_FORM->labelAlign = "left";
-    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->isObjectDefaultOnLoad = true;
     $OBJECT_FORM->isKeys = true;
     $OBJECT_FORM->renderJS();
     

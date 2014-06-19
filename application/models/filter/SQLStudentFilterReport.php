@@ -118,28 +118,67 @@ class SQLStudentFilterReport {
         return $data;
     }
 
-    public static function getDisciplineType() {
+    public static function getCountStudent($stdClass){
+        
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_camemis_type", array('*'));
-        $SQL->where("OBJECT_TYPE =?","DISCIPLINE_TYPE_STUDENT");
-        $SQL->where("PARENT <> 0");
-        $SQL->order("ID ASC");
+        $SQL->from(array('A' => 't_student_schoolyear'), array("C" => "COUNT(*)"));
+        $SQL->joinLeft(array('B' => 't_student'), 'A.STUDENT=B.ID', array());
+        if ($stdClass->campusId)
+            $SQL->where("A.CAMPUS = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("A.GRADE = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("A.CLASS = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("A.SCHOOL_YEAR = ?",$stdClass->schoolyearId);  
+        if (isset($stdClass->gender))
+            $SQL->where("B.GENDER = ?",$stdClass->gender);
+        if(isset($stdClass->status))
+            $SQL->where("A.STATUS = ?",$stdClass->status);
+        if(isset($stdClass->religion))
+            $SQL->where("B.RELIGION = ?",$stdClass->religion);
+        if(isset($stdClass->SMS))
+            $SQL->where("B.SMS_SERVICES = ?",$stdClass->SMS);
+        if(isset($stdClass->nationality))
+            $SQL->where("B.NATIONALITY = ?",$stdClass->nationality);
+        if(isset($stdClass->ethnicity))
+            $SQL->where("B.ETHNIC = ?",$stdClass->ethnicity);     
+        if (isset($stdClass->country_province))
+            $SQL->where("B.COUNTRY_PROVINCE = ?",$stdClass->country_province);
         //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result?$result->C:0;    
+    }
+    
+    public static function getAgeStudentEnroll($stdClass){
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_student_schoolyear'), array());
+        $SQL->joinLeft(array('B' => 't_student'), 'A.STUDENT=B.ID', array("DATE_FORMAT(FROM_DAYS(TO_DAYS(NOW())-TO_DAYS(DATE_BIRTH)), '%Y')+0 AS AGE","ID AS STUDENT_ID"));
+        if (isset($stdClass->campusId))
+            $SQL->where("A.CAMPUS = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("A.GRADE = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("A.CLASS = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("A.SCHOOL_YEAR = ?",$stdClass->schoolyearId);
+       
+        //error_log($SQL->__toString());
+        //$SQL->group('AGE');
+        $SQL->order(array('AGE ASC'));
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;    
+    }
+    
+    public function getAllLocation(){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_location", array("*"));
+        $SQL->where("PARENT=?",0);
+        $SQL->order("NAME");
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
-
-    public static function getAdvisoryType() {
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_camemis_type", array('*'));
-        $SQL->where("OBJECT_TYPE =?","ADVISORY_TYPE");
-        $SQL->where("PARENT <> 0");
-        $SQL->order("ID ASC");
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        return $result;
-    }
-
 }
 
 ?>

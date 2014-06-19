@@ -4,193 +4,67 @@
 // Date: 17.05.2014
 ///////////////////////////////////////////////////////////
 require_once 'filterviewport.phtml';
-require_once setUserLoacalization();
 class StudentFilterViewPort extends filterviewport{
     
-    public function __construct($stdClass) {
-        $this->campusId = isset($stdClass->campusId) ? addText($stdClass->campusId): "";
-        $this->classId = isset($stdClass->classId) ? addText($stdClass->classId) : "";
-        $this->gradeId = isset($stdClass->gradeId) ? addText($stdClass->gradeId) : "";
-        $this->schoolyearId = isset($stdClass->schoolyearId) ? addText($stdClass->schoolyearId) : "";
-        $this->objectType = isset($stdClass->objectType) ? addText($stdClass->objectType) : "";
-        $this->gridType = isset($stdClass->gridType) ? addText($stdClass->gridType) : "";//example: STUDENT_ATTENDANCE_FILTER
-        parent::__construct();
-        $this->difineGrid();                 
-    }
-
-    public function setGridCulumn($columns){
-        
-        $this->OBJECT_GRID->addCellRenderer("
-            function renderTextBold(v, p, record, rowIndex){
-                var str = '<span style=\"font-weight:bold;color:#061f83;white-space:normal;\">' + v + '</span>';
-                return str;
-            }
-        ");
-        $this->OBJECT_GRID->addCellRenderer("
-            function renderText(v, p, record, rowIndex){
-                var str = '<span style=\"font-weight:normal;color:#555;white-space:normal;\">' + v + '</span>';
-                return str;
-            }
-        "); 
-        
-        switch($this->gridType){
-            case 'STUDENT_FILTER':
-                $this->setFilterColumn($columns);
-                break;
-            case 'STUDENT_ATTENDANCE_FILTER':
-            case 'STUDENT_DISCIPLINE_FILTER':
-            case 'STUDENT_ADVISORY_FILTER':
-                $this->setCountFilterColumn();
-                break;     
-        }
-    }
+    const STUDENT_FILTER = 'STUDENT_FILTER';
+    const STUDENT_ATTENDANCE_FILTER = 'STUDENT_ATTENDANCE_FILTER';
+    const STUDENT_DISCIPLINE_FILTER = 'STUDENT_DISCIPLINE_FILTER';
+    const STUDENT_ADVISORY_FILTER = 'STUDENT_ADVISORY_FILTER';
     
-    public function setCmd(){
-        
-        $this->cmdParams = $this->setCmdParams();
-        switch($this->gridType){
-            case 'STUDENT_FILTER':
-                $this->cmdParams .=",displayCurrentAcademic:2";
-                $this->cmdParams .=",cmd: 'searchStudent'";
-                break;
-            case 'STUDENT_ATTENDANCE_FILTER':
-                $this->cmdParams .=",objectType:'".$this->objectType."'";
-                $this->cmdParams .=",cmd: 'getStudentAttendanceData'";
-                $this->cmdParams .=",personType: 'STUDENT'";
-                $this->cmdParams .=",status: '1'";
-                $this->cmdParams .=",gridType: '".$this->gridType."'";
-                break;
-            case 'STUDENT_DISCIPLINE_FILTER':
-                $this->cmdParams .=",objectType:'".$this->objectType."'";
-                $this->cmdParams .=",cmd: 'getStudentDisciplineData'";
-                $this->cmdParams .=",gridType: '".$this->gridType."'";
-                break;
-            case 'STUDENT_ADVISORY_FILTER':
-                $this->cmdParams .=",objectType:'".$this->objectType."'";
-                $this->cmdParams .=",cmd: 'getStudentAdvisoryData'";
-                $this->cmdParams .=",gridType: '".$this->gridType."'";
-                break;    
-        }    
-        $this->OBJECT_GRID->baseParams = $this->cmdParams;
-        if($this->exportExcel)
-            $this->tbarExport($this->cmdParams);    
+    public function __construct($params) {
+        parent::__construct();
+        $this->stdClass = (object)$params;
+        $this->urlEncryp = new URLEncryption();            
     }
     
     public function setChartParams(){
+        
         $params = "";
-        $params .= "objectType=".$this->objectType."";
-        $params .= "&campusId=".$this->campusId."";
-        $params .= "&gradeId=".$this->gradeId."";
-        $params .= "&schoolyearId=".$this->schoolyearId."";
-        if($this->gradeId)
-        $params .= "&academicId=".$this->gradeId."";
+        if(isset($this->stdClass->objectType))
+        $params .= "objectType=".$this->stdClass->objectType."";
+        
+        if(isset($this->stdClass->campusId))
+        $params .= "&campusId=".$this->stdClass->campusId."";
+        
+        if(isset($this->stdClass->gradeId))
+        $params .= "&gradeId=".$this->stdClass->gradeId."";
+        
+        if(isset($this->stdClass->schoolyearId))
+        $params .= "&schoolyearId=".$this->stdClass->schoolyearId."";
+        
+        if(isset($this->stdClass->gradeId))
+        $params .= "&academicId=".$this->stdClass->gradeId."";
         return $params;    
     }
     
-    public function redererViewPortJs(){
-        $this->redererViewPort($this->setChartParams());      
-    }      
-}
-//////////////////////
-//generate the view///
-/////////////////////
-
-$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
-
-$gradeId = "";
-$campusId = "";
-$schoolyearId = "";
-$classId = "";
-
-if (strpos($objectId, "CAMPUS_") !== false) {
-    $Ids = explode("_",substr($objectId, 7));
-    $campusId = isset($Ids[0])?$Ids[0]:"";
-    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
-    $objectType = "CAMPUS";
-} elseif (strpos($objectId, "GRADE_") !== false) {
-    $objectType = "GRADE";
-    $Ids = explode("_",substr($objectId, 6));
-    $gradeId = isset($Ids[0])?$Ids[0]:"";
-    $campusId = isset($Ids[1])?$Ids[1]:"";
-    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
-} else{
-    $objectType = "CLASS";
-    $classId = $objectId;
-}
-print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
-
-$filterObject = new StudentFilterViewPort((object)array('campusId'=>$campusId,'classId'=>$classId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId,'objectType'=>$objectType,'gridType'=>$this->gridType));
-?>
-<style>
-    .filter-row-grid .x-grid3-header {
-    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
-}
-
-.filter-row-grid .filter-row-header {
-    height: 26px;
-}
-
-tr.filter-row-header .filter-row-icon input {
-    background-image: url(/public/images/filter-row-icon.png);
-    background-repeat: no-repeat;
-    padding-left: 16px;
-}
-</style>
-<script>
-Ext.onReady(function() {
-    Ext.Ajax.timeout = 600000;
-    
-    function cssText(value, metadata, record){
-        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
-    }
-    <?
-    /**
-     * Extjs: s.gif
-     */
-    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
-    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-    $dataColumn = array();
-    if($this->gridType)
-    {
-        switch($this->gridType)
+    private function setChartUrl(){
+        $charUrls = array();
+        if($this->stdClass)
         {
-            case 'STUDENT_FILTER':
-                $dataColumn[]='CODE';
-                $dataColumn[]='STUDENT_SCHOOL_ID';
-                $dataColumn[]='FIRSTNAME';
-                $dataColumn[]='LASTNAME';
-                $dataColumn[]='GENDER';
-                $dataColumn[]='PHONE';
-                $dataColumn[]='EMAIL';
-                $dataColumn[]='DATE_BIRTH';
-                $dataColumn[]='AGE';
-                $dataColumn[]='CURRENT_CAMPUS';
-                $dataColumn[]='CURRENT_GRADE';
-                $dataColumn[]='CURRENT_CLASS';
-                $dataColumn[]='NATIONALITY';
-                $dataColumn[]='RELIGION';
-                $dataColumn[]='ETHNIC_GROUPS';
-                $filterObject->OBJECT_GRID->isFilterRow = true;
-                
-                break; 
+            switch($this->stdClass->gridType)
+            {
+                case self::STUDENT_FILTER:
+                    $charUrls=array(
+                        "count female and male"=>array("url"=>"/chart/studentstatistic/","height"=>290)
+                      
+                    );
+                    break;
+                case self::STUDENT_ATTENDANCE_FILTER:
+
+                    break;
+                case self::STUDENT_DISCIPLINE_FILTER:
+
+                    break;
+                case self::STUDENT_ADVISORY_FILTER:
+
+                    break;
+       
+            }        
         }
-        
-        $filterObject->exportExcel=true;
-        $filterObject->setGridCulumn($dataColumn);
-        $filterObject->setCmd();
-        $filterObject->OBJECT_GRID->addTBarItems("tbar.add('->');");
-        $filterObject->OBJECT_GRID->isQuickySearch = true;
-        $filterObject->OBJECT_GRID->isPagingToolbar = true;
-        $filterObject->OBJECT_GRID->isObjectDefaultOnLoad = true;
-        $filterObject->OBJECT_GRID->setUserColumn = true;
-        $filterObject->OBJECT_GRID->forceFit = "false";    
-        $filterObject->OBJECT_GRID->renderJS();
-        $filterObject->redererViewPortJs();
+        return $charUrls;   
     }
-    ?>
-});
-</script>
-<?
-print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
-?>
+
+    public function renderJS(){
+        $this->redererViewPort($this->setChartUrl());
+    }    
+}
