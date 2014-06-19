@@ -99,13 +99,21 @@ class AcademicDBAccess {
                     if ($academicObject->SUBJECT_ID)
                     {
                         $subjectObject = SubjectDBAccess::findSubjectFromId($academicObject->SUBJECT_ID);
-                        if ($subjectObject)
+                        if ($academicObject->NUMBER_CREDIT)
                         {
-                            $data["SHORT_CODE"] = $subjectObject->SHORT;
-                            $data["SUBJECT_NAME"] = $subjectObject->NAME;
-                            $data["SUBJECT_CREDIT"] = $subjectObject->NUMBER_CREDIT;
-                            $data["SUBJECT_ID"] = $subjectObject->ID;
+                            $data["NUMBER_CREDIT"] = $academicObject->NUMBER_CREDIT;
                         }
+                        else
+                        {
+                            if ($subjectObject)
+                            {
+                                $data["SHORT_CODE"] = $subjectObject->SHORT;
+                                $data["SUBJECT_NAME"] = $subjectObject->NAME;
+                                $data["NUMBER_CREDIT"] = $subjectObject->NUMBER_CREDIT;
+                                $data["SUBJECT_ID"] = $subjectObject->ID;
+                            }
+                        }
+
                         $title = $parentName . ": " . $subjectObject->NAME;
                         $data["NAME"] = setShowText($subjectObject->NAME);
                     }
@@ -169,8 +177,6 @@ class AcademicDBAccess {
 
             $data["USE_OF_GROUPS"] = $academicObject->USE_OF_GROUPS ? true : false;
             $data["SUBJECT"] = $academicObject->SUBJECT_ID;
-            $data["NUMBER_CREDIT"] = $academicObject->NUMBER_CREDIT;
-
             $deapartmentObject = DepartmentDBAccess::findDepartmentFromId($academicObject->DEPARTMENT);
 
             if ($deapartmentObject)

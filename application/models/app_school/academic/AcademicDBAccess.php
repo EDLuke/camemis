@@ -87,14 +87,23 @@ class AcademicDBAccess {
                 case "SUBJECT":
                     if ($facette->SUBJECT_ID)
                     {
+
                         $subjectObject = SubjectDBAccess::findSubjectFromId($facette->SUBJECT_ID);
-                        if ($subjectObject)
+                        if ($facette->NUMBER_CREDIT)
                         {
-                            $data["SHORT_CODE"] = $subjectObject->SHORT;
-                            $data["SUBJECT_NAME"] = $subjectObject->NAME;
-                            $data["CREDITS"] = $subjectObject->NUMBER_CREDIT;
-                            $data["SUBJECT_ID"] = $subjectObject->ID;
+                            $data["NUMBER_CREDIT"] = $facette->NUMBER_CREDIT;
                         }
+                        else
+                        {
+                            if ($subjectObject)
+                            {
+                                $data["SHORT_CODE"] = $subjectObject->SHORT;
+                                $data["SUBJECT_NAME"] = $subjectObject->NAME;
+                                $data["NUMBER_CREDIT"] = $subjectObject->NUMBER_CREDIT;
+                                $data["SUBJECT_ID"] = $subjectObject->ID;
+                            }
+                        }
+
                         $title = $parentName . ": " . $subjectObject->NAME;
                         $data["NAME"] = setShowText($subjectObject->NAME);
                     }
@@ -119,7 +128,6 @@ class AcademicDBAccess {
             $data["EDUCATION_TYPE"] = $facette->EDUCATION_TYPE;
             $data["QUALIFICATION_TYPE"] = $facette->EDUCATION_TYPE;
             $data["SCHOOL_TYPE"] = $facette->SCHOOL_TYPE;
-            $data["NUMBER_CREDIT"] = displayNumberFormat($facette->NUMBER_CREDIT);
 
             $data["CODE"] = $facette->CODE;
             $data["STATUS"] = $facette->STATUS;
