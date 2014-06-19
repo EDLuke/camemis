@@ -234,7 +234,7 @@ class RoomDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public function allRooms($params) {
+    public function allRooms($params, $isJson= true) {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -269,11 +269,15 @@ class RoomDBAccess {
                 $a[] = $data[$i];
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
+        if($isJson){
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }else {
+            return $data;
+        }
     }
 
     public function jsonTreeAllRooms($params) {
