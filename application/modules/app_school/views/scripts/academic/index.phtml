@@ -252,7 +252,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-flag_blue'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/academic/gradesubjects/?objectId=' + node.id);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".SUBJECT_AND_ASSIGNMENT."','/academic/gradesubjects/?objectId=' + node.id);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
@@ -321,7 +321,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-flag_blue'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/academic/classsubjects/?objectId=' + node.id);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".SUBJECT_AND_ASSIGNMENT."','/academic/classsubjects/?objectId=' + node.id);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
