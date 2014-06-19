@@ -1320,6 +1320,7 @@ class SubjectDBAccess {
         {
             case 1:
                 $SQL->where("GRADE = '" . $academicObject->CAMPUS_ID . "'");
+                $SQL->where("SCHOOLYEAR = '" . $academicObject->SCHOOL_YEAR . "'");
                 $SQL->where("USED_IN_CLASS = '0'");
                 break;
             default:
