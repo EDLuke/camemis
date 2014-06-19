@@ -173,10 +173,6 @@ class AcademicController extends Zend_Controller_Action {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
     }
 
-    public function creditassessmenttabsAction() {
-        $this->_helper->viewRenderer("creditsystem/creditassessmenttabs");
-    }
-
     public function addcampusAction() {
 
         $this->view->objectId = $this->objectId;

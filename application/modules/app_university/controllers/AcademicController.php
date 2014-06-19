@@ -177,11 +177,7 @@ class AcademicController extends Zend_Controller_Action {
             $this->_helper->viewRenderer("traditionalsystem/schedule");
         }
     }
-
-    public function creditassessmenttabsAction() {
-        $this->_helper->viewRenderer("creditsystem/creditassessmenttabs");
-    }
-
+    
     public function addparentfolderAction() {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
