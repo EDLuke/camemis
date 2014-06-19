@@ -217,7 +217,7 @@ class AssignmentTempDBAccess {
         }
 
         $target = isset($params["target"]) ? addText($params["target"]) : "";
-
+        
         if (strtoupper($target) == "GENERAL")
         {
 
@@ -247,6 +247,7 @@ class AssignmentTempDBAccess {
 
                 $sarchParam["educationType"] = $node;
                 $sarchParam["subjectId"] = 'xxxx';
+                $sarchParam["academicId"] = isset($params["academicId"]) ? addText($params["academicId"]) : "";
                 $result = $this->getSQLAssignmentTemp($sarchParam);
 
                 $i = 0;
