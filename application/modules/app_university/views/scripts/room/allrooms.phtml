@@ -100,6 +100,8 @@ $DISPLAY_FIELDS = implode(",",$FIELD_PANEL_ITEMS);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());//@CHHE Vathana
+
 $READ_RIGHT=UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT")?"false":"true";
 $EDIT_RIGHT=UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT")?"false":"true";
 
@@ -259,6 +261,44 @@ Ext.onReady(function() {
     $OBJECT_GRID->addTBarItems("
         tbar.add('->');
     ");
+    
+    //@CHHE Vathana
+    
+    if(UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT")){
+            $OBJECT_GRID->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
+                            ,params:{
+                                cmd: 'allRooms'
+                                ,objectId: '".$OBJECT_GRID->getObjectId()."'
+                                ,type: 1                         
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openroomlist/'
+                            }
+                        });
+                    }
+                }]);
+            ");
+        }
+        
+    //End...
     //
     $OBJECT_GRID->baseParams = "
         start:0
@@ -270,6 +310,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isPagingToolbar = true;
     $OBJECT_GRID->isQuickySearch = true;
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->setUserColumn = true;//@CHHE Vathana
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->renderJS();
     ?>
@@ -323,6 +364,8 @@ Ext.onReady(function() {
         event.stopEvent();
         contextMenu.showAt(event.xy);
     });
+    
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <style type="text/css">
