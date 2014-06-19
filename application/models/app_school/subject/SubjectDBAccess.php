@@ -16,35 +16,42 @@ class SubjectDBAccess {
     public $dataforjson = null;
     public $data = array();
 
-    static function getInstance() {
+    static function getInstance()
+    {
         static $me;
-        if ($me == null) {
+        if ($me == null)
+        {
             $me = new SubjectDBAccess();
         }
         return $me;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->SELECT = self::dbAccess()->select();
         $this->_TOSTRING = $this->SELECT->__toString();
         $this->DB_ACADEMIC = AcademicDBAccess::getInstance();
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public function getSubjectDataFromId($Id) {
+    public function getSubjectDataFromId($Id)
+    {
 
         $data = array();
         $facette = self::findSubjectFromId($Id);
 
-        if ($facette) {
+        if ($facette)
+        {
             $data["ID"] = $facette->ID;
             $facette = self::findSubjectFromId($Id);
 
@@ -82,28 +89,36 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public static function findSubjectFromId($Id) {
+    public static function findSubjectFromId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array('*'));
-        if (is_numeric($Id)) {
+        if (is_numeric($Id))
+        {
             $SQL->where("ID = ?", $Id);
-        } else {
+        }
+        else
+        {
             $SQL->where("GUID = ?", $Id);
         }
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function loadObject($Id) {
+    public function loadObject($Id)
+    {
 
         $result = self::findSubjectFromId($Id);
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => $this->getSubjectDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -112,7 +127,8 @@ class SubjectDBAccess {
         return $o;
     }
 
-    public static function getAllSubjectsQuery($params) {
+    public static function getAllSubjectsQuery($params)
+    {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -121,7 +137,8 @@ class SubjectDBAccess {
         $gradeId = isset($params["gradeId"]) ? (int) $params["gradeId"] : "";
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
 
-        if ($gradeId) {
+        if ($gradeId)
+        {
             $gradeObject = AcademicDBAccess::findGradeFromId($gradeId);
             $educationType = $gradeObject->EDUCATION_TYPE;
         }
@@ -137,13 +154,15 @@ class SubjectDBAccess {
         if ($educationType)
             $SQL .= " AND A.EDUCATION_TYPE = '" . $educationType . "'";
 
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SQL .= " AND ((NAME like '" . $globalSearch . "%') ";
             $SQL .= " OR (SHORT like '" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
 
-        switch (strtoupper($target)) {
+        switch (strtoupper($target))
+        {
             case "GENERAL":
                 $SQL .= " AND TRAINING =0";
                 break;
@@ -161,7 +180,8 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     // Tree: List of Subjects...
     ///////////////////////////////////////////////////////
-    public function treeAllSubjects($params) {
+    public function treeAllSubjects($params)
+    {
 
         $requisiteId = isset($params["requisiteId"]) ? addText($params["requisiteId"]) : "";
         //@veasna
@@ -172,9 +192,11 @@ class SubjectDBAccess {
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $checkUsed = false;
 
-        if ($academicObject) {
+        if ($academicObject)
+        {
             $checkUsed = true;
-            switch ($academicObject->OBJECT_TYPE) {
+            switch ($academicObject->OBJECT_TYPE)
+            {
                 case "CLASS":
                     $classId = $academicObject->ID;
                     $gradeId = $academicObject->GRADE_ID;
@@ -188,29 +210,37 @@ class SubjectDBAccess {
             }
         }
 
-        if (substr($params["node"], 19)) {
+        if (substr($params["node"], 19))
+        {
             $node = str_replace('QUALIFICATION_TYPE_', '', $params["node"]);
-        } else {
+        }
+        else
+        {
             $node = $params["node"];
         }
 
         $data = array();
 
         $WHERE = "WHERE OBJECT_TYPE='QUALIFICATION_TYPE' AND PARENT<>0";
-        if ($requisiteId) {
+        if ($requisiteId)
+        {
             $subjectObject = self::findSubjectFromId($requisiteId);
-            if ($subjectObject) {
+            if ($subjectObject)
+            {
                 $WHERE .= " AND ID = '" . $subjectObject->EDUCATION_TYPE . "'";
             }
         }
 
-        if ($node == 0) {
+        if ($node == 0)
+        {
             $i = 0;
 
             $result = self::dbAccess()->fetchAll("SELECT * FROM t_camemis_type " . $WHERE . "");
 
-            if ($result) {
-                foreach ($result as $key => $value) {
+            if ($result)
+            {
+                foreach ($result as $key => $value)
+                {
                     $data[$i]['id'] = "QUALIFICATION_TYPE_" . $value->ID;
                     $data[$i]['objectId'] = $value->ID;
                     $data[$i]['type'] = "qualification";
@@ -224,35 +254,53 @@ class SubjectDBAccess {
                     $i++;
                 }
             }
-        } else {
+        }
+        else
+        {
             $params["educationType"] = $node;
             $result = self::getAllSubjectsQuery($params);
             $i = 0;
 
-            if ($result) {
-                switch (UserAuth::getUserType()) { //@Math Man
+            if ($result)
+            {
+                switch (UserAuth::getUserType())
+                { //@Math Man
                     case "STUDENT":
                         $checkedPrerequisite = true;
-                        foreach ($result as $key => $value) {
-                            if ($requisiteId) {
-                                if ($schoolyear) {
+                        foreach ($result as $key => $value)
+                        {
+                            if ($requisiteId)
+                            {
+                                if ($schoolyear)
+                                {
                                     $snaParams['academicId'] = $gradeSubjectGradId;
                                     $snaParams['schoolyear'] = $schoolyear;
                                     $snaParams['requisiteId'] = $requisiteId;
-                                    $checkedPrerequisite = in_array($value->ID, GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
-                                } else {
-                                    $checkedPrerequisite = in_array($value->ID, self::getPreRequisiteBySubject($requisiteId)) ? true : false;
+                                    $checkedPrerequisite = in_array(
+                                            $value->ID
+                                            , GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
+                                }
+                                else
+                                {
+                                    $checkedPrerequisite = in_array(
+                                            $value->ID
+                                            , self::getPreRequisiteBySubject($requisiteId)) ? true : false;
                                 }
                             }
-                            if ($checkedPrerequisite) {
+                            if ($checkedPrerequisite)
+                            {
                                 $data[$i]['id'] = $value->ID;
                                 $data[$i]['subjectId'] = $value->ID;
-                                if (!$checkUsed) {
+                                if (!$checkUsed)
+                                {
                                     $CHECK_USED = false;
                                     $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
                                     $data[$i]['isUsed'] = false;
-                                } else {
-                                    if (isset($gradeId) && isset($schoolyearId) && isset($classId)) {
+                                }
+                                else
+                                {
+                                    if (isset($gradeId) && isset($schoolyearId) && isset($classId))
+                                    {
                                         $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
                                         $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
                                         $data[$i]['isUsed'] = $CHECK_USED ? true : false;
@@ -269,17 +317,22 @@ class SubjectDBAccess {
                         break;
                     ///////////////////////
                     default:
-                        foreach ($result as $key => $value) {
+                        foreach ($result as $key => $value)
+                        {
 
                             $data[$i]['id'] = $value->ID;
                             $data[$i]['subjectId'] = $value->ID;
 
-                            if (!$checkUsed) {
+                            if (!$checkUsed)
+                            {
                                 $CHECK_USED = false;
                                 $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
                                 $data[$i]['isUsed'] = false;
-                            } else {
-                                if (isset($gradeId) && isset($schoolyearId) && isset($classId)) {
+                            }
+                            else
+                            {
+                                if (isset($gradeId) && isset($schoolyearId) && isset($classId))
+                                {
                                     $CHECK_USED = GradeSubjectDBAccess::checkSubjectINGrade($value->ID, $gradeId, $schoolyearId, $classId);
                                     $data[$i]['cls'] = $CHECK_USED ? "nodeTextUnderline" : "nodeTextBlue";
                                     $data[$i]['isUsed'] = $CHECK_USED ? true : false;
@@ -292,11 +345,13 @@ class SubjectDBAccess {
 
                             $data[$i]['leaf'] = true;
 
-                            if ($requisiteId) {
+                            if ($requisiteId)
+                            {
                                 $data[$i]['iconCls'] = "icon-shape_square_link";
                                 $data[$i]["checked"] = in_array($value->ID, self::getPreRequisiteBySubject($requisiteId)) ? true : false;
                                 //@veasna
-                                if ($schoolyear) {
+                                if ($schoolyear)
+                                {
                                     $data[$i]['iconCls'] = "icon-shape_square_link";
                                     $snaParams['academicId'] = $gradeSubjectGradId;
                                     $snaParams['schoolyear'] = $schoolyear;
@@ -304,7 +359,9 @@ class SubjectDBAccess {
                                     $data[$i]["checked"] = in_array($value->ID, GradeSubjectDBAccess::getPreRequisiteByGradeSubject($snaParams)) ? true : false;
                                 }
                                 //
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['iconCls'] = "icon-star";
                             }
                             $i++;
@@ -320,7 +377,8 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     // Grid: Subjects by Teacher...
     ///////////////////////////////////////////////////////
-    public function loadSubjectByTeacher($params) {
+    public function loadSubjectByTeacher($params)
+    {
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "0";
         $start = $params["start"] ? (int) $params["start"] : "0";
@@ -333,7 +391,8 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $qualificationObject = CamemisTypeDBAccess::findObjectFromId($value->EDUCATION_TYPE);
                 $data[$i]["EDUCATION_TYPE"] = $qualificationObject ? $qualificationObject->NAME : "---";
@@ -353,7 +412,8 @@ class SubjectDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -367,7 +427,8 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     // Checktree: Teacher and Subject
     ///////////////////////////////////////////////////////
-    public function treeTeacherSubjects($params) {
+    public function treeTeacherSubjects($params)
+    {
 
         //checked:true/false
         $data = array();
@@ -376,7 +437,8 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $check = $this->checkSubjectByTeacher($teacherId, $value->ID);
 
@@ -398,7 +460,8 @@ class SubjectDBAccess {
     ///////////////////////////////////////////////////////
     //Grid: List of Subjects...
     ///////////////////////////////////////////////////////
-    public function allSubjects($params, $forjson = true) {
+    public function allSubjects($params, $forjson = true)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
@@ -409,7 +472,8 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["SHORT"] = $value->SHORT;
@@ -421,21 +485,25 @@ class SubjectDBAccess {
                 $i++;
             }
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-        if ($forjson) {
+        if ($forjson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else
+        }
+        else
             return $a;
     }
 
-    public static function allSubjectsComboData() {
+    public static function allSubjectsComboData()
+    {
 
         $data = array();
         $result = self::getAllSubjectsQuery(false);
@@ -443,7 +511,8 @@ class SubjectDBAccess {
         $data[0] = "[0,'[---]']";
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"" . addslashes($value->NAME) . "\"]";
 
                 $i++;
@@ -452,7 +521,8 @@ class SubjectDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public function removeSubject($params) {
+    public function removeSubject($params)
+    {
 
         $subjectId = isset($params["removeId"]) ? addText($params["removeId"]) : "";
 
@@ -460,14 +530,16 @@ class SubjectDBAccess {
         $SQL .= " WHERE";
         $SQL .= " SUBJECT='" . $subjectId . "' AND";
 
-        if (!$this->checkRemoveSubject($subjectId)) {
+        if (!$this->checkRemoveSubject($subjectId))
+        {
             self::dbAccess()->query($SQL);
         }
 
         return array("success" => true);
     }
 
-    public function updateSubject($params) {
+    public function updateSubject($params)
+    {
 
         $SAVEDATA = array();
 
@@ -496,11 +568,13 @@ class SubjectDBAccess {
         if (isset($params["AVERAGE_FROM_SEMESTER"]))
             $SAVEDATA['AVERAGE_FROM_SEMESTER'] = addText($params["AVERAGE_FROM_SEMESTER"]);
 
-        if (isset($params["SUBJECT_TYPE"])) {
+        if (isset($params["SUBJECT_TYPE"]))
+        {
             $SAVEDATA['SUBJECT_TYPE'] = addText($params["SUBJECT_TYPE"]);
         }
 
-        if ($facette) {
+        if ($facette)
+        {
             $SAVEDATA['PRE_REQUISITE_COURSE'] = $facette->PRE_REQUISITE_COURSE;
         }
 
@@ -510,17 +584,23 @@ class SubjectDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
-        if (isset($params["FORMULA_TYPE"])) {
+        if (isset($params["FORMULA_TYPE"]))
+        {
             $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
-        } else {
+        }
+        else
+        {
             $SAVEDATA['FORMULA_TYPE'] = 1;
         }
         $SAVEDATA['COEFF_VALUE'] = addText($params["COEFF_VALUE"]);
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
 
-        if (isset($params["SCORE_TYPE"])) {
+        if (isset($params["SCORE_TYPE"]))
+        {
             $SAVEDATA['SCORE_TYPE'] = $params["SCORE_TYPE"];
-        } else {
+        }
+        else
+        {
             $SAVEDATA['SCORE_TYPE'] = 1;
         }
 
@@ -539,11 +619,15 @@ class SubjectDBAccess {
         if (isset($params["MAX_POSSIBLE_SCORE"]))
             $SAVEDATA['MAX_POSSIBLE_SCORE'] = addText($params["MAX_POSSIBLE_SCORE"]);
 
-        if ($params["objectId"] != "new") {
+        if ($params["objectId"] != "new")
+        {
             $WHERE = Zend_Registry::get('DB_ACCESS')->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_subject', $SAVEDATA, $WHERE);
-        } else {
-            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
+        }
+        else
+        {
+            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+            {
                 $SAVEDATA['STATUS'] = 1;
             }
 
@@ -557,13 +641,15 @@ class SubjectDBAccess {
         );
     }
 
-    public function SubjectCheckBox() {
+    public function SubjectCheckBox()
+    {
 
         $entries = self::getAllSubjectsQuery(array());
 
         $CHECK_BOX = array();
         if ($entries)
-            foreach ($entries as $key => $value) {
+            foreach ($entries as $key => $value)
+            {
                 $CHECK_BOX[$key] = "
 				{
 				fieldLabel: ''
@@ -583,7 +669,8 @@ class SubjectDBAccess {
     //@Sea Peng 22.08.2013
     ////////////////////////////////////////////////////////////////////////////
 
-    public function createOnlyItem($params) {
+    public function createOnlyItem($params)
+    {
 
         $SAVEDATA = array();
 
@@ -591,7 +678,8 @@ class SubjectDBAccess {
 
         $SAVEDATA['GUID'] = generateGuid();
 
-        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
+        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+        {
             $SAVEDATA['STATUS'] = 0;
         }
         if (isset($params["COLOR"]))
@@ -613,7 +701,8 @@ class SubjectDBAccess {
         $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
         $SAVEDATA['EDUCATION_TYPE'] = addText($educationType);
 
-        if ($educationType == "TRAINING") {
+        if ($educationType == "TRAINING")
+        {
             $SAVEDATA['TRAINING'] = 1;
             $SAVEDATA['EVALUATION_TYPE'] = 1;
         }
@@ -630,7 +719,8 @@ class SubjectDBAccess {
         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
-        if (!self::findLastSubjectId()) {
+        if (!self::findLastSubjectId())
+        {
             $SAVEDATA['ID'] = self::findLastId() + 1000;
         }
 
@@ -646,22 +736,27 @@ class SubjectDBAccess {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public function checkRemoveSubject($Id) {
+    public function checkRemoveSubject($Id)
+    {
 
         $count2 = $this->checkSubjectBySubjectTeacherClass($Id);
         $count3 = $this->checkSubjectByAssignment($Id);
         $count4 = self::existingSubjectInSchedule($Id);
 
-        if ($count2 || $count3 || $count4) {
+        if ($count2 || $count3 || $count4)
+        {
             $status = true;
-        } else {
+        }
+        else
+        {
             $status = false;
         }
 
         return $status;
     }
 
-    public function removeObject($params) {
+    public function removeObject($params)
+    {
 
         $SQL = "
 		DELETE FROM t_subject
@@ -671,7 +766,8 @@ class SubjectDBAccess {
         return array("success" => true);
     }
 
-    protected function countTeachersBySubject($subjectId, $gradeId, $schoolyearId) {
+    protected function countTeachersBySubject($subjectId, $gradeId, $schoolyearId)
+    {
 
         $SQL = self::dbAccess()->select()
                 ->from("t_subject", array("C" => "COUNT(*)"))
@@ -682,7 +778,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function countAssignmentBySubject($subjectId, $gradeId) {
+    public function countAssignmentBySubject($subjectId, $gradeId)
+    {
 
         $SQL = self::dbAccess()->select()
                 ->from("t_assignment", array("C" => "COUNT(*)"))
@@ -692,7 +789,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function releaseObject($params) {
+    public function releaseObject($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
@@ -703,8 +801,10 @@ class SubjectDBAccess {
         $SQL .= " t_subject";
         $SQL .= " SET";
 
-        if (isset($facette)) {
-            switch ($facette->STATUS) {
+        if (isset($facette))
+        {
+            switch ($facette->STATUS)
+            {
                 case 0:
                     $newStatus = 1;
                     $SQL .= " STATUS=1";
@@ -728,7 +828,8 @@ class SubjectDBAccess {
         return array("success" => true, "status" => $newStatus);
     }
 
-    public function treeSubjectsByClass($params) {
+    public function treeSubjectsByClass($params)
+    {
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "0";
 
@@ -738,7 +839,8 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $gradeSubjectObject = GradeSubjectDBAccess::getGradeSubject(
                                 false
@@ -762,7 +864,8 @@ class SubjectDBAccess {
         return $data;
     }
 
-    protected function checkSubjectByAssignment($Id) {
+    protected function checkSubjectByAssignment($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", array("C" => "COUNT(*)"));
@@ -771,7 +874,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkSubjectBySubjectTeacherClass($Id) {
+    protected function checkSubjectBySubjectTeacherClass($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -780,7 +884,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkTeacherBySubjectTeacherClass($teacherId, $subjectId) {
+    protected function checkTeacherBySubjectTeacherClass($teacherId, $subjectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject_teacher_class", array("C" => "COUNT(*)"));
@@ -790,7 +895,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkSubjectByTeacher($teacherId, $subjectId) {
+    protected function checkSubjectByTeacher($teacherId, $subjectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teacher_subject", array("C" => "COUNT(*)"));
@@ -800,7 +906,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function actionTeacherSubjects($params) {
+    public function actionTeacherSubjects($params)
+    {
 
         $newValue = $params["newValue"];
         $field = $params["field"];
@@ -809,17 +916,23 @@ class SubjectDBAccess {
 
         $check = $this->checkTeacherBySubjectTeacherClass($teacherId, $subjectId);
 
-        if ($check == 0) {
+        if ($check == 0)
+        {
 
             $this->removeSubjectFromTeacher($teacherId, $subjectId);
 
-            if ($newValue == 1 && $field == "TEACHING") {
+            if ($newValue == 1 && $field == "TEACHING")
+            {
                 $this->addTeacherSubject($teacherId, $subjectId);
                 $ACTION_STATUS = 0;
-            } else {
+            }
+            else
+            {
                 $ACTION_STATUS = 0;
             }
-        } else {
+        }
+        else
+        {
             $ACTION_STATUS = 1;
         }
 
@@ -829,7 +942,8 @@ class SubjectDBAccess {
         );
     }
 
-    protected function removeSubjectFromTeacher($teacherId, $subjectId) {
+    protected function removeSubjectFromTeacher($teacherId, $subjectId)
+    {
 
         $SQL = "
 		DELETE FROM t_teacher_subject
@@ -839,7 +953,8 @@ class SubjectDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    protected function addTeacherSubject($teacherId, $subjectId) {
+    protected function addTeacherSubject($teacherId, $subjectId)
+    {
 
         $SQL = "
 		INSERT INTO t_teacher_subject
@@ -850,25 +965,29 @@ class SubjectDBAccess {
         self::dbAccess()->query($SQL);
     }
 
-    public static function existingSubjectInSchedule($subjectId, $term = false) {
+    public static function existingSubjectInSchedule($subjectId, $term = false)
+    {
 
         $SQL = "SELECT count(*) AS C";
         $SQL .= " FROM t_schedule";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND SUBJECT_ID = '" . $subjectId . "'";
-        if ($term) {
+        if ($term)
+        {
             $SQL .= " AND TERM = '" . $term . "'";
         }
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
 
-    public function SubjectByTeacherCombo() {
+    public function SubjectByTeacherCombo()
+    {
 
         $utiles = Utiles::getInstance();
         $teacherId = "";
 
-        if (UserAuth::getUserType() == 'TEACHER' || UserAuth::getUserType() == "INSTRUCTOR") {
+        if (UserAuth::getUserType() == 'TEACHER' || UserAuth::getUserType() == "INSTRUCTOR")
+        {
             $teacherId = $utiles->getValueRegistry("USERID");
         }
 
@@ -890,14 +1009,16 @@ class SubjectDBAccess {
 
         $data = array();
         if ($result)
-            foreach ($result as $key => $value) {
+            foreach ($result as $key => $value)
+            {
                 $data[$key] = "[\"$value->SUBJECT_ID\",\"$value->SUBJECT_NAME\"]";
             }
 
         return "[" . implode(",", $data) . "]";
     }
 
-    public function actionTeacherSubject($params) {
+    public function actionTeacherSubject($params)
+    {
 
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
         $subjectId = isset($params["id"]) ? addText($params["id"]) : "";
@@ -905,13 +1026,17 @@ class SubjectDBAccess {
         $isInClass = $this->checkTeacherBySubjectTeacherClass($teacherId, $subjectId);
         $check = $this->checkSubjectByTeacher($teacherId, $subjectId);
 
-        if ($params["newValue"] == 1) {
-            if (!$check) {
+        if ($params["newValue"] == 1)
+        {
+            if (!$check)
+            {
                 $this->addTeacherSubject($teacherId, $subjectId);
             }
         }
-        if ($params["newValue"] == 0) {
-            if (!$isInClass) {
+        if ($params["newValue"] == 0)
+        {
+            if (!$isInClass)
+            {
                 $this->removeSubjectFromTeacher($teacherId, $subjectId);
             }
         }
@@ -919,7 +1044,8 @@ class SubjectDBAccess {
         return array("success" => true);
     }
 
-    public static function sqlSubjectsByClass($classId, $isIncludeEvaluation = false, $isNationalExam = false) {
+    public static function sqlSubjectsByClass($classId, $isIncludeEvaluation = false, $isNationalExam = false)
+    {
 
         $SQL = "";
         $SQL .= " SELECT ";
@@ -950,7 +1076,8 @@ class SubjectDBAccess {
     }
 
     //@SODA
-    public static function sqlSubjectsByTraining($trainingId, $isIncludeEvaluation = false, $isNationalExam = false) {
+    public static function sqlSubjectsByTraining($trainingId, $isIncludeEvaluation = false, $isNationalExam = false)
+    {
 
         $SQL = "";
         $SQL .= " SELECT ";
@@ -980,13 +1107,16 @@ class SubjectDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function subjectsByClassPrimary($classId) {
+    public function subjectsByClassPrimary($classId)
+    {
 
         $result = self::sqlSubjectsByClass($classId, true, false);
 
         $data = array();
-        if ($result) {
-            foreach ($result as $key => $value) {
+        if ($result)
+        {
+            foreach ($result as $key => $value)
+            {
                 $data[$key]["ID"] = $value->SUBJECT_ID;
                 $data[$key]["NAME"] = $value->SUBJECT_NAME;
                 $data[$key]["TEMPLATE"] = $value->TEMPLATE;
@@ -996,7 +1126,8 @@ class SubjectDBAccess {
         return $data;
     }
 
-    public function jsonSubjectsByClass($params) {
+    public function jsonSubjectsByClass($params)
+    {
 
         $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
 
@@ -1021,7 +1152,8 @@ class SubjectDBAccess {
         $data[1]["NAME"] = ALL_SUBJECTS;
         $i = 2;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
                 $i++;
@@ -1034,15 +1166,18 @@ class SubjectDBAccess {
         );
     }
 
-    public static function jsonSubject($edutype) {
+    public static function jsonSubject($edutype)
+    {
         $SQL = "SELECT * FROM T_SUBJECT";
         $SQL .= " WHERE EDUCATION_TYPE=" . $edutype;
         $SQL .= " ORDER BY ID ASC";
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
                 $i++;
@@ -1056,7 +1191,8 @@ class SubjectDBAccess {
         );
     }
 
-    public function treeAllTrainingSubjects() {
+    public function treeAllTrainingSubjects()
+    {
 
         $searchParams["target"] = "TRAINING";
         $result = self::getAllSubjectsQuery($searchParams);
@@ -1065,19 +1201,15 @@ class SubjectDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $short = $value->SHORT ? $value->SHORT : "---";
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = "(" . $short . ") " . stripslashes($value->NAME);
 
-                if ($value->STATUS) {
-                    $data[$i]['iconCls'] = "icon-green";
-                } else {
-                    $data[$i]['iconCls'] = "icon-red";
-                }
-
-                $data[$i]['cls'] = "nodeTextBold";
+                $data[$i]['cls'] = $value->STATUS ? "nodeTextBlue" : "nodeTextRed";
+                $data[$i]['iconCls'] = "icon-flag_blue";
                 $data[$i]['leaf'] = true;
 
                 $i++;
@@ -1086,7 +1218,8 @@ class SubjectDBAccess {
         return $data;
     }
 
-    protected static function findLastSubjectId() {
+    protected static function findLastSubjectId()
+    {
 
         $SQL = "SELECT ID";
         $SQL .= " FROM t_subject";
@@ -1095,7 +1228,8 @@ class SubjectDBAccess {
         return $result ? $result->ID : 0;
     }
 
-    public static function checkUseSubjectInClass($subjectId, $classId) {
+    public static function checkUseSubjectInClass($subjectId, $classId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', 'COUNT(*) AS C');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
@@ -1106,14 +1240,18 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function getAcademicSubject($subjectId, $academicId) {
+    public static function getAcademicSubject($subjectId, $academicId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
-        if (self::checkUseSubjectInClass($subjectId, $academicId)) {
+        if (self::checkUseSubjectInClass($subjectId, $academicId))
+        {
             $SQL->where("USED_IN_CLASS = '1'");
-        } else {
+        }
+        else
+        {
             $SQL->where("USED_IN_CLASS = '0'");
         }
         $SQL->where("CLASS = ?", $academicId);
@@ -1123,7 +1261,8 @@ class SubjectDBAccess {
 
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
             $data["SUBJECT_ID"] = $facette->ID;
             $data["NUMBER_CREDIT"] = $facette->NUMBER_CREDIT;
             $data["SUBJECT_NAME"] = $facette->NAME;
@@ -1143,7 +1282,8 @@ class SubjectDBAccess {
         return (object) $data;
     }
 
-    public static function checkAcademicSubjectSchedule($subjecId, $academicId) {
+    public static function checkAcademicSubjectSchedule($subjecId, $academicId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_schedule', 'COUNT(*) AS C');
@@ -1155,7 +1295,8 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function findSubjectFromGuId($GuId) {
+    public static function findSubjectFromGuId($GuId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("*"));
         $SQL->where("GUID = ?", $GuId);
@@ -1163,7 +1304,8 @@ class SubjectDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function findLastId() {
+    protected static function findLastId()
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_subject", array("C" => "COUNT(*)"));
         $SQL->order('ID DESC');
@@ -1173,13 +1315,15 @@ class SubjectDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function actionPreRequisite2Subject($params) {
+    public static function actionPreRequisite2Subject($params)
+    {
 
         $subjectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $selecteds = isset($params["selecteds"]) ? addText($params["selecteds"]) : "";
         $facette = self::findSubjectFromId($subjectId);
 
-        if ($facette) {
+        if ($facette)
+        {
             $SAVEDATA['PRE_REQUISITE_COURSE'] = $selecteds;
             $WHERE[] = "ID = '" . $facette->ID . "'";
             self::dbAccess()->update('t_subject', $SAVEDATA, $WHERE);
@@ -1190,12 +1334,14 @@ class SubjectDBAccess {
         );
     }
 
-    public static function getPreRequisiteBySubject($id) {
+    public static function getPreRequisiteBySubject($id)
+    {
 
         $facette = self::findSubjectFromId($id);
         $result = array();
 
-        if ($facette) {
+        if ($facette)
+        {
             if ($facette->PRE_REQUISITE_COURSE)
                 $result = explode(",", $facette->PRE_REQUISITE_COURSE);
         }
