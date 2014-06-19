@@ -17,8 +17,8 @@ require_once 'models/app_school/user/OrganizationDBAccess.php';
 require_once 'models/app_school/AbsentTypeDBAccess.php';
 require_once 'utiles/Utiles.php';
 require_once 'models/app_school/room/RoomDBAccess.php';
-require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingSubjectDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/CamemisTypeDBAccess.php';
 
 Class BuildData {

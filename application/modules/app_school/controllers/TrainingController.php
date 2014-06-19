@@ -9,10 +9,10 @@ require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once 'models/app_school/DescriptionDBAccess.php';
-require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
-require_once 'models/app_school/training/TeacherTrainingDBAccess.php';
-require_once 'models/app_school/training/StudentTrainingDBAccess.php';
+require_once 'models/training/TrainingSubjectDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
+require_once 'models/training/TeacherTrainingDBAccess.php';
+require_once 'models/training/StudentTrainingDBAccess.php';
 require_once 'models/app_school/assignment/AssignmentTempDBAccess.php';
 require_once 'models/UserAuth.php';
 
@@ -590,10 +590,7 @@ class TrainingController extends Zend_Controller_Action {
             case "actionTrainingStudentAssignment":
                 $jsondata = $this->DB_STUDENT_TRAINING->actionTrainingStudentAssignment($this->REQUEST->getPost());
                 break;
-            /* case "actionTrainingStudentAssignment":
-              $jsondata = StudentTrainingDBAccess::actionTrainingStudentAssignment($this->REQUEST->getPost());
-              break;
-             */
+            
             case "actionStudentTrainingTransfer":
                 $jsondata = StudentTrainingDBAccess::actionStudentTrainingTransfer($this->REQUEST->getPost());
                 break;
@@ -626,8 +623,8 @@ class TrainingController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteSingleScoreTraining($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionPublishSubjectAssessmentTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionPublishSubjectAssessmentTraining($this->REQUEST->getPost());
+            case "jsonActionCalculationAssessmentTraining":
+                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionCalculationAssessmentTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteAllScoresSubjectTraining":

@@ -48,9 +48,9 @@ Ext.onReady(function() {
     ////////////////////////////////////////////////////////////////////////////
     $OBJECT_GRID->addReadField("name: 'ID'");
     $OBJECT_GRID->addReadField("name: 'TIME'");
-    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'ROOM'");
     $OBJECT_GRID->addReadField("name: 'EVENT'");
-    $OBJECT_GRID->addReadField("name: 'TERM'");
+    $OBJECT_GRID->addReadField("name: 'SESSION_DATE'");
     $OBJECT_GRID->addReadField("name: 'CHECKED'");
     $OBJECT_GRID->addReadField("name: 'COLOR'");
     $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
@@ -59,9 +59,9 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'DISABLED_DAYOFFSCHOOL'");
     
     $OBJECT_GRID->addColumn("xtype: 'checkboxcolumn', header: '', renderer: showText, dataIndex: 'CHECKED', width: 50, on: 1, off: 0");
-    $OBJECT_GRID->addColumn("header: '<b>" . TIME . "</b>', renderer: showText, align:'center', sortable: false, dataIndex: 'TIME', width: 130");
+    $OBJECT_GRID->addColumn("header: '<b>" . TIME . "</b>', renderer: showText, align:'center', sortable: false, dataIndex: 'SESSION_DATE', width: 130");
     $OBJECT_GRID->addColumn("header: '<b>" . EVENT . "</b>', renderer: showText, align:'center', sortable: false, dataIndex: 'EVENT', width: 150");
-    $OBJECT_GRID->addColumn("header: '<b>" . GRADE_CLASS . "</b>', align:'center', renderer: showText, sortable: false, dataIndex: 'CLASS_NAME', width: 150");
+    $OBJECT_GRID->addColumn("header: '<b>" . GRADE_CLASS . "</b>', align:'center', renderer: showText, sortable: false, dataIndex: 'ROOM', width: 150");
     $OBJECT_GRID->addColumn("header: '<b>" . TERM . "</b>', align:'center', renderer: showText, sortable: false, dataIndex: 'TERM', width: 150");
     $OBJECT_GRID->addColumn("header: '<b>" . TEACHING . "</b>', align:'center', renderer: showTextStatus, sortable: false, dataIndex: 'TEACHING_STATUS', width: 200");
     
@@ -70,7 +70,7 @@ Ext.onReady(function() {
         ,limit:100
         ,objectId: '".$this->objectId."'
         ,staffId: '".$this->staffId."'
-        ,choosedate: '".$this->choosedate."'
+        ,choosedate: '".setDate2DB($this->choosedate)."'
         ,target:'teacher'
         ,cmd: 'jsonTeacherDayClassEvents'
     ";

@@ -158,18 +158,6 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("creditsystem/crediteinformation/showcreditinformation");
     }
 
-    //
-
-    public function schoolyearscheduletabsAction() {
-        //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
-        $facette = AcademicDBAccess::findGradeFromId($this->academicId);
-        if ($facette->EDUCATION_SYSTEM) {
-            $this->_helper->viewRenderer("creditsystem/scheduletabs");
-        } else {
-            $this->_helper->viewRenderer("traditionalsystem/scheduletabs");
-        }
-    }
-
     public function schoolyearscheduleAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $facette = AcademicDBAccess::findGradeFromId($this->academicId);
@@ -610,12 +598,12 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     // STUDENT FILTER...
     ////////////////////////////////////////////////////////////////////////////
-    
+
     public function studentfilterAction() {
         $this->_helper->viewRenderer("filter/studentfilter");
         $this->view->gridType = "STUDENT_FILTER";
     }
-    
+
     public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_ATTENDANCE_FILTER";
@@ -630,12 +618,12 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_ADVISORY_FILTER";
     }
-    
+
     public function teacherfilterAction() {
         $this->_helper->viewRenderer("filter/teacherfilterviewport");
         $this->view->gridType = "TEACHER_FILTER";
     }
-    
+
     public function teacherattendancefilterAction() {
         $this->_helper->viewRenderer("filter/teacherfilterviewport");
         $this->view->gridType = "TEACHER_ATTENDANCE_FILTER";

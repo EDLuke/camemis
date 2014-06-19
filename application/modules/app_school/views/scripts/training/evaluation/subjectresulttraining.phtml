@@ -9,8 +9,6 @@ require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_school/subject/TrainingSubjectDBAccess.php';
-require_once 'models/app_school/training/StudentTrainingDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -19,7 +17,6 @@ $STUDENT_ASSIGNMENT = StudentTrainingDBAccess::getInstance();
 $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
-$columndata = Utiles::getGridColumnData("TRAINING_LIST_ID");
 
 $subjectObject = SubjectDBAccess::findSubjectFromId($this->subjectId);
 $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
@@ -53,6 +50,12 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
     }
     
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+    }
+    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
@@ -78,17 +81,16 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, dataIndex: 'CODE'");   
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 180, hidden:".checkColHidden(3, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 180, renderer: cssDefault, dataIndex: 'STUDENT'");
     
-   
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, hidden:".checkColHidden(4, $columndata).", align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, hidden:".checkColHidden(5, $columndata).", align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'AVERAGE'");
     
     if($entries){     
         foreach($entries as $value){    
-            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, hidden:".checkColHidden(6, $columndata).", align: 'center', renderer: cssDefault, dataIndex: '".$value->ASSIGNMENT_ID."'");
+            $OBJECT_GRID->addColumn("header: '<b>".addslashes($value->NAME)."</b>', width: 130, align: 'center', renderer: cssNumber, dataIndex: '".$value->ASSIGNMENT_ID."'");
         }
     }
     
@@ -104,8 +106,8 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addTBarItems("
         tbar.add('-',[{
-            text: '" . PUBLISH_SCORE . "'
-            ,iconCls:'icon-lightning_add'
+            text: '" . CALCULATION . "'
+            ,iconCls:'icon-calculator_add'
             ,handler: function(){
                 Ext.MessageBox.show({
                     msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
@@ -118,7 +120,7 @@ Ext.onReady(function() {
                 Ext.Ajax.request({
                     url:'/training/jsonsave/'
                     ,method: 'POST'
-                    ,params: {cmd: 'jsonActionPublishSubjectAssessmentTraining',section:1,trainingId:'".$this->trainingId."',subjectId:'".$this->subjectId."'}
+                    ,params: {cmd: 'jsonActionCalculationAssessmentTraining',section:1,trainingId:'".$this->trainingId."',subjectId:'".$this->subjectId."'}
                     ,success: function(response, options) {
                         var jsonData = Ext.util.JSON.decode(response.responseText);
                         Ext.MessageBox.hide();
@@ -162,7 +164,6 @@ Ext.onReady(function() {
             ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
         }]
     });
-    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?

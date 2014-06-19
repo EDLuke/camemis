@@ -797,6 +797,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 ,A.INCLUDE_IN_EVALUATION AS INCLUDE_IN_EVALUATION
                 ,C.SUBJECT_TYPE AS SUBJECT_TYPE
                 ,A.NAME AS NAME
+                ,A.SHORT AS SHORT
                 ,C.ID AS SUBJECT_ID
                 ,C.EDUCATION_TYPE AS EDUCATION_TYPE
                 ";
@@ -877,11 +878,11 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
                     if ($academicObject->EVALUATION_TYPE)
                     {
-                        $data[$i]['text'] = setShowText($value->NAME) . " (" . $value->COEFF_VALUE . "%)";
+                        $data[$i]['text'] = "(".setShowText($value->SHORT) . ") ".setShowText($value->NAME) . " (" . $value->COEFF_VALUE . "%)";
                     }
                     else
                     {
-                        $data[$i]['text'] = setShowText($value->NAME) . " (" . $value->COEFF_VALUE . ")";
+                        $data[$i]['text'] = "(".setShowText($value->SHORT) . ") ".setShowText($value->NAME) . " (" . $value->COEFF_VALUE . ")";
                     }
 
                     switch ($value->INCLUDE_IN_EVALUATION)

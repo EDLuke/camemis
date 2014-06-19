@@ -242,8 +242,12 @@ Ext.onReady(function() {
         }
     }
     
+    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_REMOVE_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
+    
     if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
     $OBJECT_FORM->setLoadParams("cmd: 'loadTrainingSubject',objectId: '".$this->objectId."'");   
     $OBJECT_FORM->setSaveParams("
         cmd: 'saveTrainingSubject'
@@ -258,8 +262,6 @@ Ext.onReady(function() {
         myNode.expand(true, false); 
     ");
     
-    if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_REMOVE_RIGHT"))
-    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
     $OBJECT_FORM->setRemoveParams("
         cmd: 'jsonRemoveSubjectFromTraining'
         ,objectId: '".$this->objectId."'

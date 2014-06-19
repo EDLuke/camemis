@@ -1089,7 +1089,6 @@ class AcademicDBAccess {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_grade", array("*"));
             $SQL->where("PARENT = '" . $schoolyearsubjectObject->ID . "'");
-            $SQL->where("OBJECT_TYPE = 'SUBCLASS'");
             //error_log($SQL->__toString());
             $entries = self::dbAccess()->fetchAll($SQL);
 

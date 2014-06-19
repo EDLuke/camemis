@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
-//require_once 'models/app_school/student/StudentAdvisoryDBAccess.php';
 
 class StudentAdvisoryExportDBAccess extends CamemisExportDBAccess {
 

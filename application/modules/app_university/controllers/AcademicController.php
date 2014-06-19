@@ -168,18 +168,6 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("creditsystem/crediteinformation/showcreditinformation");
     }
 
-    //
-
-    public function schoolyearscheduletabsAction() {
-        //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
-        $facette = AcademicDBAccess::findGradeFromId($this->academicId);
-        if ($facette->EDUCATION_SYSTEM) {
-            $this->_helper->viewRenderer("creditsystem/scheduletabs");
-        } else {
-            $this->_helper->viewRenderer("traditionalsystem/scheduletabs");
-        }
-    }
-
     public function schoolyearscheduleAction() {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $facette = AcademicDBAccess::findGradeFromId($this->academicId);
@@ -431,7 +419,7 @@ class AcademicController extends Zend_Controller_Action {
     ////////////////////////////////////////////////////////////////////////////
     public function gradesubjectsAction() {
 
-        $this->view->academicId = $this->academicId;   
+        $this->view->academicId = $this->academicId;
         $this->view->subjectId = $this->subjectId;
         $this->view->teacherId = $this->teacherId;
         $this->view->facette = $this->facette;
@@ -826,7 +814,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_FILTER";
     }
-    
+
     public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_ATTENDANCE_FILTER";

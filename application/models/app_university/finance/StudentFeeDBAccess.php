@@ -12,7 +12,7 @@ require_once 'models/app_university/student/StudentDBAccess.php';
 require_once 'models/app_university/student/StudentSearchDBAccess.php';
 require_once 'models/app_university/finance/ExpenseDBAccess.php';
 require_once 'models/app_university/finance/FeeDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_university/ScholarshipDBAccess.php'; //@veasna 
 require_once 'models/app_university/finance/FeeOptionDBAccess.php'; //@veasna 
 require_once 'models/app_university/finance/IncomeCategoryDBAccess.php'; //@veasna 

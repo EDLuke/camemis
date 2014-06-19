@@ -13,7 +13,7 @@ require_once 'models/app_school/student/StudentSearchDBAccess.php';
 require_once 'models/app_school/finance/ExpenseDBAccess.php';
 require_once 'models/app_school/finance/FeeDBAccess.php';
 require_once 'models/app_school/finance/FeeOptionDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/app_school/CommunicationDBAccess.php';
 //require_once 'models/app_school/student/StudentFeeDBAccess.php';
 require_once setUserLoacalization();

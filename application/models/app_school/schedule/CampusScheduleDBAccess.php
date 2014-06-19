@@ -8,7 +8,7 @@ require_once 'models/app_school/subject/SubjectDBAccess.php';
 require_once 'models/app_school/room/RoomDBAccess.php';
 require_once 'include/Common.inc.php';
 require_once 'models/app_school/schedule/ScheduleDBAccess.php';
-require_once 'models/app_school/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once setUserLoacalization();
 
 class CampusScheduleDBAccess extends ScheduleDBAccess {

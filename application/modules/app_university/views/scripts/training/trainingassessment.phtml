@@ -11,7 +11,7 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
 require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/subject/TrainingSubjectDBAccess.php';
+require_once 'models/training/TrainingSubjectDBAccess.php';
 require_once 'utiles/Utiles.php';
 require_once 'clients/CamemisViewport.php';
 require_once setUserLoacalization();
@@ -51,34 +51,10 @@ Ext.onReady(function() {
         );
     }
     
-    function cssFirst(value, metadata, record){
+    function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#D1DDEF;">' + value + '</div>';
-    }
-    
-    function cssSecond(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:10px; background:#FFE5A6;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#061f83; padding: 5px; height:15px;background:#F3E5AB;">' + value + '</div>';
-    }
-    
-    function cssDefault(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#333; padding: 5px; height: 15px; background:#E0FFFF;">' + value + '</div>';
     }
     
     function cssDefault(value, metadata, record){
@@ -122,24 +98,20 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 210, dataIndex: 'STUDENT'");
-   
-    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 100, sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
-    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'AVERAGE'");
+    $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 100, sortable: true, renderer: cssNumber, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssNumber, width: 110, dataIndex: 'AVERAGE'");
     
      if($entries){
         foreach($entries as $value){
-            $OBJECT_GRID->addColumn("header: '<b>".$value->NAME."</b>', align: 'center', width: 100, renderer: cssDefault, dataIndex: '".$value->SUBJECT_ID."'");
+            $OBJECT_GRID->addColumn("header: '<b>".$value->NAME."</b>', align: 'center', width: 100, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
         }
     } 
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        //,objectId:'".$trainingId."'
-        //,cmd: 'jsonStudentTrainingAssessment'
         ,trainingId:'".$trainingId."'                  
         ,cmd: 'jsonListStudentsClassPerformanceTraining'
-        
     ";
     
     $OBJECT_GRID->isGridEditing = false;
@@ -152,7 +124,6 @@ Ext.onReady(function() {
     $VIEWPORT->addItem($ITEMS);
     $VIEWPORT->renderJS();
     ?>
-   
 });
 </script>
 <?

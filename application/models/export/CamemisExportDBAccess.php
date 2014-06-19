@@ -18,7 +18,8 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/Studen
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentStatusDBAccess.php"; //@Visal
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentAdvisoryDBAccess.php"; //@Visal
 require_once "models/filter/FilterData.php"; //@Visal
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/training/StudentTrainingDBAccess.php"; //@CHHE Vathana
+require_once "models/training/StudentTrainingDBAccess.php"; //@CHHE Vathana 
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php"; //@CHHE Vathana
 
 error_reporting(E_ALL);
 
@@ -39,6 +40,8 @@ abstract class CamemisExportDBAccess {
         $this->DB_WEEKSCHEDULE = ScheduleDBAccess::getInstance();
         $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance(); //@Visal
         $this->DB_STUDENT_TRAINING = StudentTrainingDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_ROOM_LIST = RoomDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_EDUCATION_BACKGROUND_STUDENT_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
         
     }
 
@@ -91,6 +94,12 @@ abstract class CamemisExportDBAccess {
     }
     public function getEnrolledStudentTrainingOnClassList() {
         return self::getUserPhath("_enrolledstudentstraningonclasslist.xls");
+    }
+    public function getRoomList() {
+        return self::getUserPhath("_roomlist.xls");
+    }
+    public function getEducationBackgroundStudentList() {
+        return self::getUserPhath("_educationbackgroundstudentlist.xls");
     }
     //End...
 

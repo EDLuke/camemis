@@ -10,7 +10,7 @@ require_once 'models/app_university/subject/SubjectDBAccess.php';
 require_once 'models/app_university/room/RoomDBAccess.php';
 require_once 'models/app_university/schedule/ScheduleDBAccess.php';
 require_once 'models/app_university/schedule/TeachingSessionDBAccess.php';
-require_once 'models/app_university/training/TrainingDBAccess.php';
+require_once 'models/training/TrainingDBAccess.php';
 require_once setUserLoacalization();
 
 class TeacherScheduleDBAccess extends ScheduleDBAccess {
@@ -603,7 +603,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         $startDate = isset($params["startdt"]) ? substr($params["startdt"], 0, 10) : "";
         $endDate = isset($params["enddt"]) ? substr($params["enddt"], 0, 10) : "";
         $teacherId = isset($params["teacherId"]) ? addText($params["teacherId"]) : "";
-        $academicType = isset($params["type"]) ? addText($params["type"]) : "GENERAL"; 
+        $academicType = isset($params["type"]) ? addText($params["type"]) : "GENERAL";
 
         $days = getDatesBetween2Dates($startDate, $endDate);
         $data = array();
@@ -611,8 +611,10 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
         foreach ($days as $day) {
             $shortday = getWEEKDAY($day);
             if ($shortday) {
+
                 $entries = self::getSQLTeacherEvent($teacherId, $startDate, $endDate, $shortday, $academicType);
                 if ($entries) {
+                   
                     foreach ($entries as $value) {
                         $data[$i]["ID"] = $value->GUID;
                         $data[$i]["TEACHING_STATUS"] = "---";

@@ -268,7 +268,7 @@ class TrainingDBAccess {
                             {
                                 $data[$i]['iconCls'] = "icon-date_edit";
                             }
-                            self::updateChildTerm($value->ID);
+
                             break;
                     }
                 }
@@ -283,7 +283,6 @@ class TrainingDBAccess {
                             $data[$i]['iconCls'] = "icon-bricks";
                             $data[$i]['objecttype'] = "PROGRAM";
                             $data[$i]['programId'] = $value->PROGRAM;
-                            self::updateChildProgram($value->ID);
                             $data[$i]['parentId'] = $value->PARENT;
                             break;
 
@@ -295,7 +294,6 @@ class TrainingDBAccess {
                             $data[$i]['iconCls'] = "icon-folder_magnify";
                             $data[$i]['objecttype'] = "LEVEL";
                             $data[$i]['levelId'] = $value->LEVEL;
-                            self::updateChildLevel($value->ID);
                             $data[$i]['parentId'] = $value->PARENT;
                             break;
 
@@ -316,7 +314,6 @@ class TrainingDBAccess {
                             $data[$i]['parentId'] = $value->PARENT;
                             $data[$i]['termId'] = $value->TERM;
                             $data[$i]['cls'] = "nodeTextBold";
-                            self::updateChildTerm($value->ID);
                             break;
 
                         case "CLASS":
@@ -664,12 +661,7 @@ class TrainingDBAccess {
             }
         }
 
-        $UPDATE_SUBJECT = "UPDATE t_training_subject SET";
-        $UPDATE_SUBJECT .= " PROGRAM='" . $facette->PROGRAM . "'";
-        $UPDATE_SUBJECT .= " ,TERM='" . $facette->ID . "'";
-        $UPDATE_SUBJECT .= " ,LEVEL='" . $facette->LEVEL . "'";
-        $UPDATE_SUBJECT .= " WHERE ID ='" . $facette->ID . "'";
-        self::dbAccess()->query($UPDATE_SUBJECT);
+        self::updatePropertiesTrainingSubject($facette->ID);
     }
 
     public static function sqlTrainingStudentFromId($Id)
@@ -694,6 +686,37 @@ class TrainingDBAccess {
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
+    }
+
+    public static function updatePropertiesTrainingSubject($Id)
+    {
+
+        $facette = self::findTrainingFromId($Id);
+
+        if ($facette)
+        {
+            switch ($facette->OBJECT_TYPE)
+            {
+                case "TERM":
+                    $SQL = "UPDATE t_training_subject SET";
+                    $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
+                    $SQL .= " ,TERM='" . $facette->ID . "'";
+                    $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
+                    $SQL .= " ,EVALUATION_TYPE='" . $facette->EVALUATION_TYPE . "'";
+                    $SQL .= " WHERE TERM ='" . $facette->ID . "'";
+                    self::dbAccess()->query($SQL);
+                    break;
+                case "CLASS":
+                    $SQL = "UPDATE t_training_subject SET";
+                    $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
+                    $SQL .= " ,TERM='" . $facette->TERM . "'";
+                    $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
+                    $SQL .= " ,EVALUATION_TYPE='" . $parentObject->EVALUATION_TYPE . "'";
+                    $SQL .= " WHERE TRAINING ='" . $facette->ID . "'";
+                    self::dbAccess()->query($SQL);
+                    break;
+            }
+        }
     }
 
 }
