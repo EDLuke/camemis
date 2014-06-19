@@ -36,15 +36,18 @@ class ScheduleDBAccess {
 
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
         $this->DB_ACADEMIC = AcademicDBAccess::getInstance();
@@ -54,22 +57,28 @@ class ScheduleDBAccess {
         $this->DB_TRAINING = TrainingDBAccess::getInstance();
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelect() {
+    public static function dbSelect()
+    {
         return self::dbAccess()->select();
     }
 
-    public static function findScheduleFromGuId($Id) {
+    public static function findScheduleFromGuId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_schedule', '*');
 
-        if (is_numeric($Id)) {
+        if (is_numeric($Id))
+        {
             $SQL->where('ID = ?', $Id);
-        } else {
+        }
+        else
+        {
             $SQL->where('GUID = ?', $Id);
         }
 
@@ -77,12 +86,14 @@ class ScheduleDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getScheduleDataFromGuId($Id) {
+    public function getScheduleDataFromGuId($Id)
+    {
 
         $data = array();
         $result = self::findScheduleFromGuId($Id);
 
-        if ($result) {
+        if ($result)
+        {
 
             $ROOM_OBJECT = $this->DB_ROOM->findRoomFromId($result->ROOM_ID);
             $SUBJECT_OBJECT = SubjectDBAccess::findSubjectFromId($result->SUBJECT_ID);
@@ -95,14 +106,20 @@ class ScheduleDBAccess {
             $data["START_TIME"] = secondToHour($result->START_TIME);
             $data["END_TIME"] = secondToHour($result->END_TIME);
 
-            if ($result->SUBJECT_ID) {
+            if ($result->SUBJECT_ID)
+            {
 
-                if ($SUBJECT_OBJECT) {
+                if ($SUBJECT_OBJECT)
+                {
                     $data["EVENT"] = $SUBJECT_OBJECT->NAME;
-                } else {
+                }
+                else
+                {
                     $data["EVENT"] = "?";
                 }
-            } else {
+            }
+            else
+            {
                 $data["EVENT"] = setShowText($result->EVENT);
             }
 
@@ -111,14 +128,20 @@ class ScheduleDBAccess {
             $data["ROOM_ID"] = $result->ROOM_ID;
             $data["ROOM_NAME"] = isset($ROOM_OBJECT->NAME) ? $ROOM_OBJECT->NAME : "---";
 
-            if ($TEACHER_OBJECT) {
-                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+            if ($TEACHER_OBJECT)
+            {
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
                     $data["TEACHER_NAME"] = $TEACHER_OBJECT->LASTNAME . " " . $TEACHER_OBJECT->FIRSTNAME;
-                } else {
+                }
+                else
+                {
                     $data["TEACHER_NAME"] = $TEACHER_OBJECT->FIRSTNAME . " " . $TEACHER_OBJECT->LASTNAME;
                 }
                 $data["TEACHER_NAME"] .= " (" . $TEACHER_OBJECT->CODE . ")";
-            } else {
+            }
+            else
+            {
                 $data["TEACHER_NAME"] = "---";
             }
 
@@ -139,16 +162,20 @@ class ScheduleDBAccess {
         return $data;
     }
 
-    public function loadClassEvent($Id) {
+    public function loadClassEvent($Id)
+    {
 
         $result = self::findScheduleFromGuId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => $this->getScheduleDataFromGuId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -157,7 +184,8 @@ class ScheduleDBAccess {
         return $o;
     }
 
-    public function saveClassEvent($params) {
+    public function saveClassEvent($params)
+    {
 
         $SAVEDATA = array();
 
@@ -181,7 +209,8 @@ class ScheduleDBAccess {
 
         $errors = array();
 
-        if ($facette) {
+        if ($facette)
+        {
             $academicId = $facette->ACADEMIC_ID;
             $shortDay = $facette->SHORTDAY;
             $term = $facette->TERM;
@@ -206,11 +235,13 @@ class ScheduleDBAccess {
         if (!$_END_TIME)
             $ERROR_START_TIME_IS_INCORRECT = true;
 
-        if ($_START_TIME > $_END_TIME) {
+        if ($_START_TIME > $_END_TIME)
+        {
             $ERROR_START_TIME_END_TIME = true;
         }
 
-        if ($academicId && !$trainingId) {
+        if ($academicId && !$trainingId)
+        {
             $ERROR_TIME_HAS_BEEN_USED = $this->checkStartTimeANDEndTime(
                     $_START_TIME
                     , $_END_TIME
@@ -223,7 +254,8 @@ class ScheduleDBAccess {
             );
         }
 
-        if (!$academicId && $trainingId) {
+        if (!$academicId && $trainingId)
+        {
             $ERROR_TIME_HAS_BEEN_USED = $this->checkStartTimeANDEndTimeTraining(
                     $_START_TIME
                     , $_END_TIME
@@ -250,13 +282,16 @@ class ScheduleDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
 
-        if ($facette) {
-            switch ($scheduleType) {
+        if ($facette)
+        {
+            switch ($scheduleType)
+            {
                 case 1:
 
                     $SAVEDATA["TEACHER_ID"] = $teacherId;
 
-                    if (isset($facette->SUBJECT)) {
+                    if (isset($facette->SUBJECT))
+                    {
                         if (!$teacherId)
                             $ERROR_TEACHER_NAME = true;
                         if (!$roomId)
@@ -275,45 +310,57 @@ class ScheduleDBAccess {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
 
-            if ($ERROR_TIME_HAS_BEEN_USED) {
+            if ($ERROR_TIME_HAS_BEEN_USED)
+            {
                 $errors["START_TIME"] = true;
                 $errors["END_TIME"] = true;
             }
-            if ($ERROR_START_TIME_IS_INCORRECT) {
+            if ($ERROR_START_TIME_IS_INCORRECT)
+            {
                 $errors["START_TIME"] = true;
             }
-            if ($ERROR_END_TIME_IS_INCORRECT) {
+            if ($ERROR_END_TIME_IS_INCORRECT)
+            {
                 $errors["END_TIME"] = true;
             }
-            if ($ERROR_TEACHER_NAME) {
+            if ($ERROR_TEACHER_NAME)
+            {
                 $errors["TEACHER_NAME"] = true;
             }
-            if ($ERROR_ROOM_NAME) {
+            if ($ERROR_ROOM_NAME)
+            {
                 $errors["ROOM_NAME"] = true;
             }
-            if ($ERROR_SUBJECT) {
+            if ($ERROR_SUBJECT)
+            {
                 $errors["SUBJECT"] = true;
             }
-            if ($ERROR_EVENT) {
+            if ($ERROR_EVENT)
+            {
                 $errors["EVENT"] = true;
             }
 
             ///////////////////////////// Update....
-            if (!$errors) {
+            if (!$errors)
+            {
 
-                if (timeStrToSecond($startTime) && timeStrToSecond($endTime)) {
+                if (timeStrToSecond($startTime) && timeStrToSecond($endTime))
+                {
                     $WHERE = self::dbAccess()->quoteInto("GUID = ?", $scheduleId);
                     self::dbAccess()->update('t_schedule', $SAVEDATA, $WHERE);
                 }
 
-                if (!$facette->TRAINING_ID) {
+                if (!$facette->TRAINING_ID)
+                {
                     SubjectTeacherDBAccess::addSubjectTeacherClassTerm(
                             $subjectId
                             , $teacherId
                             , $academicId
                             , $term
                     );
-                } else {
+                }
+                else
+                {
                     SubjectTeacherDBAccess::addSubjectTeacherTraining(
                             $subjectId
                             , $teacherId
@@ -321,8 +368,11 @@ class ScheduleDBAccess {
                     );
                 }
             }
-        } else {
-            switch ($scheduleType) {
+        }
+        else
+        {
+            switch ($scheduleType)
+            {
                 case 1:
                     if (!$subjectId)
                         $ERROR_SUBJECT = true;
@@ -341,8 +391,10 @@ class ScheduleDBAccess {
             $SAVEDATA["SHORTDAY"] = $shortDay;
             $SAVEDATA["TRAINING_ID"] = $trainingId;
 
-            if (isset($academicObject)) {
-                if (!$trainingId) {
+            if (isset($academicObject))
+            {
+                if (!$trainingId)
+                {
                     $termDateObject = AcademicDBAccess::getDateBySchoolTerm($academicObject->ID, $term);
                     $SAVEDATA["START_DATE"] = $termDateObject->START_DATE;
                     $SAVEDATA["END_DATE"] = $termDateObject->END_DATE;
@@ -355,71 +407,90 @@ class ScheduleDBAccess {
             $SAVEDATA["TERM"] = $term;
             $SAVEDATA["SCHEDULE_TYPE"] = $scheduleType;
 
-            if ($ERROR_TIME_HAS_BEEN_USED) {
+            if ($ERROR_TIME_HAS_BEEN_USED)
+            {
                 $errors["START_TIME"] = true;
                 $errors["END_TIME"] = true;
             }
-            if ($ERROR_START_TIME_IS_INCORRECT) {
+            if ($ERROR_START_TIME_IS_INCORRECT)
+            {
                 $errors["START_TIME"] = true;
             }
-            if ($ERROR_END_TIME_IS_INCORRECT) {
+            if ($ERROR_END_TIME_IS_INCORRECT)
+            {
                 $errors["END_TIME"] = true;
             }
-            if ($ERROR_TEACHER_NAME) {
+            if ($ERROR_TEACHER_NAME)
+            {
                 $errors["TEACHER_NAME"] = true;
             }
-            if ($ERROR_ROOM_NAME) {
+            if ($ERROR_ROOM_NAME)
+            {
                 $errors["ROOM_NAME"] = true;
             }
-            if ($ERROR_SUBJECT) {
+            if ($ERROR_SUBJECT)
+            {
                 $errors["SUBJECT"] = true;
             }
-            if ($ERROR_EVENT) {
+            if ($ERROR_EVENT)
+            {
                 $errors["EVENT"] = true;
             }
 
-            if (!$errors) {
+            if (!$errors)
+            {
                 self::dbAccess()->insert('t_schedule', $SAVEDATA);
             }
         }
 
-        if ($ERROR_START_TIME_END_TIME) {
+        if ($ERROR_START_TIME_END_TIME)
+        {
 
             $errors["START_TIME"] = ERROR;
             $errors["END_TIME"] = ERROR;
         }
 
-        if ($ERROR_TIME_HAS_BEEN_USED) {
+        if ($ERROR_TIME_HAS_BEEN_USED)
+        {
             $errors["START_TIME"] = TIME_HAS_BEEN_USED;
             $errors["END_TIME"] = TIME_HAS_BEEN_USED;
         }
-        if ($ERROR_START_TIME_IS_INCORRECT) {
+        if ($ERROR_START_TIME_IS_INCORRECT)
+        {
             $errors["START_TIME"] = TIME_IS_INCORRECT;
         }
-        if ($ERROR_END_TIME_IS_INCORRECT) {
+        if ($ERROR_END_TIME_IS_INCORRECT)
+        {
             $errors["END_TIME"] = TIME_IS_INCORRECT;
         }
-        if ($ERROR_TEACHER_NAME) {
+        if ($ERROR_TEACHER_NAME)
+        {
             $errors["TEACHER_NAME"] = THIS_FIELD_IS_REQIRED;
         }
-        if ($ERROR_ROOM_NAME) {
+        if ($ERROR_ROOM_NAME)
+        {
             $errors["ROOM_NAME"] = THIS_FIELD_IS_REQIRED;
         }
-        if ($ERROR_SUBJECT) {
+        if ($ERROR_SUBJECT)
+        {
             $errors["SUBJECT"] = THIS_FIELD_IS_REQIRED;
         }
-        if ($ERROR_EVENT) {
+        if ($ERROR_EVENT)
+        {
             $errors["EVENT"] = THIS_FIELD_IS_REQIRED;
         }
 
         self::updateSharedSchedule(self::findScheduleFromGuId($scheduleId));
 
-        if ($errors) {
+        if ($errors)
+        {
             return array(
                 "success" => false
                 , "errors" => $errors
             );
-        } else {
+        }
+        else
+        {
             return array(
                 "success" => true
                 , "errors" => $errors
@@ -427,9 +498,11 @@ class ScheduleDBAccess {
         }
     }
 
-    public static function loadSQLClassEvents($startTime, $endTime, $shortDay, $chooseId, $term, $single = true, $type = false, $teacherId = false) {
+    public static function loadSQLClassEvents($startTime, $endTime, $shortDay, $chooseId, $term, $single = true, $type = false, $teacherId = false)
+    {
 
-        switch (strtoupper($type)) {
+        switch (strtoupper($type))
+        {
             case "GENERAL":
                 $params["academicId"] = $chooseId;
                 $params["target"] = "GENERAL";
@@ -460,7 +533,8 @@ class ScheduleDBAccess {
      * @author Math Man 05.02.2014
      * @param mixed $params
      */
-    public static function getGroupsByStudentId($params) {
+    public static function getGroupsByStudentId($params)
+    {
 
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $schoolyearId = isset($params["schoolyearId"]) ? addText($params["schoolyearId"]) : "";
@@ -480,7 +554,8 @@ class ScheduleDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getSQLClassEvents($params) {
+    public static function getSQLClassEvents($params)
+    {
 
         $single = isset($params["single"]) ? $params["single"] : "";
 
@@ -501,7 +576,8 @@ class ScheduleDBAccess {
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : ''; //@new... veasna
         $groupIds = isset($params["groupIds"]) ? addText($params["groupIds"]) : ''; //@Man
 
-        if ($academicId && !$trainingId) {
+        if ($academicId && !$trainingId)
+        {
             $SELECT_DATA = array(
                 "A.GUID AS GUID"
                 , "A.GRADE_ID AS GRADE_ID"
@@ -535,7 +611,8 @@ class ScheduleDBAccess {
             );
         }
 
-        if (!$academicId && $trainingId) {
+        if (!$academicId && $trainingId)
+        {
             $SELECT_DATA = array(
                 "A.GUID AS GUID"
                 , "A.ID AS SCHEDULE_ID"
@@ -574,7 +651,8 @@ class ScheduleDBAccess {
         if ($studentId)
             $SQL->joinLeft(array('F' => "t_student_schoolyear_subject"), 'A.SUBJECT_ID=F.SUBJECT_ID', array());
 
-        if ($academicId && !$trainingId) {
+        if ($academicId && !$trainingId)
+        {
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             $SQL->joinLeft(array('E' => self::TABLE_GRADE), 'A.ACADEMIC_ID=E.ID', array());
 
@@ -583,19 +661,24 @@ class ScheduleDBAccess {
             if ($schoolyearId)
                 $SQL->where('A.SCHOOLYEAR_ID = ?', $schoolyearId);
 
-            if (!$teacherId) {
+            if (!$teacherId)
+            {
                 if ($term)
                     $SQL->where('A.TERM = ?', $term);
             }
         }
 
-        if (!$academicId && $trainingId) {
+        if (!$academicId && $trainingId)
+        {
             $SQL->joinLeft(array('E' => 't_training'), 'A.TRAINING_ID=E.ID', array());
             $SQL->joinLeft(array('F' => 't_training'), 'E.PARENT=F.ID', array());
 
-            if ($trainingId) {
+            if ($trainingId)
+            {
                 $SQL->where("A.TRAINING_ID='" . $trainingId . "'");
-            } else {
+            }
+            else
+            {
                 $SQL->where("NOW()<=F.EXTRA_END_DATE");
             }
         }
@@ -629,17 +712,21 @@ class ScheduleDBAccess {
         $SQL->order('A.START_TIME');
 
         //error_log($SQL->__toString());
-        if ($single) {
+        if ($single)
+        {
 
             $resultRows = self::dbAccess()->fetchRow($SQL);
-        } else {
+        }
+        else
+        {
             $resultRows = self::dbAccess()->fetchAll($SQL);
         }
 
         return $resultRows;
     }
 
-    public function loadClassEvents($params, $isJson = true) {
+    public function loadClassEvents($params, $isJson = true)
+    {
 
         $data = array();
 
@@ -652,13 +739,16 @@ class ScheduleDBAccess {
         ///@veasna
         $checkAcademicId = '';
 
-        if ($academicId) {
+        if ($academicId)
+        {
             //@veasna
             $type = "GENERAL";
             $academicObject = AcademicDBAccess::findGradeFromId($academicId);
             $params["schoolyearId"] = $academicObject->SCHOOL_YEAR;
-            if ($academicObject->EDUCATION_SYSTEM) {
-                switch ($academicObject->OBJECT_TYPE) {
+            if ($academicObject->EDUCATION_SYSTEM)
+            {
+                switch ($academicObject->OBJECT_TYPE)
+                {
                     case "SUBJECT":
                         $params["academicId"] = $academicObject->ID;
                         $checkAcademicId = '';
@@ -678,11 +768,14 @@ class ScheduleDBAccess {
                         $params['groupIds'] = $groupIds;
                         break;
                 }
-            } else {
+            } else
+            {
                 $params["academicId"] = $academicObject->ID;
             }
             $chooseId = "ACADEMIC_ID";
-        } elseif ($trainingId) {
+        }
+        elseif ($trainingId)
+        {
             $chooseId = "TRAINING_ID";
             $type = "TRAINING";
         }
@@ -691,9 +784,11 @@ class ScheduleDBAccess {
         //@veasna check link credit education system link
         ////////////////////////////////////////////////////////////////////////
         $LINKED_SCHEDULE_CREDIT_DATA = array();
-        if ($checkAcademicId) {
+        if ($checkAcademicId)
+        {
             $listLinkedScheduleCredit = self::findLinkedScheduleAcademicByAcademicId($checkAcademicId);
-            foreach ($listLinkedScheduleCredit as $schedule) {
+            foreach ($listLinkedScheduleCredit as $schedule)
+            {
                 $LINKED_SCHEDULE_CREDIT_DATA[] = $schedule->SCHEDULE_ID;
             }
         }
@@ -704,13 +799,18 @@ class ScheduleDBAccess {
         $resultRows = self::getSQLClassEvents($params);
 
         $i = 0;
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
 
                 $data[$i]["ID"] = $value->GUID;
-                if (self::getCountAssignedGroup($value->SCHEDULE_ID)) {
+                if (self::getCountAssignedGroup($value->SCHEDULE_ID))
+                {
                     $data[$i]["HEIGHT"] = 110;
-                } else {
+                }
+                else
+                {
                     $data[$i]["HEIGHT"] = 85;
                 }
                 $data[$i]["STATUS"] = $value->SCHEDULE_STATUS;
@@ -719,7 +819,8 @@ class ScheduleDBAccess {
                 $data[$i]["EXTRA_START_DATE"] = secondToHour($value->START_TIME);
                 $data[$i]["EXTRA_END_DATE"] = secondToHour($value->END_TIME);
                 if ($i > 0)
-                    if ($data[$i]["TIME"] == $data[$i - 1]["TIME"]) {
+                    if ($data[$i]["TIME"] == $data[$i - 1]["TIME"])
+                    {
                         $i--;
                     }
                 $MO_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "MO", $value->$chooseId, $value->TERM, true, $type);
@@ -804,34 +905,43 @@ class ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
         //@soda
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
         //
     }
 
-    public function deleteDayClassEvent($Id) {
+    public function deleteDayClassEvent($Id)
+    {
 
         $facette = self::findScheduleFromGuId($Id);
-        if ($facette) {
+        if ($facette)
+        {
             self::dbAccess()->delete('t_schedule', array('GUID = ? ' => $Id));
-            if (!$facette->SHARED_FROM) {
+            if (!$facette->SHARED_FROM)
+            {
                 self::dbAccess()->delete('t_link_schedule_academic', array(
                     'SCHEDULE_ID = ? ' => $facette->SHARED_FROM)
                 );
-            } else {
+            }
+            else
+            {
                 self::dbAccess()->delete('t_link_schedule_academic', array(
                     'SCHEDULE_ID = ? ' => $facette->SHARED_FROM
                     , 'ACADEMIC_ID = ? ' => $facette->ACADEMIC_ID)
@@ -842,7 +952,8 @@ class ScheduleDBAccess {
         }
     }
 
-    public function jsonDeleteDayClassEvent($Id) {
+    public function jsonDeleteDayClassEvent($Id)
+    {
 
         $this->deleteDayClassEvent($Id);
 
@@ -851,7 +962,8 @@ class ScheduleDBAccess {
         );
     }
 
-    public function findMaxTime($shortday, $term, $academicId) {
+    public function findMaxTime($shortday, $term, $academicId)
+    {
 
         $SQL = "SELECT DISTINCT END_TIME AS TIME";
         $SQL .= " FROM t_schedule";
@@ -867,12 +979,14 @@ class ScheduleDBAccess {
         return $result ? secondToHour($result->TIME) : "06:00";
     }
 
-    public function releaseClassEvent($params) {
+    public function releaseClassEvent($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
         $facette = self::findScheduleFromGuId($scheduleId);
         $newStatus = 0;
-        switch ($facette->STATUS) {
+        switch ($facette->STATUS)
+        {
             case 0:
                 $newStatus = 1;
                 $SAVEDATA["STATUS"] = 1;
@@ -894,32 +1008,40 @@ class ScheduleDBAccess {
         return array("success" => true, "status" => $newStatus);
     }
 
-    protected function checkUseRooms($scheduleObject) {
+    protected function checkUseRooms($scheduleObject)
+    {
 
         $CHECK_DATA = array();
 
-        if ($scheduleObject->TRAINING_ID) {
+        if ($scheduleObject->TRAINING_ID)
+        {
             $objectTraining = TrainingDBAccess::findTrainingFromId($scheduleObject->TRAINING_ID);
 
-            if ($objectTraining) {
+            if ($objectTraining)
+            {
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => 't_schedule'), array("*"));
                 $SQL->where("START_TIME <=" . $scheduleObject->START_TIME . " AND END_TIME >=" . $scheduleObject->END_TIME . "");
                 $SQL->where("TERM= '" . $objectTraining->TERM . "'");
                 $SQL->where("SHORTDAY= '" . $scheduleObject->SHORTDAY . "'");
-                if ($scheduleObject->SUBJECT_ID) {
+                if ($scheduleObject->SUBJECT_ID)
+                {
                     $SQL->where("SUBJECT_ID= '" . $scheduleObject->SUBJECT_ID . "'");
                 }
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchAll($SQL);
-                foreach ($result as $value) {
-                    if ($scheduleObject->END_TIME == $value->END_TIME) {
+                foreach ($result as $value)
+                {
+                    if ($scheduleObject->END_TIME == $value->END_TIME)
+                    {
                         $CHECK_DATA[$value->ROOM_ID] = $value->ROOM_ID;
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
 
             $SQL = self::dbAccess()->select();
             $SQL->from(array('A' => 't_schedule'), array("*"));
@@ -929,10 +1051,14 @@ class ScheduleDBAccess {
             $SQL->where("SCHOOLYEAR_ID= '" . $scheduleObject->SCHOOLYEAR_ID . "'");
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
-            foreach ($result as $value) {
-                if ($scheduleObject->START_TIME == $value->START_TIME) {
-                    if (!$scheduleObject->SHARED_SCHEDULE && !$value->SHARED_SCHEDULE) {
-                        if ($scheduleObject->END_TIME == $value->END_TIME) {
+            foreach ($result as $value)
+            {
+                if ($scheduleObject->START_TIME == $value->START_TIME)
+                {
+                    if (!$scheduleObject->SHARED_SCHEDULE && !$value->SHARED_SCHEDULE)
+                    {
+                        if ($scheduleObject->END_TIME == $value->END_TIME)
+                        {
                             $CHECK_DATA[$value->ROOM_ID] = $value->ROOM_ID;
                         }
                     }
@@ -944,7 +1070,8 @@ class ScheduleDBAccess {
     }
 
     //@veasna
-    public function availableGridRoom($params) {
+    public function availableGridRoom($params)
+    {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -954,7 +1081,8 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
             $SQL->Orwhere("A.SHORT LIKE '" . $globalSearch . "%'");
         }
@@ -965,8 +1093,10 @@ class ScheduleDBAccess {
         $data = array();
         $i = 0;
 
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["SHORT"] = setShowText($value->SHORT);
                 $data[$i]["MAX_COUNT"] = $value->MAX_COUNT ? $value->MAX_COUNT : "---";
@@ -978,10 +1108,13 @@ class ScheduleDBAccess {
                 $data[$i]["STATUS_KEY"] = iconStatus($value->STATUS);
                 $data[$i]["STATUS"] = $value->STATUS;
 
-                if (!in_array($value->ID, $CHECK_DATA)) {
+                if (!in_array($value->ID, $CHECK_DATA))
+                {
                     $data[$i]['AVAILABLE_STATUS'] = iconYESNO(1);
                     $data[$i]['AVAILABLE'] = 1;
-                } else {
+                }
+                else
+                {
                     $data[$i]['AVAILABLE_STATUS'] = iconYESNO(0);
                     $data[$i]['AVAILABLE'] = 0;
                 }
@@ -991,7 +1124,8 @@ class ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1005,7 +1139,8 @@ class ScheduleDBAccess {
 
     //
 
-    public function availableRoom($params) {
+    public function availableRoom($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
         $parentId = isset($params["node"]) ? addText($params["node"]) : 0;
@@ -1014,7 +1149,7 @@ class ScheduleDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => self::TABLE_ROOM), array("*"));
-        $SQL->where("A.PARENT = ?",$parentId);
+        $SQL->where("A.PARENT = ?", $parentId);
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $CHECK_DATA = $this->checkUseRooms($facette);
@@ -1022,47 +1157,70 @@ class ScheduleDBAccess {
         $data = array();
         $i = 0;
 
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
 
-                if (RoomDBAccess::checkChild($value->ID)) {
+                if (RoomDBAccess::checkChild($value->ID))
+                {
 
-                    if ($value->SHORT) {
+                    if ($value->SHORT)
+                    {
                         $data[$i]['text'] = "(" . $value->SHORT . ") " . stripslashes($value->NAME);
-                    } else {
+                    }
+                    else
+                    {
                         $data[$i]['text'] = stripslashes($value->NAME);
                     }
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['cls'] = "nodeTextBold";
                     $data[$i]['leaf'] = false;
                     $data[$i]['iconCls'] = "icon-folder_magnify";
-                } else {
+                }
+                else
+                {
 
-                    if ($shared) {
-                        if ($value->SHORT) {
+                    if ($shared)
+                    {
+                        if ($value->SHORT)
+                        {
                             $data[$i]['text'] = "(" . $value->SHORT . ") " . stripslashes($value->NAME);
-                        } else {
+                        }
+                        else
+                        {
                             $data[$i]['text'] = stripslashes($value->NAME);
                         }
                         $data[$i]['id'] = "" . $value->ID . "";
                         $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['leaf'] = true;
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
-                    } else {
-                        if (!in_array($value->ID, $CHECK_DATA)) {
-                            if ($value->SHORT) {
+                    }
+                    else
+                    {
+                        if (!in_array($value->ID, $CHECK_DATA))
+                        {
+                            if ($value->SHORT)
+                            {
                                 $data[$i]['text'] = "(" . $value->SHORT . ") " . stripslashes($value->NAME);
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['text'] = stripslashes($value->NAME);
                             }
                             $data[$i]['id'] = "" . $value->ID . "";
                             $data[$i]['cls'] = "nodeTextBlue";
                             $data[$i]['leaf'] = true;
                             $data[$i]['iconCls'] = "icon-application_form_magnify";
-                        } else {
-                            if ($value->SHORT) {
+                        }
+                        else
+                        {
+                            if ($value->SHORT)
+                            {
                                 $data[$i]['text'] = "(" . $value->SHORT . ") " . stripslashes($value->NAME);
-                            } else {
+                            }
+                            else
+                            {
                                 $data[$i]['text'] = stripslashes($value->NAME);
                             }
                             $data[$i]['id'] = "" . $value->ID . "";
@@ -1081,33 +1239,41 @@ class ScheduleDBAccess {
         return $data;
     }
 
-    protected function checkUsedTeachers($scheduleObject) {
+    protected function checkUsedTeachers($scheduleObject)
+    {
 
         ///@veasna
         $CHECK_DATA = array();
 
-        if ($scheduleObject->TRAINING_ID) {
+        if ($scheduleObject->TRAINING_ID)
+        {
             $objectTraining = TrainingDBAccess::findTrainingFromId($scheduleObject->TRAINING_ID);
 
-            if ($objectTraining) {
+            if ($objectTraining)
+            {
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from(array('A' => 't_schedule'), array("*"));
                 $SQL->where("START_TIME <=" . $scheduleObject->START_TIME . " AND END_TIME >=" . $scheduleObject->END_TIME . "");
                 $SQL->where("TERM= '" . $objectTraining->TERM . "'");
                 $SQL->where("SHORTDAY= '" . $scheduleObject->SHORTDAY . "'");
-                if ($scheduleObject->SUBJECT_ID) {
+                if ($scheduleObject->SUBJECT_ID)
+                {
                     $SQL->where("SUBJECT_ID= '" . $scheduleObject->SUBJECT_ID . "'");
                 }
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchAll($SQL);
-                foreach ($result as $value) {
-                    if ($scheduleObject->END_TIME == $value->END_TIME) {
+                foreach ($result as $value)
+                {
+                    if ($scheduleObject->END_TIME == $value->END_TIME)
+                    {
                         $CHECK_DATA[$value->TEACHER_ID] = $value->TEACHER_ID;
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
 
             $SQL = self::dbAccess()->select();
             $SQL->from(array('A' => 't_schedule'), array("*"));
@@ -1117,10 +1283,14 @@ class ScheduleDBAccess {
             $SQL->where("SCHOOLYEAR_ID= '" . $scheduleObject->SCHOOLYEAR_ID . "'");
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchAll($SQL);
-            foreach ($result as $value) {
-                if ($scheduleObject->START_TIME == $value->START_TIME) {
-                    if (!$scheduleObject->SHARED_SCHEDULE && !$value->SHARED_SCHEDULE) {
-                        if ($scheduleObject->END_TIME == $value->END_TIME) {
+            foreach ($result as $value)
+            {
+                if ($scheduleObject->START_TIME == $value->START_TIME)
+                {
+                    if (!$scheduleObject->SHARED_SCHEDULE && !$value->SHARED_SCHEDULE)
+                    {
+                        if ($scheduleObject->END_TIME == $value->END_TIME)
+                        {
                             $CHECK_DATA[$value->TEACHER_ID] = $value->TEACHER_ID;
                         }
                     }
@@ -1131,7 +1301,8 @@ class ScheduleDBAccess {
         return $CHECK_DATA;
     }
 
-    protected function checkAssignedSubjectTeacherClass($subjectId, $teacherId, $academicId, $term) {
+    protected function checkAssignedSubjectTeacherClass($subjectId, $teacherId, $academicId, $term)
+    {
 
         $SQL = "SELECT DISTINCT COUNT(*) AS C";
         $SQL .= " FROM t_subject_teacher_class";
@@ -1149,7 +1320,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    protected function checkAssignedSubjectTeacherTraining($subjectId, $teacherId, $trainingId) {
+    protected function checkAssignedSubjectTeacherTraining($subjectId, $teacherId, $trainingId)
+    {
 
         $SQL = "SELECT DISTINCT COUNT(*) AS C";
         $SQL .= " FROM t_subject_teacher_training";
@@ -1165,7 +1337,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function availableTeacher($params) {
+    public function availableTeacher($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : false;
         $facette = self::findScheduleFromGuId($scheduleId);
@@ -1186,8 +1359,9 @@ class ScheduleDBAccess {
 
         if ($facette->SUBJECT_ID)
             $SQL->where("C.ID ='" . $facette->SUBJECT_ID . "'");
-            
-        if ($globalSearch) {
+
+        if ($globalSearch)
+        {
             $SEARCH = " ((A.CODE LIKE '" . strtoupper($globalSearch) . "%')";
             $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.LASTNAME LIKE '" . $globalSearch . "%')";
@@ -1205,23 +1379,34 @@ class ScheduleDBAccess {
         $i = 0;
 
         if ($resultRows)
-            foreach ($resultRows as $value) {
+            foreach ($resultRows as $value)
+            {
 
-                if ($value->ID) {
+                if ($value->ID)
+                {
 
-                    if ($facette->SHARED_SCHEDULE) {
+                    if ($facette->SHARED_SCHEDULE)
+                    {
                         $status = 1;
                         $AVAILABLE = true;
-                    } else {
-                        if (in_array($value->ID, $CHECK_USED_TEACHERS)) {
-                            if ($facette->TEACHER_ID == $value->ID) {
+                    }
+                    else
+                    {
+                        if (in_array($value->ID, $CHECK_USED_TEACHERS))
+                        {
+                            if ($facette->TEACHER_ID == $value->ID)
+                            {
                                 $status = 1;
                                 $AVAILABLE = true;
-                            } else {
+                            }
+                            else
+                            {
                                 $status = 3;
                                 $AVAILABLE = false;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             $status = 2;
                             $AVAILABLE = true;
                         }
@@ -1232,9 +1417,12 @@ class ScheduleDBAccess {
 
                     $data[$i]["ID"] = $value->ID;
                     $data[$i]["CODE"] = $value->CODE;
-                    if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                    if (!SchoolDBAccess::displayPersonNameInGrid())
+                    {
                         $data[$i]["FULL_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME;
-                    } else {
+                    }
+                    else
+                    {
                         $data[$i]["FULL_NAME"] = $value->FIRSTNAME . " " . $value->LASTNAME;
                     }
                     $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
@@ -1251,11 +1439,13 @@ class ScheduleDBAccess {
         );
     }
 
-    public function checkCountEvents($subjectId, $academicId, $term) {
+    public function checkCountEvents($subjectId, $academicId, $term)
+    {
         return $this->checkSubjectInSchedule($subjectId, $academicId, $term);
     }
 
-    public function deleteOldSubject($params) {
+    public function deleteOldSubject($params)
+    {
 
         $SAVEDATA = array();
         $Id = $params["scheduleId"] ? addText($params["scheduleId"]) : false;
@@ -1265,8 +1455,10 @@ class ScheduleDBAccess {
 
         $facette = self::findScheduleFromGuId($Id);
 
-        if ($facette) {
-            if ($subjectId != $facette->SUBJECT_ID) {
+        if ($facette)
+        {
+            if ($subjectId != $facette->SUBJECT_ID)
+            {
                 $WHERE = array();
                 $SAVEDATA["TEACHER_ID"] = "";
                 $WHERE[] = self::dbAccess()->quoteInto("SUBJECT_ID = ?", $subjectId);
@@ -1277,15 +1469,18 @@ class ScheduleDBAccess {
         }
     }
 
-    public function jsonDeleteAllClassEventByDay($params) {
+    public function jsonDeleteAllClassEventByDay($params)
+    {
 
         $shortday = $params["shortday"] ? addText($params["shortday"]) : false;
         $academicId = $params["academicId"] ? addText($params["academicId"]) : false;
         $term = $params["term"] ? addText($params["term"]) : false;
 
         $entries = self::getSQLClassEvents($params);
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $this->deleteDayClassEvent($value->GUID);
             }
         }
@@ -1303,7 +1498,8 @@ class ScheduleDBAccess {
         );
     }
 
-    public function checkSubjectInSchedule($subjectId, $academicId, $term) {
+    public function checkSubjectInSchedule($subjectId, $academicId, $term)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(self::TABLE_SCHEDULE, 'COUNT(*) AS C');
@@ -1315,7 +1511,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function checkStartTimeANDEndTime($starttime, $endtime, $shortday, $academicId, $term, $scheduleId, $subjectId, $shared) {
+    public function checkStartTimeANDEndTime($starttime, $endtime, $shortday, $academicId, $term, $scheduleId, $subjectId, $shared)
+    {
 
         $facette = self::findScheduleFromGuId($scheduleId);
 
@@ -1330,19 +1527,29 @@ class ScheduleDBAccess {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if (!$facette) {
-            if ($result) {
-                switch ($shared) {
+        if (!$facette)
+        {
+            if ($result)
+            {
+                switch ($shared)
+                {
                     case 1:
-                        if ($result->SUBJECT_ID == $subjectId) {
-                            if ($result->START_TIME != $starttime && $result->END_TIME != $endtime) {
+                        if ($result->SUBJECT_ID == $subjectId)
+                        {
+                            if ($result->START_TIME != $starttime && $result->END_TIME != $endtime)
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = true;
                             }
-                        } else {
+                        }
+                        else
+                        {
 
-                            if ($result->START_TIME == $starttime && $result->END_TIME == $endtime) {
+                            if ($result->START_TIME == $starttime && $result->END_TIME == $endtime)
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = false;
-                            } else {
+                            }
+                            else
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = true;
                             }
                         }
@@ -1357,7 +1564,8 @@ class ScheduleDBAccess {
         return $ERROR_TIME_HAS_BEEN_USED;
     }
 
-    public function checkStartTimeANDEndTimeTraining($starttime, $endtime, $shortday, $trainingId, $scheduleId = false) {
+    public function checkStartTimeANDEndTimeTraining($starttime, $endtime, $shortday, $trainingId, $scheduleId = false)
+    {
 
         $facette = self::findScheduleFromGuId($scheduleId);
 
@@ -1372,19 +1580,29 @@ class ScheduleDBAccess {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if (!$facette) {
-            if ($result) {
-                switch ($shared) {
+        if (!$facette)
+        {
+            if ($result)
+            {
+                switch ($shared)
+                {
                     case 1:
-                        if ($result->SUBJECT_ID == $subjectId) {
-                            if ($result->START_TIME != $starttime && $result->END_TIME != $endtime) {
+                        if ($result->SUBJECT_ID == $subjectId)
+                        {
+                            if ($result->START_TIME != $starttime && $result->END_TIME != $endtime)
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = true;
                             }
-                        } else {
+                        }
+                        else
+                        {
 
-                            if ($result->START_TIME == $starttime && $result->END_TIME == $endtime) {
+                            if ($result->START_TIME == $starttime && $result->END_TIME == $endtime)
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = false;
-                            } else {
+                            }
+                            else
+                            {
                                 $ERROR_TIME_HAS_BEEN_USED = true;
                             }
                         }
@@ -1455,7 +1673,8 @@ class ScheduleDBAccess {
          */
     }
 
-    public function getSubjectsInSchedule($teacherId, $subjectId, $academicId) {
+    public function getSubjectsInSchedule($teacherId, $subjectId, $academicId)
+    {
 
         $SQL = "";
         $SQL .= " SELECT *";
@@ -1467,8 +1686,10 @@ class ScheduleDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $data[$value->SUBJECT_ID] = $value->SUBJECT_ID;
             }
         }
@@ -1476,7 +1697,8 @@ class ScheduleDBAccess {
         return $data;
     }
 
-    public function jsonTeacherSchedule($params) {
+    public function jsonTeacherSchedule($params)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -1488,18 +1710,22 @@ class ScheduleDBAccess {
 
         $data = array();
         $i = 0;
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
 
                 $CHECK_SUBJECT_TEACHER_DATA = $this->getSubjectsInSchedule($teacherId, $value->SUBJECT_ID, $value->ACADEMIC_ID);
 
-                if (in_array($value->SUBJECT_ID, $CHECK_SUBJECT_TEACHER_DATA)) {
+                if (in_array($value->SUBJECT_ID, $CHECK_SUBJECT_TEACHER_DATA))
+                {
 
                     $data[$i]["ID"] = $value->GUID;
                     $data[$i]["STATUS"] = $value->SCHEDULE_STATUS;
                     $data[$i]["CODE"] = setShowText($value->SCHEDULE_CODE);
 
-                    switch ($value->SCHEDULE_TYPE) {
+                    switch ($value->SCHEDULE_TYPE)
+                    {
                         case 1:
                             $data[$i]["EVENT"] = setShowText($value->SUBJECT_NAME);
                             $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
@@ -1524,7 +1750,8 @@ class ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1536,7 +1763,8 @@ class ScheduleDBAccess {
         );
     }
 
-    protected function setTeacherWorkingSubjectInAllDays($in_all_days, $teacherId, $subjectId, $academicId, $term) {
+    protected function setTeacherWorkingSubjectInAllDays($in_all_days, $teacherId, $subjectId, $academicId, $term)
+    {
 
         $params["academicId"] = $academicId;
         $params["subjectId"] = $subjectId;
@@ -1545,11 +1773,16 @@ class ScheduleDBAccess {
 
         $TEACHER_SUBJECTS = $this->getTeacherSubjects($teacherId);
 
-        if (in_array($subjectId, $TEACHER_SUBJECTS)) {
-            if ($entries) {
-                foreach ($entries as $value) {
-                    if ($subjectId == $value->SUBJECT_ID) {
-                        if ($in_all_days && $teacherId && $subjectId && $academicId && $term) {
+        if (in_array($subjectId, $TEACHER_SUBJECTS))
+        {
+            if ($entries)
+            {
+                foreach ($entries as $value)
+                {
+                    if ($subjectId == $value->SUBJECT_ID)
+                    {
+                        if ($in_all_days && $teacherId && $subjectId && $academicId && $term)
+                        {
                             $SAVEDATA["TEACHER_ID"] = $teacherId;
                             $WHERE = self::dbAccess()->quoteInto("GUID = ?", $value->GUID);
                             self::dbAccess()->update(self::TABLE_SCHEDULE, $SAVEDATA, $WHERE);
@@ -1560,7 +1793,8 @@ class ScheduleDBAccess {
         }
     }
 
-    protected function getTeacherSubjects($teacherId) {
+    protected function getTeacherSubjects($teacherId)
+    {
 
         $SQL = "SELECT * FROM t_teacher_subject";
         $SQL .= " WHERE 1=1";
@@ -1568,8 +1802,10 @@ class ScheduleDBAccess {
         $resultRows = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
                 $data[$value->SUBJECT] = $value->SUBJECT;
             }
         }
@@ -1577,7 +1813,8 @@ class ScheduleDBAccess {
         return $data;
     }
 
-    public function checkAssignedTeacherInSchedule($params) {
+    public function checkAssignedTeacherInSchedule($params)
+    {
 
         $teacherId = isset($params["checkId"]) ? addText($params["checkId"]) : false;
         $target = isset($params["target"]) ? addText($params["target"]) : false;
@@ -1590,10 +1827,13 @@ class ScheduleDBAccess {
 
         $data = array();
 
-        if ($resultRows) {
-            foreach ($resultRows as $key => $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $key => $value)
+            {
 
-                if ($value->ACADEMIC_ID) {
+                if ($value->ACADEMIC_ID)
+                {
                     $data[$key]["TIME"] = secondToHour($value->START_TIME) . " - " . secondToHour($value->END_TIME);
                     $data[$key]["ID"] = $value->GUID;
                     $data[$key]["DAY"] = getShortdayName($value->SHORTDAY);
@@ -1606,7 +1846,9 @@ class ScheduleDBAccess {
                     $data[$key]["TEACHING_INFORMATION"] .= $value->SUBJECT_NAME;
                     $data[$key]["TEACHING_INFORMATION"] .= "<br>";
                     $data[$key]["TEACHING_INFORMATION"] .= displaySchoolTerm($value->TERM);
-                } elseif ($value->TRAINING_ID) {
+                }
+                elseif ($value->TRAINING_ID)
+                {
                     $data[$key]["TIME"] = secondToHour($value->START_TIME) . " - " . secondToHour($value->END_TIME);
                     $data[$key]["ID"] = $value->ID;
                     $data[$key]["DAY"] = getShortdayName($value->SHORTDAY);
@@ -1625,7 +1867,8 @@ class ScheduleDBAccess {
         );
     }
 
-    public function checkAssignedRoomInSchedule($params) {
+    public function checkAssignedRoomInSchedule($params)
+    {
 
         $roomId = isset($params["checkId"]) ? addText($params["checkId"]) : false;
         $target = isset($params["target"]) ? addText($params["target"]) : false;
@@ -1638,20 +1881,25 @@ class ScheduleDBAccess {
 
         $data = array();
 
-        if ($resultRows) {
-            foreach ($resultRows as $key => $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $key => $value)
+            {
 
                 $data[$key]["ID"] = $value->ROOM_ID;
                 $data[$key]["TIME"] = secondToHour($value->START_TIME) . " - " . secondToHour($value->END_TIME);
 
-                if ($value->ACADEMIC_ID) {
+                if ($value->ACADEMIC_ID)
+                {
                     $data[$key]["DAY"] = getShortdayName($value->SHORTDAY);
                     $data[$key]["COLOR"] = $value->SUBJECT_COLOR;
                     $data[$key]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);
                     $data[$key]["TEACHING_INFORMATION"] = $value->CLASS_NAME;
                     $data[$key]["TEACHING_INFORMATION"] .= "<br>";
                     $data[$key]["TEACHING_INFORMATION"] .= displaySchoolTerm($value->TERM);
-                } elseif ($value->TRAINING_ID) {
+                }
+                elseif ($value->TRAINING_ID)
+                {
                     $data[$key]["TIME"] = secondToHour($value->START_TIME) . " - " . secondToHour($value->END_TIME);
                     $data[$key]["ID"] = $value->ID;
                     $data[$key]["DAY"] = getShortdayName($value->SHORTDAY);
@@ -1670,9 +1918,11 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function setSharedSchedule($academicId, $scheduleObject) {
+    public static function setSharedSchedule($academicId, $scheduleObject)
+    {
 
-        if ($academicId && is_object($scheduleObject)) {
+        if ($academicId && is_object($scheduleObject))
+        {
 
             $CONDITION_A = array(
                 'TERM = ? ' => $scheduleObject->TERM
@@ -1720,19 +1970,25 @@ class ScheduleDBAccess {
         }
     }
 
-    public function linkedScheduleAcademic($Id, $type) {
-        if ($type == 'EXTRA_SESSION') {
+    public function linkedScheduleAcademic($Id, $type)
+    {
+        if ($type == 'EXTRA_SESSION')
+        {
             $facette = TeachingSessionDBAccess::getTeachingSessionFromId($Id);
-        } else{
+        }
+        else
+        {
             $facette = self::findScheduleFromGuId($Id);
         }
-        
+
         $data = Array();
 
-        if ($facette) {
+        if ($facette)
+        {
             $academicObject = AcademicDBAccess::findGradeFromId($facette->ACADEMIC_ID);
 
-            if ($academicObject) {
+            if ($academicObject)
+            {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_grade", array('*'));
                 $SQL->where("PARENT='" . $academicObject->ID . "'");
@@ -1740,8 +1996,10 @@ class ScheduleDBAccess {
                 $result = self::dbAccess()->fetchAll($SQL);
 
                 $i = 0;
-                if ($result) {
-                    foreach ($result as $value) {
+                if ($result)
+                {
+                    foreach ($result as $value)
+                    {
                         $data[$i]['ID'] = $value->ID;
                         $data[$i]['NAME'] = $value->NAME;
                         $data[$i]['APPLY'] = self::checkLinkedScheduleAcademic($facette->ID, $value->ID, $type);
@@ -1758,12 +2016,14 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function actionLinkSchedule2Academic($scheduleId, $academicId, $isValue, $target = false) {
+    public static function actionLinkSchedule2Academic($scheduleId, $academicId, $isValue, $target = false)
+    {
 
         $facette = self::findScheduleFromGuId($scheduleId);
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-        if ($facette && $academicObject) {
+        if ($facette && $academicObject)
+        {
             $CONDITION = array(
                 'SCHEDULE_ID = ? ' => $facette->ID
                 , 'ACADEMIC_ID = ? ' => $academicId
@@ -1771,11 +2031,13 @@ class ScheduleDBAccess {
 
             self::dbAccess()->delete('t_link_schedule_academic', $CONDITION);
 
-            if ($isValue) {
+            if ($isValue)
+            {
                 $SAVEDATA["SCHEDULE_ID"] = $facette->ID;
                 $SAVEDATA["ACADEMIC_ID"] = $academicId;
                 $SAVEDATA["PARENT_ACADEMIC_ID"] = $academicObject->PARENT;
-                if ($target) {
+                if ($target)
+                {
                     $SAVEDATA["TARGET"] = 1;
                 }
                 self::dbAccess()->insert('t_link_schedule_academic', $SAVEDATA);
@@ -1783,8 +2045,10 @@ class ScheduleDBAccess {
             //@veasna
             $scheduleLinkAcademic = self::findLinkedScheduleAcademicByScheduleId($facette->ID);
             $GROUP_ID_ARR = array();
-            if ($scheduleLinkAcademic) {
-                foreach ($scheduleLinkAcademic as $value) {
+            if ($scheduleLinkAcademic)
+            {
+                foreach ($scheduleLinkAcademic as $value)
+                {
                     $GROUP_ID_ARR[] = $value->ACADEMIC_ID;
                 }
             }
@@ -1795,7 +2059,8 @@ class ScheduleDBAccess {
         }
     }
 
-    public function jsonActionLinkSchedule2Academic($params) {
+    public function jsonActionLinkSchedule2Academic($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "";
         $academicId = isset($params["id"]) ? addText($params["id"]) : "";
@@ -1806,22 +2071,27 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function checkLinkedScheduleAcademic($scheduleId, $academicId) {
+    public static function checkLinkedScheduleAcademic($scheduleId, $academicId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_link_schedule_academic", array("C" => "COUNT(*)"));
         $SQL->where("SCHEDULE_ID = '" . $scheduleId . "'");
-        $SQL->where("ACADEMIC_ID = ?",$academicId);
+        $SQL->where("ACADEMIC_ID = ?", $academicId);
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if ($result) {
+        if ($result)
+        {
             return $result->C ? 1 : 0;
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
 
     //@veasna
-    public static function findLinkedScheduleAcademicByScheduleId($scheduleId) {
+    public static function findLinkedScheduleAcademicByScheduleId($scheduleId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_link_schedule_academic'), array("ACADEMIC_ID AS ACADEMIC_ID"));
         $SQL->joinLeft(array('B' => 't_grade'), 'B.ID=A.ACADEMIC_ID', array("*"));
@@ -1831,7 +2101,8 @@ class ScheduleDBAccess {
         return $result;
     }
 
-    public static function findLinkedScheduleAcademicByAcademicId($academicId) {
+    public static function findLinkedScheduleAcademicByAcademicId($academicId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', array('*'));
         $SQL->where("ACADEMIC_ID= '" . $academicId . "'");
@@ -1840,7 +2111,8 @@ class ScheduleDBAccess {
         return $result;
     }
 
-    public static function sqlTeachersCredit($params) {
+    public static function sqlTeachersCredit($params)
+    {
 
         $objectId = isset($params['objectId']) ? addText($params['objectId']) : '';
         //$parentId = isset($params['parentId']) ? $params['parentId'] : '';
@@ -1886,8 +2158,10 @@ class ScheduleDBAccess {
         $SQL->joinLeft(array('B' => 't_schedule'), 'B.ID=A.SCHEDULE_ID', $SELECTION_B);
         $SQL->joinLeft(array('C' => 't_staff'), 'B.TEACHER_ID=C.ID', $SELECTION_C);
         $SQL->joinLeft(array('D' => 't_grade'), 'D.ID=A.ACADEMIC_ID', $SELECTION_D);
-        if ($academicObject) {
-            switch ($academicObject->OBJECT_TYPE) {
+        if ($academicObject)
+        {
+            switch ($academicObject->OBJECT_TYPE)
+            {
                 case 'CLASS':
                     $SQL->where("B.ACADEMIC_ID='" . $academicObject->PARENT . "'");
                     $SQL->where("A.ACADEMIC_ID='" . $academicObject->ID . "'");
@@ -1909,7 +2183,8 @@ class ScheduleDBAccess {
         return $result;
     }
 
-    public static function jsonListTeacherCredit($params) {
+    public static function jsonListTeacherCredit($params)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -1920,54 +2195,65 @@ class ScheduleDBAccess {
         $creditGroupArr = array();
         $teacher = '';
         $i = 0;
-        if ($result) {
-            foreach ($result as $value) {
-                if ($teacher == $value->STAFF_ID) {
-                    if (in_array($value->GROUP_ID, $creditGroupArr))
-                        continue;
-                }else {
-                    $creditGroupArr = array();
-                }
-                $teacher = $value->STAFF_ID;
-                $data[$i]["ID"] = $teacher; //@THORN Visal
-                $data[$i]["TEACHER_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME . " (" . $value->CODE . ")";
-                $data[$i]["PHONE"] = $value->PHONE;
-                $data[$i]["EMAIL"] = $value->EMAIL;
-                if ($academicObject) {
-                    switch ($academicObject->OBJECT_TYPE) {
-                        case 'CLASS':
-                        case 'SUBJECT':
-                            $data[$i]["GROUP_NAME"] = $value->GROUP_NAME;
-                            $data[$i]["GROUP_ID"] = $value->GROUP_ID; //@THORN Visal
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                if ($value->STAFF_ID)
+                {
+                    if ($teacher == $value->STAFF_ID)
+                    {
+                        if (in_array($value->GROUP_ID, $creditGroupArr))
+                            continue;
+                    }else
+                    {
+                        $creditGroupArr = array();
+                    }
+                    $teacher = $value->STAFF_ID;
+                    $data[$i]["ID"] = $teacher; //@THORN Visal
+                    $data[$i]["TEACHER_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME . " (" . $value->CODE . ")";
+                    $data[$i]["PHONE"] = $value->PHONE;
+                    $data[$i]["EMAIL"] = $value->EMAIL;
+                    if ($academicObject)
+                    {
+                        switch ($academicObject->OBJECT_TYPE)
+                        {
+                            case 'CLASS':
+                            case 'SUBJECT':
+                                $data[$i]["GROUP_NAME"] = $value->GROUP_NAME;
+                                $data[$i]["GROUP_ID"] = $value->GROUP_ID; //@THORN Visal
+                                break;
+                            case 'SCHOOLYEAR':
+                                $data[$i]["SUBJECT"] = $value->SUBJECT_TGRADE;
+                                break;
+                        }
+                    }
+                    switch (Zend_Registry::get('SCHOOL')->SCHOOL_TERM)
+                    {
+                        case 1:
+                            $data[$i]["FIRST_TERM"] = ($value->TERM == "FIRST_TERM") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["SECOND_TERM"] = ($value->TERM == "SECOND_TERM") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["THIRD_TERM"] = ($value->TERM == "THIRD_TERM") ? iconYESNO(true) : iconYESNO(false);
                             break;
-                        case 'SCHOOLYEAR':
-                            $data[$i]["SUBJECT"] = $value->SUBJECT_TGRADE;
+                        case 2:
+                            $data[$i]["FIRST_QUARTER"] = ($value->TERM == "FIRST_QUARTER") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["SECOND_QUARTER"] = ($value->TERM == "SECOND_QUARTER") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["THIRD_QUARTER"] = ($value->TERM == "THIRD_QUARTER") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["FOURTH_QUARTER"] = ($value->TERM == "FOURTH_QUARTER") ? iconYESNO(true) : iconYESNO(false);
+                            break;
+                        default:
+                            $data[$i]["FIRST_SEMESTER"] = ($value->TERM == "FIRST_SEMESTER") ? iconYESNO(true) : iconYESNO(false);
+                            $data[$i]["SECOND_SEMESTER"] = ($value->TERM == "SECOND_SEMESTER") ? iconYESNO(true) : iconYESNO(false);
                             break;
                     }
+                    $creditGroupArr[] = $value->GROUP_ID;
+                    $i++;
                 }
-                switch (Zend_Registry::get('SCHOOL')->SCHOOL_TERM) {
-                    case 1:
-                        $data[$i]["FIRST_TERM"] = ($value->TERM == "FIRST_TERM") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["SECOND_TERM"] = ($value->TERM == "SECOND_TERM") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["THIRD_TERM"] = ($value->TERM == "THIRD_TERM") ? iconYESNO(true) : iconYESNO(false);
-                        break;
-                    case 2:
-                        $data[$i]["FIRST_QUARTER"] = ($value->TERM == "FIRST_QUARTER") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["SECOND_QUARTER"] = ($value->TERM == "SECOND_QUARTER") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["THIRD_QUARTER"] = ($value->TERM == "THIRD_QUARTER") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["FOURTH_QUARTER"] = ($value->TERM == "FOURTH_QUARTER") ? iconYESNO(true) : iconYESNO(false);
-                        break;
-                    default:
-                        $data[$i]["FIRST_SEMESTER"] = ($value->TERM == "FIRST_SEMESTER") ? iconYESNO(true) : iconYESNO(false);
-                        $data[$i]["SECOND_SEMESTER"] = ($value->TERM == "SECOND_SEMESTER") ? iconYESNO(true) : iconYESNO(false);
-                        break;
-                }
-                $creditGroupArr[] = $value->GROUP_ID;
-                $i++;
             }
         }
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -1978,19 +2264,23 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function countTeacherScheduleFirstSemester($teacherId, $academicId, $child = false) {
+    public static function countTeacherScheduleFirstSemester($teacherId, $academicId, $child = false)
+    {
 
         $SQL = self::dbAccess()->select();
-        if ($child) {
+        if ($child)
+        {
             $SQL->from(array('A' => 't_schedule'), array("C" => "COUNT(*)"));
             $SQL->joinLeft(array('B' => 't_link_schedule_academic'), 'A.ID=B.SCHEDULE_ID');
             $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
             $SQL->where("B.ACADEMIC_ID = '" . $academicId . "'");
             $SQL->where("A.TERM = 'FIRST_SEMESTER'");
-        } else {
+        }
+        else
+        {
             $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-            $SQL->where("TEACHER_ID = ?",$teacherId);
-            $SQL->where("ACADEMIC_ID = ?",$academicId);
+            $SQL->where("TEACHER_ID = ?", $teacherId);
+            $SQL->where("ACADEMIC_ID = ?", $academicId);
             $SQL->where("TERM = 'FIRST_SEMESTER'");
         }
         //error_log($SQL->__toString());
@@ -1998,19 +2288,23 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function countTeacherScheduleSecondSemester($teacherId, $academicId, $child) {
+    public static function countTeacherScheduleSecondSemester($teacherId, $academicId, $child)
+    {
 
         $SQL = self::dbAccess()->select();
-        if ($child) {
+        if ($child)
+        {
             $SQL->from(array('A' => 't_schedule'), array("C" => "COUNT(*)"));
             $SQL->joinLeft(array('B' => 't_link_schedule_academic'), 'A.ID=B.SCHEDULE_ID');
             $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
             $SQL->where("B.ACADEMIC_ID = '" . $academicId . "'");
             $SQL->where("A.TERM = 'SECOND_SEMESTER'");
-        } else {
+        }
+        else
+        {
             $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-            $SQL->where("TEACHER_ID = ?",$teacherId);
-            $SQL->where("ACADEMIC_ID = ?",$academicId);
+            $SQL->where("TEACHER_ID = ?", $teacherId);
+            $SQL->where("ACADEMIC_ID = ?", $academicId);
             $SQL->where("TERM = 'SECOND_SEMESTER'");
         }
         //error_log($SQL->__toString());
@@ -2018,7 +2312,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkCreditScheduleInGroup($scheduleId, $group) {
+    public static function checkCreditScheduleInGroup($scheduleId, $group)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', 'COUNT(*) AS C');
         $SQL->where("SCHEDULE_ID = '" . $scheduleId . "'");
@@ -2029,7 +2324,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkCreditExtraSessionInGroup($scheduleId, $group) {
+    public static function checkCreditExtraSessionInGroup($scheduleId, $group)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', 'COUNT(*) AS C');
         $SQL->where("TEACHING_SESSION_ID = '" . $scheduleId . "'");
@@ -2040,7 +2336,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function loadCreditStudentSubjectEvents($params, $isJson = true) {
+    public function loadCreditStudentSubjectEvents($params, $isJson = true)
+    {
 
         $data = array();
 
@@ -2052,9 +2349,12 @@ class ScheduleDBAccess {
         $facette = GradeSubjectDBAccess::getStudentCreditSubject($studentId, $schoolyearId);
         $studentGroupArr = array();
         $studentGroup = '';
-        if ($facette) {
-            foreach ($facette as $studentInSubject) {
-                if ($studentInSubject->CLASS_ID) {
+        if ($facette)
+        {
+            foreach ($facette as $studentInSubject)
+            {
+                if ($studentInSubject->CLASS_ID)
+                {
                     $studentGroupArr[] = $studentInSubject->CLASS_ID;
                 }
             }
@@ -2065,8 +2365,10 @@ class ScheduleDBAccess {
         $resultRows = self::getSQLCreditSubjectEvent($params);
 
         $i = 0;
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
 
 
                 $data[$i]["ID"] = $value->GUID;
@@ -2081,13 +2383,16 @@ class ScheduleDBAccess {
                 $params['single'] = true;
                 $shortdayInWeek = array("MO", "TU", "WE", "TH", "FR", "SA", "SU");
 
-                foreach ($shortdayInWeek as $shortday) {
+                foreach ($shortdayInWeek as $shortday)
+                {
                     $params["shortday"] = $shortday;
                     $DAY_OBJECT = self::getSQLCreditSubjectEvent($params);
                     $data[$i][$shortday] = "";
-                    if ($DAY_OBJECT) {
+                    if ($DAY_OBJECT)
+                    {
                         $inCheck = self::checkCreditScheduleInGroup($DAY_OBJECT->SCHEDULE_ID, $studentGroup);
-                        if (!$inCheck) {
+                        if (!$inCheck)
+                        {
                             continue;
                         }
 
@@ -2116,24 +2421,29 @@ class ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
         //@soda
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
     }
 
-    public static function jsonTreeSharedSchedule2Academic($params) {
+    public static function jsonTreeSharedSchedule2Academic($params)
+    {
 
         $node = isset($params["node"]) ? addText($params["node"]) : "0";
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "0";
@@ -2141,26 +2451,33 @@ class ScheduleDBAccess {
 
         $data = array();
 
-        if ($scheduleObject) {
+        if ($scheduleObject)
+        {
 
             $facette = AcademicDBAccess::findGradeFromId($scheduleObject->ACADEMIC_ID);
 
-            if ($node == 0) {
+            if ($node == 0)
+            {
                 $parentId = $facette->PARENT;
-            } else {
+            }
+            else
+            {
                 $parentId = $node;
             }
 
             $SQL = self::dbAccess()->select();
             $SQL->from("t_grade", array("*"));
-            $SQL->where("PARENT = ?",$parentId);
+            $SQL->where("PARENT = ?", $parentId);
             //error_log($SQL);
             $result = self::dbAccess()->fetchAll($SQL);
 
             $i = 0;
-            if ($result) {
-                foreach ($result as $value) {
-                    if ($scheduleObject->ACADEMIC_ID != $value->ID) {
+            if ($result)
+            {
+                foreach ($result as $value)
+                {
+                    if ($scheduleObject->ACADEMIC_ID != $value->ID)
+                    {
                         $data[$i]['id'] = "" . $value->ID . "";
                         $data[$i]['text'] = setShowText($value->NAME);
                         $data[$i]['iconCls'] = "icon-shape_square_link";
@@ -2176,21 +2493,27 @@ class ScheduleDBAccess {
         return $data;
     }
 
-    public static function actionSharingSchedule2Academic($params) {
+    public static function actionSharingSchedule2Academic($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : "0";
         $selectedId = isset($params["selectedId"]) ? addText($params["selectedId"]) : "";
         $checked = false;
-        if (isset($params["checked"])) {
-            if ($params["checked"] == "true") {
+        if (isset($params["checked"]))
+        {
+            if ($params["checked"] == "true")
+            {
                 $checked = true;
             }
         }
         $scheduleObject = self::findScheduleFromGuId($scheduleId);
-        if ($scheduleObject) {
-            if ($selectedId) {
+        if ($scheduleObject)
+        {
+            if ($selectedId)
+            {
                 $academicObject = AcademicDBAccess::findGradeFromId($selectedId);
-                switch ($academicObject->OBJECT_TYPE) {
+                switch ($academicObject->OBJECT_TYPE)
+                {
                     case "CLASS":
                         self::setSharedSchedule($selectedId, $scheduleObject);
                         break;
@@ -2205,7 +2528,8 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function displayGroupSubjectEvent($scheduleObject) {
+    public static function displayGroupSubjectEvent($scheduleObject)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => 't_subject'), array('NAME AS SUBJECT_NAME', 'ID AS SUBJECT_ID'));
@@ -2219,9 +2543,11 @@ class ScheduleDBAccess {
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $DAY_EVENT = "";
-        if ($result) {
+        if ($result)
+        {
             $j = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 if ($j != 0)
                     $DAY_EVENT .="<br>";
                 $DAY_EVENT .= setShowText($value->SUBJECT_NAME);
@@ -2232,13 +2558,15 @@ class ScheduleDBAccess {
         return $DAY_EVENT;
     }
 
-    public static function checkSharedScheduleAcademic($scheduleId, $academicId) {
+    public static function checkSharedScheduleAcademic($scheduleId, $academicId)
+    {
         $CHECK = self::checkLinkedScheduleAcademic($scheduleId, $academicId);
         return $CHECK ? true : false;
     }
 
     //@veasna
-    public static function getCreditClassInAcademicSubject($params) {
+    public static function getCreditClassInAcademicSubject($params)
+    {
 
         $academicId = isset($params['academicId']) ? addText($params["academicId"]) : '';
         $schoolyearId = isset($params['schoolyearId']) ? addText($params["schoolyearId"]) : '';
@@ -2254,21 +2582,24 @@ class ScheduleDBAccess {
         if ($academicId)
             $SQL->where("C.ACADEMIC_ID = '" . $academicId . "'");
         if ($schoolyearId)
-            $SQL->where("A.SCHOOL_YEAR = ?",$schoolyearId);
+            $SQL->where("A.SCHOOL_YEAR = ?", $schoolyearId);
 
         $SQL->where("A.EDUCATION_SYSTEM = '1'");
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonCreditClassInAcademic($params) {
+    public static function jsonCreditClassInAcademic($params)
+    {
 
         $result = self::getCreditClassInAcademicSubject($params);
         $data = array();
         $i = 0;
 
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = setShowText($value->NAME);
 
@@ -2283,7 +2614,8 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function displayEvent($type, $checkAcademicId, $EVENT_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT) {
+    public static function displayEvent($type, $checkAcademicId, $EVENT_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT)
+    {
 
         $DAY_EVENT = "";
         $DAY_NAME_EVENT = "";
@@ -2295,10 +2627,13 @@ class ScheduleDBAccess {
 
         $DISPLAY_ROOM = Zend_Registry::get('SCHOOL')->ROOM_DISPLAY ? "ROOM_SHORT" : "ROOM";
 
-        if ($EVENT_OBJECT) {
+        if ($EVENT_OBJECT)
+        {
 
-            if ($EVENT_OBJECT->SHARED_SCHEDULE) {
-                if (self::checkAcaemicGroup($EVENT_OBJECT->ACADEMIC_ID)) {
+            if ($EVENT_OBJECT->SHARED_SCHEDULE)
+            {
+                if (self::checkAcaemicGroup($EVENT_OBJECT->ACADEMIC_ID))
+                {
                     $DAY_EVENT .= self::displayGroupSubjectEvent($EVENT_OBJECT);
                     $DAY_NAME_EVENT .= "";
                     $DAY_COLOR .= "#FFF";
@@ -2306,18 +2641,23 @@ class ScheduleDBAccess {
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
                     $DAY_DESCRIPTION .= self::displayAcademicGroup($EVENT_OBJECT);
                     $DAY_DESCRIPTION_EX .= "";
-                } else {
+                }
+                else
+                {
                     $DAY_NAME_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_SUBJECT);
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
-                    switch ($EVENT_OBJECT->SCHEDULE_TYPE) {
+                    switch ($EVENT_OBJECT->SCHEDULE_TYPE)
+                    {
                         case 1:
                             $DAY_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_SUBJECT);
                             $DAY_EVENT .= "<br>";
 
                             $groupObject = self::findLinkedScheduleAcademicByScheduleId($EVENT_OBJECT->SCHEDULE_ID);
-                            if ($groupObject) {
+                            if ($groupObject)
+                            {
                                 $j = 0;
-                                foreach ($groupObject as $group) {
+                                foreach ($groupObject as $group)
+                                {
                                     if ($j != 0)
                                         $DAY_EVENT .=", ";
                                     $DAY_EVENT .= setShowText($group->NAME);
@@ -2354,13 +2694,18 @@ class ScheduleDBAccess {
 
                     $DAY_DESCRIPTION .= $EVENT_OBJECT->DESCRIPTION;
                 }
-            } else {
-                if ($checkAcademicId && !in_array($EVENT_OBJECT->SCHEDULE_ID, $LINKED_SCHEDULE_CREDIT_DATA)) {
+            } else
+            {
+                if ($checkAcademicId && !in_array($EVENT_OBJECT->SCHEDULE_ID, $LINKED_SCHEDULE_CREDIT_DATA))
+                {
                     $DAY_EVENT .= "";
-                } else {
+                }
+                else
+                {
                     $DAY_NAME_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_SUBJECT);
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
-                    switch ($EVENT_OBJECT->SCHEDULE_TYPE) {
+                    switch ($EVENT_OBJECT->SCHEDULE_TYPE)
+                    {
                         case 1:
                             //@THORN Visal
                             /* switch (UserAuth::getUserType()) {
@@ -2373,9 +2718,11 @@ class ScheduleDBAccess {
                             // }
 
                             $groupObject = self::findLinkedScheduleAcademicByScheduleId($EVENT_OBJECT->SCHEDULE_ID);
-                            if ($groupObject) {
+                            if ($groupObject)
+                            {
                                 $j = 0;
-                                foreach ($groupObject as $group) {
+                                foreach ($groupObject as $group)
+                                {
                                     if ($j != 0)
                                         $DAY_EVENT .=", ";
                                     $DAY_EVENT .= setShowText($group->NAME);
@@ -2385,7 +2732,8 @@ class ScheduleDBAccess {
                                 $DAY_EVENT .= "<br>";
                             }
                             //@THORN Visal
-                            switch (UserAuth::getUserType()) {
+                            switch (UserAuth::getUserType())
+                            {
                                 case "SUPERADMIN":
                                 case "ADMIN":
                                 case "STUDENT":
@@ -2421,7 +2769,8 @@ class ScheduleDBAccess {
             }
         }
 
-        switch ($type) {
+        switch ($type)
+        {
             case "DAY_EVENT":return $DAY_EVENT;
             case "DAY_NAME_EVENT":return $DAY_NAME_EVENT;
             case "DAY_COLOR_FONT":return $DAY_COLOR_FONT;
@@ -2432,9 +2781,11 @@ class ScheduleDBAccess {
         }
     }
 
-    public static function checkDoubleGroupEvent($scheduleObject) {
+    public static function checkDoubleGroupEvent($scheduleObject)
+    {
 
-        if ($scheduleObject) {
+        if ($scheduleObject)
+        {
 
             $SQL = self::dbAccess()->select();
             $SQL->distinct();
@@ -2449,12 +2800,15 @@ class ScheduleDBAccess {
             $result = self::dbAccess()->fetchRow($SQL);
             //error_log($SQL);
             return $result ? $result->C : 0;
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
 
-    public static function checkAcaemicGroup($academicId) {
+    public static function checkAcaemicGroup($academicId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', 'COUNT(*) AS C');
@@ -2465,7 +2819,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function getCountAssignedGroup($scheduleId) {
+    public static function getCountAssignedGroup($scheduleId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', 'COUNT(*) AS C');
@@ -2475,7 +2830,8 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function displayAcademicGroup($scheduleObject) {
+    public static function displayAcademicGroup($scheduleObject)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => 't_grade'), array('NAME'));
@@ -2485,9 +2841,11 @@ class ScheduleDBAccess {
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $GROUP_NAME = "";
-        if ($result) {
+        if ($result)
+        {
             $j = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 if ($j != 0)
                     $GROUP_NAME .="<br>";
                 $GROUP_NAME .= setShowText($value->NAME);
@@ -2498,7 +2856,8 @@ class ScheduleDBAccess {
         return $GROUP_NAME;
     }
 
-    public static function checkRoomSharedSchedule($scheduleObject) {
+    public static function checkRoomSharedSchedule($scheduleObject)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_schedule', '*');
@@ -2507,7 +2866,8 @@ class ScheduleDBAccess {
         $SQL->where("SUBJECT_ID = '" . $scheduleObject->SUBJECT_ID . "'");
         $SQL->where("SHORTDAY = '" . $scheduleObject->SHORTDAY . "'");
         $SQL->where("TERM = '" . $scheduleObject->TERM . "'");
-        if ($scheduleObject->SCHOOLYEAR_ID) {
+        if ($scheduleObject->SCHOOLYEAR_ID)
+        {
             $SQL->where("SCHOOLYEAR_ID = '" . $scheduleObject->SCHOOLYEAR_ID . "'");
         }
         $SQL->limitPage(0, 1);
@@ -2515,11 +2875,14 @@ class ScheduleDBAccess {
         return $result ? $result->ROOM_ID : null;
     }
 
-    public static function deleteTecherFromAcademic($scheduleObject) {
+    public static function deleteTecherFromAcademic($scheduleObject)
+    {
 
-        if ($scheduleObject) {
+        if ($scheduleObject)
+        {
 
-            if ($scheduleObject->ACADEMIC_ID) {
+            if ($scheduleObject->ACADEMIC_ID)
+            {
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from('t_subject_teacher_class', 'COUNT(*) AS C');
@@ -2531,7 +2894,8 @@ class ScheduleDBAccess {
                 $result = self::dbAccess()->fetchRow($SQL);
                 //error_log($SQL);
                 $count = $result ? $result->C : 0;
-                if ($count == 1) {
+                if ($count == 1)
+                {
                     self::dbAccess()->delete('t_subject_teacher_class', array(
                         'TEACHER = ? ' => $scheduleObject->TEACHER_ID
                         , 'ACADEMIC = ? ' => $scheduleObject->ACADEMIC_ID
@@ -2542,7 +2906,8 @@ class ScheduleDBAccess {
                 }
             }
 
-            if ($scheduleObject->TRAINING_ID) {
+            if ($scheduleObject->TRAINING_ID)
+            {
                 $SQL = self::dbAccess()->select();
                 $SQL->from('t_subject_teacher_training', 'COUNT(*) AS C');
                 $SQL->where("TEACHER = '" . $scheduleObject->TEACHER_ID . "'");
@@ -2552,7 +2917,8 @@ class ScheduleDBAccess {
                 $result = self::dbAccess()->fetchRow($SQL);
                 //error_log($SQL);
                 $count = $result ? $result->C : 0;
-                if ($count == 1) {
+                if ($count == 1)
+                {
                     self::dbAccess()->delete('t_subject_teacher_training', array(
                         'TEACHER = ? ' => $scheduleObject->TEACHER_ID
                         , 'TRAINING = ? ' => $scheduleObject->TRAINING_ID
@@ -2564,10 +2930,13 @@ class ScheduleDBAccess {
         }
     }
 
-    public static function updateSharedSchedule($fromObject) {
+    public static function updateSharedSchedule($fromObject)
+    {
 
-        if ($fromObject) {
-            if ($fromObject->START_TIME && $fromObject->END_TIME) {
+        if ($fromObject)
+        {
+            if ($fromObject->START_TIME && $fromObject->END_TIME)
+            {
                 $WHERE = self::dbAccess()->quoteInto("SHARED_FROM = ?", $fromObject->ID);
                 $SAVEDATA["START_TIME"] = $fromObject->START_TIME;
                 $SAVEDATA["END_TIME"] = $fromObject->END_TIME;
