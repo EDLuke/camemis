@@ -82,7 +82,6 @@ $FIRST_SQL_CLASS .= " GROUP BY A.ID";
 
 $FIRST_ENTRIES_CLASS = $DB_ACCESS->fetchAll($FIRST_SQL_CLASS);
 
-
 $CHECK_INSTRUCTOR = array();
 if($FIRST_ENTRIES_CLASS){
     foreach($FIRST_ENTRIES_CLASS as $value){
@@ -109,7 +108,7 @@ $TOTAL_ENTRIES = $FIRST_ENTRIES_CLASS + $SECOND_ENTRIES_CLASS;
 $RESULT_DATA = array();
 if($TOTAL_ENTRIES){
     foreach($TOTAL_ENTRIES as $value){
-        $RESULT_DATA[$value->SUBJECT_ACADEMIC_ID] = $value->DISPLAY_NAME; 
+        if ($value->DISPLAY_NAME) $RESULT_DATA[$value->SUBJECT_ACADEMIC_ID] = $value->DISPLAY_NAME; 
     }
 }
 

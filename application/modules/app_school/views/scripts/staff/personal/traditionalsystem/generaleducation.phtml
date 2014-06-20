@@ -108,7 +108,7 @@ $TOTAL_ENTRIES = $FIRST_ENTRIES_CLASS + $SECOND_ENTRIES_CLASS;
 $RESULT_DATA = array();
 if($TOTAL_ENTRIES){
     foreach($TOTAL_ENTRIES as $value){
-        $RESULT_DATA[$value->CLASS_ID] = $value->DISPLAY_NAME; 
+        if ($value->DISPLAY_NAME) $RESULT_DATA[$value->CLASS_ID] = $value->DISPLAY_NAME; 
     }
 }
 

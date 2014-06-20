@@ -185,39 +185,36 @@ $HTML .= "</div>";
         $MY_CALENDAR .= "}";
         $CHOOSE_PANEL[] = "" . $MY_CALENDAR . "";
         
-        $TRADITIONAL_EDUCATION_SYSTEM = "{";
-        $TRADITIONAL_EDUCATION_SYSTEM .= "title: '".TRADITIONAL_EDUCATION_SYSTEM."'";
-        $TRADITIONAL_EDUCATION_SYSTEM .= ",id: 'TRADITIONAL_EDUCATION_SYSTEM'";
-        $TRADITIONAL_EDUCATION_SYSTEM .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
-        $TRADITIONAL_EDUCATION_SYSTEM .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/staff/generaleducation/?objectId=".$objectId."'})]";
-        $TRADITIONAL_EDUCATION_SYSTEM .= "}";
-        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION && Zend_Registry::get('SCHOOL')->TRADITIONAL_EDUCATION_SYSTEM) {
-            $CHOOSE_PANEL[] = "" . $TRADITIONAL_EDUCATION_SYSTEM . "";
+        if (UserAuth::displayTraditionalEducationSystem()) {
+            $TRADITIONAL_EDUCATION = "{";
+            $TRADITIONAL_EDUCATION .= "title: '".TRADITIONAL_EDUCATION_SYSTEM."'";
+            $TRADITIONAL_EDUCATION .= ",id: 'TRADITIONAL_EDUCATION_SYSTEM'";
+            $TRADITIONAL_EDUCATION .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
+            $TRADITIONAL_EDUCATION .= ",items: [new Ext.ux.IFrameComponent({ id: 'FRAME_TRADITIONAL_EDUCATION_SYSTEM', url:'/staff/generaleducation/?objectId=".$objectId."'})]";
+            $TRADITIONAL_EDUCATION .= "}";
+            $CHOOSE_PANEL[] = "" . $TRADITIONAL_EDUCATION . "";
         }
         
-        ///@veasna
-        
-        $CREDIT_EDUCATION_SYSTEM = "{";
-        $CREDIT_EDUCATION_SYSTEM .= "title: '".CREDIT_EDUCATION_SYSTEM."'";
-        $CREDIT_EDUCATION_SYSTEM .= ",id: 'CREDIT_EDUCATION_SYSTEM'";
-        $CREDIT_EDUCATION_SYSTEM .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
-        $CREDIT_EDUCATION_SYSTEM .= ",items: [new Ext.ux.IFrameComponent({ id: 'CREDIT_EDUCATION_SYSTEM', url:'/staff/crediteducationsystem/?objectId=".$objectId."'})]";
-        $CREDIT_EDUCATION_SYSTEM .= "}";
-        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION && Zend_Registry::get('SCHOOL')->CREDIT_EDUCATION_SYSTEM) {
-            $CHOOSE_PANEL[] = "" . $CREDIT_EDUCATION_SYSTEM . "";
+        if (UserAuth::displayCreditEducationSystem()) {
+            $CREDIT_EDUCATION = "{";
+            $CREDIT_EDUCATION .= "title: '".CREDIT_EDUCATION_SYSTEM."'";
+            $CREDIT_EDUCATION .= ",id: 'CREDIT_EDUCATION_SYSTEM'";
+            $CREDIT_EDUCATION .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
+            $CREDIT_EDUCATION .= ",items: [new Ext.ux.IFrameComponent({ id: 'FRAME_CREDIT_EDUCATION_SYSTEM', url:'/staff/crediteducationsystem/?objectId=".$objectId."'})]";
+            $CREDIT_EDUCATION .= "}";
+            $CHOOSE_PANEL[] = "" . $CREDIT_EDUCATION . "";
         }
-        ////
         
-        $TRAINING_PROGRAMS = "{";
-        $TRAINING_PROGRAMS .= "title: '".TRAINING_PROGRAMS."'";
-        $TRAINING_PROGRAMS .= ",id: 'TRAINING_PROGRAMS'";
-        $TRAINING_PROGRAMS .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
-        $TRAINING_PROGRAMS .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url:'/staff/trainingeducation/?objectId=".$objectId."'})]";
-        $TRAINING_PROGRAMS .= "}";
-        if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
+        if (UserAuth::displayRoleTrainingEducation()) {
+            $TRAINING_PROGRAMS = "{";
+            $TRAINING_PROGRAMS .= "title: '".TRAINING_PROGRAMS."'";
+            $TRAINING_PROGRAMS .= ",id: 'TRAINING_PROGRAMS'";
+            $TRAINING_PROGRAMS .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
+            $TRAINING_PROGRAMS .= ",items: [new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url:'/staff/trainingeducation/?objectId=".$objectId."'})]";
+            $TRAINING_PROGRAMS .= "}";
             $CHOOSE_PANEL[] = "" . $TRAINING_PROGRAMS . "";
         }
-
+        
         //@Man 05.03.2014
         $LETTER = "{";
         $LETTER .= "title: '".LETTER."'";

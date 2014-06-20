@@ -127,17 +127,6 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'CHDECK_STATUS'");
     $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
     
-    $OBJECT_GRID->addTBarItems("
-        tbar.add('-','<b>".DATE."</b>&nbsp;',[{
-            xtype:'datefield'
-            ,width:130
-            ,id:'CHOOSE_DATE'
-            ,name: 'CHOOSE_DATE'
-            ,format: '".setExtDatafieldFormat()."'
-            ,value:choosedate
-        }]);
-    ");
-    
     $OBJECT_GRID->addColumn("
         header: '<b>" . TIME . "</b>'
         , align:'center'
@@ -205,6 +194,17 @@ Ext.onReady(function() {
             ,handler: function(){
                 Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
             }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-','<b>".DATE."</b>&nbsp;',[{
+            xtype:'datefield'
+            ,width:130
+            ,id:'CHOOSE_DATE'
+            ,name: 'CHOOSE_DATE'
+            ,format: '".setExtDatafieldFormat()."'
+            ,value:choosedate
         }]);
     ");
     
