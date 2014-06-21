@@ -170,7 +170,7 @@ class SQLStudentFilterReport {
         return $result;    
     }
     
-    public function getAllLocation(){
+    public static function getAllLocation(){
         
         $SQL = self::dbAccess()->select();
         $SQL->from("t_location", array("*"));

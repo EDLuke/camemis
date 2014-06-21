@@ -261,7 +261,36 @@ class FilterData extends FilterProperties {
         
         return $result;    
     }
-
+    
+    public function getCountStaffByDataType(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params[$this->dataType] = $this->dataValue;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params[$this->dataType] = $this->dataValue;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params[$this->dataType] = $this->dataValue;
+                    break;
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
+        return $result?count($result):0;    
+    }
+    
 }
 
 ?>

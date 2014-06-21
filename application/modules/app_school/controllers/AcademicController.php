@@ -616,7 +616,7 @@ class AcademicController extends Zend_Controller_Action {
     }
 
     public function teacherfilterAction() {
-        $this->_helper->viewRenderer("filter/teacherfilterviewport");
+        $this->_helper->viewRenderer("filter/teacherfilter");
         $this->view->gridType = "TEACHER_FILTER";
     }
 

@@ -7,7 +7,7 @@
 require_once 'models/filter/FilterData.php';
 require_once 'include/Common.inc.php';
 
-class FilterStudentDataSet extends FilterData{
+class FilterDataSet extends FilterData{
 
     function __construct() {
         parent::__construct();
@@ -210,6 +210,105 @@ class FilterStudentDataSet extends FilterData{
         $DATASET .= "}]";
         
         return $DATASET;      
+    }
+    
+    public function getDataSetStaffGender(){
+        $entries = array('1' => MALE, '2' => FEMALE);
+        $this->dataType='gender';
+        $DATASET = "[";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $key=>$value)
+            {
+                $this->dataValue=$key;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'key':'" . $value . "'";
+                $DATASET .= ",'y':'" . $this->getCountStaffByDataType() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        return $DATASET;     
+    }
+    
+    public function getDataSetStaffEthnicity(){
+        
+        $entries = FilterProperties::getCamemisType('ETHNICITY_TYPE');
+        $this->dataType='ethnicity';
+        $DATASET = "[{";
+        $DATASET .= "key: '".ETHNICITY."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->dataValue = $value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getCountStaffByDataType() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    public function getDataSetStaffReligion(){
+        
+        $entries = FilterProperties::getCamemisType('RELIGION_TYPE');
+        $this->dataType='religion';
+        $DATASET = "[";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->dataValue = $value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'key':'" . $value->NAME . "'";
+                $DATASET .= ",'y':'" . $this->getCountStaffByDataType() . "'";
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        return $DATASET;      
+    }
+    
+    public function getDataSetStaffActiveAndDeactive(){//check a
+        
+        $entries = array('ACTIVE' => ACTIVE, 'DEACTIVE' => 'Deactive');
+        $this->dataType='status';
+        $DATASET = "[";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $key=>$value)
+            {
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'key':'" . $value . "'";
+                if($key=='ACTIVE')
+                $DATASET .= ",'y':'" . $this->getCountStudentActive() . "'";
+                if($key=='DEACTIVE')
+                $DATASET .= ",'y':'" . $this->getCountStudentDeactive() . "'";
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        return $DATASET;    
     }
 }
 

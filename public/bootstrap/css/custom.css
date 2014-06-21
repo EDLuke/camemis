@@ -1,3 +1,9 @@
+svg text{
+    font: 11px Arial;
+}
+h5, .h5 {
+    font-size: 13px;
+}
 .nvtooltip h3{
     display: block;
     font-size: 1.17em;
@@ -10,7 +16,30 @@
     font: 11px Helvetica,verdana,arial,sans-serif;
 }
 .btn{
-    font-size:12px;
+    font-size:11px;
+}
+.btn-info{
+    background-color: #c3d5ed;
+    border-color: #99bbe8;
+    color: #15428b;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active,
+.btn-info.active,
+.open .dropdown-toggle.btn-info {
+  color: #15428b;
+  background-color: #deecfd;
+  border-color: #99bbe8;
+}
+
+.glyphicon-search{
+    margin-right: 5px; 
+    font-size: 16px;
+}
+h5{
+    color:#15428b;
 }
 .panel-camemis {
     border-color: #CEDFF5;

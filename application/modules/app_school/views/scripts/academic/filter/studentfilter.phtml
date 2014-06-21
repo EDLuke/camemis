@@ -6,9 +6,8 @@
 
 require_once 'clients/CamemisChart.php';
 require_once 'clients/CamemisPage.php';
-require_once 'models/statistic/StudentStatisticsDBAccess.php';
 require_once 'models/filter/FilterData.php';
-require_once 'models/filter/FilterStudentDataSet.php';
+require_once 'models/filter/FilterDataSet.php';
 require_once setUserLoacalization();
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -35,7 +34,7 @@ if (strpos($objectId, "CAMPUS_") !== false) {
 }
 $setParams="";
 
-$objectDataSet = new FilterStudentDataSet();
+$objectDataSet = new FilterDataSet();
 if($campusId){
     $objectDataSet->campusId = $campusId;
     $setParams .= "&campusId=".$campusId.""; 
@@ -63,10 +62,10 @@ $chartMaleFemale->width = 280;
 $chartMaleFemale->height = 280;
 
 $datasetStatusAcount = $objectDataSet->getDataSetStudentActiveAndDeactive();
-$chartStatusAcount = new CamemisChart("DONUT_CHART", 'chartStatusAcount', $datasetStatusAcount);
+$chartStatusAcount = new CamemisChart("PIC_CHART", 'chartStatusAcount', $datasetStatusAcount);
 $chartStatusAcount->chartSVG = "displayStatusAcount";
 $chartStatusAcount->showLegend='true';
-$chartStatusAcount->width = 300;
+$chartStatusAcount->width = 350;
 $chartStatusAcount->height = 300;
 
 $datasetAge=$objectDataSet->getDataSetStudentAge();
@@ -97,7 +96,7 @@ $datasetSMS = $objectDataSet->getDataSetSMS();
 $chartSMS = new CamemisChart("PIC_CHART", 'chartSMS', $datasetSMS);
 $chartSMS->chartSVG = "displaySMS";
 $chartSMS->showLegend='true';
-$chartSMS->width = 300;
+$chartSMS->width = 350;
 $chartSMS->height = 300;
 
 $datasetCity=$objectDataSet->getDataSetCountryProvince(); 
@@ -124,20 +123,20 @@ $chartEthnic->height = 350;
 <script src="/public/nvd3/nvd3-camemis.php"></script>
     <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
     
-        <div class="row" style="background-color: #C2C2C2;">
+        <div class="row">
             <div class="col-md-4">
-                <div class="panel-heading"><h4><?=GENDER;?></h4></div>
+                <div class="panel-heading"><h5><b><?=GENDER;?></b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentGender"  class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentGender"  class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartMaleFemale->setChartDisplay(); ?>
                     <script><?= $chartMaleFemale->setChartScript(); ?></script>       
                 </div>
                 </div>
             <div class="col-md-8">
                  
-                 <div class="panel-heading"><h4><?=AGE;?></h4></div>
+                 <div class="panel-heading"><h5><b><?=AGE;?></b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentAge" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentAge" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartAge->setChartDisplay(); ?>
                     <script><?= $chartAge->setChartScript(); ?></script>    
                 </div>    
@@ -145,11 +144,11 @@ $chartEthnic->height = 350;
             </div>
         </div>
         
-        <div class="row" style="background-color: #DDD;">
+        <div class="row">
             <div class="col-md-6">
-                <div class="panel-heading"><h4>SMS</h4></div>          
+                <div class="panel-heading"><h5><b>SMS</b></h5></div>          
                 <div class="panel-body">
-                    <button type="button" id="btnStudentSMS" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentSMS" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartSMS->setChartDisplay(); ?>
                     <script><?= $chartSMS->setChartScript(); ?></script> 
                 </div>
@@ -157,20 +156,20 @@ $chartEthnic->height = 350;
             
             <div class="col-md-6">
                 
-                <div class="panel-heading"><h4>Status Acount</h4></div>
+                <div class="panel-heading"><h5><b>Status Acount</b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentAcountStatus" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentAcountStatus" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartStatusAcount->setChartDisplay(); ?>
                     <script><?= $chartStatusAcount->setChartScript(); ?></script> 
                 </div>
             
             </div>
         </div>   
-        <div class="row" style="background-color: #EEE;">
+        <div class="row">
             <div class="col-md-4">
-                <div class="panel-heading"><h4><?=RELIGION;?></h4></div>
+                <div class="panel-heading"><h5><b><?=RELIGION;?></b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentReligion" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentReligion" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartReligion->setChartDisplay(); ?>
                     <script><?= $chartReligion->setChartScript(); ?></script>    
                 </div>     
@@ -178,9 +177,9 @@ $chartEthnic->height = 350;
             </div>    
             <div class="col-md-8">
                 
-                <div class="panel-heading"><h4><?=ETHNICITY;?></h4></div>
+                <div class="panel-heading"><h5><b><?=ETHNICITY;?></b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentEthnicity" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentEthnicity" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartEthnic->setChartDisplay(); ?>
                     <script><?= $chartEthnic->setChartScript(); ?></script>    
                 </div>  
@@ -188,23 +187,23 @@ $chartEthnic->height = 350;
             
         </div>
         
-         <div class="row" style="background-color: #E1E1E1;">
+         <div class="row">
             <div class="col-md-12">
-                <div class="panel-heading"><h4><?=NATIONALITY?></h4></div>
+                <div class="panel-heading"><h5><b><?=NATIONALITY?></b></h5></div>
                 
                 <div class="panel-body">
-                    <button type="button" id="btnStudentNationality" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentNationality" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartNationality->setChartDisplay(); ?>
                     <script><?= $chartNationality->setChartScript(); ?></script> 
                 </div>     
             </div>  
         </div>
         
-        <div class="row" style="background-color: #ECECEC;">
+        <div class="row">
             <div class="col-md-12">
-                <div class="panel-heading"><h4><?=CITY_PROVINCE?></h4></div>
+                <div class="panel-heading"><h5><b><?=CITY_PROVINCE?></b></h5></div>
                 <div class="panel-body">
-                    <button type="button" id="btnStudentEthnicity" class="btn btn-info">View Details</button>
+                    <button type="button" id="btnStudentCityProvince" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
                     <?= $chartCity->setChartDisplay(); ?>
                     <script><?= $chartCity->setChartScript(); ?></script> 
                 </div> 
@@ -241,7 +240,26 @@ $chartEthnic->height = 350;
             });
             
            Ext.get('btnStudentAge').on('click', function(){
-               alert('fdsfdsf');
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentSMS').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentAcountStatus').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           
+            Ext.get('btnStudentReligion').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentEthnicity').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentNationality').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentCityProvince').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            
         });

@@ -454,7 +454,7 @@ Class discreteBarChart {
             //.staggerLabels(historicalBarChart[0].values.length > 8)
             .tooltips(" . $this->tooltips . ")                  // true, false
             .showValues(" . $this->showValues . ")
-            .showXAxis(".$this->showXAxis.")            // true, false
+            .showXAxis(false)            // true, false
             .transitionDuration(250);
             d3.select('#" . $this->chartSVG . " svg')
             .datum(" . $this->dataSet . ")
