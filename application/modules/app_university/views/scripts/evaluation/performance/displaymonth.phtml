@@ -70,6 +70,11 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
     }
     
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+    }
     <?
     ////////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -164,7 +169,7 @@ Ext.onReady(function() {
             , align: 'right'
             , sortable: true
             , dataIndex: 'RANK'
-            , renderer:cssDefault
+            , renderer:cssNumber
             , editor: new Ext.form.NumberField({
                 allowBlank: false
                 ,name: 'RANK'   
@@ -174,15 +179,15 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS',filter:{}");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     if($entries){
         foreach($entries as $value){
             if($value->SUBJECT_ID){
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssDefault, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 70, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
             }
         }
     }

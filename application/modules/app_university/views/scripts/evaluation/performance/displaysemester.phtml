@@ -88,6 +88,12 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
     }
     
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+    }
+    
     <?
     ///////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -142,7 +148,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
     
     if($academicObject->DISPLAY_GPA){
-        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GPA',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GPA',filter:{}");
     }
     
     switch(UserAuth::getUserType()){
@@ -175,7 +181,7 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
@@ -183,7 +189,7 @@ Ext.onReady(function() {
             , align: 'right'
             , sortable: true
             , dataIndex: 'RANK'
-            , renderer:cssDefault
+            , renderer:cssNumber
             , editor: new Ext.form.NumberField({
                 allowBlank: false
                 ,name: 'RANK'   
@@ -201,7 +207,7 @@ Ext.onReady(function() {
         foreach($entries as $value){
             if($value->SUBJECT_ID){
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 100, renderer: cssDefault, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 70, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
             }
         }
     }
