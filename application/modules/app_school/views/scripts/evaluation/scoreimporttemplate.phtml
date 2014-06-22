@@ -121,7 +121,7 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         {
             $this->setCellContent(1, 2, Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT);
         }
-        $this->setCellContent(1, 2, Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT);
+
         $this->setBorderStyle(1, 2, false);
         $this->setFontStyle(1, 2, true, 11, "000000");
         $this->setCellStyle(1, 2, 20, 30);
@@ -232,7 +232,7 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
                 $this->EXCEL->setActiveSheetIndex(0);
                 $this->setTableHeader();
                 $this->setTableContent();
-                $this->EXCEL->getActiveSheet()->setTitle("" . LIST_OF_STUDENTS . "");
+                $this->EXCEL->getActiveSheet()->setTitle($this->evaluation->getAssignment()->SHORT);
                 $this->WRITER->save($this->getFileName());
                 break;
         }
