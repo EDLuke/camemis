@@ -260,6 +260,27 @@ Ext.onReady(function() {
         }
     ");
 
+    $paramImport = $setParams;
+    $paramImport .= "&target=MULTI";
+    $OBJECT_TREE->addTBarItems("
+        text: '" . IMPORT . "'
+        ,disabled: false
+        ,iconCls:'icon-list-items'
+        ,menu:[{
+            text: '" . EXCEL_TEMPLATE . "'
+            ,iconCls:'icon-page_excel'
+            ,handler:function(){
+                window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($paramImport)."';
+            }
+        },{
+            text: '" . IMPORT . "'
+            ,iconCls:'icon-database_copy'
+            ,handler:function(){
+                openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($paramImport)."', 450,250);
+            }
+        }]
+    ");
+    
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAssignmentsBySubjctClass'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'

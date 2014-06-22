@@ -89,10 +89,13 @@ $formItems = "[";
     $FORM_TBAR .= ",form: fp.getForm().getEl().dom";
     $FORM_TBAR .= ",success: function(response, options) {";
     
-    if($target == "subjectassignments"){
-        $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
-    }else{
-        $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+    switch($target){
+        case "subjectassignments":
+            $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+            break;
+        default:
+            $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+            break;
     }
     
     $FORM_TBAR .= "}";

@@ -10,10 +10,12 @@ require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
 require_once 'models/export/CamemisExportDBAccess.php';
 
-class myExportDBAccess extends CamemisExportDBAccess {
+class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
 
-    function __construct($academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section) {
+    function __construct($target, $academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section)
+    {
 
+        $this->target = $target;
         $this->academicId = (int) $academicId;
         $this->subjectId = (int) $subjectId;
         $this->assignmentId = (int) $assignmentId;
@@ -34,17 +36,18 @@ class myExportDBAccess extends CamemisExportDBAccess {
         parent::__construct();
     }
 
-    public function setParams() {
-        if ($this->evaluation->getSettingEvaluationOption()) {
+    public function setAssignmentId($value)
+    {
+        $this->evaluation->setAssignmentId($value);
+    }
 
-            if ($this->term) {
-                return array(
-                    "academicId" => $this->academicId
-                    , "subjectId" => $this->subjectId
-                    , "term" => $this->term
-                    , "section" => $this->section
-                );
-            } else {
+    public function setParams()
+    {
+        if ($this->evaluation->getSettingEvaluationOption())
+        {
+
+            if ($this->term)
+            {
                 return array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -52,7 +55,18 @@ class myExportDBAccess extends CamemisExportDBAccess {
                     , "section" => $this->section
                 );
             }
-        } else {
+            else
+            {
+                return array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "section" => $this->section
+                );
+            }
+        }
+        else
+        {
             return array(
                 "academicId" => $this->academicId
                 , "subjectId" => $this->subjectId
@@ -62,21 +76,25 @@ class myExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function getFileName() {
+    public function getFileName()
+    {
         return self::getUserPhath("_scoreimporttemplate.xls");
     }
 
-    public function setTableHeader() {
+    public function setTableHeader()
+    {
 
         $content = $this->evaluation->getCurrentClass()->NAME . " (" . $this->evaluation->getCurrentSchoolyear()->NAME . ")";
         $content .= "\r";
 
-        if ($this->date) {
+        if ($this->date)
+        {
             $content .= getShowDate($this->date);
             $content .= "\r";
         }
 
-        if ($this->monthyear) {
+        if ($this->monthyear)
+        {
             $content .= diplayNameMonthYear($this->monthyear);
             $content .= "\r";
         }
@@ -85,9 +103,10 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $content .= "\r";
         $content .= $this->evaluation->getSubjectScorePossible();
 
-        if ($this->assignmentId) {
+        if ($this->assignmentId)
+        {
             $content .= "\r";
-            $content .= $this->evaluation->getAssignment()->NAME;
+            $content .= $this->evaluation->getAssignment()->SHORT;
         }
 
         $this->setCellMergeContent(0, 1, $content, "A1", "C1");
@@ -110,7 +129,8 @@ class myExportDBAccess extends CamemisExportDBAccess {
         $this->setFullStyle(2, 2, "DFE3E8");
         $this->setCellStyle(2, 2, 20, 30);
 
-        if ($this->evaluation->getSettingEvaluationOption()) {
+        if ($this->evaluation->getSettingEvaluationOption())
+        {
             $this->setCellContent(3, 2, RANK);
             $this->setFontStyle(3, 2, true, 11, "000000");
             $this->setFullStyle(3, 2, "DFE3E8");
@@ -118,18 +138,21 @@ class myExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setTableContent() {
+    public function setTableContent()
+    {
 
         $stdClass = (object) $this->setParams();
 
         $entries = $this->evaluation->listClassStudents();
 
-        if ($entries) {
+        if ($entries)
+        {
 
             $i = 0;
             $colIndex = 0;
 
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
 
                 $rowIndex = $i + $this->startContent();
 
@@ -144,9 +167,12 @@ class myExportDBAccess extends CamemisExportDBAccess {
                 $this->setFontStyle(1, $rowIndex, false, 9, "000000");
                 $this->setCellStyle(1, $rowIndex, false, 20);
 
-                if ($this->evaluation->getSettingEvaluationOption()) {
+                if ($this->evaluation->getSettingEvaluationOption())
+                {
                     $this->setCellContent(2, $rowIndex, "");
-                } else {
+                }
+                else
+                {
                     $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
                     $this->setCellContent(2, $rowIndex, $facette ? $facette->POINTS : "");
                 }
@@ -159,17 +185,45 @@ class myExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setSaveExcel() {
+    public function setSaveExcel()
+    {
+        switch ($this->target)
+        {
+            case "MULTI":
 
-        $this->EXCEL->setActiveSheetIndex(0);
-        $this->setTableHeader();
-        $this->setTableContent();
-        $this->EXCEL->getActiveSheet()->setTitle("" . LIST_OF_STUDENTS . "");
-        $this->WRITER->save($this->getFileName());
+                if ($this->evaluation->getCurrentClassAssignments())
+                {
+                    $i = 0;
+                    foreach ($this->evaluation->getCurrentClassAssignments() as $value)
+                    {
+                        $this->setAssignmentId($value->ASSIGNMENT_ID);
+                        if ($i)
+                            $this->EXCEL->createSheet();
+                        $this->EXCEL->setActiveSheetIndex($i);
+                        $this->setTableHeader();
+                        $this->setTableContent();
+                        $this->EXCEL->getActiveSheet()->setTitle($value->SHORT);
+
+                        $i++;
+                    }
+                }
+
+                $this->WRITER->save($this->getFileName());
+
+                break;
+            default:
+                $this->EXCEL->setActiveSheetIndex(0);
+                $this->setTableHeader();
+                $this->setTableContent();
+                $this->EXCEL->getActiveSheet()->setTitle("" . LIST_OF_STUDENTS . "");
+                $this->WRITER->save($this->getFileName());
+                break;
+        }
     }
 
 }
 
+$target = isset($_GET["target"]) ? addText($_GET["target"]) : "";
 $academicId = isset($_GET["academicId"]) ? (int) $_GET["academicId"] : "";
 $subjectId = isset($_GET["subjectId"]) ? (int) $_GET["subjectId"] : "";
 $assignmentId = isset($_GET["assignmentId"]) ? (int) $_GET["assignmentId"] : "";
@@ -178,7 +232,8 @@ $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 $monthyear = isset($_GET["monthyear"]) ? addText($_GET["monthyear"]) : "";
 
 $section = "";
-switch ($term) {
+switch ($term)
+{
     case "FIRST_SEMESTER":
     case "SECOND_SEMESTER":
         $section = "2";
@@ -196,7 +251,15 @@ switch ($term) {
         break;
 }
 
-$MY_EXPORT = new myExportDBAccess($academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section);
+$MY_EXPORT = new ScoreExportTemplateDBAccess(
+        $target
+        , $academicId
+        , $subjectId
+        , $assignmentId
+        , $term
+        , $date
+        , $monthyear
+        , $section);
 $MY_EXPORT->setSaveExcel();
 
 $fileName = UserAuth::getUserId() . "_scoreimporttemplate.xls";
@@ -209,7 +272,8 @@ header('Expires: 0');
 header('Pragma: cache');
 header('Cache-Control: private');
 
-if (file_exists($exportFile)) {
+if (file_exists($exportFile))
+{
     $fh = fopen($exportFile, 'r');
     fpassthru($fh);
     fclose($fh);

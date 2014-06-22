@@ -20,8 +20,8 @@ $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");exit;}
-if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");exit;}
+if(!$academicObject) {header("Location: /main/permission/");}
+if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");}
 
 $ENTRIES = GradeSubjectDBAccess::getListSubjectsToAcademic($academicId,false);
 
