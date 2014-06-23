@@ -12,7 +12,8 @@ require_once 'models/export/CamemisExportDBAccess.php';
 
 class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
 
-    function __construct($actionType, $academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section) {
+    function __construct($actionType, $academicId, $subjectId, $assignmentId, $term, $date, $monthyear, $section)
+    {
 
         $this->actionType = $actionType;
         $this->academicId = (int) $academicId;
@@ -35,21 +36,19 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         parent::__construct();
     }
 
-    public function setAssignmentId($value) {
+    public function setAssignmentId($value)
+    {
         $this->evaluation->setAssignmentId($value);
+        $this->assignmentId = $value;
     }
 
-    public function setParams() {
-        if ($this->evaluation->getSettingEvaluationOption()) {
+    public function setParams()
+    {
+        if ($this->evaluation->getSettingEvaluationOption())
+        {
 
-            if ($this->term) {
-                return array(
-                    "academicId" => $this->academicId
-                    , "subjectId" => $this->subjectId
-                    , "term" => $this->term
-                    , "section" => $this->section
-                );
-            } else {
+            if ($this->term)
+            {
                 return array(
                     "academicId" => $this->academicId
                     , "subjectId" => $this->subjectId
@@ -57,7 +56,18 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
                     , "section" => $this->section
                 );
             }
-        } else {
+            else
+            {
+                return array(
+                    "academicId" => $this->academicId
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "section" => $this->section
+                );
+            }
+        }
+        else
+        {
             return array(
                 "academicId" => $this->academicId
                 , "subjectId" => $this->subjectId
@@ -67,16 +77,19 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function getFileName() {
+    public function getFileName()
+    {
         return self::getUserPhath("_scoreimporttemplate.xls");
     }
 
-    public function setTableHeader() {
+    public function setTableHeader()
+    {
 
         $content = $this->evaluation->getCurrentClass()->NAME . " (" . $this->evaluation->getCurrentSchoolyear()->NAME . ")";
         $content .= "\r";
 
-        if ($this->monthyear) {
+        if ($this->monthyear)
+        {
             $content .= diplayNameMonthYear($this->monthyear);
             $content .= "\r";
         }
@@ -85,7 +98,8 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         $content .= "\r";
         $content .= $this->evaluation->getSubjectScorePossible();
 
-        if ($this->assignmentId) {
+        if ($this->assignmentId)
+        {
             $content .= "\r";
             $content .= $this->evaluation->getAssignment()->SHORT;
         }
@@ -100,19 +114,27 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         $this->setFontStyle(0, 2, true, 11, "000000");
         $this->setCellStyle(0, 2, 20, 30);
 
-        if ($this->date) {
+        if ($this->date)
+        {
             $this->setCellContent(1, 2, getShowDate($this->date));
-        } else {
-            $this->setCellContent(1, 2, Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT);
+            $this->setBorderStyle(1, 2, false);
+            $this->setFontStyle(1, 2, true, 11, "000000");
+            $this->setCellStyle(1, 2, 20, 30);
+        }
+        else
+        {
+            if ($this->actionType == "MULTI")
+            {
+                $this->setCellContent(1, 2, Zend_Registry::get('SCHOOL')->SYSTEM_DATE_FORMAT);
+                $this->setBorderStyle(1, 2, false);
+                $this->setFontStyle(1, 2, true, 11, "000000");
+                $this->setCellStyle(1, 2, 20, 30);
+            }
         }
 
-        $this->setBorderStyle(1, 2, false);
-        $this->setFontStyle(1, 2, true, 11, "000000");
-        $this->setCellStyle(1, 2, 20, 30);
-
-        $this->setCellContent(2, 2, "");
+        $this->setCellContent(2, 2, $this->academicId . "_" . $this->subjectId . "_" . $this->assignmentId);
         $this->setBorderStyle(2, 2, false);
-        $this->setFontStyle(2, 2, false, 11, "000000");
+        $this->setFontStyle(2, 2, true, 11, "000000");
         $this->setCellStyle(2, 2, 20, 30);
 
         $this->setCellContent(0, 3, "CODE_ID");
@@ -130,7 +152,8 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         $this->setFullStyle(2, 3, "DFE3E8");
         $this->setCellStyle(2, 3, 20, 30);
 
-        if ($this->evaluation->getSettingEvaluationOption()) {
+        if ($this->evaluation->getSettingEvaluationOption())
+        {
             $this->setCellContent(3, 3, "RANK");
             $this->setFontStyle(3, 3, true, 11, "000000");
             $this->setFullStyle(3, 3, "DFE3E8");
@@ -138,18 +161,21 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setTableContent() {
+    public function setTableContent()
+    {
 
         $stdClass = (object) $this->setParams();
 
         $entries = $this->evaluation->listClassStudents();
 
-        if ($entries) {
+        if ($entries)
+        {
 
             $i = 0;
             $colIndex = 0;
 
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
 
                 $rowIndex = $i + $this->startContent();
 
@@ -164,9 +190,12 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
                 $this->setFontStyle(1, $rowIndex, false, 9, "000000");
                 $this->setCellStyle(1, $rowIndex, false, 20);
 
-                if ($this->evaluation->getSettingEvaluationOption()) {
+                if ($this->evaluation->getSettingEvaluationOption())
+                {
                     $this->setCellContent(2, $rowIndex, "");
-                } else {
+                }
+                else
+                {
                     $facette = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
                     $this->setCellContent(2, $rowIndex, $facette ? $facette->POINTS : "");
                 }
@@ -179,13 +208,17 @@ class ScoreExportTemplateDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setSaveExcel() {
-        switch ($this->actionType) {
+    public function setSaveExcel()
+    {
+        switch ($this->actionType)
+        {
             case "MULTI":
 
-                if ($this->evaluation->getCurrentClassAssignments()) {
+                if ($this->evaluation->getCurrentClassAssignments())
+                {
                     $i = 0;
-                    foreach ($this->evaluation->getCurrentClassAssignments() as $value) {
+                    foreach ($this->evaluation->getCurrentClassAssignments() as $value)
+                    {
                         $this->setAssignmentId($value->ASSIGNMENT_ID);
                         if ($i)
                             $this->EXCEL->createSheet();
@@ -222,7 +255,8 @@ $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 $monthyear = isset($_GET["monthyear"]) ? addText($_GET["monthyear"]) : "";
 
 $section = "";
-switch ($term) {
+switch ($term)
+{
     case "FIRST_SEMESTER":
     case "SECOND_SEMESTER":
         $section = "2";
@@ -241,7 +275,7 @@ switch ($term) {
 }
 
 $exportTemplate = new ScoreExportTemplateDBAccess(
-        $target
+        $actionType
         , $academicId
         , $subjectId
         , $assignmentId
@@ -261,7 +295,8 @@ header('Expires: 0');
 header('Pragma: cache');
 header('Cache-Control: private');
 
-if (file_exists($exportFile)) {
+if (file_exists($exportFile))
+{
     $fh = fopen($exportFile, 'r');
     fpassthru($fh);
     fclose($fh);

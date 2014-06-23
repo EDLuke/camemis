@@ -10,15 +10,19 @@ require_once('excel/excel_reader2.php');
 
 class SQLEvaluationImport {
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function getListStudents($stdClass) {
+    public static function getListStudents($stdClass)
+    {
         $data = array();
 
-        if ($stdClass->listStudents) {
-            foreach ($stdClass->listStudents as $value) {
+        if ($stdClass->listStudents)
+        {
+            foreach ($stdClass->listStudents as $value)
+            {
                 $data[$value->CODE] = $value->ID;
             }
         }
@@ -26,7 +30,8 @@ class SQLEvaluationImport {
         return $data;
     }
 
-    public static function importScoreAssignment($stdClass) {
+    public static function importScoreAssignment($stdClass)
+    {
 
         ini_set('max_execution_time', 3000);
 
@@ -35,8 +40,10 @@ class SQLEvaluationImport {
         $EXCEL_DATA->setOutputEncoding('UTF-8');
         $EXCEL_DATA->read($stdClass->tmp_name);
 
-        if ($EXCEL_DATA->sheets) {
-            for ($i = 0; $i <= $EXCEL_DATA->sheets; $i++) {
+        if ($EXCEL_DATA->sheets)
+        {
+            for ($i = 0; $i <= $EXCEL_DATA->sheets; $i++)
+            {
                 $excelObject = isset($EXCEL_DATA->sheets[$i]) ? $EXCEL_DATA->sheets[$i] : "";
                 if ($excelObject)
                     self::actionImportScoreAssignment($EXCEL_DATA->sheets[$i], $stdClass);
@@ -44,100 +51,61 @@ class SQLEvaluationImport {
         }
     }
 
-    public static function actionImportScoreAssignment($sheets, $stdClass) {
+    public static function actionImportScoreAssignment($sheets, $stdClass)
+    {
         $STUDENT_DATA = self::getListStudents($stdClass);
+        $date = isset($sheets['cells'][2][2]) ? $sheets['cells'][2][2] : "";
+        $keys = isset($sheets['cells'][2][3]) ? $sheets['cells'][2][3] : "";
 
-        for ($iCol = 1; $iCol <= $sheets['numCols']; $iCol++) {
+        if ($keys)
+        {
+            $explode = explode("_", $keys);
+            $academicId = isset($explode[0]) ? $explode[0] : "";
+            $subjectId = isset($explode[1]) ? $explode[1] : "";
+            $assignmentId = isset($explode[2]) ? $explode[2] : "";
 
-            $fieldDate = isset($sheets['cells'][2][$iCol]) ? $sheets['cells'][2][$iCol] : "";
-            $fieldsGeneral = isset($sheets['cells'][3][$iCol]) ? $sheets['cells'][3][$iCol] : "";
+            if ($academicId && $subjectId && $assignmentId)
+            {
+                $stdClass->academicId = $academicId;
+                $stdClass->subjectId = $subjectId;
+                $stdClass->assignmentId = $assignmentId;
+                $stdClass->date = setDate2DB($date);
 
-            if ($fieldDate) {
-                $Col_DATE = $iCol;
-            }
+                for ($i = 1; $i <= $sheets['numRows']; $i++)
+                {
+                    $studentCodeId = isset($sheets['cells'][$i + 3][1]) ? $sheets['cells'][$i + 3][1] : "";
+                    $score = isset($sheets['cells'][$i + 3][3]) ? $sheets['cells'][$i + 3][3] : "";
 
-            if ($fieldsGeneral) {
-                switch (trim($fieldsGeneral)) {
-                    case "CODE_ID":
-                        $Col_CODE_ID = $iCol;
-                        break;
-                    case "SCORE":
-                        $Col_SCORE = $iCol;
-                        break;
-                    case "RANK":
-                        $Col_RANK = $iCol;
-                        break;
+                    $studentId = isset($STUDENT_DATA[$CODE_ID]) ? $STUDENT_DATA[$studentCodeId] : "";
+
+                    if ($studentId)
+                    {
+                        if ($score)
+                        {
+                            $stdClass->studentId = $studentId;
+                            switch ($stdClass->scoreType)
+                            {
+                                case 1:
+                                    $stdClass->actionValue = $score;
+                                    if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax)
+                                    {
+                                        SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
+                                    }
+                                    break;
+                                case 2:
+                                    $stdClass->actionValue = strtoupper($score);
+                                    SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
-            for ($i = 1; $i <= $sheets['numRows']; $i++) {
-
-                if (isset($Col_DATE))
-                    $date = isset($sheets['cells'][$i + 2][$Col_DATE]) ? $sheets['cells'][$i + 2][$Col_DATE] : "";
-                if (isset($Col_CODE_ID))
-                    $codeId = isset($sheets['cells'][$i + 1][$Col_CODE_ID]) ? $sheets['cells'][$i + 1][$Col_CODE_ID] : "";
-                if (isset($Col_SCORE))
-                    $score = isset($sheets['cells'][$i + 1][$Col_SCORE]) ? $sheets['cells'][$i + 1][$Col_SCORE] : "";
-                if (isset($Col_RANK))
-                    $rank = isset($sheets['cells'][$i + 1][$Col_RANK]) ? $sheets['cells'][$i + 1][$Col_RANK] : "";
-
-                error_log("Date: " . $date);
-            }
-
-
-
-
-//            switch (trim($field)) {
-//                case "TIME":
-//                    $Col_TIME = $iCol;
-//                    break;
-//                case "EVENT_TYPE":
-//                    $Col_EVENT_TYPE = $iCol;
-//                    break;
-//                case "SUBJECT_SHORT_OR_EVENT":
-//                    $Col_SUBJECT_SHORT = $iCol;
-//                    break;
-//                case "ROOM_SHORT":
-//                    $Col_ROOM_SHORT = $iCol;
-//                    break;
-//                case "TEACHER_CODE":
-//                    $Col_TEACHER_CODE = $iCol;
-//                    break;
-//            }
         }
-
-//        for ($i = 0; $i <= $sheet['numRows']; $i++) {
-//            $date = isset($sheet['cells'][$i + 2][2]) ? $sheet['cells'][$i + 2][2] : "";
-//
-//
-//            $code = isset($sheet['cells'][$i + 4][1]) ? $sheet['cells'][$i + 4][1] : "";
-//            $score = isset($sheet['cells'][$i + 4][3]) ? $sheet['cells'][$i + 4][3] : "";
-//
-//            $studentId = isset($STUDENT_DATA[$code]) ? $STUDENT_DATA[$code] : "";
-//
-//            error_log("Date: " . $date);
-//
-//            if ($studentId) {
-//
-//                if ($score) {
-//                    $stdClass->studentId = $studentId;
-//                    switch ($stdClass->scoreType) {
-//                        case 1:
-//                            $stdClass->actionValue = $score;
-//                            if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
-//                                #SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
-//                            }
-//                            break;
-//                        case 2:
-//                            $stdClass->actionValue = strtoupper($score);
-//                            #SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
-//                            break;
-//                    }
-//                }
-//            }
-//        }
     }
 
-    public static function importScoreSubject($stdClass) {
+    public static function importScoreSubject($stdClass)
+    {
 
         $xls = new Spreadsheet_Excel_Reader();
         $xls->setUTFEncoder('iconv');
@@ -146,7 +114,8 @@ class SQLEvaluationImport {
 
         $STUDENT_DATA = self::getListStudents($stdClass);
 
-        for ($i = 0; $i <= $xls->sheets[0]['numRows']; $i++) {
+        for ($i = 0; $i <= $xls->sheets[0]['numRows']; $i++)
+        {
 
             $code = isset($xls->sheets[0]['cells'][$i + 3][1]) ? $xls->sheets[0]['cells'][$i + 3][1] : "";
             $score = isset($xls->sheets[0]['cells'][$i + 3][3]) ? $xls->sheets[0]['cells'][$i + 3][3] : "";
@@ -154,25 +123,31 @@ class SQLEvaluationImport {
 
             $studentId = isset($STUDENT_DATA[$code]) ? $STUDENT_DATA[$code] : "";
 
-            if ($studentId) {
+            if ($studentId)
+            {
 
-                if (trim($score)) {
+                if (trim($score))
+                {
                     $stdClass->studentId = $studentId;
                     if (is_numeric($rank))
                         $stdClass->actionRank = $rank;
 
-                    switch ($stdClass->scoreType) {
+                    switch ($stdClass->scoreType)
+                    {
                         case 1:
-                            if (is_numeric($score)) {
+                            if (is_numeric($score))
+                            {
                                 $stdClass->average = trim($score);
-                                if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax) {
+                                if ($score >= $stdClass->scoreMin && $score <= $stdClass->scoreMax)
+                                {
                                     SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
                                 }
                             }
 
                             break;
                         case 2:
-                            if (!is_numeric($score)) {
+                            if (!is_numeric($score))
+                            {
                                 $stdClass->mappingValue = strtoupper(trim($score));
                                 $stdClass->assessmentId = self::getAssessmentId($score, $stdClass->qualificationType);
                                 SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
@@ -185,7 +160,8 @@ class SQLEvaluationImport {
         }
     }
 
-    public static function getAssessmentId($score, $qualificationType) {
+    public static function getAssessmentId($score, $qualificationType)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '2'");
