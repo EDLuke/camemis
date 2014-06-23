@@ -261,7 +261,8 @@ Ext.onReady(function() {
     ");
     
     $paramImport = $setParams;
-    $paramImport .= "&target=MULTI";
+    $paramImport .= "&target=subjectassignments";
+    $paramImport .= "&actionType=MULTI";
     $OBJECT_TREE->addTBarItems("
         text: '" . IMPORT . "'
         ,disabled: false
