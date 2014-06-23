@@ -15,7 +15,6 @@ require_once "models/training/TrainingSubjectDBAccess.php";
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php";
 require_once 'models/assessment/AssessmentConfig.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/assignment/AssignmentTempDBAccess.php";//@CHHE Vathana
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/assignment/AssignmentTempDBAccess.php";//@CHHE Vathana
 require_once setUserLoacalization();
 
 class StudentTrainingDBAccess extends TrainingDBAccess {
