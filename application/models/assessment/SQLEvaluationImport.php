@@ -48,9 +48,42 @@ class SQLEvaluationImport {
         $STUDENT_DATA = self::getListStudents($stdClass);
 
         for ($iCol = 1; $iCol <= $sheets['numCols']; $iCol++) {
-            $field = isset($sheets['cells'][2][$iCol]) ? $sheets['cells'][2][$iCol] : "";
 
-            error_log("Field: " . $field);
+            $fieldDate = isset($sheets['cells'][2][$iCol]) ? $sheets['cells'][2][$iCol] : "";
+            $fieldsGeneral = isset($sheets['cells'][3][$iCol]) ? $sheets['cells'][3][$iCol] : "";
+
+            if ($fieldDate) {
+                $Col_DATE = $iCol;
+            }
+
+            if ($fieldsGeneral) {
+                switch (trim($fieldsGeneral)) {
+                    case "CODE_ID":
+                        $Col_CODE_ID = $iCol;
+                        break;
+                    case "SCORE":
+                        $Col_SCORE = $iCol;
+                        break;
+                    case "RANK":
+                        $Col_RANK = $iCol;
+                        break;
+                }
+            }
+            for ($i = 1; $i <= $sheets['numRows']; $i++) {
+
+                if (isset($Col_DATE))
+                    $date = isset($sheets['cells'][$i + 2][$Col_DATE]) ? $sheets['cells'][$i + 2][$Col_DATE] : "";
+                if (isset($Col_CODE_ID))
+                    $codeId = isset($sheets['cells'][$i + 1][$Col_CODE_ID]) ? $sheets['cells'][$i + 1][$Col_CODE_ID] : "";
+                if (isset($Col_SCORE))
+                    $score = isset($sheets['cells'][$i + 1][$Col_SCORE]) ? $sheets['cells'][$i + 1][$Col_SCORE] : "";
+                if (isset($Col_RANK))
+                    $rank = isset($sheets['cells'][$i + 1][$Col_RANK]) ? $sheets['cells'][$i + 1][$Col_RANK] : "";
+
+                error_log("Date: " . $date);
+            }
+
+
 
 
 //            switch (trim($field)) {
