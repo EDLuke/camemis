@@ -328,11 +328,11 @@ class StudentPreschoolDBAccess {
         $SQL->from(array('A' => 't_student_preschool'), array('*'));
         if($informationType == "CLEAR"){
             //$SQL->JOIN_OUTER('t_student_preschooltype AS B', 'A.ID= B.PRESTUDENT WHERE B.PRESTUDENT Is NULL');
-            $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.id = B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT'));
+            $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.id = B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT', 'PHONE AS RPHONE', 'EMAIL AS REMAIL'));
             //$SQL->where("B.OBJECT_TYPE = 'APPLICATION' && B.OBJECT_TYPE = 'TESTING'");
             $SQL->where('B.PRESTUDENT IS NULL');
         }else{
-             $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT'));
+             $SQL->joinLeft(array('B' => 't_student_preschooltype'), 'A.ID= B.PRESTUDENT', array('ID AS PRESCHOOLTYPE_ID', 'OBJECT_TYPE AS PRESCHOOL_OBJECT_TYPE', 'DESCRIPTION AS PRESCHOOLTYPE_DES', 'CAMEMIS_TYPE AS PRESCHOOLTYPE_CAM',  'CREATED_DATE', 'CREATED_BY', 'SCORE', 'DEGREE_TYPE', 'APPLICATION_STATUS', 'SESSION_EVENT', 'PHONE AS RPHONE', 'EMAIL AS REMAIL'));
             if ($informationType){
                 $SQL->where("B.OBJECT_TYPE = '" . $informationType. "'");
                 //$SQL->where("B.CAMEMIS_TYPE != 0");
@@ -390,7 +390,7 @@ class StudentPreschoolDBAccess {
             
         //$SQL .= "GROUP BY A.ID";
 
-        //error_log($SQL);
+        error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
     
@@ -430,6 +430,10 @@ class StudentPreschoolDBAccess {
 
                 $data[$i]['CREATED_DATE'] = getShowDate($value->CREATED_DATE);
                 $data[$i]['OBJECT_TYPE'] = $value->OBJECT_TYPE;
+                
+                $data[$i]['PHONE'] = $value->RPHONE;
+                $data[$i]['EMAIL'] = $value->REMAIL;
+
                 
                 if($value->OBJECT_TYPE != 'APPLICATION_TYPE')
                 $data[$i]['SCORE'] = $value->SCORE;
