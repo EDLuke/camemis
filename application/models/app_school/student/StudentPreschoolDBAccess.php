@@ -390,7 +390,7 @@ class StudentPreschoolDBAccess {
             
         //$SQL .= "GROUP BY A.ID";
 
-        error_log($SQL);
+        //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
     
