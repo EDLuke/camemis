@@ -22,20 +22,24 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
 
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
 
         parent::__construct();
     }
 
-    public function setImportSheets($sheets, $academicId, $term, $shortday, $schoolyearId) {
+    public function setImportSheets($sheets, $academicId, $term, $shortday, $schoolyearId)
+    {
 
         $SAVEDATA = array();
 
@@ -43,9 +47,11 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         $subjectId = "";
         $teacherId = "";
 
-        for ($iCol = 1; $iCol <= $sheets['numCols']; $iCol++) {
+        for ($iCol = 1; $iCol <= $sheets['numCols']; $iCol++)
+        {
             $field = isset($sheets['cells'][1][$iCol]) ? $sheets['cells'][1][$iCol] : "";
-            switch (trim($field)) {
+            switch (trim($field))
+            {
                 case "TIME":
                     $Col_TIME = $iCol;
                     break;
@@ -64,7 +70,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
             }
         }
 
-        for ($i = 1; $i <= $sheets['numRows']; $i++) {
+        for ($i = 1; $i <= $sheets['numRows']; $i++)
+        {
 
             $scheduleTime = isset($sheets['cells'][$i + 1][$Col_TIME]) ? $sheets['cells'][$i + 1][$Col_TIME] : "";
             $eventType = isset($sheets['cells'][$i + 1][$Col_EVENT_TYPE]) ? $sheets['cells'][$i + 1][$Col_EVENT_TYPE] : "";
@@ -75,24 +82,27 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
             if ($roomShort)
                 $roomId = $this->findRoomId(strtoupper(trim($roomShort)));
 
-            if ($teacherCode) {
+            if ($teacherCode)
+            {
                 $teacherObject = self::findTeacherByCode(strtoupper(trim($teacherCode)));
-                if ($teacherObject) {
+                if ($teacherObject)
+                {
                     $teacherId = $teacherObject->ID;
                 }
             }
 
-            if ($scheduleTime) {
+            if ($scheduleTime)
+            {
                 $TIME_STR = explode("-", trim($scheduleTime));
                 $startTime = isset($TIME_STR[0]) ? timeStrToSecond(trim($TIME_STR[0])) : 0;
                 $endTime = isset($TIME_STR[1]) ? timeStrToSecond(trim($TIME_STR[1])) : 0;
             }
 
-            //error_log("TeacherCode: ".$teacherId." RoomShort: ".$roomId." EventType: ".$eventType. " Event: ".$subjectId. " Term: ".$term." StartTime: ".$startTime." EndTime: ".$endTime." ClassId: ".$academicId." ShortDay: ".$shortday);
+            if ($scheduleTime)
+            {
 
-            if ($scheduleTime) {
-
-                if ($startTime && $endTime) {
+                if ($startTime && $endTime)
+                {
 
                     $ERROR_TIME_HAS_BEEN_USED = $this->checkStartTimeANDEndTime(
                             $startTime
@@ -103,7 +113,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
                             , false
                     );
 
-                    if (!$ERROR_TIME_HAS_BEEN_USED) {
+                    if (!$ERROR_TIME_HAS_BEEN_USED)
+                    {
 
                         $SAVEDATA["CODE"] = createCode();
                         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
@@ -114,19 +125,26 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
                         $SAVEDATA["TERM"] = $term;
                         $SAVEDATA["ACADEMIC_ID"] = $academicId;
 
-                        if ($event != "") {
-                            if ($roomId) {
+                        if ($event != "")
+                        {
+                            if ($roomId)
+                            {
                                 $SAVEDATA["ROOM_ID"] = $roomId;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             $SAVEDATA["ROOM_ID"] = "";
                         }
 
-                        if ($eventType) {
+                        if ($eventType)
+                        {
 
-                            switch ($eventType) {
+                            switch ($eventType)
+                            {
                                 case 1:
-                                    if ($event && $academicId && $teacherCode) {
+                                    if ($event && $academicId && $teacherCode)
+                                    {
                                         $SAVEDATA["EVENT"] = "";
                                         $SAVEDATA["SCHEDULE_TYPE"] = 1;
                                         $SAVEDATA["TEACHER_ID"] = $teacherId;
@@ -136,7 +154,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
                                     }
                                     break;
                                 case 2:
-                                    if ($event && $academicId) {
+                                    if ($event && $academicId)
+                                    {
                                         $SAVEDATA["EVENT"] = $event;
                                         $SAVEDATA["SCHEDULE_TYPE"] = 2;
                                         $SAVEDATA["SUBJECT_ID"] = "";
@@ -149,10 +168,12 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
                             $SAVEDATA["START_TIME"] = $startTime;
                             $SAVEDATA["END_TIME"] = $endTime;
 
-                            if ($subjectId && $academicId && $teacherId && $term) {
+                            if ($subjectId && $academicId && $teacherId && $term)
+                            {
                                 self::dbAccess()->insert(self::TABLE_SCHEDULE, $SAVEDATA);
                                 $scheduleId = self::dbAccess()->lastInsertId();
-                                if ($scheduleId) {
+                                if ($scheduleId)
+                                {
                                     self::addSubjectTeacherClass($subjectId, $teacherId, $academicId, $term);
                                 }
                             }
@@ -163,7 +184,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         }
     }
 
-    public function importXLS($params) {
+    public function importXLS($params)
+    {
 
         $_FILES['xlsfile']['type'];
 
@@ -241,7 +263,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         );
     }
 
-    public function checkTeacherInSchedule($starttime, $endtime, $shortday, $term) {
+    public function checkTeacherInSchedule($starttime, $endtime, $shortday, $term)
+    {
 
         $SQLFirst = "";
         $SQLFirst .= " SELECT *";
@@ -262,10 +285,14 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         $resultRowsSecond = self::dbAccess()->fetchAll($SQLSecond);
 
         $FIRST_DATA = array();
-        if ($resultRowsFirst) {
-            foreach ($resultRowsFirst as $key => $value) {
-                if ($value->SHORTDAY == $shortday) {
-                    if ($value->TERM == $term) {
+        if ($resultRowsFirst)
+        {
+            foreach ($resultRowsFirst as $key => $value)
+            {
+                if ($value->SHORTDAY == $shortday)
+                {
+                    if ($value->TERM == $term)
+                    {
                         if ($value->TEACHER_ID)
                             $FIRST_DATA[$value->TEACHER_ID] = $value->TEACHER_ID;
                     }
@@ -274,10 +301,14 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         }
 
         $SECOND_DATA = array();
-        if ($resultRowsSecond) {
-            foreach ($resultRowsSecond as $key => $value) {
-                if ($value->SHORTDAY == $shortday) {
-                    if ($value->TERM == $term) {
+        if ($resultRowsSecond)
+        {
+            foreach ($resultRowsSecond as $key => $value)
+            {
+                if ($value->SHORTDAY == $shortday)
+                {
+                    if ($value->TERM == $term)
+                    {
                         if ($value->TEACHER_ID)
                             $SECOND_DATA[$value->TEACHER_ID] = $value->TEACHER_ID;
                     }
@@ -290,7 +321,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return $CHECK_DATA;
     }
 
-    protected function checkImportRoom($starttime, $endtime, $shortday, $term) {
+    protected function checkImportRoom($starttime, $endtime, $shortday, $term)
+    {
 
         $SQLFirst = "";
         $SQLFirst .= " SELECT *";
@@ -311,10 +343,14 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         $resultRowsSecond = self::dbAccess()->fetchAll($SQLSecond);
 
         $FIRST_DATA = array();
-        if ($resultRowsFirst) {
-            foreach ($resultRowsFirst as $key => $value) {
-                if ($value->SHORTDAY == $shortday) {
-                    if ($value->TERM == $term) {
+        if ($resultRowsFirst)
+        {
+            foreach ($resultRowsFirst as $key => $value)
+            {
+                if ($value->SHORTDAY == $shortday)
+                {
+                    if ($value->TERM == $term)
+                    {
                         if ($value->ROOM_ID)
                             $FIRST_DATA[$value->ROOM_ID] = $value->ROOM_ID;
                     }
@@ -323,10 +359,14 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         }
 
         $SECOND_DATA = array();
-        if ($resultRowsSecond) {
-            foreach ($resultRowsSecond as $key => $value) {
-                if ($value->SHORTDAY == $shortday) {
-                    if ($value->TERM == $term) {
+        if ($resultRowsSecond)
+        {
+            foreach ($resultRowsSecond as $key => $value)
+            {
+                if ($value->SHORTDAY == $shortday)
+                {
+                    if ($value->TERM == $term)
+                    {
                         if ($value->ROOM_ID)
                             $SECOND_DATA[$value->ROOM_ID] = $value->ROOM_ID;
                     }
@@ -339,7 +379,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return $CHECK_DATA;
     }
 
-    public function checkImportTeacher($starttime, $endtime, $teacherId, $subjectId, $shortday, $term) {
+    public function checkImportTeacher($starttime, $endtime, $teacherId, $subjectId, $shortday, $term)
+    {
 
         $CHECK_VALUE = false;
 
@@ -358,21 +399,28 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
                 , $term
         );
 
-        if ($TEACHER_SUBJECT_COUNT) {
+        if ($TEACHER_SUBJECT_COUNT)
+        {
 
-            if (!in_array($teacherId, $TEACHER_IN_SCHEDULE_DATA)) {
+            if (!in_array($teacherId, $TEACHER_IN_SCHEDULE_DATA))
+            {
                 $CHECK_VALUE = false;
-            } else {
+            }
+            else
+            {
                 $CHECK_VALUE = true;
             }
-        } else {
+        }
+        else
+        {
             $CHECK_VALUE = true;
         }
 
         return $CHECK_VALUE;
     }
 
-    public function findSubjectId($short, $teacherId) {
+    public function findSubjectId($short, $teacherId)
+    {
 
         $query = self::dbAccess()->select();
         $query->from(array('A' => 't_subject'), array("ID AS SUBJECT_ID"));
@@ -385,7 +433,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return $result ? $result->SUBJECT_ID : false;
     }
 
-    public function findRoomId($code) {
+    public function findRoomId($code)
+    {
 
         $query = self::dbAccess()->select();
         $query->from('t_room');
@@ -395,7 +444,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return $result ? $result->ID : null;
     }
 
-    public static function findTeacherByCode($codeId) {
+    public static function findTeacherByCode($codeId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_staff', '*');
@@ -404,7 +454,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function checkSubjectTeacherClassTerm($subjectId, $teacherId, $academicId, $schoolyearId, $term) {
+    public static function checkSubjectTeacherClassTerm($subjectId, $teacherId, $academicId, $schoolyearId, $term)
+    {
 
         $SQL = self::dbAccess()->select()
                 ->from("t_subject_teacher_class", array("C" => "COUNT(*)"))
@@ -417,7 +468,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function addSubjectTeacherClass($subjectId, $teacherId, $academicId, $term) {
+    public static function addSubjectTeacherClass($subjectId, $teacherId, $academicId, $term)
+    {
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
@@ -438,7 +490,8 @@ class ImportScheduleDBAccess extends ScheduleDBAccess {
         $SQL .= " ,ACADEMIC='" . $academicObject->ID . "'";
         $SQL .= " ,GRADE='" . $academicObject->GRADE_ID . "'";
         $SQL .= " ,TEACHER='" . $teacherId . "'";
-        if (!$CHECK) self::dbAccess()->query($SQL);
+        if (!$CHECK)
+            self::dbAccess()->query($SQL);
     }
 
 }
