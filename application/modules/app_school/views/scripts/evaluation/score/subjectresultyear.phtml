@@ -215,7 +215,7 @@ Ext.onReady(function() {
     
     if($subjectObject->SCORE_TYPE == 1){
         if(!$academicObject->EVALUATION_OPTION){
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 100,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
         }else{
             $OBJECT_GRID->addColumn("
                 header: '<b>".RANK."</b>'

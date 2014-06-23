@@ -162,7 +162,7 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 120,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 100,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
@@ -182,13 +182,13 @@ Ext.onReady(function() {
     if($academicObject->DISPLAY_GRADE_POINTS){
         $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS',filter:{}");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 120,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 100,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     if($entries){
         foreach($entries as $value){
             if($value->SUBJECT_ID){
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 70, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width: 60, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
             }
         }
     }
