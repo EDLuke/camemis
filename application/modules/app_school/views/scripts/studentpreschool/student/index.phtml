@@ -310,11 +310,13 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'OBJECT_TYPE'");
         $OBJECT_GRID->addReadField("name: 'DEGREE_TYPE'");
         $OBJECT_GRID->addReadField("name: 'APPLICATION_STATUS'");
+        $OBJECT_GRID->addReadField("name: 'PHONE'");
+        $OBJECT_GRID->addReadField("name: 'EMAIL'");
         
         
         $OBJECT_GRID->addColumn("header: '<b>" . FULL_NAME . "</b>', align:'left', width: 150,hidden:".checkColHidden(1, $columndata).", dataIndex: 'STUDENT_NAME'");
         $OBJECT_GRID->addColumn("header: '<b>" . GENDER . "</b>', align:'left', width: 150,hidden:".checkColHidden(2, $columndata).", dataIndex: 'GENDER'");
-        $OBJECT_GRID->addColumn("header: '<b>" . Major . "</b>', align:'left', width: 120,hidden:".checkColHidden(3, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . TYPE . "</b>', align:'left', width: 120,hidden:".checkColHidden(3, $columndata).", dataIndex: 'CAMEMIS_TYPE'");
         $OBJECT_GRID->addColumn("header: '<b>" . SCORE . "</b>', align:'left', width: 150,hidden:".checkColHidden(4, $columndata).", dataIndex: 'SCORE'");
         $OBJECT_GRID->addColumn("header: '<b>" . DEGREE_TYPE . "</b>', align:'left', width: 100,hidden:".checkColHidden(5, $columndata).", dataIndex: 'DEGREE_TYPE'");
         $OBJECT_GRID->addColumn("header: '<b>" . SESSION_EVENT . "</b>', align:'left', width: 100,hidden:".checkColHidden(6, $columndata).", dataIndex: 'SESSION_EVENT'");
@@ -322,6 +324,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
         $OBJECT_GRID->addColumn("header: '<b>" . STATUS . "</b>', align:'left', width: 100,hidden:".checkColHidden(8, $columndata).", dataIndex: 'APPLICATION_STATUS'");
         $OBJECT_GRID->addColumn("header: '<b>" . CREATED_DATE . "</b>', align:'left', width: 100,hidden:".checkColHidden(9, $columndata).", dataIndex: 'CREATED_DATE'");
         $OBJECT_GRID->addColumn("header: '<b>" . CREATED_BY . "</b>', align:'left', width: 100,hidden:".checkColHidden(10, $columndata).", dataIndex: 'CREATED_BY'");
+        $OBJECT_GRID->addColumn("header: '<b>" . PHONE . "</b>', align:'left', width: 100,hidden:".checkColHidden(11, $columndata).", dataIndex: 'PHONE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . EMAIL . "</b>', align:'left', width: 100,hidden:".checkColHidden(12, $columndata).", dataIndex: 'EMAIL'");
         
         
         
@@ -476,6 +480,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(8, false);
                     myGrid.getColumnModel().setHidden(9, false);
                     myGrid.getColumnModel().setHidden(10, false);
+                    myGrid.getColumnModel().setHidden(11, true);
+                    myGrid.getColumnModel().setHidden(12, true);
                     
                     break;
                     
@@ -493,6 +499,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, false);
                     myGrid.getColumnModel().setHidden(10, false);
+                    myGrid.getColumnModel().setHidden(11, true);
+                    myGrid.getColumnModel().setHidden(12, true);
                     break
                     
                 case 'REFERENCE':
@@ -509,7 +517,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, true);
                     myGrid.getColumnModel().setHidden(10, true);
-                    
+                    myGrid.getColumnModel().setHidden(11, false);
+                    myGrid.getColumnModel().setHidden(12, false);
                     break
                 
                 default:
@@ -526,7 +535,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_PRESCHOOL_LIST_ID");
                     myGrid.getColumnModel().setHidden(8, true);
                     myGrid.getColumnModel().setHidden(9, true);
                     myGrid.getColumnModel().setHidden(10, true);
-                    
+                    myGrid.getColumnModel().setHidden(11, true);
+                    myGrid.getColumnModel().setHidden(12, true);
                     break;
             }
         });

@@ -164,7 +164,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $APPLICATION_GRID->addReadField("name: 'DELETE'");
         
         $APPLICATION_GRID->addColumn("
-            header: '<b>".MAJOR."</b>',
+            header: '<b>".TYPE."</b>',
             dataIndex: 'CAMEMIS_TYPE',
             width: 150,
             align: 'left',
@@ -174,7 +174,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,store: new Ext.data.JsonStore({
                     autoDestroy: true
                     ,fields: ['chooseValue', 'chooseDisplay']
-                    ,data:".CamemisTypeDBAccess::comboxCamemisType('MAJOR_TYPE')."
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('APPLICATION_TYPE')."
                 })
                 ,valueField: 'chooseValue'
                 ,displayField: 'chooseDisplay'
