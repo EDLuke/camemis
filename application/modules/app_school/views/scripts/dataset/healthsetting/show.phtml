@@ -176,8 +176,6 @@ Ext.onReady(function() {
         ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
     ");
     
-    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
-    
     $OBJECT_FORM->setLoadParams("
         cmd: 'jsonLoadHealthSetting'
         ,objectId: '".$this->objectId."'
@@ -201,7 +199,10 @@ Ext.onReady(function() {
     
     if($this->objectId != "new"){
         
-        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
+        if(!$facette->NOT_REMOVE){
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
+        }
+        
         $OBJECT_FORM->setRemoveParams("
             cmd: 'jsonRemoveHealthSetting'
             ,objectId: '".$this->objectId."'
@@ -217,6 +218,8 @@ Ext.onReady(function() {
         "); 
     }
 	
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
     if($facette){
         $OBJECT_FORM->isObjectDefaultOnLoad = true;
     }else{

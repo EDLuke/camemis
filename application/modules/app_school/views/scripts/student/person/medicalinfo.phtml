@@ -37,29 +37,32 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
         if($entries){
             foreach($entries as $value){
-                $params = "objectId=".$this->objectId."";
-                $params .= "&settingId=".$value->ID."";
-                $params .= "&target=dynamic";
-                $url = "/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($params)."";
                 
-                switch(UserAuth::systemLanguage()){
-                    case "ENGLISH":
-                        $item = "{
-                            title: '".setShowText($value->NAME_EN)."'
-                            ,layout: 'fit'
-                            ,items:[new Ext.ux.IFrameComponent({ id: '".$value->ID."', url: '".$url."'})]
-                        }";
-                        break;
-                    default:
-                        $item = "{
-                            title: '".setShowText($value->NAME)."'
-                            ,layout: 'fit'
-                            ,items:[new Ext.ux.IFrameComponent({ id: '".$value->ID."', url: '".$url."'})]
-                        }";
-                        break;
+                if($value->OBJECT_DISPLAY){
+                    $params = "objectId=".$this->objectId."";
+                    $params .= "&settingId=".$value->ID."";
+                    $params .= "&target=dynamic";
+                    $url = "/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($params)."";
+
+                    switch(UserAuth::systemLanguage()){
+                        case "ENGLISH":
+                            $item = "{
+                                title: '".setShowText($value->NAME_EN)."'
+                                ,layout: 'fit'
+                                ,items:[new Ext.ux.IFrameComponent({ id: '".$value->ID."', url: '".$url."'})]
+                            }";
+                            break;
+                        default:
+                            $item = "{
+                                title: '".setShowText($value->NAME)."'
+                                ,layout: 'fit'
+                                ,items:[new Ext.ux.IFrameComponent({ id: '".$value->ID."', url: '".$url."'})]
+                            }";
+                            break;
+                    }
+                    
+                    $PENEL_ITEMS[] = $item;
                 }
-                
-                $PENEL_ITEMS[] = $item;
             }
         }
         $params = "objectId=".$this->objectId."";

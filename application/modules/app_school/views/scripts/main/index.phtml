@@ -11,19 +11,13 @@ require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisBar.php';
 require_once setUserLoacalization();
 
-//require_once 'models/assessment/StudentAssessmentResults.php';
+//$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 //
-//$STUDNET_ASSESSMENT = new StudentAssessmentResults();
-//
-////$this->studentId = "AwHvzXTKtxGPD5LnsFW792a285clD8YD9RR";        
-//$setParams["subjectId"] = "1025";
-//$setParams["classId"] = "40";
-//$setParams["assignmentId"] = "375";
-//$setParams["term"] = "FIRST_SEMESTER";
-//$setParams["date"] = "2013-09-04";
-//$STUDNET_ASSESSMENT->jsonListResultStudentsSubjectAssignment($setParams);
-//
-//exit;
+//$SQL = "";
+//$SQL .= " UPDATE t_health_setting";
+//$SQL .= " SET";
+//$SQL .= " NAME=NAME_EN";
+//$DB_ACCESS->query($SQL);
 
 Utiles::setUserPublicRoot();
 Utiles::dbClean();
