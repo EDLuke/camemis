@@ -43,7 +43,7 @@ class DatasetController extends Zend_Controller_Action {
 
     public function init() {
 
-        
+        $this->getResponse()->setHeader('X-FRAME-OPTIONS', 'SAMEORIGIN');
         $this->REQUEST = $this->getRequest();
         $this->UTILES = Utiles::getInstance();
 
@@ -53,12 +53,14 @@ class DatasetController extends Zend_Controller_Action {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
-        if ($this->_getParam('objectId')) {
+        if ($this->_getParam('objectId'))
             $this->objectId = $this->_getParam('objectId');
-        }
-        
+
         if ($this->_getParam('target'))
             $this->target = $this->_getParam('target');
+        //@veasna
+        if ($this->_getParam('type'))
+            $this->type = $this->_getParam('type');
 
         $this->DB_DESCRIPTION = DescriptionDBAccess::getInstance();
         $this->DB_LOCATION = LocationDBAccess::getInstance();
@@ -66,7 +68,6 @@ class DatasetController extends Zend_Controller_Action {
         $this->DB_UPLOAD = CAMEMISUploadDBAccess::getInstance();
         //@veasna
         $this->DB_SCHOLARSHIP = ScholarshipDBAccess::getInstance();
-
         $this->REQUEST = $this->getRequest();
         $this->UTILES = Utiles::getInstance();
     }
@@ -160,36 +161,23 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function dataviewAction() {
-        
-        if (!UserAuth::identify()) {
-            $this->_request->setControllerName('error');
-            $this->_request->setActionName('expired');
-            $this->_request->setDispatched(false);
-        }
-        
         $this->view->objectId = $this->_getParam('objectId');
-        $this->view->target = $this->_getParam('target');
         $this->view->object = $this->_getParam('object');
     }
 
     public function dataeditorAction() {
-        
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
-        
+
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->object = $this->_getParam('object');
     }
 
-    public function displayfileAction() {
-        
-    }
-
     public function attachmentAction() {
-        
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -198,7 +186,7 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function ckeditorAction() {
-        
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -207,7 +195,7 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function ckeditoradminAction() {
-        
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -216,7 +204,7 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function smalleditorAction() {
-        
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -225,7 +213,7 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function showcontentAction() {
-        
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -234,7 +222,16 @@ class DatasetController extends Zend_Controller_Action {
     }
 
     public function showblobAction() {
-        
+
+        if (!UserAuth::identify()) {
+            $this->_request->setControllerName('error');
+            $this->_request->setActionName('expired');
+            $this->_request->setDispatched(false);
+        }
+    }
+
+    public function displayfileAction() {
+
         if (!UserAuth::identify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -246,11 +243,20 @@ class DatasetController extends Zend_Controller_Action {
         
     }
 
+    public function linechartAction() {
+        $this->view->setId = $this->_getParam('setId');
+    }
+
     public function listAction() {
         $this->view->target = $this->target;
         switch (strtoupper($this->target)) {
             case "HEALTHSETTING":
                 $this->_helper->viewRenderer("healthsetting/list");
+                break;
+            //@veasna    
+            case "FORUMCATEGORIES":
+                $this->view->typeForum = $this->type;
+                $this->_helper->viewRenderer("forumcategories/list");
                 break;
         }
     }
@@ -265,15 +271,10 @@ class DatasetController extends Zend_Controller_Action {
         }
     }
 
-    public function linechartAction() {
-        $this->view->setId = $this->_getParam('setId');
-    }
-
     public function addattachmentAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->view->object = $this->_getParam('object');
-
         $this->_helper->viewRenderer("upload/show");
     }
 
@@ -291,10 +292,17 @@ class DatasetController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("upload/list");
     }
 
+    public function imageAction() {
+
+        $this->view->objectId = $this->_getParam('objectId');
+        $this->view->objectName = $this->_getParam('objectName');
+    }
+
     public function settingAction() {
         $this->view->URL_DESCRIPTIOIN = $this->UTILES->buildURL('dataset/alldescription', array('personType' => $this->_getParam('personType')));
         $this->view->URL_DESCRIPTIOIN_TRAINING = $this->UTILES->buildURL('dataset/alldescription', array('personType' => "STUDENT_TRAINING"));
         $this->view->URL_LOCATION = $this->UTILES->buildURL('dataset/alllocation', array());
+        $this->view->URL_ABSENT_TYPE = $this->UTILES->buildURL('dataset/allabsenttype', array());
     }
 
     public function allfacilitiesAction() {
@@ -321,16 +329,56 @@ class DatasetController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("branchoffice/list");
     }
 
-    public function showbranchofficeAction() {
+    public function allpersonstatusAction() {
+        $this->_helper->viewRenderer("personstatus/list");
+    }
+
+    //@veasna
+    public function allscholarshiptypeAction() {
+        $this->view->URL_SHOW_SCHOLARSHIP_TYPE = $this->UTILES->buildURL('dataset/showsholarshiptype', array());
+        $this->_helper->viewRenderer("scholarshiptype/list");
+    }
+
+    public function showsholarshiptypeAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
-        $this->_helper->viewRenderer("branchoffice/show");
+        $this->view->parentId = $this->_getParam('parentId');
+        //$this->view->target=$this->_getParam('target');
+        $this->view->type = $this->_getParam('type');
+
+        $this->_helper->viewRenderer("scholarshiptype/show");
+    }
+
+    public function scholarshipcontentAction() {
+        $this->_helper->viewRenderer("scholarshiptype/showcontent");
+    }
+
+    //
+    public function allabsenttypesAction() {
+        $this->view->URL_SHOW_ABSENT_TYPE = $this->UTILES->buildURL('dataset/showabsenttype', array());
+        $this->_helper->viewRenderer("absenttype/list");
+    }
+
+    public function showabsenttypeAction() {
+        $this->view->objectId = $this->_getParam('objectId');
+        $this->_helper->viewRenderer("absenttype/show");
+    }
+
+    public function showpersonstatusAction() {
+        $this->view->objectId = $this->_getParam('objectId');
+        $this->_helper->viewRenderer("personstatus/show");
     }
 
     public function showlocationAction() {
 
         $this->view->objectId = $this->_getParam('objectId');
         $this->_helper->viewRenderer("location/show");
+    }
+
+    public function showbranchofficeAction() {
+
+        $this->view->objectId = $this->_getParam('objectId');
+        $this->_helper->viewRenderer("branchoffice/show");
     }
 
     public function showdescriptionAction() {
@@ -347,46 +395,8 @@ class DatasetController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("facility/show");
     }
 
-    public function allabsenttypesAction() {
-        $this->view->URL_SHOW_ABSENT_TYPE = $this->UTILES->buildURL('dataset/showabsenttype', array());
-        $this->_helper->viewRenderer("absenttype/list");
-    }
-
-    public function showabsenttypeAction() {
-        $this->view->objectId = $this->_getParam('objectId');
-        $this->_helper->viewRenderer("absenttype/show");
-    }
-
-    //@veasna
-    public function allscholarshiptypeAction() {
-        $this->view->URL_SHOW_SCHOLARSHIP_TYPE = $this->UTILES->buildURL('dataset/showsholarshiptype', array());
-        $this->_helper->viewRenderer("scholarshiptype/list");
-    }
-
-    public function showsholarshiptypeAction() {
-
-        $this->view->objectId = $this->_getParam('objectId');
-        $this->view->parentId = $this->_getParam('parentId');
-        $this->view->type = $this->_getParam('type');
-        $this->_helper->viewRenderer("scholarshiptype/show");
-    }
-
-    public function scholarshipcontentAction() {
-        $this->_helper->viewRenderer("scholarshiptype/showcontent");
-    }
-
-    public function allpersonstatusAction() {
-        $this->_helper->viewRenderer("personstatus/list");
-    }
-
-    public function showpersonstatusAction() {
-        $this->view->objectId = $this->_getParam('objectId');
-        $this->_helper->viewRenderer("personstatus/show");
-    }
-
-    public function imageAction() {
-        $this->view->objectId = $this->_getParam('objectId');
-        $this->view->objectName = $this->_getParam('objectName');
+    public function authenticationAction() {
+        
     }
 
     //@Sea Peng
@@ -430,6 +440,7 @@ class DatasetController extends Zend_Controller_Action {
                 $DB_COMMUNICATION = CommunicationDBAccess::getInstance();
                 $jsondata = $DB_COMMUNICATION->jsonLoadNewMessage($this->REQUEST->getPost());
                 break;
+
             case "sendmail":
 
                 $empfaenger = $this->REQUEST->getPost('to');
@@ -453,13 +464,8 @@ class DatasetController extends Zend_Controller_Action {
     public function jsontreeAction() {
 
         switch ($this->REQUEST->getPost('cmd')) {
-
             case "treeAllLocations":
                 $jsondata = LocationDBAccess::jsonTreeLocal($this->REQUEST->getPost());
-                break;
-
-            case "treeAllBranchOffices":
-                $jsondata = BranchOfficeDBAccess::jsonTreeBranchOffices($this->REQUEST->getPost());
                 break;
 
             case "jsonTreeAllDescription":
@@ -490,6 +496,10 @@ class DatasetController extends Zend_Controller_Action {
                 $jsondata = LocationDBAccess::jsonTreeAllLocation($this->REQUEST->getPost());
                 break;
 
+            case "jsonTreeAllBranchOffices":
+                $jsondata = BranchOfficeDBAccess::jsonTreeAllBranchOffices($this->REQUEST->getPost());
+                break;
+
             case "jsonTreeAllAbsentType":
                 $jsondata = AbsentTypeDBAccess::jsonTreeAllAbsentType($this->REQUEST->getPost());
                 break;
@@ -498,7 +508,7 @@ class DatasetController extends Zend_Controller_Action {
             case "jsonTreeAllScholarship":
                 $jsondata = $this->DB_SCHOLARSHIP->jsonTreeAllScholarship($this->REQUEST->getPost());
                 break;
-            // 
+            //    
             case "jsonTreeAllPersonStatus":
                 $jsondata = PersonStatusDBAccess::jsonTreeAllPersonStatus($this->REQUEST->getPost());
                 break;
@@ -539,7 +549,6 @@ class DatasetController extends Zend_Controller_Action {
             case "jsonGrading":
                 $jsondata = SpecialDBAccess::jsonGrading($this->REQUEST->getPost('edutype'));
                 break;
-
             case "jsonSubject":
                 $jsondata = SubjectDBAccess::jsonSubject($this->REQUEST->getPost('edutype'));
                 break;
@@ -560,6 +569,11 @@ class DatasetController extends Zend_Controller_Action {
             //Sea Peng
             case "loadCamemisType":
                 $jsondata = CamemisTypeDBAccess::loadCamemisType($this->REQUEST->getPost('objectId'));
+                break;
+            
+            //@Visal    
+            case "jsonPunishment":
+                $jsondata = CamemisTypeDBAccess::jsonPunishment($this->REQUEST->getPost());
                 break;
 
             case "loadObject":
@@ -588,6 +602,9 @@ class DatasetController extends Zend_Controller_Action {
                     case "tax":
                         $jsondata = TaxDBAccess::loadObject($this->REQUEST->getPost('objectId'));
                         break;
+                    case "personstatus":
+                        $jsondata = PersonStatusDBAccess::loadObject($this->REQUEST->getPost('objectId'));
+                        break;
                 }
                 break;
 
@@ -614,7 +631,7 @@ class DatasetController extends Zend_Controller_Action {
                 break;
 
             case "removeSubHealthSetting":
-                $jsondata = HealthSettingDBAccess::removeSubHealthSetting($this->REQUEST->getPost('objectId'));
+                $jsondata = HealthSettingDBAccess::removeSubHealthSetting($this->REQUEST->getPost('removeId'));
                 break;
 
             case "jsonRemoveHealthSetting":
@@ -658,12 +675,10 @@ class DatasetController extends Zend_Controller_Action {
                 $jsondata = ScholarshipDBAccess::jsonRemoveScholarship($this->REQUEST->getPost());
                 break;
             //
-
             case "jsonSavePersonStatus":
                 $jsondata = PersonStatusDBAccess::jsonSavePersonStatus($this->REQUEST->getPost());
                 break;
-            //
-
+            //            
             case "jsonRemovePersonStatus":
                 $jsondata = PersonStatusDBAccess::jsonRemovePersonStatus($this->REQUEST->getPost('objectId'));
                 break;
@@ -697,13 +712,17 @@ class DatasetController extends Zend_Controller_Action {
                     case "location":
                         $jsondata = LocationDBAccess::updateObject($this->REQUEST->getPost());
                         break;
-                    case "brachoffice":
+                    case "branchoffice":
                         $jsondata = BranchOfficeDBAccess::updateObject($this->REQUEST->getPost());
                         break;
                     case "tax":
                         $jsondata = TaxDBAccess::updateObject($this->REQUEST->getPost());
                         break;
                 }
+                break;
+
+            case "jsonUserColumnSelection":
+                $jsondata = Utiles::setGridColumnData($this->REQUEST->getPost("gridId"), $this->REQUEST->getPost("columdata"));
                 break;
 
             case "addObject":
@@ -775,9 +794,6 @@ class DatasetController extends Zend_Controller_Action {
                 $jsondata = $this->actionDeleteBuckUp();
                 break;
             ////////////////////////////////////////////////////////////////////
-            case "jsonUserColumnSelection":
-                $jsondata = Utiles::setGridColumnData($this->REQUEST->getPost("gridId"), $this->REQUEST->getPost("columdata"));
-                break;
         }
         if (isset($jsondata))
             if (isset($jsondata))
@@ -799,14 +815,6 @@ class DatasetController extends Zend_Controller_Action {
 
         $INCLUDE_TABLES = array();
         $EXCLUDE_TABLES = array();
-
-        //$tables = UserAuth::dbAccess()->fetchAll("SHOW TABLES");
-        //if($tables){
-        //    foreach($tables as $table){
-        //        $tableObject = UserAuth::tableObject();
-        //        $INCLUDE_TABLES[] = $table->$tableObject;
-        //    }
-        //}
 
         $dumpSettings = array(
             'include-tables' => $INCLUDE_TABLES,
@@ -843,7 +851,6 @@ class DatasetController extends Zend_Controller_Action {
     public function setJSON($jsondata) {
 
         Zend_Loader::loadClass('Zend_Json');
-
         $json = Zend_Json::encode($jsondata);
         $this->getResponse()->setHeader('Content-Type', 'text/javascript');
         $this->getResponse()->setBody($json);
