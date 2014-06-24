@@ -6,6 +6,7 @@
 ///////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisDynamicCombo.php';
 require_once 'clients/CamemisBar.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
@@ -69,6 +70,24 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         */
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        //@Visal 
+        
+        $OBJECT_PUNISHMENT = new CamemisDynCombo("PUNISHMENT_TYPE","RIGHT_PUNISHMENT");
+        $OBJECT_PUNISHMENT->setLoadUrl("/dataset/jsonload/");
+        $OBJECT_PUNISHMENT->objectTitle = PUNISHMENT ;
+        $OBJECT_PUNISHMENT->allowBlank = "true";
+        $OBJECT_PUNISHMENT->width = 250;
+        $OBJECT_PUNISHMENT->varName = "PUNISHMENT_TYPE";
+        if ($this->objectId !="new") {
+            $OBJECT_PUNISHMENT->setLoadParams("
+                cmd: 'jsonPunishment'
+                ,objectType:'PUNISHMENT_TYPE'
+                ,shareId: ".$this->disciplineObject->DISCIPLINE_TYPE."
+            ");
+        }
+        $OBJECT_PUNISHMENT->renderJS();
+        ///
 
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'CODE'");
@@ -142,8 +161,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         $DETAIL_INFORMATION_ITEMS = "
                         {".CamemisField::Datefield('INFRACTION_DATE', INFRACTION_DATE, true)."}
                         ,{".CamemisField::comboCamemisTypes("DISCIPLINE_TYPE_STUDENT", INFRACTION_TYPE, false,false, true)."}
-                        ,{".CamemisField::ComboPunishmentType()."} 
+                        ,{xtype:'".$OBJECT_PUNISHMENT->getObjectXType()."'}
                         ";
+                        
                     break;
                 }
 
@@ -450,6 +470,22 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,items: <?=$LAYOUT_ITMEMS;?>
             }]
         });
+        
+        var comboDiscipline=Ext.getCmp('DISCIPLINE_TYPE_STUDENT');
+        var comboPunishment=Ext.getCmp('<?=$OBJECT_PUNISHMENT->getObjectId();?>');
+        comboPunishment.disable();
+        if(comboDiscipline){
+            comboDiscipline.on('select', function() {
+                var disId = comboDiscipline.getValue();
+                comboPunishment.enable();
+                comboPunishment.store.baseParams={
+                    cmd: 'jsonPunishment'
+                    ,shareId:disId
+                    ,objectType:'PUNISHMENT_TYPE'
+                };
+                comboPunishment.store.reload()
+            });
+        }
         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
 </script>
