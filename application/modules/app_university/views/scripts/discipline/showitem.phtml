@@ -6,6 +6,7 @@
 ///////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisDynamicCombo.php';
 require_once 'clients/CamemisBar.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
@@ -69,6 +70,22 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         */
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        //@Visal 
+        
+        $OBJECT_PUNISHMENT = new CamemisDynCombo("PUNISHMENT_TYPE","RIGHT_PUNISHMENT");
+        $OBJECT_PUNISHMENT->setLoadUrl("/dataset/jsonload/");
+        $OBJECT_PUNISHMENT->objectTitle = PUNISHMENT ;
+        $OBJECT_PUNISHMENT->allowBlank = "true";
+        $OBJECT_PUNISHMENT->width = 250;
+        $OBJECT_PUNISHMENT->varName = "PUNISHMENT_TYPE";
+        $OBJECT_PUNISHMENT->setLoadParams("
+            cmd: 'jsonPunishment'
+            ,objectType:'PUNISHMENT_TYPE'
+            ,shareId: ".$this->disciplineObject->DISCIPLINE_TYPE."
+        ");
+        $OBJECT_PUNISHMENT->renderJS();
+        ///
 
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'CODE'");
@@ -90,6 +107,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'FULL_NAME'");
         $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssText, sortable: true, dataIndex: 'GENDER'");
         $OBJECT_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150,  renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+    
 
         switch (strtoupper($personType)) {
             case "STAFF":
@@ -105,7 +123,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     start:0
                     ,limit:100
                     ,cmd: 'searchStudent'
-                    ,classId: '".$this->academicId."'
+                    ,classId: '".$this->classId."'
                 ";
                 $OBJECT_GRID->isObjectDefaultOnLoad = true;
             break;
@@ -141,8 +159,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         $DETAIL_INFORMATION_ITEMS = "
                         {".CamemisField::Datefield('INFRACTION_DATE', INFRACTION_DATE, true)."}
                         ,{".CamemisField::comboCamemisTypes("DISCIPLINE_TYPE_STUDENT", INFRACTION_TYPE, false,false, true)."}
-                        ,{".CamemisField::ComboPunishmentType()."} 
+                        ,{xtype:'".$OBJECT_PUNISHMENT->getObjectXType()."'}
                         ";
+                        
                     break;
                 }
 
@@ -352,7 +371,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,bodyStyle: 'padding:0px'
             ,items: $FORM_ITEMS
         ";
-		
+        
         $OBJECT_FORM->addObjectItems($items);
 
         $OBJECT_FORM->addTBarItems("
@@ -369,11 +388,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             case "ADMIN":
             case "INSTRUCTOR":
             case "TEACHER":
-                //if(UserAuth::getACLValue($DISCIPLINE_REMOVE_RIGHT))
+               // if(UserAuth::getACLValue($DISCIPLINE_REMOVE_RIGHT))
                 $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
 
                 if ($this->objectId !="new") {
-                   // if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
+                    //if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
                     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
                     //if(UserAuth::getACLValue($DISCIPLINE_EDIT_RIGHT))
                     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave()); 
@@ -449,11 +468,27 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,items: <?=$LAYOUT_ITMEMS;?>
             }]
         });
+        
+        var comboDiscipline=Ext.getCmp('DISCIPLINE_TYPE_STUDENT');
+        var comboPunishment=Ext.getCmp('<?=$OBJECT_PUNISHMENT->getObjectId();?>');
+        comboPunishment.disable();
+        if(comboDiscipline){
+            comboDiscipline.on('select', function() {
+                var disId = comboDiscipline.getValue();
+                comboPunishment.enable();
+                comboPunishment.store.baseParams={
+                    cmd: 'jsonPunishment'
+                    ,shareId:disId
+                    ,objectType:'PUNISHMENT_TYPE'
+                };
+                comboPunishment.store.reload()
+            });
+        }
         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
 </script>
 <style type="text/css">
-	#COMMENT_ID {height: auto !important;}
+    #COMMENT_ID {height: auto !important;}
 </style>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
