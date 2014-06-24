@@ -496,6 +496,9 @@ class StudentPreschoolDBAccess {
             case "TESTING_STATUS":
                 $newValue = $comboValue;
                 break;
+            case "TESTING_LEVEL":
+                $newValue = $comboValue;
+                break;
             case "SESSION_EVENT":
                 $newValue = $comboValue;
                 break;
@@ -594,10 +597,11 @@ class StudentPreschoolDBAccess {
                     default:
                         if ($value->TESTING_STATUS <> 0)
                             $data[$i]["TESTING_STATUS"] = CamemisTypeDBAccess::findObjectFromId($value->TESTING_STATUS)->NAME;
+                        if ($value->TESTING_LEVEL <> 0)
+                            $data[$i]["TESTING_LEVEL"] = CamemisTypeDBAccess::findObjectFromId($value->TESTING_LEVEL)->NAME;
                         $data[$i]["ID"] = $value->ID;
                         $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
                         $data[$i]["SCORE"] = $value->SCORE;
-                        $data[$i]["LEVEL"] = $value->LEVEL;
                         
                         if (!SchoolDBAccess::displayPersonNameInGrid()) {
                             $data[$i]["CREATED_BY"] = setShowText($value->MEMBER_FIRSTNAME) . " " . setShowText($value->MEMBER_LASTNAME);
