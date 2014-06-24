@@ -33,7 +33,7 @@ class CamemisTypeDBAccess {
     {
         return self::dbAccess()->select();
     }
-
+    
     public static function findObjectFromId($Id)
     {
         $SQL = self::dbAccess()->select();
@@ -41,7 +41,52 @@ class CamemisTypeDBAccess {
         $SQL->from(array('t_camemis_type'));
         $SQL->where("ID = ?",$Id);
         //error_log($SQL);
+        
         return self::dbAccess()->fetchRow($SQL);
+    }
+    
+    //@Visal
+    public static function findObjectType($objectType)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->distinct();
+        $SQL->from(array('t_camemis_type'));
+        $SQL->where("OBJECT_TYPE = ?",$objectType);
+        $SQL->where("PARENT <> 0");
+        
+        //error_log($SQL); 
+               
+        return self::dbAccess()->fetchAll($SQL);
+    }
+    
+    public static function jsonPunishment($params)
+    {
+        $shareId = isset($params["shareId"]) ? addText($params["shareId"]) : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
+        
+        $data = array();
+        $i= 0;
+        $result = self::findObjectType($objectType);
+        $data[$i]["ID"] = "0";
+        $data[$i]["NAME"] = "[---]";
+        
+        if($result){
+            foreach($result as $value){
+                $share = explode(",", $value->SHARED_ID);
+                if(in_array($shareId, $share)){
+                     $data[$i + 1]["ID"] = $value->ID;
+                     $data[$i + 1]["NAME"] = $value->NAME;
+                     $i++;
+                }
+                           
+            }
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $data
+        );
     }
 
     public static function getCamemisTypeComboData($objectType, $isParent = false)
@@ -88,7 +133,6 @@ class CamemisTypeDBAccess {
         $data = array();
         if ($result)
         {
-
             $data["ID"] = $result->ID;
             $data["NAME"] = setShowText($result->NAME);
             if ($result->DESCRIPTION)
@@ -99,6 +143,15 @@ class CamemisTypeDBAccess {
             {
                 $data["DESCRIPTION"] = "---";
             }
+            
+            $CHECK_DATA = explode(",", $result->SHARED_ID);
+            if($CHECK_DATA){
+               foreach($CHECK_DATA as $check){
+                    $data[$check] = 1;
+               } 
+            }
+            
+            
         }
 
         return $data;
@@ -286,9 +339,29 @@ class CamemisTypeDBAccess {
     {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
-
+        $objectType = "DISCIPLINE_TYPE_STUDENT";
+        $shared = "";
+        $data = array();
+        $i = 0;
+        
+        $result = self::findObjectType($objectType);
+        $count = count($result);
+            foreach($result as $value){
+                $data[$i] = isset($params[$value->ID])? addText($params[$value->ID]):"";
+                if($data[$i] == 1){
+                    $shared .= $value->ID;
+                    if($i <($count - 1)){
+                        $shared .= ","; 
+                    }
+                }
+                $i++;
+            }
+            
         $SAVEDATA = array();
 
+        if ($shared)
+            $SAVEDATA['SHARED_ID'] = addText($shared);
+            
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
