@@ -570,6 +570,11 @@ class DatasetController extends Zend_Controller_Action {
             case "loadCamemisType":
                 $jsondata = CamemisTypeDBAccess::loadCamemisType($this->REQUEST->getPost('objectId'));
                 break;
+            
+            //@Visal    
+            case "jsonPunishment":
+                $jsondata = CamemisTypeDBAccess::jsonPunishment($this->REQUEST->getPost());
+                break;
 
             case "loadObject":
                 switch ($this->REQUEST->getPost('type')) {

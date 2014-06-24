@@ -104,6 +104,7 @@ class DisciplineController extends Zend_Controller_Action {
         //UserAuth::actionPermint($this->_request, "STUDENT_DISCIPLINE");
 
         $this->view->objectId = $this->objectId;
+        $this->view->disciplineObject = $this->DB_DISCIPLINE->findDisciplineFromId($this->objectId);
         $this->view->studentId = $this->studentId;
         $this->view->facette = $this->facette;
         $this->view->trainingId = $this->trainingId;
