@@ -89,128 +89,6 @@ class FilterData extends FilterProperties {
         return $result;    
     }
     
-    public function getCountStudentReligion(){
-        
-        
-        if($this->objectType){
-            switch ($this->objectType) {
-                case 'CAMPUS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['religion'] = $this->religion;
-                    break;
-                case 'GRADE':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['gradeId'] = $this->gradeId;
-                    $params['religion'] = $this->religion;
-                    break;
-                case 'CLASS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['classId'] = $this->classId;
-                    $params['religion'] = $this->religion;
-                    break;
-            }
-        }
-        
-        $stdClass = (object) $params;   
-        $result = SQLStudentFilterReport::getCountStudent($stdClass);
-        
-        return $result;    
-    }
-    
-    public function getCountStudentSMS(){
-        
-        if($this->objectType){
-            switch ($this->objectType) {
-                case 'CAMPUS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['SMS'] = $this->SMS;
-                    break;
-                case 'GRADE':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['gradeId'] = $this->gradeId;
-                    $params['SMS'] = $this->SMS;
-                    break;
-                case 'CLASS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['classId'] = $this->classId;
-                    $params['SMS'] = $this->SMS;
-                    break;
-            }
-        }
-        
-        $stdClass = (object) $params;   
-        $result = SQLStudentFilterReport::getCountStudent($stdClass);
-        
-        return $result;    
-    }
-    
-    public function getCountStudentNationality(){
-        
-        if($this->objectType){
-            switch ($this->objectType) {
-                case 'CAMPUS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['nationality'] = $this->nationality;
-                    break;
-                case 'GRADE':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['gradeId'] = $this->gradeId;
-                    $params['nationality'] = $this->nationality;
-                    break;
-                case 'CLASS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['classId'] = $this->classId;
-                    $params['nationality'] = $this->nationality;
-                    break;
-                
-            }
-        }
-        
-        $stdClass = (object) $params;   
-        $result = SQLStudentFilterReport::getCountStudent($stdClass);
-        
-        return $result;    
-    }
-    
-    public function getCountStudentEthnicity(){
-        
-        if($this->objectType){
-            switch ($this->objectType) {
-                case 'CAMPUS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['ethnicity'] = $this->ethnicity;
-                    break;
-                case 'GRADE':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['gradeId'] = $this->gradeId;
-                    $params['ethnicity'] = $this->ethnicity;
-                    break;
-                case 'CLASS':
-                    $params['schoolyearId'] = $this->schoolyearId;
-                    $params['campusId'] = $this->campusId;
-                    $params['classId'] = $this->classId;
-                    $params['ethnicity'] = $this->ethnicity;
-                    break;
-            }
-        }
-        
-        $stdClass = (object) $params;   
-        $result = SQLStudentFilterReport::getCountStudent($stdClass);
-        
-        return $result;    
-    }
-    
     public function getStudentAge(){
         $stdClass = (object) array(
                 "schoolyearId" => $this->schoolyearId
@@ -232,37 +110,35 @@ class FilterData extends FilterProperties {
         return $data;
     }
     
-    public function getCountStudentCountryProvince(){
-        
+    public function getCountStudentPersonalInformation(){
         if($this->objectType){
             switch ($this->objectType) {
                 case 'CAMPUS':
                     $params['schoolyearId'] = $this->schoolyearId;
                     $params['campusId'] = $this->campusId;
-                    $params['country_province'] = $this->country_province;
+                    $params[$this->dataType] = $this->dataValue;
                     break;
                 case 'GRADE':
                     $params['schoolyearId'] = $this->schoolyearId;
                     $params['campusId'] = $this->campusId;
                     $params['gradeId'] = $this->gradeId;
-                    $params['country_province'] = $this->country_province;
+                    $params[$this->dataType] = $this->dataValue;
                     break;
                 case 'CLASS':
                     $params['schoolyearId'] = $this->schoolyearId;
                     $params['campusId'] = $this->campusId;
                     $params['classId'] = $this->classId;
-                    $params['country_province'] = $this->country_province;
+                    $params[$this->dataType] = $this->dataValue;
                     break;
             }
         }
         
         $stdClass = (object) $params;   
         $result = SQLStudentFilterReport::getCountStudent($stdClass);
-        
-        return $result;    
+        return $result;  
     }
     
-    public function getCountStaffByDataType(){
+    public function getCountStaffPersonalInformation(){
         
         if($this->objectType){
             switch ($this->objectType) {

@@ -66,17 +66,18 @@ class FilterDataSet extends FilterData{
     public function getDataSetReligion(){
         
         $entries = FilterProperties::getCamemisType('RELIGION_TYPE');
+        $this->dataType='religion';
         $DATASET = "[";
         if ($entries)
         {
             $i = 0;
             foreach ($entries as $value)
             {
-                $this->religion = $value->ID;
+                $this->dataValue = $value->ID;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'key':'" . $value->NAME . "'";
-                $DATASET .= ",'y':'" . $this->getCountStudentReligion() . "'";
+                $DATASET .= ",'y':'" . $this->getCountStudentPersonalInformation() . "'";
                 
                 $DATASET .= "}";
                 $i++;
@@ -89,17 +90,18 @@ class FilterDataSet extends FilterData{
     public function getDataSetSMS(){
         
         $entries = array('0'=>'NO','1'=>'YES');
+        $this->dataType='SMS';
         $DATASET = "[";
         if ($entries)
         {
             $i = 0;
             foreach ($entries as $key=>$value)
             {
-                $this->SMS = $key;
+                $this->dataValue = $key;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'key':'" . $value . "'";
-                $DATASET .= ",'y':'" . $this->getCountStudentSMS() . "'";
+                $DATASET .= ",'y':'" . $this->getCountStudentPersonalInformation() . "'";
                 
                 $DATASET .= "}";
                 $i++;
@@ -112,6 +114,7 @@ class FilterDataSet extends FilterData{
     public function getDataSetNationality(){
         
         $entries = FilterProperties::getCamemisType('NATIONALITY_TYPE');
+        $this->dataType='nationality';
         $DATASET = "[{";
         $DATASET .= "key: '".NATIONALITY."',";
         $DATASET .= "values: [";
@@ -120,11 +123,11 @@ class FilterDataSet extends FilterData{
             $i = 0;
             foreach ($entries as $value)
             {
-                $this->nationality = $value->ID;
+                $this->dataValue = $value->ID;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getCountStudentNationality() . "'";
+                $DATASET .= ",'value':'" . $this->getCountStudentPersonalInformation() . "'";
                 
                 $DATASET .= "}";
                 $i++;
@@ -139,6 +142,7 @@ class FilterDataSet extends FilterData{
      public function getDataSetEthnicity(){
         
         $entries = FilterProperties::getCamemisType('ETHNICITY_TYPE');
+        $this->dataType='ethnicity';
         $DATASET = "[{";
         $DATASET .= "key: '".ETHNICITY."',";
         $DATASET .= "values: [";
@@ -147,11 +151,11 @@ class FilterDataSet extends FilterData{
             $i = 0;
             foreach ($entries as $value)
             {
-                $this->ethnicity = $value->ID;
+                $this->dataValue = $value->ID;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getCountStudentEthnicity() . "'";
+                $DATASET .= ",'value':'" . $this->getCountStudentPersonalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
@@ -189,6 +193,7 @@ class FilterDataSet extends FilterData{
     public function getDataSetCountryProvince(){
         
         $entries = SQLStudentFilterReport::getAllLocation();
+        $this->dataType='country_province';
         $DATASET = "[{";
         $DATASET .= "key: '".CITY_PROVINCE."',";
         $DATASET .= "values: [";
@@ -197,11 +202,11 @@ class FilterDataSet extends FilterData{
             $i = 0;
             foreach ($entries as $value)
             {
-                $this->country_province = $value->ID;
+                $this->dataValue = $value->ID;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getCountStudentCountryProvince() . "'";
+                $DATASET .= ",'value':'" . $this->getCountStudentPersonalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
@@ -225,7 +230,7 @@ class FilterDataSet extends FilterData{
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'key':'" . $value . "'";
-                $DATASET .= ",'y':'" . $this->getCountStaffByDataType() . "'";
+                $DATASET .= ",'y':'" . $this->getCountStaffPersonalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
@@ -250,7 +255,7 @@ class FilterDataSet extends FilterData{
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getCountStaffByDataType() . "'";
+                $DATASET .= ",'value':'" . $this->getCountStaffPersonalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
@@ -275,8 +280,7 @@ class FilterDataSet extends FilterData{
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
                 $DATASET .= "'key':'" . $value->NAME . "'";
-                $DATASET .= ",'y':'" . $this->getCountStaffByDataType() . "'";
-                
+                $DATASET .= ",'y':'" . $this->getCountStaffPersonalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
@@ -285,31 +289,7 @@ class FilterDataSet extends FilterData{
         return $DATASET;      
     }
     
-    public function getDataSetStaffActiveAndDeactive(){//check a
-        
-        $entries = array('ACTIVE' => ACTIVE, 'DEACTIVE' => 'Deactive');
-        $this->dataType='status';
-        $DATASET = "[";
-        if ($entries)
-        {
-            $i = 0;
-            foreach ($entries as $key=>$value)
-            {
-                $DATASET .= $i ? "," : "";
-                $DATASET .= "{";
-                $DATASET .= "'key':'" . $value . "'";
-                if($key=='ACTIVE')
-                $DATASET .= ",'y':'" . $this->getCountStudentActive() . "'";
-                if($key=='DEACTIVE')
-                $DATASET .= ",'y':'" . $this->getCountStudentDeactive() . "'";
-                
-                $DATASET .= "}";
-                $i++;
-            }
-        }
-        $DATASET .= "]";
-        return $DATASET;    
-    }
+    
 }
 
 ?>
