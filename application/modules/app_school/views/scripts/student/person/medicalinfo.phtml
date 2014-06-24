@@ -33,8 +33,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
 
-        //$params = "objectId=".$this->objectId."";
-
         $PENEL_ITEMS = Array();
 
         if($entries){
@@ -81,13 +79,19 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
-            ,items: [{
-                xtype: 'vrtabpanel'
-                ,activeTab: 0
-                ,tabMarginTop:100
-                ,enableTabScroll:true
-                ,defaults: {autoScroll:true}
-                ,items:<?=$CHOOSE_ITEMS?>
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,border:false
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
             }]
         });
     });

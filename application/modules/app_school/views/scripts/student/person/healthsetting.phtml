@@ -203,7 +203,7 @@ Ext.onReady(function() {
                 text: '" . ADD_NEW_ITEM . "'
                 ,iconCls:'icon-application_form_add'
                 ,handler: function(){
-                    clickOpenPage('content','" . ADD_NEW_ITEM . "','/student/studenthealth/?camIds=".$this->urlEncryp->encryptedGet($paramsNew)."');
+                    clickOpenPage('content','','/student/studenthealth/?camIds=".$this->urlEncryp->encryptedGet($paramsNew)."');
                 }
             }]);
         ");
@@ -233,6 +233,7 @@ Ext.onReady(function() {
             $html .=",layout:'card'";
             $html .=",border:false";
             $html .=",activeItem: 0";
+            $html .=",bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
             $html .=",items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
         $html .="}]";
     $html .="});";

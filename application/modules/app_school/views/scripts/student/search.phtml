@@ -549,14 +549,15 @@ Ext.onReady(function() {
     if (UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_READ_RIGHT"))
     $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
 
-    $HEALTH_INFORMATION ="{";
-    $HEALTH_INFORMATION .="text: '".HEALTH_INFORMATION." &raquo; ' + record.data.FULL_NAME";
-    $HEALTH_INFORMATION .=",iconCls: 'icon-paste_plain'";
-    $HEALTH_INFORMATION .=",handler: function(){";
-    $HEALTH_INFORMATION .="contextMenu.hide();openWinMax('".HEALTH_INFORMATION." &raquo; ' + record.data.FULL_NAME,'/student/medicalinfo/?objectId=' + record.data.ID);";
-    $HEALTH_INFORMATION .="}";
-    $HEALTH_INFORMATION .="}";
-    $CONTEXTMENU_ITEMS[] = $HEALTH_INFORMATION;
+//    $HEALTH_INFORMATION ="{";
+//    $HEALTH_INFORMATION .="text: '".HEALTH_INFORMATION." &raquo; ' + record.data.FULL_NAME";
+//    $HEALTH_INFORMATION .=",iconCls: 'icon-paste_plain'";
+//    $HEALTH_INFORMATION .=",handler: function(){";
+//    $HEALTH_INFORMATION .="contextMenu.hide();clickOpenPage('center','','/student/medicalinfo/?&target=".camemisId()."&objectId=' + record.data.ID + '&noSudentComboLsit=true');";
+//    $HEALTH_INFORMATION .="Ext.getCmp('WEST_ID').collapse();";
+//    $HEALTH_INFORMATION .="}";
+//    $HEALTH_INFORMATION .="}";
+//    $CONTEXTMENU_ITEMS[] = $HEALTH_INFORMATION;
 
     $SEND_SMS ="{";
     $SEND_SMS .="text: '".SEND." &raquo; ' + record.data.FULL_NAME";
