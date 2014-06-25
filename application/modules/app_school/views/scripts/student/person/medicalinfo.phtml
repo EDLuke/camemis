@@ -41,7 +41,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 if($value->OBJECT_DISPLAY){
                     $params = "objectId=".$this->objectId."";
                     $params .= "&settingId=".$value->ID."";
-                    $params .= "&target=dynamic";
+                    $params .= "&target=".$value->OBJECT_INDEX."";
                     $url = "/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($params)."";
 
                     switch(UserAuth::systemLanguage()){
@@ -65,30 +65,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 }
             }
         }
-        $params = "objectId=".$this->objectId."";
-        $paramsGrowthChart = $params;
-        $paramsGrowthChart .= "&target=growth_chart";
-        $PENEL_ITEMS[] = "{
-            title: 'Growth Chart'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'GROWTH_CHART', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsGrowthChart)."'})]
-        }";
-
-        $paramsMedicalVisit = $params;
-        $paramsMedicalVisit .= "&target=medical_visit";
-        $PENEL_ITEMS[] = "{
-            title: 'Medical Visit'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'MEDICAL_VISIT', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsMedicalVisit)."'})]
-        }";
-
-        $paramsBMI = $params;
-        $paramsBMI .= "&target=bmi";
-        $PENEL_ITEMS[] = "{
-            title: 'BMI'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'BMI', url: '/student/studenthealthsetting/?camIds=".$this->urlEncryp->encryptedGet($paramsBMI)."'})]
-        }";
+        
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
 
         ?>

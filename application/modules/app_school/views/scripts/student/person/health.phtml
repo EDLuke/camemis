@@ -114,7 +114,7 @@ Ext.onReady(function() {
     }
     ";
     
-    $MEDICAL_VISIT = "
+    $MEDICAL_VISIT_FIELDS = "
     {
         title: '".DETAIL_INFORMATION."'
         ,collapsible: true
@@ -134,13 +134,13 @@ Ext.onReady(function() {
                 {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
                 ,{".CamemisField::Textfield('DOCTOR_NAME', 'DOCTOR_NAME', 'Doctor Name', true)."}
                 ,{".CamemisField::Textfield('REASON', 'REASON', 'Reason', true)."}
-                ,{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',true,false,false)."}
+                ,{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}
             ]
         }]
     }
     ";
     
-    $BMI = "
+    $BMI_FIELDS = "
     {
         title: '".DETAIL_INFORMATION."'
         ,collapsible: true
@@ -165,7 +165,7 @@ Ext.onReady(function() {
     }
     ";
     
-    $GROWTH_CHART = "
+    $GROWTH_CHART_FIELDS = "
     {
         title: '".DETAIL_INFORMATION."'
         ,collapsible: true
@@ -189,12 +189,15 @@ Ext.onReady(function() {
     }
     ";
     
-    $DYNAMIC_ITEMS = "
+    $INJURY_FIELDS = "
     {
-        title: '&nbsp;'
-        ,autoHeight: true
+        title: '".DETAIL_INFORMATION."'
         ,collapsible: true
         ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
         ,style: 'padding-bottom: 5px'
         ,width: 550
         ,items:[{
@@ -202,7 +205,10 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [".HealthSettingDBAccess::renderHealthField($settingId)."]
+            ,items:[
+                {".CamemisField::Datefield("INJURY_DATE", DATE,true,false,false)."}
+                ,{".CamemisField::Textfield('INJURY_LOCATION', 'INJURY_LOCATION', 'Location', true)."}
+            ]
         }]
     }
     ";
@@ -211,15 +217,19 @@ Ext.onReady(function() {
     
     switch($target){
         case "BMI":
-            $FORM_ITEMS .= $BMI;
+            $FORM_ITEMS .= $BMI_FIELDS;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "INJURY":
+            $FORM_ITEMS .= $INJURY_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "GROWTH_CHART":
-            $FORM_ITEMS .= $GROWTH_CHART;
+            $FORM_ITEMS .= $GROWTH_CHART_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "MEDICAL_VISIT":
-            $FORM_ITEMS .= $MEDICAL_VISIT;
+            $FORM_ITEMS .= $MEDICAL_VISIT_FIELDS;
             $FORM_ITEMS .= ",".$DOCTOR_COMMENT;
             break;
         default:
@@ -346,18 +356,18 @@ Ext.onReady(function() {
                 }]
             }]
         }";
-        if(is_numeric($setId)){
-            if($facette){
-                if ($facette->OBJECT_TYPE == "DYNAMIC") $FORM_ITEMS .= ",".$GRID_ITEMS;   
-            }
-        }   
+//        if(is_numeric($setId)){
+//            if($facette){
+//                if ($facette->OBJECT_TYPE == "DYNAMIC") $FORM_ITEMS .= ",".$GRID_ITEMS;   
+//            }
+//        }   
     }
     
-    if(is_numeric($setId)){
-        if($facette){
-            if ($facette->OBJECT_TYPE == "DYNAMIC") $FORM_ITEMS .= ",".$DYNAMIC_ITEMS;
-        }
-    }
+//    if(is_numeric($setId)){
+//        if($facette){
+//            if ($facette->OBJECT_TYPE == "DYNAMIC") $FORM_ITEMS .= ",".$DYNAMIC_ITEMS;
+//        }
+//    }
     
     $FORM_ITEMS .= "]";
     $items = "

@@ -105,7 +105,11 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
 
     switch($target){
-        case "DYNAMIC":
+        case "DENTAL":
+        case "VISION":
+        case "VACCINATION":
+        case "VITAMIN":
+        case "INJURY":
             $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
             $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
             $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
@@ -117,7 +121,7 @@ Ext.onReady(function() {
 
         break;
         case "BMI":
-            //Date, Height, Weight, BMI, Status
+            
             $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");

@@ -281,7 +281,6 @@ class SQLEvaluationStudentAssignment {
 
     public static function setActionStudentScoreSubjectAssignment($stdClass)
     {
-
         $facette = self::getScoreSubjectAssignment($stdClass);
 
         if ($facette)
