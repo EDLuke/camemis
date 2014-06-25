@@ -90,6 +90,9 @@ var objectId;
 var date='<?=getCurrentDBDate();?>';
 Ext.onReady(function() {
 	
+    Ext.Ajax.timeout = 600000;
+    Ext.QuickTips.init();
+    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();

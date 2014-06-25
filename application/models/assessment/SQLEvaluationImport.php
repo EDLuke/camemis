@@ -28,24 +28,99 @@ class SQLEvaluationImport {
 
     public static function importScoreAssignment($stdClass) {
 
-        ini_set('max_execution_time', 3000);
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', '1200');
 
         $EXCEL_DATA = new Spreadsheet_Excel_Reader();
         $EXCEL_DATA->setUTFEncoder('iconv');
         $EXCEL_DATA->setOutputEncoding('UTF-8');
         $EXCEL_DATA->read($stdClass->tmp_name);
 
-        if ($EXCEL_DATA->sheets) {
-            for ($i = 0; $i <= $EXCEL_DATA->sheets; $i++) {
-                $excelObject = isset($EXCEL_DATA->sheets[$i]) ? $EXCEL_DATA->sheets[$i] : "";
-                if ($excelObject)
-                    self::actionImportScoreAssignment($EXCEL_DATA->sheets[$i], $stdClass);
-            }
+        $COUNT = count($EXCEL_DATA->sheets);
+
+        switch ($COUNT) {
+            case 1:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                break;
+            case 2:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                break;
+            case 3:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                break;
+            case 4:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                break;
+            case 5:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                break;
+            case 6:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[5], $stdClass);
+                break;
+            case 7:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[5], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[6], $stdClass);
+                break;
+            case 8:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[5], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[6], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[7], $stdClass);
+                break;
+            case 9:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[5], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[6], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[7], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[8], $stdClass);
+                break;
+            case 10:
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[0], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[1], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[2], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[3], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[4], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[5], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[6], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[7], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[8], $stdClass);
+                self::actionImportScoreAssignment($EXCEL_DATA->sheets[9], $stdClass);
+                break;
         }
     }
 
     public static function actionImportScoreAssignment($sheets, $stdClass) {
+
         $STUDENT_DATA = self::getListStudents($stdClass);
+
         $date = isset($sheets['cells'][2][2]) ? $sheets['cells'][2][2] : "";
         $keys = isset($sheets['cells'][2][3]) ? $sheets['cells'][2][3] : "";
 
@@ -57,11 +132,22 @@ class SQLEvaluationImport {
 
             if ($academicId && $subjectId && $assignmentId) {
 
-                $assignmentObject = AssignmentDBAccess::findAssignmentFromId($assignmentId);
+                $assessment = new EvaluationSubjectAssessment();
+                $assessment->setAcademicId($academicId);
+                $assessment->setSubjectId($subjectId);
+                $assessment->setAssignmentId($assignmentId);
+                $assessment->setDate($date);
 
+                $stdClass->include_in_valuation = $assessment->getAssignmentInCludeEvaluation();
+                $stdClass->term = $assessment->getAcademicTerm();
+                $stdClass->scoreMax = $assessment->getSubjectScoreMax();
+                $stdClass->scoreMin = $assessment->getSubjectScoreMin();
+                $stdClass->scoreType = $assessment->getSubjectScoreType();
+                $stdClass->coeffValue = $assessment->getAssignmentCoeff();
+
+                $stdClass->actionType = "IMPORT";
                 $stdClass->academicId = $academicId;
                 $stdClass->subjectId = $subjectId;
-                $stdClass->include_in_valuation = $assignmentObject->INCLUDE_IN_EVALUATION;
                 $stdClass->assignmentId = $assignmentId;
                 $stdClass->date = setDate2DB($date);
 

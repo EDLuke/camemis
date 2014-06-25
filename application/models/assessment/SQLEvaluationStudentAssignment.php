@@ -254,10 +254,11 @@ class SQLEvaluationStudentAssignment {
 
         $facette = self::getScoreSubjectAssignment($stdClass);
 
-        if (!isset($stdClass->term)) {
-            $stdClass->term = self::findTerm($stdClass->date, $stdClass->academicId);
-            $stdClass->month = getMonthByDate($stdClass->date);
-            $stdClass->year = getYearByDate($stdClass->date);
+        if (isset($stdClass->actionType)) {
+            if ($stdClass->actionType == "IMPORT") {
+                $stdClass->month = getMonthByDate($stdClass->date);
+                $stdClass->year = getYearByDate($stdClass->date);
+            }
         }
 
         if ($facette) {

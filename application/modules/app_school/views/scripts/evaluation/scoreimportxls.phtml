@@ -19,6 +19,7 @@ $monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
 $term = isset($_GET["term"])?addText($_GET["term"]):"";
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
+$actionType = isset($_GET["actionType"])? addText($_GET["actionType"]):"";
 
 $setParams = "";
 $setParams .= "&academicId=".$academicId."";
@@ -91,7 +92,12 @@ $formItems = "[";
     
     switch($target){
         case "subjectassignments":
-            $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+            if($actionType == "MULTI"){
+                $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+            }else{
+                $FORM_TBAR .= "parent.parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
+            }
+            
             break;
         default:
             $FORM_TBAR .= "parent.window.location='/evaluation/".$target."/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';";
@@ -109,6 +115,10 @@ $formItems = "[";
 
 <script>
 Ext.onReady(function() {
+    
+    Ext.Ajax.timeout = 600000;
+    Ext.QuickTips.init();
+    
     var fp = new Ext.FormPanel({
         fileUpload: true
         ,labelAlign: 'left'

@@ -337,6 +337,11 @@ abstract class AssessmentProperties {
         return $this->getCurrentClass()->PERFORMANCE_FOURTH_DIVISION_VALUE;
     }
 
+    public function getAcademicTerm() {
+
+        return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->academicId);
+    }
+
     public static function setGradingScale($academicObject) {
 
         $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;

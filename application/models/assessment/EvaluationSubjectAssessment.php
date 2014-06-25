@@ -1087,7 +1087,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
             SQLEvaluationImport::importScoreSubject($stdClass);
         } else {
-
+            
             if ($this->assignmentId) {
                 $stdClass->assignmentId = $this->assignmentId;
                 $stdClass->date = $this->date;
@@ -1097,6 +1097,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->include_in_valuation = $this->getAssignmentInCludeEvaluation();
                 $stdClass->term = $this->getTermByDateAcademicId();
             }
+            
             $stdClass->educationSystem = $this->getEducationSystem();
             $stdClass->actionField = "SCORE";
             SQLEvaluationImport::importScoreAssignment($stdClass);
