@@ -455,7 +455,11 @@ Ext.onReady(function() {
     ");
     $OBJECT_GRID->loadMask = true;
     $OBJECT_GRID->isPagingToolbar = true;
-    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    if($gridParam){
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    }else{
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;    
+    }
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->setUserColumn = true;
