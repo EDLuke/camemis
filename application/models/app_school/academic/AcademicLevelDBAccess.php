@@ -227,6 +227,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 }
             }
         }
+        
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }

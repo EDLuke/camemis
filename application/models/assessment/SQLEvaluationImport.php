@@ -155,7 +155,6 @@ class SQLEvaluationImport {
                 for ($i = 1; $i <= $sheets['numRows']; $i++) {
                     $studentCodeId = isset($sheets['cells'][$i + 3][1]) ? $sheets['cells'][$i + 3][1] : "";
                     $score = isset($sheets['cells'][$i + 3][3]) ? $sheets['cells'][$i + 3][3] : "";
-
                     $studentId = isset($STUDENT_DATA[$studentCodeId]) ? $STUDENT_DATA[$studentCodeId] : "";
 
                     if ($studentId) {

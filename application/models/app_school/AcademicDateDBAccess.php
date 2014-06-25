@@ -17,29 +17,35 @@ class AcademicDateDBAccess {
     protected $data = array();
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public function getAcademicDatetDataFromId($Id) {
+    public function getAcademicDatetDataFromId($Id)
+    {
 
         $data = array();
 
         $result = self::findAcademicDateFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
 
             $data["SCHOOLYEAR_DATE"] = getShowDate($result->START) . " - " . getShowDate($result->END);
 
@@ -95,14 +101,18 @@ class AcademicDateDBAccess {
         return $data;
     }
 
-    public static function findAcademicDateFromId($Id) {
+    public static function findAcademicDateFromId($Id)
+    {
 
         $SQL = "SELECT DISTINCT *";
         $SQL .= " FROM t_academicdate";
         $SQL .= " WHERE";
-        if (is_numeric($Id)) {
+        if (is_numeric($Id))
+        {
             $SQL .= " INDEX_ID = '" . $Id . "'";
-        } else {
+        }
+        else
+        {
             $SQL .= " ID = '" . $Id . "'";
         }
 
@@ -111,7 +121,8 @@ class AcademicDateDBAccess {
     }
 
     //@Sea Peng 19.12.2013
-    public static function findSemesterDateByClass($academicId, $schoolyearId) {
+    public static function findSemesterDateByClass($academicId, $schoolyearId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
@@ -126,7 +137,8 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getAllAcademicDatesQuery($params) {
+    public function getAllAcademicDatesQuery($params)
+    {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $node = isset($params["node"]) ? addText($params["node"]) : "";
@@ -138,13 +150,17 @@ class AcademicDateDBAccess {
         $SQL .= " FROM t_academicdate AS A";
         $SQL .= " WHERE 1=1";
 
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SQL .= " AND ((A.NAME like '" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
-        if (!$facette) {
+        if (!$facette)
+        {
             $SQL .= " AND PARENT='0'";
-        } else {
+        }
+        else
+        {
             $SQL .= " AND PARENT='" . $facette->INDEX_ID . "'";
         }
 
@@ -152,15 +168,19 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function loadAcademicDateFromId($Id) {
+    public function loadAcademicDateFromId($Id)
+    {
         $result = self::findAcademicDateFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => $this->getAcademicDatetDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -169,7 +189,8 @@ class AcademicDateDBAccess {
         return $o;
     }
 
-    public function removeObject($params) {
+    public function removeObject($params)
+    {
 
         $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
@@ -181,7 +202,8 @@ class AcademicDateDBAccess {
         return array("success" => true);
     }
 
-    public function updateAcademicDate($params) {
+    public function updateAcademicDate($params)
+    {
 
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
@@ -200,13 +222,15 @@ class AcademicDateDBAccess {
         return array("success" => true);
     }
 
-    public function createOnlyItem($params) {
+    public function createOnlyItem($params)
+    {
 
         $NAME = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $TERM_NUMBER = isset($params["TERM_NUMBER"]) ? addText($params["TERM_NUMBER"]) : "";
         $SORT = isset($params["SORT"]) ? addText($params["SORT"]) : "";
 
-        if ($NAME) {
+        if ($NAME)
+        {
             $SAVEDATA['NAME'] = $NAME;
             $SAVEDATA['TERM_NUMBER'] = $TERM_NUMBER;
             $SAVEDATA['SORT'] = $SORT;
@@ -220,7 +244,8 @@ class AcademicDateDBAccess {
     }
 
     //@veasna
-    public function selectBoxSchoolyearNowFuture() {
+    public function selectBoxSchoolyearNowFuture()
+    {
 
         $SQL = "";
         $SQL .= " SELECT *";
@@ -238,7 +263,8 @@ class AcademicDateDBAccess {
         $data[$i]["ID"] = "0";
         $data[$i]["NAME"] = "[---]";
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i + 1]["ID"] = $value->ID;
                 $data[$i + 1]["NAME"] = $value->NAME;
@@ -253,7 +279,8 @@ class AcademicDateDBAccess {
         );
     }
 
-    public static function getAllSchoolyear() {
+    public static function getAllSchoolyear()
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
         $SQL->where("STATUS='1'");
@@ -262,7 +289,8 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function allSchoolyearCombo() {
+    public function allSchoolyearCombo()
+    {
         //error_log($SQL->__toString());
         $result = self::getAllSchoolyear();
         $data = array();
@@ -271,7 +299,8 @@ class AcademicDateDBAccess {
         $data[$i]["ID"] = "0";
         $data[$i]["NAME"] = "[---]";
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i + 1]["ID"] = $value->ID;
                 $data[$i + 1]["NAME"] = $value->NAME;
@@ -286,7 +315,8 @@ class AcademicDateDBAccess {
         );
     }
 
-    public static function getComboDataLastSchoolyear($search = false) {
+    public static function getComboDataLastSchoolyear($search = false)
+    {
 
         $data = array();
 
@@ -300,8 +330,10 @@ class AcademicDateDBAccess {
         $i = 0;
         if (!$search)
             $data[0] = "['0','[---]']";
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $name = $value->NAME;
                 $data[$i + 1] = "[\"$value->ID\",\"$name\"]";
                 $i++;
@@ -310,7 +342,8 @@ class AcademicDateDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public static function getComboDataNextSchoolyear($search = false) {
+    public static function getComboDataNextSchoolyear($search = false)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
@@ -321,8 +354,10 @@ class AcademicDateDBAccess {
         $i = 0;
         if (!$search)
             $data[0] = "['0','[---]']";
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $name = $value->NAME;
                 $data[$i + 1] = "[\"$value->ID\",\"$name\"]";
                 $i++;
@@ -334,7 +369,8 @@ class AcademicDateDBAccess {
     /**
      * Combo academic date
      */
-    public function AcademicDateCombo() {
+    public function AcademicDateCombo()
+    {
 
         $SQL = "";
         $SQL .= " SELECT *";
@@ -348,8 +384,10 @@ class AcademicDateDBAccess {
 
         $i = 0;
         $data[$i] = "['0','[---]']";
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $name = $value->NAME;
                 $data[$i + 1] = "[\"$value->ID\",\"$name\"]";
                 $i++;
@@ -359,7 +397,8 @@ class AcademicDateDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public function releaseObject($params) {
+    public function releaseObject($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $facette = self::findAcademicDateFromId($objectId);
@@ -370,7 +409,8 @@ class AcademicDateDBAccess {
         $SQL .= " t_academicdate";
         $SQL .= " SET";
 
-        switch ($status) {
+        switch ($status)
+        {
             case 0:
                 $newStatus = 1;
                 $SQL .= " STATUS=1";
@@ -393,23 +433,28 @@ class AcademicDateDBAccess {
         return array("success" => true, "status" => $newStatus);
     }
 
-    public function jsonTreeAllAcademicDate($params) {
+    public function jsonTreeAllAcademicDate($params)
+    {
 
         $data = array();
         $result = $this->getAllAcademicDatesQuery($params);
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 //$isCurrentYear = $this->isCurrentSchoolyear($value->ID);
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['parentId'] = "" . $value->INDEX_ID . "";
                 $data[$i]['isChild'] = "" . $value->IS_CHILD . "";
                 $data[$i]['text'] = stripslashes($value->NAME);
                 $data[$i]['leaf'] = true;
-                if ($value->STATUS) {
+                if ($value->STATUS)
+                {
                     $data[$i]['iconCls'] = "icon-green";
-                } else {
+                }
+                else
+                {
                     $data[$i]['iconCls'] = "icon-red";
                 }
                 $i++;
@@ -418,7 +463,8 @@ class AcademicDateDBAccess {
         return $data;
     }
 
-    public static function getListSchoolyearByGradeId() {
+    public static function getListSchoolyearByGradeId()
+    {
 
         $data = array();
 
@@ -434,25 +480,31 @@ class AcademicDateDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[] = "['" . $value->ID . "', '" . $value->NAME . "']";
             }
 
         return $data;
     }
 
-    public function isCurrentSchoolyear($Id) {
+    public function isCurrentSchoolyear($Id)
+    {
 
         $facette = self::loadCurrentSchoolyear($Id);
 
-        if ($facette) {
+        if ($facette)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static function loadLastSchoolyear() {
+    public static function loadLastSchoolyear()
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
@@ -463,19 +515,24 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function loadCurrentSchoolyear($Id = false, $date = false) {
+    public static function loadCurrentSchoolyear($Id = false, $date = false)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
         $SQL->where("NAME IS NOT NULL");
 
-        if ($Id) {
+        if ($Id)
+        {
             $SQL->where("ID = ?", $Id);
         }
 
-        if ($date) {
+        if ($date)
+        {
             $SQL->where("DATEDIFF(END,'" . $date . "') > 0");
-        } else {
+        }
+        else
+        {
             $SQL->where("CAST(NOW() AS DATE) BETWEEN START AND END");
         }
 
@@ -484,11 +541,13 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function findCurrentSchoolyear($id = false) {
+    public function findCurrentSchoolyear($id = false)
+    {
 
         $result = $this->loadCurrentSchoolyear();
 
-        if ($result) {
+        if ($result)
+        {
             if ($id == true)
                 return $result->ID;
             else
@@ -496,7 +555,8 @@ class AcademicDateDBAccess {
         }
     }
 
-    public function isPastSchoolyear($Id) {
+    public function isPastSchoolyear($Id)
+    {
 
         $SQL = "";
         $SQL .= " SELECT *";
@@ -508,7 +568,8 @@ class AcademicDateDBAccess {
         return $result ? 1 : 0;
     }
 
-    public static function getSchoolyearByGradeId($gradeId) {
+    public static function getSchoolyearByGradeId($gradeId)
+    {
 
         $data = array();
 
@@ -520,7 +581,8 @@ class AcademicDateDBAccess {
         $result = self::dbAccess()->fetchAll($SQL);
 
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$value->SCHOOL_YEAR] = $value->SCHOOL_YEAR;
             }
@@ -528,7 +590,8 @@ class AcademicDateDBAccess {
         return $data;
     }
 
-    public static function findYearByEndDate($enddate) {
+    public static function findYearByEndDate($enddate)
+    {
 
         $SQL = "";
         $SQL .= " SELECT YEAR(END) AS YEAR";
@@ -540,7 +603,8 @@ class AcademicDateDBAccess {
     }
 
     //sea peng
-    public static function findAcademicBetweenDate($date) {
+    public static function findAcademicBetweenDate($date)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate");
@@ -554,13 +618,15 @@ class AcademicDateDBAccess {
     //
     //YEAR(`date`) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
 
-    public static function getNextSchoolyearFromLast($Id) {
+    public static function getNextSchoolyearFromLast($Id)
+    {
 
         $facette = self::findAcademicDateFromId($Id);
 
         $result = null;
 
-        if ($facette) {
+        if ($facette)
+        {
             $dateEndObject = self::findYearByEndDate($facette->END);
             $SQL = "";
             $SQL .= " SELECT *";
@@ -575,7 +641,8 @@ class AcademicDateDBAccess {
         return $result;
     }
 
-    private function getYearlevel($schoolyearId) {
+    private function getYearlevel($schoolyearId)
+    {
         $SQL = "SELECT YEAR_LEVEL AS C";
         $SQL .= " FROM t_academicdate";
         $SQL .= " WHERE 1=1";
@@ -585,10 +652,12 @@ class AcademicDateDBAccess {
         return isset($result) ? $result->C : 0;
     }
 
-    public function getSchoolYearBetween($schoolyearIdStart, $schoolyearIdEnd) {
+    public function getSchoolYearBetween($schoolyearIdStart, $schoolyearIdEnd)
+    {
         $yearLevel1 = $this->getYearlevel($schoolyearIdStart);
         $yearLevel2 = $this->getYearlevel($schoolyearIdEnd);
-        if ($yearLevel1 > $yearLevel2) {
+        if ($yearLevel1 > $yearLevel2)
+        {
             $tmp = $yearLevel1;
             $yearLevel1 = $yearLevel2;
             $yearLevel2 = $tmp;
@@ -602,13 +671,15 @@ class AcademicDateDBAccess {
 
         $data = array();
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[] = "'" . $value->SCHOOL_YEAR . "'";
             }
         return $data;
     }
 
-    protected function getClassBySchoolyearId($schoolyearId, $campusId) {
+    protected function getClassBySchoolyearId($schoolyearId, $campusId)
+    {
 
         $SQL = "
             SELECT A.ID AS CLASS_ID, A.NAME AS CLASS_NAME, B.NAME AS GRADE_NAME
@@ -625,7 +696,8 @@ class AcademicDateDBAccess {
 
         $data = array();
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$value->CLASS_ID] = $value->CLASS_NAME . " (" . $value->GRADE_NAME . ")";
             }
@@ -633,14 +705,16 @@ class AcademicDateDBAccess {
         return $data;
     }
 
-    public function getRadioBoxClassBySchoolyearId($schoolyearId, $campusId) {
+    public function getRadioBoxClassBySchoolyearId($schoolyearId, $campusId)
+    {
 
         $entries = $this->getClassBySchoolyearId($schoolyearId, $campusId);
 
         $data = array();
         $i = 0;
         if ($entries)
-            foreach ($entries as $key => $value) {
+            foreach ($entries as $key => $value)
+            {
 
                 $js = "{";
                 $js .= "fieldLabel: ''";
@@ -659,7 +733,8 @@ class AcademicDateDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public static function getListLastSchoolyear() {
+    public static function getListLastSchoolyear()
+    {
 
         $facette = self::loadCurrentSchoolyear();
 
@@ -675,7 +750,8 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function actionDateline($params) {
+    public function actionDateline($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $actionType = isset($params["actionType"]) ? addText($params["actionType"]) : 0;
@@ -683,7 +759,8 @@ class AcademicDateDBAccess {
         $UPDATE_VALUES['MODIFY_DATE'] = getCurrentDBDateTime();
         $UPDATE_VALUES['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
 
-        switch ($actionType) {
+        switch ($actionType)
+        {
             case 1:
                 $SAVEDATA['START'] = isset($params["START"]) ? setDate2DB($params["START"]) : "";
                 $SAVEDATA['END'] = isset($params["START"]) ? setDate2DB($params["END"]) : "";
@@ -731,7 +808,8 @@ class AcademicDateDBAccess {
         return array("success" => true);
     }
 
-    public static function findSchoolyearByCurrentDate() {
+    public static function findSchoolyearByCurrentDate()
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
@@ -745,7 +823,8 @@ class AcademicDateDBAccess {
     ////////////////////////////////////////////////////////////////////
     //@Sea Peng
     ////////////////////////////////////////////////////////////////////
-    public static function findSchoolyearByDate($date) {
+    public static function findSchoolyearByDate($date)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
@@ -758,7 +837,8 @@ class AcademicDateDBAccess {
 
     //////////////////////////////////////////////////////////////////
 
-    public static function findSchoolyearByClassId($classObj) {
+    public static function findSchoolyearByClassId($classObj)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
@@ -767,7 +847,8 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function findSchoolyearByStartEnd($start, $stop) {
+    public static function findSchoolyearByStartEnd($start, $stop)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_academicdate", array('*'));
