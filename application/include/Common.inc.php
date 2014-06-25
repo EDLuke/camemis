@@ -2493,4 +2493,12 @@ function getPercent($a, $b) {
     return $result;
 }
 
+function getMonthByDate($date) {
+    return date("m", strtotime($date));
+}
+
+function getYearByDate($date) {
+    return date("Y", strtotime($date));
+}
+
 ?>
