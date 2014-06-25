@@ -125,6 +125,7 @@ class SQLEvaluationImport {
         $keys = isset($sheets['cells'][2][3]) ? $sheets['cells'][2][3] : "";
 
         if ($keys) {
+
             $explode = explode("_", $keys);
             $academicId = isset($explode[0]) ? $explode[0] : "";
             $subjectId = isset($explode[1]) ? $explode[1] : "";
@@ -168,8 +169,10 @@ class SQLEvaluationImport {
                                     }
                                     break;
                                 case 2:
-                                    $stdClass->actionValue = strtoupper($score);
-                                    SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
+                                    if (!is_numeric($score)) {
+                                        $stdClass->actionValue = strtoupper($score);
+                                        SQLEvaluationStudentAssignment::setActionStudentScoreSubjectAssignment($stdClass);
+                                    }
                                     break;
                             }
                         }
