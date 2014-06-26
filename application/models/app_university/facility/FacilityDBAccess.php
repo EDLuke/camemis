@@ -494,6 +494,7 @@ class FacilityDBAccess {
                     }
 
                     $data[$i]['id'] = $value->ID;
+                    $data[$i]['parent'] = $value->PARENT;
                     $data[$i]['text'] = $value->NAME ? stripslashes($value->NAME) : "?";
                 }
 
@@ -769,6 +770,7 @@ class FacilityDBAccess {
                 $status = ($value->STATUS == 'CHECK-IN') ? CHECK_IN : CHECK_OUT;
                 $data[$i]["STATUS"] = $location . "<br/>" . $status . " (" . $date . ")";
                 $data[$i]["ID"] = $value->ID;
+                $data[$i]["PARENT"] = $value->PARENT;
                 $data[$i]["ITEM_STATUS"] = $value->STATUS ? $value->STATUS : '---';
                 $data[$i]["DELIVERED_DATE"] = getShowDate($value->DELIVERED_DATE);
                 $data[$i]["EXPIRED_WARRANTY"] = getShowDate($value->EXPIRED_WARRANTY);
