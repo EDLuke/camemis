@@ -132,10 +132,40 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items:[
                 {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
-                ,{".CamemisField::Textfield('DOCTOR_NAME', 'DOCTOR_NAME', 'Doctor Name', true)."}
-                ,{".CamemisField::Textfield('REASON', 'REASON', 'Reason', true)."}
                 ,{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}
             ]
+        }]
+    },{
+        title: 'Reason'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Visited by'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
         }]
     }
     ";
@@ -161,6 +191,96 @@ Ext.onReady(function() {
                 ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', 'Weight', true, false)."}
                 ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', 'Height', true, false)."}
             ]
+        }]
+    }
+    ";
+     
+    $VACCINATION = "
+    {
+        title: 'Types of Vaccines'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    }
+    ";
+    
+    $VITAMIN = "
+    {
+        title: 'Vitamins and Deworming'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Deworming Pill'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Multiple micronutrient supplementation'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    }
+    ";
+    
+    $VISION = "
+    {
+        title: 'Eye treatment'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Eye Chart'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
         }]
     }
     ";
@@ -210,6 +330,92 @@ Ext.onReady(function() {
                 ,{".CamemisField::Textfield('INJURY_LOCATION', 'INJURY_LOCATION', 'Location', true)."}
             ]
         }]
+    },{
+        title: 'Kind of injury'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    }
+    ";
+    
+    $DENTAL_PROPERTIES = "
+    {
+        title:'Exam Type'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Fluoride Treatment'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'X-rays'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Dental Caries'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+        }]
+    },{
+        title: 'Tooth Number'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup("TOOTH_NUMBER",3, HealthSettingDBAccess::getListObjectIndizes("DENTAL_TOOTH_NUMBER"))."}]
+        }]
     }
     ";
     
@@ -231,6 +437,26 @@ Ext.onReady(function() {
         case "MEDICAL_VISIT":
             $FORM_ITEMS .= $MEDICAL_VISIT_FIELDS;
             $FORM_ITEMS .= ",".$DOCTOR_COMMENT;
+            break;
+        case "DENTAL":
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DENTAL_PROPERTIES;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VACCINATION":
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VACCINATION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VISION":
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VISION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VITAMIN":
+            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VITAMIN;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         default:
             if (is_numeric($settingId)){

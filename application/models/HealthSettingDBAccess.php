@@ -403,29 +403,13 @@ Class HealthSettingDBAccess {
         return ($isAddObjectItem) ? $data : implode(",", $data);
     }
 
-    public static function getHealthComboItems($objectIndex)
+    public static function getListObjectIndizes($objectIndex)
     {
-
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
         $SQL->where("OBJECT_INDEX = ?", $objectIndex);
         //error_log($SQL);
-        $result = self::dbAccess()->fetchAll($SQL);
-
-        $data = array();
-
-        $data[0] = "['0','[---]']";
-
-        if ($result)
-        {
-            $i = 0;
-            foreach ($result as $value)
-            {
-                $data[$i + 1] = "['" . $value->ID . "','" . UserAuth::isDefaultSystemLanguage() ? $value->NAME_EN : $value->NAME . "']";
-                $i++;
-            }
-        }
-        return "[" . implode(",", $data) . "]";
+        return self::dbAccess()->fetchAll($SQL);
     }
 
 }
