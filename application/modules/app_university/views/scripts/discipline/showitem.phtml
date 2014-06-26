@@ -79,11 +79,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_PUNISHMENT->allowBlank = "true";
         $OBJECT_PUNISHMENT->width = 250;
         $OBJECT_PUNISHMENT->varName = "PUNISHMENT_TYPE";
-        $OBJECT_PUNISHMENT->setLoadParams("
-            cmd: 'jsonPunishment'
-            ,objectType:'PUNISHMENT_TYPE'
-            ,shareId: ".$this->disciplineObject->DISCIPLINE_TYPE."
-        ");
+        if ($this->objectId !="new") {
+            $OBJECT_PUNISHMENT->setLoadParams("
+                cmd: 'jsonPunishment'
+                ,objectType:'PUNISHMENT_TYPE'
+                ,shareId: ".$this->disciplineObject->DISCIPLINE_TYPE."
+            ");
+        }
         $OBJECT_PUNISHMENT->renderJS();
         ///
 
