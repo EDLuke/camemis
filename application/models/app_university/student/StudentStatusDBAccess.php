@@ -159,6 +159,7 @@ class StudentStatusDBAccess extends StudentDBAccess {
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
         $singleDate = isset($params["SINGLE_START_DATE"]) ? setDate2DB($params["SINGLE_START_DATE"]) : "";
         $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
+        
         $studentStatusObject = self::getSQLCurrentStudentStatus($studentId);
 
         if ($startDate && $endDate)
