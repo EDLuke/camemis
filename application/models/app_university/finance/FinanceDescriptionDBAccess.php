@@ -232,7 +232,7 @@
                             break;
                         case "ITEM":
                             $data[$i]['leaf'] = true;
-                            $data[$i]['cls'] = "nodeText";
+                            $data[$i]['cls'] = "nodeTextBlue";
                             $data[$i]['iconCls'] = "icon-application_form_magnify";
                             break;
                     }

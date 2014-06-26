@@ -1997,7 +1997,7 @@ class StaffDBAccess {
 
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = $value->CODE . " " . setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-                    $data[$i]['cls'] = "nodeText";
+                    $data[$i]['cls'] = "nodeTextBlue";
                     $data[$i]['iconCls'] = "icon-user";
                     $data[$i]['leaf'] = true;
                     $i++;

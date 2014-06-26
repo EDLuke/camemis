@@ -158,7 +158,7 @@ class AdminHelpDBAccess {
 
             $data[$i]['text'] = $value->NAME_ENGLISH;
             $data[$i]['id'] = "" . $value->ID . "";
-            $data[$i]['cls'] = "nodeText";
+            $data[$i]['cls'] = "nodeTextBlue";
             $data[$i]['iconCls'] = "icon-application_form_magnify";
             $data[$i]['leaf'] = true;
             $i++;

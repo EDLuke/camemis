@@ -248,7 +248,7 @@
                             $data[$i]['iconCls'] = "icon-folder_magnify";
                         } else {
                             $data[$i]['leaf'] = true;
-                            $data[$i]['cls'] = "nodeText";
+                            $data[$i]['cls'] = "nodeTextBlue";
                             $data[$i]['iconCls'] = "icon-plugin";
                         }
                     }

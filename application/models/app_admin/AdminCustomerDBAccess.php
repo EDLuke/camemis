@@ -481,7 +481,7 @@ class AdminCustomerDBAccess {
                 $data[$i]['id'] = "" . $value->GUID . "";
                 $data[$i]['text'] = stripslashes($value->URL);
                 $data[$i]['iconCls'] = "icon-school";
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['leaf'] = true;
                 $i++;
             }

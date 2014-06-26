@@ -208,7 +208,7 @@ class DescriptionDBAccess {
                     case "ITEM":
                         $data[$i]['text'] = $value->NAME;
                         $data[$i]['leaf'] = true;
-                        $data[$i]['cls'] = "nodeText";
+                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                         break;
                 }
