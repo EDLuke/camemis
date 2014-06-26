@@ -174,7 +174,7 @@ Ext.onReady(function() {
     $JS_EVENT.="if(!node.isLeaf()){ ";
         $JS_EVENT.="url='".$this->URL_SHOW_MANAGE_ITEM."&objectId='+node.id;var isCollapse = true;isDisabled = false;";
     $JS_EVENT.="}else{";
-        $JS_EVENT.="url='".$this->URL_SHOW_SUB_MANAGE_ITEM."&objectId='+node.id; var isCollapse = false; isDisabled = true;";
+        $JS_EVENT.="url='".$this->URL_SHOW_SUB_MANAGE_ITEM."&parentId='+node.attributes.parent+'&objectId='+node.id; var isCollapse = false; isDisabled = true;";
     $JS_EVENT.="} ";
 
     $JS_EVENT.="var contextMenu = new Ext.menu.Menu({";
