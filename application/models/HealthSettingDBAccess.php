@@ -403,13 +403,38 @@ Class HealthSettingDBAccess {
         return ($isAddObjectItem) ? $data : implode(",", $data);
     }
 
-    public static function getListObjectIndizes($objectIndex)
+    public static function getListObjectIndizes($objectIndex, $objecttype = false)
     {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
         $SQL->where("OBJECT_INDEX = ?", $objectIndex);
+        if ($objecttype)
+        {
+            $SQL->where("OBJECT_TYPE = ?", $objecttype);
+        }
+        else
+        {
+            $SQL->where("OBJECT_TYPE = ?", "SUBITEM");
+        }
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
+    }
+
+    public static function updateChildItem($Id)
+    {
+        $facette = self::findHealthSettingFromId($Id);
+        $entries = self::getListObjectIndizes($facette->OBJECT_INDEX, "ITEM");
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
+                $SAVEDATA['FIELD_TYPE'] = $facette->FIELD_TYPE;
+                $SAVEDATA['FIELD_TYPE'] = $facette->FIELD_TYPE;
+                $SAVEDATA['OBJECT_TYPE'] = $facette->OBJECT_INDEX;
+                $WHERE = self::dbAccess()->quoteInto("PARENT = ?", $Id);
+                self::dbAccess()->update('t_health_setting', $SAVEDATA, $WHERE);
+            }
+        }
     }
 
 }
