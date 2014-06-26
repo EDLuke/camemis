@@ -494,6 +494,7 @@ class FacilityDBAccess {
                     }
 
                     $data[$i]['id'] = $value->ID;
+                    $data[$i]['parent'] = $value->PARENT;
                     $data[$i]['text'] = $value->NAME ? stripslashes($value->NAME) : "?";
                 }
 
