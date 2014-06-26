@@ -445,7 +445,7 @@ Ext.onReady(function() {
     $SHOW_DETAIL .="text: '".SHOW_DETAIL."'";
     $SHOW_DETAIL .=",iconCls: 'icon-application_form_magnify'";
     $SHOW_DETAIL .=",handler: function(){";
-    $SHOW_DETAIL .="clickOpenPage('CONTENT','','/facility/subshowmanageitem/?&objectId=' + record.data.ID);";
+    $SHOW_DETAIL .="clickOpenPage('CONTENT','','/facility/subshowmanageitem/?parentId='+record.data.PARENT+'&objectId=' + record.data.ID);";
     $SHOW_DETAIL .="}";
     $SHOW_DETAIL .="}";
     $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
