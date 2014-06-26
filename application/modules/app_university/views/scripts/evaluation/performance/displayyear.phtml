@@ -164,7 +164,7 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 100,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 80,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
@@ -182,9 +182,9 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 100, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 100, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 80, sortable: true, renderer: cssDefault, dataIndex: 'AVERAGE_TOTAL',filter:{}");
     
     switch($TERM_NUMBER){
         case 1:
