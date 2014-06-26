@@ -1594,7 +1594,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             $data[$i]['text'] = $dayName;
             $data[$i]['leaf'] = true;
             $data[$i]['checked'] = $checkDay;
-            $data[$i]['cls'] = "nodeText";
+            $data[$i]['cls'] = "nodeTextBlue";
             $data[$i]['iconCls'] = "icon-tabs";
         }
         return $data;
@@ -1874,7 +1874,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 $data[$i]['id'] = $value->CLASS_ID;
                 $data[$i]['text'] = $value->CLASS_NAME;
                 $data[$i]['leaf'] = true;
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['iconCls'] = "icon-blackboard";
 
                 $i++;
@@ -1910,7 +1910,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $data[$i]['id'] = $value->SUBJECT_ID;
                     $data[$i]['text'] = $value->SUBJECT_NAME;
                     $data[$i]['leaf'] = true;
-                    $data[$i]['cls'] = "nodeText";
+                    $data[$i]['cls'] = "nodeTextBlue";
                     $data[$i]['iconCls'] = "icon-flag_pink";
 
                     $i++;
@@ -2046,7 +2046,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             {
                 $data[$i]['id'] = $value->GUID;
                 $data[$i]['text'] = setShowText($value->NAME) . " (" . $value->NUMBER_OF_STUDENTS . ")";
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['iconCls'] = "icon-blackboard";
                 $data[$i]['academicId'] = $value->ID;
                 $data[$i]['gradeId'] = $value->GRADE_ID;

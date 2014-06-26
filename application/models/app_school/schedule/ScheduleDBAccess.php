@@ -2415,7 +2415,7 @@ class ScheduleDBAccess {
                         $data[$i]['id'] = "" . $value->ID . "";
                         $data[$i]['text'] = setShowText($value->NAME);
                         $data[$i]['iconCls'] = "icon-shape_square_link";
-                        $data[$i]['cls'] = "nodeText";
+                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['leaf'] = true;
                         $data[$i]['checked'] = self::checkSharedScheduleAcademic($scheduleId, $value->ID);
                         $i++;

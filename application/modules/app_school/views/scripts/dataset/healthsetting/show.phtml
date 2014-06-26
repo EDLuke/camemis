@@ -27,8 +27,6 @@ if($this->objectId == "new"){
     $parentId = $facette?$facette->PARENT:'';    
 }
 
-HealthSettingDBAccess::updateChildItem($this->objectId);
-
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>

@@ -2947,6 +2947,7 @@ function setExtRadioGroup($varname, $column = 1, $object)
         {
             $js .= $i ? "," : "";
             $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: '" . $varname . "', inputValue: " . $value->ID . "}";
+            $i++;
         }
     }
     $js .= "]";
@@ -2958,7 +2959,7 @@ function setExtCheckboxGroup($varname, $column = 1, $object)
 {
     $js = "";
     $js .= "xtype: 'checkboxgroup'";
-    $js .= ",columns: 3";
+    $js .= ",columns: " . $column . "";
     $js .= ",fieldLabel: ''";
     $js .= ",labelSeparator: ''";
     $js .= ",items: [";
@@ -2969,6 +2970,7 @@ function setExtCheckboxGroup($varname, $column = 1, $object)
         {
             $js .= $i ? "," : "";
             $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: '" . $varname . "_" . $value->ID . "', inputValue: " . $value->ID . "}";
+            $i++;
         }
     }
     $js .= "]";

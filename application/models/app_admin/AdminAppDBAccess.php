@@ -137,19 +137,19 @@ class AdminAppDBAccess {
                         } else {
                             switch ($value->USER_RIGHT) {
                                 case "READ_RIGHT":
-                                    $data[$i]['cls'] = "nodeText";
+                                    $data[$i]['cls'] = "nodeTextBlue";
                                     $data[$i]['iconCls'] = "icon-bullet_square_grey";
                                     break;
                                 case "EDIT_RIGHT":
-                                    $data[$i]['cls'] = "nodeText";
+                                    $data[$i]['cls'] = "nodeTextBlue";
                                     $data[$i]['iconCls'] = "icon-bullet_square_green";
                                     break;
                                 case "REMOVE_RIGHT":
-                                    $data[$i]['cls'] = "nodeText";
+                                    $data[$i]['cls'] = "nodeTextBlue";
                                     $data[$i]['iconCls'] = "icon-bullet_square_red";
                                     break;
                                 case "EXECUTE_RIGHT":
-                                    $data[$i]['cls'] = "nodeText";
+                                    $data[$i]['cls'] = "nodeTextBlue";
                                     $data[$i]['iconCls'] = "icon-bullet_square_yellow";
                                     break;
                             }

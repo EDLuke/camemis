@@ -180,7 +180,7 @@ class OrganizationDBAccess {
                         break;
                 }
 
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['leaf'] = true;
 
                 $i++;

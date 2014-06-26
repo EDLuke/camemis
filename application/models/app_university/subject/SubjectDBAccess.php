@@ -541,11 +541,11 @@ class SubjectDBAccess {
                 $check = $this->checkSubjectByTeacher($teacherId, $value->ID);
 
                 $data[$i]['iconCls'] = "icon-page";
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['leaf'] = true;
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = setShowText($value->NAME);
-                $data[$i]['cls'] = "nodeText";
+                $data[$i]['cls'] = "nodeTextBlue";
                 $data[$i]['readonly'] = true;
                 $data[$i]['checked'] = $check ? true : false;
 

@@ -175,7 +175,7 @@
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME);
 
-                    $data[$i]['cls'] = "nodeText";
+                    $data[$i]['cls'] = "nodeTextBlue";
                     $data[$i]['leaf'] = true;
                     if($userId){
 

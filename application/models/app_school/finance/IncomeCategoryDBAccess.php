@@ -278,7 +278,7 @@
                         } else {
                             $data[$i]['text'] = "(".$value->ACCOUNT_NUMBER . ") " . $value->NAME;
                             $data[$i]['leaf'] = true;
-                            $data[$i]['cls'] = "nodeText";
+                            $data[$i]['cls'] = "nodeTextBlue";
                             $data[$i]['iconCls'] = "icon-plugin";
                         }
                     }

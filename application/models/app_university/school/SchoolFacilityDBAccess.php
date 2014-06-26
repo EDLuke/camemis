@@ -215,7 +215,7 @@ class SchoolFacilityDBAccess {
                     case "ITEM":
 
                         $data[$i]['leaf'] = true;
-                        $data[$i]['cls'] = "nodeText";
+                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                         if ($value->TYPE == "SCHOOL") {
                             $data[$i]['text'] = $value->NAME . " (" . $value->COUNT . ")";

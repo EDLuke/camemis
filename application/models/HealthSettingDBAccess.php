@@ -102,34 +102,50 @@ Class HealthSettingDBAccess {
         );
     }
 
-    public static function updateChildren($Id, $type = false) {
-
-        $facette = self::findHealthSettingFromId($Id);
-
-        $SAVEDATA = array();
-        if ($facette) {
-            if ($type) {
-                $SAVEDATA['FIELD_TYPE'] = $type;
-            } else {
-                $SAVEDATA['FIELD_TYPE'] = $facette->FIELD_TYPE;
-            }
-            $SAVEDATA['OBJECT_TYPE'] = $facette->OBJECT_TYPE;
-            $SAVEDATA['FIELD_IS_REQUIRED'] = $facette->FIELD_IS_REQUIRED;
-            $SAVEDATA['OBJECT_INDEX'] = $facette->OBJECT_INDEX;
-            $SAVEDATA['DISPLAY_SEARCH_RESULT'] = $facette->DISPLAY_SEARCH_RESULT;
-            $SAVEDATA['DISPLAY_SEARCH_FORM'] = $facette->DISPLAY_SEARCH_FORM;
-            $SAVEDATA['NOT_REMOVE'] = $facette->NOT_REMOVE;
-            $SAVEDATA['OBJECT_DISPLAY'] = $facette->OBJECT_DISPLAY;
-            $WHERE = self::dbAccess()->quoteInto("PARENT = ?", $parentId);
-            self::dbAccess()->update('t_health_setting', $SAVEDATA, $WHERE);
-        }
-    }
+//    public static function updateChildren($Id, $type = false) {
+//
+//        $facette = self::findHealthSettingFromId($Id);
+//        $parentObject = self::findHealthSettingFromId($facette->PARENT);
+//        $SAVEDATA = array();
+//
+//        if ($facette && $parentObject) {
+//            if ($type) {
+//                $SAVEDATA['FIELD_TYPE'] = $type;
+//            } else {
+//                $SAVEDATA['FIELD_TYPE'] = $parentObject->FIELD_TYPE;
+//            }
+//
+//            switch ($parentObject->OBJECT_TYPE) {
+//                case "FOLDER":
+//                    $SAVEDATA['OBJECT_TYPE'] = "ITEM";
+//                    break;
+//                case "ITEM":
+//                    $SAVEDATA['OBJECT_TYPE'] = "SUBITEM";
+//                    break;
+//            }
+//
+//            $SAVEDATA['FIELD_IS_REQUIRED'] = $parentObject->FIELD_IS_REQUIRED;
+//            $SAVEDATA['OBJECT_INDEX'] = $parentObject->OBJECT_INDEX;
+//            $SAVEDATA['DISPLAY_SEARCH_RESULT'] = $parentObject->DISPLAY_SEARCH_RESULT;
+//            $SAVEDATA['DISPLAY_SEARCH_FORM'] = $parentObject->DISPLAY_SEARCH_FORM;
+//            $SAVEDATA['NOT_REMOVE'] = $parentObject->NOT_REMOVE;
+//            $SAVEDATA['OBJECT_DISPLAY'] = $parentObject->OBJECT_DISPLAY;
+//            $WHERE = self::dbAccess()->quoteInto("PARENT = ?", $parentObject->PARENT);
+//            self::dbAccess()->update('t_health_setting', $SAVEDATA, $WHERE);
+//        }
+//    }
 
     public static function findHealthSettingFromId($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("ID = ?", $Id);
+
+        if (is_numeric($Id)) {
+            $SQL->where("ID = ?", $Id);
+        } else {
+            $SQL->where("OBJECT_INDEX = ?", $Id);
+        }
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -248,14 +264,14 @@ Class HealthSettingDBAccess {
                                 break;
                         }
                         $data[$i]['leaf'] = false;
-                        $data[$i]['cls'] = "nodeText";
+                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-folder_magnify";
                         break;
                     case "SUBITEM":
                         $data[$i]['text'] = setShowText($name);
                         $data[$i]['leaf'] = true;
                         $data[$i]['disabled'] = false;
-                        $data[$i]['cls'] = "nodeText";
+                        $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                         break;
                 }
@@ -373,28 +389,25 @@ Class HealthSettingDBAccess {
     }
 
     public static function getListObjectIndizes($objectIndex, $objecttype = false) {
+
+        $facette = self::findHealthSettingFromId($objectIndex);
+
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("OBJECT_INDEX = ?", $objectIndex);
-        if ($objecttype) {
-            $SQL->where("OBJECT_TYPE = ?", $objecttype);
-        } else {
-            $SQL->where("OBJECT_TYPE = ?", "SUBITEM");
-        }
+        $SQL->where("PARENT = ?", $facette ? $facette->ID : "0");
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function updateChildItem($Id) {
-        $facette = self::findHealthSettingFromId($Id);
-        $entries = self::getListObjectIndizes($facette->OBJECT_INDEX, "ITEM");
-        if ($entries) {
-            foreach ($entries as $value) {
-                self::updateChildren($Id, false);
-            }
-        }
-    }
-
+//    public static function updateChildItem($Id) {
+//        $facette = self::findHealthSettingFromId($Id);
+//        $entries = self::getListObjectIndizes($facette->OBJECT_INDEX, "ITEM");
+//        if ($entries) {
+//            foreach ($entries as $value) {
+//                self::updateChildren($Id, false);
+//            }
+//        }
+//    }
 }
 
 ?>
