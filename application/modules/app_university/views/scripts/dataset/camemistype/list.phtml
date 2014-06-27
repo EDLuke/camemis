@@ -107,6 +107,16 @@ Ext.onReady(function() {
             var setDisabled = true;    
         }
         
+        if(node.attributes.parent>0){
+            if(node.attributes.type == "DISCIPLINE_TYPE_STUDENT" || node.attributes.type == "DISCIPLINE_TYPE_STAFF"){
+                var nameAdd = '<?=ADD_A_NEW_ITEM;?> (<?=KIND_OF_PUNISHMENT;?>)';
+            }else{
+                var nameAdd = '<?=ADD_A_NEW_ITEM;?>';
+            }
+        }else{
+            var nameAdd = '<?=ADD_A_NEW_ITEM;?>';
+        }
+        
         var contextMenu = new Ext.menu.Menu({
             items: [{
                 text: '<?=SHOW_DETAIL;?>'
@@ -115,7 +125,7 @@ Ext.onReady(function() {
                     clickOpenPage('center','<?=SHOW_DETAIL?> &raquo; ' + node.text, '<?=$this->URL_SHOW_CAMEMIS_TYPE;?>objectId=' + node.id);
                 }
             },{
-                text: '<?=ADD_A_NEW_ITEM;?>'
+                text: nameAdd
                 ,iconCls:'icon-application_form_add'
                 ,disabled:setDisabled
                 ,handler: function(){

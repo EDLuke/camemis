@@ -248,6 +248,7 @@ class CamemisTypeDBAccess {
             foreach ($result as $value) {
 
                 $data[$i]['id'] = "" . $value->ID . "";
+                $data[$i]['parent'] = "" . $value->PARENT . "";
                 $data[$i]['text'] = stripslashes($value->NAME);
                 $data[$i]['type'] = setShowText($value->OBJECT_TYPE);
 
