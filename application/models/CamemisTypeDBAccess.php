@@ -331,9 +331,14 @@ class CamemisTypeDBAccess {
                         $SAVEDATA['OBJECT_TYPE'] = $parentObject->OBJECT_TYPE;
                         break;
                     case "DISCIPLINE_TYPE_STUDENT":
+                        if ($parentObject->IS_PARENT) {
+                            $SAVEDATA['OBJECT_TYPE'] = "PUNISHMENT_TYPE_STUDENT";
+                            $SAVEDATA['IS_PARENT'] = 0;
+                        }
+                        break;
                     case "DISCIPLINE_TYPE_STAFF":
                         if ($parentObject->IS_PARENT) {
-                            $SAVEDATA['OBJECT_TYPE'] = "PUNISHMENT_TYPE";
+                            $SAVEDATA['OBJECT_TYPE'] = "PUNISHMENT_TYPE_STAFF";
                             $SAVEDATA['IS_PARENT'] = 0;
                         }
                         break;
