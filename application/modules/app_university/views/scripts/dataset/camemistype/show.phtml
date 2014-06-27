@@ -18,8 +18,6 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("CAMEMISTYPE");
 
 $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
-$OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
-$get_objectType = CamemisTypeDBAccess::findObjectFromId($this->objectId);
     
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -56,47 +54,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ]
             }]
         ");
-        
-        if($get_objectType){
-            if($get_objectType->OBJECT_TYPE == 'PUNISHMENT_TYPE' && $get_objectType->PARENT != 0){
-                $objectType = "DISCIPLINE_TYPE_STUDENT";
-                $data = array();
-                $CHECK_DATA = array();
-                $i = 0;
-                $get_disciplineType = CamemisTypeDBAccess::findObjectType($objectType);
-                    $form = "title: '".DISCIPLINE."'";
-                    $form .= ",collapsible: true";
-                    $form .= ",collapsed: false";
-                    $form .= ",autoHeight: true";
-                    $form .= ",style: 'padding-bottom: 5px'";
-                    $form .= ",width: 550";
-                    $form .= ",items:[{";
-                    $form .= "layout: 'form'";
-                    $form .= ",border: false";
-                    $form .= ",autoHeight:true";
-                    $form .= ",bodyStyle: 'padding:10px'";
-                    $form .= ",items: [";
-                    if($get_disciplineType){
-                        
-                        foreach($get_disciplineType as $result){   
-                            $data[$i] = "{".CamemisField::Checkbox($result->ID,$result->ID, $result->NAME, 1, false)."}";
-                            $i++;
-                        }
-                    }
-                    for($j=($i-1); $j >= 0; $j--){
-                        
-                        $form .= $data[$j];
-                        $form .= ",";
-                            
-                    }
-                    $form .= "]";
-                    $form .= "}]";
-                    
-                    $OBJECT_FORM->addObjectItems($form);
-                
-            }
-        }
-        
         
         $OBJECT_FORM->addObjectItems("
             title: '".DESCRIPTION."'

@@ -14,71 +14,63 @@ class CamemisTypeDBAccess {
 
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
-    
-    public static function findObjectFromId($Id)
-    {
+
+    public static function findObjectFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_camemis_type'));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL);
-        
+
         return self::dbAccess()->fetchRow($SQL);
     }
-    
+
     //@Visal
-    public static function findObjectType($objectType)
-    {
+    public static function findObjectType($objectType) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_camemis_type'));
-        $SQL->where("OBJECT_TYPE = ?",$objectType);
+        $SQL->where("OBJECT_TYPE = ?", $objectType);
         $SQL->where("PARENT <> 0");
-        
+
         //error_log($SQL); 
-               
+
         return self::dbAccess()->fetchAll($SQL);
     }
-    
-    public static function jsonPunishment($params)
-    {
+
+    public static function jsonPunishment($params) {
         $shareId = isset($params["shareId"]) ? addText($params["shareId"]) : "";
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
-        
+
         $data = array();
-        $i= 0;
+        $i = 0;
         $result = self::findObjectType($objectType);
         $data[$i]["ID"] = "0";
         $data[$i]["NAME"] = "[---]";
-        
-        if($result){
-            foreach($result as $value){
+
+        if ($result) {
+            foreach ($result as $value) {
                 $share = explode(",", $value->SHARED_ID);
-                if(in_array($shareId, $share)){
-                     $data[$i + 1]["ID"] = $value->ID;
-                     $data[$i + 1]["NAME"] = $value->NAME;
-                     $i++;
+                if (in_array($shareId, $share)) {
+                    $data[$i + 1]["ID"] = $value->ID;
+                    $data[$i + 1]["NAME"] = $value->NAME;
+                    $i++;
                 }
-                           
             }
         }
 
@@ -89,8 +81,7 @@ class CamemisTypeDBAccess {
         );
     }
 
-    public static function getCamemisTypeComboData($objectType, $isParent = false)
-    {
+    public static function getCamemisTypeComboData($objectType, $isParent = false) {
 
         $data = array();
         $result = self::getCamemisType($objectType, $isParent);
@@ -98,8 +89,7 @@ class CamemisTypeDBAccess {
         $data[0] = "[\"0\",\"[---]\"]";
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i + 1] = "[\"$value->ID\",\"" . addslashes($value->NAME) . "\"]";
                 $i++;
             }
@@ -107,16 +97,12 @@ class CamemisTypeDBAccess {
         return "[" . implode(",", $data) . "]";
     }
 
-    public static function getCamemisType($objectType, $isParent = false)
-    {
+    public static function getCamemisType($objectType, $isParent = false) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('t_camemis_type'));
-        if ($isParent)
-        {
+        if ($isParent) {
             $SQL->where("PARENT=0");
-        }
-        else
-        {
+        } else {
             $SQL->where("PARENT<>0");
         }
         if ($objectType)
@@ -125,52 +111,41 @@ class CamemisTypeDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getObjectDataFromId($Id)
-    {
+    public static function getObjectDataFromId($Id) {
 
         $result = self::findObjectFromId($Id);
 
         $data = array();
-        if ($result)
-        {
+        if ($result) {
             $data["ID"] = $result->ID;
             $data["NAME"] = setShowText($result->NAME);
-            if ($result->DESCRIPTION)
-            {
+            if ($result->DESCRIPTION) {
                 $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
-            }
-            else
-            {
+            } else {
                 $data["DESCRIPTION"] = "---";
             }
-            
+
             $CHECK_DATA = explode(",", $result->SHARED_ID);
-            if($CHECK_DATA){
-               foreach($CHECK_DATA as $check){
+            if ($CHECK_DATA) {
+                foreach ($CHECK_DATA as $check) {
                     $data[$check] = 1;
-               } 
+                }
             }
-            
-            
         }
 
         return $data;
     }
 
-    public static function loadCamemisType($Id)
-    {
+    public static function loadCamemisType($Id) {
 
         $result = self::findObjectFromId($Id);
 
-        if ($result)
-        {
+        if ($result) {
             $o = array(
                 "success" => true
                 , "data" => self::getObjectDataFromId($Id)
             );
-        }
-        else
-        {
+        } else {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -180,8 +155,7 @@ class CamemisTypeDBAccess {
         return $o;
     }
 
-    public static function getAllCamemisTypeQuery($params)
-    {
+    public static function getAllCamemisTypeQuery($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
@@ -193,27 +167,20 @@ class CamemisTypeDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('t_camemis_type'));
 
-        if ($parentId)
-        {
-            $SQL->where("PARENT = ?",$parentId);
-        }
-        else
-        {
+        if ($parentId) {
+            $SQL->where("PARENT = ?", $parentId);
+        } else {
 
             $SQL->where("PARENT=0");
         }
 
-        if ($facette)
-        {
+        if ($facette) {
             $SQL->where("OBJECT_TYPE='" . $facette->OBJECT_TYPE . "'");
-        }
-        else
-        {
+        } else {
             if ($objectType)
                 $SQL->where("OBJECT_TYPE='" . $objectType . "'");
         }
-        if ($readonly)
-        {//@veasna
+        if ($readonly) {//@veasna
             $SQL->where("READONLY='" . $readonly . "'");
         }
 
@@ -223,51 +190,40 @@ class CamemisTypeDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function checkChild($Id)
-    {
-        if ($Id)
-        {
+    public static function checkChild($Id) {
+        if ($Id) {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_camemis_type", array("C" => "COUNT(*)"));
             $SQL->where("PARENT = " . $Id . "");
             //error_log($SQL);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
     ///@veasna
 
-    public static function jsonTreeCatagories($params)
-    {
+    public static function jsonTreeCatagories($params) {
 
         $params["parentId"] = isset($params["node"]) ? addText($params["node"]) : "0";
-        if ($params["node"] == "0")
-        {
+        if ($params["node"] == "0") {
             $params["parentId"] = $params["objectId"];
         }
         $result = self::getAllCamemisTypeQuery($params);
         $data = array();
         $i = 0;
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = stripslashes($value->NAME);
                 $data[$i]['type'] = setShowText($value->OBJECT_TYPE);
-                if (self::checkChild($value->ID))
-                {
+                if (self::checkChild($value->ID)) {
                     $data[$i]['leaf'] = false;
                     $data[$i]['iconCls'] = "forum-parent";
                     $data[$i]['cls'] = "forum-ct";
-                }
-                else
-                {
+                } else {
                     $data[$i]['leaf'] = true;
                     $data[$i]['iconCls'] = "icon-forum";
                     $data[$i]['cls'] = "forum";
@@ -281,48 +237,38 @@ class CamemisTypeDBAccess {
 
     //
 
-    public static function jsonTreeAllCamemisType($params)
-    {
+    public static function jsonTreeAllCamemisType($params) {
         $parentId = isset($params["node"]) ? addText($params["node"]) : 0;
         $params["parentId"] = isset($params["node"]) ? addText($params["node"]) : "0";
         $result = self::getAllCamemisTypeQuery($params);
         $data = array();
         $i = 0;
 
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
 
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = stripslashes($value->NAME);
                 $data[$i]['type'] = setShowText($value->OBJECT_TYPE);
 
-                if (!self::checkChild($value->ID))
-                {
-                    if ($value->IS_PARENT)
-                    {
+                if (!self::checkChild($value->ID)) {
+                    if ($value->IS_PARENT) {
                         $data[$i]['leaf'] = false;
                         $data[$i]['iconCls'] = "icon-folder_magnify";
                         $data[$i]['cls'] = "nodeTextBold";
-                    }
-                    else
-                    {
+                    } else {
                         $data[$i]['leaf'] = true;
                         $data[$i]['isParent'] = $value->IS_PARENT;
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                         $data[$i]['cls'] = "nodeTextBlue";
                     }
-                }
-                else
-                {
+                } else {
                     $data[$i]['leaf'] = false;
                     $data[$i]['iconCls'] = "icon-folder_magnify";
                     $data[$i]['cls'] = "nodeTextBold";
                 }
 
-                if (!$parentId)
-                {
+                if (!$parentId) {
                     $data[$i]['leaf'] = false;
                     $data[$i]['iconCls'] = "icon-folder_magnify";
                     $data[$i]['cls'] = "nodeTextBold";
@@ -335,70 +281,71 @@ class CamemisTypeDBAccess {
         return $data;
     }
 
-    public static function jsonSaveCamemisType($params)
-    {
+    public static function jsonSaveCamemisType($params) {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : 0;
         $objectType = "DISCIPLINE_TYPE_STUDENT";
         $shared = "";
         $data = array();
         $i = 0;
-        
+
         $result = self::findObjectType($objectType);
         $count = count($result);
-            foreach($result as $value){
-                $data[$i] = isset($params[$value->ID])? addText($params[$value->ID]):"";
-                if($data[$i] == 1){
-                    $shared .= $value->ID;
-                    if($i <($count - 1)){
-                        $shared .= ","; 
-                    }
+        foreach ($result as $value) {
+            $data[$i] = isset($params[$value->ID]) ? addText($params[$value->ID]) : "";
+            if ($data[$i] == 1) {
+                $shared .= $value->ID;
+                if ($i < ($count - 1)) {
+                    $shared .= ",";
                 }
-                $i++;
             }
-            
+            $i++;
+        }
+
         $SAVEDATA = array();
 
         if ($shared)
             $SAVEDATA['SHARED_ID'] = addText($shared);
-            
+
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
 
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
-        if ($objectId == "new")
-        {
+        if ($objectId == "new") {
             $SAVEDATA['PARENT'] = $parentId;
             $parentObject = self::findObjectFromId($parentId);
-            if ($parentObject)
-            {
-                $SAVEDATA['OBJECT_TYPE'] = $parentObject->OBJECT_TYPE;
-                switch ($parentObject->OBJECT_TYPE)
-                {
+
+            if ($parentObject) {
+
+                switch ($parentObject->OBJECT_TYPE) {
                     case "FORUM_ALUMNI":
                     case "FORUM_ELEARNING":
                     case "MAJOR_TYPE":
-                        if ($parentObject->READONLY)
-                        {
+                        if ($parentObject->READONLY) {
                             $SAVEDATA['IS_PARENT'] = $parentObject->IS_PARENT;
+                        } else {
+                            $SAVEDATA['IS_PARENT'] = 0;
                         }
-                        else
-                        {
+                        $SAVEDATA['OBJECT_TYPE'] = $parentObject->OBJECT_TYPE;
+                        break;
+                    case "DISCIPLINE_TYPE_STUDENT":
+                    case "DISCIPLINE_TYPE_STAFF":
+                        if ($parentObject->IS_PARENT) {
+                            $SAVEDATA['OBJECT_TYPE'] = "PUNISHMENT_TYPE";
                             $SAVEDATA['IS_PARENT'] = 0;
                         }
                         break;
                     default:
                         $SAVEDATA['IS_PARENT'] = $parentObject->IS_PARENT;
+                        $SAVEDATA['OBJECT_TYPE'] = $parentObject->OBJECT_TYPE;
                         break;
                 }
             }
             self::dbAccess()->insert('t_camemis_type', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
-        }
-        else
-        {
+        } else {
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_camemis_type', $SAVEDATA, $WHERE);
         }
@@ -409,15 +356,13 @@ class CamemisTypeDBAccess {
         );
     }
 
-    public static function jsonRemoveCamemisType($Id)
-    {
+    public static function jsonRemoveCamemisType($Id) {
 
         self::dbAccess()->delete('t_camemis_type', array("ID='" . $Id . "'"));
         return array("success" => true);
     }
 
-    public static function comboxCamemisType($objectType, $isParent = 0)
-    {
+    public static function comboxCamemisType($objectType, $isParent = 0) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('t_camemis_type'));
@@ -428,11 +373,9 @@ class CamemisTypeDBAccess {
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $json = "[";
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $json .= $i ? "," : "";
                 $json .= "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . addslashes(setShowText($value->NAME)) . "'}";
                 $i++;
