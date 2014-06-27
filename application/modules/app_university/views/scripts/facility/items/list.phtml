@@ -104,7 +104,6 @@ Ext.onReady(function() {
         ,iconCls:'icon-application_form_add'
         ,handler: function(){   
             clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_MANAGE_ITEM."&objectId=new');
-            //Ext.getCmp('WEST_ID').collapse();
         }
     ");
     
@@ -183,7 +182,6 @@ Ext.onReady(function() {
          $JS_EVENT.=",iconCls:'icon-application_form_magnify'";
          $JS_EVENT.=",handler:function(){ ";
              $JS_EVENT.="clickOpenPage('center','',url);";
-             //$JS_EVENT.="if (isCollapse) Ext.getCmp('WEST_ID').collapse();";
          $JS_EVENT.="} ";
          
     $JS_EVENT.="},{";
@@ -198,7 +196,6 @@ Ext.onReady(function() {
     
         $JS_EVENT .="text: '".IMPORT_FROM_EXCEL."'";
             $JS_EVENT .=",iconCls:'icon-database_copy'";
-            #$JS_EVENT.=",disabled:isDisabled";
             $JS_EVENT .=",menu:[{";
                 $JS_EVENT .="text: '".EXCEL_TEMPLATE."'";
                 $JS_EVENT .=",iconCls:'icon-page_excel'";
