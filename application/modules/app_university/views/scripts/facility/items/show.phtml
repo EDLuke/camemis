@@ -20,7 +20,7 @@ $OBJECT_FORM = new CamemisForm("FACILITY");
 $OBJECT_FORM->setSaveUrl("/facility/jsonsave/");
 $OBJECT_FORM->setLoadUrl("/facility/jsonload/");
 
-$OBJECT_FACILITY_TYPE_TREE = new CamemisTree("FACILITY", "LIST");
+$OBJECT_FACILITY_TYPE_TREE = new CamemisTree("FACILITY_TYPE", "LIST");
 $OBJECT_FACILITY_TYPE_TREE->setURL("/facility/jsontree/");
 $OBJECT_FACILITY_TYPE_TREE->setSaveUrl("/facility/jsonsave/");
 
@@ -38,7 +38,9 @@ if($this->facette){
         $facette=FacilityDBAccess::getAllFacilityItem($subParams);
         $CHECK_ADD_ENTRY=(count($facette)>=1)?'true':'false';
     }
-}     
+}
+
+$parentId = isset($_GET['parentId'])?addText($_GET['parentId']):0;    
 
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -223,10 +225,10 @@ Ext.onReady(function() {
         $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
         
         $OBJECT_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$this->objectId."');
-            if(myNode.parentNode==null){
+            myNode = myTree.getNodeById('".$parentId."');
+            if(myNode.parentNode.id==null){
                 myTree.root.reload();
             }else{
                 var parentId = myNode.parentNode.id
@@ -249,9 +251,9 @@ Ext.onReady(function() {
         ");
         
         $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."');
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$this->objectId."');
+            myNode = myTree.getNodeById('".$parentId."');
             if(myNode.parentNode==null){
                 myTree.root.reload();
             }else{
@@ -275,11 +277,10 @@ Ext.onReady(function() {
         ");
         
     }else{
-        
         $OBJECT_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$this->parentId."');
+            myNode = myTree.getNodeById('".$parentId."');
             if(myNode.parentNode==null){
                 myTree.root.reload();
             }else{
@@ -299,7 +300,8 @@ Ext.onReady(function() {
                     }
                 }
             }
-            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
         ");
     }
     
@@ -471,10 +473,8 @@ Ext.onReady(function() {
         $html .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
             $html .="var record = grid.store.getAt(rowIndex);";
             $html .="Ext.getCmp('CONTENT').getLayout().setActiveItem(0);";
-            //
             $html .="var check_in=(record.data.ITEM_STATUS=='CHECK-IN')?true:false;";
             $html .="var check_out=(record.data.ITEM_STATUS=='CHECK-OUT')?true:false;";
-            //
             $html .="var contextMenu = new Ext.menu.Menu({";
             $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
             $html .="});";

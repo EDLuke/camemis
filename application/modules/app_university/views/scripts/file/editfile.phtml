@@ -249,7 +249,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ");
                 
                 $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                    XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."'); 
                     myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');
                     myNode = myTree.getNodeById('".$parentId."');
                     if(myNode.parentNode==null){
