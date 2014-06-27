@@ -20,6 +20,13 @@ class DBWebservices {
         return Zend_Registry::get('DB_ACCESS');
     }
 
+    protected static function exceptionDB() {
+        return array(
+            'camemis_admin' => 'camemis_admin'
+            , 'cam_admin' => 'cam_admin'
+        );
+    }
+
     public static function getCAMEMISDatabases() {
 
         $SQL = "SHOW DATABASES";
@@ -68,10 +75,7 @@ class DBWebservices {
 
     public static function getListLocalization() {
 
-        $SQL = "SELECT DISTINCT * FROM t_localization";
-        $result = self::dbAccess()->fetchAll($SQL);
-
-        return $result;
+        return self::dbAccess()->fetchAll("SELECT DISTINCT * FROM t_localization");
     }
 
     public static function jsonActionDBTable($params) {
@@ -241,12 +245,6 @@ class DBWebservices {
         $SQL .= " WHERE 1=1";
 
         if ($globalSearch) {
-            /*
-              if ($language != "ENGLISH") {
-              $SQL .= " AND ((" . $language . " like '%" . $globalSearch . "%') OR (CONST like '%" . $globalSearch . "%') ";
-              $SQL .= " ) ";
-              }
-             */
             $SQL .= " AND ((" . $language . " like '%" . $globalSearch . "%') OR (CONST like '%" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
@@ -311,24 +309,16 @@ class DBWebservices {
 
     public static function jsonActionSQLStatements($params) {
 
-
         $SQL_STATEMENTS = isset($params["SQL_STATEMENTS"]) ? trim($params["SQL_STATEMENTS"]) : null;
 
         $entries = self::getCAMEMISDatabases();
-
-        $CHECK_DATA = array(
-            'camemis_admin' => 'camemis_admin'
-            , 'cam_admin' => 'cam_admin'
-            , 'camemis_efront1' => 'camemis_efront1'
-            , 'camemis_moodle' => 'camemis_moodle'
-        );
+        $CHECK_DATA = self::exceptionDB();
 
         if ($entries) {
 
             foreach ($entries as $DB_NAME) {
                 //error_log($DB_NAME);
                 if (!in_array($DB_NAME, $CHECK_DATA)) {
-
                     $DB_PARAMS = array(
                         'host' => 'localhost',
                         'username' => Zend_Registry::get('CHOOSE_DB_USER'),
@@ -342,6 +332,35 @@ class DBWebservices {
             }
         }
         return array("success" => true);
+    }
+
+    public static function getTablesByDBName($dbname) {
+
+        return self::dbAccess()->fetchAll("SHOW TABLES FROM " . $dbname . "");
+    }
+
+    public static function actionOptimizeTable() {
+        $entries = self::getCAMEMISDatabases();
+        $CHECK_DATA = self::exceptionDB();
+        if ($entries) {
+
+            foreach ($entries as $DB_NAME) {
+                if (!in_array($DB_NAME, $CHECK_DATA)) {
+                    $tables = self::getTablesByDBName($DB_NAME);
+                    if ($tables) {
+                        foreach ($tables as $value) {
+                            $name = "Tables_in_" . $DB_NAME;
+                            $SQL = "OPTIMIZE TABLE " . $value->$name . "";
+                            self::dbAccess()->query($SQL);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static function actionCustomerBackUp() {
+        
     }
 
 }
