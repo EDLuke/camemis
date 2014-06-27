@@ -122,14 +122,14 @@ Ext.onReady(function() {
                 text: '<?=SHOW_DETAIL;?>'
                 ,iconCls:'icon-application_form_magnify'
                 ,handler:function(){
-                    clickOpenPage('center','<?=SHOW_DETAIL?> &raquo; ' + node.text, '<?=$this->URL_SHOW_CAMEMIS_TYPE;?>objectId=' + node.id);
+                    clickOpenPage('center','<?=SHOW_DETAIL?> &raquo; ' + node.text, '/dataset/showcamemistype/?objectId=' + node.id);
                 }
             },{
                 text: nameAdd
                 ,iconCls:'icon-application_form_add'
                 ,disabled:setDisabled
                 ,handler: function(){
-                    clickOpenPage('center','<?=ADD_A_NEW_ITEM?>', '<?=$this->URL_SHOW_CAMEMIS_TYPE;?>objectId=new&parentId=' + node.id);
+                    clickOpenPage('center','<?=ADD_A_NEW_ITEM?>', '/dataset/showcamemistype/?objectId=new&parentId=' + node.id);
                 }
             }]
         });

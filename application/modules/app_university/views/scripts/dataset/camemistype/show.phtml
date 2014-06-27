@@ -18,6 +18,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_FORM = new CamemisForm("CAMEMISTYPE");
 
 $OBJECT_FORM->setSaveUrl("/dataset/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/dataset/jsonload/");
     
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
