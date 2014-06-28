@@ -23,17 +23,13 @@ $setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
 $settingId = isset($_GET["settingId"]) ? addText($_GET["settingId"]):"";
 $target = isset($_GET["target"]) ? addText($_GET["target"]):"";
 
-$facette = StudentHealthDBAccess::findStudentHealth($setId, $this->objectId, false);
+$studentObject = StudentDBAccess::findStudentFromId($this->objectId);
 
-if($settingId == 2){
-    $FIRST_GRID = new CamemisGrid("HEALTH", "FIRST");
-    $FIRST_GRID->setLoadUrl('/student/jsonload/');
-    $FIRST_GRID->setSaveUrl('/student/jsonsave/');
-
-    $SECOND_GRID = new CamemisGrid("HEALTH", "SECOND");
-    $SECOND_GRID->setLoadUrl('/student/jsonload/');
-    $SECOND_GRID->setSaveUrl('/student/jsonsave/');
+if(!$studentObject){
+    exit;
 }
+
+$facette = StudentHealthDBAccess::findStudentHealth($setId, $this->objectId, false);
 
 if($facette){
     $target = $facette->OBJECT_TYPE;
@@ -58,6 +54,43 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
+    $DETAIL_INFORMATION_ITEMS = "";
+    $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}";
+    
+    $PERSONAL_INFORMATION = "
+    {
+        title: '".PERSONAL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom:5px'
+        ,width: 550
+        ,bodyStyle: 'padding:3px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,frame:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[
+                {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
+                ,{".CamemisField::Displayfield("LASTNAME", LASTNAME, setShowText($studentObject->LASTNAME),false,false,false)."}
+                ,{".CamemisField::Displayfield("DATE_BIRTH", DATE_BIRTH, getShowDate($studentObject->DATE_BIRTH),false,false,false)."}
+                ,{".CamemisField::Displayfield("AGE", AGE, StudentDBAccess::getAge($studentObject->ID),false,false,false)."}
+            ]
+        }]
+    }";
+    
+    switch($target){
+        case "VISION":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('VISION_OTHER', 'VISION_OTHER', "Other", true)."}";
+            break;
+        case "MEDICAL_VISIT":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}";
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}";
+            break;
+    }
+    
     $DETAIL_INFORMATION = "
     {
         title: '".DETAIL_INFORMATION."'
@@ -71,12 +104,9 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items:[
-                {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
-            ]
+            ,items:[".$DETAIL_INFORMATION_ITEMS."]
         }]
-    }
-    ";
+    }";
 
     $DESCRIPTION = "
     {
@@ -114,9 +144,9 @@ Ext.onReady(function() {
     }
     ";
     
-    $MEDICAL_VISIT_FIELDS = "
+    $MEDICAL_VISIT = "
     {
-        title: '".DETAIL_INFORMATION."'
+        title: 'Visited by'
         ,collapsible: true
         ,collapsed: false
         ,autoHeight: true
@@ -130,10 +160,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items:[
-                {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
-                ,{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}
-            ]
+            ,items: [{".setExtRadioGroup("MEDICAL_VISIT_BY",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
         }]
     },{
         title: 'Reason'
@@ -150,24 +177,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("MEDICAL_VISIT_REASON",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_REASON"))."}]
-        }]
-    },{
-        title: 'Visited by'
-        ,collapsible: true
-        ,collapsed: false
-        ,autoHeight: true
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,autoHeight: true
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("MEDICAL_VISIT_BY",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
+            ,items: [{".setExtCheckboxGroup("MEDICAL_VISIT_REASON",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_REASON"))."}]
         }]
     }
     ";
@@ -274,7 +284,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("ET",2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
+            ,items: [{".setExtCheckboxGroup("ET",2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
         }]
     },{
         title: 'Eye Chart'
@@ -353,7 +363,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("KIND_OF_INJURY",2, HealthSettingDBAccess::getListObjectIndizes("KIND_OF_INJURY"))."}]
+            ,items: [{".setExtCheckboxGroup("KIND_OF_INJURY",2, HealthSettingDBAccess::getListObjectIndizes("KIND_OF_INJURY"))."}]
         }]
     }
     ";
@@ -434,40 +444,42 @@ Ext.onReady(function() {
     
     $FORM_ITEMS = "[";
     
+    $FORM_ITEMS .= $PERSONAL_INFORMATION;
     switch($target){
         case "BMI":
-            $FORM_ITEMS .= $BMI_FIELDS;
+            $FORM_ITEMS .= ",".$BMI_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "INJURY":
-            $FORM_ITEMS .= $INJURY_FIELDS;
+            $FORM_ITEMS .= ",".$INJURY_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "GROWTH_CHART":
-            $FORM_ITEMS .= $GROWTH_CHART_FIELDS;
+            $FORM_ITEMS .= ",".$GROWTH_CHART_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "MEDICAL_VISIT":
-            $FORM_ITEMS .= $MEDICAL_VISIT_FIELDS;
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$MEDICAL_VISIT;
             $FORM_ITEMS .= ",".$DOCTOR_COMMENT;
             break;
         case "DENTAL":
-            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
             $FORM_ITEMS .= ",".$DENTAL_PROPERTIES;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "VACCINATION":
-            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
             $FORM_ITEMS .= ",".$VACCINATION;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "VISION":
-            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
             $FORM_ITEMS .= ",".$VISION;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "VITAMIN":
-            $FORM_ITEMS .= $DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
             $FORM_ITEMS .= ",".$VITAMIN;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;

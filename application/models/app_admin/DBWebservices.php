@@ -413,7 +413,6 @@ class DBWebservices {
         {
             foreach ($entries as $DB_NAME)
             {
-                error_log($DB_NAME);
                 if (!in_array($DB_NAME, $CHECK_DATA))
                 {
                     $tables = self::getTablesByDBName($DB_NAME);

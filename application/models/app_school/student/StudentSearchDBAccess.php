@@ -257,7 +257,7 @@ class StudentSearchDBAccess {
                 $data[$i]["EMAIL"] = setShowText($value->EMAIL);
                 $data[$i]["PHONE"] = setShowText($value->PHONE);
                 $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
-                $data[$i]["AGE"] = self::getAge($value->ID);
+                $data[$i]["AGE"] = StudentDBAccess::getAge($value->ID);
                 $data[$i]["NATIONALITY"] = self::getCamemisType($value->NATIONALITY);
                 $data[$i]["RELIGION"] = self::getCamemisType($value->RELIGION);
                 $data[$i]["ETHNIC_GROUPS"] = self::getCamemisType($value->ETHNIC);
@@ -357,15 +357,6 @@ class StudentSearchDBAccess {
         $data["CURRENT_SCHOOLYEAR"] = $facette ? $facette->SCHOOLYEAR : "---";
         $data["CURRENT_ACADEMIC"] = $facette ? $facette->ACADEMIC : "---";
         return (object) $data;
-    }
-
-    public static function getAge($studentId) {
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student", array("DATE_FORMAT(FROM_DAYS(TO_DAYS(NOW())-TO_DAYS(DATE_BIRTH)), '%Y')+0 AS AGE"));
-        $SQL->where("ID = '" . $studentId . "'");
-        //echo $SQL->__toString();
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->AGE : "--";
     }
 }
 
