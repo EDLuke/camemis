@@ -171,7 +171,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $infractionDate = isset($params["INFRACTION_DATE"]) ? setDate2DB($params["INFRACTION_DATE"]) : "";
-        $punishmentType = isset($params["PUNISHMENT_TYPE"]) ? $params["PUNISHMENT_TYPE"] : "";
+        $punishmentType = isset($params["PUNISHMENT_TYPE"]) ? addText($params["PUNISHMENT_TYPE"]) : "";
         $comment = isset($params["COMMENT"]) ? $params["COMMENT"] : "";
         $personType = isset($params["personType"]) ? $params["personType"] : ""; //@Man
         switch ($personType) {
@@ -223,12 +223,12 @@ class DisciplineDBAccess extends StudentDBAccess {
 
             if ($comment)
                 $SAVEDATA['COMMENT'] = addText($comment);
-
-            if ($disciplineType)
-                $SAVEDATA['DISCIPLINE_TYPE'] = addText($disciplineType);
-
+            
             if ($punishmentType)
                 $SAVEDATA['PUNISHMENT_TYPE'] = addText($punishmentType);
+               
+            if ($disciplineType)
+                $SAVEDATA['DISCIPLINE_TYPE'] = addText($disciplineType);
 
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
