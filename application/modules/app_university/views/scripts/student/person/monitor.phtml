@@ -301,16 +301,16 @@ Ext.onReady(function() {
                 $viewport .= ",split: true";
             $viewport .= "}";
             
-            switch(UserAuth::getUserType()){
-                case "SUPERADMIN":
-                case "ADMIN":
-                if($this->noSudentComboLsit){
-                    $viewport .= ",tbar:['->',{";
-                        $viewport .= "xtype: 'buttongroup',items:[{xtype:'STUDENT_LIST_COMBO'}]";
-                    $viewport .= "}]";
-                    break;
-                }
-            }
+//            switch(UserAuth::getUserType()){
+//                case "SUPERADMIN":
+//                case "ADMIN":
+//                if($this->noSudentComboLsit){
+//                    $viewport .= ",tbar:['->',{";
+//                        $viewport .= "xtype: 'buttongroup',items:[{xtype:'STUDENT_LIST_COMBO'}]";
+//                    $viewport .= "}]";
+//                    break;
+//                }
+//            }
             
             $viewport .= ",items: [{";
                 $viewport .= "region:'west'";
