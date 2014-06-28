@@ -131,6 +131,21 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
         */
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        //@Visal 
+        $OBJECT_PUNISHMENT = new CamemisDynCombo("DATASET","RIGHT_PUNISHMENT");
+        $OBJECT_PUNISHMENT->setLoadUrl("/dataset/jsonload/");
+        $OBJECT_PUNISHMENT->objectTitle = PUNISHMENT ;
+        $OBJECT_PUNISHMENT->allowBlank = "true";
+        $OBJECT_PUNISHMENT->width = 150;
+        $OBJECT_PUNISHMENT->varName = "PUNISHMENT_TYPE";
+        /*$OBJECT_PUNISHMENT->setLoadParams("
+            cmd: 'jsonPunishment'
+            ,objectType:'PUNISHMENT_TYPE_STUDENT'
+            ,objectId: ".$this->disciplineObject->DISCIPLINE_TYPE."
+        ");*/
+        $OBJECT_PUNISHMENT->renderJS();
+        ///
 
         $OBJECT_FORM->addObjectItems("
            xtype:'fieldset'
@@ -196,6 +211,7 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
                         ,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
                         ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
                         ,{".CamemisField::comboCamemisTypes($DISCIPLINE_TYPE, $INFRACTION_TYPE, false,150, false)."}
+                        ,{xtype:'".$OBJECT_PUNISHMENT->getObjectXType()."'}
                     ]
                 ");
             break;
@@ -252,10 +268,7 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
         $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
         $OBJECT_GRID->addReadField("name: 'STATUS'");
         $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
-        $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
         $OBJECT_GRID->addReadField("name: 'CODE'");
-        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
-        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
         $OBJECT_GRID->addReadField("name: 'INFRACTION_DATE'");
         $OBJECT_GRID->addReadField("name: 'DISCIPLINE_TYPE'");
         $OBJECT_GRID->addReadField("name: 'INFRACTION_TYPE'");
@@ -355,10 +368,10 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
                     ,minSize: 350
                     ,maxSize: 350
                     ,keys:{
-                            key:[13]
-                            ,fn: keyEnter
-                            ,scope:this
-                        }
+                        key:[13]
+                        ,fn: keyEnter
+                        ,scope:this
+                    }
                     ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
                 },{
                     title: ''
@@ -404,6 +417,21 @@ $columndata = Utiles::getGridColumnData("DISCIPLINE_".$personType."_LIST_ID");
         <?
         }
         ?>
+        var comboDiscipline=Ext.getCmp('DISCIPLINE_TYPE_STUDENT');
+        var comboPunishment=Ext.getCmp('<?=$OBJECT_PUNISHMENT->getObjectId();?>');
+        comboPunishment.disable();
+        if(comboDiscipline){
+            comboDiscipline.on('select', function() {
+                var disId = comboDiscipline.getValue();
+                comboPunishment.enable();
+                comboPunishment.store.baseParams={
+                    cmd: 'jsonPunishment'
+                    ,objectId:disId
+                    ,objectType:'PUNISHMENT_TYPE_STUDENT'
+                };
+                comboPunishment.store.reload()
+            });
+        }
         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
 </script>
