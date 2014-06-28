@@ -276,6 +276,7 @@ class DisciplineDBAccess extends StudentDBAccess {
         $target = isset($params["target"]) ? addText($params["target"]) : '';        //@veasna  
         $academictype = isset($params["academictype"]) ? addText($params["academictype"]) : '';
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : '';
+        $punishment = isset($params["PUNISHMENT_TYPE"]) ? addText($params["PUNISHMENT_TYPE"]) : '';
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : '';
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : '';
         $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : '';
@@ -366,6 +367,8 @@ class DisciplineDBAccess extends StudentDBAccess {
             $SQL .= " AND D.CLASS = '" . $classId . "'";
         if ($disciplineType)
             $SQL .= " AND A.DISCIPLINE_TYPE = " . $disciplineType . "";
+        if ($punishment)
+            $SQL .= " AND A.PUNISHMENT_TYPE = " . $punishment . "";
 
         if ($startDate && $endDate) {
             $SQL .= " AND A.INFRACTION_DATE >= '" . setDate2DB($startDate) . "' AND A.INFRACTION_DATE <= '" . setDate2DB($endDate) . "'";
