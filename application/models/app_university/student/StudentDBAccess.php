@@ -2406,6 +2406,8 @@ class StudentDBAccess {
 
     public static function setCurrentStudentAcademic($studentId = false)
     {
+        ini_set('max_execution_time', 600000);
+        set_time_limit(35000);
 
         if ($studentId)
         {
@@ -2433,7 +2435,8 @@ class StudentDBAccess {
         }
     }
 
-    public static function getAge($studentId) {
+    public static function getAge($studentId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student", array("DATE_FORMAT(FROM_DAYS(TO_DAYS(NOW())-TO_DAYS(DATE_BIRTH)), '%Y')+0 AS AGE"));
         $SQL->where("ID = '" . $studentId . "'");
@@ -2441,6 +2444,7 @@ class StudentDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->AGE : "--";
     }
+
 }
 
 ?>

@@ -2478,6 +2478,9 @@ class StudentDBAccess {
     public static function setCurrentStudentAcademic($studentId = false, $callBack = false)
     {
 
+        ini_set('max_execution_time', 600000);
+        set_time_limit(35000);
+
         if ($studentId)
         {
             $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
