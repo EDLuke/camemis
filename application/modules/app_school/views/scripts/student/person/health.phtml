@@ -392,26 +392,32 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("EYE_CHART"),2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
         }]
-    },{
-        title: 'Values for left eye'
-        ,collapsible: true
-        ,collapsed: false
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,height:420
-        ,layout:'fit'
-        ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
-    },{
-        title: 'Values for right eye'
-        ,collapsible: true
-        ,collapsed: false
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,height:420
-        ,layout:'fit'
-        ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
     }
     ";
+    
+    if($facette){
+        $VISION .= "
+        ,{
+            title: 'Values for left eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
+        },{
+            title: 'Values for right eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
+        }
+        ";
+    }
     
     $GROWTH_CHART_FIELDS = "
     {

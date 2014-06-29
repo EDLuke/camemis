@@ -552,76 +552,6 @@ class StudentHealthDBAccess {
             }
         }
 
-//        $params = Utiles::setPostDecrypteParams($encrypParams);
-//        $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
-//        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-//        $settingId = isset($params["settingId"]) ? addText($params["settingId"]) : "";
-//
-//        $result = self::findStudentHealth($setId, $objectId, $settingId);
-//
-//        $SQL = self::dbAccess()->select();
-//        $SQL->from("t_student_medical_item", array('*'));
-//        $SQL->where("MEDICAL_ID='" . $setId . "'");
-//        $SQL->where("STUDENT_ID='" . $objectId . "'");
-//        //error_log($SQL->__toString());
-//        $entries = self::dbAccess()->fetchAll($SQL);
-//
-//        if ($result)
-//        {
-//
-//            $data["MEDICAL_DATE"] = getShowDate($result->MEDICAL_DATE);
-//            $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
-//            $data["BMI"] = setShowText($result->BMI);
-//            $data["WEIGHT"] = setShowText($result->WEIGHT);
-//            $data["HEIGHT"] = setShowText($result->HEIGHT);
-//            $data["PULSE"] = setShowText($result->PULSE);
-//            $data["BLOOD_PRESSURE"] = setShowText($result->BLOOD_PRESSURE);
-//            $data["DOCTOR_NAME"] = setShowText($result->DOCTOR_NAME);
-//            $data["REASON"] = setShowText($result->REASON);
-//            $data["DOCTOR_COMMENT"] = setShowText($result->DOCTOR_COMMENT);
-//            $data["NEXT_VISIT"] = getShowDate($result->NEXT_VISIT);
-//
-//            foreach ($entries as $value)
-//            {
-//
-//                $facette = self::getHealthSetting($value->ITEM);
-//
-//                if ($facette)
-//                {
-//                    switch ($facette->FIELD_TYPE)
-//                    {
-//                        case 1:
-//                            $data["CHECKBOX_" . $facette->ID] = true;
-//                            break;
-//                        case 2:
-//                            $data["RADIOBOX_" . $facette->PARENT] = $facette->ID;
-//                            break;
-//                        case 3:
-//                            $data["INPUTFIELD_" . $facette->ID] = $value->FIELD_DESCRIPTION;
-//                            break;
-//                        case 4:
-//                            $data["TEXTAREA_" . $facette->ID] = $value->FIELD_DESCRIPTION;
-//                            break;
-//                        case 5:
-//                            $data["DATE_" . $facette->ID] = $value->FIELD_DATE;
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            $o = array(
-//                "success" => true
-//                , "data" => $data
-//            );
-//        }
-//        else
-//        {
-//            $o = array(
-//                "success" => true
-//                , "data" => array()
-//            );
-//        }
-
         $o = array(
             "success" => true
             , "data" => $data
@@ -681,7 +611,7 @@ class StudentHealthDBAccess {
                 $data[$i]["PLACE"] = setShowText($value->PLACE);
                 $data[$i]["REASON"] = setShowText($value->REASON);
                 $data[$i]["DOCTOR_COMMENT"] = setShowText($value->DOCTOR_COMMENT);
-                $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
+                $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
                 $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
 
