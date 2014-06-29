@@ -133,14 +133,20 @@ class StudentHealthDBAccess {
             $SAVEDATA['REASON'] = addText($params["REASON"]);
         }
 
-        if (isset($params["DOCTOR_COMMENT"]))
+        if (isset($params["OTHER"]))
         {
-            $SAVEDATA['DOCTOR_COMMENT'] = addText($params["DOCTOR_COMMENT"]);
+            $SAVEDATA['OTHER'] = addText($params["OTHER"]);
+        }
+
+        if (isset($params["FULL_NAME"]))
+        {
+            $SAVEDATA['DOCTOR_NAME'] = addText($params["FULL_NAME"]);
         }
 
         if (isset($params["NEXT_VISIT"]))
         {
-            $SAVEDATA['NEXT_VISIT'] = setDate2DB($params["NEXT_VISIT"]);
+            if ($params["NEXT_VISIT"])
+                $SAVEDATA['NEXT_VISIT'] = setDate2DB($params["NEXT_VISIT"]);
         }
 
         if (isset($params["MEDICAL_DATE"]))
@@ -523,6 +529,9 @@ class StudentHealthDBAccess {
         {
             $data["MEDICAL_DATE"] = getShowDate($result->MEDICAL_DATE);
             $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
+            $data["FULL_NAME"] = setShowText($result->DOCTOR_NAME);
+            $data["DOCTOR_COMMENT"] = setShowText($result->DOCTOR_COMMENT);
+            $data["OTHER"] = setShowText($result->OTHER);
 
             $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
             if ($LIST_CHECKBOX)
