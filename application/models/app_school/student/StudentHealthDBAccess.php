@@ -11,23 +11,28 @@ class StudentHealthDBAccess {
 
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public static function getEyeData() {
+    public static function getEyeData()
+    {
         $data = array(
             1 => array("METRE" => "6/60", "FOOT" => "20/200", "DECIMAL" => "0.10", "LOGMAR" => "1.00"),
             2 => array("METRE" => "6/48", "FOOT" => "20/160", "DECIMAL" => "0.125", "LOGMAR" => "0.90"),
@@ -48,7 +53,8 @@ class StudentHealthDBAccess {
         return $data;
     }
 
-    public static function listHealthValuesOfEye($encrypParams) {
+    public static function listHealthValuesOfEye($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -58,8 +64,10 @@ class StudentHealthDBAccess {
 
         $data = array();
         $i = 0;
-        if (self::getEyeData()) {
-            foreach (self::getEyeData() as $key => $value) {
+        if (self::getEyeData())
+        {
+            foreach (self::getEyeData() as $key => $value)
+            {
                 $data[$i]["ID"] = $key;
                 $data[$i]["EYE_LEFT"] = ($key == $facette->EYE_LEFT) ? 1 : 0;
                 $data[$i]["EYE_RIGHT"] = ($key == $facette->EYE_RIGHT) ? 1 : 0;
@@ -78,76 +86,8 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function createStudentHealthItem($params) {
-
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
-
-        self::dbAccess()->delete('t_student_medical_item', array(
-            "STUDENT_ID='" . $objectId . "'"
-            , "MEDICAL_ID='" . $setId . "'"
-        ));
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_health_setting", array('*'));
-        //error_log($SQL);
-        $result = self::dbAccess()->fetchAll($SQL);
-
-        $SAVEDATA['MEDICAL_ID'] = $setId;
-        $SAVEDATA['STUDENT_ID'] = $objectId;
-
-        if ($result) {
-            foreach ($result as $value) {
-
-                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
-                $RADIOBOX = isset($params["RADIOBOX_" . $value->PARENT . ""]) ? addText($params["RADIOBOX_" . $value->PARENT . ""]) : "";
-                $INPUTFIELD = isset($params["INPUTFIELD_" . $value->ID . ""]) ? addText($params["INPUTFIELD_" . $value->ID . ""]) : "";
-                $TEXTAREA = isset($params["TEXTAREA_" . $value->ID . ""]) ? addText($params["TEXTAREA_" . $value->ID . ""]) : "";
-                $DATE = isset($params["DATE_" . $value->ID . ""]) ? $params["DATE_" . $value->ID . ""] : "";
-
-                $SAVEDATA['FIELD_DESCRIPTION'] = '';
-                $SAVEDATA['FIELD_DATE'] = '';
-
-                switch ($value->FIELD_TYPE) {
-                    case 1:
-                        if ($CHECKBOX) {
-                            $SAVEDATA['ITEM'] = $value->ID;
-                            self::dbAccess()->insert('t_student_medical_item', $SAVEDATA);
-                        }
-                        break;
-
-                    case 2:
-                        if ($RADIOBOX) {
-                            $SAVEDATA['ITEM'] = $RADIOBOX;
-                            self::dbAccess()->insert('t_student_medical_item', $SAVEDATA);
-                        }
-                        break;
-
-                    case 3:
-                        if ($INPUTFIELD) {
-                            $SAVEDATA['FIELD_DESCRIPTION'] = $INPUTFIELD;
-                            self::dbAccess()->insert('t_student_medical_item', $SAVEDATA);
-                        }
-                        break;
-
-                    case 4:
-                        if ($TEXTAREA) {
-                            $SAVEDATA['FIELD_DESCRIPTION'] = $TEXTAREA;
-                            self::dbAccess()->insert('t_student_medical_item', $SAVEDATA);
-                        }
-                        break;
-                    case 5:
-                        if ($DATE) {
-                            $SAVEDATA['DATE_FIELD'] = $DATE;
-                            self::dbAccess()->insert('t_student_medical_item', $SAVEDATA);
-                        }
-                        break;
-                }
-            }
-        }
-    }
-
-    public static function createStudentHealth($encrypParams) {
+    public static function createStudentHealth($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
@@ -158,73 +98,122 @@ class StudentHealthDBAccess {
 
         $SAVEDATA['OBJECT_TYPE'] = $target;
 
-        if (isset($params["DESCRIPTION"])) {
+        if (isset($params["DESCRIPTION"]))
+        {
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         }
 
-        if (isset($params["WEIGHT"])) {
+        if (isset($params["WEIGHT"]))
+        {
             $SAVEDATA['WEIGHT'] = addText($params["WEIGHT"]);
         }
 
-        if (isset($params["HEIGHT"])) {
+        if (isset($params["HEIGHT"]))
+        {
             $SAVEDATA['HEIGHT'] = addText($params["HEIGHT"]);
         }
 
-        if (isset($params["PULSE"])) {
+        if (isset($params["PULSE"]))
+        {
             $SAVEDATA['PULSE'] = addText($params["PULSE"]);
         }
 
-        if (isset($params["BLOOD_PRESSURE"])) {
+        if (isset($params["BLOOD_PRESSURE"]))
+        {
             $SAVEDATA['BLOOD_PRESSURE'] = addText($params["BLOOD_PRESSURE"]);
         }
 
-        if (isset($params["DOCTOR_NAME"])) {
+        if (isset($params["DOCTOR_NAME"]))
+        {
             $SAVEDATA['DOCTOR_NAME'] = addText($params["DOCTOR_NAME"]);
         }
 
-        if (isset($params["REASON"])) {
+        if (isset($params["REASON"]))
+        {
             $SAVEDATA['REASON'] = addText($params["REASON"]);
         }
 
-        if (isset($params["DOCTOR_COMMENT"])) {
+        if (isset($params["DOCTOR_COMMENT"]))
+        {
             $SAVEDATA['DOCTOR_COMMENT'] = addText($params["DOCTOR_COMMENT"]);
         }
 
-        if (isset($params["NEXT_VISIT"])) {
+        if (isset($params["NEXT_VISIT"]))
+        {
             $SAVEDATA['NEXT_VISIT'] = setDate2DB($params["NEXT_VISIT"]);
         }
 
-        if (isset($params["MEDICAL_DATE"])) {
+        if (isset($params["MEDICAL_DATE"]))
+        {
             $SAVEDATA['MEDICAL_DATE'] = setDate2DB($params["MEDICAL_DATE"]);
         }
 
-        if ($setId == "new") {
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_health_setting", array('*'));
+        //error_log($SQL);
+        $entries = self::dbAccess()->fetchAll($SQL);
+
+        $CHECKBOX_DATA = array();
+        $RADIOBOX_DATA = array();
+
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
+                $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
+                $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? addText($params["RADIOBOX_" . $value->ID . ""]) : "";
+                if ($CHECKBOX)
+                {
+                    $CHECKBOX_DATA[$value->ID] = $CHECKBOX;
+                }
+                if ($RADIOBOX)
+                {
+                    $RADIOBOX_DATA[$value->ID] = $RADIOBOX;
+                }
+            }
+        }
+
+        if ($CHECKBOX_DATA)
+        {
+            $SAVEDATA['CHECKBOX_DATA'] = implode(",", $CHECKBOX_DATA);
+        }
+
+        if ($RADIOBOX_DATA)
+        {
+            $SAVEDATA['RADIOBOX_DATA'] = implode(",", $RADIOBOX_DATA);
+        }
+
+        $SAVEDATA['DATA_ITEMS'] = implode(",", $RADIOBOX_DATA + $CHECKBOX_DATA);
+
+        if ($setId == "new")
+        {
             $SAVEDATA['MEDICAL_SETTING_ID'] = $settingId;
             $SAVEDATA['STUDENT_ID'] = $objectId;
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             self::dbAccess()->insert('t_student_medical', $SAVEDATA);
             $setId = self::dbAccess()->lastInsertId();
-        } else {
+        }
+        else
+        {
             $WHERE[] = "ID = '" . $setId . "'";
             self::dbAccess()->update('t_student_medical', $SAVEDATA, $WHERE);
         }
 
         $facette = self::findStudentHealth($setId, $objectId, false);
 
-        if ($facette) {
+        if ($facette)
+        {
             self::calculationBMI($facette->ID);
         }
-
-        if ($settingId)
-            self::createStudentHealthItem($params);
         return array(
             "success" => true
             , "setId" => $setId
         );
     }
 
-    public static function deleteStudentHealth($encrypParams) {
+    public static function deleteStudentHealth($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
@@ -237,20 +226,16 @@ class StudentHealthDBAccess {
             , "MEDICAL_SETTING_ID='" . $settingId . "'"
         ));
 
-        self::dbAccess()->delete('t_student_medical_item', array(
-            "STUDENT_ID='" . $objectId . "'"
-            , "MEDICAL_ID='" . $settingId . "'"
-        ));
-
         return array(
             "success" => true
         );
     }
 
-    public static function findStudentHealth($Id, $studentId = false, $settingId = false) {
+    public static function findStudentHealth($Id, $studentId = false, $settingId = false)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_medical", array('*'));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         if ($settingId)
             $SQL->where("MEDICAL_SETTING_ID='" . $settingId . "'");
         if ($studentId)
@@ -260,7 +245,8 @@ class StudentHealthDBAccess {
     }
 
     //@veasna
-    public static function sqlStudentHealth($params) {
+    public static function sqlStudentHealth($params)
+    {
 
         $studentId = isset($params['studentId']) ? $params['studentId'] : "";
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
@@ -284,7 +270,7 @@ class StudentHealthDBAccess {
         $EYE_LEFT = isset($params["EYE_LEFT"]) ? $params["EYE_LEFT"] : "";
         $EYE_RIGHT = isset($params["EYE_RIGHT"]) ? $params["EYE_RIGHT"] : "";
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
-        
+
         $BMI_STATUS = isset($params["BMI_STATUS"]) ? $params["BMI_STATUS"] : "";
 
         $SELECTION_C = array(
@@ -308,17 +294,18 @@ class StudentHealthDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_medical'), array('*'));
-        $SQL->joinLeft(array('B' => 't_student_medical_item'), 'A.ID=B.MEDICAL_ID', array("ITEM", "FIELD_DESCRIPTION", "FIELD_DATE"));
-        $SQL->joinLeft(array('C' => 't_student'), 'C.ID=A.STUDENT_ID', $SELECTION_C);
+        $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_C);
 
         if ($studentId)
             $SQL->where("A.STUDENT_ID='" . $studentId . "'");
 
-        if ($startDate && $endDate) {
+        if ($startDate && $endDate)
+        {
             $SQL->where("A.MEDICAL_DATE >='" . $startDate . "' AND A.MEDICAL_DATE <='" . $endDate . "'");
         }
 
-        if ($BMI_STATUS) {
+        if ($BMI_STATUS)
+        {
             $SQL->where("A.STATUS = '" . $BMI_STATUS . "'");
         }
 
@@ -349,8 +336,10 @@ class StudentHealthDBAccess {
         if ($EYE_RIGHT)
             $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
 
-        if ($health_type) {
-            switch ($health_type) {
+        if ($health_type)
+        {
+            switch ($health_type)
+            {
                 case 'GROWTH_CHART':
                 case 'MEDICAL_VISIT':
                 case 'BMI':
@@ -362,43 +351,39 @@ class StudentHealthDBAccess {
             }
         }
 
-        if ($healthItems)
-            $SQL->where("B.ITEM IN (" . $healthItems . ")");
-
         if ($code)
-            $SQL->where("C.CODE LIKE '" . $code . "%'");
+            $SQL->where("B.CODE LIKE '" . $code . "%'");
         if ($schoolCode)
-            $SQL->where("C.STUDENT_SCHOOL_ID LIKE '" . $code . "%'");
+            $SQL->where("B.STUDENT_SCHOOL_ID LIKE '" . $code . "%'");
         if ($firstname)
-            $SQL->where("C.FIRSTNAME LIKE '" . $firstname . "%'");
+            $SQL->where("B.FIRSTNAME LIKE '" . $firstname . "%'");
         if ($lastname)
-            $SQL->where("C.LASTNAME LIKE '" . $lastname . "%'");
+            $SQL->where("B.LASTNAME LIKE '" . $lastname . "%'");
         if ($gender)
-            $SQL->where("C.GENDER ='" . $gender . "'");
+            $SQL->where("B.GENDER ='" . $gender . "'");
         if ($religion)
-            $SQL->where("C.RELIGION='" . $religion . "'");
+            $SQL->where("B.RELIGION='" . $religion . "'");
         if ($ethnic)
-            $SQL->where("C.ETHNIC='" . $ethnic . "'");
+            $SQL->where("B.ETHNIC='" . $ethnic . "'");
         if ($nationality)
-            $SQL->where("C.NATIONALITY='" . $nationality . "'");
+            $SQL->where("B.NATIONALITY='" . $nationality . "'");
 
-        if(is_numeric($health_type)){
-            $SQL->group("B.MEDICAL_ID");
-        }
-        
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function searchStudentHealth($encrypParams, $isJson = true) {
+    public static function searchStudentHealth($encrypParams, $isJson = true)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
         $facette = "";
-        if ($health_type) {
-            switch ($health_type) {
+        if ($health_type)
+        {
+            switch ($health_type)
+            {
                 case 'GROWTH_CHART':
                 case 'MEDICAL_VISIT':
                 case 'BMI':
@@ -411,11 +396,15 @@ class StudentHealthDBAccess {
         }
 
         $healthItems = array();
-        if ($facette) {
-            foreach ($facette as $item) {
+        if ($facette)
+        {
+            foreach ($facette as $item)
+            {
                 $entries = HealthSettingDBAccess::sqlHealthSetting($item->ID, false);
-                foreach ($entries as $value) {
-                    switch ($value->FIELD_TYPE) {
+                foreach ($entries as $value)
+                {
+                    switch ($value->FIELD_TYPE)
+                    {
                         case 1:
                             if (isset($params["CHECKBOX_" . $value->ID]))
                                 $healthItems[] = $params["CHECKBOX_" . $value->ID];
@@ -424,43 +413,42 @@ class StudentHealthDBAccess {
                             if (isset($params["RADIOBOX_" . $item->ID]))
                                 $healthItems[] = $params["RADIOBOX_" . $item->ID];
                             break;
-                        case 3:
-                            //$data[] = "{xtype: 'textfield',id: 'INPUTFIELD_" . $value->ID . "'" . ",fieldLabel: '" . setShowText($name) . "',width:" . $width . ",name: 'INPUTFIELD_" . $value->ID . "'}";
-                            break;
-                        case 4:
-                            //$data[] = "{xtype: 'textarea',id: 'TEXTAREA_" . $value->ID . "'" . ",fieldLabel: '" . setShowText($name) . "',width:" . $width . ",name: 'TEXTAREA_" . $value->ID . "'}";
-                            break;
-                        case 5:
-                            //$data[] = "{xtype: 'datefield',id: 'DATEFIELD_" . $value->ID . "'" . ",fieldLabel: '" . setShowText($name) . "',width:" . $width . ",name: 'DATEFIELD_" . $value->ID . "'}";
-                            break;
                     }
                 }
             }
         }
-        if ($healthItems) {
+        if ($healthItems)
+        {
             $params['healthItems'] = implode(',', $healthItems);
         }
         //error_log(implode(',',$healthItems));
         $result = self::sqlStudentHealth($params);
         $data = array();
         $i = 0;
-        foreach ($result as $value) {
+        foreach ($result as $value)
+        {
 
             $data[$i]["CODE"] = $value->CODE;
             $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
             $data[$i]["ID"] = $value->ID;
             $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
             $data[$i]["FULLNAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            if (!SchoolDBAccess::displayPersonNameInGrid()) {
+            if (!SchoolDBAccess::displayPersonNameInGrid())
+            {
                 $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            } else {
+            }
+            else
+            {
                 $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
             }
             $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
             $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
-            if (!SchoolDBAccess::displayPersonNameInGrid()) {
+            if (!SchoolDBAccess::displayPersonNameInGrid())
+            {
                 $data[$i]["FULL_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            } else {
+            }
+            else
+            {
                 $data[$i]["FULL_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
             }
             $data[$i]["FIRSTNAME_LATIN"] = setShowText($value->FIRSTNAME_LATIN);
@@ -498,7 +486,8 @@ class StudentHealthDBAccess {
             $i++;
         }
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -509,83 +498,130 @@ class StudentHealthDBAccess {
             , "rows" => $a
         );
 
-        if ($isJson) {
+        if ($isJson)
+        {
             return $dataforjson;
-        } else {
+        }
+        else
+        {
             return $data;
         }
     }
 
-    public static function loadStudentHealth($encrypParams) {
+    public static function loadStudentHealth($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $settingId = isset($params["settingId"]) ? addText($params["settingId"]) : "";
-
         $result = self::findStudentHealth($setId, $objectId, $settingId);
 
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_medical_item", array('*'));
-        $SQL->where("MEDICAL_ID='" . $setId . "'");
-        $SQL->where("STUDENT_ID='" . $objectId . "'");
-        //error_log($SQL->__toString());
-        $entries = self::dbAccess()->fetchAll($SQL);
+        $data = array();
 
-        if ($result) {
-
+        if ($result)
+        {
             $data["MEDICAL_DATE"] = getShowDate($result->MEDICAL_DATE);
             $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
-            $data["BMI"] = setShowText($result->BMI);
-            $data["WEIGHT"] = setShowText($result->WEIGHT);
-            $data["HEIGHT"] = setShowText($result->HEIGHT);
-            $data["PULSE"] = setShowText($result->PULSE);
-            $data["BLOOD_PRESSURE"] = setShowText($result->BLOOD_PRESSURE);
-            $data["DOCTOR_NAME"] = setShowText($result->DOCTOR_NAME);
-            $data["REASON"] = setShowText($result->REASON);
-            $data["DOCTOR_COMMENT"] = setShowText($result->DOCTOR_COMMENT);
-            $data["NEXT_VISIT"] = getShowDate($result->NEXT_VISIT);
 
-            foreach ($entries as $value) {
-
-                $facette = self::getHealthSetting($value->ITEM);
-
-                if ($facette) {
-                    switch ($facette->FIELD_TYPE) {
-                        case 1:
-                            $data["CHECKBOX_" . $facette->ID] = true;
-                            break;
-                        case 2:
-                            $data["RADIOBOX_" . $facette->PARENT] = $facette->ID;
-                            break;
-                        case 3:
-                            $data["INPUTFIELD_" . $facette->ID] = $value->FIELD_DESCRIPTION;
-                            break;
-                        case 4:
-                            $data["TEXTAREA_" . $facette->ID] = $value->FIELD_DESCRIPTION;
-                            break;
-                        case 5:
-                            $data["DATE_" . $facette->ID] = $value->FIELD_DATE;
-                            break;
-                    }
+            $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
+            if ($LIST_CHECKBOX)
+            {
+                foreach ($LIST_CHECKBOX as $value)
+                {
+                    $data["CHECKBOX_" . $value] = true;
                 }
             }
-
-            $o = array(
-                "success" => true
-                , "data" => $data
-            );
-        } else {
-            $o = array(
-                "success" => true
-                , "data" => array()
-            );
+            $LIST_RADIOBOX = explode(",", $result->RADIOBOX_DATA);
+            if ($LIST_RADIOBOX)
+            {
+                foreach ($LIST_RADIOBOX as $value)
+                {
+                    $setting = HealthSettingDBAccess::findHealthSettingFromId($value);
+                    $data["RADIOBOX_" . $setting->PARENT] = $value;
+                }
+            }
         }
 
+//        $params = Utiles::setPostDecrypteParams($encrypParams);
+//        $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
+//        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+//        $settingId = isset($params["settingId"]) ? addText($params["settingId"]) : "";
+//
+//        $result = self::findStudentHealth($setId, $objectId, $settingId);
+//
+//        $SQL = self::dbAccess()->select();
+//        $SQL->from("t_student_medical_item", array('*'));
+//        $SQL->where("MEDICAL_ID='" . $setId . "'");
+//        $SQL->where("STUDENT_ID='" . $objectId . "'");
+//        //error_log($SQL->__toString());
+//        $entries = self::dbAccess()->fetchAll($SQL);
+//
+//        if ($result)
+//        {
+//
+//            $data["MEDICAL_DATE"] = getShowDate($result->MEDICAL_DATE);
+//            $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
+//            $data["BMI"] = setShowText($result->BMI);
+//            $data["WEIGHT"] = setShowText($result->WEIGHT);
+//            $data["HEIGHT"] = setShowText($result->HEIGHT);
+//            $data["PULSE"] = setShowText($result->PULSE);
+//            $data["BLOOD_PRESSURE"] = setShowText($result->BLOOD_PRESSURE);
+//            $data["DOCTOR_NAME"] = setShowText($result->DOCTOR_NAME);
+//            $data["REASON"] = setShowText($result->REASON);
+//            $data["DOCTOR_COMMENT"] = setShowText($result->DOCTOR_COMMENT);
+//            $data["NEXT_VISIT"] = getShowDate($result->NEXT_VISIT);
+//
+//            foreach ($entries as $value)
+//            {
+//
+//                $facette = self::getHealthSetting($value->ITEM);
+//
+//                if ($facette)
+//                {
+//                    switch ($facette->FIELD_TYPE)
+//                    {
+//                        case 1:
+//                            $data["CHECKBOX_" . $facette->ID] = true;
+//                            break;
+//                        case 2:
+//                            $data["RADIOBOX_" . $facette->PARENT] = $facette->ID;
+//                            break;
+//                        case 3:
+//                            $data["INPUTFIELD_" . $facette->ID] = $value->FIELD_DESCRIPTION;
+//                            break;
+//                        case 4:
+//                            $data["TEXTAREA_" . $facette->ID] = $value->FIELD_DESCRIPTION;
+//                            break;
+//                        case 5:
+//                            $data["DATE_" . $facette->ID] = $value->FIELD_DATE;
+//                            break;
+//                    }
+//                }
+//            }
+//
+//            $o = array(
+//                "success" => true
+//                , "data" => $data
+//            );
+//        }
+//        else
+//        {
+//            $o = array(
+//                "success" => true
+//                , "data" => array()
+//            );
+//        }
+
+        $o = array(
+            "success" => true
+            , "data" => $data
+        );
         return $o;
     }
 
-    public static function listStudentHealth($encrypParams) {
+    public static function listStudentHealth($encrypParams)
+    {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
@@ -601,7 +637,8 @@ class StudentHealthDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_medical", array('*'));
 
-        switch ($target) {
+        switch ($target)
+        {
             case "BMI":
             case "GROWTH_CHART":
             case "MEDICAL_VISIT":
@@ -618,8 +655,10 @@ class StudentHealthDBAccess {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
 
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["BMI"] = setShowText($value->BMI);
                 $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
@@ -642,7 +681,8 @@ class StudentHealthDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -654,7 +694,8 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function calculationBMI($Id) {
+    public static function calculationBMI($Id)
+    {
 
         $facette = self::findStudentHealth($Id, false, false);
 
@@ -669,20 +710,25 @@ class StudentHealthDBAccess {
         $value = "";
         $HEALTH_BMI_STANDARD = Zend_Registry::get('SCHOOL')->HEALTH_BMI_STANDARD;
         $STANDARD = $HEALTH_BMI_STANDARD ? $HEALTH_BMI_STANDARD : 1;
-        if ($facette) {
-            switch ($STANDARD) {
+        if ($facette)
+        {
+            switch ($STANDARD)
+            {
                 case 1:
-                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT))
+                    {
                         $value = round($facette->WEIGHT / pow($facette->HEIGHT / 100, 2), 2);
                     }
                     break;
                 case 2:
-                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT))
+                    {
                         $value = round((($facette->WEIGHT) / pow($facette->HEIGHT * 2.54, 2)) * 703, 2);
                     }
                     break;
             }
-            if ($value) {
+            if ($value)
+            {
                 $SQL = "UPDATE t_student_medical";
                 $SQL .= " SET";
                 $SQL .= " BMI='" . $value . "'";
@@ -693,7 +739,8 @@ class StudentHealthDBAccess {
         }
     }
 
-    public static function calculationBMIStatus($value) {
+    public static function calculationBMIStatus($value)
+    {
         /**
          * Underweight = <18.5
           Normal weight = 18.5–24.9
@@ -701,14 +748,22 @@ class StudentHealthDBAccess {
           Obesity = BMI of 30 or greater
          */
         $result = "";
-        if ($value) {
-            if ($value <= 18.49) {
+        if ($value)
+        {
+            if ($value <= 18.49)
+            {
                 $result = 1;
-            } elseif ($value >= 18.50 && $value <= 24.99) {
+            }
+            elseif ($value >= 18.50 && $value <= 24.99)
+            {
                 $result = 2;
-            } elseif ($value >= 25.00 && $value <= 29.99) {
+            }
+            elseif ($value >= 25.00 && $value <= 29.99)
+            {
                 $result = 3;
-            } elseif ($value >= 30.00) {
+            }
+            elseif ($value >= 30.00)
+            {
                 $result = 4;
             }
         }
@@ -716,8 +771,10 @@ class StudentHealthDBAccess {
         return $result;
     }
 
-    public static function showBMIStatus($value) {
-        switch ($value) {
+    public static function showBMIStatus($value)
+    {
+        switch ($value)
+        {
             case 1:
                 $result = "Underweight";
                 break;
@@ -738,22 +795,25 @@ class StudentHealthDBAccess {
         return $result;
     }
 
-    public static function getHealthSetting($Id) {
+    public static function getHealthSetting($Id)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
-        $SQL->where("ID = ?",$Id);
+        $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function actionStudentHealthEyeInfo($encrypParams) {
+    public static function actionStudentHealthEyeInfo($encrypParams)
+    {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $rowValue = isset($params["id"]) ? addText($params["id"]) : "";
 
         $WHERE[] = "ID = '" . $setId . "'";
-        switch ($field) {
+        switch ($field)
+        {
             case "EYE_LEFT":
                 $SAVEDATA["EYE_LEFT"] = addText($rowValue);
                 break;

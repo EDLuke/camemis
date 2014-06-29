@@ -29,6 +29,14 @@ if(!$studentObject){
     exit;
 }
 
+$FIRST_GRID = new CamemisGrid("HEALTH", "FIRST");
+$FIRST_GRID->setLoadUrl('/student/jsonload/');
+$FIRST_GRID->setSaveUrl('/student/jsonsave/');
+
+$SECOND_GRID = new CamemisGrid("HEALTH", "SECOND");
+$SECOND_GRID->setLoadUrl('/student/jsonload/');
+$SECOND_GRID->setSaveUrl('/student/jsonsave/');
+    
 $facette = StudentHealthDBAccess::findStudentHealth($setId, $this->objectId, false);
 
 if($facette){
@@ -53,6 +61,90 @@ Ext.onReady(function() {
     */
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //Foot	Metre	Decimal	LogMAR
+    $FIRST_GRID->addReadField("name: 'ID'");
+    $FIRST_GRID->addReadField("name: 'EYE_LEFT'");
+    $FIRST_GRID->addReadField("name: 'FOOT'");
+    $FIRST_GRID->addReadField("name: 'METRE'");
+    $FIRST_GRID->addReadField("name: 'DECIMAL'");
+    $FIRST_GRID->addReadField("name: 'LOGMAR'");
+    $FIRST_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".APPLY."</b>'
+        ,dataIndex: 'EYE_LEFT'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    $FIRST_GRID->addColumn("header: '<b>Foot</b>', align:'left', sortable: false, dataIndex: 'FOOT', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>Metre</b>', align:'left', sortable: false, dataIndex: 'METRE', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>Decimal</b>', align:'left', sortable: false, dataIndex: 'DECIMAL', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>LogMAR</b>', align:'left', sortable: false, dataIndex: 'LOGMAR', width: 100, renderer: cssText");
+    $FIRST_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'listHealthValuesOfEye'
+    ";
+
+    $FIRST_GRID->setSaveParams("
+        cmd: 'actionStudentHealthEyeInfo'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    $FIRST_GRID->setAftereditCallback("
+        Ext.getCmp('".$FIRST_GRID->getObjectId()."').store.reload(); 
+    ");
+    $FIRST_GRID->loadMask = false;
+    $FIRST_GRID->isPagingToolbar = true;
+    $FIRST_GRID->isGridEditing = true;
+    $FIRST_GRID->isObjectDefaultOnLoad = true;
+    $FIRST_GRID->forceFit = "false";
+    $FIRST_GRID->renderJS();
+
+    $SECOND_GRID->addReadField("name: 'ID'");
+    $SECOND_GRID->addReadField("name: 'EYE_RIGHT'");
+    $SECOND_GRID->addReadField("name: 'FOOT'");
+    $SECOND_GRID->addReadField("name: 'METRE'");
+    $SECOND_GRID->addReadField("name: 'DECIMAL'");
+    $SECOND_GRID->addReadField("name: 'LOGMAR'");
+    $SECOND_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".APPLY."</b>'
+        ,dataIndex: 'EYE_RIGHT'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    $SECOND_GRID->addColumn("header: '<b>Foot</b>', align:'left', sortable: false, dataIndex: 'FOOT', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>Metre</b>', align:'left', sortable: false, dataIndex: 'METRE', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>Decimal</b>', align:'left', sortable: false, dataIndex: 'DECIMAL', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>LogMAR</b>', align:'left', sortable: false, dataIndex: 'LOGMAR', width: 100, renderer: cssText");
+    $SECOND_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'listHealthValuesOfEye'
+    ";
+    $SECOND_GRID->setSaveParams("
+        cmd: 'actionStudentHealthEyeInfo'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    $SECOND_GRID->setAftereditCallback("
+        Ext.getCmp('".$SECOND_GRID->getObjectId()."').store.reload(); 
+    ");
+    $SECOND_GRID->loadMask = false;
+    $SECOND_GRID->isPagingToolbar = true;
+    $SECOND_GRID->isObjectDefaultOnLoad = true;
+    $SECOND_GRID->isGridEditing = true;
+    $SECOND_GRID->forceFit = "false";
+    $SECOND_GRID->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
     
     $DETAIL_INFORMATION_ITEMS = "";
     $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}";
@@ -160,7 +252,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("MEDICAL_VISIT_BY",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
+            ,items: [{".setExtRadioGroup("RADIO_MVB",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
         }]
     },{
         title: 'Reason'
@@ -177,7 +269,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("MEDICAL_VISIT_REASON",2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_REASON"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_REASON"))."}]
         }]
     }
     ";
@@ -220,7 +312,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("TYPES_OF_VACCINES",1, HealthSettingDBAccess::getListObjectIndizes("TYPES_OF_VACCINES"))."}]
+            ,items: [{".setExtCheckboxGroup(1, HealthSettingDBAccess::getListObjectIndizes("TYPES_OF_VACCINES"))."}]
         }]
     }
     ";
@@ -238,7 +330,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("VITAMINS_DEWORMING",2, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING"))."}]
         }]
     },{
         title: 'Deworming Pill'
@@ -252,7 +344,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("VDP",1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING_PILL"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("VITAMINS_DEWORMING_PILL"),1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING_PILL"))."}]
         }]
     },{
         title: 'Multiple micronutrient supplementation'
@@ -266,7 +358,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("VMMS",1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_MMS"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("VITAMINS_MMS"),1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_MMS"))."}]
         }]
     }
     ";
@@ -284,7 +376,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("ET",2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
         }]
     },{
         title: 'Eye Chart'
@@ -298,8 +390,26 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("EC",2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("EYE_CHART"),2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
         }]
+    },{
+        title: 'Values for left eye'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,height:420
+        ,layout:'fit'
+        ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
+    },{
+        title: 'Values for right eye'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,height:420
+        ,layout:'fit'
+        ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
     }
     ";
     
@@ -363,7 +473,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("KIND_OF_INJURY",2, HealthSettingDBAccess::getListObjectIndizes("KIND_OF_INJURY"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("KIND_OF_INJURY"))."}]
         }]
     }
     ";
@@ -381,7 +491,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("DENTAL_EXAM_TYPE",2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_EXAM_TYPE"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_EXAM_TYPE"))."}]
         }]
     },{
         title: 'Fluoride Treatment'
@@ -395,7 +505,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("DENTAL_FLUORIDE_TREATMENT",1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_FLUORIDE_TREATMENT"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_FLUORIDE_TREATMENT"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_FLUORIDE_TREATMENT"))."}]
         }]
     },{
         title: 'X-rays'
@@ -409,7 +519,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("DENTAL_X_RAYS",1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_X_RAYS"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_X_RAYS"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_X_RAYS"))."}]
         }]
     },{
         title: 'Dental Caries'
@@ -423,7 +533,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup("DENTAL_CARIES",1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_CARIES"))."}]
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_CARIES"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_CARIES"))."}]
         }]
     },{
         title: 'Tooth Number'
@@ -437,7 +547,7 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup("TOOTH_NUMBER",2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_TOOTH_NUMBER"))."}]
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_TOOTH_NUMBER"))."}]
         }]
     }
     ";

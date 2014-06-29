@@ -2932,7 +2932,7 @@ function getYearByDate($date)
     return date("Y", strtotime($date));
 }
 
-function setExtRadioGroup($varname, $column = 1, $object)
+function setExtRadioGroup($parentId, $column = 1, $object)
 {
     $js = "";
     $js .= "xtype: 'radiogroup'";
@@ -2946,7 +2946,7 @@ function setExtRadioGroup($varname, $column = 1, $object)
         foreach ($object as $value)
         {
             $js .= $i ? "," : "";
-            $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: '" . $varname . "', inputValue: " . $value->ID . "}";
+            $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: 'RADIOBOX_" . $parentId . "', inputValue: " . $value->ID . "}";
             $i++;
         }
     }
@@ -2955,7 +2955,7 @@ function setExtRadioGroup($varname, $column = 1, $object)
     return $js;
 }
 
-function setExtCheckboxGroup($varname, $column = 1, $object)
+function setExtCheckboxGroup($column = 1, $object)
 {
     $js = "";
     $js .= "xtype: 'checkboxgroup'";
@@ -2969,7 +2969,7 @@ function setExtCheckboxGroup($varname, $column = 1, $object)
         foreach ($object as $value)
         {
             $js .= $i ? "," : "";
-            $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: '" . $varname . "_" . $value->ID . "', inputValue: " . $value->ID . "}";
+            $js .= "{boxLabel: '" . addslashes($value->NAME) . "', name: 'CHECKBOX_" . $value->ID . "', inputValue: " . $value->ID . "}";
             $i++;
         }
     }
