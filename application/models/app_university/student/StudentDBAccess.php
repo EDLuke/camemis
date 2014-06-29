@@ -2406,8 +2406,7 @@ class StudentDBAccess {
 
     public static function setCurrentStudentAcademic($studentId = false)
     {
-        ini_set('max_execution_time', 600000);
-        set_time_limit(35000);
+        ini_set('memory_limit', '128M');
 
         if ($studentId)
         {

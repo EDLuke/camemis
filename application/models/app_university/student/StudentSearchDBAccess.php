@@ -47,6 +47,9 @@ class StudentSearchDBAccess {
     }
 
     public function searchStudents($params, $isJson = true) {
+        
+        ini_set('memory_limit', '128M');
+        
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $this->displayCurrentAcademic = isset($params["displayCurrentAcademic"]) ? addText($params["displayCurrentAcademic"]) : 1;
