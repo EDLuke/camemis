@@ -11,28 +11,23 @@ class StudentHealthDBAccess {
 
     private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null)
-        {
+    static function getInstance() {
+        if (self::$instance === null) {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public static function getEyeData()
-    {
+    public static function getEyeData() {
         $data = array(
             1 => array("METRE" => "6/60", "FOOT" => "20/200", "DECIMAL" => "0.10", "LOGMAR" => "1.00"),
             2 => array("METRE" => "6/48", "FOOT" => "20/160", "DECIMAL" => "0.125", "LOGMAR" => "0.90"),
@@ -53,8 +48,7 @@ class StudentHealthDBAccess {
         return $data;
     }
 
-    public static function listHealthValuesOfEye($encrypParams)
-    {
+    public static function listHealthValuesOfEye($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -64,10 +58,8 @@ class StudentHealthDBAccess {
 
         $data = array();
         $i = 0;
-        if (self::getEyeData())
-        {
-            foreach (self::getEyeData() as $key => $value)
-            {
+        if (self::getEyeData()) {
+            foreach (self::getEyeData() as $key => $value) {
                 $data[$i]["ID"] = $key;
                 if ($facette)
                     $data[$i]["EYE_LEFT"] = ($key == $facette->EYE_LEFT) ? 1 : 0;
@@ -88,8 +80,7 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function createStudentHealth($encrypParams)
-    {
+    public static function createStudentHealth($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
@@ -100,59 +91,44 @@ class StudentHealthDBAccess {
 
         $SAVEDATA['OBJECT_TYPE'] = $target;
 
-        if (isset($params["DESCRIPTION"]))
-        {
+        if (isset($params["DESCRIPTION"])) {
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         }
 
-        if (isset($params["WEIGHT"]))
-        {
+        if (isset($params["WEIGHT"])) {
             $SAVEDATA['WEIGHT'] = addText($params["WEIGHT"]);
         }
 
-        if (isset($params["HEIGHT"]))
-        {
+        if (isset($params["HEIGHT"])) {
             $SAVEDATA['HEIGHT'] = addText($params["HEIGHT"]);
         }
 
-        if (isset($params["PULSE"]))
-        {
+        if (isset($params["PULSE"])) {
             $SAVEDATA['PULSE'] = addText($params["PULSE"]);
         }
 
-        if (isset($params["BLOOD_PRESSURE"]))
-        {
+        if (isset($params["BLOOD_PRESSURE"])) {
             $SAVEDATA['BLOOD_PRESSURE'] = addText($params["BLOOD_PRESSURE"]);
         }
 
-        if (isset($params["DOCTOR_NAME"]))
-        {
-            $SAVEDATA['DOCTOR_NAME'] = addText($params["DOCTOR_NAME"]);
+        if (isset($params["LOCATION"])) {
+            $SAVEDATA['LOCATION'] = addText($params["LOCATION"]);
         }
 
-        if (isset($params["REASON"]))
-        {
-            $SAVEDATA['REASON'] = addText($params["REASON"]);
-        }
-
-        if (isset($params["OTHER"]))
-        {
+        if (isset($params["OTHER"])) {
             $SAVEDATA['OTHER'] = addText($params["OTHER"]);
         }
 
-        if (isset($params["FULL_NAME"]))
-        {
+        if (isset($params["FULL_NAME"])) {
             $SAVEDATA['DOCTOR_NAME'] = addText($params["FULL_NAME"]);
         }
 
-        if (isset($params["NEXT_VISIT"]))
-        {
+        if (isset($params["NEXT_VISIT"])) {
             if ($params["NEXT_VISIT"])
                 $SAVEDATA['NEXT_VISIT'] = setDate2DB($params["NEXT_VISIT"]);
         }
 
-        if (isset($params["MEDICAL_DATE"]))
-        {
+        if (isset($params["MEDICAL_DATE"])) {
             $SAVEDATA['MEDICAL_DATE'] = setDate2DB($params["MEDICAL_DATE"]);
         }
 
@@ -164,54 +140,44 @@ class StudentHealthDBAccess {
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $CHECKBOX = isset($params["CHECKBOX_" . $value->ID . ""]) ? addText($params["CHECKBOX_" . $value->ID . ""]) : "";
                 $RADIOBOX = isset($params["RADIOBOX_" . $value->ID . ""]) ? addText($params["RADIOBOX_" . $value->ID . ""]) : "";
-                if ($CHECKBOX)
-                {
+                if ($CHECKBOX) {
                     $CHECKBOX_DATA[$value->ID] = $CHECKBOX;
                 }
-                if ($RADIOBOX)
-                {
+                if ($RADIOBOX) {
                     $RADIOBOX_DATA[$value->ID] = $RADIOBOX;
                 }
             }
         }
 
-        if ($CHECKBOX_DATA)
-        {
+        if ($CHECKBOX_DATA) {
             $SAVEDATA['CHECKBOX_DATA'] = implode(",", $CHECKBOX_DATA);
         }
 
-        if ($RADIOBOX_DATA)
-        {
+        if ($RADIOBOX_DATA) {
             $SAVEDATA['RADIOBOX_DATA'] = implode(",", $RADIOBOX_DATA);
         }
 
         $SAVEDATA['DATA_ITEMS'] = implode(",", $RADIOBOX_DATA + $CHECKBOX_DATA);
 
-        if ($setId == "new")
-        {
+        if ($setId == "new") {
             $SAVEDATA['MEDICAL_SETTING_ID'] = $settingId;
             $SAVEDATA['STUDENT_ID'] = $objectId;
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             self::dbAccess()->insert('t_student_medical', $SAVEDATA);
             $setId = self::dbAccess()->lastInsertId();
-        }
-        else
-        {
+        } else {
             $WHERE[] = "ID = '" . $setId . "'";
             self::dbAccess()->update('t_student_medical', $SAVEDATA, $WHERE);
         }
 
         $facette = self::findStudentHealth($setId, $objectId, false);
 
-        if ($facette)
-        {
+        if ($facette) {
             self::calculationBMI($facette->ID);
         }
         return array(
@@ -220,8 +186,7 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function deleteStudentHealth($encrypParams)
-    {
+    public static function deleteStudentHealth($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
@@ -239,8 +204,7 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function findStudentHealth($Id, $studentId = false, $settingId = false)
-    {
+    public static function findStudentHealth($Id, $studentId = false, $settingId = false) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_medical", array('*'));
         $SQL->where("ID = ?", $Id);
@@ -253,8 +217,7 @@ class StudentHealthDBAccess {
     }
 
     //@veasna
-    public static function sqlStudentHealth($params)
-    {
+    public static function sqlStudentHealth($params) {
 
         $studentId = isset($params['studentId']) ? $params['studentId'] : "";
         $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
@@ -307,13 +270,11 @@ class StudentHealthDBAccess {
         if ($studentId)
             $SQL->where("A.STUDENT_ID='" . $studentId . "'");
 
-        if ($startDate && $endDate)
-        {
+        if ($startDate && $endDate) {
             $SQL->where("A.MEDICAL_DATE >='" . $startDate . "' AND A.MEDICAL_DATE <='" . $endDate . "'");
         }
 
-        if ($BMI_STATUS)
-        {
+        if ($BMI_STATUS) {
             $SQL->where("A.STATUS = '" . $BMI_STATUS . "'");
         }
 
@@ -344,10 +305,8 @@ class StudentHealthDBAccess {
         if ($EYE_RIGHT)
             $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
 
-        if ($health_type)
-        {
-            switch ($health_type)
-            {
+        if ($health_type) {
+            switch ($health_type) {
                 case 'GROWTH_CHART':
                 case 'MEDICAL_VISIT':
                 case 'BMI':
@@ -380,18 +339,15 @@ class StudentHealthDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function searchStudentHealth($encrypParams, $isJson = true)
-    {
+    public static function searchStudentHealth($encrypParams, $isJson = true) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
         $facette = "";
-        if ($health_type)
-        {
-            switch ($health_type)
-            {
+        if ($health_type) {
+            switch ($health_type) {
                 case 'GROWTH_CHART':
                 case 'MEDICAL_VISIT':
                 case 'BMI':
@@ -404,15 +360,11 @@ class StudentHealthDBAccess {
         }
 
         $healthItems = array();
-        if ($facette)
-        {
-            foreach ($facette as $item)
-            {
+        if ($facette) {
+            foreach ($facette as $item) {
                 $entries = HealthSettingDBAccess::sqlHealthSetting($item->ID, false);
-                foreach ($entries as $value)
-                {
-                    switch ($value->FIELD_TYPE)
-                    {
+                foreach ($entries as $value) {
+                    switch ($value->FIELD_TYPE) {
                         case 1:
                             if (isset($params["CHECKBOX_" . $value->ID]))
                                 $healthItems[] = $params["CHECKBOX_" . $value->ID];
@@ -425,38 +377,30 @@ class StudentHealthDBAccess {
                 }
             }
         }
-        if ($healthItems)
-        {
+        if ($healthItems) {
             $params['healthItems'] = implode(',', $healthItems);
         }
         //error_log(implode(',',$healthItems));
         $result = self::sqlStudentHealth($params);
         $data = array();
         $i = 0;
-        foreach ($result as $value)
-        {
+        foreach ($result as $value) {
 
             $data[$i]["CODE"] = $value->CODE;
             $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
             $data[$i]["ID"] = $value->ID;
             $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
             $data[$i]["FULLNAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            if (!SchoolDBAccess::displayPersonNameInGrid())
-            {
+            if (!SchoolDBAccess::displayPersonNameInGrid()) {
                 $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            }
-            else
-            {
+            } else {
                 $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
             }
             $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
             $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
-            if (!SchoolDBAccess::displayPersonNameInGrid())
-            {
+            if (!SchoolDBAccess::displayPersonNameInGrid()) {
                 $data[$i]["FULL_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-            }
-            else
-            {
+            } else {
                 $data[$i]["FULL_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
             }
             $data[$i]["FIRSTNAME_LATIN"] = setShowText($value->FIRSTNAME_LATIN);
@@ -494,8 +438,7 @@ class StudentHealthDBAccess {
             $i++;
         }
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -506,18 +449,14 @@ class StudentHealthDBAccess {
             , "rows" => $a
         );
 
-        if ($isJson)
-        {
+        if ($isJson) {
             return $dataforjson;
-        }
-        else
-        {
+        } else {
             return $data;
         }
     }
 
-    public static function loadStudentHealth($encrypParams)
-    {
+    public static function loadStudentHealth($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
@@ -527,27 +466,23 @@ class StudentHealthDBAccess {
 
         $data = array();
 
-        if ($result)
-        {
+        if ($result) {
             $data["MEDICAL_DATE"] = getShowDate($result->MEDICAL_DATE);
             $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
+            $data["LOCATION"] = setShowText($result->LOCATION);
             $data["FULL_NAME"] = setShowText($result->DOCTOR_NAME);
             $data["DOCTOR_COMMENT"] = setShowText($result->DOCTOR_COMMENT);
             $data["OTHER"] = setShowText($result->OTHER);
 
             $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
-            if ($LIST_CHECKBOX)
-            {
-                foreach ($LIST_CHECKBOX as $value)
-                {
+            if ($LIST_CHECKBOX) {
+                foreach ($LIST_CHECKBOX as $value) {
                     $data["CHECKBOX_" . $value] = true;
                 }
             }
             $LIST_RADIOBOX = explode(",", $result->RADIOBOX_DATA);
-            if ($LIST_RADIOBOX)
-            {
-                foreach ($LIST_RADIOBOX as $value)
-                {
+            if ($LIST_RADIOBOX) {
+                foreach ($LIST_RADIOBOX as $value) {
                     $setting = HealthSettingDBAccess::findHealthSettingFromId($value);
                     $data["RADIOBOX_" . $setting->PARENT] = $value;
                 }
@@ -561,8 +496,7 @@ class StudentHealthDBAccess {
         return $o;
     }
 
-    public static function listStudentHealth($encrypParams)
-    {
+    public static function listStudentHealth($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
 
@@ -578,8 +512,7 @@ class StudentHealthDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_medical", array('*'));
 
-        switch ($target)
-        {
+        switch ($target) {
             case "BMI":
             case "GROWTH_CHART":
             case "MEDICAL_VISIT":
@@ -596,10 +529,8 @@ class StudentHealthDBAccess {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
 
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["BMI"] = setShowText($value->BMI);
                 $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
@@ -609,21 +540,39 @@ class StudentHealthDBAccess {
                 $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
                 $data[$i]["PULSE"] = setShowText($value->PULSE);
                 $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
-                $data[$i]["DOCTOR_NAME"] = setShowText($value->DOCTOR_NAME);
-                $data[$i]["PLACE"] = setShowText($value->PLACE);
-                $data[$i]["REASON"] = setShowText($value->REASON);
+                $data[$i]["LOCATION"] = setShowText($value->LOCATION);
                 $data[$i]["DOCTOR_COMMENT"] = setShowText($value->DOCTOR_COMMENT);
                 $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
                 $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
+
+                switch ($target) {
+                    case "DENTAL":
+                        $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
+                        $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
+                        $data[$i]["X_RAYS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_X_RAYS");
+                        $data[$i]["DENTAL_CARIES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_CARIES");
+                        $data[$i]["TOOTH_NUMBER"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_TOOTH_NUMBER");
+                        break;
+                    case "INJURY":
+                        $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
+                        break;
+                    case "MEDICAL_VISIT":
+                        $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
+                        $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
+                        $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
+                        break;
+                    case "VACCINATION":
+                        $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
+                        break;
+                }
 
                 $i++;
             }
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++)
-        {
+        for ($i = $start; $i < $start + $limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -635,8 +584,7 @@ class StudentHealthDBAccess {
         );
     }
 
-    public static function calculationBMI($Id)
-    {
+    public static function calculationBMI($Id) {
 
         $facette = self::findStudentHealth($Id, false, false);
 
@@ -651,25 +599,20 @@ class StudentHealthDBAccess {
         $value = "";
         $HEALTH_BMI_STANDARD = Zend_Registry::get('SCHOOL')->HEALTH_BMI_STANDARD;
         $STANDARD = $HEALTH_BMI_STANDARD ? $HEALTH_BMI_STANDARD : 1;
-        if ($facette)
-        {
-            switch ($STANDARD)
-            {
+        if ($facette) {
+            switch ($STANDARD) {
                 case 1:
-                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT))
-                    {
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
                         $value = round($facette->WEIGHT / pow($facette->HEIGHT / 100, 2), 2);
                     }
                     break;
                 case 2:
-                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT))
-                    {
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
                         $value = round((($facette->WEIGHT) / pow($facette->HEIGHT * 2.54, 2)) * 703, 2);
                     }
                     break;
             }
-            if ($value)
-            {
+            if ($value) {
                 $SQL = "UPDATE t_student_medical";
                 $SQL .= " SET";
                 $SQL .= " BMI='" . $value . "'";
@@ -680,8 +623,7 @@ class StudentHealthDBAccess {
         }
     }
 
-    public static function calculationBMIStatus($value)
-    {
+    public static function calculationBMIStatus($value) {
         /**
          * Underweight = <18.5
           Normal weight = 18.5–24.9
@@ -689,22 +631,14 @@ class StudentHealthDBAccess {
           Obesity = BMI of 30 or greater
          */
         $result = "";
-        if ($value)
-        {
-            if ($value <= 18.49)
-            {
+        if ($value) {
+            if ($value <= 18.49) {
                 $result = 1;
-            }
-            elseif ($value >= 18.50 && $value <= 24.99)
-            {
+            } elseif ($value >= 18.50 && $value <= 24.99) {
                 $result = 2;
-            }
-            elseif ($value >= 25.00 && $value <= 29.99)
-            {
+            } elseif ($value >= 25.00 && $value <= 29.99) {
                 $result = 3;
-            }
-            elseif ($value >= 30.00)
-            {
+            } elseif ($value >= 30.00) {
                 $result = 4;
             }
         }
@@ -712,10 +646,8 @@ class StudentHealthDBAccess {
         return $result;
     }
 
-    public static function showBMIStatus($value)
-    {
-        switch ($value)
-        {
+    public static function showBMIStatus($value) {
+        switch ($value) {
             case 1:
                 $result = "Underweight";
                 break;
@@ -736,8 +668,7 @@ class StudentHealthDBAccess {
         return $result;
     }
 
-    public static function getHealthSetting($Id)
-    {
+    public static function getHealthSetting($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_health_setting", array('*'));
         $SQL->where("ID = ?", $Id);
@@ -745,16 +676,32 @@ class StudentHealthDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function actionStudentHealthEyeInfo($encrypParams)
-    {
+    public static function getStudentHealthSetting($dataItems, $objectIndex) {
+
+        $data = array();
+        if ($dataItems) {
+            $CHECK_DATA = explode(",", $dataItems);
+            $entries = HealthSettingDBAccess::getListObjectIndizes($objectIndex);
+            if ($entries) {
+                foreach ($entries as $value) {
+                    if (in_array($value->ID, $CHECK_DATA)) {
+                        $data[] = setShowText($value->NAME);
+                    }
+                }
+            }
+        }
+
+        return implode("<br>", $data);
+    }
+
+    public static function actionStudentHealthEyeInfo($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $setId = isset($params["setId"]) ? addText($params["setId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $rowValue = isset($params["id"]) ? addText($params["id"]) : "";
 
         $WHERE[] = "ID = '" . $setId . "'";
-        switch ($field)
-        {
+        switch ($field) {
             case "EYE_LEFT":
                 $SAVEDATA["EYE_LEFT"] = addText($rowValue);
                 break;

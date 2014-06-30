@@ -117,11 +117,11 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'X_RAYS'");
             $OBJECT_GRID->addReadField("name: 'DENTAL_CARIES'");
             $OBJECT_GRID->addReadField("name: 'TOOTH_NUMBER'");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Exam Type</b>',dataIndex: 'EXAM_TYPE',width: 130");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Fluoride Treatment</b>',dataIndex: 'FLUORIDE_TREATMENT',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>X-Rays</b>',dataIndex: 'X_RAYS',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Dental Caries</b>',dataIndex: 'DENTAL_CARIES',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Tooth number</b>',dataIndex: 'TOOTH_NUMBER',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Exam Type</b>',dataIndex: 'EXAM_TYPE',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Fluoride Treatment</b>',dataIndex: 'FLUORIDE_TREATMENT',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>X-Rays</b>',dataIndex: 'X_RAYS',width: 120");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Dental Caries</b>',dataIndex: 'DENTAL_CARIES',width: 120");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Tooth number</b>',dataIndex: 'TOOTH_NUMBER',width: 120");
             break;
         case "VISION":
             $OBJECT_GRID->addReadField("name: 'OTHER'");
@@ -129,23 +129,23 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'EYE_CHART'");
             $OBJECT_GRID->addReadField("name: 'VALUES_OF_LEFT_EYE'");
             $OBJECT_GRID->addReadField("name: 'VALUES_OF_RIGHT_EYE'");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Other</b>',dataIndex: 'OTHER',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Eye treatment</b>',dataIndex: 'EYE_TREATMENT',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Eye chart</b>',dataIndex: 'EYE_CHART',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Values of left eye</b>',dataIndex: 'VALUES_OF_LEFT_EYE',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Values of right eye</b>',dataIndex: 'VALUES_OF_RIGHT_EYE',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Other</b>',dataIndex: 'OTHER',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye treatment</b>',dataIndex: 'EYE_TREATMENT',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye chart</b>',dataIndex: 'EYE_CHART',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of left eye</b>',dataIndex: 'VALUES_OF_LEFT_EYE',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of right eye</b>',dataIndex: 'VALUES_OF_RIGHT_EYE',width: 140");
             break;
         case "VACCINATION":
             $OBJECT_GRID->addReadField("name: 'TYPES_OF_VACCINES'");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Types of Vaccines</b>',dataIndex: 'TYPES_OF_VACCINES',width: 250");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Types of Vaccines</b>',dataIndex: 'TYPES_OF_VACCINES',width: 350");
             break;
         case "VITAMIN":
             break;
         case "INJURY":
             $OBJECT_GRID->addReadField("name: 'LOCATION'");
             $OBJECT_GRID->addReadField("name: 'KIND_OF_INJURY'");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Location</b>',dataIndex: 'LOCATION',width: 140");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>Kind of Injury</b>',dataIndex: 'KIND_OF_INJURY',width: 140");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Location</b>',dataIndex: 'LOCATION',width: 200");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Kind of Injury</b>',dataIndex: 'KIND_OF_INJURY',width: 200");
 
             break;
         case "BMI":
@@ -161,8 +161,8 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
             $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
-            $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");    
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");    
 
         break;
         case "GROWTH_CHART":
@@ -198,8 +198,8 @@ Ext.onReady(function() {
         break;
     }
 
-    $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 130");
-    $OBJECT_GRID->addColumn("align: 'center',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 130");
+    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 130");
+    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 130");
             
     $OBJECT_GRID->baseParams = "
         start:0

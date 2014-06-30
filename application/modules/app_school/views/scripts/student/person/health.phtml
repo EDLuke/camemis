@@ -182,6 +182,9 @@ Ext.onReady(function() {
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}";
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}";
             break;
+        case "INJURY":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
+            break;
     }
     
     $DETAIL_INFORMATION = "
@@ -446,26 +449,6 @@ Ext.onReady(function() {
     
     $INJURY_FIELDS = "
     {
-        title: '".DETAIL_INFORMATION."'
-        ,collapsible: true
-        ,collapsed: false
-        ,autoHeight: true
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,autoHeight: true
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,bodyStyle: 'padding:10px'
-            ,items:[
-                {".CamemisField::Datefield("INJURY_DATE", DATE,true,false,false)."}
-                ,{".CamemisField::Textfield('INJURY_LOCATION', 'INJURY_LOCATION', 'Location', true)."}
-            ]
-        }]
-    },{
         title: 'Kind of injury'
         ,collapsible: true
         ,collapsed: false
@@ -568,6 +551,7 @@ Ext.onReady(function() {
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "INJURY":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
             $FORM_ITEMS .= ",".$INJURY_FIELDS;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
