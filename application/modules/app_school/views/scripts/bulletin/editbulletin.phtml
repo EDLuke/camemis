@@ -99,6 +99,41 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }
         }
         
+        $schoolyearObject = AcademicDateDBAccess::loadCurrentSchoolyear();
+        $currentSchoolyearId = $schoolyearObject?$schoolyearObject->ID:"";
+        $STORE_SCHOOLYEAR = "[";
+        if(AcademicDateDBAccess::getAllSchoolyear()){
+            $i = 0;
+            foreach(AcademicDateDBAccess::getAllSchoolyear() as $value){
+                $DATA[$i] = $value->ID;
+                $STORE_SCHOOLYEAR .= $i?",":"";
+                $STORE_SCHOOLYEAR .= "['" . $value->ID . "', '" . setShowText($value->NAME) ."', 'icon-date']";
+                $i++;
+            }
+        }
+        
+        $STORE_SCHOOLYEAR .= "]";
+        $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                xtype:'combo'
+                ,id:'COMO_SCHOOLYEAR_ID'
+                ,width:170
+                ,fieldLabel:'IconCombo'
+                ,store: new Ext.data.SimpleStore({
+                    fields: ['comboCode', 'comboName', 'comboIcon'],
+                    data: ".$STORE_SCHOOLYEAR."
+                })
+                ,plugins:new Ext.ux.plugins.IconCombo()
+                ,valueField: 'comboCode'
+                ,displayField: 'comboName'
+                ,iconClsField: 'comboIcon'
+                ,triggerAction: 'all'
+                ,mode: 'local'
+                ,value:'".$currentSchoolyearId."'
+            }]
+        ");
+        
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isOnClickContextMenu = false;
         $OBJECT_TREE->isTreeExpand = true;
@@ -322,9 +357,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                    ,id: 'WEST_ID'
                    ,margins: '3 0 3 3'
                    ,cmargins: '3 3 3 3'
-                   ,width: 250
-                   ,minSize: 250
-                   ,maxSize: 250
+                   ,width: 300
+                   ,minSize: 300
+                   ,maxSize: 300
                    ,layout: 'fit'
                    ,items: [{xtype: '".$OBJECT_TREE->getObjectXType()."'}]    
                },{
@@ -353,6 +388,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,border: false
                 ,items: <?=$VIEWPORT_ITEMS;?>
             }]
+        });
+        
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        var myCombo = Ext.getCmp('COMO_SCHOOLYEAR_ID');
+        if (myCombo)
+        myCombo.on('select', function() {
+            myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMO_SCHOOLYEAR_ID').getValue();
+            myTree.root.reload();
+            myTree.getRootNode().expand(true, false);
+            Ext.getCmp('center').getLayout().setActiveItem(0);
         });
         
         <?
