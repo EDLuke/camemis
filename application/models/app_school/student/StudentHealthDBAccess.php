@@ -69,8 +69,10 @@ class StudentHealthDBAccess {
             foreach (self::getEyeData() as $key => $value)
             {
                 $data[$i]["ID"] = $key;
-                $data[$i]["EYE_LEFT"] = ($key == $facette->EYE_LEFT) ? 1 : 0;
-                $data[$i]["EYE_RIGHT"] = ($key == $facette->EYE_RIGHT) ? 1 : 0;
+                if ($facette)
+                    $data[$i]["EYE_LEFT"] = ($key == $facette->EYE_LEFT) ? 1 : 0;
+                if ($facette)
+                    $data[$i]["EYE_RIGHT"] = ($key == $facette->EYE_RIGHT) ? 1 : 0;
                 $data[$i]["FOOT"] = $value["FOOT"];
                 $data[$i]["METRE"] = $value["METRE"];
                 $data[$i]["DECIMAL"] = $value["DECIMAL"];

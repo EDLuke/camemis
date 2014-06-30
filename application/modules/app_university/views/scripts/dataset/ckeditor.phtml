@@ -38,28 +38,28 @@ switch($object){
     case "student":
         require_once 'models/app_university/student/StudentDBAccess.php';
         $facette = StudentDBAccess::findStudentFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
     break;
     case "staff":
         require_once 'models/app_university/staff/StaffDBAccess.php';
         $facette = StaffDBAccess::findStaffFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
     break;
     case "bulletin":
         require_once 'models/app_university/bulletin/BulletinDBAccess.php';
         $facette = BulletinDBAccess::findBulletinFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         
     break;
     case "studenttraining":
         require_once 'models/training/StudentTrainingDBAccess.php';
         $facette = StudentTrainingDBAccess::findStudentTrainingFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         
     break;
     case "subject_training":
         $facette = TrainingSubjectDBAccess::findTrainingSubjectFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         break;
 }
 

@@ -46,46 +46,46 @@ switch($object){
             if($CHECK_TEACHER_CHANGE_CONTENT == 1){
                 $facette = GradeSubjectDBAccess::getGradeSubjectTeacher($subjectId, false, $classId);
                 if($facette->$field){
-                    if ($field) $content = $facette->$field;
+                    if ($field) $content = setShowText($facette->$field);
                 }else{
                     $control = GradeSubjectDBAccess::getGradeSubject($objectId, false, false, false);
-                    if ($field) $content = $control->$field;    
+                    if ($field) $content = setShowText($facette->$field);
                 }
             }
             else if($CHECK_TEACHER_CHANGE_CONTENT == 0){
                 $facette = GradeSubjectDBAccess::getGradeSubject($objectId, false, false, false);
-                if ($field) $content = $facette->$field;
+                if ($field) $content = setShowText($facette->$field);
             }
         }else{
             $facette = GradeSubjectDBAccess::getGradeSubject($objectId, false, false, false);
-            if ($field) $content = $facette->$field;    
+            if ($field) $content = setShowText($facette->$field); 
         }
     break;
     case "student":
         require_once 'models/app_school/student/StudentDBAccess.php';
         $facette = StudentDBAccess::findStudentFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
     break;
     case "staff":
         require_once 'models/app_school/staff/StaffDBAccess.php';
         $facette = StaffDBAccess::findStaffFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
     break;
     case "bulletin":
         require_once 'models/app_school/bulletin/BulletinDBAccess.php';
         $facette = BulletinDBAccess::findBulletinFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         
     break;
     case "studenttraining":
         require_once 'models/training/StudentTrainingDBAccess.php';
         $facette = StudentTrainingDBAccess::findStudentTrainingFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         
     break;
     case "subject_training":
         $facette = TrainingSubjectDBAccess::findTrainingSubjectFromId($objectId);
-        if ($field) $content = isset($facette->$field)?$facette->$field:"";
+        if ($field) $content = isset($facette->$field)?setShowText($facette->$field):"";
         break;
 }
 

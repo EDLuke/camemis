@@ -178,6 +178,7 @@ Ext.onReady(function() {
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('OTHER', 'OTHER', "Other", true)."}";
             break;
         case "MEDICAL_VISIT":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}";
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}";
             break;
