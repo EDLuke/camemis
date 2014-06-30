@@ -140,6 +140,12 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Types of Vaccines</b>',dataIndex: 'TYPES_OF_VACCINES',width: 350");
             break;
         case "VITAMIN":
+            $OBJECT_GRID->addReadField("name: 'VND'");
+            $OBJECT_GRID->addReadField("name: 'DP'");
+            $OBJECT_GRID->addReadField("name: 'MMS'");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Vitamins and Deworming</b>',dataIndex: 'VND',width: 160");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Deworming Pill</b>',dataIndex: 'DP',width: 160");
+            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Multiple micronutrient supplementation</b>',dataIndex: 'MMS',width: 250");
             break;
         case "INJURY":
             $OBJECT_GRID->addReadField("name: 'LOCATION'");
@@ -237,7 +243,7 @@ Ext.onReady(function() {
         ,camIds:'".$this->urlEncryp->encryptedGet($paramsgrid)."'
     ");
     
-    $OBJECT_GRID->loadMask = false;
+    $OBJECT_GRID->loadMask = true;
     $OBJECT_GRID->objectBorder = "true";
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->isObjectDefaultOnLoad = true;

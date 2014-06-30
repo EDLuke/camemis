@@ -58,7 +58,7 @@ class StudentHealthDBAccess {
             $output = "&bull; " . "Metre: " . $facette->METRE;
             $output .= "<br>&bull; " . "Foot: " . $facette->FOOT;
             $output .= "<br>&bull; " . "Decimal: " . $facette->DECIMAL;
-            $output .= "<br>&bull; " . "Logmar: " . $facette->LOGMAR;
+            $output .= "<br>&bull; " . "LogMAR: " . $facette->LOGMAR;
         }
 
         return $output;
@@ -587,6 +587,11 @@ class StudentHealthDBAccess {
                         $data[$i]["EYE_CHART"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_CHART");
                         $data[$i]["VALUES_OF_LEFT_EYE"] = self::getEyeData($value->EYE_LEFT);
                         $data[$i]["VALUES_OF_RIGHT_EYE"] = self::getEyeData($value->EYE_RIGHT);
+                        break;
+                    case "VITAMIN":
+                        $data[$i]["VND"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING");
+                        $data[$i]["DP"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING_PILL");
+                        $data[$i]["MMS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_MMS");
                         break;
                 }
 
