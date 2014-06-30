@@ -77,14 +77,18 @@ if($this->teacherId) $setParams .= "&teacherId=".$this->teacherId."";
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
-            ,items: [{
-                xtype: 'vrtabpanel'
-                ,tabWidth: 150
-                ,activeTab: 0
-                ,tabMarginTop:100
-                ,enableTabScroll:true       
-                ,defaults: {autoScroll:true}
-                ,items:<?=$CHOOSE_ITEMS?>
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
             }]
         });
     });
