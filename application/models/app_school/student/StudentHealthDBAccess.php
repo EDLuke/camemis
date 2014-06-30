@@ -565,6 +565,13 @@ class StudentHealthDBAccess {
                     case "VACCINATION":
                         $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
                         break;
+                    case "VISION":
+                        $data[$i]["OTHER"] = setShowText($value->OTHER);
+                        $data[$i]["EYE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_TREATMENT");
+                        $data[$i]["EYE_CHART"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_CHART");
+                        $data[$i]["VALUES_OF_LEFT_EYE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
+                        $data[$i]["VALUES_OF_RIGHT_EYE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
+                        break;
                 }
 
                 $i++;
@@ -685,7 +692,7 @@ class StudentHealthDBAccess {
             if ($entries) {
                 foreach ($entries as $value) {
                     if (in_array($value->ID, $CHECK_DATA)) {
-                        $data[] = setShowText($value->NAME);
+                        $data[] = "&raquo; ".setShowText($value->NAME);
                     }
                 }
             }
