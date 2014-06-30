@@ -1,9 +1,4 @@
-@font-face {
-    font-family: 'Hanuman';
-    src:url('../font/khmer/Hanuman.ttf');
-    font-weight: normal;
-    font-style: normal;	
-}
+@import url(http://fonts.googleapis.com/css?family=Hanuman);
 
 html, body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
     margin: 0;
