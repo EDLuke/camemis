@@ -27,7 +27,7 @@ class StudentHealthDBAccess {
         return self::dbAccess()->select();
     }
 
-    public static function getEyeData() {
+    public static function getListEyeDataInfo() {
         $data = array(
             1 => array("METRE" => "6/60", "FOOT" => "20/200", "DECIMAL" => "0.10", "LOGMAR" => "1.00"),
             2 => array("METRE" => "6/48", "FOOT" => "20/160", "DECIMAL" => "0.125", "LOGMAR" => "0.90"),
@@ -48,6 +48,22 @@ class StudentHealthDBAccess {
         return $data;
     }
 
+    public static function getEyeData($index) {
+
+        $result = self::getListEyeDataInfo();
+        $facette = isset($result[$index]) ? (object) $result[$index] : "";
+
+        $output = "";
+        if ($facette) {
+            $output = "&bull; " . "Metre: " . $facette->METRE;
+            $output .= "<br>&bull; " . "Foot: " . $facette->FOOT;
+            $output .= "<br>&bull; " . "Decimal: " . $facette->DECIMAL;
+            $output .= "<br>&bull; " . "Logmar: " . $facette->LOGMAR;
+        }
+
+        return $output;
+    }
+
     public static function listHealthValuesOfEye($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -58,8 +74,8 @@ class StudentHealthDBAccess {
 
         $data = array();
         $i = 0;
-        if (self::getEyeData()) {
-            foreach (self::getEyeData() as $key => $value) {
+        if (self::getListEyeDataInfo()) {
+            foreach (self::getListEyeDataInfo() as $key => $value) {
                 $data[$i]["ID"] = $key;
                 if ($facette)
                     $data[$i]["EYE_LEFT"] = ($key == $facette->EYE_LEFT) ? 1 : 0;
@@ -569,8 +585,8 @@ class StudentHealthDBAccess {
                         $data[$i]["OTHER"] = setShowText($value->OTHER);
                         $data[$i]["EYE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_TREATMENT");
                         $data[$i]["EYE_CHART"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_CHART");
-                        $data[$i]["VALUES_OF_LEFT_EYE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
-                        $data[$i]["VALUES_OF_RIGHT_EYE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
+                        $data[$i]["VALUES_OF_LEFT_EYE"] = self::getEyeData($value->EYE_LEFT);
+                        $data[$i]["VALUES_OF_RIGHT_EYE"] = self::getEyeData($value->EYE_RIGHT);
                         break;
                 }
 
@@ -692,7 +708,7 @@ class StudentHealthDBAccess {
             if ($entries) {
                 foreach ($entries as $value) {
                     if (in_array($value->ID, $CHECK_DATA)) {
-                        $data[] = "&raquo; ".setShowText($value->NAME);
+                        $data[] = "&bull; " . setShowText($value->NAME);
                     }
                 }
             }
