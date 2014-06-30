@@ -205,13 +205,13 @@ class CamemisPage {
 
         $js = "";
 
-//        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
-//            case "KHMER":
-//                #if ($_SERVER['REMOTE_ADDR'] != "127.0.0.1") {
-//                $js .= "<link href=\"http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer\" rel=\"stylesheet\" type=\"text/css\">";
-//                #}
-//                break;
-//        }
+        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
+            case "KHMER":
+                #if ($_SERVER['REMOTE_ADDR'] != "127.0.0.1") {
+                $js .= "<link href=\"http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer\" rel=\"stylesheet\" type=\"text/css\">";
+                #}
+                break;
+        }
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $this->setExtJsVersion() . "/resources/css/ext-all-css-camemis.php?key=" . $keyAPI . "\" />";
 
         switch (UserAuth::getUserType()) {
