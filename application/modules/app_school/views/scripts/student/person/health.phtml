@@ -278,7 +278,7 @@ Ext.onReady(function() {
     }
     ";
     
-    $BMI_FIELDS = "
+    $BODY_MASS_INDEX = "
     {
         title: '".DETAIL_INFORMATION."'
         ,collapsible: true
@@ -423,7 +423,7 @@ Ext.onReady(function() {
         ";
     }
     
-    $GROWTH_CHART_FIELDS = "
+    $GROWTH_CHART = "
     {
         title: '".DETAIL_INFORMATION."'
         ,collapsible: true
@@ -447,7 +447,7 @@ Ext.onReady(function() {
     }
     ";
     
-    $INJURY_FIELDS = "
+    $INJURY = "
     {
         title: 'Kind of injury'
         ,collapsible: true
@@ -468,7 +468,7 @@ Ext.onReady(function() {
     }
     ";
     
-    $DENTAL_PROPERTIES = "
+    $DENTAL = "
     {
         title:'Exam Type'
         ,collapsible: true
@@ -547,16 +547,16 @@ Ext.onReady(function() {
     $FORM_ITEMS .= $PERSONAL_INFORMATION;
     switch($target){
         case "BMI":
-            $FORM_ITEMS .= ",".$BMI_FIELDS;
+            $FORM_ITEMS .= ",".$BODY_MASS_INDEX;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "INJURY":
             $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
-            $FORM_ITEMS .= ",".$INJURY_FIELDS;
+            $FORM_ITEMS .= ",".$INJURY;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "GROWTH_CHART":
-            $FORM_ITEMS .= ",".$GROWTH_CHART_FIELDS;
+            $FORM_ITEMS .= ",".$GROWTH_CHART;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "MEDICAL_VISIT":
@@ -566,7 +566,7 @@ Ext.onReady(function() {
             break;
         case "DENTAL":
             $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
-            $FORM_ITEMS .= ",".$DENTAL_PROPERTIES;
+            $FORM_ITEMS .= ",".$DENTAL;
             $FORM_ITEMS .= ",".$DESCRIPTION;
             break;
         case "VACCINATION":
