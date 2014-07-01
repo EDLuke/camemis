@@ -966,7 +966,6 @@ class AcademicDBAccess {
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
                 }
             }
-
             $SECOND_SQL = self::dbAccess()->select();
             $SECOND_SQL->from("t_assignment", array("*"));
             $SECOND_SQL->where("GRADE = '" . $schoolyearObject->GRADE_ID . "'");

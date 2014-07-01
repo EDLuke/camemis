@@ -15,14 +15,12 @@ class CamemisField {
 
     public $data = array();
 
-    public function __construct()
-    {
+    public function __construct() {
 
         //
     }
 
-    static function Hidden($name, $value = false)
-    {
+    static function Hidden($name, $value = false) {
 
         $js = "";
         $js .= "xtype: 'hidden'";
@@ -34,8 +32,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Colorfield($name, $fieldLabel, $readOnly = false)
-    {
+    static function Colorfield($name, $fieldLabel, $readOnly = false) {
 
         $readOnly = $readOnly ? "true" : "false";
         $js = "";
@@ -51,18 +48,14 @@ class CamemisField {
         return $js;
     }
 
-    static function Trigger2($name, $fieldLabel, $onClick, $allowBlank = false, $width = false)
-    {
+    static function Trigger2($name, $fieldLabel, $onClick, $allowBlank = false, $width = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "id: '" . $name . "_ID',fieldLabel: '" . $fieldLabel . "',xtype: 'trigger',name: '" . $name . "',
             triggerClass: 'x-form-search-trigger',editable:false";
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width;
-        }
-        else
-        {
+        } else {
             $js .= ",anchor: '95%'";
         }
 
@@ -76,19 +69,15 @@ class CamemisField {
         return $js;
     }
 
-    static function Trigger($name, $fieldLabel, $onClick, $allowBlank = false, $hidden = false, $readOnly = false, $width = false)
-    {
+    static function Trigger($name, $fieldLabel, $onClick, $allowBlank = false, $hidden = false, $readOnly = false, $width = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $hidden = $hidden ? "true" : "false";
         $js = "id: '" . $name . "_ID',fieldLabel: '" . $fieldLabel . "',xtype: 'trigger',name: '" . $name . "',";
         $js .="triggerClass: 'x-form-search-trigger',editable:false,";
 
-        if ($width)
-        {
+        if ($width) {
             $js .="width:$width,";
-        }
-        else
-        {
+        } else {
             $js .="width:250,";
         }
 
@@ -97,16 +86,14 @@ class CamemisField {
         $js .="} ";
         $js .= ",allowBlank:" . $allowBlank . "";
         $js .= ",hidden:" . $hidden . "";
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly: true";
         }
 
         return $js;
     }
 
-    static function Displayfield($name, $fieldLabel, $value = false, $hidden = false, $width = false)
-    {
+    static function Displayfield($name, $fieldLabel, $value = false, $hidden = false, $width = false) {
 
         $js = "";
         $js .= "xtype: 'displayfield'";
@@ -115,12 +102,9 @@ class CamemisField {
         $js .= ",id: '" . $name . "_ID'";
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width: '" . $width . "'";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -135,8 +119,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Loginname($name, $fieldLabel)
-    {
+    static function Loginname($name, $fieldLabel) {
 
         $js = "";
         $js .= "xtype: 'textfield'";
@@ -152,8 +135,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Password($name, $fieldLabel, $allowBlank = false)
-    {
+    static function Password($name, $fieldLabel, $allowBlank = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype: 'textfield'";
@@ -168,8 +150,7 @@ class CamemisField {
         return $js;
     }
 
-    static function EMailfield($name, $fieldLabel, $readOnly = false, $allowBlank = false)
-    {
+    static function EMailfield($name, $fieldLabel, $readOnly = false, $allowBlank = false) {
 
         $readOnly = $readOnly ? "true" : "false";
 
@@ -182,8 +163,7 @@ class CamemisField {
         $js .= ",name: '" . $name . "'";
         $js .= ",readOnly: " . $readOnly . "";
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
             $js .= ",regex: /^([\w\-\'\-]+)(\.[\w-\'\-]+)*@([\w\-]+\.){1,5}([A-Za-z]){2,4}$/";
         }
@@ -194,8 +174,7 @@ class CamemisField {
         return $js;
     }
 
-    static function TextTimefield($name, $fieldLabel, $allowBlank = false, $value = false)
-    {
+    static function TextTimefield($name, $fieldLabel, $allowBlank = false, $value = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype: 'textfield'";
@@ -215,33 +194,27 @@ class CamemisField {
         return $js;
     }
 
-    static function Textfield($id, $name, $fieldLabel, $allowBlank = false, $readOnly = false, $hidden = false, $width = false, $value = false)
-    {
+    static function Textfield($id, $name, $fieldLabel, $allowBlank = false, $readOnly = false, $hidden = false, $width = false, $value = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype: 'textfield'";
         //$js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",id: '" . $id . "'";
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:$width";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
         $js .= ",name: '" . $name . "'";
         $js .= ",allowBlank: " . $allowBlank . "";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
 
-        if ($value)
-        {
+        if ($value) {
             $js .= ",value: '" . $value . "'";
         }
 
@@ -253,8 +226,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Hiddenfield($name, $value)
-    {
+    static function Hiddenfield($name, $value) {
         $js = "";
         $js .= "xtype: 'hidden'";
         $js .= ",id: '" . $name . "_ID'";
@@ -264,8 +236,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Combo($name, $fieldLabel, $store, $readOnly = false, $value = false, $width = false, $hidden = false, $allowBlank = false)
-    {
+    static function Combo($name, $fieldLabel, $store, $readOnly = false, $value = false, $width = false, $hidden = false, $allowBlank = false) {
 
         if (!$store)
             $store = "[]";
@@ -284,44 +255,31 @@ class CamemisField {
         $js .= ",name: '" . $name . "'";
         $js .= ",hiddenName: '" . $name . "'";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly: true";
-        }
-        else
-        {
+        } else {
             $js .= ",readOnly: false";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
-        }
-        else
-        {
+        } else {
             $js .= ",hidden: false";
         }
 
-        if ($value)
-        {
+        if ($value) {
             $js .= ",value: '" . $value . "'";
         }
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width: " . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
@@ -331,20 +289,16 @@ class CamemisField {
         return $js;
     }
 
-    static function Textarea($name, $fieldLabel, $height, $readOnly = false, $allowBlank = false, $hidden = false, $width = false)
-    {
+    static function Textarea($name, $fieldLabel, $height, $readOnly = false, $allowBlank = false, $hidden = false, $width = false) {
 
         $js = "";
         $js .= "xtype: 'textarea'";
         $js .= ",id: '" . $name . "_ID'";
         $js .= ",emptyText: ''";
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -361,16 +315,14 @@ class CamemisField {
         if ($readOnly)
             $js .= ",readOnly: true";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
 
         return $js;
     }
 
-    static function ComboCampusBind($name, $fieldLabel, $bindToId, $hidden = false, $disabled = false)
-    {
+    static function ComboCampusBind($name, $fieldLabel, $bindToId, $hidden = false, $disabled = false) {
         $store = BuildData::comboCampus();
         $js = "";
         $js .= "xtype: 'combo'";
@@ -378,8 +330,7 @@ class CamemisField {
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
         $js .= ",triggerAction: 'all'";
@@ -390,8 +341,7 @@ class CamemisField {
             fields:['" . $name . "_ID', '" . $name . "']
             ,data:" . $store . "})";
         $js .= ",name: '" . $name . "'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: '" . $name . "'";
@@ -410,8 +360,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboFeeCategory($id, $name, $fieldLabel, $width = false)
-    {
+    static function ComboFeeCategory($id, $name, $fieldLabel, $width = false) {
         $params["node"] = 1;
         $params["type"] = "SCHOOL";
         $store = BuildData::comboFeeCategory($params);
@@ -438,8 +387,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboGradeBind($name, $fieldLabel, $bindFromId, $hidden = false, $disabled = false)
-    {
+    static function ComboGradeBind($name, $fieldLabel, $bindFromId, $hidden = false, $disabled = false) {
         $store = BuildData::comboGradeByCampusId();
         $js = "";
         $js .= "xtype: 'combo'";
@@ -447,8 +395,7 @@ class CamemisField {
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
         $js .= ",triggerAction: 'all'";
@@ -459,8 +406,7 @@ class CamemisField {
             fields:['" . $name . "_ID', '" . $bindFromId . "', '" . $name . "']
             ,data:" . $store . "})";
         $js .= ",name: '" . $name . "'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: '" . $name . "'";
@@ -474,8 +420,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboYear($name, $fieldLabel, $startYear, $endYear, $hidden, $width = false)
-    {
+    static function ComboYear($name, $fieldLabel, $startYear, $endYear, $hidden, $width = false) {
 
         if (!$startYear)
             $startYear = 2000;
@@ -483,8 +428,7 @@ class CamemisField {
             $endYear = date('Y') + 1;
 
         $store = "[[0, '[---]']";
-        for ($i = $startYear; $i <= $endYear; $i++)
-        {
+        for ($i = $startYear; $i <= $endYear; $i++) {
             $store .= ",[" . $i . ", '" . $i . "']";
         }
         $store .= "]";
@@ -499,18 +443,14 @@ class CamemisField {
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $name . "'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: '" . $name . "'";
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width: " . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:false";
@@ -521,11 +461,9 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAge($name, $fieldLabel, $hidden = false, $disabled = false, $width = false)
-    {
+    static function ComboAge($name, $fieldLabel, $hidden = false, $disabled = false, $width = false) {
         $store = "[[0, '[---]']";
-        for ($i = 6; $i <= 30; $i++)
-        {
+        for ($i = 6; $i <= 30; $i++) {
             $store .= ",[" . $i . ", '" . $i . "']";
         }
         $store .= "]";
@@ -535,25 +473,20 @@ class CamemisField {
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
         $js .= ",triggerAction: 'all'";
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $name . "'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: '" . $name . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:false";
@@ -564,8 +497,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboGender($fieldLabel = false, $hidden = false, $disabled = false, $width = false)
-    {
+    static function ComboGender($fieldLabel = false, $hidden = false, $disabled = false, $width = false) {
         $store = "[[0, '[---]'],[2, '" . FEMALE . "'],[1, '" . MALE . "']]";
         $js = "";
         $js .= "xtype: 'combo'";
@@ -573,25 +505,20 @@ class CamemisField {
         $js .= ",fieldLabel: '" . GENDER . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
         $js .= ",triggerAction: 'all'";
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
         $js .= ",name: 'GENDER'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: 'GENDER'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -602,8 +529,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboUserType($fieldLabel = false, $hidden = false, $disabled = false, $width = false)
-    {
+    static function ComboUserType($fieldLabel = false, $hidden = false, $disabled = false, $width = false) {
         $store = "[[0, '[---]'],['STUDENT', '" . STUDENT . "'],['TEACHER', '" . TEACHER . "'],['STAFF', '" . STAFF . "']]";
         $js = "";
         $js .= "xtype: 'combo'";
@@ -611,25 +537,20 @@ class CamemisField {
         $js .= ",fieldLabel: '" . RECIPIENT . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
         $js .= ",triggerAction: 'all'";
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
         $js .= ",name: 'RECIPIENT'";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",hiddenName: 'RECIPIENT'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:false";
@@ -640,8 +561,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboYesNO($id, $name, $fieldLabel, $allowBlank = false, $disabled = false, $width = false)
-    {
+    static function ComboYesNO($id, $name, $fieldLabel, $allowBlank = false, $disabled = false, $width = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
         $store = "[
@@ -656,8 +576,7 @@ class CamemisField {
         $js .= ",editable:false";
         $js .= ",triggerAction: 'all'";
 
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly: true";
         }
 
@@ -678,25 +597,20 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboReleaseStatus($search = false, $hidden = false, $noNullValue = false, $width = false)
-    {
+    static function ComboReleaseStatus($search = false, $hidden = false, $noNullValue = false, $width = false) {
 
-        if ($search)
-        {
+        if ($search) {
             $store = "[
                 ['---', '[---]'],
                 ['ACTIVE', '" . ENABLED . "'],
                 ['INACTIVE', '" . DISABLED . "']
                 ]";
-        }
-        else
-        {
+        } else {
             $store = "[
                 [1, '" . DISABLED . "'],
                 [0, '[---]']
                 ]";
-            if ($noNullValue)
-            {
+            if ($noNullValue) {
                 $store = "[
                     ['---', '[---]'],
                     [1, '" . ENABLED . "'],
@@ -716,8 +630,7 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'STATUS'";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -725,12 +638,9 @@ class CamemisField {
             $js .= ",value: '---'";
 
         $js .= ",hiddenName: 'STATUS'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -738,8 +648,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboLastSchoolyears($fieldLabel, $allowBlank = false)
-    {
+    static function ComboLastSchoolyears($fieldLabel, $allowBlank = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -766,8 +675,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSchoolYear($id, $name, $fieldLabel, $width = false)
-    {
+    static function ComboSchoolYear($id, $name, $fieldLabel, $width = false) {
         $store = BuildData::comboAcademicData();
 
         $js = "";
@@ -792,16 +700,14 @@ class CamemisField {
         return $js;
     }
 
-    static function Datefield($name, $fieldLabel, $allowBlank = false, $disabled = false, $width = false)
-    {
+    static function Datefield($name, $fieldLabel, $allowBlank = false, $disabled = false, $width = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype:'datefield'";
         $js .= ",id: '" . $name . "_ID'";
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
         $js .= ",name: '" . $name . "'";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly : true";
         }
         $js .= ",format: '" . setExtDatafieldFormat() . "'";
@@ -817,8 +723,7 @@ class CamemisField {
         return $js;
     }
 
-    static function DatefieldDefaultToday($name, $fieldLabel, $allowBlank = false)
-    {
+    static function DatefieldDefaultToday($name, $fieldLabel, $allowBlank = false) {
         $Date = new Zend_Date();
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
@@ -837,8 +742,7 @@ class CamemisField {
         return $js;
     }
 
-    static function StartDatefieldRange($name, $fieldLabel, $endDateField, $allowBlank = false, $setTodayValue = false, $readOnly = false)
-    {
+    static function StartDatefieldRange($name, $fieldLabel, $endDateField, $allowBlank = false, $setTodayValue = false, $readOnly = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype:'datefield'";
@@ -854,8 +758,7 @@ class CamemisField {
         if ($readOnly)
             $js .= ",readOnly:" . $readOnly . "";
 
-        if ($setTodayValue)
-        {
+        if ($setTodayValue) {
             $Date = new Zend_Date();
             $js .= ",value: '" . getShowDate($Date) . "'";
         }
@@ -865,8 +768,7 @@ class CamemisField {
         return $js;
     }
 
-    static function EndDatefieldRange($name, $fieldLabel, $startDateField, $allowBlank = false, $readOnly = false, $disable = false)
-    {
+    static function EndDatefieldRange($name, $fieldLabel, $startDateField, $allowBlank = false, $readOnly = false, $disable = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype:'datefield'";
@@ -890,8 +792,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSubjectType($fieldLabel = false, $allowBlank = false, $readOnly = false)
-    {
+    static function ComboSubjectType($fieldLabel = false, $allowBlank = false, $readOnly = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -906,8 +807,7 @@ class CamemisField {
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
         $js .= ",editable:false";
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly: true";
         }
         $js .= ",name: 'SUBJECT_TYPE'";
@@ -921,19 +821,15 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboJobType($fieldLabel, $allowBlank = true, $isRegistration = false, $width = false)
-    {
+    static function ComboJobType($fieldLabel, $allowBlank = true, $isRegistration = false, $width = false) {
         $allowBlank = $allowBlank ? "false" : "true";
 
-        if ($isRegistration)
-        {
+        if ($isRegistration) {
             $store = "[
                 [2, '" . PART_TIME_JOB . "'],
                 [1, '" . FULL_TIME_JOB . "']
                 ]";
-        }
-        else
-        {
+        } else {
             $store = "[
                 [0, '[---]'],
                 [2, '" . PART_TIME_JOB . "'],
@@ -965,8 +861,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboUserRole($fieldLabel, $allowBlank = false, $hidden = false, $width = false)
-    {
+    static function ComboUserRole($fieldLabel, $allowBlank = false, $hidden = false, $width = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -981,8 +876,7 @@ class CamemisField {
         $js .= ",editable:false";
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
         $js .= ",store: " . $store . "";
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",name: 'USER_ROLE'";
@@ -999,8 +893,7 @@ class CamemisField {
         return $js;
     }
 
-    static function HTML($name, $height = false, $readOnly = false)
-    {
+    static function HTML($name, $height = false, $readOnly = false) {
 
         $_readOnly = $readOnly ? "true" : "false";
 
@@ -1011,8 +904,7 @@ class CamemisField {
         $js .= ",name: '" . $name . "'";
         $js .= ",hideLabel: true";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",listeners: {";
             $js .= "'initialize': function(f){";
             $js .= "this.setReadOnly(" . $_readOnly . ");";
@@ -1035,8 +927,7 @@ class CamemisField {
         return $js;
     }
 
-    static function HTMLAdvantage($name, $width = false, $height = false, $readOnly = false)
-    {
+    static function HTMLAdvantage($name, $width = false, $height = false, $readOnly = false) {
 
         $_readOnly = $readOnly ? "true" : "false";
 
@@ -1047,8 +938,7 @@ class CamemisField {
         $js .= ",name: '" . $name . "'";
         $js .= ",hideLabel: true";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",listeners: {";
             $js .= "'initialize': function(f){";
             $js .= "this.setReadOnly(" . $_readOnly . ");";
@@ -1074,8 +964,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Numberfield($id, $name, $fieldLabel, $allowBlank = true, $value = false, $readOnly = false, $hidden = false, $emptyText = false, $width = false)
-    {
+    static function Numberfield($id, $name, $fieldLabel, $allowBlank = true, $value = false, $readOnly = false, $hidden = false, $emptyText = false, $width = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $js = "";
         $js .= "xtype: 'numberfield'";
@@ -1088,12 +977,9 @@ class CamemisField {
         if ($value)
             $js .= ",value: " . $value . "";
         $js .= ",decimalPrecision : 3";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:$width";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -1110,8 +996,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Checkbox($id, $name, $fieldLabel, $value = false, $checked = false, $disabled = false, $hiden = false)
-    {
+    static function Checkbox($id, $name, $fieldLabel, $value = false, $checked = false, $disabled = false, $hiden = false) {
         $js = "";
         $js .= "fieldLabel: ''";
         $js .= ",xtype: 'checkbox'";
@@ -1121,12 +1006,10 @@ class CamemisField {
             $js .= ",hidden:true";
         $js .= ",name: '" . $name . "'";
         $js .= ",hideLabel: true";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",disabled: true";
         }
-        if ($value)
-        {
+        if ($value) {
             $js .= ",inputValue: '" . $value . "'";
             $js .= ",value: '" . $value . "'";
         }
@@ -1136,8 +1019,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Radio($id, $name, $fieldLabel, $value, $checked = false, $disabled = false)
-    {
+    static function Radio($id, $name, $fieldLabel, $value, $checked = false, $disabled = false) {
         $js = "";
         $js .= "fieldLabel: ''";
         $js .= ",xtype: 'radio'";
@@ -1146,8 +1028,7 @@ class CamemisField {
         $js .= ",name: '" . $name . "'";
         $js .= ",inputValue: '" . $value . "'";
         $js .= ",hideLabel: true";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",disabled: true";
         }
         if ($checked)
@@ -1156,8 +1037,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Spinnerfield($name, $fieldLabel, $allowBlank = false, $value = false)
-    {
+    static function Spinnerfield($name, $fieldLabel, $allowBlank = false, $value = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $minValue = $value ? 1 : 0;
 
@@ -1182,8 +1062,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboDuration($fieldLabel, $value = false, $readOnly = false)
-    {
+    static function ComboDuration($fieldLabel, $value = false, $readOnly = false) {
         $store = "[
             [1, '" . ONE_YEAR . "'],
             [2, '" . TWO_YEAR . "'],
@@ -1219,8 +1098,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSendStatus($fieldLabel, $width = false)
-    {
+    static function ComboSendStatus($fieldLabel, $width = false) {
         $store = "[
             [1, '" . ALL_TEXT . "'],
             [2, '" . SENT . "'],
@@ -1252,8 +1130,7 @@ class CamemisField {
     ///////////////////////////////////////////////////////
     // Subjects by Grade...
     ///////////////////////////////////////////////////////
-    static function ComboSubjectByGrade($id, $name, $fieldLabel, $allowBlank, $hidden = false, $width = false)
-    {
+    static function ComboSubjectByGrade($id, $name, $fieldLabel, $allowBlank, $hidden = false, $width = false) {
         $store = BuildData::comboDataSubjectsByGrade();
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -1275,8 +1152,7 @@ class CamemisField {
 
         $js .= ",allowBlank:" . $allowBlank . "";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",readOnly: true";
         }
         if ($fieldLabel == "")
@@ -1285,8 +1161,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSubjectByTraining($id, $name, $fieldLabel, $allowBlank, $hidden = false)
-    {
+    static function ComboSubjectByTraining($id, $name, $fieldLabel, $allowBlank, $hidden = false) {
 
         $store = BuildData::comboDataSubjectsByTraining();
         $allowBlank = $allowBlank ? "false" : "true";
@@ -1305,8 +1180,7 @@ class CamemisField {
         $js .= ",width:250";
         $js .= ",allowBlank:" . $allowBlank . "";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         if ($fieldLabel == "")
@@ -1315,8 +1189,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboRoom($id, $name, $fieldLabel, $allowBlank, $width = false)
-    {
+    static function ComboRoom($id, $name, $fieldLabel, $allowBlank, $width = false) {
         $store = BuildData::comboDataRoom();
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -1331,12 +1204,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $name . "'";
         $js .= ",hiddenName: '" . $name . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -1347,20 +1217,16 @@ class CamemisField {
         return $js;
     }
 
-    static function Uploadfield($name, $fieldLabel)
-    {
+    static function Uploadfield($name, $fieldLabel) {
 
         $js = "";
         $js .= "xtype: 'fileuploadfield'";
         $js .= ",id: '" . $name . "_ID'";
         $js .= ",emptyText: '" . PLEASE_CHOOSE . "'";
 
-        if ($fieldLabel)
-        {
+        if ($fieldLabel) {
             $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        }
-        else
-        {
+        } else {
             $js .= ",hideLabel: true";
         }
 
@@ -1374,8 +1240,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Box($Id, $fieldLabel, $value)
-    {
+    static function Box($Id, $fieldLabel, $value) {
         $js = "";
         $js .= "xtype:'box'";
         $js .= ",id: '" . $Id . "'";
@@ -1396,8 +1261,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboCampus($fieldLabel, $allowBlank = true)
-    {
+    static function ComboCampus($fieldLabel, $allowBlank = true) {
 
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -1420,8 +1284,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboTrainingprograms($fieldLabel, $allowBlank = true)
-    {
+    static function ComboTrainingprograms($fieldLabel, $allowBlank = true) {
 
         $allowBlank = $allowBlank ? "false" : "true";
 
@@ -1444,8 +1307,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboGrade($name, $fieldLabel, $allowBlank = false, $hidden = false, $width = false)
-    {
+    static function ComboGrade($name, $fieldLabel, $allowBlank = false, $hidden = false, $width = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
         $hidden = $hidden ? "true" : "false";
@@ -1464,12 +1326,9 @@ class CamemisField {
         $js .= ",hiddenName: '" . $name . "'";
 
         $js .= ",allowBlank:" . $allowBlank . "";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -1478,8 +1337,7 @@ class CamemisField {
         return $js;
     }
 
-    static function Timefield($name, $fieldLabel)
-    {
+    static function Timefield($name, $fieldLabel) {
 
         $js = "";
         $js .= "xtype: 'textfield'";
@@ -1495,15 +1353,13 @@ class CamemisField {
         return $js;
     }
 
-    static function checkBoxSubject()
-    {
+    static function checkBoxSubject() {
         $checkBoxs = BuildData::checkboxDataSubjects();
         $js = $checkBoxs;
         return $js;
     }
 
-    static function scheduleType($fieldLabel, $readOnly = false)
-    {
+    static function scheduleType($fieldLabel, $readOnly = false) {
         $store = "[
             [0, '[---]']
             ,[1, '" . TEACHING_EVENT . "']
@@ -1524,8 +1380,7 @@ class CamemisField {
         $js .= ",width:250";
         $js .= ",allowBlank:false";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly: " . $readOnly . "";
         }
 
@@ -1535,8 +1390,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboInfractionType($fieldLabel, $hidden = false, $width = false)
-    {
+    static function ComboInfractionType($fieldLabel, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataInfractionType();
 
@@ -1556,8 +1410,7 @@ class CamemisField {
         else
             $js .= ",width:250";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",allowBlank:false";
@@ -1568,8 +1421,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboPriority($fieldLabel)
-    {
+    static function ComboPriority($fieldLabel) {
 
         $store = "[
             [1, '" . NORMAL . "'],
@@ -1598,8 +1450,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboTwoTerms($allowBlank = false, $hidden = false)
-    {
+    static function comboTwoTerms($allowBlank = false, $hidden = false) {
         $allowBlank = $allowBlank ? "false" : "true";
         $hidden = $hidden ? "true" : "false";
         $store = "[
@@ -1627,8 +1478,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboReligion($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboReligion($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllReligion();
 
@@ -1638,8 +1488,7 @@ class CamemisField {
         $js .= ",fieldLabel: '" . RELIGION . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
         if ($hidden)
@@ -1658,8 +1507,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboTutors($allowBlank = false, $width = false)
-    {
+    static function comboTutors($allowBlank = false, $width = false) {
 
         $allowBlank = $allowBlank ? "false" : "true";
         $store = BuildData::comboDataAllTeacher();
@@ -1675,12 +1523,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'TEACHER'";
         $js .= ",hiddenName: 'TEACHER'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
@@ -1689,8 +1534,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboNationality($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboNationality($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllNationality();
 
@@ -1700,13 +1544,11 @@ class CamemisField {
         $js .= ",fieldLabel: '" . NATIONALITY . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -1715,12 +1557,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'NATIONALITY'";
         $js .= ",hiddenName: 'NATIONALITY'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -1729,8 +1568,7 @@ class CamemisField {
     }
 
     ////
-    static function comboMajor($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboMajor($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllMajor();
 
@@ -1740,13 +1578,11 @@ class CamemisField {
         $js .= ",fieldLabel: '" . MAJOR . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -1755,12 +1591,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'MAJOR'";
         $js .= ",hiddenName: 'MAJOR'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -1768,8 +1601,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboQualitycationDegree($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboQualitycationDegree($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllQualitycationDegree();
 
@@ -1779,13 +1611,11 @@ class CamemisField {
         $js .= ",fieldLabel: '" . QUALIFICATION_DEGREE . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -1794,12 +1624,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'QUALIFICATION_DEGREE'";
         $js .= ",hiddenName: 'QUALIFICATION_DEGREE'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -1809,8 +1636,7 @@ class CamemisField {
 
     ////
 
-    static function comboEthnic($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboEthnic($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllEthnic();
         $js = "";
@@ -1819,13 +1645,11 @@ class CamemisField {
         $js .= ",fieldLabel: '" . ETHNIC_GROUPS . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -1834,12 +1658,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'ETHNIC'";
         $js .= ",hiddenName: 'ETHNIC'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -1847,8 +1668,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboOrganization($hidden = false, $width = false)
-    {
+    static function comboOrganization($hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllOrganization();
 
@@ -1859,8 +1679,7 @@ class CamemisField {
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden: true";
         }
         $js .= ",triggerAction: 'all'";
@@ -1877,8 +1696,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboUserAcivity()
-    {
+    static function comboUserAcivity() {
 
         $store = "[
             ['','[---]']
@@ -1904,11 +1722,9 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSMSPriority($type, $width = false)
-    {
+    static function ComboSMSPriority($type, $width = false) {
 
-        switch ($type)
-        {
+        switch ($type) {
             case "SEARCH_STUDENT":
                 $store = "[
                     ['', '" . ALL_TEXT . "']
@@ -1964,8 +1780,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboCurrency()
-    {
+    static function ComboCurrency() {
         $store = "[
             [0, '[---]']
             ,['KHR', '" . CAMBODIA_RIEL . "']
@@ -1996,8 +1811,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboPaymentMethod($width = false)
-    {
+    static function ComboPaymentMethod($width = false) {
         $store = "[
             ['CASH_IN_HAND', '" . CASH_IN_HAND . "']
             ,['CREDIT_CARD_BANK_CARD', '" . CREDIT_CARD_BANK_CARD . "']
@@ -2025,8 +1839,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAmountOption($width = false, $readOnly = false)
-    {
+    static function ComboAmountOption($width = false, $readOnly = false) {
         $store = "[
             ['1', '" . FIRST_OPTION . "']
             ,['2', '" . SECOND_OPTION . "']
@@ -2056,8 +1869,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboFeeBalanceType($width = false)
-    {
+    static function ComboFeeBalanceType($width = false) {
         $store = "[
             ['1', '" . COMPLETELY . "']
             ,['2', '" . HALF_PAY . "']
@@ -2084,11 +1896,9 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboPaymentOption($index, $value = false, $readOnly = false)
-    {
+    static function ComboPaymentOption($index, $value = false, $readOnly = false) {
 
-        switch ($index)
-        {
+        switch ($index) {
             case 1:
                 $store = "[
                     ['1', '" . FIRST_OPTION . "']
@@ -2140,8 +1950,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAcademicType($fieldLabel, $value = false, $width = false)
-    {
+    static function ComboAcademicType($fieldLabel, $value = false, $width = false) {
 
         $store = "[
             [0, '[---]'],
@@ -2168,20 +1977,16 @@ class CamemisField {
 
         if ($fieldLabel == "")
             $js .= ",hideLabel: true";
-        if ($value == "clear")
-        {
+        if ($value == "clear") {
             $js .= "";
-        }
-        else
-        {
+        } else {
             $js .= ",value: 2";
         }
 
         return $js;
     }
 
-    static function ComboAddUserRole($fieldLabel, $width = false)
-    {
+    static function ComboAddUserRole($fieldLabel, $width = false) {
         $store = "[
             [0, '[---]']
             ,[1, '" . INSTRUCTOR . "']
@@ -2210,8 +2015,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSendSMSIntervall($allowBlank = false)
-    {
+    static function ComboSendSMSIntervall($allowBlank = false) {
         $store = "[
             ['0', '" . NO . "']
             ,['1', '" . YES . "']
@@ -2229,20 +2033,16 @@ class CamemisField {
         $js .= ",name: 'SMS_SEND'";
         $js .= ",hiddenName: 'SMS_SEND'";
         $js .= ",width:250";
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
         return $js;
     }
 
-    static function ComboDay($hideLabel = false)
-    {
+    static function ComboDay($hideLabel = false) {
         $store = "[
             ['0', '[---]']
             ,['MO', '" . MONDAY . "']
@@ -2272,8 +2072,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboBulletinType()
-    {
+    static function ComboBulletinType() {
 
         $store = "[['0', '[---]']]";
 
@@ -2294,8 +2093,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboMathematicalOperation($value = false)
-    {
+    static function comboMathematicalOperation($value = false) {
 
         $store = "[
             ['0', '[---]']
@@ -2323,8 +2121,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboScoreType($value = false, $readOnly = false)
-    {
+    static function comboScoreType($value = false, $readOnly = false) {
 
         $store = "[
             ['1', '" . SCORE_ON_NUMBER . "']
@@ -2351,8 +2148,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboFacilityType()
-    {
+    static function ComboFacilityType() {
 
         $store = "[
             ['', '[---]']
@@ -2376,8 +2172,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboPersonalDescription($fieldLabel, $parent, $personType, $type = false, $disabled = false, $hidden = false, $width = false)
-    {
+    static function comboPersonalDescription($fieldLabel, $parent, $personType, $type = false, $disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllPersonalDescription($parent, $personType, $type);
 
@@ -2387,13 +2182,11 @@ class CamemisField {
         $js .= ",fieldLabel: '" . $fieldLabel . "'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -2402,12 +2195,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $fieldLabel . "'";
         $js .= ",hiddenName: '" . $fieldLabel . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";
@@ -2415,8 +2205,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAcademicSystemTypeHightEducation($value = false, $width = false, $readOnly = false)
-    {
+    static function ComboAcademicSystemTypeHightEducation($value = false, $width = false, $readOnly = false) {
 
         $PENEL_ITEMS = Array();
         $GENERAL_EDUCATION = "['GENERAL', '" . HIGHT_EDUCATION . "']";
@@ -2440,27 +2229,20 @@ class CamemisField {
         $js .= ",store: " . $CHOOSE_ITEMS . "";
         $js .= ",name: 'EDUCATION_TYPE'";
 
-        if ($value)
-        {
+        if ($value) {
             $js .= ",value: '" . $value . "'";
-        }
-        else
-        {
+        } else {
             $js .= ",value: '[---]'";
         }
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
         $js .= ",hiddenName: 'EDUCATION_TYPE'";
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:false";
@@ -2468,14 +2250,12 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAcademicSystemType($value = false, $width = false, $readOnly = false)
-    {
+    static function ComboAcademicSystemType($value = false, $width = false, $readOnly = false) {
 
         $PENEL_ITEMS = Array();
         $GENERAL_EDUCATION = "['GENERAL', '" . TRADITIONAL_EDUCATION_SYSTEM . "']";
         $CREDIT_EDUCATION = "['CREDIT','" . CREDIT_EDUCATION_SYSTEM . "']";   //@veasna
-        if (UserAuth::displayRoleGeneralEducation())
-        {  //@veasna
+        if (UserAuth::displayRoleGeneralEducation()) {  //@veasna
             if (UserAuth::displayTraditionalEducationSystem()) //@veasna
                 $PENEL_ITEMS[] = $GENERAL_EDUCATION;      //@veasna
             if (UserAuth::displayCreditEducationSystem())   //@veasna
@@ -2499,27 +2279,20 @@ class CamemisField {
         $js .= ",store: " . $CHOOSE_ITEMS . "";
         $js .= ",name: 'EDUCATION_TYPE'";
 
-        if ($value)
-        {
+        if ($value) {
             $js .= ",value: '" . $value . "'";
-        }
-        else
-        {
+        } else {
             $js .= ",value: '[---]'";
         }
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
         $js .= ",hiddenName: 'EDUCATION_TYPE'";
 
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:false";
@@ -2527,8 +2300,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboFormularTax($fieldLabel, $width = false)
-    {
+    static function ComboFormularTax($fieldLabel, $width = false) {
         $store = "[
             [1, '" . ADDITION . "']
             ,[2, '" . SUBSTRACTION . "']
@@ -2556,8 +2328,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboPaymentStatus($width = false)
-    {
+    static function ComboPaymentStatus($width = false) {
         $store = "[
             ['', '[---]']
             ,['PAID', '" . PAID . "']
@@ -2586,8 +2357,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboSalary($width = false)
-    {
+    static function ComboSalary($width = false) {
         $store = "[
             ['', '[---]']
             ,['PAYMENT_FOR_SALARY', '" . PAYMENT_FOR_SALARY . "']
@@ -2614,8 +2384,7 @@ class CamemisField {
         return $js;
     }
 
-    static function ComboAttendanceIsUsed($width = false, $readOnly = false)
-    {
+    static function ComboAttendanceIsUsed($width = false, $readOnly = false) {
         $store = "[
             ['0', '" . NO . "']
             ,['1', '" . YES . "']
@@ -2638,16 +2407,14 @@ class CamemisField {
             $js .= ",width:250";
         $js .= ",allowBlank:true";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
 
         return $js;
     }
 
-    static function ComboQualificationType($allowBlank, $width = false, $readOnly = false)
-    {
+    static function ComboQualificationType($allowBlank, $width = false, $readOnly = false) {
 
         $store = BuildData::comboDataQualificationType();
 
@@ -2669,23 +2436,18 @@ class CamemisField {
             $js .= ",width:250";
         $js .= ",allowBlank:true";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
         return $js;
     }
 
-    static function ComboEducationSystem($width = false, $readOnly = false, $value = false)
-    {
+    static function ComboEducationSystem($width = false, $readOnly = false, $value = false) {
 
         $store = "[
             ['0', '" . TRADITIONAL . "']
@@ -2709,25 +2471,20 @@ class CamemisField {
             $js .= ",width:250";
         $js .= ",allowBlank:true";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
 
-        if ($value == 0)
-        {
+        if ($value == 0) {
             $js .= ",value:'0'";
-        }
-        else
-        {
+        } else {
             $js .= ",value:'" . $value . "'";
         }
 
         return $js;
     }
 
-    static function comboAbsentTypes($objectType, $readOnly = false, $width = false, $allowBlank = false)
-    {
+    static function comboAbsentTypes($objectType, $readOnly = false, $width = false, $allowBlank = false) {
 
         $store = BuildData::comboAbsentType($objectType);
 
@@ -2738,8 +2495,7 @@ class CamemisField {
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
 
@@ -2748,21 +2504,15 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'ABSENT_TYPE'";
         $js .= ",hiddenName: 'ABSENT_TYPE'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
@@ -2770,8 +2520,7 @@ class CamemisField {
     }
 
     //@THORN Visal
-    static function comboAcademicClasses($academicId, $schoolyearId, $teacherId, $label, $readOnly = false, $width = true, $allowBlank = false)
-    {
+    static function comboAcademicClasses($academicId, $schoolyearId, $teacherId, $label, $readOnly = false, $width = true, $allowBlank = false) {
 
         $store = BuildData::comboAcademicClasses(array('academicId' => $academicId, 'schoolyearId' => $schoolyearId, 'teacherId' => $teacherId));
 
@@ -2782,8 +2531,7 @@ class CamemisField {
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
 
@@ -2792,21 +2540,15 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $label . "'";
         $js .= ",hiddenName: '" . $label . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
@@ -2814,8 +2556,7 @@ class CamemisField {
     }
 
     //@Sea Peng
-    static function comboCamemisTypes($objectType, $label, $readOnly = false, $width = false, $allowBlank = false)
-    {
+    static function comboCamemisTypes($objectType, $label, $readOnly = false, $width = false, $allowBlank = false) {
 
         $store = BuildData::comboCamemisType($objectType);
 
@@ -2826,8 +2567,7 @@ class CamemisField {
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
 
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
 
@@ -2836,29 +2576,22 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: '" . $objectType . "'";
         $js .= ",hiddenName: '" . $objectType . "'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
         return $js;
     }
 
-    static function ComboPunishmentType()
-    {
+    static function ComboPunishmentType() {
 
         $store = BuildData::comboCamemisType('PUNISHMENT_TYPE');
         $js = "";
@@ -2881,8 +2614,7 @@ class CamemisField {
 
     //
 
-    static function comboTimezone($width = false, $allowBlank = false)
-    {
+    static function comboTimezone($width = false, $allowBlank = false) {
 
         $data = array(
             '(UTC-11:00)-1' => 'Pacific/Midway (UTC-11:00)',
@@ -3032,8 +2764,7 @@ class CamemisField {
 
         asort($data);
 
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $result[] = "['" . $key . "', '" . $value . "']";
         }
 
@@ -3052,53 +2783,39 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'SCHOOL_TIMEZONE'";
         $js .= ",hiddenName: 'SCHOOL_TIMEZONE'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
 
-        if ($allowBlank)
-        {
+        if ($allowBlank) {
             $js .= ",allowBlank:false";
-        }
-        else
-        {
+        } else {
             $js .= ",allowBlank:true";
         }
 
         return $js;
     }
 
-    static function ComboSchoolTerm($fieldLabel, $readOnly = false, $width = false)
-    {
+    static function ComboSchoolTerm($fieldLabel, $readOnly = false, $width = false) {
         $store = "[[0, '" . TWO_SEMESTERS . "'],[1, '" . THREE_ITEMS . "'],[2, '" . FOUR_QUARTERS . "']]";
         $js = "";
         $js .= "xtype: 'combo'";
         $js .= ",id: 'TERM_NUMBER_ID'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($fieldLabel)
-        {
+        if ($fieldLabel) {
             $js .= ",fieldLabel: '" . $fieldLabel . "'";
-        }
-        else
-        {
+        } else {
             $js .= ",fieldLabel: '" . TERM_NUMBER . "'";
         }
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
-        if ($readOnly)
-        {
+        if ($readOnly) {
             $js .= ",readOnly:true";
         }
         $js .= ",triggerAction: 'all'";
@@ -3109,8 +2826,7 @@ class CamemisField {
         return $js;
     }
 
-    static function comboEyeChart($disabled = false, $hidden = false, $width = false)
-    {
+    static function comboEyeChart($disabled = false, $hidden = false, $width = false) {
 
         $store = BuildData::comboDataAllEyeChart();
         $js = "";
@@ -3119,13 +2835,11 @@ class CamemisField {
         $js .= ",fieldLabel: 'Chart Type'";
         $js .= ",mode: 'local'";
         $js .= ",editable:false";
-        if ($disabled)
-        {
+        if ($disabled) {
             $js .= ",readOnly:true";
         }
 
-        if ($hidden)
-        {
+        if ($hidden) {
             $js .= ",hidden:true";
         }
 
@@ -3134,12 +2848,9 @@ class CamemisField {
         $js .= ",store: " . $store . "";
         $js .= ",name: 'EYECHART_TYPE'";
         $js .= ",hiddenName: 'EYECHART_TYPE'";
-        if ($width)
-        {
+        if ($width) {
             $js .= ",width:" . $width . "";
-        }
-        else
-        {
+        } else {
             $js .= ",width:250";
         }
         $js .= ",allowBlank:true";

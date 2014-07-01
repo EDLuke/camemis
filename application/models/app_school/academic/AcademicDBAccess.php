@@ -897,7 +897,6 @@ class AcademicDBAccess {
                 $FIRST_SQL->where("PARENT = '" . $schoolyearObject->ID . "'");
                 $FIRST_SQL->where("OBJECT_TYPE = 'CLASS'");
             }
-
             //error_log($FIRST_SQL->__toString());
             $firstEntries = self::dbAccess()->fetchAll($FIRST_SQL);
 
@@ -955,35 +954,34 @@ class AcademicDBAccess {
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
                 }
             }
-        }
+            $SECOND_SQL = self::dbAccess()->select();
+            $SECOND_SQL->from("t_assignment", array("*"));
+            $SECOND_SQL->where("GRADE = '" . $schoolyearObject->GRADE_ID . "'");
+            $SECOND_SQL->where("SCHOOLYEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
+            //error_log($SQL->__toString());
+            $secondEntries = self::dbAccess()->fetchAll($SECOND_SQL);
 
-        $SECOND_SQL = self::dbAccess()->select();
-        $SECOND_SQL->from("t_assignment", array("*"));
-        $SECOND_SQL->where("GRADE = '" . $schoolyearObject->GRADE_ID . "'");
-        $SECOND_SQL->where("SCHOOLYEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
-        //error_log($SQL->__toString());
-        $secondEntries = self::dbAccess()->fetchAll($SECOND_SQL);
-
-        if ($secondEntries) {
-            foreach ($secondEntries as $value) {
-                $SECOND_SAVEDATA['EVALUATION_TYPE'] = $schoolyearObject->EVALUATION_TYPE;
-                $SECOND_WHERE[] = "ID = '" . $value->ID . "'";
-                self::dbAccess()->update('t_assignment', $SECOND_SAVEDATA, $SECOND_WHERE);
+            if ($secondEntries) {
+                foreach ($secondEntries as $value) {
+                    $SECOND_SAVEDATA['EVALUATION_TYPE'] = $schoolyearObject->EVALUATION_TYPE;
+                    $SECOND_WHERE[] = "ID = '" . $value->ID . "'";
+                    self::dbAccess()->update('t_assignment', $SECOND_SAVEDATA, $SECOND_WHERE);
+                }
             }
-        }
 
-        $THIRD_SQL = self::dbAccess()->select();
-        $THIRD_SQL->from("t_grade_subject", array("*"));
-        $THIRD_SQL->where("GRADE = '" . $schoolyearObject->GRADE_ID . "'");
-        $THIRD_SQL->where("SCHOOLYEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
-        //error_log($SQL->__toString());
-        $thirdEntries = self::dbAccess()->fetchAll($THIRD_SQL);
+            $THIRD_SQL = self::dbAccess()->select();
+            $THIRD_SQL->from("t_grade_subject", array("*"));
+            $THIRD_SQL->where("GRADE = '" . $schoolyearObject->GRADE_ID . "'");
+            $THIRD_SQL->where("SCHOOLYEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
+            //error_log($SQL->__toString());
+            $thirdEntries = self::dbAccess()->fetchAll($THIRD_SQL);
 
-        if ($thirdEntries) {
-            foreach ($thirdEntries as $value) {
-                $THIRD_SAVEDATA['EVALUATION_TYPE'] = $schoolyearObject->EVALUATION_TYPE;
-                $THIRD_WHERE[] = "ID = '" . $value->ID . "'";
-                self::dbAccess()->update('t_grade_subject', $THIRD_SAVEDATA, $THIRD_WHERE);
+            if ($thirdEntries) {
+                foreach ($thirdEntries as $value) {
+                    $THIRD_SAVEDATA['EVALUATION_TYPE'] = $schoolyearObject->EVALUATION_TYPE;
+                    $THIRD_WHERE[] = "ID = '" . $value->ID . "'";
+                    self::dbAccess()->update('t_grade_subject', $THIRD_SAVEDATA, $THIRD_WHERE);
+                }
             }
         }
     }

@@ -497,29 +497,29 @@ Ext.onReady(function() {
     $WORKING_DAYS = "
     {
         title: '".WORKING_DAYS."'
+        ,autoHeight: true
         ,collapsible: true
         ,collapsed: false
-        ,autoHeight: true
         ,style: 'padding-bottom: 5px'
+        ,bodyStyle: 'padding:15px'
         ,width: 550
         ,autoHeight: true
         ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,bodyStyle: 'padding:10px'
+            xtype: 'checkboxgroup'
+            ,columns:3
+            ,fieldLabel: ''
+            ,labelSeparator: ''
             ,items: [
-                {".CamemisField::Checkbox("MO","MO", MONDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("TU","TU", TUESDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("WE","WE", WEDNESDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("TH","TH", THURSDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("FR","FR", FRIDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("SA","SA", SATURDAY, 1, false)."}
-                ,{".CamemisField::Checkbox("SU","SU", SUNDAY, 1, false)."}
+                {boxLabel: '" . MONDAY . "', name: 'MO', disabled:false, inputValue:1}
+                ,{boxLabel: '" . TUESDAY . "', name: 'TU', disabled:false, inputValue:1}
+                ,{boxLabel: '" . WEDNESDAY . "', name: 'WE', disabled:false, inputValue:1}
+                ,{boxLabel: '" . THURSDAY . "', name: 'TH', disabled:false, inputValue:1}
+                ,{boxLabel: '" . FRIDAY . "', name: 'FR', disabled:false, inputValue:1}
+                ,{boxLabel: '" . SATURDAY . "', name: 'SA', disabled:false, inputValue:1}
+                ,{boxLabel: '" . SUNDAY . "', name: 'SU', disabled:false, inputValue:1}
             ]
         }]
-    }
-    ";
+    }";
     
     $CAMEMIS_EDITION_CODE_ID = "
     {
