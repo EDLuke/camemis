@@ -23,6 +23,9 @@ $OBJECT_FORM->setSaveUrl('/student/jsonsave/');
 //Checkbox...
 ////////////////////////////////////////////////////////////////////////////////
 function getExtCheckBoxField($parentId){
+    
+    $CHECKBOX_JS = "";
+    
     $data = Array();
     $objectParent = DescriptionDBAccess::findObjectFromId($parentId);
     $entries = DescriptionDBAccess::sqlDescription($parentId, "STUDENT", false);
@@ -44,6 +47,9 @@ function getExtCheckBoxField($parentId){
 //Radiobox...
 ////////////////////////////////////////////////////////////////////////////////
 function getExtRadioBoxField($parentId){
+    
+    $RADIOBOX_JS = "";
+    
     $data = Array();
     $objectParent = DescriptionDBAccess::findObjectFromId($parentId);
     $entries = DescriptionDBAccess::sqlDescription($parentId, "STUDENT", false);
