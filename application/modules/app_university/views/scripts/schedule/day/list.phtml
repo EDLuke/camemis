@@ -79,6 +79,8 @@ Ext.onReady(function() {
     }
     
     function showText(v, p, record, rowIndex){
+        var description = record.data.GROUPS?record.data.GROUPS:record.data.DESCRIPTION;
+        p.attr = "ext:qtip='"+description+"'";
         switch(record.data.CHDECK_STATUS){
             case 1:
                 textdecoration = 'none';
@@ -126,6 +128,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STATUS'");
     $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
     $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+    $OBJECT_GRID->addReadField("name: 'GROUPS'");
     
     $OBJECT_GRID->addColumn("
         header: '<b>" . TIME . "</b>'

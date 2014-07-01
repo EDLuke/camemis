@@ -222,7 +222,7 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
     function getCSSDay($shortday){
         $js ="function css".$shortday."(v, metadata, record){";
             $js .="var name = record.data.".$shortday."_DESCRIPTION;";
-            $js .="metadata.attr = 'ext:qtip=\"' + name + '\"';";
+            $js .="metadata.attr = 'ext:qtip=\'' + name + '\'';";
             $js .="return String.format('<div style=\"white-space:normal; font-weight:normal; padding:10px; height:' + record.data.HEIGHT+ 'px; background:{1};color:{2};\">{0}</div>'";
                 $js .=",v,record.data['".$shortday."_COLOR'],record.data['".$shortday."_COLOR_FONT']";
             $js .=");";

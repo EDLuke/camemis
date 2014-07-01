@@ -154,7 +154,7 @@ class DayScheduleDBAccess extends ScheduleDBAccess {
                 switch ($value->SCHEDULE_TYPE) {
                     case 1:
                         $data[$i]["EVENT"] = setShowText($value->$DISPLAY_SUBJECT);
-                        $groupObject = self::findLinkedScheduleAcademicByScheduleId($value->SCHEDULE_ID);
+                        /*$groupObject = self::findLinkedScheduleAcademicByScheduleId($value->SCHEDULE_ID);
                         if ($groupObject) {
                             $j = 0;
                             foreach ($groupObject as $group) {
@@ -164,6 +164,19 @@ class DayScheduleDBAccess extends ScheduleDBAccess {
                                 ++$j;
                             }
                             $data[$i]["EVENT"] .= "<br>";
+                        }*/
+                        if($value->SHARED_SCHEDULE){
+                            if($value->SHARED_FROM){
+                                $ownerSchedule=ScheduleDBAccess::findScheduleFromGuId($value->SHARED_FROM);
+                                $ownerSchedule->SCHEDULE_ID=$ownerSchedule->ID;
+                            }else{
+                                $ownerSchedule=ScheduleDBAccess::findScheduleFromGuId($value->SCHEDULE_ID);
+                                $ownerSchedule->SCHEDULE_ID=$ownerSchedule->ID;    
+                            }
+                            
+                            $data[$i]["EVENT"] .= "<br/><img src='".Zend_Registry::get('CAMEMIS_URL')."/public/images/24/paperclip_add.png' ext:qtip='".ScheduleDBAccess::displayShearedWith($ownerSchedule)."'>";
+                            $data[$i]["GROUPS"] =ScheduleDBAccess::displayShearedWith($ownerSchedule);
+                            
                         }
                         $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
                         $data[$i]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);

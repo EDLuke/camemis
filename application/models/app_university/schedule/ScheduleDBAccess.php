@@ -1918,7 +1918,7 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function setSharedSchedule($academicId, $scheduleObject)
+    public static function setSharedSchedule($academicId, $scheduleObject,$checked)
     {
 
         if ($academicId && is_object($scheduleObject))
@@ -1931,9 +1931,9 @@ class ScheduleDBAccess {
                 , 'SHORTDAY = ? ' => $scheduleObject->SHORTDAY
                 , 'ACADEMIC_ID = ? ' => $academicId
             );
-
-            self::dbAccess()->delete('t_schedule', $CONDITION_A);
-
+            if($checked==false){
+                self::dbAccess()->delete('t_schedule', $CONDITION_A);
+            }
             $SAVEDATA["CODE"] = createCode();
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
@@ -1954,18 +1954,21 @@ class ScheduleDBAccess {
             $SAVEDATA["END_TIME"] = $scheduleObject->END_TIME;
             $SAVEDATA["SCHEDULE_TYPE"] = $scheduleObject->SCHEDULE_TYPE;
             $SAVEDATA["DESCRIPTION"] = $scheduleObject->DESCRIPTION;
-
-            self::dbAccess()->insert('t_schedule', $SAVEDATA);
-
+            if($checked){
+                $checkSchedule = self::getSQLClassEvents(array('academicId'=>$academicId,'subjectId'=>$scheduleObject->SUBJECT_ID,'starttime'=>$scheduleObject->START_TIME,'endtime'=>$scheduleObject->END_TIME,'single'=>true));
+                if(!$checkSchedule)
+                self::dbAccess()->insert('t_schedule', $SAVEDATA);
+            }
             $CONDITION_B = array(
                 'SCHEDULE_ID = ? ' => $scheduleObject->ID
                 , 'ACADEMIC_ID = ? ' => $academicId
             );
-
-            self::dbAccess()->delete('t_link_schedule_academic', $CONDITION_B);
-
+            if($checked==false){
+                self::dbAccess()->delete('t_link_schedule_academic', $CONDITION_B);
+            } 
             $LINK_SAVEDATA["SCHEDULE_ID"] = $scheduleObject->ID;
             $LINK_SAVEDATA["ACADEMIC_ID"] = $academicId;
+            if($checked)
             self::dbAccess()->insert('t_link_schedule_academic', $LINK_SAVEDATA);
         }
     }
@@ -2043,6 +2046,42 @@ class ScheduleDBAccess {
                 self::dbAccess()->insert('t_link_schedule_academic', $SAVEDATA);
             }
             //@veasna
+            ///find parent schedule if have no action if not insert
+            $parentSchedule = self::getSQLClassEvents(array('academicId'=>$academicObject->PARENT,'subjectId'=>$facette->SUBJECT_ID,'starttime'=>$facette->START_TIME,'endtime'=>$facette->END_TIME,'single'=>true));
+            if(!$parentSchedule){
+                $SAVEDATA = array();
+                $SAVEDATA["CODE"] = createCode();
+                $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+                $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+                $SAVEDATA["GUID"] = generateGuid();
+                $SAVEDATA["SHORTDAY"] = $facette->SHORTDAY;
+                $SAVEDATA["SHARED_FROM"] = $facette->ID;
+                $SAVEDATA["GRADE_ID"] = $facette->GRADE_ID;
+                $SAVEDATA["SHARED_SCHEDULE"] = $facette->SHARED_SCHEDULE;
+                $SAVEDATA["SCHOOLYEAR_ID"] = $facette->SCHOOLYEAR_ID;
+                $SAVEDATA["TERM"] = $facette->TERM;
+                $SAVEDATA["ACADEMIC_ID"] = $academicObject->PARENT;
+                $SAVEDATA["ROOM_ID"] = $facette->ROOM_ID;
+                $SAVEDATA["SUBJECT_ID"] = $facette->SUBJECT_ID;
+                $SAVEDATA["TEACHER_ID"] = $facette->TEACHER_ID;
+                $SAVEDATA["EVENT"] = $facette->EVENT;
+                $SAVEDATA["STATUS"] = $facette->STATUS;
+                $SAVEDATA["START_TIME"] = $facette->START_TIME;
+                $SAVEDATA["END_TIME"] = $facette->END_TIME;
+                $SAVEDATA["SCHEDULE_TYPE"] = $facette->SCHEDULE_TYPE;
+                $SAVEDATA["DESCRIPTION"] = $facette->DESCRIPTION;
+                if ($isValue){
+                    self::dbAccess()->insert('t_schedule', $SAVEDATA);
+                }  
+            }
+            $chekLinkParent = self::findLinkedScheduleAcademic(array('scheduleId'=>$facette->ID,'academicId'=>$academicObject->PARENT));
+            if(!$chekLinkParent){
+                if ($isValue){
+                if($academicObject->PARENT!=$facette->ACADEMIC_ID)
+                self::dbAccess()->insert('t_link_schedule_academic', array('SCHEDULE_ID'=>$facette->ID,'ACADEMIC_ID'=>$academicObject->PARENT));
+                }
+            }   
+            //
             $scheduleLinkAcademic = self::findLinkedScheduleAcademicByScheduleId($facette->ID);
             $GROUP_ID_ARR = array();
             if ($scheduleLinkAcademic)
@@ -2476,16 +2515,27 @@ class ScheduleDBAccess {
             {
                 foreach ($result as $value)
                 {
-                    if ($scheduleObject->ACADEMIC_ID != $value->ID)
-                    {
+                    /*if ($scheduleObject->ACADEMIC_ID != $value->ID)
+                    {*/
                         $data[$i]['id'] = "" . $value->ID . "";
                         $data[$i]['text'] = setShowText($value->NAME);
                         $data[$i]['iconCls'] = "icon-shape_square_link";
-                        $data[$i]['cls'] = "nodeTextBlue";
-                        $data[$i]['leaf'] = true;
+                        $data[$i]['cls'] = "nodeText";
                         $data[$i]['checked'] = self::checkSharedScheduleAcademic($scheduleId, $value->ID);
+                        if($value->OBJECT_TYPE=='SUBCLASS'){
+                            $data[$i]['leaf'] = true;
+                        }else{
+                            $data[$i]['leaf'] = false; 
+                            if($value->ID==$scheduleObject->ACADEMIC_ID){
+                             $data[$i]['disabled'] = true;
+                             $data[$i]['checked'] = true;  
+                            }
+                               
+                        }
+                        
+                        
                         $i++;
-                    }
+                    //}
                 }
             }
         }
@@ -2515,7 +2565,7 @@ class ScheduleDBAccess {
                 switch ($academicObject->OBJECT_TYPE)
                 {
                     case "CLASS":
-                        self::setSharedSchedule($selectedId, $scheduleObject);
+                        self::setSharedSchedule($selectedId, $scheduleObject,$checked);
                         break;
                     case "SUBCLASS":
                         self::actionLinkSchedule2Academic($scheduleId, $selectedId, $checked, 1);
@@ -2613,7 +2663,91 @@ class ScheduleDBAccess {
             , "rows" => $data
         );
     }
-
+    
+    
+    ///
+    public static function findLinkedScheduleAcademic($params)
+    {
+        $scheduleId = isset($params['scheduleId'])?$params['scheduleId']:'';
+        $isParent = isset($params['isParent'])?$params['isParent']:'';
+        $isChildrens = isset($params['isChildrens'])?$params['isChildrens']:'';
+        $parentId = isset($params['parentId'])?$params['parentId']:'';
+        $academicId = isset($params['academicId'])?$params['academicId']:'';
+            
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_link_schedule_academic'), array("ACADEMIC_ID AS ACADEMIC_ID","SCHEDULE_ID"));
+        $SQL->joinLeft(array('B' => 't_grade'), 'B.ID=A.ACADEMIC_ID', array("*"));
+        if($scheduleId)
+        $SQL->where("A.SCHEDULE_ID = '" . $scheduleId . "'");
+        if($isParent)
+        $SQL->where("A.PARENT_ACADEMIC_ID = ?",0);
+        if($isChildrens)
+        $SQL->where("A.PARENT_ACADEMIC_ID <> 0");
+        if($parentId)
+        $SQL->where("A.PARENT_ACADEMIC_ID = ?",$parentId);
+        if($academicId){
+        $SQL->where("A.ACADEMIC_ID = ?",$academicId);    
+        }
+        $result = self::dbAccess()->fetchAll($SQL);
+        //error_log($SQL->__toString());
+        return $result;
+    }
+    
+    public static function displayShearedWith($scheduleObject){
+        
+        if($scheduleObject->SHARED_FROM){
+            $ownerSchedule = self::findScheduleFromGuId($scheduleObject->SHARED_FROM);
+            if($ownerSchedule->ACADEMIC_ID){
+                $ownerScheduleClass = AcademicDBAccess::findGradeFromId($ownerSchedule->ACADEMIC_ID);
+                $ownerScheduleSubClass = self::findLinkedScheduleAcademic(array('scheduleId'=>$ownerSchedule->ID,'parentId'=>$ownerSchedule->ACADEMIC_ID));    
+            }        
+        }else{
+            $ownerScheduleClass = AcademicDBAccess::findGradeFromId($scheduleObject->ACADEMIC_ID);
+            $ownerScheduleSubClass = self::findLinkedScheduleAcademic(array('scheduleId'=>$scheduleObject->SCHEDULE_ID,'parentId'=>$scheduleObject->ACADEMIC_ID));    
+        }
+        
+        $disPlay = "<div style=\"padding:5px;\"><h2 style=\"font-size:12px;\">This Schedule shared With:</h2>";
+        $disPlay .="<span style=\"color:#15428b; font-weight:bold; padding-left:10px; margin-top:10px;\">".$ownerScheduleClass->NAME;
+        
+        $i=0;
+        if($ownerScheduleSubClass){
+            $disPlay .="(";
+            foreach($ownerScheduleSubClass as $value){
+                $disPlay .= $i?',':'';
+                $disPlay .= $value->NAME;  
+                $i++;          
+            }
+            $disPlay .= ")";
+        }
+        $disPlay .= "</span>";
+        /////Sheared
+        if($scheduleObject->SHARED_FROM){
+            $linkShearedSchedule = self::findLinkedScheduleAcademic(array('scheduleId'=>$ownerSchedule->ID,'isParent'=>true));
+        }else{
+            $linkShearedSchedule = self::findLinkedScheduleAcademic(array('scheduleId'=>$scheduleObject->SCHEDULE_ID,'isParent'=>true));    
+        }
+        
+        if($linkShearedSchedule){
+            foreach($linkShearedSchedule as $value){
+                $disPlay .= "<br/><span style=\"padding-left:10px;\">";
+                $disPlay .= $value->NAME;
+                $ShearSubClass = self::findLinkedScheduleAcademic(array('scheduleId'=>$value->SCHEDULE_ID,'parentId'=>$value->ID));                  if($ShearSubClass){
+                    $disPlay .= "(";
+                    $i=0;
+                    foreach($ShearSubClass as $subSchedule){
+                        $disPlay .= $i?',':'';  
+                        $disPlay .= $subSchedule->NAME;       
+                    }
+                    $disPlay .= ")";  
+                }   
+                $disPlay .= "</span>";          
+            }
+        }
+        $disPlay .="<br/></div>";
+        
+        return $disPlay;        
+    }
+    ///
     public static function displayEvent($type, $checkAcademicId, $EVENT_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT)
     {
 
@@ -2635,11 +2769,20 @@ class ScheduleDBAccess {
                 if (self::checkAcaemicGroup($EVENT_OBJECT->ACADEMIC_ID))
                 {
                     $DAY_EVENT .= self::displayGroupSubjectEvent($EVENT_OBJECT);
+                    $DAY_EVENT .= "<br>";
+                    $DAY_EVENT .= $EVENT_OBJECT->TEACHER;
+                    $DAY_EVENT .= "<br>";
+                    $DAY_EVENT .= setShowText($EVENT_OBJECT->$DISPLAY_ROOM);
+                    $DAY_EVENT .= "<br>";
+                    //$DAY_EVENT .= self::displayShearedWith($EVENT_OBJECT);
+                    $DAY_EVENT .= "<img src='".Zend_Registry::get('CAMEMIS_URL')."/public/images/24/paperclip_add.png' ext:qtip='".self::displayShearedWith($EVENT_OBJECT)."'>";
+                
                     $DAY_NAME_EVENT .= "";
                     $DAY_COLOR .= "#FFF";
                     $DAY_COLOR_FONT .= "#555";
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
-                    $DAY_DESCRIPTION .= self::displayAcademicGroup($EVENT_OBJECT);
+                    //$DAY_DESCRIPTION .= self::displayAcademicGroup($EVENT_OBJECT);
+                    $DAY_DESCRIPTION .= self::displayShearedWith($EVENT_OBJECT);
                     $DAY_DESCRIPTION_EX .= "";
                 }
                 else

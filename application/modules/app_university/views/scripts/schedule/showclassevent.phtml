@@ -196,13 +196,15 @@ Ext.onReady(function() {
     ////////////////////////////////////////////////////////////////////////////
     if($this->facette){
         if($this->facette->SHARED_SCHEDULE){
-            $SHARED_TREE->isTreeExpand = true;
             $SHARED_TREE->isAsyncTreeNode = false;
-            $SHARED_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+            $SHARED_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
             $SHARED_TREE->setBaseParams("
                 cmd: 'jsonTreeSharedSchedule2Academic'
                 ,scheduleId:'".$this->facette->ID."'
             ");
+            $SHARED_TREE->isTreeExpand = true;
+            $SHARED_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+            $SHARED_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
             $SHARED_TREE->backgroundColor = "#F9F9F9";
             $SHARED_TREE->renderJS();
 
@@ -975,6 +977,8 @@ Ext.onReady(function() {
                 $js .= "}";
                 $js .= ",success: function(response, options) {";
                     $js .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); ";
+                    $js .= "myTree.root.reload();";
+                    $js .= "myTree.getRootNode().expand(true, false);";
                 $js .= "}";
             $js .= "});";
         $js .= "});";
