@@ -16,14 +16,32 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $OBJECT_GRID = new CamemisGrid("HEALTH", "LIST");
-$OBJECT_GRID->setLoadUrl('/health/jsonload/');
-$OBJECT_GRID->setSaveUrl('/health/jsonsave/');
+$OBJECT_GRID->setLoadUrl('/student/jsonload/');
+$OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$setParams = "";
+$setParams .= "&health_type=".$target."";
+
 ?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
 <script>
     
     Ext.onReady(function() {
@@ -33,18 +51,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ,v
             );
         }
-
-        function showTextRed(v){
-            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#CC0000; padding: 5px;\">{0}</div>'
-                ,v
-            );
-        }
-
-        function showTextBlue(v){
-            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#061f83; padding: 5px;\">{0}</div>'
-                ,v
-            );
-        }
+        
         <?
         /**
         * Extjs: s.gif
@@ -52,16 +59,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
-        $OBJECT_GRID->addReadField("name: 'FIRST_TERM_RESULT'");   
-        $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'"); 
-        $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'"); 
+        $OBJECT_GRID->addReadField("name: 'STUDENT'");   
         
         $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
         $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
         $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
 
         $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 120, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
-    
+        $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 140, renderer: showText, sortable: true, dataIndex: 'STUDENT',filter:{}");
+        
         switch($target){
             case "DENTAL":
                 $title = "Dental";
@@ -168,7 +174,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
-            ,cmd: 'jsonListStudentsYearAcademicPerformance'
+            ,cmd: 'searchStudentHealth'
             ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
         ";
         

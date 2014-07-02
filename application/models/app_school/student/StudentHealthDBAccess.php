@@ -275,10 +275,6 @@ class StudentHealthDBAccess {
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
         $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
-        $religion = isset($params["RELIGION"]) ? addText($params["RELIGION"]) : "";
-        $ethnic = isset($params["ETHNIC"]) ? addText($params["ETHNIC"]) : "";
-        $nationality = isset($params["NATIONALITY"]) ? $params["NATIONALITY"] : "";
-        $healthItems = isset($params["healthItems"]) ? $params["healthItems"] : "";
         $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
         $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
         $nexVisitDate = isset($params["NEXT_VISIT"]) ? setDate2DB($params["NEXT_VISIT"]) : "";
@@ -294,7 +290,7 @@ class StudentHealthDBAccess {
 
         $BMI_STATUS = isset($params["BMI_STATUS"]) ? $params["BMI_STATUS"] : "";
 
-        $SELECTION_C = array(
+        $SELECTION_B = array(
             "ID AS STUDENT_ID"
             , "CODE AS CODE"
             , "STUDENT_SCHOOL_ID AS STUDENT_SCHOOL_ID"
@@ -302,20 +298,12 @@ class StudentHealthDBAccess {
             , "CONCAT(LASTNAME,', ',FIRSTNAME) AS NAME"
             , "FIRSTNAME AS FIRSTNAME"
             , "LASTNAME AS LASTNAME"
-            , "FIRSTNAME_LATIN AS FIRSTNAME_LATIN"
-            , "LASTNAME_LATIN AS LASTNAME_LATIN"
-            , "CONCAT(LASTNAME_LATIN,', ',FIRSTNAME_LATIN) AS FULLNAME_LATIN"
-            , "ADDRESS AS ADDRESS"
-            , "NATIONALITY AS NATIONALITY"
-            , "ETHNIC AS ETHNIC"
-            , "MINORITY AS MINORITY"
-            , "RELIGION AS RELIGION"
             , "GENDER AS GENDER"
         );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_medical'), array('*'));
-        $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_C);
+        $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_B);
 
         if ($studentId)
             $SQL->where("A.STUDENT_ID='" . $studentId . "'");
@@ -357,20 +345,7 @@ class StudentHealthDBAccess {
         if ($EYE_RIGHT)
             $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
 
-        if ($health_type)
-        {
-            switch ($health_type)
-            {
-                case 'GROWTH_CHART':
-                case 'MEDICAL_VISIT':
-                case 'BMI':
-                    $SQL->where("A.OBJECT_TYPE = '" . $health_type . "'");
-                    break;
-                default:
-                    $SQL->where("A.MEDICAL_SETTING_ID = '" . $health_type . "'");
-                    break;
-            }
-        }
+        $SQL->where("A.OBJECT_TYPE = '" . $health_type . "'");
 
         if ($code)
             $SQL->where("B.CODE LIKE '" . $code . "%'");
@@ -382,12 +357,6 @@ class StudentHealthDBAccess {
             $SQL->where("B.LASTNAME LIKE '" . $lastname . "%'");
         if ($gender)
             $SQL->where("B.GENDER ='" . $gender . "'");
-        if ($religion)
-            $SQL->where("B.RELIGION='" . $religion . "'");
-        if ($ethnic)
-            $SQL->where("B.ETHNIC='" . $ethnic . "'");
-        if ($nationality)
-            $SQL->where("B.NATIONALITY='" . $nationality . "'");
 
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -400,60 +369,19 @@ class StudentHealthDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
-        $facette = "";
-        if ($health_type)
-        {
-            switch ($health_type)
-            {
-                case 'GROWTH_CHART':
-                case 'MEDICAL_VISIT':
-                case 'BMI':
-                    $facette = "";
-                    break;
-                default:
-                    $facette = HealthSettingDBAccess::sqlHealthSetting($health_type, false);
-                    break;
-            }
-        }
 
-        $healthItems = array();
-        if ($facette)
-        {
-            foreach ($facette as $item)
-            {
-                $entries = HealthSettingDBAccess::sqlHealthSetting($item->ID, false);
-                foreach ($entries as $value)
-                {
-                    switch ($value->FIELD_TYPE)
-                    {
-                        case 1:
-                            if (isset($params["CHECKBOX_" . $value->ID]))
-                                $healthItems[] = $params["CHECKBOX_" . $value->ID];
-                            break;
-                        case 2:
-                            if (isset($params["RADIOBOX_" . $item->ID]))
-                                $healthItems[] = $params["RADIOBOX_" . $item->ID];
-                            break;
-                    }
-                }
-            }
-        }
-        if ($healthItems)
-        {
-            $params['healthItems'] = implode(',', $healthItems);
-        }
-        //error_log(implode(',',$healthItems));
         $result = self::sqlStudentHealth($params);
         $data = array();
         $i = 0;
         foreach ($result as $value)
         {
 
+            $data[$i]["MEDICAL_DATE"] = getShowDate($value->MEDICAL_DATE);
             $data[$i]["CODE"] = $value->CODE;
             $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
             $data[$i]["ID"] = $value->ID;
             $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
-            $data[$i]["FULLNAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
+
             if (!SchoolDBAccess::displayPersonNameInGrid())
             {
                 $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
@@ -462,48 +390,66 @@ class StudentHealthDBAccess {
             {
                 $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
             }
-            $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
-            $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
-            if (!SchoolDBAccess::displayPersonNameInGrid())
+
+            switch ($health_type)
             {
-                $data[$i]["FULL_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
+                case "DENTAL":
+                    $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
+                    $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
+                    $data[$i]["X_RAYS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_X_RAYS");
+                    $data[$i]["DENTAL_CARIES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_CARIES");
+                    $data[$i]["TOOTH_NUMBER"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_TOOTH_NUMBER");
+                    break;
+
+                case "INJURY":
+                    $data[$i]["LOCATION"] = setShowText($value->LOCATION);
+                    $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
+                    break;
+
+                case "MEDICAL_VISIT":
+                    $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
+                    $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
+                    $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
+                    $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
+                    $data[$i]["LOCATION"] = setShowText($value->LOCATION);
+                    break;
+
+                case "VACCINATION":
+                    $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
+                    break;
+
+                case "VISION":
+                    $data[$i]["OTHER"] = setShowText($value->OTHER);
+                    $data[$i]["EYE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_TREATMENT");
+                    $data[$i]["EYE_CHART"] = self::getStudentHealthSetting($value->DATA_ITEMS, "EYE_CHART");
+                    $data[$i]["VALUES_OF_LEFT_EYE"] = self::getEyeData($value->EYE_LEFT);
+                    $data[$i]["VALUES_OF_RIGHT_EYE"] = self::getEyeData($value->EYE_RIGHT);
+                    break;
+
+                case "VITAMIN":
+                    $data[$i]["VND"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING");
+                    $data[$i]["DP"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING_PILL");
+                    $data[$i]["MMS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_MMS");
+                    break;
+
+                case "BMI":
+                    $data[$i]["BMI"] = setShowText($value->BMI);
+                    $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                    $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                    $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
+                    break;
+
+                case "GROWTH_CHART":
+                    $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                    $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                    $data[$i]["PULSE"] = setShowText($value->PULSE);
+                    $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
+                    break;
             }
-            else
-            {
-                $data[$i]["FULL_NAME"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
-            }
-            $data[$i]["FIRSTNAME_LATIN"] = setShowText($value->FIRSTNAME_LATIN);
-            $data[$i]["LASTNAME_LATIN"] = setShowText($value->LASTNAME_LATIN);
-            $data[$i]["FULLNAME_LATIN"] = setShowText($value->FULLNAME_LATIN);
-            $data[$i]["NATIONALITY"] = setShowText($value->NATIONALITY);
-            $data[$i]["RELIGION"] = $value->RELIGION;
-            $data[$i]["ETHNIC"] = $value->ETHNIC;
-            $data[$i]["ETHNICITY"] = $value->ETHNIC;
-            $data[$i]["GENDER"] = getGenderName($value->GENDER);
-            $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->STUDENT_ID);
-            $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
-            $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
-            $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
-            $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
-            //growth chart
-            $data[$i]["WEIGHT"] = $value->WEIGHT ? $value->WEIGHT : '---';
-            $data[$i]["HEIGHT"] = $value->HEIGHT ? $value->HEIGHT : '---';
-            $data[$i]["PULSE"] = $value->PULSE ? $value->PULSE : '---';
-            $data[$i]["BLOOD_PRESSURE"] = $value->BLOOD_PRESSURE ? $value->BLOOD_PRESSURE : '---';
 
-            //Medical visit
-            $data[$i]["DOCTOR_NAME"] = $value->DOCTOR_NAME ? $value->DOCTOR_NAME : '---';
-            $data[$i]["REASON"] = $value->REASON ? $value->REASON : '---';
-            $data[$i]["DOCTOR_COMMENT"] = $value->DOCTOR_COMMENT ? $value->DOCTOR_COMMENT : '---';
-            $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
+            $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
+            $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
 
-            //BMI
-            $data[$i]["BMI"] = $value->BMI ? $value->BMI : '---';
-            $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
-            $data[$i]["MEDICAL_DATE"] = getShowDate($value->MEDICAL_DATE);
-            $data[$i]["DESCRIPTION"] = $value->DESCRIPTION;
-
-            $data[$i]["MEDICAL_SETTING_ID"] = $value->MEDICAL_SETTING_ID;
             $i++;
         }
         $a = array();
@@ -611,6 +557,7 @@ class StudentHealthDBAccess {
 
         if ($objectId)
             $SQL->where("STUDENT_ID='" . $objectId . "'");
+
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
 
@@ -619,22 +566,21 @@ class StudentHealthDBAccess {
             foreach ($result as $value)
             {
                 $data[$i]["ID"] = $value->ID;
-                $data[$i]["BMI"] = setShowText($value->BMI);
-                $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
                 $data[$i]["DESCRIPTION"] = setShowText($value->DESCRIPTION);
                 $data[$i]["MEDICAL_DATE"] = getShowDate($value->MEDICAL_DATE);
-                $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
-                $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
-                $data[$i]["PULSE"] = setShowText($value->PULSE);
-                $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
-                $data[$i]["LOCATION"] = setShowText($value->LOCATION);
                 $data[$i]["DOCTOR_COMMENT"] = setShowText($value->DOCTOR_COMMENT);
-                $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
                 $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
 
                 switch ($target)
                 {
+                    case "BMI":
+                        $data[$i]["BMI"] = setShowText($value->BMI);
+                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                        $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
+                        break;
+
                     case "DENTAL":
                         $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
                         $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
@@ -646,9 +592,11 @@ class StudentHealthDBAccess {
                         $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
                         break;
                     case "MEDICAL_VISIT":
+                        $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
                         $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                         $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                         $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
+                        $data[$i]["LOCATION"] = setShowText($value->LOCATION);
                         break;
                     case "VACCINATION":
                         $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
@@ -664,6 +612,12 @@ class StudentHealthDBAccess {
                         $data[$i]["VND"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING");
                         $data[$i]["DP"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_DEWORMING_PILL");
                         $data[$i]["MMS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "VITAMINS_MMS");
+                        break;
+                    case "GROWTH_CHART":
+                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                        $data[$i]["PULSE"] = setShowText($value->PULSE);
+                        $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
                         break;
                 }
 

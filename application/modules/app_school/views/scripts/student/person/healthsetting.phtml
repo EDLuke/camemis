@@ -24,53 +24,6 @@ $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-function columnDate($header, $dataindex, $width){
-    $js = "";
-    $js .= "editor: new Ext.form.DateField({";
-        $js .= "allowBlank: false,format: '" . setExtDatafieldFormat() . "'";
-    $js .= "})";
-    $js .=",format:'" . setExtDatafieldFormat() . "'";
-    $js .= ",renderer:showText";
-    $js .= ",header: '<b>".$header."</b>'";
-    $js .= ",dataIndex: '".$dataindex."'";
-    $js .= ",width: $width";
-    
-    return $js;
-}
-
-function columnTextarea($header, $dataindex, $width){
-    $js = "";
-    $js .= "editor: new Ext.form.TextArea({";
-        $js .= "allowBlank: false";
-    $js .= "})";
-    $js .= ",renderer:showText";
-    $js .= ",height:25";
-    $js .= ",header: '<b>".$header."</b>'";
-    $js .= ",dataIndex: '".$dataindex."'";
-    $js .= ",width: $width";
-    
-    return $js;
-}
-
-function columnInput($header, $dataindex, $width, $align, $css=false){
-    $js = "";
-    $js .= "editor: new Ext.form.TextField({";
-        $js .= "allowBlank: false";
-    $js .= "})";
-    if($css){
-        $js .= ",renderer:".$css."";
-    }else{
-        $js .= ",renderer:showText";
-    }
-    $js .= ",sortable: true";
-    $js .= ",align: '".$align."'";
-    $js .= ",header: '<b>".$header."</b>'";
-    $js .= ",dataIndex: '".$dataindex."'";
-    $js .= ",width: $width";
-    
-    return $js;
-}
-
 $params = "objectId=".$this->objectId."";
 $params .= "&target=".$target."";
 $params .= "&settingId=".$settingId."";
@@ -167,8 +120,6 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
             $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
-            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
-            $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");    
 
         break;
         case "GROWTH_CHART":

@@ -107,13 +107,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,id: 'MEDICAL_VISIT'
             ,hidden:true
             ,checkboxToggle:true
-            ,title: 'Next visit (" . DATE . ")'
+            ,title: 'Next visit'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
             ,width: 320
             ,items:[{
-                ".CamemisField::Datefield("MV_START_DATE", START_DATE, false, false, 150)."
-            },{
-                ".CamemisField::Datefield("MV_END_DATE", END_DATE, false, false, 150)."
+                ".CamemisField::Datefield("NEXT_VISIT_DATE",DATE, false, false, 150)."
             }]
         "); 
         
@@ -134,21 +132,18 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
                 start = myForm.findField('START_DATE_ID').getValue();
                 end = myForm.findField('END_DATE_ID').getValue();
-                vstart = myForm.findField('MV_START_DATE_ID').getValue();
-                vend = myForm.findField('MV_END_DATE_ID').getValue();
+                nextvisit = myForm.findField('NEXT_VISIT_DATE').getValue();
                 
                 start_ = start?start.format('Y-m-j'):'';
                 end_ = end?end.format('Y-m-j'):'';
                 
-                vstart_ = vstart?vstart.format('Y-m-j'):'';
-                vend_ = vend?vend.format('Y-m-j'):'';
+                nextvisit_ = nextvisit?nextvisit.format('Y-m-j'):'';
                 
                 var searchparams='';
                 searchparams += '&target=' + searchType;
                 searchparams += '&start=' + start_;
                 searchparams += '&end=' + end_;
-                if (vstart_) searchparams += '&vstart=' + vstart_;
-                if (vend_) searchparams += '&vend=' + vend_;
+                if (nextvisit_) searchparams += '&nextVisit=' + nextvisit_;
                 
                 addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
             }
