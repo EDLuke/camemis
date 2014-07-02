@@ -1,7 +1,10 @@
+
+@import url(http://fonts.googleapis.com/earlyaccess/laomuangdon.css);
+
 html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
     margin: 0;
     padding: 0;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 #app-header {
@@ -18,57 +21,57 @@ html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fiel
 }
 
 span.textBold{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 span.textBoldBlue{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#061f83;
 }
 span.textBoldBlue14{
-    font:bold 14px Helvetica,verdana,arial,sans-serif;
+    font:bold 14px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 h1.header{
-    font:bold 15px Helvetica,verdana,arial,sans-serif;
+    font:bold 15px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#555;
 }
 h1.installHeader{
-    font:bold 18px Helvetica,verdana,arial,sans-serif;
+    font:bold 18px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 h2.installSubHeader{
-    font:bold 14px Helvetica,verdana,arial,sans-serif;
+    font:bold 14px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 h1.headerError{
-    font:bold 16px Helvetica,verdana,arial,sans-serif;
+    font:bold 16px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#CC0000;
 }
 h1.modulName{
-    font:bold 9px  Helvetica,verdana,arial,sans-serif;
+    font:bold 9px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#FFFFFF;
     text-align: right;
 }
 h1.schoolName{
-    font:bold 14px  Helvetica,verdana,arial,sans-serif;
+    font:bold 14px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#FFFFFF;
     text-align: right;
 }
 h1.camemis{
-    font:bold 15px Helvetica,verdana,arial,sans-serif;
+    font:bold 15px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#FFFFFF;
     text-align: left;
 }
 p.header{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 h1.content{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 textarea{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     border: 1px solid #D0D0BF;
 }
 table.show{
@@ -81,26 +84,26 @@ table.show{
     */
 }
 th.header{
-    font:bold 12px Helvetica,verdana,arial,sans-serif;
+    font:bold 12px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
 }
 
 th.show{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
 }
 td.show{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     padding: 5px;
 }
 
 th.showReportItemNumber{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     font-weight: bold;
     color: #333333;
     padding: 5px;
@@ -109,7 +112,7 @@ th.showReportItemNumber{
 }
 
 th.showReportItem{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     font-weight: bold;
     color: #333333;
     padding: 5px;
@@ -118,7 +121,7 @@ th.showReportItem{
 }
 
 td.showReportItemNumber{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     font-weight: normal;
     color: #333333;
     padding: 5px;
@@ -127,7 +130,7 @@ td.showReportItemNumber{
 }
 
 td.showReportItem{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     font-weight: normal;
     color: #333333;
     padding: 5px;
@@ -136,29 +139,29 @@ td.showReportItem{
 }
 
 td.fieldBold{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     font-weight: bold;
     color: #333333;
     padding: 5px;
 }
 td.fieldNormal{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     padding: 5px;
 }
 
 td.tdBold{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     padding: 5px;
 }
 td.tdNormal{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color: #333333;
     padding: 5px;
 }
 .textNormal {
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 ul.list{
@@ -171,11 +174,11 @@ ul.list{
     list-style:square;
 }
 input.show-btn{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     padding: 5px;
 }
 .header .x-panel-body{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .disabled2{
@@ -190,17 +193,17 @@ label.x-form-item-label{
     font-weight:normal;
 }
 .x-form-item label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     text-decoration:none;
 }
 .x-grid3-row td,.x-grid3-summary-row td{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-tree-node{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-grid3-hd-row td{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .ux-grid3-dirty-row {
     background:#ffffa8;
@@ -210,11 +213,11 @@ label.x-form-item-label{
 }
 .x-panel-header-text {
     text-decoration:none;
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .details-panel .x-panel-body{
     padding: 11px;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 h1.details {padding: 11px;color: #333333;font-size: 16px;font-weight:bold;}
@@ -234,7 +237,7 @@ p.details {padding: 11px;}
     color: #CC0000;
     padding: 11px;
     height: 40px;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .line {
@@ -281,29 +284,29 @@ p.details {padding: 11px;}
 /*
 .x-panel-body {background-color:#FFFFFF;}
 */
-.x-panel-header-text {font:bold 11px Helvetica,verdana,arial,sans-serif;}
+.x-panel-header-text {font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';}
 .x-btn-text{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-grid3-header {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-grid3-cell-inner{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-tree-node {
-    font:Helvetica,verdana,arial,sans-serif;
+    font:'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-tab-strip span.x-tab-strip-text {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-toolbar .x-btn button{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .combo-result-item {
     padding :  2px;
@@ -312,81 +315,81 @@ p.details {padding: 11px;}
 
 .nodeTextBold .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeTextThrough .x-tree-node-anchor SPAN {
     color : #333333 !important;
     text-decoration: line-through;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeText .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .nodeTextRed .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeTextRedBold .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeTextBlue .x-tree-node-anchor SPAN {
     color : #061f83 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeTextBoldBlue .x-tree-node-anchor SPAN {
     color : #061f83 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeFolderBold .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .nodeFolder .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .nodeCampus .x-tree-node-anchor SPAN {
     color : #31005A !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .nodeGrade .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .nodeSchoolyear .x-tree-node-anchor SPAN {
     color : #31005A !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .nodeClass .x-tree-node-anchor SPAN {
     color : #1861A5 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .disabled .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .enabled .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .disabled .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .enabled .x-tree-node-anchor SPAN {
     color : #333333 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .upload-icon {
@@ -418,11 +421,11 @@ p.details {padding: 11px;}
 }
 
 .x-grid3-td-topic b {
-    font:normal 16px Helvetica,verdana,arial,sans-serif;
+    font:normal 16px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     display:block;
 }
 .x-grid3-td-topic b i {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
     color:#000;
 }
 .x-grid3-td-topic .x-grid3-cell-inner {
@@ -570,42 +573,42 @@ Kaom
 }
 
 .x-small-editor .x-form-field {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .ext-webkit .x-small-editor .x-form-field {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-fieldset legend {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-btn{
-    font:normal 11px tHelvetica,verdana,arial,sans-serif;
+    font:normal 11px t'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-btn button{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-grid3-row td, .x-grid3-summary-row td{
-    font:normal 11px/13px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px/13px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-grid3-hd-row td {
-    font:normal 11px/15px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px/15px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-grid-group-hd div.x-grid-group-title {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-grid-empty {
     font:normal 11px Helvetica, arial, helvetica, sans-serif;
@@ -613,29 +616,29 @@ Kaom
 
 .x-dd-drag-ghost{
 
-    font: normal 11px Helvetica,verdana,arial,sans-serif;
+    font: normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 
 .x-tree-node{
-    font: normal 11px Helvetica,verdana,arial,sans-serif;
+    font: normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-date-inner th {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 
 }
 .x-date-inner a {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-date-mp td {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-date-mp-btns button {
 
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-tip .x-tip-mc {
@@ -651,7 +654,7 @@ Kaom
 }
 
 .x-menu-list-item{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-box-mc {
@@ -686,7 +689,7 @@ Kaom
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-window-tl .x-window-header {
@@ -700,11 +703,11 @@ Kaom
 }
 
 .x-list-header-inner div em {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-list-body dt em {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 
 .x-window-dlg .ext-mb-textarea {
