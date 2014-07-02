@@ -235,8 +235,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
                             ,params:{
                                 cmd: 'studentSearch'
                                 ,objectId:'STUDENT_LIST_GRADE_YEAR_ID'
-                                ,CHOOSE_GRADE: '".$this->facette->GRADE_ID."'
-                                ,CHOOSE_SCHOOLYEAR: '".$this->facette->SCHOOL_YEAR."'
+                                ,gradeId: '".$this->facette->GRADE_ID."'
+                                ,schoolyearId: '".$this->facette->SCHOOL_YEAR."'
                             }
                             ,success: function(response, options) {
                                 Ext.MessageBox.hide();
