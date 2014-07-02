@@ -8,8 +8,6 @@
 require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
 
-
-
 class StudentExportDBAccess extends CamemisExportDBAccess {
 
     function __construct($objectId) {
@@ -120,6 +118,8 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
     }
 
     public function studentSearch($searchParams) {
+
+        ini_set('memory_limit', '1024M');
         ini_set('max_execution_time', 600000);
         set_time_limit(35000);
 
@@ -133,24 +133,24 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
             "success" => true
         );
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////////
     //Enrolled Student By Year
     //@CHHE Vathana
     //////////////////////////////////////////////////////////////////////////////////
 
     public function getTopHeader() {
-        
+
         $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 
         $CURRENT_SCHOOLYEAR = $DB_SCHOOLYEAR->isCurrentSchoolyear($this->facette->SCHOOL_YEAR);
         $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->NAME);
         $name = "Dara";
-        $this->setCellContent(0, 1,$TERM_NUMBER);
+        $this->setCellContent(0, 1, $TERM_NUMBER);
         $this->setFontStyle(0, 1, true, 11, "000000");
         $this->setFullStyle(0, 1, "DFE3E8");
     }
-    
+
     public function setEnrolledStudentYearContentHeader() {
 
         $i = 0;
@@ -212,7 +212,7 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
             $i++;
         }
     }
-    
+
     public function setEnrolledStudentYearContent($searchParams) {
         $entries = $this->DB_STUDENT_SEARCH->searchStudents($searchParams, false);
         if ($entries) {
@@ -247,7 +247,7 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
             }
         }
     }
-    
+
     public function enrolledStudentYearSearch($searchParams) {
         ini_set('max_execution_time', 600000);
         set_time_limit(35000);
@@ -263,8 +263,7 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
             "success" => true
         );
     }
-    
-    
+
 }
 
 ?>
