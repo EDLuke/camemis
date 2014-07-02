@@ -249,6 +249,8 @@ class StudentExportDBAccess extends CamemisExportDBAccess {
     }
 
     public function enrolledStudentYearSearch($searchParams) {
+        
+        ini_set('memory_limit', '1024M');
         ini_set('max_execution_time', 600000);
         set_time_limit(35000);
 
