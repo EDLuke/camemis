@@ -371,6 +371,29 @@ Class HealthSettingDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
+    public static function comboHealth() {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_health_setting", array('*'));
+        $SQL->where("PARENT = ?", 0);
+        $SQL->order("SORTKEY ASC");
+        
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        $data = array();
+
+        $data[0] = "[\"0\",\"[---]\"]";
+
+        if ($result) {
+            $i = 0;
+            foreach ($result as $value) {
+                $data[$i + 1] = "[\"$value->OBJECT_INDEX\",\"$value->NAME\"]";
+                $i++;
+            }
+        }
+        return "[" . implode(",", $data) . "]";
+    }
+
 }
 
 ?>

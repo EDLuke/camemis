@@ -18,9 +18,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     Ext.onReady(function() {
         viewport = new Ext.Viewport({
             layout: 'fit'
-            ,border: false
             ,items:[{
-                border: false
+                border: true
                 ,layout: 'fit'
                 ,tbar:[{
                     text:'<?=REFRESH?>'
@@ -39,18 +38,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,defaults: {anchor: '100%'}
                     }
                     ,items: [{
-                        columnWidth: 1
-                        ,baseCls:'x-plain'
-                        ,bodyStyle:'padding:5px 5px 5px 5px'
-                        ,items:[{
-                            title: 'Vaccination'
-                            ,layout: 'fit'
-                            ,collapsible: true
-                            ,collapsed: false
-                            ,height:480
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'VACCINATION', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=VACCINATION")?>'})]
-                        }]    
-                    },{
                         columnWidth: 1
                         ,baseCls:'x-plain'
                         ,bodyStyle:'padding:5px 5px 5px 5px'
