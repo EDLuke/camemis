@@ -63,6 +63,18 @@ tr.filter-row-header .filter-row-icon input {
                 ,v
             );
         }
+
+        function showTextRed(v){
+            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#CC0000; padding: 5px;\">{0}</div>'
+                ,v
+            );
+        }
+
+        function showTextBlue(v){
+            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#061f83; padding: 5px;\">{0}</div>'
+                ,v
+            );
+        }
         
         <?
         /**
@@ -77,7 +89,7 @@ tr.filter-row-header .filter-row-icon input {
         $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
         $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
 
-        $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 120, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 120, renderer: showTextBlue, sortable: false, dataIndex: 'MEDICAL_DATE'");
         $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 140, renderer: showText, sortable: true, dataIndex: 'STUDENT',filter:{}");
         
         switch($target){
@@ -170,7 +182,7 @@ tr.filter-row-header .filter-row-icon input {
                 $OBJECT_GRID->addReadField("name: 'NEXT_VISIT'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
 
-                $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'NEXT_VISIT'");
+                $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showTextRed, sortable: false, dataIndex: 'NEXT_VISIT'");
                 $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'FULL_NAME'");
                 $OBJECT_GRID->addColumn("header: '<b>Visited by</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
                 $OBJECT_GRID->addColumn("header: '<b>".LOCATION."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'LOCATION'");
