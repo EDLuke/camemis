@@ -97,19 +97,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
             ,width: 320
             ,items:[{
-                width: 150
-                ,id: 'START_DATE'
-                ,fieldLabel: '" . START_DATE . "'
-                ,xtype: 'datefield'
-                ,format: '" . setExtDatafieldFormat() . "'
-                ,allowBlank: true
+                ".CamemisField::Datefield("START_DATE", START_DATE, false, false, 150)."
             },{
-                width: 150
-                ,id: 'END_DATE'
-                ,fieldLabel: '" . END_DATE . "'
-                ,xtype: 'datefield'
-                ,format: '" . setExtDatafieldFormat() . "'
-                ,allowBlank: true
+                ".CamemisField::Datefield("END_DATE", END_DATE, false, false, 150)."
             }]
         "); 
         
@@ -154,11 +144,10 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,iconCls:'icon-magnifier'
             ,scope:this
             ,handler: function(){
-                myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
                 var searchparams='';
                 searchparams += '&searchType=' + searchType;
-                searchparams += '&startDate=' + myForm.findField('START_DATE').getValue();
-                searchparams += '&endDate=' + myForm.findField('START_DATE').getValue();
+                searchparams += '&startDate=' + document.getElementById('START_DATE').value;
+                searchparams += '&endDate=' + document.getElementById('END_DATE').value;
                 addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
             }
         ");
