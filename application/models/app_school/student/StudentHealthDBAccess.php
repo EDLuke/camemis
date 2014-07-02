@@ -122,12 +122,12 @@ class StudentHealthDBAccess {
         {
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         }
-        
+
         if (isset($params["NEXT_VISIT_TIME"]))
         {
             $SAVEDATA['NEXT_VISIT_TIME'] = timeStrToSecond($params["NEXT_VISIT_TIME"]);
         }
-        
+
         if (isset($params["WEIGHT"]))
         {
             $SAVEDATA['WEIGHT'] = addText($params["WEIGHT"]);
@@ -322,8 +322,9 @@ class StudentHealthDBAccess {
         {
             $SQL->where("A.MEDICAL_DATE >='" . $start . "' AND A.MEDICAL_DATE <='" . $end . "'");
         }
-        
-        if($nextVisit){
+
+        if ($nextVisit)
+        {
             $SQL->where("A.START_DATE <= '" . $nextVisit . "' AND A.END_DATE >= '" . $nextVisit . "'");
         }
 
@@ -420,7 +421,16 @@ class StudentHealthDBAccess {
                     break;
 
                 case "MEDICAL_VISIT":
-                    $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT)." ".secondToHour($value->NEXT_VISIT_TIME);
+
+                    if (getShowDate($value->NEXT_VISIT) != "---")
+                    {
+                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT) . " " . secondToHour($value->NEXT_VISIT_TIME);
+                    }
+                    else
+                    {
+                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
+                    }
+
                     $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                     $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                     $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
@@ -607,7 +617,14 @@ class StudentHealthDBAccess {
                         $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
                         break;
                     case "MEDICAL_VISIT":
-                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT)." ".secondToHour($value->NEXT_VISIT_TIME);
+                        if (getShowDate($value->NEXT_VISIT) != "---")
+                        {
+                            $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT) . " " . secondToHour($value->NEXT_VISIT_TIME);
+                        }
+                        else
+                        {
+                            $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
+                        }
                         $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                         $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                         $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
