@@ -208,7 +208,7 @@ Ext.onReady(function() {
                     Ext.Ajax.request({
                         url: '/export/jsonexcel/'
                         ,method: 'POST'
-                        ,params:{cmd: 'studentSearch',objectId:'STUDENT_LIST_CLASS_ID',CHOOSE_CLASS:'".$this->facette->ID."'}
+                        ,params:{cmd: 'studentSearch',objectId:'STUDENT_LIST_CLASS_ID',classId:'".$this->facette->ID."'}
                         ,success: function(response, options) {
                             Ext.MessageBox.hide();
                             window.location='/export/openstudentlist/'
