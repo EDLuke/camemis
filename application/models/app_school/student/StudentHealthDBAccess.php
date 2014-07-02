@@ -122,7 +122,12 @@ class StudentHealthDBAccess {
         {
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         }
-
+        
+        if (isset($params["NEXT_VISIT_TIME"]))
+        {
+            $SAVEDATA['NEXT_VISIT_TIME'] = timeStrToSecond($params["NEXT_VISIT_TIME"]);
+        }
+        
         if (isset($params["WEIGHT"]))
         {
             $SAVEDATA['WEIGHT'] = addText($params["WEIGHT"]);
@@ -269,23 +274,28 @@ class StudentHealthDBAccess {
     public static function sqlStudentHealth($params)
     {
 
-        $studentId = isset($params['studentId']) ? $params['studentId'] : "";
-        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
-        $schoolCode = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
-        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
-        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
-        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
-        $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
-        $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
-        $nexVisitDate = isset($params["NEXT_VISIT"]) ? setDate2DB($params["NEXT_VISIT"]) : "";
-        $WEIGHT = isset($params["WEIGHT"]) ? $params["WEIGHT"] : "";
-        $HEIGHT = isset($params["HEIGHT"]) ? $params["HEIGHT"] : "";
-        $PULSE = isset($params["PULSE"]) ? $params["PULSE"] : "";
-        $BLOOD_PRESSURE = isset($params["BLOOD_PRESSURE"]) ? $params["BLOOD_PRESSURE"] : "";
-        $DOCTOR_NAME = isset($params["DOCTOR_NAME"]) ? $params["DOCTOR_NAME"] : "";
-        $BMI = isset($params["BMI"]) ? $params["BMI"] : "";
-        $EYE_LEFT = isset($params["EYE_LEFT"]) ? $params["EYE_LEFT"] : "";
-        $EYE_RIGHT = isset($params["EYE_RIGHT"]) ? $params["EYE_RIGHT"] : "";
+//        $studentId = isset($params['studentId']) ? $params['studentId'] : "";
+//        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
+//        $schoolCode = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
+//        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
+//        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
+//        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
+//        $start = isset($params["start"]) ? $params["start"] : "";
+//        $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
+//        $nexVisitDate = isset($params["NEXT_VISIT"]) ? setDate2DB($params["NEXT_VISIT"]) : "";
+//        $WEIGHT = isset($params["WEIGHT"]) ? $params["WEIGHT"] : "";
+//        $HEIGHT = isset($params["HEIGHT"]) ? $params["HEIGHT"] : "";
+//        $PULSE = isset($params["PULSE"]) ? $params["PULSE"] : "";
+//        $BLOOD_PRESSURE = isset($params["BLOOD_PRESSURE"]) ? $params["BLOOD_PRESSURE"] : "";
+//        $DOCTOR_NAME = isset($params["DOCTOR_NAME"]) ? $params["DOCTOR_NAME"] : "";
+//        $BMI = isset($params["BMI"]) ? $params["BMI"] : "";
+//        $EYE_LEFT = isset($params["EYE_LEFT"]) ? $params["EYE_LEFT"] : "";
+//        $EYE_RIGHT = isset($params["EYE_RIGHT"]) ? $params["EYE_RIGHT"] : "";
+
+        $start = isset($params["start"]) ? $params["start"] : "";
+        $end = isset($params["end"]) ? $params["end"] : "";
+        $nextVisit = isset($params["nextVisit"]) ? $params["nextVisit"] : "";
+
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
 
         $BMI_STATUS = isset($params["BMI_STATUS"]) ? $params["BMI_STATUS"] : "";
@@ -305,59 +315,62 @@ class StudentHealthDBAccess {
         $SQL->from(array('A' => 't_student_medical'), array('*'));
         $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_B);
 
-        if ($studentId)
-            $SQL->where("A.STUDENT_ID='" . $studentId . "'");
+//        if ($studentId)
+//            $SQL->where("A.STUDENT_ID='" . $studentId . "'");
 
-        if ($startDate && $endDate)
+        if ($start && $end)
         {
-            $SQL->where("A.MEDICAL_DATE >='" . $startDate . "' AND A.MEDICAL_DATE <='" . $endDate . "'");
+            $SQL->where("A.MEDICAL_DATE >='" . $start . "' AND A.MEDICAL_DATE <='" . $end . "'");
+        }
+        
+        if($nextVisit){
+            $SQL->where("A.START_DATE <= '" . $nextVisit . "' AND A.END_DATE >= '" . $nextVisit . "'");
         }
 
-        if ($BMI_STATUS)
-        {
-            $SQL->where("A.STATUS = '" . $BMI_STATUS . "'");
-        }
-
-        if ($nexVisitDate)
-            $SQL->where("A.NEXT_VISIT = '" . $nexVisitDate . "'");
-
-        if ($WEIGHT)
-            $SQL->where("A.WEIGHT = '" . $WEIGHT . "'");
-
-        if ($HEIGHT)
-            $SQL->where("A.HEIGHT = '" . $HEIGHT . "'");
-
-        if ($PULSE)
-            $SQL->where("A.PULSE LIKE '" . $PULSE . "%'");
-
-        if ($BLOOD_PRESSURE)
-            $SQL->where("A.BLOOD_PRESSURE LIKE '" . $BLOOD_PRESSURE . "%'");
-
-        if ($DOCTOR_NAME)
-            $SQL->where("A.DOCTOR_NAME LIKE '" . $DOCTOR_NAME . "%'");
-
-        if ($BMI)
-            $SQL->where("A.BMI = '" . $BMI . "'");
-
-        if ($EYE_LEFT)
-            $SQL->where("A.EYE_LEFT = '" . $EYE_LEFT . "'");
-
-        if ($EYE_RIGHT)
-            $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
-
-        $SQL->where("A.OBJECT_TYPE = '" . $health_type . "'");
-
-        if ($code)
-            $SQL->where("B.CODE LIKE '" . $code . "%'");
-        if ($schoolCode)
-            $SQL->where("B.STUDENT_SCHOOL_ID LIKE '" . $code . "%'");
-        if ($firstname)
-            $SQL->where("B.FIRSTNAME LIKE '" . $firstname . "%'");
-        if ($lastname)
-            $SQL->where("B.LASTNAME LIKE '" . $lastname . "%'");
-        if ($gender)
-            $SQL->where("B.GENDER ='" . $gender . "'");
-
+//        if ($BMI_STATUS)
+//        {
+//            $SQL->where("A.STATUS = '" . $BMI_STATUS . "'");
+//        }
+//
+//        if ($nexVisitDate)
+//            $SQL->where("A.NEXT_VISIT = '" . $nexVisitDate . "'");
+//
+//        if ($WEIGHT)
+//            $SQL->where("A.WEIGHT = '" . $WEIGHT . "'");
+//
+//        if ($HEIGHT)
+//            $SQL->where("A.HEIGHT = '" . $HEIGHT . "'");
+//
+//        if ($PULSE)
+//            $SQL->where("A.PULSE LIKE '" . $PULSE . "%'");
+//
+//        if ($BLOOD_PRESSURE)
+//            $SQL->where("A.BLOOD_PRESSURE LIKE '" . $BLOOD_PRESSURE . "%'");
+//
+//        if ($DOCTOR_NAME)
+//            $SQL->where("A.DOCTOR_NAME LIKE '" . $DOCTOR_NAME . "%'");
+//
+//        if ($BMI)
+//            $SQL->where("A.BMI = '" . $BMI . "'");
+//
+//        if ($EYE_LEFT)
+//            $SQL->where("A.EYE_LEFT = '" . $EYE_LEFT . "'");
+//
+//        if ($EYE_RIGHT)
+//            $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
+//
+//        $SQL->where("A.OBJECT_TYPE = '" . $health_type . "'");
+//
+//        if ($code)
+//            $SQL->where("B.CODE LIKE '" . $code . "%'");
+//        if ($schoolCode)
+//            $SQL->where("B.STUDENT_SCHOOL_ID LIKE '" . $code . "%'");
+//        if ($firstname)
+//            $SQL->where("B.FIRSTNAME LIKE '" . $firstname . "%'");
+//        if ($lastname)
+//            $SQL->where("B.LASTNAME LIKE '" . $lastname . "%'");
+//        if ($gender)
+//            $SQL->where("B.GENDER ='" . $gender . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -407,7 +420,7 @@ class StudentHealthDBAccess {
                     break;
 
                 case "MEDICAL_VISIT":
-                    $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
+                    $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT)." ".secondToHour($value->NEXT_VISIT_TIME);
                     $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                     $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                     $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
@@ -497,6 +510,8 @@ class StudentHealthDBAccess {
             $data["WEIGHT"] = setShowText($result->WEIGHT);
             $data["HEIGHT"] = setShowText($result->HEIGHT);
             $data["PULSE"] = setShowText($result->PULSE);
+            $data["NEXT_VISIT"] = getShowDate($result->NEXT_VISIT);
+            $data["NEXT_VISIT_TIME"] = secondToHour($result->NEXT_VISIT_TIME);
             $data["BLOOD_PRESSURE"] = setShowText($result->BLOOD_PRESSURE);
 
             $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
@@ -592,7 +607,7 @@ class StudentHealthDBAccess {
                         $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
                         break;
                     case "MEDICAL_VISIT":
-                        $data[$i]["NEXT_VISIT"] = getShowDateTime($value->NEXT_VISIT);
+                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT)." ".secondToHour($value->NEXT_VISIT_TIME);
                         $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                         $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                         $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");

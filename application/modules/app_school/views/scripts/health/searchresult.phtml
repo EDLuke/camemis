@@ -20,11 +20,23 @@ $OBJECT_GRID->setLoadUrl('/student/jsonload/');
 $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 
 $target = isset($_GET["target"])?addText($_GET["target"]):"";
+$start = isset($_GET["start"])?addText($_GET["start"]):"";
+$end = isset($_GET["end"])?addText($_GET["end"]):"";
+$nextVisit = isset($_GET["nextVisit"])?addText($_GET["nextVisit"]):"";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $setParams = "";
 $setParams .= "&health_type=".$target."";
+
+if ($start) $setParams .= "&start=".$start."";
+if ($end) $setParams .= "&end=".$end."";
+
+switch($target){
+    case "MEDICAL_VISIT":
+        if ($nextVisit) $setParams .= "&nextVisit=".$nextVisit."";
+    break;
+}
 
 ?>
 <style>

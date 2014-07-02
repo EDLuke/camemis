@@ -180,7 +180,14 @@ Ext.onReady(function() {
         case "MEDICAL_VISIT":
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}";
-            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}";
+            $DETAIL_INFORMATION_ITEMS .= ",{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'NEXT_VISIT_TIME'
+                ,fieldLabel: '".TIME."'
+                ,width: 250
+                ,allowBlank:false
+            }";
             break;
         case "INJURY":
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
@@ -256,7 +263,10 @@ Ext.onReady(function() {
             ,border: false
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("MEDICAL_VISIT_BY"),2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
+            ,items: [
+                {".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}
+                ,{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("MEDICAL_VISIT_BY"),2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}
+            ]
         }]
     },{
         title: 'Reason'
