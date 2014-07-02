@@ -35,6 +35,8 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
     var studentId;
     Ext.onReady(function() {
         
+        Ext.Ajax.timeout = 600000;
+        
         function cssStatus(v, p, record){
             return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
             ,v

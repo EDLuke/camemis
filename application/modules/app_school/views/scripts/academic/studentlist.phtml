@@ -38,6 +38,8 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
     var studentId;
     Ext.onReady(function() {
         
+        Ext.Ajax.timeout = 600000;
+        
         function cssStatus(v, p, record){
             return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
             ,v
