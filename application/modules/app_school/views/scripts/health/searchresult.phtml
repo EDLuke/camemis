@@ -1,0 +1,85 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("HEALTH", "LIST");
+$OBJECT_GRID->setLoadUrl('/health/jsonload/');
+$OBJECT_GRID->setSaveUrl('/health/jsonsave/');
+
+print_r($_GET);
+
+exit;
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        function cssDefault(value, metadata, record){
+            var name = record.data.STUDENT;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+        }
+    
+        function cssNumber(value, metadata, record){
+            var name = record.data.STUDENT;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+        }
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addReadField("name: 'FIRST_TERM_RESULT'");   
+        $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'"); 
+        $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'"); 
+        
+        $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FIRST_TERM_RESULT'");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListStudentsYearAcademicPerformance'
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ";
+        
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->isGridEditing = false;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->isFilterRow = true;
+        $OBJECT_GRID->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id:'content'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -32,9 +32,9 @@ $setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
 $disabledButton = $this->facette > 0 ? false : true; //@Math Man
 
 if ($educationSystem) {
-	$TITLE = CREDIT_EDUCATION_SYSTEM;
+    $TITLE = CREDIT_EDUCATION_SYSTEM;
 } else {
-	$TITLE = TRADITIONAL_EDUCATION_SYSTEM;
+    $TITLE = TRADITIONAL_EDUCATION_SYSTEM;
 }
 
 $IMPORTXLS_EXECUTE_RIGHT=UserAuth::getACLValue("STUDENT_MODUL_IMPORT_FROM_XLS_FILE_GENERAL_EXECUTE_RIGHT")?"false":"true";

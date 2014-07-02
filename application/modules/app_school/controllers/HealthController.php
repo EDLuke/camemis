@@ -33,9 +33,13 @@ class HealthController extends Zend_Controller_Action {
     public function indexAction() {
         
     }
-    
+
+    public function searchresultAction() {
+        
+    }
+
     public function chartreportAction() {
-      
+        
     }
 
     public function jsonloadAction() {

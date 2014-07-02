@@ -144,16 +144,16 @@ $STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_W
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
         $OBJECT_TREE->addTBarItems("
-                xtype: 'buttongroup'
-                ,items:[{
-                    width: 80
-                    ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
-                }]
-            ");
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 80
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
         $OBJECT_TREE->setBaseParams("
-                cmd: 'getTreeCreditEducationSystem'
-                ,educationSystem:1
-            ");
+            cmd: 'getTreeCreditEducationSystem'
+            ,educationSystem:1
+        ");
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->isCrediSystem = true;
         $OBJECT_TREE->isTreeExpand = true;
