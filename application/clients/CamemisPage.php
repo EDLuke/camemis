@@ -646,13 +646,14 @@ class CamemisPage {
     {
         $js = "";
         $js .= "function addTab(ID,TITLE,URL){";
-        $js .= "var title = TITLE;";
+        $js .= "if (Ext.getCmp('ACTIVED_' + ID)) tabs.remove(Ext.getCmp('ACTIVED_' + ID));var title = TITLE;";
         $js .= "var activetab = tabId(tabs, title);";
         $js .= "if (activetab){";
         $js .= "tabs.setActiveTab(activetab);";
         $js .= "}else{";
         $js .= "tabs.add({";
         $js .= "title: TITLE";
+        $js .= ",id:'ACTIVED_'+ID";
         $js .= ",closable:true";
         $js .= ",layout:'fit'";
         $js .= "/*,iconCls: 'icon-tabs'*/";

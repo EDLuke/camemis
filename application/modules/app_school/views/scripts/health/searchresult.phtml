@@ -19,9 +19,8 @@ $OBJECT_GRID = new CamemisGrid("HEALTH", "LIST");
 $OBJECT_GRID->setLoadUrl('/health/jsonload/');
 $OBJECT_GRID->setSaveUrl('/health/jsonsave/');
 
-print_r($_GET);
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
 
-exit;
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>
@@ -29,16 +28,22 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     
     Ext.onReady(function() {
         
-        function cssDefault(value, metadata, record){
-            var name = record.data.STUDENT;
-            metadata.attr = 'ext:qtip="' + name + '"';
-            return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+        function showText(v){
+            return String.format('<div style=\"font-weight:normal;white-space:normal;color:#000; padding: 5px;\">{0}</div>'
+                ,v
+            );
         }
-    
-        function cssNumber(value, metadata, record){
-            var name = record.data.STUDENT;
-            metadata.attr = 'ext:qtip="' + name + '"';
-            return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+
+        function showTextRed(v){
+            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#CC0000; padding: 5px;\">{0}</div>'
+                ,v
+            );
+        }
+
+        function showTextBlue(v){
+            return String.format('<div style=\"font-weight:bold;white-space:normal;color:#061f83; padding: 5px;\">{0}</div>'
+                ,v
+            );
         }
         <?
         /**
@@ -51,7 +56,114 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addReadField("name: 'SECOND_TERM_RESULT'"); 
         $OBJECT_GRID->addReadField("name: 'THIRD_TERM_RESULT'"); 
         
-        $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FIRST_TERM_RESULT'");
+        $OBJECT_GRID->addReadField("name: 'MEDICAL_DATE'");
+        $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+        $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
+
+        $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 120, renderer: showText, sortable: false, dataIndex: 'MEDICAL_DATE'");
+    
+        switch($target){
+            case "DENTAL":
+                $title = "Dental";
+                $OBJECT_GRID->addReadField("name: 'EXAM_TYPE'");
+                $OBJECT_GRID->addReadField("name: 'FLUORIDE_TREATMENT'");
+                $OBJECT_GRID->addReadField("name: 'X_RAYS'");
+                $OBJECT_GRID->addReadField("name: 'DENTAL_CARIES'");
+                $OBJECT_GRID->addReadField("name: 'TOOTH_NUMBER'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Exam Type</b>',dataIndex: 'EXAM_TYPE',width: 140");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Fluoride Treatment</b>',dataIndex: 'FLUORIDE_TREATMENT',width: 140");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>X-Rays</b>',dataIndex: 'X_RAYS',width: 120");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Dental Caries</b>',dataIndex: 'DENTAL_CARIES',width: 120");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Tooth number</b>',dataIndex: 'TOOTH_NUMBER',width: 120");
+                break;
+            case "VISION":
+                $title = "Vision";
+                $OBJECT_GRID->addReadField("name: 'OTHER'");
+                $OBJECT_GRID->addReadField("name: 'EYE_TREATMENT'");
+                $OBJECT_GRID->addReadField("name: 'EYE_CHART'");
+                $OBJECT_GRID->addReadField("name: 'VALUES_OF_LEFT_EYE'");
+                $OBJECT_GRID->addReadField("name: 'VALUES_OF_RIGHT_EYE'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Other</b>',dataIndex: 'OTHER',width: 150");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye treatment</b>',dataIndex: 'EYE_TREATMENT',width: 200");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye chart</b>',dataIndex: 'EYE_CHART',width: 200");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of left eye</b>',dataIndex: 'VALUES_OF_LEFT_EYE',width: 140");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of right eye</b>',dataIndex: 'VALUES_OF_RIGHT_EYE',width: 140");
+                break;
+            case "VACCINATION":
+                $title = "Vaccination";
+                $OBJECT_GRID->addReadField("name: 'TYPES_OF_VACCINES'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Types of Vaccines</b>',dataIndex: 'TYPES_OF_VACCINES',width: 350");
+                break;
+            case "VITAMIN":
+                $title = "Vitamin";
+                $OBJECT_GRID->addReadField("name: 'VND'");
+                $OBJECT_GRID->addReadField("name: 'DP'");
+                $OBJECT_GRID->addReadField("name: 'MMS'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Vitamins and Deworming</b>',dataIndex: 'VND',width: 160");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Deworming Pill</b>',dataIndex: 'DP',width: 160");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Multiple micronutrient supplementation</b>',dataIndex: 'MMS',width: 250");
+                break;
+            case "INJURY":
+                $title = "Injury";
+                $OBJECT_GRID->addReadField("name: 'LOCATION'");
+                $OBJECT_GRID->addReadField("name: 'KIND_OF_INJURY'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Location</b>',dataIndex: 'LOCATION',width: 200");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Kind of Injury</b>',dataIndex: 'KIND_OF_INJURY',width: 200");
+
+                break;
+            case "BMI":
+                $title = "Body Mass Index";
+                $OBJECT_GRID->addReadField("name: 'WEIGHT'");
+                $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+                $OBJECT_GRID->addReadField("name: 'BMI'");
+                $OBJECT_GRID->addReadField("name: 'STATUS'");
+                $OBJECT_GRID->addReadField("name: 'STANDARD'");
+                $OBJECT_GRID->addReadField("name: 'DELETE'");
+
+                $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+                $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+                $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
+                $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 160");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 120");    
+
+            break;
+            case "GROWTH_CHART":
+                $title = "Growth Chart";
+                $OBJECT_GRID->addReadField("name: 'WEIGHT'");
+                $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+                $OBJECT_GRID->addReadField("name: 'PULSE'");
+                $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE'");
+                $OBJECT_GRID->addReadField("name: 'DELETE'");
+
+                $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+                $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+                $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
+                $OBJECT_GRID->addColumn("header: '<b>Blood Pressure</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE'"); 
+
+            break;
+            case "MEDICAL_VISIT":
+                $title = "Medical visit";
+                $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+                $OBJECT_GRID->addReadField("name: 'VISITED_BY'");
+                $OBJECT_GRID->addReadField("name: 'LOCATION'");
+                $OBJECT_GRID->addReadField("name: 'REASON'");
+                $OBJECT_GRID->addReadField("name: 'COMMENT'");
+                $OBJECT_GRID->addReadField("name: 'NEXT_VISIT'");
+                $OBJECT_GRID->addReadField("name: 'DELETE'");
+
+                $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'NEXT_VISIT'");
+                $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'FULL_NAME'");
+                $OBJECT_GRID->addColumn("header: '<b>Visited by</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
+                $OBJECT_GRID->addColumn("header: '<b>".LOCATION."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'LOCATION'");
+                $OBJECT_GRID->addColumn("header: '<b>Reason</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'REASON'");
+                $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'COMMENT'");
+
+            break;
+        }
+
+        $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 130");
+        $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 130");
         
         $OBJECT_GRID->baseParams = "
             start:0
@@ -60,6 +172,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
         ";
         
+        $OBJECT_GRID->objectTitle = $title;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
         $OBJECT_GRID->isGridEditing = false;
         $OBJECT_GRID->forceFit = "false";

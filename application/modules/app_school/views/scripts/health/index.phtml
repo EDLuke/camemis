@@ -65,7 +65,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,activeTab:0,bodyStyle: 'background:<?=CamemisPage::userBgColor()?>'
             ,items:[{
                 title: '<?=CHARTS?>'
-                ,id: 'ACADEMIC_DASHBOARD'
                 ,layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'
                 ,items: [new Ext.ux.IFrameComponent({ id: 'DASHBOARD', url:'/health/chartreport/'})]
             }]
@@ -90,7 +89,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,id: 'START_AND_END_DATE'
+            ,id: 'START_AND_END'
             ,hidden: true
             ,checkboxToggle:true
             ,title: '" . DATE . "'
@@ -112,21 +111,9 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
             ,width: 320
             ,items:[{
-                hidden: false
-                ,width: 150
-                ,fieldLabel: '" . START_DATE . "'
-                ,xtype: 'datefield'
-                ,id: 'EXT_VISIT_START_DATE'
-                ,format: '" . setExtDatafieldFormat() . "'
-                ,allowBlank: true
+                ".CamemisField::Datefield("MV_START_DATE", START_DATE, false, false, 150)."
             },{
-                hidden: false
-                ,width: 150
-                ,fieldLabel: '" . END_DATE . "'
-                ,xtype: 'datefield'
-                ,id: 'EXT_VISIT_END_DATE'
-                ,format: '" . setExtDatafieldFormat() . "'
-                ,allowBlank: true
+                ".CamemisField::Datefield("MV_END_DATE", END_DATE, false, false, 150)."
             }]
         "); 
         
@@ -145,10 +132,24 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,scope:this
             ,handler: function(){
                 myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                start = myForm.findField('START_DATE_ID').getValue();
+                end = myForm.findField('END_DATE_ID').getValue();
+                vstart = myForm.findField('MV_START_DATE_ID').getValue();
+                vend = myForm.findField('MV_END_DATE_ID').getValue();
+                
+                start_ = start?start.format('Y-m-j'):'';
+                end_ = end?end.format('Y-m-j'):'';
+                
+                vstart_ = vstart?vstart.format('Y-m-j'):'';
+                vend_ = vend?vend.format('Y-m-j'):'';
+                
                 var searchparams='';
-                searchparams += '&searchType=' + searchType;
-                searchparams += '&startDate=' + myForm.findField('START_DATE_ID').getValue();
-                searchparams += '&endDate=' + myForm.findField('END_DATE_ID').getValue();
+                searchparams += '&target=' + searchType;
+                searchparams += '&start=' + start_;
+                searchparams += '&end=' + end_;
+                if (vstart_) searchparams += '&vstart=' + vstart_;
+                if (vend_) searchparams += '&vend=' + vend_;
+                
                 addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
             }
         ");
@@ -200,10 +201,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             searchType = type;
             switch(type){
                 case 'MEDICAL_VISIT':
+                    Ext.getCmp('START_AND_END').show();
                     Ext.getCmp('MEDICAL_VISIT').show();
                 break;
             default:
-                Ext.getCmp('START_AND_END_DATE').show();
+                Ext.getCmp('START_AND_END').show();
                 Ext.getCmp('MEDICAL_VISIT').hide();
                 break;
             }
