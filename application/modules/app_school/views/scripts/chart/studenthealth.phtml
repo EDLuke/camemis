@@ -6,8 +6,11 @@
 ///////////////////
 require_once 'models/statistic/StudentHealthStatisticsDBAccess.php';
 require_once 'models/HealthSettingDBAccess.php';
-$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
-$dataSet="[]";  
+
+$target = isset($_GET["target"])?addText($_GET["target"]):"";
+
+$dataSet="[]";
+
 if($objectType){
     switch($objectType){
         case 'VACCINATION':
@@ -105,8 +108,7 @@ if($objectType){
                 $dataSet .= "{'key' : '".FEMALE."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByGender('FEMALE','GROWTH_CHART')."},";
                 $dataSet .= "]";     
             }
-        
-           
+            
             ?>
             <!DOCTYPE html>
             <meta charset="utf-8">
