@@ -24,6 +24,9 @@ $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
+$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+            
 $params = "objectId=".$this->objectId."";
 $params .= "&target=".$target."";
 $params .= "&settingId=".$settingId."";
@@ -109,9 +112,6 @@ Ext.onReady(function() {
             break;
         case "BMI":
             
-            $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
-            $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
-            
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
             $OBJECT_GRID->addReadField("name: 'BMI'");
@@ -126,9 +126,6 @@ Ext.onReady(function() {
 
         break;
         case "GROWTH_CHART":
-            
-            $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
-            $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
                 
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");

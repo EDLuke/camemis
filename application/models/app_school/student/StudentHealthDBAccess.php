@@ -239,25 +239,11 @@ class StudentHealthDBAccess {
     //@veasna
     public static function sqlStudentHealth($params) {
 
-//        $studentId = isset($params['studentId']) ? $params['studentId'] : "";
-//        $code = isset($params["CODE"]) ? addText($params["CODE"]) : "";
-//        $schoolCode = isset($params["STUDENT_SCHOOL_ID"]) ? addText($params["STUDENT_SCHOOL_ID"]) : "";
-//        $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
-//        $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
-//        $gender = isset($params["GENDER"]) ? addText($params["GENDER"]) : "";
-//        $start = isset($params["start"]) ? $params["start"] : "";
-//        $endDate = isset($params["END_DATE"]) ? setDate2DB($params["END_DATE"]) : "";
-//        $nexVisitDate = isset($params["NEXT_VISIT"]) ? setDate2DB($params["NEXT_VISIT"]) : "";
-//        $WEIGHT = isset($params["WEIGHT"]) ? $params["WEIGHT"] : "";
-//        $HEIGHT = isset($params["HEIGHT"]) ? $params["HEIGHT"] : "";
-//        $PULSE = isset($params["PULSE"]) ? $params["PULSE"] : "";
-//        $BLOOD_PRESSURE = isset($params["BLOOD_PRESSURE"]) ? $params["BLOOD_PRESSURE"] : "";
-//        $DOCTOR_NAME = isset($params["DOCTOR_NAME"]) ? $params["DOCTOR_NAME"] : "";
-//        $BMI = isset($params["BMI"]) ? $params["BMI"] : "";
-//        $EYE_LEFT = isset($params["EYE_LEFT"]) ? $params["EYE_LEFT"] : "";
-//        $EYE_RIGHT = isset($params["EYE_RIGHT"]) ? $params["EYE_RIGHT"] : "";
-
-
+        $codeId = isset($params["codeId"]) ? addText($params["codeId"]) : "";
+        $studentSchoolCode = isset($params["studentSchoolCode"]) ? addText($params["studentSchoolCode"]) : "";
+        $firstName = isset($params["firstName"]) ? addText($params["firstName"]) : "";
+        $lastName = isset($params["lastName"]) ? addText($params["lastName"]) : "";
+        $gender = isset($params["gender"]) ? addText($params["gender"]) : "";
         $bmiStatus = isset($params["bmiStatus"]) ? addText($params["bmiStatus"]) : "";
         $start = isset($params["start"]) ? $params["start"] : "";
         $end = isset($params["end"]) ? $params["end"] : "";
@@ -265,9 +251,7 @@ class StudentHealthDBAccess {
 
         $health_type = isset($params["health_type"]) ? $params["health_type"] : "";
 
-        $BMI_STATUS = isset($params["BMI_STATUS"]) ? $params["BMI_STATUS"] : "";
-
-        $SELECTION_B = array(
+        $SELECTION_C = array(
             "ID AS STUDENT_ID"
             , "CODE AS CODE"
             , "STUDENT_SCHOOL_ID AS STUDENT_SCHOOL_ID"
@@ -280,60 +264,28 @@ class StudentHealthDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_medical'), array('*'));
-        $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_B);
+        $SQL->joinLeft(array('B' => 't_health_setting'), 'B.ID=A.MEDICAL_SETTING_ID', array());
+        $SQL->joinLeft(array('C' => 't_student'), 'C.ID=A.STUDENT_ID', $SELECTION_C);
 
-        if ($start && $end) {
+        if ($health_type)
+            $SQL->where("B.OBJECT_INDEX = '" . $health_type . "'");
+        if ($start && $end)
             $SQL->where("A.MEDICAL_DATE >='" . $start . "' AND A.MEDICAL_DATE <='" . $end . "'");
-        }
-
-        if ($nextVisit) {
+        if ($nextVisit)
             $SQL->where("A.START_DATE <= '" . $nextVisit . "' AND A.END_DATE >= '" . $nextVisit . "'");
-        }
-
-        if ($bmiStatus) {
+        if ($bmiStatus)
             $SQL->where("A.STATUS = '" . $bmiStatus . "'");
-        }
+        if ($codeId)
+            $SQL->where("C.CODE LIKE '" . $codeId . "%'");
+        if ($studentSchoolCode)
+            $SQL->where("C.STUDENT_SCHOOL_ID LIKE '" . $studentSchoolCode . "%'");
+        if ($firstName)
+            $SQL->where("C.FIRSTNAME LIKE '" . $firstName . "%'");
+        if ($lastName)
+            $SQL->where("C.LASTNAME LIKE '" . $lastName . "%'");
+        if ($gender)
+            $SQL->where("C.GENDER ='" . $gender . "'");
 
-//
-//        if ($nexVisitDate)
-//            $SQL->where("A.NEXT_VISIT = '" . $nexVisitDate . "'");
-//
-//        if ($WEIGHT)
-//            $SQL->where("A.WEIGHT = '" . $WEIGHT . "'");
-//
-//        if ($HEIGHT)
-//            $SQL->where("A.HEIGHT = '" . $HEIGHT . "'");
-//
-//        if ($PULSE)
-//            $SQL->where("A.PULSE LIKE '" . $PULSE . "%'");
-//
-//        if ($BLOOD_PRESSURE)
-//            $SQL->where("A.BLOOD_PRESSURE LIKE '" . $BLOOD_PRESSURE . "%'");
-//
-//        if ($DOCTOR_NAME)
-//            $SQL->where("A.DOCTOR_NAME LIKE '" . $DOCTOR_NAME . "%'");
-//
-//        if ($BMI)
-//            $SQL->where("A.BMI = '" . $BMI . "'");
-//
-//        if ($EYE_LEFT)
-//            $SQL->where("A.EYE_LEFT = '" . $EYE_LEFT . "'");
-//
-//        if ($EYE_RIGHT)
-//            $SQL->where("A.EYE_RIGHT = '" . $EYE_RIGHT . "'");
-//
-//        $SQL->where("A.OBJECT_TYPE = '" . $health_type . "'");
-//
-//        if ($code)
-//            $SQL->where("B.CODE LIKE '" . $code . "%'");
-//        if ($schoolCode)
-//            $SQL->where("B.STUDENT_SCHOOL_ID LIKE '" . $code . "%'");
-//        if ($firstname)
-//            $SQL->where("B.FIRSTNAME LIKE '" . $firstname . "%'");
-//        if ($lastname)
-//            $SQL->where("B.LASTNAME LIKE '" . $lastname . "%'");
-//        if ($gender)
-//            $SQL->where("B.GENDER ='" . $gender . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -618,10 +570,9 @@ class StudentHealthDBAccess {
           Calculation: [150 ÷ (65)2] x 703 = 24.96
          */
         $value = "";
-        $HEALTH_BMI_STANDARD = Zend_Registry::get('SCHOOL')->HEALTH_BMI_STANDARD;
-        $STANDARD = $HEALTH_BMI_STANDARD ? $HEALTH_BMI_STANDARD : 1;
+
         if ($facette) {
-            switch ($STANDARD) {
+            switch (HealthSettingDBAccess::unitBMI()) {
                 case 1:
                     if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
                         $value = round($facette->WEIGHT / pow($facette->HEIGHT / 100, 2), 2);
@@ -736,6 +687,7 @@ class StudentHealthDBAccess {
             "success" => true
         );
     }
+
 }
 
 ?>

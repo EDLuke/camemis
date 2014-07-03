@@ -30,31 +30,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     var searchType;
     var startDate;
     
-    Ext.apply(Ext.form.VTypes, {
-        daterange : function(val, field) {
-            
-            var date = field.parseDate(val);
-            if(!date){
-                return false;
-            }
-            if (field.startDateField) {
-                var start = Ext.getCmp(field.startDateField);
-                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
-                    start.setMaxValue(date);
-                    start.validate();
-                }
-            }
-            else if (field.endDateField) {
-                var end = Ext.getCmp(field.endDateField);
-                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
-                    end.setMinValue(date);
-                    end.validate();
-                }
-            }
-            return true;
-        }
-    });
-
     Ext.onReady(function() {
         
         var tabs =  new Ext.TabPanel({
@@ -86,6 +61,23 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,width: 310
             ,items:[{".CamemisField::Combo('HEALTH_TYPE', TYPE, HealthSettingDBAccess::comboHealth(), false, false, 150, false,false)."}]
         ");
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'PERSONAL_INFORMATION'
+            ,hidden: true
+            ,checkboxToggle:true
+            ,title: '" . PERSONAL_INFORMATION . "'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[
+                {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+            ]
+        "); 
         
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
@@ -150,6 +142,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,scope:this
             ,handler: function(){
                 myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    
+                gender = myForm.findField('GENDER_ID').getValue();
+                studentSchoolCode = myForm.findField('STUDENT_SCHOOL_ID').getValue();
+                codeId = myForm.findField('CODE_ID').getValue();     
+                firstName = myForm.findField('FIRSTNAME').getValue();    
+                lastName = myForm.findField('LASTNAME').getValue();       
+                
                 start = myForm.findField('START_DATE_ID').getValue();
                 end = myForm.findField('END_DATE_ID').getValue();
                 nextvisit = myForm.findField('NEXT_VISIT_DATE').getValue();
@@ -165,6 +164,11 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 searchparams += '&end=' + end_;
                 if (nextvisit_) searchparams += '&nextVisit=' + nextvisit_;
                 if (bmiStatus) searchparams += '&bmiStatus=' + bmiStatus;
+                if (studentSchoolCode) searchparams += '&studentSchoolCode=' + studentSchoolCode;
+                if (codeId) searchparams += '&codeId=' + codeId;
+                if (firstName) searchparams += '&firstName=' + firstName;
+                if (lastName) searchparams += '&lastName=' + lastName;
+                if (gender) searchparams += '&gender=' + gender;
                 
                 addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
             }
@@ -215,7 +219,10 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         Ext.getCmp('HEALTH_TYPE_ID').on('select', function() {
             var type = Ext.getCmp('HEALTH_TYPE_ID').getValue();
             searchType = type;
+            
             Ext.getCmp('START_AND_END').show();
+            Ext.getCmp('PERSONAL_INFORMATION').show();
+            
             switch(type){
                 case 'MEDICAL_VISIT':
                     Ext.getCmp('MEDICAL_VISIT').show();
