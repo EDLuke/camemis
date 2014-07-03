@@ -115,6 +115,26 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         "); 
         
+        $BMI_STATUS_STORE = "[
+            [0, '[---]']
+            ,[1, 'Underweight']
+            ,[2, 'Normal weight']
+            ,[3, 'Overweight']
+            ,[4, 'Obesity']
+        ]";
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'BMI'
+            ,hidden:true
+            ,checkboxToggle:true
+            ,title: 'BMI Status'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[{
+                ".CamemisField::Combo('BMI_STATUS', TYPE, $BMI_STATUS_STORE, false, false,150,false,false)."
+            }]
+        "); 
+        
         $OBJECT_FORM->addTBarItems("
             text: '".RESET."'
             ,iconCls:'icon-arrow_undo'
@@ -133,7 +153,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 start = myForm.findField('START_DATE_ID').getValue();
                 end = myForm.findField('END_DATE_ID').getValue();
                 nextvisit = myForm.findField('NEXT_VISIT_DATE').getValue();
-                
+                bmiStatus = myForm.findField('BMI_STATUS').getValue();                
                 start_ = start?start.format('Y-m-j'):'';
                 end_ = end?end.format('Y-m-j'):'';
                 
@@ -144,6 +164,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 searchparams += '&start=' + start_;
                 searchparams += '&end=' + end_;
                 if (nextvisit_) searchparams += '&nextVisit=' + nextvisit_;
+                if (bmiStatus) searchparams += '&bmiStatus=' + bmiStatus;
                 
                 addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
             }
@@ -194,14 +215,19 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         Ext.getCmp('HEALTH_TYPE_ID').on('select', function() {
             var type = Ext.getCmp('HEALTH_TYPE_ID').getValue();
             searchType = type;
+            Ext.getCmp('START_AND_END').show();
             switch(type){
                 case 'MEDICAL_VISIT':
-                    Ext.getCmp('START_AND_END').show();
                     Ext.getCmp('MEDICAL_VISIT').show();
+                    Ext.getCmp('BMI').hide();
+                break;
+                case 'BMI':
+                    Ext.getCmp('MEDICAL_VISIT').hide();
+                    Ext.getCmp('BMI').show();
                 break;
             default:
-                Ext.getCmp('START_AND_END').show();
                 Ext.getCmp('MEDICAL_VISIT').hide();
+                Ext.getCmp('BMI').hide();
                 break;
             }
         });

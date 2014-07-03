@@ -292,6 +292,8 @@ class StudentHealthDBAccess {
 //        $EYE_LEFT = isset($params["EYE_LEFT"]) ? $params["EYE_LEFT"] : "";
 //        $EYE_RIGHT = isset($params["EYE_RIGHT"]) ? $params["EYE_RIGHT"] : "";
 
+
+        $bmiStatus = isset($params["bmiStatus"]) ? addText($params["bmiStatus"]) : "";
         $start = isset($params["start"]) ? $params["start"] : "";
         $end = isset($params["end"]) ? $params["end"] : "";
         $nextVisit = isset($params["nextVisit"]) ? $params["nextVisit"] : "";
@@ -315,9 +317,6 @@ class StudentHealthDBAccess {
         $SQL->from(array('A' => 't_student_medical'), array('*'));
         $SQL->joinLeft(array('B' => 't_student'), 'B.ID=A.STUDENT_ID', $SELECTION_B);
 
-//        if ($studentId)
-//            $SQL->where("A.STUDENT_ID='" . $studentId . "'");
-
         if ($start && $end)
         {
             $SQL->where("A.MEDICAL_DATE >='" . $start . "' AND A.MEDICAL_DATE <='" . $end . "'");
@@ -328,10 +327,11 @@ class StudentHealthDBAccess {
             $SQL->where("A.START_DATE <= '" . $nextVisit . "' AND A.END_DATE >= '" . $nextVisit . "'");
         }
 
-//        if ($BMI_STATUS)
-//        {
-//            $SQL->where("A.STATUS = '" . $BMI_STATUS . "'");
-//        }
+        if ($bmiStatus)
+        {
+            $SQL->where("A.STATUS = '" . $bmiStatus . "'");
+        }
+
 //
 //        if ($nexVisitDate)
 //            $SQL->where("A.NEXT_VISIT = '" . $nexVisitDate . "'");
