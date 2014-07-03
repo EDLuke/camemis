@@ -96,6 +96,18 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,height:300
                             ,items: [new Ext.ux.IFrameComponent({ id: 'GROWTH_CHART', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=GROWTH_CHART")?>'})]
                         }]    
+                    },{
+                        columnWidth: 1
+                        ,baseCls:'x-plain'
+                        ,bodyStyle:'padding:5px 5px 5px 5px'
+                        ,items:[{
+                            title: 'Vaccination'
+                            ,layout: 'fit'
+                            ,collapsible: true
+                            ,collapsed: false
+                            ,height:350
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'VACCINATION', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=VACCINATION")?>'})]
+                        }]   
                     }]
                 }]
             }]

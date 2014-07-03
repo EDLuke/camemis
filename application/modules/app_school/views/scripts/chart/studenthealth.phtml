@@ -14,17 +14,6 @@ $dataSet="[]";
 if($target){
     switch($target){
         case 'VACCINATION':
-            $dataSet = "[";
-            $vaccination=HealthSettingDBAccess::sqlHealthSetting(3, false);
-            if($vaccination){
-                $vaccinationItems = HealthSettingDBAccess::sqlHealthSetting($vaccination[0]->ID, false);
-                if($vaccinationItems){
-                    foreach($vaccinationItems as $item){
-                        $dataSet .= "{'key' : '".$item->NAME."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByType($item->ID)."},";    
-                    }
-                }
-            }
-            $dataSet .= "]";
             ?>
                 <!DOCTYPE html>
                 <meta charset="utf-8">
@@ -34,57 +23,72 @@ if($target){
                 <style>
 
                 body {
-                  overflow-y:scroll;
+                  overflow-y:scroll;font: 11px sans-serif;
                 }
-
-                text {
-                  font: 11px sans-serif;
-                }
-
-                #chart1, #chart2 {
-                  height:300px;
-                }
-
+                
                 </style>
-                <body class='with-3d-shadow with-transitions'>
-
-                <div>
-                <svg id="chart1"></svg>
+                <body>
+                <div style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
+                    <b>Vaccinated</b><svg id="chart1"></svg>
                 </div>
-                    
+                
+                <div style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
+                    <b>Unvaccinated</b></b><svg id="chart2"></svg>
+                </div>
+                
                 <script src="/public/nvd3/nvd3-camemis.php"></script>
                 <script>
-
-                var colors = d3.scale.category20();
-                keyColor = function(d, i) {return colors(d.key);};
-                var myDataset = <?=$dataSet;?>;
-
-                var chart;
-                nv.addGraph(function() {
-                    chart = nv.models.stackedAreaChart()
-                    //.width(600).height(500)
-                    .showLegend(false)
-                    .useInteractiveGuideline(true)
-                    .x(function(d) { return d[0]; })
-                    .y(function(d) { return d[1];})
-                    .color(keyColor)
-                    .transitionDuration(300);
-                    //.clipEdge(true);
-                    //chart.stacked.scatter.clipVoronoi(false);
-                    chart.xAxis
-                    .tickFormat(function(d) { return d3.time.format("%d.%m.%Y")(new Date(d));});
-                    chart.yAxis
-                    //.tickFormat(d3.format(',.2f'));
-                    .tickFormat(function(d){return d;});
-                    d3.select('#chart1')
-                    .datum(myDataset)
-                    .transition().duration(0)
-                    .call(chart);
-                    nv.utils.windowResize(chart.update);
-                    chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
-                    return chart;
-                });
+                    var dataset1 = [];
+                    nv.addGraph(function() {
+                        chart1 = nv.models.stackedAreaChart()
+                        //.width(600).height(500)
+                        .showLegend(false)
+                        .useInteractiveGuideline(true)
+                        .x(function(d) { return d[0]; })
+                        .y(function(d) { return d[1];})
+                        .transitionDuration(300);
+                        //.clipEdge(true);
+                        //chart.stacked.scatter.clipVoronoi(false);
+                        chart1.xAxis
+                        .tickFormat(function(d) { return d3.time.format("%d.%m.%Y")(new Date(d));});
+                        chart1.yAxis
+                        //.tickFormat(d3.format(',.2f'));
+                        .tickFormat(function(d){return d;});
+                        d3.select('#chart1')
+                        .datum(dataset1)
+                        .transition().duration(0)
+                        .call(chart1);
+                        nv.utils.windowResize(chart1.update);
+                        chart1.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+                        return chart1;
+                    });
+                    
+                    nv.addGraph(function() {
+                        chart2 = nv.models.stackedAreaChart()
+                        //.width(600).height(500)
+                        .showLegend(false)
+                        .useInteractiveGuideline(true)
+                        .x(function(d) { return d[0]; })
+                        .y(function(d) { return d[1];})
+                        .transitionDuration(300);
+                        //.clipEdge(true);
+                        //chart.stacked.scatter.clipVoronoi(false);
+                        chart2.xAxis
+                        .tickFormat(function(d) { return d3.time.format("%d.%m.%Y")(new Date(d));});
+                        chart2.yAxis
+                        //.tickFormat(d3.format(',.2f'));
+                        .tickFormat(function(d){return d;});
+                        d3.select('#chart2')
+                        .datum(dataset1)
+                        .transition().duration(0)
+                        .call(chart2);
+                        nv.utils.windowResize(chart2.update);
+                        chart2.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+                        return chart2;
+                    });
                 </script>
+                </body>
+                </html>
             <? 
             break;
         case 'BMI_AGE':  
@@ -108,11 +112,11 @@ if($target){
 
                 </style>
                 <div id="chart1" style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
-                    Boys (5-19 years)
+                    <b>Boys (5-19 years)</b>
                     <svg></svg>
                 </div>
                 <div id="chart2" style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
-                    Girls (5-19 years)
+                    <b>Girls (5-19 years)</b>
                     <svg></svg>
                 </div>
                     
@@ -165,6 +169,8 @@ if($target){
                         return chart2;
                     });   
                 </script>
+                </body>
+                </html>
             <?
             break;
         case 'MEDICAL_VISIT':
@@ -246,7 +252,9 @@ if($target){
                 chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
                 return chart;
             });
-        </script>
+            </script>
+            </body>
+            </html>
         <?  
         break; 
     }
