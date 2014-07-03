@@ -107,30 +107,18 @@ if($target){
                 }
 
                 </style>
-                <div id="chart1" style='padding:10px; border: 1px solid #DDD; width:46%;height:240px;float:left;margin:5px;'>
+                <div id="chart1" style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
                     Boys (5-19 years)
                     <svg></svg>
                 </div>
-                <div id="chart2" style='padding:10px; border: 1px solid #DDD; width:46%;height:240px;float:left;margin:5px;'>
+                <div id="chart2" style='padding:10px; border: 1px solid #DDD; width:45%;height:240px;float:left;margin:5px;'>
                     Girls (5-19 years)
                     <svg></svg>
                 </div>
                     
                 <script src="/public/nvd3/nvd3-camemis.php"></script>   
                 <script>
-                    var dataset1 = [{
-                        key: "Long",
-                        values: []
-                    },{
-                        key: "Short",
-                        values: []
-                    },{
-                        key: "Gross",
-                        values: []
-                    },{
-                        key: "S&P 1500",
-                        values: []
-                    }];
+                    var dataset1 = [];
                     nv.addGraph(function() {  
                         var chart1 = nv.models.cumulativeLineChart()
                         .useInteractiveGuideline(true)
