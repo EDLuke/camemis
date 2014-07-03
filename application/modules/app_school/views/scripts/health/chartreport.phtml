@@ -58,17 +58,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                                     title: 'BMI-for-age (5-19 years)'
                                     ,layout: 'fit'
                                     ,height:300
-                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_AGE")?>'})]
+                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI_AGE', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_AGE")?>'})]
                                 },{
                                     title: 'Height-for-age (5-19 years)'
                                     ,layout: 'fit'
                                     ,height:300
-                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_HEIGHT_AGE")?>'})]
+                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI_HEIGHT_AGE', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_HEIGHT_AGE")?>'})]
                                 },{
                                     title: 'Weight-for-age (5-10 years)'
                                     ,layout: 'fit'
                                     ,height:300
-                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_WEIGHT_AGE")?>'})]
+                                    ,items: [new Ext.ux.IFrameComponent({ id: 'BMI_WEIGHT_AGE', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=BMI_WEIGHT_AGE")?>'})]
                                 }]
                             }]
                         }]   
