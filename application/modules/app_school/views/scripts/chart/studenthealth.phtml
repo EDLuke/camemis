@@ -11,8 +11,8 @@ $target = isset($_GET["target"])?addText($_GET["target"]):"";
 
 $dataSet="[]";
 
-if($objectType){
-    switch($objectType){
+if($target){
+    switch($target){
         case 'VACCINATION':
             $dataSet = "[";
             $vaccination=HealthSettingDBAccess::sqlHealthSetting(3, false);
@@ -90,19 +90,19 @@ if($objectType){
         case 'MEDICAL_VISIT':    
         case 'BMI':
         case 'GROWTH_CHART':
-            if($objectType=='MEDICAL_VISIT'){
+            if($target=='MEDICAL_VISIT'){
                 $dataSet = "[";
                 $dataSet .= "{'key' : '".MALE."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByGender('MALE','MEDICAL_VISIT')."},";    
                 $dataSet .= "{'key' : '".FEMALE."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByGender('FEMALE','MEDICAL_VISIT')."},";
             $dataSet .= "]";   
-            }else if($objectType=='BMI'){
+            }else if($target=='BMI'){
                 $dataSet = "[";
                 $dataSet .= "{'key' : 'Underweight','color':'#FFDEDE','values':".StudentHealthStatisticsDBAccess::getStudentHealthBMIByMonthType('UNDERWEIGHT')."}";
                 $dataSet .= ",{'key' : 'Normal weight','color':'#99BBE8','values':".StudentHealthStatisticsDBAccess::getStudentHealthBMIByMonthType('NORMAL_WEIGHT')."}";
                 $dataSet .= ",{'key' : 'Overweight','color':'#FFDEE7','values':".StudentHealthStatisticsDBAccess::getStudentHealthBMIByMonthType('OVER_WEIGHT')."}";
                 $dataSet .= ",{'key' : 'Obesity','color':'#9FFDED','values':".StudentHealthStatisticsDBAccess::getStudentHealthBMIByMonthType('OBESITY')."}";
                 $dataSet .= "]";
-            }else if($objectType=='GROWTH_CHART'){ 
+            }else if($target=='GROWTH_CHART'){ 
                 $dataSet = "[";
                 $dataSet .= "{'key' : '".MALE."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByGender('MALE','GROWTH_CHART')."},";    
                 $dataSet .= "{'key' : '".FEMALE."','values':".StudentHealthStatisticsDBAccess::getStudentHealthByGender('FEMALE','GROWTH_CHART')."},";
