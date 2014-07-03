@@ -48,6 +48,9 @@ $setParams .= "&setId=".$setId."";
 $setParams .= "&target=".$target."";
 $setParams .= "&settingId=".$settingId."";
 
+$WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
+$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+    
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
@@ -306,8 +309,8 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items:[
                 {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
-                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', 'Weight', true, false)."}
-                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', 'Height', true, false)."}
+                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', $WEIGHT_NAME, true, false)."}
+                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', $HEIGHT_NAME, true, false)."}
             ]
         }]
     }
@@ -448,8 +451,8 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items:[
                 {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
-                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', 'Weight', true, false)."}
-                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', 'Height', true, false)."}
+                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', $WEIGHT_NAME, true, false)."}
+                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', $HEIGHT_NAME, true, false)."}
                 ,{".CamemisField::Numberfield('PULSE', 'PULSE', 'Pulse', true, false)."}
                 ,{".CamemisField::Numberfield('BLOOD_PRESSURE', 'BLOOD_PRESSURE', 'Blood Pressure', true, false)."}
             ]

@@ -31,6 +31,11 @@ Class HealthSettingDBAccess {
         return self::dbAccess()->select();
     }
 
+    public static function unitBMI() {
+        $facette = Zend_Registry::get('SCHOOL')->HEALTH_BMI_STANDARD;
+        return $facette ? $facette : 1;
+    }
+
     public static function jsonSaveHealthSetting($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
@@ -377,7 +382,7 @@ Class HealthSettingDBAccess {
         $SQL->from("t_health_setting", array('*'));
         $SQL->where("PARENT = ?", 0);
         $SQL->order("SORTKEY ASC");
-        
+
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();

@@ -109,6 +109,9 @@ Ext.onReady(function() {
             break;
         case "BMI":
             
+            $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
+            $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+            
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
             $OBJECT_GRID->addReadField("name: 'BMI'");
@@ -116,22 +119,25 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'STANDARD'");
             $OBJECT_GRID->addReadField("name: 'DELETE'");
             
-            $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
-            $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
             $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
 
         break;
         case "GROWTH_CHART":
             
+            $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
+            $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+                
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
             $OBJECT_GRID->addReadField("name: 'PULSE'");
             $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE'");
             $OBJECT_GRID->addReadField("name: 'DELETE'");
 
-            $OBJECT_GRID->addColumn("header: '<b>Weight</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
-            $OBJECT_GRID->addColumn("header: '<b>Height</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
             $OBJECT_GRID->addColumn("header: '<b>Blood Pressure</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE'"); 
             
