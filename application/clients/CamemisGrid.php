@@ -803,13 +803,29 @@ class CamemisGrid {
         return $js;
     }
 
+    //@CHHE Vathana
     protected function findUserColunmName($str) {
-        $str1 = substr(strrchr($str, "dataIndex:"), 4);
-        $str2 = strpos($str1, "}");
-        $str3 = substr($str1, 0, $str2);
-        return substr(trim($str3), 1, -1);
+        
+        //error_log($str);
+        $str1 = substr($str,strpos($str,"dataIndex:"));
+        //error_log($str1);
+        $temArr = explode(",",$str1);
+        //error_log($temArr[0]);
+        $temArr1 = explode(":",$temArr[0]);
+        $stepStr= trim($temArr1[1],"'");
+        $secondStepStr = substr($stepStr, 2);
+        if(strpos($secondStepStr, "'}")!== false){
+        $strFinish = substr($secondStepStr,0,-2);  
+        }else{
+        $strFinish = $secondStepStr;    
+        }   
+        //error_log(substr($stepStr, 2));
+        //error_log($strFinish);
+        return $strFinish;
+        
     }
 
+    //@CHHE Vathana
     public function setUserGridColumns() {
 
         $data = array();
@@ -817,16 +833,7 @@ class CamemisGrid {
         $CHECK_STR = "";
 
         foreach ($this->columns as $value) {
-            $CHECK_STR = trim(str_replace(",filter:", "", $this->findUserColunmName($value)));
-
-            if (strpos($CHECK_STR, "eturn") !== false) {
-                $CHECK_STR = "";
-            }
-
-            if (strripos($CHECK_STR, "'") !== false) {
-                $CHECK_STR = substr($CHECK_STR, 0, -1);
-            }
-
+            $CHECK_STR = $this->findUserColunmName($value);
             if ($CHECK_STR) {
                 $data[] = $CHECK_STR;
             }
