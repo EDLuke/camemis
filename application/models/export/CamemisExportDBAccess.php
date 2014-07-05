@@ -41,6 +41,9 @@ abstract class CamemisExportDBAccess {
         $this->DB_STUDENT_ADVISORY = StudentAdvisoryDBAccess::getInstance(); //@Visal
         $this->DB_STUDENT_TRAINING = StudentTrainingDBAccess::getInstance(); //@CHHE Vathana
         $this->DB_ROOM_LIST = RoomDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_STUDENT_INFO_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_STUDENT_PREREQUIREMENT_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
+        
         
     }
 
@@ -96,6 +99,9 @@ abstract class CamemisExportDBAccess {
     }
     public function getRoomList() {
         return self::getUserPhath("_roomlist.xls");
+    }
+    public function getStudentPersonalList() {
+        return self::getUserPhath("_studentpersonalinformation.xls");
     }
     
     //End...
