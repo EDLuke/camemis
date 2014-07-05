@@ -18,12 +18,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
-$OBJECT_GRID->setLoadUrl("/student/jsonload/");
-$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
-
 $isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
-$columndata = Utiles::getGridColumnData("STUDENT_LIST_ID");
 
 function columnProperties($header, $dataindex, $width, $hidden=false){
     $js = "";
@@ -59,6 +54,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
             
         switch($this->target){
             case "PARINFO":
+            
+                    //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("PARENT_GUARDIAN", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/student/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                    //End
+                
                     $OBJECT_GRID->addReadField("name: 'NAME'");
                     $OBJECT_GRID->addReadField("name: 'OCCUPATION'");
                     $OBJECT_GRID->addReadField("name: 'PHONE'");
@@ -188,6 +193,15 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                 break;
             case "EDUBACK":
+            
+                //@CHHE Vathana
+                $OBJECT_GRID = new CamemisGrid("STUDENT_EDUCATIONAL_BACKGROUND", "LIST");
+
+                $OBJECT_GRID->setLoadUrl("/student/jsonload/");
+                $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+                $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                //End
+                
                 $OBJECT_GRID->addReadField("name: 'ACADEMIC_YEAR'");
                 $OBJECT_GRID->addReadField("name: 'INSTITUTION_NAME'");
                 $OBJECT_GRID->addReadField("name: 'MAJOR_TYPE'");
@@ -399,6 +413,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
         $OBJECT_GRID->isGridEditing = true;
         $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->setUserColumn=true;//@CHHE Vathana
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         ?>
