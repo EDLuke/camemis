@@ -18,7 +18,7 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
+$OBJECT_GRID = new CamemisGrid("STUDENT_PREREQUIREMENTS", "LIST");//@CHHE Vathana
 $OBJECT_GRID->setLoadUrl("/student/jsonload/");
 $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
 
@@ -128,6 +128,7 @@ function columnProperties($header, $dataindex, $width){
         //if (UserAuth::getACLStudent("EDIT_RIGHT"))
         $OBJECT_GRID->isGridEditing = true;
         $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->setUserColumn = true;//@CHHE Vathana
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
@@ -141,6 +142,7 @@ function columnProperties($header, $dataindex, $width){
                 ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType()?>'}]
             }]
         });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
 </script>
 <?
