@@ -60,14 +60,14 @@ $chartMaleFemale->showLegend='true';
 $chartMaleFemale->width = 280;
 $chartMaleFemale->height = 280;
 
-$datasetStatusAcount = $objectDataSet->getDataSetStudentActiveAndDeactive();
+$datasetStatusAcount = $objectDataSet->getDataSetStaffActiveAndDeactive();
 $chartStatusAcount = new CamemisChart("PIC_CHART", 'chartStatusAcount', $datasetStatusAcount);
 $chartStatusAcount->chartSVG = "displayStatusAcount";
 $chartStatusAcount->showLegend='true';
 $chartStatusAcount->width = 350;
 $chartStatusAcount->height = 300;
 
-$datasetAge=$objectDataSet->getDataSetStudentAge();
+$datasetAge=$objectDataSet->getDataSetStaffAge();
 $chartAge = new CamemisChart("DISCRETE_BAR_CHART", 'chartAge', $datasetAge);
 $chartAge->chartSVG = "displayAge";
 $chartAge->showLegend='true';
@@ -75,7 +75,7 @@ $chartAge->tooltips = 'true';
 $chartAge->showValues ='true';
 $chartAge->height = 280;
 
-$dataSetNationality = $objectDataSet->getDataSetNationality(); 
+$dataSetNationality = $objectDataSet->getDataSetStaffNationality(); 
 $chartNationality = new CamemisChart("DISCRETE_BAR_CHART", 'chartNationality', $dataSetNationality);
 $chartNationality->chartSVG = "displayNationality";
 $chartNationality->showLegend='true';
@@ -91,7 +91,7 @@ $chartReligion->showLegend='true';
 $chartReligion->width = 350;
 $chartReligion->height = 350;
 
-$datasetCity=$objectDataSet->getDataSetCountryProvince(); 
+$datasetCity=$objectDataSet->getDataSetStaffCountryProvince(); 
 $chartCity = new CamemisChart("DISCRETE_BAR_CHART", 'chartCity', $datasetCity);
 $chartCity->chartSVG = "displayCity";
 $chartCity->showControls=true;
@@ -222,30 +222,30 @@ $chartEthnic->height = 350;
         });*/
             
             Ext.get('btnStudentGender').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
             });
             
            Ext.get('btnStudentAge').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            Ext.get('btnStudentSMS').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            Ext.get('btnStudentAcountStatus').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            
             Ext.get('btnStudentReligion').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            Ext.get('btnStudentEthnicity').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            Ext.get('btnStudentNationality').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            Ext.get('btnStudentCityProvince').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });
            
         });
