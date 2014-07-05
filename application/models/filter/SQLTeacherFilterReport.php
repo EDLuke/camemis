@@ -60,6 +60,7 @@ class SQLTeacherFilterReport {
             $SQL->where("B.COUNTRY_PROVINCE = ?",$stdClass->country_province);
         $SQL->group("A.TEACHER_ID");
         //error_log($SQL->__toString());
+        //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         return $result?$result:0;   
            
@@ -161,6 +162,30 @@ class SQLTeacherFilterReport {
     
     }
    
+    public static function getAgeStaffEnroll($stdClass){   
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' =>'t_schedule'),     array('TEACHER_ID AS TEACHER_ID'));
+        $SQL->joinLeft(array('B' => 't_staff'), 'B.ID=A.TEACHER_ID', array("DATE_FORMAT(FROM_DAYS(TO_DAYS(NOW())-TO_DAYS(DATE_BIRTH)), '%Y')+0 AS AGE","ID AS STAFF_ID"));
+        $SQL->joinLeft(array('C' => 't_grade'), 'C.ID=A.ACADEMIC_ID', array());
+         if(isset($stdClass->campusId))
+        $SQL->where("C.CAMPUS_ID = ?",$stdClass->campusId);
+        
+        if(isset($stdClass->gradeId))
+        $SQL->where("C.GRADE_ID = ?",$stdClass->gradeId);
+        
+        if(isset($stdClass->classId))
+        $SQL->where("A.ACADEMIC_ID = ?",$stdClass->classId);
+        
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("A.SCHOOLYEAR_ID = ?",$stdClass->schoolyearId);
+
+        //error_log($SQL->__toString());
+        $SQL->group('TEACHER_ID');
+        $SQL->order(array('AGE ASC'));
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;    
+    }
     
     public static function countTeacherAttendanceType($stdClass){
         

@@ -63,6 +63,32 @@ class FilterDataSet extends FilterData{
         return $DATASET;    
     }
     
+    //@Visal
+    public function getDataSetStaffActiveAndDeactive(){
+        
+        $entries = array('ACTIVE' => ACTIVE, 'DEACTIVE' => 'Deactive');
+        $DATASET = "[";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $key=>$value)
+            {
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'key':'" . $value . "'";
+                if($key=='ACTIVE')
+                $DATASET .= ",'y':'" . $this->getCountStaffActive() . "'";
+                if($key=='DEACTIVE')
+                $DATASET .= ",'y':'" . $this->getCountStaffDeactive() . "'";
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        return $DATASET;    
+    }
+    
     public function getDataSetReligion(){
         
         $entries = FilterProperties::getCamemisType('RELIGION_TYPE');
@@ -165,7 +191,36 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
+    //@Visal
+    public function getDataSetStaffNationality(){
+        
+        $entries = FilterProperties::getCamemisType('NATIONALITY_TYPE');
+        $this->dataType='nationality';
+        $DATASET = "[{";
+        $DATASET .= "key: '".NATIONALITY."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->dataValue = $value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getCountStaffPersonalInformation() . "'";
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
     
+    //
     public function getDataSetStudentAge(){
         $entries = $this->groupAge();
         $DATASET = "[{";
@@ -182,6 +237,33 @@ class FilterDataSet extends FilterData{
                 $DATASET .= ",'value':'" . count($value) . "'";
                 $DATASET .= "}";
                 $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    //@Visal
+    public function getDataSetStaffAge(){
+        $entries = $this->groupStaffAge();
+        $DATASET = "[{";
+        $DATASET .= "key: '".AGE."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $key=>$value)
+            {
+                if($key <> null){
+                    $DATASET .= $i ? "," : "";
+                    $DATASET .= "{";
+                    $DATASET .= "'label':'".AGE." " . $key . "'";
+                    $DATASET .= ",'value':'" . count($value) . "'";
+                    $DATASET .= "}";
+                    $i++;
+                }
             }
         }
         $DATASET .= "]";
@@ -216,7 +298,34 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
-    
+    //@Visal
+    public function getDataSetStaffCountryProvince(){
+        
+        $entries = SQLStudentFilterReport::getAllLocation();
+        $this->dataType='country_province';
+        $DATASET = "[{";
+        $DATASET .= "key: '".CITY_PROVINCE."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->dataValue = $value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getCountStaffPersonalInformation() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    //
     public function getDataSetStaffGender(){
         $entries = array('1' => MALE, '2' => FEMALE);
         $this->dataType='gender';

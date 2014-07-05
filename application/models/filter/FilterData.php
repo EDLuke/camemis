@@ -89,6 +89,35 @@ class FilterData extends FilterProperties {
         return $result;    
     }
     
+    //@Visal
+    public function getCountStaffActive(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "status"  => 1
+        );
+        $result = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
+        
+        return $result?count($result):0;   
+    }
+    
+    public function getCountStaffDeactive(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "status"  => 0
+        );
+        $result = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
+        
+        return $result?count($result):0;   
+    }
+    //
     public function getStudentAge(){
         $stdClass = (object) array(
                 "schoolyearId" => $this->schoolyearId
@@ -96,7 +125,19 @@ class FilterData extends FilterProperties {
                 , "gradeId" => $this->gradeId
                 , "classId" => $this->classId
         );
-        $result = SQLStudentFilterReport::getAgeStudentEnroll($stdClass);  
+        $result = SQLStudentFilterReport::getAgeStudentEnroll($stdClass);
+        return $result;  
+        
+    }
+    //@Visal
+    public function getStaffAge(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+        );
+        $result = SQLTeacherFilterReport::getAgeStaffEnroll($stdClass); 
         return $result;  
     }
     
@@ -104,6 +145,16 @@ class FilterData extends FilterProperties {
         $data = array();
         $studetnAge = $this->getStudentAge();
         foreach($studetnAge as $value){   
+            $data[$value->AGE][]=$value->AGE;
+        }
+        
+        return $data;
+    }
+    //@Visal
+    public function groupStaffAge(){
+        $data = array();
+        $staffAge = $this->getStaffAge();
+        foreach($staffAge as $value){   
             $data[$value->AGE][]=$value->AGE;
         }
         
