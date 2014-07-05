@@ -285,6 +285,38 @@ Ext.onReady(function() {
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    //@CHHE Vathana
+    $OBJECT_TREE->addTBarItems("
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                cmd: 'studentpersonalinfo' 
+                                ,objectId:'".$this->objectId."'
+                                                                                    
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openstudentpersonalinfolist/'
+                            }
+                        });
+                    }
+
+            ");
+            
     $OBJECT_TREE->isAsyncTreeNode = true;
     $OBJECT_TREE->setAsyncTreeNode($PERSON_ITEMS);
     $OBJECT_TREE->renderJS();
