@@ -1905,10 +1905,13 @@ class StudentDBAccess {
         }
         return $SUCCESS_DATA;
     }
-
-    public static function jsonListPersonInfos($params)
+    //@CHHE Vathana
+    public static function jsonListPersonInfos($params, $isJson = true)
     {
-
+        
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $objectType = isset($params["object"]) ? addText($params["object"]) : "";
 
@@ -1958,21 +1961,37 @@ class StudentDBAccess {
             }
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $data
-        );
-    }
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
 
-    public static function jsonStudentPrerequirements($params)
+        if($isJson){
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }else{
+            return $data;    
+        }
+    }
+    //End
+
+    //@CHHE Vathana
+    public static function jsonStudentPrerequirements($params, $isJson = true)
     {
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         $SQL = self::dbAccess()->select()
                 ->from("t_student_prerequirements", array('*'))
                 ->where("STUDENT_ID = '" . $studentId . "'");
+        error_log($SQL);
+        
         $result = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
@@ -1990,12 +2009,23 @@ class StudentDBAccess {
             }
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $data
-        );
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        if($isJson){
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }else{
+            return $data;    
+        }
     }
+    //End
 
     ////////////////////////////////////////////////////////////////////////////
     //Medical Information...
