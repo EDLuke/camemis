@@ -114,14 +114,13 @@ Ext.onReady(function() {
                 text: '<?=ADD_ENTRY?> &raquo; ' + node.text
                 ,iconCls: 'icon-application_form_add'
                 ,disabled:addDisabled
-                ,hidden:<?=$EDIT_RIGHT;?>
                 ,handler: function(){
                     clickOpenPage('center',node.text, '<?=$this->URL_SHOW_ASSIGNMENT_TEMP?>objectId=new&educationType=' + node.attributes.parentId);
                 }
             },{
                 text: '<?=SHOW_DETAIL?> &raquo; ' + node.text
                 ,iconCls: 'icon-application_form_magnify'
-                ,disabled:showDisabled                
+                ,hidden:showDisabled                
                 ,handler: function(){
                     clickOpenPage('center','', '<?=$this->URL_SHOW_ASSIGNMENT_TEMP;?>objectId=' + node.id);
                 }
