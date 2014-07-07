@@ -396,6 +396,8 @@ class AssignmentTempDBAccess {
             , "NAME"
             , "COEFF_VALUE"
             , "INCLUDE_IN_EVALUATION"
+            , "EVALUATION_TYPE"
+            , "EDUCATION_TYPE"
         );
 
         $SQL = self::dbAccess()->select();
@@ -474,9 +476,10 @@ class AssignmentTempDBAccess {
     public function jsonAddAssignmentToSubject($params)
     {
 
+        $selectionIds = $params["selectionIds"];
+
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $tempId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($academicObject)
@@ -502,36 +505,52 @@ class AssignmentTempDBAccess {
             exit("No academicObject....");
         }
 
-        $facette = self::findAssignmentTempFromId($tempId);
-        $CHECK = self::checkExistAssignmentTemp($tempId, $subjectId, $classId, $gradeId, $schoolyearId);
-
-        if (!$CHECK && $facette)
+        $selectedCount = 0;
+        if ($selectionIds != "")
         {
-            $SAVEDATA["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
-            $SAVEDATA["SORTKEY"] = $facette->SORTKEY;
-            $SAVEDATA["NAME"] = $facette->NAME;
-            $SAVEDATA["SHORT"] = $facette->SHORT;
-            $SAVEDATA["GRADE"] = $gradeId;
-            $SAVEDATA["SUBJECT"] = $subjectId;
-            $SAVEDATA["SCHOOLYEAR"] = $schoolyearId;
-            $SAVEDATA["TEMP_ID"] = $facette->ID;
-            $SAVEDATA["CLASS"] = $classId;
-            $SAVEDATA["COEFF_VALUE"] = $facette->COEFF_VALUE ? $facette->COEFF_VALUE : 1;
-            $SAVEDATA["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION;
-            $SAVEDATA["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
-            $SAVEDATA["SMS_SEND"] = $facette->SMS_SEND;
-            $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-            $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+            $selectedAssignmentIds = explode(",", $selectionIds);
 
-            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+            if ($selectedAssignmentIds)
             {
-                $SAVEDATA['STATUS'] = 1;
-            }
+                foreach ($selectedAssignmentIds as $Id)
+                {
 
-            $SAVEDATA['USED_IN_CLASS'] = $used_in_class;
-            $this->DB_ACCESS->insert('t_assignment', $SAVEDATA);
+                    $facette = self::findAssignmentTempFromId($Id);
+                    $CHECK = self::checkExistAssignmentTemp($Id, $subjectId, $classId, $gradeId, $schoolyearId);
+
+                    if (!$CHECK && $facette)
+                    {
+                        $SAVEDATA["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
+                        $SAVEDATA["SORTKEY"] = $facette->SORTKEY;
+                        $SAVEDATA["NAME"] = $facette->NAME;
+                        $SAVEDATA["SHORT"] = $facette->SHORT;
+                        $SAVEDATA["GRADE"] = $gradeId;
+                        $SAVEDATA["SUBJECT"] = $subjectId;
+                        $SAVEDATA["SCHOOLYEAR"] = $schoolyearId;
+                        $SAVEDATA["TEMP_ID"] = $facette->ID;
+                        $SAVEDATA["CLASS"] = $classId;
+                        $SAVEDATA["COEFF_VALUE"] = $facette->COEFF_VALUE ? $facette->COEFF_VALUE : 1;
+                        $SAVEDATA["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION;
+                        $SAVEDATA["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
+                        $SAVEDATA["SMS_SEND"] = $facette->SMS_SEND;
+                        $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+                        $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+
+                        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+                        {
+                            $SAVEDATA['STATUS'] = 1;
+                        }
+
+                        $SAVEDATA['USED_IN_CLASS'] = $used_in_class;
+                        $this->DB_ACCESS->insert('t_assignment', $SAVEDATA);
+
+                        $selectedCount++;
+                    }
+                }
+            }
         }
-        return array("success" => true, 'selectedCount' => 1);
+
+        return array("success" => true, 'selectedCount' => $selectedCount);
     }
 
     protected static function findLastId()

@@ -396,6 +396,8 @@ class AssignmentTempDBAccess {
             , "NAME"
             , "COEFF_VALUE"
             , "INCLUDE_IN_EVALUATION"
+            , "EVALUATION_TYPE"
+            , "EDUCATION_TYPE"
         );
 
         $SQL = self::dbAccess()->select();
