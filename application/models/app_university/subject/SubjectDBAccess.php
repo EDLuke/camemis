@@ -1454,7 +1454,7 @@ class SubjectDBAccess {
             $i = 0;
             foreach ($result as $value)
             {
-                $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
+                $data[$i + 1] = "['" . $value->ID . "',' (" . $value->SHORT . ") " . $value->NAME . "']";
                 $i++;
             }
         }
