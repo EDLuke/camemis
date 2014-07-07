@@ -255,7 +255,7 @@ class AssignmentTempDBAccess {
                                             $data[$i]['iconCls'] = "icon-flag_white";
                                             break;
                                     }
-                                    
+
                                     $data[$i]['assignmentId'] = $value->ID;
                                     $data[$i]['leaf'] = true;
                                     $data[$i]['add'] = false;
