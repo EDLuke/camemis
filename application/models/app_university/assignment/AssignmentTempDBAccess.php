@@ -421,72 +421,63 @@ class AssignmentTempDBAccess {
 
     public function jsonAddAssignmentToSubject($params) {
 
-        $selectionIds = $params["selectionIds"];
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : '';
 
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-        if ($academicObject) {
-            switch ($academicObject->OBJECT_TYPE) {
-                case "SCHOOLYEAR":
-                    $classId = 0;
-                    $gradeId = $academicObject->GRADE_ID;
-                    $schoolyearId = $academicObject->SCHOOL_YEAR;
-                    $used_in_class = 0;
-                    break;
-                case "CLASS":
-                    $classId = $academicObject->ID;
-                    $gradeId = $academicObject->GRADE_ID;
-                    $schoolyearId = $academicObject->SCHOOL_YEAR;
-                    $used_in_class = 1;
-                    break;
-            }
-        } else {
-            exit("No academicObject....");
-        }
-
-        $selectedCount = 0;
-        if ($selectionIds != "") {
-            $selectedAssignmentIds = explode(",", $selectionIds);
-
-            if ($selectedAssignmentIds) {
-                foreach ($selectedAssignmentIds as $Id) {
-
-                    $facette = self::findAssignmentTempFromId($Id);
-                    $CHECK = self::checkExistAssignmentTemp($Id, $subjectId, $classId, $gradeId, $schoolyearId);
-
-                    if (!$CHECK && $facette) {
-                        $SAVEDATA["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
-                        $SAVEDATA["SORTKEY"] = $facette->SORTKEY;
-                        $SAVEDATA["NAME"] = $facette->NAME;
-                        $SAVEDATA["SHORT"] = $facette->SHORT;
-                        $SAVEDATA["GRADE"] = $gradeId;
-                        $SAVEDATA["SUBJECT"] = $subjectId;
-                        $SAVEDATA["SCHOOLYEAR"] = $schoolyearId;
-                        $SAVEDATA["TEMP_ID"] = $facette->ID;
-                        $SAVEDATA["CLASS"] = $classId;
-                        $SAVEDATA["COEFF_VALUE"] = $facette->COEFF_VALUE ? $facette->COEFF_VALUE : 1;
-                        $SAVEDATA["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION;
-                        $SAVEDATA["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
-                        $SAVEDATA["SMS_SEND"] = $facette->SMS_SEND;
-                        $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-                        $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
-
-                        if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
-                            $SAVEDATA['STATUS'] = 1;
-                        }
-
-                        $SAVEDATA['USED_IN_CLASS'] = $used_in_class;
-                        $this->DB_ACCESS->insert('t_assignment', $SAVEDATA);
-
-                        $selectedCount++;
-                    }
+        if ($assignmentId) {
+            if ($academicObject) {
+                switch ($academicObject->OBJECT_TYPE) {
+                    case "SCHOOLYEAR":
+                        $classId = 0;
+                        $gradeId = $academicObject->GRADE_ID;
+                        $schoolyearId = $academicObject->SCHOOL_YEAR;
+                        $used_in_class = 0;
+                        break;
+                    case "CLASS":
+                        $classId = $academicObject->ID;
+                        $gradeId = $academicObject->GRADE_ID;
+                        $schoolyearId = $academicObject->SCHOOL_YEAR;
+                        $used_in_class = 1;
+                        break;
                 }
+            } else {
+                exit("No academicObject....");
+            }
+
+            $facette = self::findAssignmentTempFromId($assignmentId);
+            $CHECK = self::checkExistAssignmentTemp($assignmentId, $subjectId, $classId, $gradeId, $schoolyearId);
+
+            if (!$CHECK && $facette) {
+                $SAVEDATA["EDUCATION_SYSTEM"] = $academicObject->EDUCATION_SYSTEM;
+                $SAVEDATA["STATUS"] = 1;
+                $SAVEDATA["SORTKEY"] = $facette->SORTKEY;
+                $SAVEDATA["NAME"] = $facette->NAME;
+                $SAVEDATA["SHORT"] = $facette->SHORT;
+                $SAVEDATA["GRADE"] = $gradeId;
+                $SAVEDATA["SUBJECT"] = $subjectId;
+                $SAVEDATA["SCHOOLYEAR"] = $schoolyearId;
+                $SAVEDATA["TEMP_ID"] = $facette->ID;
+                $SAVEDATA["CLASS"] = $classId;
+                $SAVEDATA["COEFF_VALUE"] = $facette->COEFF_VALUE ? $facette->COEFF_VALUE : 1;
+                $SAVEDATA["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION;
+                $SAVEDATA["EVALUATION_TYPE"] = $academicObject->EVALUATION_TYPE;
+                $SAVEDATA["SMS_SEND"] = $facette->SMS_SEND;
+                $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+                $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+
+                if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
+                    $SAVEDATA['STATUS'] = 1;
+                }
+
+                $SAVEDATA['USED_IN_CLASS'] = $used_in_class;
+                $this->DB_ACCESS->insert('t_assignment', $SAVEDATA);
             }
         }
 
-        return array("success" => true, 'selectedCount' => $selectedCount);
+        return array("success" => true);
     }
 
     protected static function findLastId() {
