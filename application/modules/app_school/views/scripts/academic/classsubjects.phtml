@@ -192,7 +192,7 @@ Ext.onReady(function() {
         ,type:'1'
         ,target:'general'
         ,subjectId:subjectId
-        ,academicId:'".$this->facette->GUID."'
+        ,academicId:'".$this->facette->ID."'
     ");      
     $ASSIGNMENT_TEMP_TREE->backgroundColor = "#F9F9F9";
     $ASSIGNMENT_TEMP_TREE->isTreeExpand = true;
@@ -223,8 +223,8 @@ Ext.onReady(function() {
                                 ,params: {cmd: 'jsonAddSubjectToGrade', selectionIds: node.id, academicId:'".$this->objectId."'}
                                 ,success: function(response, options) {
                                     XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
-                                    Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').root.reload(); 
-                                    Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').getRootNode().expand(true, false); 
+                                    Ext.getCmp('".$OBJECT_TREE->getObjectId()."').root.reload(); 
+                                    Ext.getCmp('".$OBJECT_TREE->getObjectId()."').getRootNode().expand(true, false); 
                                     node.remove(node.id);     
                                 }
                                 ,failure: function(response, options) {}
@@ -265,8 +265,8 @@ Ext.onReady(function() {
                         ,params: {cmd: 'jsonAddAssignmentToSubject',  assignmentId:node.id, subjectId:subjectId, academicId:'".$this->facette->GUID."'}
                         ,success: function(response, options) {
                             XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
-                            myTree = window.Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID');
-                            myNode = myTree.getNodeById('SUBJECT_'+subjectId);
+                            myTree = window.Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
+                            myNode = myTree.getNodeById(subjectId);
                             myNode.reload();
                             myNode.expand(true, false);
                             node.remove(node.id);
