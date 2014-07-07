@@ -42,6 +42,15 @@ Ext.onReady(function() {
     $DETAIL_ITEMS = "[";
     $DETAIL_ITEMS .= "{".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}";
     $DETAIL_ITEMS .= ",{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}";
+    $DETAIL_ITEMS .= ",{".CamemisField::Combo(
+            'SUBJECT'
+            , SUBJECT
+            , SubjectDBAccess::comboSubjectByEducationType($educationType)
+            , false
+            , false
+            , false
+            , false
+            ,false)."}";
     $DETAIL_ITEMS .= ",{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}";
     $DETAIL_ITEMS .= "]";
     
@@ -165,12 +174,11 @@ Ext.onReady(function() {
             window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
         ");
         
-        if($educationType){
-            
+        if($facette->SUBJECT){
             $OBJECT_FORM->setonEmbeddedEvents("
                 XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
                 myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_ASSIGNMENT_ID');
-                myNode = myTree.getNodeById('CAMEMIS_".$educationType."');
+                myNode = myTree.getNodeById('SUBJECT_".$facette->SUBJECT."');
                 myNode.reload();
                 myNode.expand(true, false); 
             ");
@@ -178,8 +186,9 @@ Ext.onReady(function() {
             $OBJECT_FORM->setonEmbeddedEvents("
                 XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
                 myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_ASSIGNMENT_ID');
-                myTree.root.reload();
-                myTree.expand(true, false); 
+                myNode = myTree.getNodeById('QUALIFICATION_".$facette->EDUCATION_TYPE."');
+                myNode.reload();
+                myNode.expand(true, false); 
             ");
         }
         
@@ -189,7 +198,7 @@ Ext.onReady(function() {
             $OBJECT_FORM->setonEmbeddedEvents("
                 XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
                 myTree = window.parent.Ext.getCmp('TREE.ASSIGNMENT_ASSIGNMENT_ID');
-                myNode = myTree.getNodeById('CAMEMIS_".$educationType."');
+                myNode = myTree.getNodeById('QUALIFICATION_".$educationType."');
                 myNode.reload();
                 myNode.expand(true, false); 
                 var result = Ext.util.JSON.decode(action.response.responseText);

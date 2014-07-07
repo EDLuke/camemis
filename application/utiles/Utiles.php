@@ -465,7 +465,7 @@ class Utiles {
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
-                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";   
+                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 $ITEMS .= "}]";
                                 break;
                             case 2:
@@ -477,7 +477,7 @@ class Utiles {
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
-                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]"; 
+                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 $ITEMS .= "}]";
                                 break;
                             case 3:
@@ -486,7 +486,7 @@ class Utiles {
                                 $ITEMS .= ",border: false";
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",bodyStyle: 'padding:10px'";
-                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";    
+                                $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 $ITEMS .= "}]";
                                 break;
                         }
@@ -776,12 +776,12 @@ class Utiles {
         {
             foreach ($entries as $value)
             {
-                $schoolyearId = isset($value['ID']) ? $value['ID'] : "";       
+                $schoolyearId = isset($value['ID']) ? $value['ID'] : "";
                 $classObject = self::getStudentClassTraditional($Id, $schoolyearId);
                 if ($classObject)
                 {
                     $displayName = isset($value['NAME']) ? $value['NAME'] . " (" . $classObject->CLASS_NAME . ")" : "?";
-                    $link = "/student/studentacademictraditional/?camIds=" . self::urlEncryp()->encryptedGet("objectId=" . $Id . "&academicId=" . $classObject->CLASS_ID ."&schoolyearId=" . $schoolyearId . "") . "";
+                    $link = "/student/studentacademictraditional/?camIds=" . self::urlEncryp()->encryptedGet("objectId=" . $Id . "&academicId=" . $classObject->CLASS_ID . "&schoolyearId=" . $schoolyearId . "") . "";
                 }
                 else
                 {
@@ -1152,7 +1152,7 @@ class Utiles {
 
             foreach ($explode as $key => $value)
             {
-                
+
                 $p = strpos($value, "^");
                 $i = substr($value, 1, $p - 1);
                 if (preg_match('/hidden/i', $value, $matches))
