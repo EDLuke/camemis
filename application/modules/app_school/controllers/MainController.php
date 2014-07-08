@@ -755,15 +755,15 @@ class MainController extends Zend_Controller_Action {
         if (UserAuth::getACLValue("SMS_MANAGEMENT"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $SMS_MANAGEMENT . "";
 
-        if (UserAuth::getACLValue("FINANCIAL_MANAGEMENT"))
+        if (UserAuth::getACLValue("CASH_MANAGEMENT"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $FINANCIAL_MANAGEMENT . "";
 
         if (UserAuth::getACLValue("FACILITY_MANAGEMENT"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $FACILITY_MANAGEMENT . "";
-
+        
         //if (UserAuth::getACLValue("EVALUATION_MANAGEMENT"))
         $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $EVALUATION_MANAGEMENT . "";
-
+        
         if (UserAuth::getACLValue("LETTER_MANAGEMENT"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $LETTER_MANAGEMENT . "";
 
