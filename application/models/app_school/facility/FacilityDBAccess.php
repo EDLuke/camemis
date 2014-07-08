@@ -517,11 +517,12 @@ class FacilityDBAccess {
             }
 
             $data['STATUS'] = $facette->STATUS;
-            $data["NAME"] = $facette->NAME;
-            $data["COLOR"] = $facette->COLOR;
-            $data["BARCODE"] = $facette->BARCODE;
-            $data["DESCRIPTION"] = $facette->DESCRIPTION;
-            $data["COST"] = $facette->COST;
+            $data["NAME"] = setShowText($facette->NAME);
+            $data["SERIAL_NUMBER"] = setShowText($facette->SERIAL_NUMBER);
+            $data["COLOR"] = setShowText($facette->COLOR);
+            $data["BARCODE"] = setShowText($facette->BARCODE);
+            $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
+            $data["COST"] = setShowText($facette->COST);
             $data["QUANTITY"] = displayNumberFormat($facette->QUANTITY);
             $data["DELIVERED_DATE"] = getShowDate($facette->DELIVERED_DATE);
             $data["EXPIRED_WARRANTY"] = getShowDate($facette->EXPIRED_WARRANTY);
@@ -626,6 +627,9 @@ class FacilityDBAccess {
 
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
+            
+        if (isset($params["SERIAL_NUMBER"]))
+            $SAVEDATA['SERIAL_NUMBER'] = addText($params["SERIAL_NUMBER"]);
 
         if (isset($params["COLOR"]))
             $SAVEDATA['COLOR'] = addText($params["COLOR"]);

@@ -23,16 +23,19 @@ require_once 'models/CamemisTypeDBAccess.php';
 
 Class BuildData {
 
-    static function comboAbsentType($objectType) {
+    static function comboAbsentType($objectType)
+    {
 
         $result = AbsentTypeDBAccess::allAbsentType($objectType);
         $data = array();
 
         $data[0] = "[\"0\",\"[---]\"]";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -41,16 +44,19 @@ Class BuildData {
     }
 
     //@THORN Visal
-    static function comboAcademicClasses($params) {
+    static function comboAcademicClasses($params)
+    {
 
         $result = ScheduleDBAccess::getCreditClassInAcademicSubject($params);
         $data = array();
 
         $data[0] = "[\"0\",\"[---]\"]";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -59,16 +65,19 @@ Class BuildData {
     }
 
     //@Sea Peng
-    static function comboCamemisType($objectType) {
+    static function comboCamemisType($objectType)
+    {
 
         $result = CamemisTypeDBAccess::getCamemisType($objectType);
         $data = array();
 
         $data[0] = "[\"\",\"[---]\"]";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -78,20 +87,24 @@ Class BuildData {
 
     //
 
-    static function comboAcademicData() {
+    static function comboAcademicData()
+    {
         $facett = AcademicDateDBAccess::getInstance();
         return $facett->AcademicDateCombo();
     }
 
-    static function comboCampus() {
+    static function comboCampus()
+    {
 
         $result = AcademicDBAccess::allCampus();
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
             $data[0] = "['0','[---]']";
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -99,15 +112,18 @@ Class BuildData {
         return "[" . implode(",", $data) . "]";
     }
 
-    static function comboTrainingprograms() {
+    static function comboTrainingprograms()
+    {
 
         $result = TrainingDBAccess::allTrainingprograms();
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
             $data[0] = "['0','[---]']";
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -115,29 +131,35 @@ Class BuildData {
         return "[" . implode(",", $data) . "]";
     }
 
-    static function comboGrade() {
+    static function comboGrade()
+    {
         return Utiles::comboData(AcademicDBAccess::allGrade());
     }
 
-    static function comboLastSchoolyearData() {
+    static function comboLastSchoolyearData()
+    {
         return Utiles::comboData(AcademicDateDBAccess::getListLastSchoolyear());
     }
 
-    static function comboDataTeacherByGrade() {
+    static function comboDataTeacherByGrade()
+    {
 
         $facett = StaffDBAccess::getInstance();
         return Utiles::comboData($facett->allTeachersByGrade());
     }
 
-    static function comboDataUserRole() {
+    static function comboDataUserRole()
+    {
         $result = UserRoleDBAccess::allUserRole();
 
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
             $data[0] = "['0','---']";
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"" . $value->ID . "\",\"" . $value->NAME . "\"]";
                 $i++;
             }
@@ -145,23 +167,27 @@ Class BuildData {
         return "[" . implode(",", $data) . "]";
     }
 
-    static function comboDataStudentByClass() {
+    static function comboDataStudentByClass()
+    {
 
         $facett = StudentDBAccess::getInstance();
         return $facett->comboDataStudentByClass();
     }
 
-    static function comboDataAllTeacher() {
+    static function comboDataAllTeacher()
+    {
 
         $DB_STAFF = StaffDBAccess::getInstance();
         $result = $DB_STAFF->comboAllTutor();
 
         $data = array();
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
             $data[0] = "['0','[---]']";
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "[\"$value->ID\",\"$value->NAME\"]";
                 $i++;
             }
@@ -169,100 +195,121 @@ Class BuildData {
         return "[" . implode(",", $data) . "]";
     }
 
-    static function comboDataTeachersByGrade() {
+    static function comboDataTeachersByGrade()
+    {
 
         $facett = StaffDBAccess::getInstance();
         return Utiles::comboData($facett->allTeachersByGrade());
     }
 
-    static function comboDataRoom() {
+    static function comboDataRoom()
+    {
 
         $facett = RoomDBAccess::getInstance();
         return $facett->allRoomsComboData();
     }
 
-    static function comboDataSubjectsByGrade() {
+    static function comboDataSubjectsByGrade()
+    {
 
         $facett = GradeSubjectDBAccess::getInstance();
         return $facett->SubjectByGradeCombo();
     }
 
-    static function comboDataSubjectsByTraining() {
+    static function comboDataSubjectsByTraining()
+    {
 
         $facett = TrainingSubjectDBAccess::getInstance();
         return $facett->SubjectByTrainingCombo();
     }
 
-    static function checkboxDataSubjects() {
+    static function checkboxDataSubjects()
+    {
 
         $facett = SubjectDBAccess::getInstance();
         return $facett->SubjectCheckBox();
     }
 
-    static function superboxSubjects() {
+    static function superboxSubjects()
+    {
         return SubjectDBAccess::allSubjectsComboData();
     }
 
-    static function superboxCampus() {
+    static function superboxCampus()
+    {
 
         $facett = AcademicLevelDBAccess::getInstance();
         return $facett->allCampusComboData();
     }
 
-    static function comboDataPunishment() {
+    static function comboDataPunishment()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("PUNISHMENT_TYPE");
     }
 
-    static function comboDataSubjectsByTeacher() {
+    static function comboDataSubjectsByTeacher()
+    {
 
         $facett = SubjectDBAccess::getInstance();
         return $facett->SubjectByTeacherCombo();
     }
 
-    static function comboDataAllSubjects() {
+    static function comboDataAllSubjects()
+    {
         return SubjectDBAccess::allSubjectsComboData();
     }
 
-    static function comboDataAllReligion() {
+    static function comboDataAllReligion()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("RELIGION_TYPE");
     }
 
-    static function comboDataAllEthnic() {
+    static function comboDataAllEthnic()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("ETHNICITY_TYPE");
     }
 
-    static function comboDataAllNationality() {
+    static function comboDataAllNationality()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("NATIONALITY_TYPE");
     }
-    
+
     ///
-    static function comboDataAllMajor() {
+    static function comboDataAllMajor()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("MAJOR_TYPE");
     }
-    
-    static function comboDataAllQualitycationDegree() {
+
+    static function comboDataAllQualitycationDegree()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("QUALIFICATION_DEGREE_TYPE");
     }
+
     ///
 
-    static function comboDataAllOrganization() {
+    static function comboDataAllOrganization()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("ORGANIZATION_TYPE");
     }
 
-    static function comboDataAllPersonalDescription($parent, $personType, $type = false) {
+    static function comboDataAllPersonalDescription($parent, $personType, $type = false)
+    {
         $facett = DescriptionDBAccess::getInstance();
         return $facett->allPersonalDescriptionComboData($parent, $personType, $type);
     }
 
-    static function comboDataQualificationType() {
+    static function comboDataQualificationType()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("QUALIFICATION_TYPE");
     }
 
-    static function comboDataSubjectType() {
+    static function comboDataSubjectType()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("SUBJECT_TYPE");
     }
 
-    static function comboDataAllEyeChart() {
+    static function comboDataAllEyeChart()
+    {
         return CamemisTypeDBAccess::getCamemisTypeComboData("EYECHART_TYPE");
     }
 

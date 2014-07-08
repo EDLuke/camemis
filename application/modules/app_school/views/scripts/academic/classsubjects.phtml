@@ -18,9 +18,8 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();
 
-$ADD_ASSIGNMENT_GRID = new CamemisGrid("ASSIGNMENT", "ASSIGNMENT_TEMP");
-$ADD_ASSIGNMENT_GRID->setLoadUrl('/assignment/jsonload/');
-$ADD_ASSIGNMENT_GRID->setSaveUrl('/assignment/jsonsave/');
+$ASSIGNMENT_TEMP_TREE = new CamemisTree("ASSIGNMENT_TEMP", false);
+$ASSIGNMENT_TEMP_TREE->setURL("/assignment/jsontree/");
 
 $OBJECT_TREE = new CamemisTree("SUBJECT_ASSIGNMENT", false);
 $OBJECT_TREE->setURL('/subject/jsontree/');
@@ -181,35 +180,24 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
     
-    $ADD_ASSIGNMENT_GRID->addReadField("name: 'NAME'");
-    $ADD_ASSIGNMENT_GRID->addReadField("name: 'EDUCATION_TYPE'");
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".NAME."', width: 200, sortable: true, dataIndex: 'NAME'");
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".EDUCATION_TYPE."', width: 150, sortable: true, dataIndex: 'EDUCATION_TYPE'");
-    
-    $ADD_ASSIGNMENT_GRID->isGroupingView = true;
-    $ADD_ASSIGNMENT_GRID->groupField = "EDUCATION_TYPE";
-    $ADD_ASSIGNMENT_GRID->isCheckboxSelect = true;
-    $ADD_ASSIGNMENT_GRID->isObjectDefaultOnLoad = true;
-    $ADD_ASSIGNMENT_GRID->forceFit = "false";
-    $ADD_ASSIGNMENT_GRID->addTBarItems(CamemisBar::tbarGridSelection());
-
-    $ADD_ASSIGNMENT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,cmd: 'jsonListAssignmentTemp'
-        ,academicId: '".$classObject->ID."'  
-        ,subjectId: subjectId
-    ";
-    $ADD_ASSIGNMENT_GRID->setSelectionParams("
-        cmd: 'jsonAddAssignmentToSubject'
-        ,academicId: '".$classObject->ID."'
-        ,educationType: '".$educationType."'    
-        ,subjectId: subjectId
-    ");
-    $ADD_ASSIGNMENT_GRID->setSelectionEmbeddedEvents("
-        ".camemisPage::setRequestURI()."
-    ");
-    $ADD_ASSIGNMENT_GRID->renderJS();
+    ///////////////////////////////////////////////////////
+    //Assignment tree...
+    ///////////////////////////////////////////////////////
+    $ASSIGNMENT_TEMP_TREE->isAsyncTreeNode = false;
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $ASSIGNMENT_TEMP_TREE->setBaseParams("
+        cmd: 'jsonTreeAllAssignmentTemp'
+        ,type:'1'
+        ,target:'general'
+        ,subjectId:subjectId
+        ,academicId:'".$this->facette->ID."'
+    ");      
+    $ASSIGNMENT_TEMP_TREE->backgroundColor = "#F9F9F9";
+    $ASSIGNMENT_TEMP_TREE->isTreeExpand = true;
+    $ASSIGNMENT_TEMP_TREE->isOnClickContextMenu = false;
+    $ASSIGNMENT_TEMP_TREE->renderJS();
 	
     ///////////////////////////////////////////////////////
     // Subject-Assignment...
@@ -235,8 +223,8 @@ Ext.onReady(function() {
                                 ,params: {cmd: 'jsonAddSubjectToGrade', selectionIds: node.id, academicId:'".$this->objectId."'}
                                 ,success: function(response, options) {
                                     XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
-                                    Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').root.reload(); 
-                                    Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').getRootNode().expand(true, false); 
+                                    Ext.getCmp('".$OBJECT_TREE->getObjectId()."').root.reload(); 
+                                    Ext.getCmp('".$OBJECT_TREE->getObjectId()."').getRootNode().expand(true, false); 
                                     node.remove(node.id);     
                                 }
                                 ,failure: function(response, options) {}
@@ -267,7 +255,26 @@ Ext.onReady(function() {
         ,handler: function(){
             var node = Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').getSelectionModel().getSelectedNode();
             subjectId = node.attributes.subjectId;
-            openWinXType('WinXType','".ASSIGNMENT."', '".$ADD_ASSIGNMENT_GRID->getObjectXType()."', 550, percentHeight(85));
+            openWinXType('WinXType','".ASSIGNMENT."', '".$ASSIGNMENT_TEMP_TREE->getObjectXType()."', 550, percentHeight(85));
+            var tempTree = ".$ASSIGNMENT_TEMP_TREE->ExtgetCmp().";
+            if (tempTree) tempTree.on('click', function(node, event){
+                if(node.isLeaf()){
+                    Ext.Ajax.request({
+                        url: '/assignment/jsonsave/'
+                        ,method: 'POST'
+                        ,params: {cmd: 'jsonAddAssignmentToSubject',  assignmentId:node.id, subjectId:subjectId, academicId:'".$this->facette->GUID."'}
+                        ,success: function(response, options) {
+                            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                            myTree = window.Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
+                            myNode = myTree.getNodeById(subjectId);
+                            myNode.reload();
+                            myNode.expand(true, false);
+                            node.remove(node.id);
+                        }
+                        ,failure: function(response, options) {}
+                    });
+                }
+            });
         }
     ");
     

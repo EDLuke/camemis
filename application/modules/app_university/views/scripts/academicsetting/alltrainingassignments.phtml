@@ -19,34 +19,24 @@ $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
+    
+var educationType;
 Ext.onReady(function() {
-	
+    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
     $OBJECT_TREE->isAsyncTreeNode = false;
-    
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
-
-    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
-    $OBJECT_TREE->addTBarItems("
-        id: 'ADD_ID'
-        ,scope:this
-        ,text:'".ADD_A_NEW_ITEM."'
-        ,tooltip:'".ADD_A_NEW_ITEM."'
-        ,iconCls:'icon-application_form_add'
-        ,handler: function(){
-            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_ASSIGNMENT_TEMP."&objectId=new&target=training');
-        }
-    ");
     
-    $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->setBaseParams("
-    	cmd: 'jsonTreeAllAssignmentTemp'
-        ,type:'2'
+        cmd: 'jsonTreeAllAssignmentTemp'
+        ,target:'general'
+        ,type:'1'
     ");
-    
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();
     
     ?>
@@ -61,7 +51,7 @@ Ext.onReady(function() {
                 ,split: true
             }
             ,items: [{
-               	region:'west'
+                   region:'west'
                 ,title:'<?=ASSIGNMENT?>'
                 ,margins: '3 0 3 3'
                 ,cmargins: '3 3 3 3'
@@ -71,7 +61,7 @@ Ext.onReady(function() {
                 ,layout: 'fit'
                 ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
             },{
-               	collapsible: false
+                   collapsible: false
                 ,id: 'center'
                 ,region:'center'
                 ,margins: '3 3 3 0'
@@ -94,10 +84,31 @@ Ext.onReady(function() {
     });
     
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-    myTree.on('click', function(node, e){
+    myTree.on('click', function(node, event){
         if(node.isLeaf()){
-            clickOpenPage('center','', '<?=$this->URL_SHOW_ASSIGNMENT_TEMP;?>objectId=' + node.attributes.assignmentId);
+            var contextMenu = new Ext.menu.Menu({
+                items: [{
+                    text: '<?=SHOW_DETAIL?> &raquo; ' + node.text
+                    ,iconCls:'icon-application_form_magnify'
+                    ,handler: function(){
+                        clickOpenPage('center','<?=SHOW_DETAIL?> &raquo; ' + node.text, '<?=$this->URL_SHOW_ASSIGNMENT_TEMP;?>objectId=' + node.attributes.assignmentId);
+                    }
+                }]
+            });
+        }else{
+            var contextMenu = new Ext.menu.Menu({
+                items: [{
+                    text: '<?=ASSIGNMENT?>'
+                    ,iconCls:'icon-application_form_add'
+                     ,handler: function(){
+                         clickOpenPage('center','<?=ASSIGNMENT?>', '<?=$this->URL_SHOW_ASSIGNMENT_TEMP?>&objectId=new&educationType=' + node.attributes.parentId);
+                    }
+                }]
+            });
         }
+        
+        event.stopEvent();
+        contextMenu.showAt(event.xy); 
     });
 });
 </script>

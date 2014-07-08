@@ -330,6 +330,7 @@ Ext.onReady(function() {
     $DETAIL_INFORMATION_ITEMS = "[";
     
     $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Textfield("NAME","NAME",NAME,true)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield("SERIAL_NUMBER","SERIAL_NUMBER",SERIAL_NUMBER,false)."}";
     $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Numberfield("COST","COST",COST,true)."}";
     $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Trigger("FACILITY_TYPE",FACILITY_CATEGORY,$triggerOnClickFacilityType,true,false, false)."}";
     $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Hidden("CHOOSE_FACILITY_TYPE",false)."}";

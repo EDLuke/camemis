@@ -1231,7 +1231,7 @@ class SubjectDBAccess {
 
     public static function jsonSubject($edutype)
     {
-        $SQL = "SELECT * FROM T_SUBJECT";
+        $SQL = "SELECT * FROM t_subject";
         $SQL .= " WHERE EDUCATION_TYPE=" . $edutype;
         $SQL .= " ORDER BY ID ASC";
         $result = self::dbAccess()->fetchAll($SQL);
@@ -1436,6 +1436,29 @@ class SubjectDBAccess {
         }
 
         return $result;
+    }
+
+    public static function comboSubjectByEducationType($edutype)
+    {
+        $SQL = "SELECT * FROM t_subject";
+        $SQL .= " WHERE EDUCATION_TYPE=" . $edutype;
+        $SQL .= " ORDER BY NAME ASC";
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        $data = array();
+
+        $data[0] = "[\"0\",\"[---]\"]";
+
+        if ($result)
+        {
+            $i = 0;
+            foreach ($result as $value)
+            {
+                $data[$i + 1] = "['" . $value->ID . "',' (" . $value->SHORT . ") " . $value->NAME . "']";
+                $i++;
+            }
+        }
+        return "[" . implode(",", $data) . "]";
     }
 
 }
