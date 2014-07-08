@@ -115,6 +115,7 @@ class TrainingDBAccess {
             $data["MODIFY_BY"] = setShowText($result->MODIFY_BY);
             $data["ENABLED_BY"] = setShowText($result->ENABLED_BY);
             $data["DISABLED_BY"] = setShowText($result->DISABLED_BY);
+            $data["SCHEDULE_SETTING"] = $result->SCHEDULE_SETTING;
         }
 
         return $data;
@@ -444,7 +445,9 @@ class TrainingDBAccess {
                         $PROGRAM_OBJECT = self::findTrainingFromId($TERM_OBJECT->PARENT);
                     if ($PROGRAM_OBJECT)
                         $SAVEDATA['PROGRAM'] = $PROGRAM_OBJECT->ID;
-
+                    //@veasna
+                    if (isset($params["SCHEDULE_SETTING"]))  
+                    $SAVEDATA['SCHEDULE_SETTING'] =addText($params["SCHEDULE_SETTING"]);    
                     break;
 
                 case "CLASS":
@@ -466,6 +469,9 @@ class TrainingDBAccess {
                     $SAVEDATA['FR'] = $LEVEL_OBJECT->FR;
                     $SAVEDATA['SA'] = $LEVEL_OBJECT->SA;
                     $SAVEDATA['SU'] = $LEVEL_OBJECT->SU;
+                    //@veasna
+                    if($LEVEL_OBJECT->SCHEDULE_SETTING)
+                    $SAVEDATA['SCHEDULE_SETTING'] = $LEVEL_OBJECT->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
@@ -491,6 +497,9 @@ class TrainingDBAccess {
                 case "TERM":
                     $SAVEDATA['PROGRAM'] = $parentObject->ID;
                     $SAVEDATA['LEVEL'] = '';
+                    //@veasna
+                    if (isset($params["SCHEDULE_SETTING"]))  
+                    $SAVEDATA['SCHEDULE_SETTING'] =addText($params["SCHEDULE_SETTING"]); 
                     break;
 
                 case "CLASS":
@@ -501,6 +510,9 @@ class TrainingDBAccess {
                     $SAVEDATA['LEVEL'] = $parentObject->ID;
                     $SAVEDATA['START_DATE'] = $parentObject->START_DATE;
                     $SAVEDATA['END_DATE'] = $parentObject->END_DATE;
+                    //@veasna
+                    if($LEVEL_OBJECT->SCHEDULE_SETTING)
+                    $SAVEDATA['SCHEDULE_SETTING'] = $LEVEL_OBJECT->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA["PARENT"] = $parent;

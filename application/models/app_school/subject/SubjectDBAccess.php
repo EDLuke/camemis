@@ -417,6 +417,7 @@ class SubjectDBAccess {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
+        $a=$data;
         return array(
             "success" => true
             , "totalCount" => sizeof($data)
