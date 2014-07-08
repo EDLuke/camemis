@@ -38,7 +38,11 @@ class MainController extends Zend_Controller_Action {
         $this->DB_USER = UserMemberDBAccess::getInstance();
         $this->SCHOOL = SchoolDBAccess::getSchool();
     }
-
+    
+    public function testAction() {
+        
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     //DASHBOARD....
     ////////////////////////////////////////////////////////////////////////////
