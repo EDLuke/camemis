@@ -200,7 +200,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','".$this->URL_EDIT_CAMPUS."objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','".$this->URL_EDIT_CAMPUS."objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "}]";
@@ -230,7 +230,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','".$this->URL_EDIT_GRADE."objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','".$this->URL_EDIT_GRADE."objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "}]";
@@ -315,7 +315,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_add'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/academic/additionalinformation/?objectId=' + node.id);";
+                                $html .= "clickOpenPage('center','".ADDITIONAL_INFORMATION."','/academic/additionalinformation/?objectId=' + node.id);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "}]";
@@ -330,7 +330,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/academic/editclass/?objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','/academic/editclass/?objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
