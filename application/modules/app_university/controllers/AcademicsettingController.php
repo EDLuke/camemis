@@ -82,7 +82,7 @@ class AcademicsettingController extends Zend_Controller_Action {
 
     public function financetabsAction() {
 
-        UserAuth::actionPermint($this->_request, "FINANCIAL_MANAGEMENT");
+        UserAuth::actionPermint($this->_request, "CASH_MANAGEMENT");
     }
 
     public function systemusertabsAction() {

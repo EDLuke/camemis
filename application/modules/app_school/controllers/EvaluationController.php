@@ -118,7 +118,7 @@ class EvaluationController extends Zend_Controller_Action {
         if ($this->_getParam('schoolyearId'))
             $this->schoolyearId = $this->_getParam('schoolyearId');
     }
-
+    
     public function classassignmentAction() {
 
         $this->view->academicId = $this->academicId;

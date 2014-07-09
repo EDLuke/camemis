@@ -147,7 +147,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         if($this->facette){
             $AVAILABLE_ROOM_TREE->setBaseParams("
-                ,scheduleId: '".$this->scheduleId."'
+                scheduleId: '".$this->scheduleId."'
                 ,cmd: 'availableRoom'
             ");
         }
