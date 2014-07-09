@@ -236,6 +236,7 @@ class ScheduleDBAccess {
         $ERROR_ROOM_NAME = false;
         $ERROR_SUBJECT = false;
         $ERROR_EVENT = false;
+        $ERROR_START_DATE_END_DATE_TERM=false;
 
         if (!$_START_TIME)
             $ERROR_START_TIME_IS_INCORRECT = true;
@@ -263,6 +264,14 @@ class ScheduleDBAccess {
 
         if (!$academicId && $trainingId)
         {
+            $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
+            if($startDate && $endDate){
+                $checkInTerm=TrainingDBAccess::checkTrainingStartDateEnddate($startDate,$endDate,$trainingId);   
+                if(!$checkInTerm){
+                    $ERROR_START_DATE_END_DATE_TERM=true;    
+                }
+            
+            }
             
             $ERROR_TIME_HAS_BEEN_USED = $this->checkStartTimeANDEndTimeTraining(
                     $_START_TIME
@@ -282,10 +291,13 @@ class ScheduleDBAccess {
         $SAVEDATA["ROOM_ID"] = $roomId;
         $SAVEDATA["EVENT"] = $eventName;
         if($trainingId){//@veasna
-            if($startDate)
+            if($startDate && $endDate){
             $SAVEDATA["START_DATE"] = setDate2DB($startDate);
-            if($endDate)
-            $SAVEDATA["END_DATE"] = setDate2DB($endDate);    
+            $SAVEDATA["END_DATE"] = setDate2DB($endDate);
+            }else{
+            $SAVEDATA["START_DATE"] = $trainingObject->START_DATE;
+            $SAVEDATA["END_DATE"] = $trainingObject->END_DATE;    
+            }    
         }
 
         $SAVEDATA["SHARED_SCHEDULE"] = $shared;
@@ -327,6 +339,10 @@ class ScheduleDBAccess {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
 
+            if($ERROR_START_DATE_END_DATE_TERM){
+                $errors["START_DATE"] = true;
+                $errors["END_DATE"] = true;    
+            }
             if ($ERROR_TIME_HAS_BEEN_USED)
             {
                 $errors["START_TIME"] = true;
@@ -435,6 +451,12 @@ class ScheduleDBAccess {
                 $errors["START_TIME"] = true;
                 $errors["END_TIME"] = true;
             }
+            
+            if($ERROR_START_DATE_END_DATE_TERM){
+                $errors["START_DATE"] = true;
+                $errors["END_DATE"] = true;    
+            }
+            
             if ($ERROR_START_TIME_IS_INCORRECT)
             {
                 $errors["START_TIME"] = true;
@@ -471,6 +493,11 @@ class ScheduleDBAccess {
 
             $errors["START_TIME"] = ERROR;
             $errors["END_TIME"] = ERROR;
+        }
+        
+        if($ERROR_START_DATE_END_DATE_TERM){
+            $errors["START_DATE"] = ERROR;
+            $errors["END_DATE"] = ERROR;    
         }
 
         if ($ERROR_TIME_HAS_BEEN_USED)

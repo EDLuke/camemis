@@ -689,6 +689,17 @@ class TrainingDBAccess {
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
+    
+    /////@veasna
+    public static function checkTrainingStartDateEnddate($startDate,$endDate,$trainingId){
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_training", array("C" => "COUNT(*)"));
+        $SQL->where("ID = " . $trainingId . "");
+        $SQL->where("START_DATE <='" . setDate2DB($startDate) . "' AND END_DATE >='" . setDate2DB($endDate) . "'");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;    
+    }
 
     //////////////////////////////////////////////////////////////
     //@Sea Peng
