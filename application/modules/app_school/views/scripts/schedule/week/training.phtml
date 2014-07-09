@@ -20,7 +20,6 @@ $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 $OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
 
 $trainingObject =TrainingDBAccess::findTrainingFromId($this->trainingId);
-
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $READ_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_READ_RIGHT")?"false":"true";
 $EDIT_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT")?"false":"true";
@@ -205,6 +204,17 @@ $setParams .= "&teacherId=".$this->teacherId."";
         $OBJECT_GRID->addReadField("name: 'SU_COLOR_FONT'");
         $OBJECT_GRID->addReadField("name: 'CODE'");
         $OBJECT_GRID->addReadField("name: 'STATUS'");    
+        if($trainingObject->SCHEDULE_SETTING){//@veasna
+        $OBJECT_GRID->addReadField("name: 'DURATION'");    
+        $OBJECT_GRID->addColumn("
+            header: '<b>" . TIME . "</b>'
+            , align:'center'
+            , sortable: false
+            , dataIndex: 'DURATION'
+            , width: 120
+        ");
+ 
+        }
 
         $OBJECT_GRID->addColumn("
             header: '<b>" . TIME . "</b>'
@@ -278,14 +288,26 @@ $setParams .= "&teacherId=".$this->teacherId."";
             , width: 180
         ");
         
-        $OBJECT_GRID->baseParams = "
-            start:0
-            ,limit:100
-            ,trainingId: '" . $this->trainingId . "'
-            ,cmd: 'loadClassEvents'
-            ,teacherId: '" . $this->teacherId . "'
-            ,target: 'TRAINING'
-        ";
+        if($trainingObject->SCHEDULE_SETTING){//@veasna
+            $OBJECT_GRID->baseParams = "
+                start:0
+                ,limit:100
+                ,trainingId: '" . $this->trainingId . "'
+                ,cmd: 'dataScheduleDayTrainingSetting'
+                ,teacherId: '" . $this->teacherId . "'
+                ,target: 'TRAINING'
+            ";
+        }else{
+        
+            $OBJECT_GRID->baseParams = "
+                start:0
+                ,limit:100
+                ,trainingId: '" . $this->trainingId . "'
+                ,cmd: 'loadClassEvents'
+                ,teacherId: '" . $this->teacherId . "'
+                ,target: 'TRAINING'
+            ";
+        }
         
         $HIDDEN_MO = $trainingObject->MO?"false":"true";
         $HIDDEN_TU = $trainingObject->TU?"false":"true";
@@ -465,12 +487,16 @@ $setParams .= "&teacherId=".$this->teacherId."";
             }]);
         ");
         
-        
+        if($trainingObject->SCHEDULE_SETTING){//@veasna
+            $copyDisabled='true';
+        }else{
+            $copyDisabled='false';    
+        }
         $OBJECT_GRID->addTBarItems("
             tbar.add(['-',{
                 id: 'COPY'
                 ,text: '".COPY."'
-                ,disabled: false
+                ,disabled: ".$copyDisabled."
                 ,iconCls:'icon-list-items'
                 ,menu:[{
                     text:'".TUESDAY."'
@@ -688,7 +714,10 @@ $setParams .= "&teacherId=".$this->teacherId."";
                 ");
             break;
         }
-
+        if($trainingObject->SCHEDULE_SETTING){//@veasna
+            $OBJECT_GRID->isGroupingView = true;
+            $OBJECT_GRID->groupField = "DURATION";   
+        }
         $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
         $OBJECT_GRID->forceFit = "false";
@@ -712,20 +741,24 @@ $setParams .= "&teacherId=".$this->teacherId."";
         });
         var myGrid = <?=$OBJECT_GRID->ExtgetCmp();?>;
         <?
+        if($trainingObject->SCHEDULE_SETTING){//@veasna
+        echo "var startIndex=3;";
+        }else{
+        echo "var startIndex=2;";  
+        }
+        if (!$trainingObject->MO) echo "myGrid.getColumnModel().setHidden(startIndex, true);";
+        if (!$trainingObject->TU) echo "myGrid.getColumnModel().setHidden(startIndex+1, true);";
+        if (!$trainingObject->WE) echo "myGrid.getColumnModel().setHidden(startIndex+2, true);";
+        if (!$trainingObject->TH) echo "myGrid.getColumnModel().setHidden(startIndex+3, true);";
+        if (!$trainingObject->FR) echo "myGrid.getColumnModel().setHidden(startIndex+4, true);";
+        if (!$trainingObject->SA) echo "myGrid.getColumnModel().setHidden(startIndex+5, true);";
+        if (!$trainingObject->SU) echo "myGrid.getColumnModel().setHidden(startIndex+6, true);";
         
-        if (!$trainingObject->MO) echo "myGrid.getColumnModel().setHidden(2, true);";
-        if (!$trainingObject->TU) echo "myGrid.getColumnModel().setHidden(3, true);";
-        if (!$trainingObject->WE) echo "myGrid.getColumnModel().setHidden(4, true);";
-        if (!$trainingObject->TH) echo "myGrid.getColumnModel().setHidden(5, true);";
-        if (!$trainingObject->FR) echo "myGrid.getColumnModel().setHidden(6, true);";
-        if (!$trainingObject->SA) echo "myGrid.getColumnModel().setHidden(7, true);";
-        if (!$trainingObject->SU) echo "myGrid.getColumnModel().setHidden(8, true);";
-        
-        $html = "";
+        $html="";
         $html .= "if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {"; 
             $html .= "var record = grid.store.getAt(rowIndex);";
             $html .= "switch(columnIndex){";
-                $html .= "case 2:";
+                $html .= "case startIndex:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.MO_EVENT";
@@ -740,7 +773,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}"; 
                 $html .= "break;";
-                $html .= "case 3:";
+                $html .= "case startIndex+1:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TU_EVENT";
@@ -755,7 +788,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}";
                 $html .= "break;";
-                $html .= "case 4:";
+                $html .= "case startIndex+2:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.WE_EVENT";
@@ -770,7 +803,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}"; 
                 $html .= "break;";
-                $html .= "case 5:";
+                $html .= "case startIndex+3:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TH_EVENT";
@@ -785,7 +818,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}"; 
                 $html .= "break;";
-                $html .= "case 6:";
+                $html .= "case startIndex+4:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.FR_EVENT";
@@ -800,7 +833,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}";
                 $html .= "break;";
-                $html .= "case 7:";
+                $html .= "case startIndex+5:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SA_EVENT";
@@ -815,7 +848,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
                         $html .= "contextMenu.showAt(event.xy);";
                     $html .= "}";  
                 $html .= "break;";
-                $html .= "case 8:";
+                $html .= "case startIndex+6:";
                     $html .= "var contextMenu = new Ext.menu.Menu({";
                         $html .= "items: [{";
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SU_EVENT";

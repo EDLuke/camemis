@@ -442,15 +442,33 @@ Ext.onReady(function() {
     }
     
     if($this->trainingId){
+        $traininObject = TrainingDBAccess::findTrainingFromId($this->trainingId);//@veasna
         $ITEMS = "
         [
             {".CamemisField::Displayfield("DAY_EVENT", DAY, $TITLE_EVENT, false)."}
             ,{".CamemisField::scheduleType(EVENT_TYPE, $READONLY_EVENT_TYPE)."} 
             ,{".CamemisField::Textfield("EVENT", "EVENT", EVENT, false, false, true)."}
             ,{".CamemisField::ComboSubjectByTraining("SUBJECT_ID","SUBJECT", SUBJECT, false, true)."}
-            ,{".CamemisField::Hidden("OLD_SUBJECT", $this->subjectId)."}
-        ]
-        ";
+            ,{".CamemisField::Hidden("OLD_SUBJECT", $this->subjectId)."}";
+        if($traininObject->SCHEDULE_SETTING){//@veasna
+        $ITEMS .= " ,{xtype:'datefield'
+            ,fieldLabel: '".START_DATE."'
+            ,name: 'START_DATE'
+            ,id: 'START_DATE'
+            ,vtype: 'daterange'
+            ,endDateField: 'END_DATE'
+            ,width: 250
+            ,format: '".setExtDatafieldFormat()."'}";
+        $ITEMS .= " ,{xtype:'datefield'
+            ,fieldLabel: '".END_DATE."'
+            ,name: 'END_DATE'
+            ,id: 'END_DATE'
+            ,vtype: 'daterange'
+            ,startDateField: 'START_DATE'
+            ,width: 250
+            ,format: '".setExtDatafieldFormat()."'}";
+        }
+        $ITEMS .= "]";
     }
     
     ////////////////////////////////////////////////////////////////////////////

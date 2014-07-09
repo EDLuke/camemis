@@ -93,6 +93,13 @@ class DayScheduleDBAccess extends ScheduleDBAccess {
                 $studentGroup = implode(',', $studentGroupArr);
             }
         }
+        
+        if($trainingId){
+            $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId); 
+            if($trainingObject->SCHEDULE_SETTING){
+                $params["checkDay"] = $eventDay;        
+            }   
+        }
         ///
 
         $params["academicId"] = $academicId;

@@ -289,7 +289,7 @@ class TrainingDBAccess {
 
                         case "LEVEL":
                             $data[$i]['text'] = stripslashes($value->NAME);
-                            $programObject = self::findTrainingFromId($value->PROGRAM);
+                            $programObject = self::findTrainingFromId($value->PARENT);
                             $data[$i]['title'] = stripslashes($programObject->NAME) . " &raquo; " . stripslashes($value->NAME);
                             $data[$i]['leaf'] = false;
                             $data[$i]['iconCls'] = "icon-folder_magnify";
@@ -477,8 +477,11 @@ class TrainingDBAccess {
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
-
+            
             self::dbAccess()->update('t_training', $SAVEDATA, $WHERE);
+            if($facette->OBJECT_TYPE==TERM){//@veasna
+                self::updateChildTerm($objectId);    
+            }
         } else
         {
 
@@ -511,8 +514,8 @@ class TrainingDBAccess {
                     $SAVEDATA['START_DATE'] = $parentObject->START_DATE;
                     $SAVEDATA['END_DATE'] = $parentObject->END_DATE;
                     //@veasna
-                    if($LEVEL_OBJECT->SCHEDULE_SETTING)
-                    $SAVEDATA['SCHEDULE_SETTING'] = $LEVEL_OBJECT->SCHEDULE_SETTING;
+                    if($parentObject->SCHEDULE_SETTING)
+                    $SAVEDATA['SCHEDULE_SETTING'] = $parentObject->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA["PARENT"] = $parent;
@@ -668,6 +671,7 @@ class TrainingDBAccess {
                 $SAVEDATA['FR'] = $facette->FR;
                 $SAVEDATA['SA'] = $facette->SA;
                 $SAVEDATA['SU'] = $facette->SU;
+                $SAVEDATA['SCHEDULE_SETTING'] = $facette->SCHEDULE_SETTING;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                 self::dbAccess()->update(self::TABLE_TRAINING, $SAVEDATA, $WHERE);
             }
