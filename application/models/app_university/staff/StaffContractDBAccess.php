@@ -155,7 +155,10 @@ class StaffContractDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonShowAllStaffContracts($params) {
+    //@CHHE Vathana
+    
+    public static function jsonShowAllStaffContracts($params, $isJson = true) {
+        
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         
@@ -191,11 +194,16 @@ class StaffContractDBAccess {
                 $a[] = $data[$i];
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
+        if($isJson){
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }else{
+            return $data;    
+        }
+        
     }
     
     public static function sqlGetAllMembers($params){
