@@ -14,136 +14,90 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$FIRST_FORM = new CamemisForm("FIRST");
-$FIRST_FORM->setLoadUrl('/advisory/jsonload/');
-$FIRST_FORM->setSaveUrl('/advisory/jsonsave/');
-
-$SECOND_FORM = new CamemisForm("SECOND");
-$SECOND_FORM->setLoadUrl('/advisory/jsonload/');
-$SECOND_FORM->setSaveUrl('/advisory/jsonsave/');
-
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
-<script>
-    Ext.onReady(function() {
-        
-        <?
-        /**
-         * Extjs: s.gif
-         */
-        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
-        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-        
-        $FIRST_FORM->addObjectItems("
-            title: '".DETAIL_INFORMATION." (First Form)'
-            ,autoHeight: true
-            ,style: 'padding-bottom:5px'
-            ,collapsible: true
-            ,collapsed: false
-            ,width: 550
-            ,items:[{
-                layout: 'form'
-                ,border: false
-                ,autoHeight:true
-                ,bodyStyle: 'padding:10px'
-                ,items: [
-                    {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, false)."}
-                ]
-            }]   
-        ");
-        
-        $FIRST_FORM->setLoadParams("
-            cmd: 'jsonLoadAdvisory'
-            ,objectId: '".$this->objectId."'
-        ");    
-        
-        $FIRST_FORM->addTBarItems(CamemisBar::tbarSingleSave());
-        
-        $FIRST_FORM->setSaveParams("
-            cmd: 'jsonSaveAdvisory'
-            ,objectId: '".$this->objectId."'
-        ");
-        
-         $FIRST_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
-            
-         ");
-        
-        $FIRST_FORM->isObjectDefaultOnLoad = false; 
-        $FIRST_FORM->labelAlign = "left";
-        $FIRST_FORM->labelWidth = 120;
-        $FIRST_FORM->renderJS();
-        ////////////////////////////////////////////////////////////////////////
-        
-        $SECOND_FORM->addObjectItems("
-            title: '".DETAIL_INFORMATION." (Second Form)'
-            ,autoHeight: true
-            ,style: 'padding-bottom:5px'
-            ,collapsible: true
-            ,collapsed: false
-            ,width: 550
-            ,items:[{
-                layout: 'form'
-                ,border: false
-                ,autoHeight:true
-                ,bodyStyle: 'padding:10px'
-                ,items: [
-                    {".CamemisField::Textfield("NAME1", "NAME1", NAME, false, false, false, false)."}
-                ]
-            }]   
-        ");
-        
-        $SECOND_FORM->setLoadParams("
-            cmd: 'jsonLoadAdvisory'
-            ,objectId: '".$this->objectId."'
-        ");    
-        
-        $SECOND_FORM->addTBarItems(CamemisBar::tbarSingleSave());
-        
-        $SECOND_FORM->setSaveParams("
-            cmd: 'jsonSaveAdvisory'
-            ,objectId: '".$this->objectId."'
-        ");
-        
-         $SECOND_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
-            
-         ");
-        
-        $SECOND_FORM->isObjectDefaultOnLoad = false; 
-        $SECOND_FORM->labelAlign = "left";
-        $SECOND_FORM->labelWidth = 120;
-        $SECOND_FORM->renderJS();
-        ////////////////////////////////////////////////////////////////////////
-        $VIEWPORT = "";
-        $VIEWPORT .= "
-            border: false
-            ,height: 800
-            ,items:[{
-                xtype: 'panel'
-                ,border: false
-                ,height: 400
-                ,items: [{xtype: '".$FIRST_FORM->getObjectXType()."'}]
-            },{
-                xtype: 'panel'
-                ,border: false
-                ,height: 400
-                ,items: [{xtype: '".$SECOND_FORM->getObjectXType()."'}]
-            }]
-        ";  
-        
-        ////////////////////////////////////////////////////////////////////////
-        $js = "viewport = new Ext.Viewport({";
-            $js .= "layout: 'fit'";
-            $js .= ",border: false";
-            $js .= ",items: [{".$VIEWPORT."}]";
-        $js .= "});";
-        
-        print $js;
-        ?>
-        
-    });
-</script>
+<link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/public/bootstrap/css/custom.css" rel="stylesheet">
+
+<div style="margin: 20px;">
+    <table class="table">
+       <caption>Contextual Table Layout</caption>
+       <thead>
+          <tr  class="success">
+             <th>Student</th>
+             <th>Student</th>
+             <th class="text-center" colspan="3">Assignment 1</th>
+             <th class="text-center" colspan="2">Assignment 2</th>
+             <th class="text-center" colspan="3">Assignment 3</th>
+          </tr>
+       </thead>
+       <thead>
+          <tr class="danger">
+             <th>Student</th>
+             <th>Result</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">22.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+             <th class="text-center">10.05.2013</th>
+          </tr>
+       </thead>
+       <tbody>
+          <tr class="active">
+             <td>Student 1</td>
+             <td class="text-center">100</td>
+             <td class="text-center">50</td>
+             <td class="text-center">60</td>
+             <td class="text-center" >70</td>
+             <td class="text-center">80</td>
+             <td class="text-center">90</td>
+             <td class="text-center">100</td>
+             <td class="text-center">70</td>
+             <td class="text-center">45</td>
+          </tr>
+          <tr class="active">
+             <td>Student 2</td>
+             <td class="text-center">100</td>
+             <td class="text-center">50</td>
+             <td class="text-center">60</td>
+             <td class="text-center" >70</td>
+             <td class="text-center">80</td>
+             <td class="text-center">90</td>
+             <td class="text-center">100</td>
+             <td class="text-center">70</td>
+             <td class="text-center">45</td>
+          </tr>
+          <tr class="active">
+             <td>Student 3</td>
+             <td class="text-center">100</td>
+             <td class="text-center">50</td>
+             <td class="text-center">60</td>
+             <td class="text-center" >70</td>
+             <td class="text-center">80</td>
+             <td class="text-center">90</td>
+             <td class="text-center">100</td>
+             <td class="text-center">70</td>
+             <td class="text-center">45</td>
+          </tr>
+          <tr class="active">
+             <td>Student 4</td>
+             <td class="text-center">100</td>
+             <td class="text-center">50</td>
+             <td class="text-center">60</td>
+             <td class="text-center" >70</td>
+             <td class="text-center">80</td>
+             <td class="text-center">90</td>
+             <td class="text-center">100</td>
+             <td class="text-center">70</td>
+             <td class="text-center">45</td>
+          </tr>
+       </tbody>
+    </table>
+</div>
+
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>
