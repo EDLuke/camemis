@@ -18,6 +18,7 @@ require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
 require_once 'models/export/StudentTrainingExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/StudentPersonalInfoExportDBAccess.php';//@CHHE Vathana
+require_once 'models/export/StaffPersonalInfoExportDBAccess.php';//@CHHE Vathana
 
 class ExportController extends Zend_Controller_Action {
 
@@ -37,6 +38,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STUDENT_TRAINING_EXCEL = new StudentTrainingExportDBAccess($this->_getParam('gridId'));//@CHHE Vathana
         $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         $this->STUDENT_PERSONAL_EXCEL = new StudentPersonalInfoExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
+        $this->STAFF_PERSONAL_EXCEL = new StaffPersonalInfoExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
@@ -161,6 +163,11 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
+    public function openstaffpersonalinfolistAction()
+    {
+         
+    }
+    
     
     //End...
     
@@ -216,6 +223,9 @@ class ExportController extends Zend_Controller_Action {
                 break;
             case "studentpersonalinfo":
                 $jsondata = $this->STUDENT_PERSONAL_EXCEL->studentpersonalinfo($this->REQUEST->getPost());
+                break;
+            case "staffpersonalinfo":
+                $jsondata = $this->STAFF_PERSONAL_EXCEL->staffpersonalinfo($this->REQUEST->getPost());
                 break;
                 
             //End...
