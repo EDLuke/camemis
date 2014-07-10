@@ -20,6 +20,8 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/Studen
 require_once "models/filter/FilterData.php"; //@Visal
 require_once "models/training/StudentTrainingDBAccess.php"; //@CHHE Vathana 
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php"; //@CHHE Vathana
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffDBAccess.php"; //@CHHE Vathana
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffContractDBAccess.php"; //@CHHE Vathana
 
 error_reporting(E_ALL);
 
@@ -43,6 +45,8 @@ abstract class CamemisExportDBAccess {
         $this->DB_ROOM_LIST = RoomDBAccess::getInstance(); //@CHHE Vathana
         $this->DB_STUDENT_INFO_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
         $this->DB_STUDENT_PREREQUIREMENT_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_STAFF_INFO_LIST = StaffDBAccess::getInstance(); //@CHHE Vathana
+        $this->DB_STAFF_CONTRACT_LIST = StaffContractDBAccess::getInstance(); //@CHHE Vathana
         
         
     }
@@ -102,6 +106,9 @@ abstract class CamemisExportDBAccess {
     }
     public function getStudentPersonalList() {
         return self::getUserPhath("_studentpersonalinformation.xls");
+    }
+    public function getStaffPersonalList() {
+        return self::getUserPhath("_staffpersonalinformation.xls");
     }
     
     //End...
