@@ -3193,9 +3193,13 @@ class StaffDBAccess {
         return $SUCCESS_DATA;
     }
 
-    public static function jsonListPersonInfos($params)
+    //@CHHE Vathana
+    
+    public static function jsonListPersonInfos($params, $isJson = true)
     {
-
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $objectType = isset($params["object"]) ? addText($params["object"]) : "";
 
@@ -3259,11 +3263,21 @@ class StaffDBAccess {
             }
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $data
-        );
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        if($isJson){
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }else{
+            return $data;    
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
