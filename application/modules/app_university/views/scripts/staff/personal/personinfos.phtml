@@ -18,12 +18,12 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$OBJECT_GRID = new CamemisGrid("STAFF", "LIST");
-$OBJECT_GRID->setLoadUrl("/staff/jsonload/");
-$OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+//$OBJECT_GRID = new CamemisGrid("STAFF", "LIST");
+//$OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+//$OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
 
 $isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
-$columndata = Utiles::getGridColumnData("STAFF_LIST_ID");
+//$columndata = Utiles::getGridColumnData("STAFF_LIST_ID");
 
 function columnProperties($header, $dataindex, $width, $hidden=false){
     $js = "";
@@ -60,6 +60,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
         
         switch($this->target){
             case "WORK_EXPERIENCE":
+                
+                //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("WORK_EXPERIENCES", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                //End
+                
                 $OBJECT_GRID->addReadField("name: 'START_DATE'");
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'COMPANY_NAME'");
@@ -104,6 +114,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 ");
                 break;
             case "PROFESSION":
+                
+                //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("SHORT_TRAINING", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                //End
+                    
                 $OBJECT_GRID->addReadField("name: 'START_DATE'");
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'COURSE'");
@@ -118,6 +138,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 $OBJECT_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(5,$columndata)));
                 break;
             case "EMERCP":
+                
+                //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("RELATIVE_INFORMATION", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                //End
+                
                 $OBJECT_GRID->addReadField("name: 'NAME'");
                 $OBJECT_GRID->addReadField("name: 'PHONE'");
                 $OBJECT_GRID->addReadField("name: 'EMAIL'");
@@ -248,6 +278,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 break;
                 
             case "EDUBACK":
+                
+                //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("EDUCATION_BACKGROUND_STAFF", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                //End
+                
                 $OBJECT_GRID->addReadField("name: 'ACADEMIC_YEAR'");
                 $OBJECT_GRID->addReadField("name: 'INSTITUTION_NAME'");
                 $OBJECT_GRID->addReadField("name: 'MAJOR_TYPE'");
@@ -373,6 +413,16 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
                 break;
             
             case "PUBLICATION":
+                
+                //@CHHE Vathana
+                    $OBJECT_GRID = new CamemisGrid("PUBLICATION", "LIST");
+
+                    $OBJECT_GRID->setLoadUrl("/staff/jsonload/");
+                    $OBJECT_GRID->setSaveUrl("/staff/jsonsave/");
+                    $columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+                    //error_log($OBJECT_GRID->getObjectId());
+                //End
+                
                 $OBJECT_GRID->addReadField("name: 'START_DATE'");
                 $OBJECT_GRID->addReadField("name: 'END_DATE'");
                 $OBJECT_GRID->addReadField("name: 'PUBLICATION_TITLE'");
@@ -481,6 +531,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
         $OBJECT_GRID->isGridEditing = true;
         $OBJECT_GRID->loadMask = false;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         ?>
