@@ -22,6 +22,8 @@ $OBJECT_FORM = new CamemisForm("STAFF_CONTRACT");
 $OBJECT_FORM->setLoadUrl('/staffcontract/jsonload/');
 
 $OBJECT_GRID = new CamemisGrid("STAFF_CONTRACT", "LIST");
+$columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());//@CHHE Vathana
+
 $OBJECT_GRID->setLoadUrl("/staffcontract/jsonload/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -232,6 +234,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 
             $OBJECT_GRID->isObjectDefaultOnLoad = true;
             $OBJECT_GRID->loadMask = true;
+            $OBJECT_GRID->setUserColumn = true; //@CHHE Vathana
             $OBJECT_GRID->forceFit = "true";
             $OBJECT_GRID->renderJS();
             
@@ -351,7 +354,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if(grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
             var record = grid.store.getAt(rowIndex);
             clickOpenPage('center','', '/staffcontract/staffshowitem?objectId='+record.data.ID);   
-        }) 
+        })
+         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'})); 
     });
 </script>
 <?
