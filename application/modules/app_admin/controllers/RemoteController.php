@@ -5,12 +5,14 @@ require_once 'models/app_admin/AdminSessionAccess.php';
 
 class RemoteController extends Zend_Controller_Action {
 
-    public function init() {
+    public function init()
+    {
 
         $this->REQUEST = $this->getRequest();
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         $USER_ACCESS = new AdminUserDBAccess(false, false);
 
@@ -19,24 +21,30 @@ class RemoteController extends Zend_Controller_Action {
 
         $session_id = $USER_ACCESS->Login($LOGINNAME, $PASSWORD);
 
-        if ($session_id) {
+        if ($session_id)
+        {
 
             $json = "{'success':true, 'sessionId':'$session_id'}";
-        } else {
+        }
+        else
+        {
             $json = "{'success':true, 'sessionId':'failed'}";
         }
-        if (isset($json)) {
+        if (isset($json))
+        {
             $this->getResponse()->setBody($json);
         }
 
         $this->getResponse()->setHeader('Content-Type', 'text/javascript');
     }
 
-    public function cronjobAction() {
-        
+    public function cronjobAction()
+    {
+
+        require_once 'models/app_admin/DBWebservices.php';
         DBWebservices::actionOptimizeTable();
-        
-        
+
+
 //        $key = $this->_getParam('key');
 //        switch ($key) {
 //
@@ -53,7 +61,8 @@ class RemoteController extends Zend_Controller_Action {
 //        }
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
 
@@ -61,6 +70,7 @@ class RemoteController extends Zend_Controller_Action {
         $this->getResponse()->setHeader('Content-Type', 'text/javascript');
         $this->getResponse()->setBody($json);
     }
+
 }
 
 ?>
