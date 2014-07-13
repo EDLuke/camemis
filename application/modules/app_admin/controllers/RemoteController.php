@@ -33,20 +33,24 @@ class RemoteController extends Zend_Controller_Action {
     }
 
     public function cronjobAction() {
-        $key = $this->_getParam('key');
-        switch ($key) {
-
-            //OPTIMIZE_TABLE
-            case "bfda03fce66ddcbf39915a9c8d4661f6":
-                require_once 'models/app_admin/DBWebservices.php';
-                DBWebservices::actionOptimizeTable();
-                break;
-            // BACKUP
-            case "606bc133522c0d9ca3b40eeae65705e3":
-                require_once 'models/app_admin/DBWebservices.php';
-                DBWebservices::actionCustomerBackUp();
-                break;
-        }
+        
+        DBWebservices::actionOptimizeTable();
+        
+        
+//        $key = $this->_getParam('key');
+//        switch ($key) {
+//
+//            //OPTIMIZE_TABLE
+//            case "bfda03fce66ddcbf39915a9c8d4661f6":
+//                require_once 'models/app_admin/DBWebservices.php';
+//                DBWebservices::actionOptimizeTable();
+//                break;
+//            // BACKUP
+//            case "606bc133522c0d9ca3b40eeae65705e3":
+//                require_once 'models/app_admin/DBWebservices.php';
+//                DBWebservices::actionCustomerBackUp();
+//                break;
+//        }
     }
 
     public function setJSON($jsondata) {
