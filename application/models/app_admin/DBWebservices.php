@@ -423,7 +423,7 @@ class DBWebservices {
                             $name = "Tables_in_" . $DB_NAME;
                             $SQL = "OPTIMIZE TABLE " . $value->$name . "";
                             self::dbAccess()->query($SQL);
-                            //error_log("Ja, ich bin hier.");
+                            error_log("Ja, ich bin hier.");
                         }
                     }
                 }
