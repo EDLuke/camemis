@@ -22,6 +22,7 @@ $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $template = isset($_GET["template"]) ? addText($_GET["template"]):"";
 $count = isset($_GET["count"]) ? addText($_GET["count"]):"3";
 $attachment = isset($_GET["attachment"]) ? addText($_GET["attachment"]):"";
+$isUpload = isset($_GET["isUpload"]) ? addText($_GET["isUpload"]):true;
 
 class DisplayItem{
     
@@ -190,7 +191,7 @@ $DISPLAY_ITEMS = new DisplayItem(
     $objectId
     , $template
     , $count
-    , true
+    , $isUpload
     , false
 );
 
