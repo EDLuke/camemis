@@ -604,7 +604,7 @@ class AssignmentDBAccess {
                 if (!$facette) {
 
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "";
-                    $data[$i]['text'] = "" . $value->NAME . "";
+                    $data[$i]['text'] = "(" . $value->SHORT . ") " . $value->NAME . "";
                     $data[$i]['leaf'] = false;
                     $data[$i]['isClick'] = true;
                     switch ($value->INCLUDE_IN_EVALUATION) {
