@@ -398,6 +398,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
+        $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($this->academicId, $this->subjectId, $this->term, false);
+
         if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
@@ -413,7 +415,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
                                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                                $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
+                                //$data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
+                                $data[$i]["AVERAGE"] = "<input style='width:30px;height:15px;text-align:right;padding:3px;' type='text' name='' value='" . $facette->SUBJECT_VALUE . "'>";
                                 $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
                                 $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
                                 break;
@@ -424,10 +427,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         switch ($this->getSubjectScoreType()) {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
-                                $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
+                                $data[$i]["RANK"] = "<input type='text' name='' value='" . $facette->SUBJECT_VALUE . "'>";
+                                //$data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
                                 break;
                         }
                         break;
+                }
+
+                if ($listAssignments) {
+                    foreach ($listAssignments as $object) {
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = "---";
+                    }
                 }
 
                 if (!$this->getSettingEvaluationOption()) {
@@ -1087,7 +1097,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
             SQLEvaluationImport::importScoreSubject($stdClass);
         } else {
-            
+
             if ($this->assignmentId) {
                 $stdClass->assignmentId = $this->assignmentId;
                 $stdClass->date = $this->date;
@@ -1097,7 +1107,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->include_in_valuation = $this->getAssignmentInCludeEvaluation();
                 $stdClass->term = $this->getTermByDateAcademicId();
             }
-            
+
             $stdClass->educationSystem = $this->getEducationSystem();
             $stdClass->actionField = "SCORE";
             SQLEvaluationImport::importScoreAssignment($stdClass);

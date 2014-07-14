@@ -65,18 +65,6 @@ $setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
 
-function geEntries($academicId, $subjectId, $term, $isGroupBy){
-    $SQL = UserAuth::dbAccess()->select();
-    $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT"));
-    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID","SCORE_INPUT_DATE"));
-    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-    $SQL->where("B.CLASS_ID = ?", $academicId);
-    $SQL->where("B.TERM = ?", $term);
-    if ($isGroupBy) $SQL->group("B.ASSIGNMENT_ID");
-    $SQL->order('A.SORTKEY ASC');
-    return UserAuth::dbAccess()->fetchAll($SQL);
-}
-
 function getColspan($assignmentId, $academicId, $subjectId, $term){
     $SQL = UserAuth::dbAccess()->select();
     $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
@@ -91,12 +79,21 @@ function getColspan($assignmentId, $academicId, $subjectId, $term){
 
 $GROUP_ROW = "";
 $GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
-$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
-$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
-$GROUP_ROW .= ",{header: 'Result', colspan: 1, align: 'center'}";
-$GROUP_ROW .= ",{header: 'Assessment', colspan: 1, align: 'center'}";
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        break;
+    default:
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        break;
+}
 
-$listGroupAssignments = geEntries($academicId, $subjectId, $term, true);
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+
+$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, true);
 if($listGroupAssignments){
     foreach($listGroupAssignments as $value){
         $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
@@ -106,10 +103,19 @@ if($listGroupAssignments){
 
 $COLUMS = "";
 $COLUMS .= "new Ext.grid.RowNumberer()";
-$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: 'Status', width:80, renderer:cssStatus, align:'center'}";
-$COLUMS .= ",{dataIndex: 'STUDENT', header: 'Fullname', width:140}";
-$COLUMS .= ",{dataIndex: 'AVERAGE', header: '&nbsp;', width: 80 ,align: 'center'}";
-$COLUMS .= ",{dataIndex: 'ASSESSMENT', header: '&nbsp;', width: 100 ,align: 'center'}";
+$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:80, renderer:cssStatus, align:'center',sortable: true}";
+$COLUMS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,sortable: true, renderer:cssDefault}";
+
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 90 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{dataIndex: 'ASSESSMENT', header: '<b>".ASSESSMENT."</b>', width: 90 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{dataIndex: 'AVERAGE', header: '<b>".TERM_RESULT."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
+        break;
+    default:
+        $COLUMS .= ",{dataIndex: 'ASSESSMENT', header: '<b>".ASSESSMENT."</b>', width: 90 ,align: 'center',sortable: true,renderer:cssDefault}";
+        break;
+}
 
 $FIELDS = "";
 $FIELDS .= "{name: 'ID'}";
@@ -118,14 +124,23 @@ $FIELDS .= ",{name: 'BG_COLOR'}";
 $FIELDS .= ",{name: 'BG_COLOR_FONT'}";
 $FIELDS .= ",{name: 'STATUS_KEY'}";
 $FIELDS .= ",{name: 'STUDENT'}";
-$FIELDS .= ",{name: 'AVERAGE'}";
-$FIELDS .= ",{name: 'ASSESSMENT'}";
 
-$listAssignments = geEntries($academicId, $subjectId, $term, false);
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $FIELDS .= ",{name: 'AVERAGE'}";
+        $FIELDS .= ",{name: 'ASSESSMENT'}";
+        $FIELDS .= ",{name: 'RANK'}";
+        break;
+    default:
+        $FIELDS .= ",{name: 'ASSESSMENT'}";
+        break;
+}
+
+$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false);
 if($listAssignments){
     foreach($listAssignments as $value){
         
-        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:85,align:'center',renderer:cssNumber}"; 
+        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'<b>".getShowDate($value->SCORE_INPUT_DATE)."</b>',width:85,align:'center',renderer:cssNumber}"; 
         $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
     }
 }
@@ -155,13 +170,13 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:bold; color:#000;">' + value + '</div>';
     }
     
     var fields = [],
