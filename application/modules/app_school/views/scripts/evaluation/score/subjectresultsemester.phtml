@@ -5,11 +5,57 @@
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
+$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
+$OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
+
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
+
+switch($term){
+    case "FIRST_SEMESTER":
+    case "SECOND_SEMESTER":
+        $section ="2";
+    break;
+    case "FIRST_TERM":
+    case "SECOND_TERM":
+    case "THIRD_TERM":
+        $section ="4";
+    break;
+    case "FIRST_QUARTER":
+    case "SECOND_QUARTER":
+    case "THIRD_QUARTER":
+    case "FOURTH_QUARTER":
+        $section ="5";
+    break;
+}
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+if(!$academicObject) {header("Location: /main/permission/");exit;}
+
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
+
+////////////////////////////////////////////////////////////////////////////////
+if($academicObject->EDUCATION_SYSTEM){
+    $subjectId = $academicObject->SUBJECT_ID;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->PARENT);
+}else{
+    $subjectId = $this->subjectId;
+    $subjectObject = SubjectDBAccess::getAcademicSubject($subjectId,$academicObject->ID);
+} 
+
+if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
+
+$academicId = $academicObject->ID;
+$campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -19,6 +65,70 @@ $setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
 
+function geEntries($academicId, $subjectId, $term, $isGroupBy){
+    $SQL = UserAuth::dbAccess()->select();
+    $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT"));
+    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID","SCORE_INPUT_DATE"));
+    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+    $SQL->where("B.CLASS_ID = ?", $academicId);
+    $SQL->where("B.TERM = ?", $term);
+    if ($isGroupBy) $SQL->group("B.ASSIGNMENT_ID");
+    $SQL->order('A.SORTKEY ASC');
+    return UserAuth::dbAccess()->fetchAll($SQL);
+}
+
+function getColspan($assignmentId, $academicId, $subjectId, $term){
+    $SQL = UserAuth::dbAccess()->select();
+    $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+    $SQL->where("B.CLASS_ID = ?", $academicId);
+    $SQL->where("B.TERM = ?", $term);
+    $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
+    $result = UserAuth::dbAccess()->fetchRow($SQL);
+    return $result ? $result->C : 0;
+}
+
+$GROUP_ROW = "";
+$GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: 'Result', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: 'Assessment', colspan: 1, align: 'center'}";
+
+$listGroupAssignments = geEntries($academicId, $subjectId, $term, true);
+if($listGroupAssignments){
+    foreach($listGroupAssignments as $value){
+        $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
+        $GROUP_ROW .= ",{header: '<b>".$value->SHORT."</b>', colspan: ".$colspan.", align: 'center'}";  
+    }
+}
+
+$COLUMS = "";
+$COLUMS .= "new Ext.grid.RowNumberer()";
+$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: 'Status', width:80, renderer:cssStatus, align:'center'}";
+$COLUMS .= ",{dataIndex: 'STUDENT', header: 'Fullname', width:140}";
+$COLUMS .= ",{dataIndex: 'AVERAGE', header: '&nbsp;', width: 80 ,align: 'center'}";
+$COLUMS .= ",{dataIndex: 'ASSESSMENT', header: '&nbsp;', width: 100 ,align: 'center'}";
+
+$FIELDS = "";
+$FIELDS .= "{name: 'ID'}";
+$FIELDS .= ",{name: 'STATUS_KEY'}";
+$FIELDS .= ",{name: 'BG_COLOR'}";
+$FIELDS .= ",{name: 'BG_COLOR_FONT'}";
+$FIELDS .= ",{name: 'STATUS_KEY'}";
+$FIELDS .= ",{name: 'STUDENT'}";
+$FIELDS .= ",{name: 'AVERAGE'}";
+$FIELDS .= ",{name: 'ASSESSMENT'}";
+
+$listAssignments = geEntries($academicId, $subjectId, $term, false);
+if($listAssignments){
+    foreach($listAssignments as $value){
+        
+        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:85,align:'center',renderer:cssNumber}"; 
+        $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+    }
+}
 ?>
 
 <style>
@@ -33,64 +143,35 @@ $setParams .="&section=".$section."";
 
 <script>
 Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+    }
+    
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
+    }
+    
     var fields = [],
     columns = [],
-    assignmentGroupRow = [];
+    groupRow = [];
     
-    var assignmentGroupRow = [
-        {header: '&nbsp;', colspan: 1, align: 'center'},
-        {header: '&nbsp;', colspan: 1, align: 'center'},
-        {header: 'Result', colspan: 1, align: 'center'},
-        {header: 'Assessment', colspan: 1, align: 'center'},
-        {header: 'Assignment #1', colspan: 2, align: 'center'},
-        {header: 'Assignment #2', colspan: 2, align: 'center'},
-        {header: 'Assignemnt #3', colspan: 2, align: 'center'},
-        {header: 'Assignment #4', colspan: 2, align: 'center'},
-        {header: 'Assignment #5', colspan: 2, align: 'center'},
-        {header: 'Assignment #6', colspan: 1, align: 'center'}
-    ]
-     
-    var group = new Ext.ux.grid.ColumnHeaderGroup({
-        rows: [assignmentGroupRow]
-    });
-    
-    //fields at this point is:
-    var fields =  [
-        {name: 'ID'},
-        {name: 'STUDENT'},
-        {name: 'RESULT'},
-        {name: 'ASSESSMENT'},
-        {name: 'A11'},
-        {name: 'A12'},
-        {name: 'B11'},
-        {name: 'B12'},
-        {name: 'C11'},
-        {name: 'C12'},
-        {name: 'D11'},
-        {name: 'D12'},
-        {name: 'E11'},
-        {name: 'E12'},
-        {name: 'A61'}
-    ];
-      
-    // columns at this point is:
-    var columns = [
-        new Ext.grid.RowNumberer(),
-        {dataIndex: 'STUDENT', header: 'Fullname', width:140},
-        {dataIndex: 'RESULT', header: '&nbsp;', width: 80 ,align: 'center'},
-        {dataIndex: 'ASSESSMENT', header: '&nbsp;', width: 100 ,align: 'center'},
-        {dataIndex: 'A11', header: '10.05.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'A12', header: '20.07.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'B11', header: '10.05.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'B12', header: '20.07.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'C11', header: '10.05.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'C12', header: '20.07.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'D11', header: '10.05.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'D12', header: '20.07.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'E11', header: '10.05.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'E12', header: '20.07.2013' , width: 80 ,align: 'center'},
-        {dataIndex: 'A61', header: 'Leer' , width: 100 ,align: 'center'}
-    ];
+    var groupRow = [<?=$GROUP_ROW;?>]
+    var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [groupRow]});
+    var fields =  [<?=$FIELDS;?>];
+    var columns = [<?=$COLUMS;?>];
     
     var myStore = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})
@@ -109,7 +190,11 @@ Ext.onReady(function() {
     });
     var grid = new Ext.grid.GridPanel({
         tbar:[{
-            text:'ssss'
+            text: '<?=REFRESH?>'
+            ,iconCls:'icon-reload'
+            ,handler: function(){
+                <?=CamemisPage::setRequestURI(false)?>
+            }
         }]
         ,border:false
         ,store: myStore
