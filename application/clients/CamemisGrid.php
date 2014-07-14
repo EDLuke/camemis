@@ -59,147 +59,184 @@ class CamemisGrid {
     public $isDataPreview = false;
     protected $applyRowClass = null;
 
-    public function __construct($object, $modul) {
+    public function __construct($object, $modul)
+    {
 
         $this->object = $object;
         $this->modul = $modul;
         $this->utiles = Utiles::getInstance();
     }
 
-    public function getObjectId() {
+    public function getObjectId()
+    {
 
         return strtoupper($this->object) . "_" . strtoupper($this->modul) . "_ID";
     }
 
-    public function getObjectName() {
+    public function getObjectName()
+    {
         return "GRID." . strtoupper($this->object) . "_" . strtoupper($this->modul);
     }
 
-    public function getObjectXType() {
+    public function getObjectXType()
+    {
         return "XTYPE_" . strtoupper($this->getObjectName()) . "_GRID";
     }
 
-    public function addColumn($column) {
+    public function addColumn($column)
+    {
         $this->columns[] = "{" . $column . "}";
     }
 
-    protected function loadURL() {
+    protected function loadURL()
+    {
         return "'" . $this->loadUrl . "'";
     }
 
-    protected function setColumns() {
+    protected function setColumns()
+    {
         return $this->columns ? "," . implode(",", $this->columns) : "";
     }
 
-    public function addReadField($readfield) {
+    public function addReadField($readfield)
+    {
         $this->readfields[] = "{" . $readfield . "}";
     }
 
-    protected function setReadFields() {
+    protected function setReadFields()
+    {
         return $this->readfields ? "," . implode(",", $this->readfields) : "";
     }
 
-    protected function setStore() {
-        if ($this->isGroupingView) {
+    protected function setStore()
+    {
+        if ($this->isGroupingView)
+        {
             return $this->getGroupingStore();
-        } else {
+        }
+        else
+        {
             return $this->getNormalStore();
         }
     }
 
-    public function addTBarItems($value) {
+    public function addTBarItems($value)
+    {
         $this->tbarItems[] = $value;
         return $this->tbarItems;
     }
 
-    protected function setTBarItems() {
-        if ($this->tbarItems) {
+    protected function setTBarItems()
+    {
+        if ($this->tbarItems)
+        {
             return implode(";", $this->tbarItems);
         }
     }
 
-    public function setSaveParams($value) {
+    public function setSaveParams($value)
+    {
         if ($value)
             return $this->saveParams = "," . $value;
     }
 
-    public function setRemoveParams($value) {
+    public function setRemoveParams($value)
+    {
         if ($value)
             return $this->removeParams = "," . $value;
     }
 
-    public function setSelectionParams($value) {
+    public function setSelectionParams($value)
+    {
         if ($value)
             return $this->selectionParams = "," . $value;
     }
 
-    public function setRemoveSelectionParams($value) {
+    public function setRemoveSelectionParams($value)
+    {
         if ($value)
             return $this->removeSelectionParams = "," . $value;
     }
 
-    public function addCellRenderer($cell) {
+    public function addCellRenderer($cell)
+    {
         $this->cellRenderers[] = $cell;
     }
 
-    public function setAftereditCallback($value) {
+    public function setAftereditCallback($value)
+    {
 
         return $this->aftereditCallback = $value;
     }
 
-    public function setAftereditEvent($value) {
+    public function setAftereditEvent($value)
+    {
 
         return $this->aftereditEvent = $value;
     }
 
-    public function setAftereditLoadParams($value) {
+    public function setAftereditLoadParams($value)
+    {
 
         return $this->aftereditLoadParams = $value ? "," . $value : "";
     }
 
-    protected function setCellRenderers() {
+    protected function setCellRenderers()
+    {
         return $this->cellRenderers ? implode(";", $this->cellRenderers) : "";
     }
 
-    protected function setExtGridType() {
-        if ($this->isGridEditing) {
+    protected function setExtGridType()
+    {
+        if ($this->isGridEditing)
+        {
             $js = "Ext.grid.EditorGridPanel";
-        } else {
+        }
+        else
+        {
             $js = "Ext.grid.GridPanel";
         }
         return $js;
     }
 
-    public function setSelectionEmbeddedEvents($value) {
+    public function setSelectionEmbeddedEvents($value)
+    {
         return $this->selectionEmbeddedEvents = $value;
     }
 
-    public function setRemoveEmbeddedEvents($value) {
+    public function setRemoveEmbeddedEvents($value)
+    {
         return $this->removeEmbeddedEvents = $value;
     }
 
-    public function setEditEmbeddedEvents($value) {
+    public function setEditEmbeddedEvents($value)
+    {
         return $this->editEmbeddedEvents = $value;
     }
 
-    public function setObjectWidth($value) {
+    public function setObjectWidth($value)
+    {
 
         return $this->objectWidth = $value;
     }
 
-    public function setLoadUrl($value) {
+    public function setLoadUrl($value)
+    {
         return $this->loadUrl = $value;
     }
 
-    public function setSaveUrl($value) {
+    public function setSaveUrl($value)
+    {
         return $this->saveUrl = $value;
     }
 
-    public function addTreeUrl($value) {
+    public function addTreeUrl($value)
+    {
         return $this->treeUrl = $value;
     }
 
-    public function renderJS() {
+    public function renderJS()
+    {
 
         $js = "";
         $js .= "var replaceValue;";
@@ -228,7 +265,8 @@ class CamemisGrid {
         /**
          * 16.04.2014 KAOM Vibolrith
          */
-        if ($this->isFilterRow) {
+        if ($this->isFilterRow)
+        {
             $js .= ",plugins:[new Ext.ux.grid.FilterRow({refilterOnStoreUpdate: true})]";
             $js .= ",stripeRows: true";
         }
@@ -236,7 +274,8 @@ class CamemisGrid {
         /**
          * 18.04.2014 KAOM Vibolrith
          */
-        if ($this->isGroupingView) {
+        if ($this->isGroupingView)
+        {
             $js .= ",plugins: [new Ext.ux.grid.HybridSummary()]";
         }
 
@@ -244,7 +283,8 @@ class CamemisGrid {
         $js .= " ,viewConfig:{forceFit:" . $this->forceFit . "";
 
         //@veasna
-        if ($this->isDataPreview) {
+        if ($this->isDataPreview)
+        {
             $js .=" ,enableRowBody:true";
             $js .=" ,showPreview:true";
             $js .=" ,getRowClass : " . $this->applyRowClass . "";
@@ -286,14 +326,16 @@ class CamemisGrid {
 
         $js .= "Ext.reg('" . $this->getObjectXType() . "', " . $this->getObjectName() . ");";
 
-        if ($this->setUserColumn) {
+        if ($this->setUserColumn)
+        {
             $this->setUserGridColumns();
         }
 
         print compressMultiSpacesToSingleSpace($js);
     }
 
-    protected function getGroupingStore() {
+    protected function getGroupingStore()
+    {
         $js = "";
         $js .= "this.store = new Ext.data.GroupingStore({";
         $js .= "proxy: new Ext.data.HttpProxy({url: " . $this->loadURL() . ", method: 'POST'})";
@@ -321,7 +363,8 @@ class CamemisGrid {
         return $js;
     }
 
-    protected function getNormalStore() {
+    protected function getNormalStore()
+    {
         $js = "";
         $js .= "this.store = new Ext.data.Store({";
         $js .= "proxy: new Ext.data.HttpProxy({url: " . $this->loadURL() . ", method: 'POST'})";
@@ -335,7 +378,8 @@ class CamemisGrid {
         $js .= "" . $this->setReadFields() . "";
         $js .= "]";
         $js .= "})";
-        if ($this->isGroupingView) {
+        if ($this->isGroupingView)
+        {
             $js .= ",remoteSort: true";
             $js .= ",remoteGroup: true";
         }
@@ -344,13 +388,16 @@ class CamemisGrid {
         return $js;
     }
 
-    public function ExtgetCmp() {
+    public function ExtgetCmp()
+    {
         return "Ext.getCmp('" . $this->getObjectId() . "')";
     }
 
-    protected function setObjectDefaultOnLoad() {
+    protected function setObjectDefaultOnLoad()
+    {
         $js = "";
-        if ($this->isObjectDefaultOnLoad) {
+        if ($this->isObjectDefaultOnLoad)
+        {
             $js .= "
             this.store.load.defer(20,this.store,[{" . $this->baseParams . "}]);
             Ext.get(document.body).unmask();
@@ -360,7 +407,8 @@ class CamemisGrid {
     }
 
     //@veasna
-    public function dataPreviewField($field, $className) {
+    public function dataPreviewField($field, $className)
+    {
 
         $js = "function(record, rowIndex, p, store) { ";
         $js .= "if (this.showPreview) { ";
@@ -375,7 +423,8 @@ class CamemisGrid {
         $this->applyRowClass = $js;
     }
 
-    public function tbarSummary($value = false) {
+    public function tbarSummary($value = false)
+    {
 
         $js = "tbar.add(['-',{";
         $js .= "text:'<b>" . SUMMARY . "</b>'";
@@ -393,7 +442,8 @@ class CamemisGrid {
     }
 
     //
-    protected function setQuickySearch() {
+    protected function setQuickySearch()
+    {
         $js = "";
         $js .= "tbar.add('-');";
         $js .= "tbar.add('<b>" . QUICKY_SEARCH . ":</b> ', ' ',";
@@ -406,55 +456,71 @@ class CamemisGrid {
         return $this->isQuickySearch ? $js : "";
     }
 
-    protected function getTopToolbar() {
+    protected function getTopToolbar()
+    {
         $c = sizeof($this->tbarItems);
         $js = "";
-        if ($c || $this->isQuickySearch) {
+        if ($c || $this->isQuickySearch)
+        {
             $js .= "var tbar = this.getTopToolbar();";
         }
         return $js;
     }
 
-    protected function ExtToolbar() {
+    protected function ExtToolbar()
+    {
         $c = sizeof($this->tbarItems);
         $js = "";
-        if ($c || $this->isQuickySearch) {
+        if ($c || $this->isQuickySearch)
+        {
             $js .= "tbar: new Ext.Toolbar(),";
         }
         return $js;
     }
 
-    protected function CheckboxSelect() {
-        if ($this->isCheckboxSelect) {
+    protected function CheckboxSelect()
+    {
+        if ($this->isCheckboxSelect)
+        {
             return "CheckboxSelect";
         }
     }
 
-    protected function setSM() {
-        if ($this->isCheckboxSelect) {
+    protected function setSM()
+    {
+        if ($this->isCheckboxSelect)
+        {
             return ",sm: CheckboxSelect";
         }
     }
 
-    protected function ExtgridRowNumberer() {
-        if (!$this->isCheckboxSelect) {
+    protected function ExtgridRowNumberer()
+    {
+        if (!$this->isCheckboxSelect)
+        {
             return "new Ext.grid.RowNumberer()";
         }
     }
 
-    protected function setBufferView() {
+    protected function setBufferView()
+    {
         return "";
     }
 
-    public function setListeners($value = false) {
+    public function setListeners($value = false)
+    {
 
         $js = "";
 
-        if ($value) {
+        if ($value)
+        {
             $js .= ",listeners: {" . $value . "}";
             //error_log($value);
-        } else {
-            if ($this->isGridEditing) {
+        }
+        else
+        {
+            if ($this->isGridEditing)
+            {
                 $js .= ",listeners: {";
 
                 $js .= "afteredit: function (e){";
@@ -475,21 +541,21 @@ class CamemisGrid {
                 $js .= ",icon: Ext.MessageBox.QUESTION";
                 $js .= ",fn: function(btn){";
                 $js .= "if (btn == 'yes'){";
-                    
-                    $js .= "Ext.Ajax.request({";
-                        $js .= "url: '" . $this->saveUrl . "'";
-                        $js .= ",method: 'POST'";
-                        $js .= ",params: {";
-                            $js .= "id: objectId";
-                            $js .= ",field:'DELETE'";
-                            $js .= ",newValue:1";
-                            $js .= "" . $this->saveParams . "";
-                        $js .= "}";
-                        $js .= ",success: function (result, request ) {";
-                            $js .= "Ext.getCmp('" . $this->getObjectId() . "').store.reload();";
-                    $js .= "}";
+
+                $js .= "Ext.Ajax.request({";
+                $js .= "url: '" . $this->saveUrl . "'";
+                $js .= ",method: 'POST'";
+                $js .= ",params: {";
+                $js .= "id: objectId";
+                $js .= ",field:'DELETE'";
+                $js .= ",newValue:1";
+                $js .= "" . $this->saveParams . "";
+                $js .= "}";
+                $js .= ",success: function (result, request ) {";
+                $js .= "Ext.getCmp('" . $this->getObjectId() . "').store.reload();";
+                $js .= "}";
                 $js .= "});";
-                
+
                 $js .= "}";
                 $js .= "}";
                 $js .= "});";
@@ -516,7 +582,8 @@ class CamemisGrid {
                 $js .= "" . $this->aftereditCallback . "";
                 if ($this->aftereditEvent)
                     $js .= "" . $this->aftereditEvent . "";
-                if ($this->editEmbeddedEvents) {
+                if ($this->editEmbeddedEvents)
+                {
                     $js .= "" . $this->editEmbeddedEvents . "";
                 }
                 $js .= "this.getStore().commitChanges();";
@@ -537,28 +604,35 @@ class CamemisGrid {
     ///////////////////////////////////////////////////////
     // PagingToolbar...
     ///////////////////////////////////////////////////////
-    protected function PagingToolbar() {
-        if ($this->isPagingToolbar) {
+    protected function PagingToolbar()
+    {
+        if ($this->isPagingToolbar)
+        {
             $js = "";
             $js .= "this.bbar = new Ext.PagingToolbar({";
             $js .= "store:this.store";
             $js .= ",displayInfo:true";
             $js .= ",pageSize: " . $this->pageSize . "";
             $js .= "});";
-        } else {
+        }
+        else
+        {
             $js = "";
         }
         return $js;
     }
 
-    protected function setClicksToEdit() {
+    protected function setClicksToEdit()
+    {
 
         if ($this->isGridEditing)
             return $js = ",clicksToEdit: $this->clicksToEdit";
     }
 
-    protected function getSelectionModel() {
-        if ($this->isGridEditing) {
+    protected function getSelectionModel()
+    {
+        if ($this->isGridEditing)
+        {
             $js = "";
             $js .= "var rc = this.getSelectionModel().getSelectedCell();";
             $js .= "if (rc){";
@@ -568,7 +642,9 @@ class CamemisGrid {
             $js .= "var recordName = record.data." . $this->removeNAME . ";";
             $js .= "}";
             $js .= "}";
-        } else {
+        }
+        else
+        {
             $js = "";
             $js .= "var sm = this.getSelectionModel();";
             $js .= "var record = sm.getSelected();";
@@ -581,7 +657,8 @@ class CamemisGrid {
         return $js;
     }
 
-    protected function actionSelection() {
+    protected function actionSelection()
+    {
         $js = "";
         $js .= "var connection = new Ext.data.Connection();";
         $js .= "connection.request({";
@@ -615,7 +692,8 @@ class CamemisGrid {
         return $js;
     }
 
-    protected function actionRemoveSelection() {
+    protected function actionRemoveSelection()
+    {
         $js = "";
         $js .= "var connection = new Ext.data.Connection();";
         $js .= "connection.request({";
@@ -647,10 +725,12 @@ class CamemisGrid {
         return $js;
     }
 
-    protected function objectWidth() {
+    protected function objectWidth()
+    {
 
         $js = "";
-        if ($this->objectWidth) {
+        if ($this->objectWidth)
+        {
             $js = ",width: " . $this->objectWidth . "";
         }
         return $js;
@@ -659,7 +739,8 @@ class CamemisGrid {
     ///////////////////////////////////////////////////////
     // OnSelection...
     ///////////////////////////////////////////////////////
-    protected function onSelection() {
+    protected function onSelection()
+    {
 
         $js = "";
         $js .= "onSelection: function (){";
@@ -695,7 +776,8 @@ class CamemisGrid {
     ///////////////////////////////////////////////////////
     // OnRemoveSelection...
     ///////////////////////////////////////////////////////
-    protected function onRemoveSelection() {
+    protected function onRemoveSelection()
+    {
 
         $js = "";
         $js .= "onRemoveSelection: function (){";
@@ -731,7 +813,8 @@ class CamemisGrid {
     ///////////////////////////////////////////////////////
     // onRemove...
     ///////////////////////////////////////////////////////
-    protected function onRemove() {
+    protected function onRemove()
+    {
         $js = "";
         $js .= "onRemove: function (){";
         $js .= "" . $this->getSelectionModel() . "";
@@ -769,7 +852,8 @@ class CamemisGrid {
     ///////////////////////////////////////////////////////
     // onAddItem...
     ///////////////////////////////////////////////////////
-    protected function onAddItem() {
+    protected function onAddItem()
+    {
 
         $js = "";
         $js .= "onAddItem: function (){";
@@ -804,37 +888,43 @@ class CamemisGrid {
     }
 
     //@CHHE Vathana
-    protected function findUserColunmName($str) {
-        
+    protected function findUserColunmName($str)
+    {
+
         //error_log($str);
-        $str1 = substr($str,strpos($str,"dataIndex:"));
+        $str1 = substr($str, strpos($str, "dataIndex:"));
         //error_log($str1);
-        $temArr = explode(",",$str1);
+        $temArr = explode(",", $str1);
         //error_log($temArr[0]);
-        $temArr1 = explode(":",$temArr[0]);
-        $stepStr= trim($temArr1[1],"'");
+        $temArr1 = explode(":", $temArr[0]);
+        $stepStr = trim($temArr1[1], "'");
         $secondStepStr = substr($stepStr, 2);
-        if(strpos($secondStepStr, "'}")!== false){
-        $strFinish = substr($secondStepStr,0,-2);  
-        }else{
-        $strFinish = $secondStepStr;    
-        }   
+        if (strpos($secondStepStr, "'}") !== false)
+        {
+            $strFinish = substr($secondStepStr, 0, -2);
+        }
+        else
+        {
+            $strFinish = $secondStepStr;
+        }
         //error_log(substr($stepStr, 2));
         //error_log($strFinish);
         return $strFinish;
-        
     }
 
     //@CHHE Vathana
-    public function setUserGridColumns() {
+    public function setUserGridColumns()
+    {
 
         $data = array();
 
         $CHECK_STR = "";
 
-        foreach ($this->columns as $value) {
+        foreach ($this->columns as $value)
+        {
             $CHECK_STR = $this->findUserColunmName($value);
-            if ($CHECK_STR) {
+            if ($CHECK_STR)
+            {
                 $data[] = $CHECK_STR;
             }
         }

@@ -415,8 +415,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
                                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                                //$data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
-                                $data[$i]["AVERAGE"] = "<input style='width:30px;height:15px;text-align:right;padding:3px;' type='text' name='' value='" . $facette->SUBJECT_VALUE . "'>";
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
+                                
                                 $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
                                 $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
                                 break;
