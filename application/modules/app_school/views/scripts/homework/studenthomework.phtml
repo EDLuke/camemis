@@ -20,7 +20,8 @@ $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
 
 $studentId = Zend_Registry::get('USER')->ID;
-$teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER;
+$teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER.$this->facette->ID;
+
 $student_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$studentId;   
 
 if(!$this->facette) {header("Location: /main/permission/");exit;}
@@ -164,11 +165,25 @@ Ext.onReady(function() {
         }]
     }
     ";
+    
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,height: 570
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("isUpload=0&template=homework&count=3&objectId=".$teacher_id."")."'})]    
+    }
+    ";
         
     $ITEMS = "["; 
     $ITEMS .= $TITLE;
     $ITEMS .= ",".$CONTENT;
     $ITEMS .= ",".$PUBLISH_INFORMATION;
+    $ITEMS .= ",".$ATTACHMENTS;
     $ITEMS .= "]";
 
     $formItems = "
