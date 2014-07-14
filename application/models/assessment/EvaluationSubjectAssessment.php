@@ -436,7 +436,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 if ($listAssignments) {
                     foreach ($listAssignments as $object) {
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = "---";
+                        $stdClass->assignmentId = $object->ID;
+                        $stdClass->date = $object->SCORE_INPUT_DATE;
+                        $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject?$scoreObject->POINTS:"---";
                     }
                 }
 

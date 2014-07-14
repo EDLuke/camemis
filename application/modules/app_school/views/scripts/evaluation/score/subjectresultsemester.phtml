@@ -178,9 +178,9 @@ $COLUMS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,so
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 90 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
-        , width: 110
+        , width: 100
         , align: 'right'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
@@ -202,7 +202,7 @@ switch($subjectObject->SCORE_TYPE){
         break;
     default:
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
-        , width: 110
+        , width: 100
         , align: 'right'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
@@ -234,7 +234,7 @@ $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $
 if($listAssignments){
     foreach($listAssignments as $value){
         
-        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:85,align:'center',renderer:cssNumber}"; 
+        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:83,align:'center',renderer:cssDefault}"; 
         $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
     }
 }
