@@ -146,7 +146,8 @@ class SubjectHomeworkDBAccess {
             $SQL->where($SEARCH);
         }
         
-        $SQL->order('B.START_DATE DESC');  
+        $SQL->order('B.START_DATE DESC');
+        //error_log($SQL);  
         return self::dbAccess()->fetchAll($SQL);
     }
     
@@ -335,6 +336,8 @@ class SubjectHomeworkDBAccess {
         $SQL->joinLeft(array('B' => 't_student_homework'), 'A.ID = B.HOMEWORK_ID', $SELECTION_B); 
         $SQL->joinLeft(array('C' => 't_subject'), 'A.SUBJECT = C.ID', $SELECTION_C);
         $SQL->where('A.ID = ?', $Id); 
+        
+        //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL); 
     }
 
