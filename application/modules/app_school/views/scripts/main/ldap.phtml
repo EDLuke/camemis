@@ -27,179 +27,32 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 }
 </style>
 
-<!--
-<link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
-<link href="/public/bootstrap/css/custom.css" rel="stylesheet">
-
-<script>
-    function runScript(e, id) {
-        if (e.keyCode == 13) {
-            var tb = document.getElementById(id);alert(eval(tb.value));
-        }
-    }
-</script>
-<div style="margin: 20px;">
-    <table class="table">
-       <caption>Contextual Table Layout</caption>
-       <thead>
-          <tr  class="success">
-             <th><?=STUDENT?></th>
-             <th class="tlist"><?=TOTAL?></th>
-             <th class="tlist" colspan="3"><?=ASSIGNMENT?> 1</th>
-             <th class="tlist" colspan="2"><?=ASSIGNMENT?> 2</th>
-             <th class="tlist" colspan="3"><?=ASSIGNMENT?> 3</th>
-          </tr>
-       </thead>
-       <thead>
-          <tr>
-             <th>#</th>
-             <th class="right">#</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">22.05.2013</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">10.05.2013</th>
-             <th class="right">10.05.2013</th>
-          </tr>
-       </thead>
-       <tbody>
-          <tr>
-             <td><?=FULL_NAME?> 1</td>
-             <td class="right"><input style="width:60px;" id="INPUT_1" type="text" onkeypress="return runScript(event,'INPUT_1')" /></td>
-             <td class="right">50</td>
-             <td class="right">60</td>
-             <td class="right" >70</td>
-             <td class="right">80</td>
-             <td class="right">90</td>
-             <td class="right">100</td>
-             <td class="right">70</td>
-             <td class="right">45</td>
-          </tr>
-          <tr>
-             <td><?=FULL_NAME?> 2</td>
-             <td class="tlist"><input style="width:60px;" id="INPUT_2" type="text" onkeypress="return runScript(event,'INPUT_2')" /></td>
-             <td class="tlist">50</td>
-             <td class="tlist">60</td>
-             <td class="tlist" >70</td>
-             <td class="tlist">80</td>
-             <td class="tlist">90</td>
-             <td class="tlist">100</td>
-             <td class="tlist">70</td>
-             <td class="tlist">45</td>
-          </tr>
-          <tr>
-             <td><?=FULL_NAME?> 3</td>
-             <td class="tlist"><input style="width:60px;" id="INPUT_3" type="text" onkeypress="return runScript(event,'INPUT_3')" /></td>
-             <td class="tlist">50</td>
-             <td class="tlist">60</td>
-             <td class="tlist" >70</td>
-             <td class="tlist">80</td>
-             <td class="tlist">90</td>
-             <td class="tlist">100</td>
-             <td class="tlist">70</td>
-             <td class="tlist">45</td>
-          </tr>
-          <tr>
-             <td><?=FULL_NAME?> 4</td>
-             <td class="tlist"><input style="width:60px;" id="INPUT_4" type="text" onkeypress="return runScript(event,'INPUT_4')" /></td>
-             <td class="tlist">50</td>
-             <td class="tlist">60</td>
-             <td class="tlist" >70</td>
-             <td class="tlist">80</td>
-             <td class="tlist">90</td>
-             <td class="tlist">100</td>
-             <td class="tlist">70</td>
-             <td class="tlist">45</td>
-          </tr>
-       </tbody>
-    </table>
-</div>
--->
-
 <script>
 Ext.onReady(function() {
-    var structure = {
-        Asia: ['Beijing', 'Tokyo'],
-        Europe: ['Berlin', 'London', 'Paris']
-    },
-    products = ['ProductX', 'ProductY'],
-    fields = [],
+    var fields = [],
     columns = [],
     data = [],
-    continentGroupRow = [],
     assignmentGroupRow = [];
-    
-        
-    /*
-     * Example method that generates:
-     * 1) The column configuration for the grid
-     * 2) The column grouping configuration
-     * 3) The data for the store
-     * 4) The fields for the store
-     */
-//    function generateConfig(){
-//        var arr,
-//            numProducts = products.length;
-//            
-//        Ext.iterate(structure, function(continent, cities){
-//            continentGroupRow.push({
-//                header: continent,
-//                align: 'center',
-//                colspan: cities.length * numProducts
-//            });
-//            Ext.each(cities, function(city){
-//                assignmentGroupRow.push({
-//                    header: city,
-//                    colspan: numProducts,
-//                    align: 'center'
-//                });
-//                Ext.each(products, function(product){
-//                    fields.push({
-//                        type: 'int',
-//                        name: city + product
-//                    });
-//                    columns.push({
-//                        dataIndex: city + product,
-//                        header: product,
-//                        renderer: Ext.util.Format.usMoney
-//                    });
-//                });
-//                arr = [];
-//                for(var i = 0; i < 20; ++i){
-//                    arr.push((Math.floor(Math.random()*11) + 1) * 100000);
-//                }
-//                data.push(arr);
-//            });
-//        })
-//    }
-//    
-//    // Run method to generate columns, fields, row grouping
-//    generateConfig();
-    
-    
-      
-     // assignmentGroupRow at this point is:
-      var assignmentGroupRow = [
-          {header: '&nbsp;', colspan: 1, align: 'center'},
-          {header: 'Result', colspan: 1, align: 'center'},
-          {header: 'Assessment', colspan: 1, align: 'center'},
-          {header: 'Assignment #1', colspan: 2, align: 'center'},
-          {header: 'Assignment #2', colspan: 2, align: 'center'},
-          {header: 'Assignemnt #3', colspan: 2, align: 'center'},
-          {header: 'Assignment #4', colspan: 2, align: 'center'},
-          {header: 'Assignment #5', colspan: 2, align: 'center'},
-          {header: 'Assignment #6', colspan: 1, align: 'center'}
-      ]
+
+    // assignmentGroupRow at this point is:
+    var assignmentGroupRow = [
+        {header: '&nbsp;', colspan: 1, align: 'center'},
+        {header: 'Result', colspan: 1, align: 'center'},
+        {header: 'Assessment', colspan: 1, align: 'center'},
+        {header: 'Assignment #1', colspan: 2, align: 'center'},
+        {header: 'Assignment #2', colspan: 2, align: 'center'},
+        {header: 'Assignemnt #3', colspan: 2, align: 'center'},
+        {header: 'Assignment #4', colspan: 2, align: 'center'},
+        {header: 'Assignment #5', colspan: 2, align: 'center'},
+        {header: 'Assignment #6', colspan: 1, align: 'center'}
+    ]
      
     var group = new Ext.ux.grid.ColumnHeaderGroup({
         rows: [assignmentGroupRow]
     });
     
-    
-     //fields at this point is:
-     var fields =  [
+    //fields at this point is:
+    var fields =  [
         {type: 'int', name: 'FULL_NAME'},
         {type: 'int', name: 'RESULT'},
         {type: 'int', name: 'ASSESSMENT'},
@@ -214,32 +67,45 @@ Ext.onReady(function() {
         {type: 'int', name: 'E11'},
         {type: 'int', name: 'E12'},
         {type: 'int', name: 'A61'}
-      ]
+    ]
       
-      // columns at this point is:
-      var columns = [
-          {dataIndex: 'FULL_NAME', header: 'Fullname'},
-          {dataIndex: 'RESULT', header: '&nbsp;', width: 80 ,align: 'center'},
-          {dataIndex: 'ASSESSMENT', header: '&nbsp;', width: 100 ,align: 'center'},
-          {dataIndex: 'A11', header: '10.05.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'A12', header: '20.07.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'B11', header: '10.05.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'B12', header: '20.07.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'C11', header: '10.05.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'C12', header: '20.07.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'D11', header: '10.05.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'D12', header: '20.07.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'E11', header: '10.05.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'E12', header: '20.07.2013' , width: 80 ,align: 'center'},
-          {dataIndex: 'A61', header: 'Leer' , width: 100 ,align: 'center'}
-      ]
+    // columns at this point is:
+    var columns = [
+        {dataIndex: 'FULL_NAME', header: 'Fullname'},
+        {dataIndex: 'RESULT', header: '&nbsp;', width: 80 ,align: 'center'},
+        {dataIndex: 'ASSESSMENT', header: '&nbsp;', width: 100 ,align: 'center'},
+        {dataIndex: 'A11', header: '10.05.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'A12', header: '20.07.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'B11', header: '10.05.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'B12', header: '20.07.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'C11', header: '10.05.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'C12', header: '20.07.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'D11', header: '10.05.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'D12', header: '20.07.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'E11', header: '10.05.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'E12', header: '20.07.2013' , width: 80 ,align: 'center'},
+        {dataIndex: 'A61', header: 'Leer' , width: 100 ,align: 'center'}
+    ]
  
     var grid = new Ext.grid.GridPanel({
         title: 'Sales By Location',
-        store: new Ext.data.ArrayStore({
-            fields: fields,
-            data: data
+        store: new Ext.data.Store({
+            proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})
+            ,baseParams:{academicId:'123'}
+            ,reader:new Ext.data.JsonReader({
+                id:'NAME'
+                ,totalProperty:'totalCount'
+                ,root:'rows'
+                ,fields:[
+                    {name: 'ID'}
+                    ,fields
+                ]
+            })
         }),
+//        store: new Ext.data.ArrayStore({
+//            fields: fields,
+//            data: data
+//        }),
         columns: columns,
         viewConfig: {
             forceFit: false
