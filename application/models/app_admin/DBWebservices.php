@@ -407,6 +407,9 @@ class DBWebservices {
 
     public static function actionOptimizeTable()
     {
+        
+        error_log("Ja, ich bin hier.");
+        
         $entries = self::getCAMEMISDatabases();
         $CHECK_DATA = self::exceptionDB();
         if ($entries)
@@ -423,7 +426,7 @@ class DBWebservices {
                             $name = "Tables_in_" . $DB_NAME;
                             $SQL = "OPTIMIZE TABLE " . $value->$name . "";
                             self::dbAccess()->query($SQL);
-                            //error_log("Ja, ich bin hier.");
+                            
                         }
                     }
                 }
