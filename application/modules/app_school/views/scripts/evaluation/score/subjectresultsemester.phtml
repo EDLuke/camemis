@@ -166,8 +166,19 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, true);
 if($listGroupAssignments){
     foreach($listGroupAssignments as $value){
+        
+        switch($subjectObject->SCORE_TYPE){
+            case 1:
+                $COEFF_VALUE = $value->COEFF_VALUE?$value->COEFF_VALUE:1;
+                $TITLE = $academicObject->EVALUATION_TYPE?"$value->SHORT (".$COEFF_VALUE." %)":"$value->SHORT (".$COEFF_VALUE.")";
+            break;
+            default:
+                $TITLE = $value->SHORT;
+            break;
+        }
+        
         $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
-        $GROUP_ROW .= ",{header: '<b>".$value->SHORT."</b>', colspan: ".$colspan.", align: 'center'}";  
+        $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
     }
 }
 

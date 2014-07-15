@@ -711,7 +711,7 @@ class AssignmentDBAccess {
 
     public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $isGroupBy) {
         $SQL = self::dbAccess()->select();
-        $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT"));
+        $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT", "COEFF_VALUE"));
         $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
         $SQL->where("B.SUBJECT_ID = ?", $subjectId);
         $SQL->where("B.CLASS_ID = ?", $academicId);
