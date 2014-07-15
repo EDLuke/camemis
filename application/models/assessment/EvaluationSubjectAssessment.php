@@ -356,7 +356,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
+                        $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
                         $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                         break;
                     case self::SCORE_CHAR:
