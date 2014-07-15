@@ -231,9 +231,10 @@ class AssignmentTempDBAccess {
 
         if (strtoupper($target) == "GENERAL")
         {
-
+            $academicObject='';
             $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-            $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+            if($academicId)
+                $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
             $SQL = "";
             $SQL .= "SELECT * FROM t_camemis_type WHERE OBJECT_TYPE='QUALIFICATION_TYPE' AND PARENT<>0";
