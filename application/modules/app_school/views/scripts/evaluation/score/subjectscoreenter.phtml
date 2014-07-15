@@ -165,9 +165,9 @@ Ext.onReady(function() {
         case 1:
             $OBJECT_GRID->addColumn("
                 header: '<b>".SCORE."</b>'
-                , width: 100
+                , width: 80
                 , sortable: true
-                , align:'right'
+                , align:'center'
                 , renderer:cssScore
                 , dataIndex: 'SCORE'
                 , editor: new Ext.form.NumberField({
@@ -181,9 +181,9 @@ Ext.onReady(function() {
             if($assignmentObject->INCLUDE_IN_EVALUATION == 2){
                 $OBJECT_GRID->addColumn("
                     header: '<b>".SCORE." (".REPEAT.")</b>'
-                    , width: 120
+                    , width: 80
                     , sortable: true
-                    , align:'right'
+                    , align:'center'
                     , renderer:cssScoreRepeat
                     , dataIndex: 'SCORE_REPEAT'
                     , editor: new Ext.form.NumberField({

@@ -148,22 +148,24 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
-$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, true);
-if($listGroupAssignments){
-    foreach($listGroupAssignments as $value){
-        
-        switch($subjectObject->SCORE_TYPE){
-            case 1:
-                $COEFF_VALUE = $value->COEFF_VALUE?$value->COEFF_VALUE:1;
-                $TITLE = $academicObject->EVALUATION_TYPE?"$value->SHORT (".$COEFF_VALUE."%)":"$value->SHORT (".$COEFF_VALUE.")";
-            break;
-            default:
-                $TITLE = $value->SHORT;
-            break;
+if(!$academicObject->EVALUATION_OPTION){
+    $listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, true);
+    if($listGroupAssignments){
+        foreach($listGroupAssignments as $value){
+
+            switch($subjectObject->SCORE_TYPE){
+                case 1:
+                    $COEFF_VALUE = $value->COEFF_VALUE?$value->COEFF_VALUE:1;
+                    $TITLE = $academicObject->EVALUATION_TYPE?"$value->SHORT (".$COEFF_VALUE."%)":"$value->SHORT (".$COEFF_VALUE.")";
+                break;
+                default:
+                    $TITLE = $value->SHORT;
+                break;
+            }
+
+            $colspan = getColspan($value->ID, $academicId, $subjectId, $monthyear);
+            $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
         }
-        
-        $colspan = getColspan($value->ID, $academicId, $subjectId, $monthyear);
-        $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
     }
 }
 
@@ -228,12 +230,14 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 
-$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, false);
-if($listAssignments){
-    foreach($listAssignments as $value){
-        
-        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
-        $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+if(!$academicObject->EVALUATION_OPTION){
+    $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, false);
+    if($listAssignments){
+        foreach($listAssignments as $value){
+
+            $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
+            $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+        }
     }
 }
 
