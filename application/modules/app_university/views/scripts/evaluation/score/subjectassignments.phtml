@@ -463,6 +463,15 @@ Ext.onReady(function() {
         break;
     }
     
+    if($academicObject->DISPLAY_YEAR_RESULT){
+        $setParamsYear = $setParams;
+        $YEAR_RESULT = "{
+            title: '".YEAR_RESULT."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
+        }";
+        $VIEWPORT_ITEMS[] = $YEAR_RESULT;
+    }
     ////////////////////////////////////////////////////////////////////////////
     $DISPLAY_VIEWPORT_ITEMS = implode(",",$VIEWPORT_ITEMS);
     ////////////////////////////////////////////////////////////////////////////

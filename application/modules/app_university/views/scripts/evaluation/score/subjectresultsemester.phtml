@@ -54,9 +54,80 @@ if($academicObject->EDUCATION_SYSTEM){
 
 if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
+$academicId = $academicObject->ID;
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+////////////////////////////////////////////////////////////////////////////////
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $comboAssessment = "
+            new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject)."]
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = record.get('chooseValue');
+                    }
+                }
+            })
+        ";
+        break;
+    case 2:
+        ////////////////////////////////////////////////////////////////////
+        $STORE_DATA = array();
+        $scoresEntries = explode(',',$subjectObject->MAX_POSSIBLE_SCORE);
+        $STORE_DATA[0] = "{chooseValue: '0', chooseDisplay: '---'}";
+        if($scoresEntries){
+            $i=0;
+            foreach($scoresEntries as $value){
+                $j = $i+1;
+                //error_log($value);
+                $gradingObject = AssessmentConfig::getSQLGradingScale(trim($value), 2, $campusObject->QUALIFICATION_TYPE, false);
+                if($gradingObject && trim($value)){
+                    $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".trim($value)."'}";
+                }
+                $i++;
+            }
+        }
+            
+        $comboAssessment = "
+            new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                        autoDestroy: true
+                        ,fields: ['chooseValue', 'chooseDisplay']
+                        ,data:[".implode($STORE_DATA)."]
+                    })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ";
+    break;
+}
+////////////////////////////////////////////////////////////////////////////////
 
 $setParams = "";
 $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
@@ -64,30 +135,125 @@ $setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
 
+function getColspan($assignmentId, $academicId, $subjectId, $term){
+    $SQL = UserAuth::dbAccess()->select();
+    $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+    $SQL->where("B.CLASS_ID = ?", $academicId);
+    $SQL->where("B.TERM = ?", $term);
+    $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
+    $result = UserAuth::dbAccess()->fetchRow($SQL);
+    return $result ? $result->C : 0;
+}
+
+$GROUP_ROW = "";
+$GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        break;
+    default:
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+        break;
+}
+
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+
+$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, true);
+if($listGroupAssignments){
+    foreach($listGroupAssignments as $value){
+        $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
+        $GROUP_ROW .= ",{header: '<b>".$value->SHORT."</b>', colspan: ".$colspan.", align: 'center'}";  
+    }
+}
+
+$COLUMS = "";
+$COLUMS .= "new Ext.grid.RowNumberer()";
+$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:80, renderer:cssStatus, align:'center',sortable: true}";
+$COLUMS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,sortable: true, renderer:cssDefault}";
+
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
+        , width: 100
+        , align: 'right'
+        , sortable: true
+        , dataIndex: 'ASSESSMENT'
+        , renderer:cssDefault
+        , editor: ".$comboAssessment."}";
+        $COLUMS .= ",{
+                dataIndex:'AVERAGE'
+                ,header: '<b>".TERM_RESULT."</b>'
+                ,width: 80
+                ,align: 'center'
+                ,sortable: true
+                ,editor: new Ext.form.NumberField({
+                    allowBlank:false
+                    ,name:'AVERAGE'
+                    ,minValue: '".$subjectObject->SCORE_MIN."'
+                    ,maxValue: '".$subjectObject->SCORE_MAX."'
+                })
+            }";
+        break;
+    default:
+        $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
+        , width: 100
+        , align: 'right'
+        , sortable: true
+        , dataIndex: 'ASSESSMENT'
+        , renderer:cssDefault
+        , editor: ".$comboAssessment."}";
+        break;
+}
+
+$FIELDS = "";
+$FIELDS .= "{name: 'ID'}";
+$FIELDS .= ",{name: 'STATUS_KEY'}";
+$FIELDS .= ",{name: 'BG_COLOR'}";
+$FIELDS .= ",{name: 'BG_COLOR_FONT'}";
+$FIELDS .= ",{name: 'STATUS_KEY'}";
+$FIELDS .= ",{name: 'STUDENT'}";
+
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $FIELDS .= ",{name: 'AVERAGE'}";
+        $FIELDS .= ",{name: 'ASSESSMENT'}";
+        $FIELDS .= ",{name: 'RANK'}";
+        break;
+    default:
+        $FIELDS .= ",{name: 'ASSESSMENT'}";
+        break;
+}
+
+$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false);
+if($listAssignments){
+    foreach($listAssignments as $value){
+        
+        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:83,align:'center',renderer:cssDefault}"; 
+        $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+    }
+}
+
 ?>
+
 <style>
-    .filter-row-grid .x-grid3-header {
-    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
-}
-
-.filter-row-grid .filter-row-header {
-    height: 26px;
-}
-
-tr.filter-row-header .filter-row-icon input {
-    background-image: url(/public/images/filter-row-icon.png);
-    background-repeat: no-repeat;
-    padding-left: 16px;
+    @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    .x-grid3-cell, /* Normal grid cell */
+    .x-grid3-gcell /* Grouped grid cell (esp. in head)*/
+    {
+        box-sizing: border-box;
+    }
 }
 </style>
+
 <script>
-var _chooseValue;
-var _chooseDisplay;
-var term = '<?=$this->term?>';
-var comboValue;
+var _chooseValue,_chooseDisplay,term = '<?=$this->term?>',comboValue;
 Ext.onReady(function() {
-    
-    Ext.Ajax.timeout = 600000;
     
     function cssStatus(v, p, record){
         return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
@@ -100,367 +266,141 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
-    }
-    <?
-    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
-    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-    
-    $OBJECT_GRID->addReadField("name: 'CODE'");
-    $OBJECT_GRID->addReadField("name: 'STUDENT'"); 
-    $OBJECT_GRID->addReadField("name: 'RANK'");
-    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
-    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
-    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
-    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
-    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
-    
-    $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_MONTH'");
-    $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_TERM'");
-    $OBJECT_GRID->addReadField("name: 'MONTH_RESULT'");
-    $OBJECT_GRID->addReadField("name: 'TERM_RESULT'");
-    $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
-    $OBJECT_GRID->addReadField("name: 'RANG'");
-    
-    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-        case "VIETNAMESE": $width = 125;break;
-        default: $width = 85;break;
+        return '<div style="font-weight:bold; color:#000;">' + value + '</div>';
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
-    
-    switch($subjectObject->SCORE_TYPE){
-        case 1:
-            
-            ////////////////////////////////////////////////////////////////////
-            $comboAssessment = "
-                new Ext.form.ComboBox({
-                    triggerAction:'all'
-                    ,mode:'local'
-                    ,store: new Ext.data.JsonStore({
-                        autoDestroy: true
-                        ,fields: ['chooseValue', 'chooseDisplay']
-                        ,data:[".AssessmentConfig::comboGradingSystem(1, $academicObject)."]
-                    })
-                    ,valueField: 'chooseValue'
-                    ,displayField: 'chooseDisplay'
-                    ,editable: false
-                    ,listeners: {
-                        select: function(combo, record, index) {
-                            replaceValue = combo.getValue();
-                            var newDisplay = record.get('chooseDisplay');
-                            combo.setValue(newDisplay);
-                            comboValue = record.get('chooseValue');
-                        }
-                    }
-                })
-            ";
-            
-            ////////////////////////////////////////////////////////////////////
-            break;
-        case 2:
-            ////////////////////////////////////////////////////////////////////
-            $STORE_DATA = array();
-            $scoresEntries = explode(',',$subjectObject->MAX_POSSIBLE_SCORE);
-            $STORE_DATA[0] = "{chooseValue: '0', chooseDisplay: '---'}";
-            if($scoresEntries){
-                $i=0;
-                foreach($scoresEntries as $value){
-                    $j = $i+1;
-                    //error_log($value);
-                    $gradingObject = AssessmentConfig::getSQLGradingScale(trim($value), 2, $campusObject->QUALIFICATION_TYPE, false);
-                    if($gradingObject && trim($value)){
-                        $STORE_DATA[$j] = ",{chooseValue: '".$gradingObject->ID."', chooseDisplay: '".trim($value)."'}";
-                    }
-                    $i++;
-                }
-                
-            }
-            
-            $comboAssessment = "
-                new Ext.form.ComboBox({
-                    triggerAction:'all'
-                    ,mode:'local'
-                    ,store: new Ext.data.JsonStore({
-                            autoDestroy: true
-                            ,fields: ['chooseValue', 'chooseDisplay']
-                            ,data:[".implode($STORE_DATA)."]
-                        })
-                    ,valueField: 'chooseValue'
-                    ,displayField: 'chooseDisplay'
-                    ,editable: false
-                    ,listeners: {
-                        select: function(combo, record, index) {
-                            replaceValue = combo.getValue();
-                            var newDisplay = record.get('chooseDisplay');
-                            combo.setValue(newDisplay);
-                            comboValue = replaceValue;
-                        }
-                    }
-                })
-            ";
-            ////////////////////////////////////////////////////////////////////
-            break;
-    }
-    
-    $OBJECT_GRID->addColumn("
-        header: '<b>".constant($GRADING_TYPE)."</b>'
-        , width: 130
-        , align: 'right'
-        , sortable: true
-        , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
-        , editor: ".$comboAssessment."
-        ,filter:{}
-    ");
-    
-    if($subjectObject->SCORE_TYPE == 1){
-        
-        if(!$academicObject->EVALUATION_OPTION){
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'RANK',filter:{}");
-            if($academicObject->DISPLAY_GRADE_POINTS){
-                $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS',filter:{}");
-            }
-            $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'AVERAGE',filter:{}");
-        }else{
-            $OBJECT_GRID->addColumn("
-                header: '<b>".RANK."</b>'
-                , width: 80
-                , sortable: true
-                , align:'right'
-                , renderer:cssNumber
-                , dataIndex: 'RANK'
-                , editor: new Ext.form.NumberField({
-                    allowBlank: false
-                    ,name: 'RANK'   
-                })
-            ");
-            $OBJECT_GRID->addColumn("
-                header: '<b>".AVERAGE."</b>'
-                , width: 100
-                , sortable: true
-                , align:'right'
-                , renderer:cssNumber
-                , dataIndex: 'AVERAGE'
-                , editor: new Ext.form.NumberField({
-                    allowBlank: false
-                    ,minValue: 0
-                    ,maxValue: '".$evaluation->getSubjectScoreMax()."'
-                    ,name: 'AVERAGE'   
-                })
-            ");
-        }
-    }
-    
-    if($academicObject->DISPLAY_MONTH_RESULT){
-        
-        if($subjectObject->SCORE_TYPE == 1){
-            switch(UserAuth::getCountryEducation()){
-                case "DEFAULT":
-                case "COL":
-                case "KHM":
-                case "PER":
-                case "THA":
-                case "LAO":
-                    $OBJECT_GRID->addColumn("header: '<b>".MONTHLY_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'MONTH_RESULT'");
-                    break;
-            }
-        }
-        
-        $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".MONTH.")</b>', width: 200, align: 'right', renderer: cssNumber, dataIndex: 'ASSIGNMENT_MONTH'");
-    }
-        
-    if(!$academicObject->EVALUATION_OPTION){
-        
-        $OBJECT_GRID->addColumn("header: '<b>".ASSIGNMENT." (".constant($term).")</b>', width: 200, align: 'right', renderer: cssNumber, dataIndex: 'ASSIGNMENT_TERM'");
-        if($subjectObject->SCORE_TYPE == 1){
-            
-            switch(UserAuth::getCountryEducation()){
-                case "DEFAULT":
-                case "COL":
-                case "KHM":
-                case "PER":
-                case "THA":
-                case "LAO":
-                    switch($term){
-                        case "FIRST_SEMESTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "SECOND_SEMESTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "FIRST_TERM":
-                            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "SECOND_TERM":
-                            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "THIRD_TERM":
-                            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "FIRST_QUARTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "SECOND_QUARTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "THIRD_QUARTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                            break;
-                        case "FOURTH_QUARTER":
-                            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer: cssNumber, dataIndex: 'TERM_RESULT'");
-                        break;
-                    }
-                break;
-            }
-        }
-    }
-    
-    $OBJECT_GRID->addTBarItems("
-        tbar.add([{
-            text: '" . REFRESH . "'
-            ,iconCls:'icon-reload'
-            ,handler: function(){
-                ".CamemisPage::setRequestURI(false)."
-            }
-        }]);
-    ");
-    
+    <?php
+
     $setActionPareams = $setParams;
     $setActionPareams .= "&target=TERM";
     
-    $OBJECT_GRID->addTBarItems("
-        tbar.add(['-',{
-            text: '" . CALCULATION . "'
-            ,iconCls:'icon-calculator_add'
-            ,handler: function(){
-                Ext.MessageBox.show({
-                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                    progressText: 'Saving...',
-                    width:300,
-                    wait:true,
-                    waitConfig: {interval:200},
-                    icon:'ext-mb-download'
-                });
-                Ext.Ajax.request({
-                    url: '/evaluation/jsonsave/'
-                    ,method: 'POST'
-                    ,params:{
-                        cmd: 'jsonActionCalculationSubjectEvaluation'
-                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
-                    }
-                    ,success: function() {
-                        Ext.MessageBox.hide();
-                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
-                    }
-                });
-            }
-        }]);
-    ");
+    $html = "";
     
-    if($academicObject->EVALUATION_OPTION){
+    $html .= "var fields = [],columns = [],groupRow = [];";
+    $html .= "var groupRow = [".$GROUP_ROW."];";
+    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [groupRow]});";
+    $html .= "var fields =  [".$FIELDS."];";
+    $html .= "var columns = [".$COLUMS."];";
+    
+    $html .= "var myStore = new Ext.data.Store({";
+        $html .= "proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})";
+        $html .= ",baseParams:{";
+            $html .= "start:0";
+            $html .= ",limit:100";
+            $html .= ",cmd:'jsonSubjectTermResult'";
+            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+        $html .= "}";
+        $html .= ",reader:new Ext.data.JsonReader({";
+            $html .= "id:'NAME'";
+            $html .= ",totalProperty:'totalCount'";
+            $html .= ",root:'rows'";
+            $html .= ",fields:fields";
+        $html .= "})";
+    $html .= "});";
+
+    $html .= "var grid = new Ext.grid.EditorGridPanel({";
+        $html .= "tbar:[{";
+            $html .= "text: '".REFRESH."'";
+            $html .= ",iconCls:'icon-reload'";
+            $html .= ",handler: function(){";
+                $html .= "".CamemisPage::setRequestURI(false)."";
+            $html .= "}";
+            
+        switch($subjectObject->SCORE_TYPE){
+            case 1:
+                $html .= "},'-',{";
+                $html .= "text: '".CALCULATION."'";
+                $html .= ",iconCls:'icon-calculator_add'";
+                $html .= ",handler: function(){";
+                    $html .= "Ext.MessageBox.show({";
+                        $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
+                        $html .= "progressText: 'Saving...',";
+                        $html .= "width:300,";
+                        $html .= "wait:true,";
+                        $html .= "waitConfig: {interval:200},";
+                        $html .= "icon:'ext-mb-download'";
+                    $html .= "});";
+                    $html .= "Ext.Ajax.request({";
+                        $html .= "url: '/evaluation/jsonsave/'";
+                        $html .= ",method: 'POST'";
+                        $html .= ",params:{";
+                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
+                        $html .= "}";
+                        $html .= ",success: function() {";
+                            $html .= "Ext.MessageBox.hide();";
+                            $html .= "grid.store.load();";
+                        $html .= "}";
+                    $html .= "});";
+                $html .= "}";
+            break;
+        }
         
-        $importParams = $setParams;
-        $importParams .= "&target=subjectresultsemester";
-        
-        $OBJECT_GRID->addTBarItems("
-            tbar.add(['-',{
-                text: '" . IMPORT . "'
-                ,disabled: false
-                ,iconCls:'icon-list-items'
-                ,menu:[{
-                    text: '" . EXCEL_TEMPLATE . "'
-                    ,iconCls:'icon-page_excel'
-                    ,handler:function(){
-                        window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';
-                    }
-                },{
-                    text: '" . IMPORT . "'
-                    ,iconCls:'icon-database_copy'
-                    ,handler:function(){
-                        openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($importParams)."', 450,250);
-                    }
-                }]
-            }]);
-        ");
-    }
+        $html .= "},'-',{";
+            $html .= "text: '".EXCEL_TEMPLATE."'";
+            $html .= ",iconCls:'icon-page_excel'";
+            $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+        $html .= "},'-',{";
+            $html .= "text: '".IMPORT."'";
+            $html .= ",iconCls:'icon-database_copy'";
+            $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+        $html .= "}]";
+        $html .= ",clicksToEdit:1";
+        $html .= ",border:false";
+        $html .= ",store: myStore";
+        $html .= ",columns: columns";
+        $html .= ",viewConfig: {";
+            $html .= "forceFit: false";
+        $html .= "}";
+        $html .= ",plugins: group";
+        $html .= ",listeners: {";
+            $html .= "afteredit: function (e){";
+                $html .= "Ext.Ajax.request({";
+                    $html .= "url: '/evaluation/jsonsave/'";
+                    $html .= ",method: 'POST'";
+                    $html .= ",params: {";
+                            $html .= "cmd:'jsonActionStudentSubjectAssessment'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+                            $html .= ",id:e.record.get('ID')";
+                            $html .= ",field: e.field";
+                            $html .= ",comboValue:comboValue";
+                    $html .= "}";
+                    $html .= ",success: function (result, request ) {";
+                        $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
+                        $html .= "grid.getStore().commitChanges();";
+                    $html .= "}";
+                $html .= "});";
+            $html .= "}";
+        $html .= "}";
+        $html .= ",bbar:new Ext.PagingToolbar({";
+            $html .= "store:myStore";
+            $html .= ",displayInfo:true";
+            $html .= ",pageSize:100";
+        $html .= "})";
+    $html .= "});";
+    $html .= "grid.store.reload();";
     
-    $OBJECT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,cmd: 'jsonSubjectTermResult'
-        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
-    ";
- 
-    $OBJECT_GRID->setSaveParams("
-        cmd: 'jsonActionStudentSubjectAssessment'
-        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
-        ,comboValue:comboValue
-    ");
+    $html .= "viewport = new Ext.Viewport({";
+        $html .= "layout: 'fit'";
+        $html .= ",border: false";
+        $html .= ",items:[{";
+            $html .= "layout:'fit'";
+            $html .= ",border: false";
+            $html .= ",items:[grid]";
+        $html .= "}]";
+    $html .= "});";
     
-    $OBJECT_GRID->setAftereditCallback("
-        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
-    ");
-    
-    $OBJECT_GRID->isObjectDefaultOnLoad = true;
-    $OBJECT_GRID->isGridEditing = true;
-    $OBJECT_GRID->forceFit = "false";
-    $OBJECT_GRID->isFilterRow = true;
-    $OBJECT_GRID->renderJS();
-    
-    ?>
-    viewport = new Ext.Viewport({
-        layout: 'fit'
-        ,border: false
-        ,items:[{
-            border: false
-            ,id:'content'
-            ,layout: 'card'
-            ,activeItem: 0
-            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
-        }]
-    });
-    
-    <?
-    
-    $TEACHER_COMMENTS ="{";
-    $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
-    $TEACHER_COMMENTS .=",iconCls: 'icon-comments_add'";
-    $TEACHER_COMMENTS .=",disabled:false";
-    $TEACHER_COMMENTS .=",handler: function(){";
-    $TEACHER_COMMENTS .="openWinIFrame('".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT,'/evaluation/teachercomment/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(85));";
-    $TEACHER_COMMENTS .="}";
-    $TEACHER_COMMENTS .="}";
-    
-    $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENTS;
-    
-    $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
-    if($CONTEXTMENU_ITEMS){
-        $js = "";
-        $js .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
-        $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
-            $js .="if(columnIndex<=2){";
-                $js .="var record = grid.store.getAt(rowIndex);";
-                $js .="var contextMenu = new Ext.menu.Menu({";
-                $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
-                $js .="});";
-                $js .="event.stopEvent();";
-                $js .="contextMenu.showAt(event.xy);"; 
-             $js .="}";
-        $js .="});";
-        echo $js;
-    }
+    echo $html;
     ?>
 });
 </script>
+
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>
