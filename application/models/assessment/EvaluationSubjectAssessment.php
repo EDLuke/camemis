@@ -342,6 +342,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
+        $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($this->academicId, $this->subjectId, false, $this->monthyear, false);
+
         if ($this->listClassStudents()) {
 
             $data = $this->listStudentsData();
@@ -363,15 +365,23 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
 
                 $data[$i]["ASSESSMENT"] = $facette->GRADING;
-
-                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
-                    if ($this->getCurrentClassAssignments()) {
-                        foreach ($this->getCurrentClassAssignments() as $v) {
-                            $stdClass->assignmentId = $v->ASSIGNMENT_ID;
-                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass, false);
-                        }
+                if ($listAssignments) {
+                    foreach ($listAssignments as $object) {
+                        $stdClass->assignmentId = $object->ID;
+                        $stdClass->date = $object->SCORE_INPUT_DATE;
+                        $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS : "---";
                     }
                 }
+
+//                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
+//                    if ($this->getCurrentClassAssignments()) {
+//                        foreach ($this->getCurrentClassAssignments() as $v) {
+//                            $stdClass->assignmentId = $v->ASSIGNMENT_ID;
+//                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass, false);
+//                        }
+//                    }
+//                }
 
                 $i++;
             }
