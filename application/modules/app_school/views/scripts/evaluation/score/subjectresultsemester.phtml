@@ -308,31 +308,37 @@ Ext.onReady(function() {
             $html .= ",handler: function(){";
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
-        $html .= "},'-',{";
-            $html .= "text: '".CALCULATION."'";
-            $html .= ",iconCls:'icon-calculator_add'";
-            $html .= ",handler: function(){";
-                $html .= "Ext.MessageBox.show({";
-                    $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
-                    $html .= "progressText: 'Saving...',";
-                    $html .= "width:300,";
-                    $html .= "wait:true,";
-                    $html .= "waitConfig: {interval:200},";
-                    $html .= "icon:'ext-mb-download'";
-                $html .= "});";
-                $html .= "Ext.Ajax.request({";
-                    $html .= "url: '/evaluation/jsonsave/'";
-                    $html .= ",method: 'POST'";
-                    $html .= ",params:{";
-                        $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
-                        $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
-                    $html .= "}";
-                    $html .= ",success: function() {";
-                        $html .= "Ext.MessageBox.hide();";
-                        $html .= "grid.store.load();";
-                    $html .= "}";
-                $html .= "});";
-            $html .= "}";
+            
+        switch($subjectObject->SCORE_TYPE){
+            case 1:
+                $html .= "},'-',{";
+                $html .= "text: '".CALCULATION."'";
+                $html .= ",iconCls:'icon-calculator_add'";
+                $html .= ",handler: function(){";
+                    $html .= "Ext.MessageBox.show({";
+                        $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
+                        $html .= "progressText: 'Saving...',";
+                        $html .= "width:300,";
+                        $html .= "wait:true,";
+                        $html .= "waitConfig: {interval:200},";
+                        $html .= "icon:'ext-mb-download'";
+                    $html .= "});";
+                    $html .= "Ext.Ajax.request({";
+                        $html .= "url: '/evaluation/jsonsave/'";
+                        $html .= ",method: 'POST'";
+                        $html .= ",params:{";
+                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
+                        $html .= "}";
+                        $html .= ",success: function() {";
+                            $html .= "Ext.MessageBox.hide();";
+                            $html .= "grid.store.load();";
+                        $html .= "}";
+                    $html .= "});";
+                $html .= "}";
+            break;
+        }
+        
         $html .= "},'-',{";
             $html .= "text: '".EXCEL_TEMPLATE."'";
             $html .= ",iconCls:'icon-page_excel'";
