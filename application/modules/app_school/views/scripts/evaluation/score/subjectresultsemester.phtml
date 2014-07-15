@@ -252,6 +252,7 @@ if($listAssignments){
 </style>
 
 <script>
+var _chooseValue,_chooseDisplay,term = '<?=$this->term?>',comboValue;
 Ext.onReady(function() {
     
     function cssStatus(v, p, record){
@@ -308,6 +309,31 @@ Ext.onReady(function() {
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
         $html .= "},'-',{";
+            $html .= "text: '".CALCULATION."'";
+            $html .= ",iconCls:'icon-calculator_add'";
+            $html .= ",handler: function(){";
+                $html .= "Ext.MessageBox.show({";
+                    $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
+                    $html .= "progressText: 'Saving...',";
+                    $html .= "width:300,";
+                    $html .= "wait:true,";
+                    $html .= "waitConfig: {interval:200},";
+                    $html .= "icon:'ext-mb-download'";
+                $html .= "});";
+                $html .= "Ext.Ajax.request({";
+                    $html .= "url: '/evaluation/jsonsave/'";
+                    $html .= ",method: 'POST'";
+                    $html .= ",params:{";
+                        $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
+                        $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
+                    $html .= "}";
+                    $html .= ",success: function() {";
+                        $html .= "Ext.MessageBox.hide();";
+                        $html .= "grid.store.load();";
+                    $html .= "}";
+                $html .= "});";
+            $html .= "}";
+        $html .= "},'-',{";
             $html .= "text: '".EXCEL_TEMPLATE."'";
             $html .= ",iconCls:'icon-page_excel'";
             $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
@@ -334,7 +360,8 @@ Ext.onReady(function() {
                             $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
                             $html .= ",id:e.record.get('ID')";
                             $html .= ",field: e.field";
-                            $html .= ",comboValue:comboValue}";
+                            $html .= ",comboValue:comboValue";
+                    $html .= "}";
                     $html .= ",success: function (result, request ) {";
                         $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
                         $html .= "grid.getStore().commitChanges();";
