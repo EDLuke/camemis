@@ -398,7 +398,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
-        $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($this->academicId, $this->subjectId, $this->term, false);
+        $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($this->academicId, $this->subjectId, $this->term, false, false);
 
         if ($this->listClassStudents()) {
 

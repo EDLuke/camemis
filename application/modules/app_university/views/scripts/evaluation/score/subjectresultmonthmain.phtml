@@ -128,7 +128,7 @@ Ext.onReady(function() {
     });
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
     myTree.on('click', function(node, event){
-        clickOpenPage('center',node.text,node.attributes.url);
+        clickOpenPage('center','',node.attributes.url);
         Ext.getCmp('WEST_ID').collapse();
     });
 });

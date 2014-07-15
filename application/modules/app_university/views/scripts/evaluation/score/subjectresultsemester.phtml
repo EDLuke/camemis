@@ -163,7 +163,7 @@ switch($subjectObject->SCORE_TYPE){
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
-$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, true);
+$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, true);
 if($listGroupAssignments){
     foreach($listGroupAssignments as $value){
         
@@ -192,7 +192,7 @@ switch($subjectObject->SCORE_TYPE){
         $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
-        , align: 'right'
+        , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
@@ -214,7 +214,7 @@ switch($subjectObject->SCORE_TYPE){
     default:
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
-        , align: 'right'
+        , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
@@ -241,7 +241,7 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 
-$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false);
+$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, false);
 if($listAssignments){
     foreach($listAssignments as $value){
         
