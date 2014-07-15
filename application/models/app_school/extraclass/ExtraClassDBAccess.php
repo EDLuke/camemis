@@ -1,5 +1,4 @@
 <?php
-
 ///////////////////////////////////////////////////////////
 // @Sea Peng
 // Date: 06.06.2013
@@ -12,8 +11,6 @@ require_once 'models/app_school/academic/AcademicDBAccess.php';
 require_once setUserLoacalization();
 
 class ExtraClassDBAccess {
-
-    CONST TABLE_EXTRACLASS = "t_extraclass";
 
     public $data = array();
     private static $instance = null;
@@ -102,7 +99,6 @@ class ExtraClassDBAccess {
     public function jsonLoadObject($Id) {
 
         $result = self::findExtraClassFromId($Id);
-
         if ($result) {
             $o = array(
                 "success" => true
@@ -118,7 +114,6 @@ class ExtraClassDBAccess {
     }
 
     public static function findExtraClassFromId($Id) {
-        $target = isset($params["target"]) ? addText($params["target"]) : '';
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_extraclass'));
@@ -234,7 +229,6 @@ class ExtraClassDBAccess {
                         case "LEVEL":
                             $data[$i]['text'] = stripslashes($value->NAME);
                             $programObject = self::findExtraClassFromId($value->PROGRAM);
-                            //$data[$i]['title'] = stripslashes($programObject->NAME)." &raquo; ".stripslashes($value->NAME);
                             $data[$i]['leaf'] = false;
                             $data[$i]['iconCls'] = "icon-folder_magnify";
                             $data[$i]['objecttype'] = "LEVEL";
@@ -246,7 +240,6 @@ class ExtraClassDBAccess {
                         case "TERM":
                             $programObject = self::findExtraClassFromId($value->PROGRAM);
                             $levelObject = self::findExtraClassFromId($value->LEVEL);
-                            //$data[$i]['title'] = stripslashes($programObject->NAME)." &raquo; ".stripslashes($levelObject->NAME)." &raquo; ".getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
                             $data[$i]['leaf'] = false;
                             $data[$i]['objecttype'] = "TERM";
                             $data[$i]['text'] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
@@ -387,7 +380,6 @@ class ExtraClassDBAccess {
 
 
         if ($facette) {
-
             $parentObject = self::findExtraClassFromId($facette->PARENT);
 
             switch ($facette->OBJECT_TYPE) {
@@ -401,7 +393,6 @@ class ExtraClassDBAccess {
                     break;
 
                 case "TERM":
-
                     $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
                     $SAVEDATA['LEVEL'] = "";
                     $SAVEDATA['TERM'] = "";
@@ -411,11 +402,9 @@ class ExtraClassDBAccess {
                         $PROGRAM_OBJECT = self::findExtraClassFromId($TERM_OBJECT->PARENT);
                     if ($PROGRAM_OBJECT)
                         $SAVEDATA['PROGRAM'] = $PROGRAM_OBJECT->ID;
-
                     break;
 
                 case "CLASS":
-
                     $LEVEL_OBJECT = self::findExtraClassFromId($parentObject->ID);
                     $SAVEDATA['PROGRAM'] = $LEVEL_OBJECT->PROGRAM;
                     $SAVEDATA['TERM'] = $LEVEL_OBJECT->TERM;
@@ -423,7 +412,6 @@ class ExtraClassDBAccess {
                     $SAVEDATA['START_DATE'] = $LEVEL_OBJECT->START_DATE;
                     $SAVEDATA['END_DATE'] = $LEVEL_OBJECT->END_DATE;
                     $SAVEDATA['SCHOOLYEAR_ID'] = $LEVEL_OBJECT->SCHOOLYEAR_ID;
-
                     break;
             }
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
@@ -466,7 +454,7 @@ class ExtraClassDBAccess {
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
 
             if (!$errors)
-                self::dbAccess()->insert(self::TABLE_EXTRACLASS, $SAVEDATA);
+                self::dbAccess()->insert('t_extraclass', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
             //error_log($objectId);
         }
@@ -494,7 +482,7 @@ class ExtraClassDBAccess {
                 $SAVEDATA["ENABLED_DATE"] = getCurrentDBDateTime();
                 $SAVEDATA["ENABLED_BY"] = Zend_Registry::get('USER')->CODE;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $Id);
-                self::dbAccess()->update(self::TABLE_EXTRACLASS, $SAVEDATA, $WHERE);
+                self::dbAccess()->update('t_extraclass', $SAVEDATA, $WHERE);
                 break;
             case 1:
                 $newStatus = 0;
@@ -502,7 +490,7 @@ class ExtraClassDBAccess {
                 $SAVEDATA["DISABLED_DATE"] = getCurrentDBDateTime();
                 $SAVEDATA["DISABLED_BY"] = Zend_Registry::get('USER')->CODE;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $Id);
-                self::dbAccess()->update(self::TABLE_EXTRACLASS, $SAVEDATA, $WHERE);
+                self::dbAccess()->update('t_extraclass', $SAVEDATA, $WHERE);
                 break;
         }
 
@@ -540,7 +528,7 @@ class ExtraClassDBAccess {
             foreach ($result as $value) {
                 $SAVEDATA["PROGRAM"] = $facette->ID;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
-                self::dbAccess()->update(self::TABLE_EXTRACLASS, $SAVEDATA, $WHERE);
+                self::dbAccess()->update('t_extraclass', $SAVEDATA, $WHERE);
             }
         }
     }
@@ -560,7 +548,7 @@ class ExtraClassDBAccess {
                 $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
                 $SAVEDATA["LEVEL"] = $facette->ID;
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
-                self::dbAccess()->update(self::TABLE_EXTRACLASS, $SAVEDATA, $WHERE);
+                self::dbAccess()->update('t_extraclass', $SAVEDATA, $WHERE);
             }
         }
     }
@@ -585,7 +573,7 @@ class ExtraClassDBAccess {
                 $SAVEDATA["END_DATE"] = $facette->END_DATE;
 
                 $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
-                self::dbAccess()->update(self::TABLE_EXTRACLASS, $SAVEDATA, $WHERE);
+                self::dbAccess()->update('t_extraclass', $SAVEDATA, $WHERE);
             }
         }
     }
