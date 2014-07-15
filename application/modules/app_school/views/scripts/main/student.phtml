@@ -232,6 +232,7 @@ $HTML .= "</div>";
                 }
                 ,items: [{
                     title: ''
+                    ,hidden:true
                     ,id: 'app-header'
                     ,region: 'north'
                     ,height: 40
@@ -241,7 +242,7 @@ $HTML .= "</div>";
                     title: ''
                     ,id:'MAIN_WEST_ID'
                     ,region:'west'
-                    ,margins: '0 0 3 3'
+                    ,margins: '3 0 3 3'
                     ,cmargins: '0 3 3 3'
                     ,width: 210
                     ,minSize: 210
@@ -278,7 +279,7 @@ $HTML .= "</div>";
                     ,id: 'center'
                     ,layout: 'card'
                     ,activeItem: 0
-                    ,margins: '0 3 3 0'
+                    ,margins: '3 3 3 0'
                     ,items: tabs
                     ,tbar:[<?=$this->TOOLBAR;?>]
                 }]
