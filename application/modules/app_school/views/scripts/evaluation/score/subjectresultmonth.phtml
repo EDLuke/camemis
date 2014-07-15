@@ -40,8 +40,6 @@ if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
-$TITLE = diplayNameMonthYear($monthyear);
-
 $entries = AssignmentDBAccess::getListAssignmentsToAcademic($academicObject->ID, $subjectObject->SUBJECT_ID);
 
 $setParams = "";
@@ -264,7 +262,7 @@ Ext.onReady(function() {
     }
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add(['-','<b>".$TITLE."</b>','-',{
+        tbar.add(['-',{
             text: '" . REFRESH . "'
             ,iconCls:'icon-reload'
             ,handler: function(){
@@ -362,7 +360,7 @@ Ext.onReady(function() {
             id:'content'
             ,layout: 'card'
             ,activeItem: 0
-            ,border: true
+            ,border: false
             ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
         }]
     });
