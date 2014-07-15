@@ -112,9 +112,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     ,layout: 'card'
                     ,activeItem: 0
                     ,items: [{
-                        layout: 'fit'
-                        ,border: false
-                        ,contentEl: 'initCenter'
+                        border: false
+                        ,layout: 'anchor'
+                        ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                        ,items: [{
+                            title: ''
+                            ,height:60
+                            ,width:500
+                            ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                            ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                        }]
                     }]
                 }]
             }]
@@ -151,9 +158,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     });
 
 </script>
-<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
-    <h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>
-</div>
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>

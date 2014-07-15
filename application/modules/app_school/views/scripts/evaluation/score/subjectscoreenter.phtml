@@ -181,7 +181,7 @@ Ext.onReady(function() {
             if($assignmentObject->INCLUDE_IN_EVALUATION == 2){
                 $OBJECT_GRID->addColumn("
                     header: '<b>".SCORE." (".REPEAT.")</b>'
-                    , width: 80
+                    , width: 100
                     , sortable: true
                     , align:'center'
                     , renderer:cssScoreRepeat
@@ -260,9 +260,8 @@ Ext.onReady(function() {
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     
-    $OBJECT_GRID->addTBarItems("tbar.add('-');");
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             text: '".CANCEL."'
             ,id: 'CANCEL_ID'
             ,formBind:true
@@ -273,8 +272,6 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    $OBJECT_GRID->addTBarItems("tbar.add('-');");
-    $OBJECT_GRID->addTBarItems("tbar.add('<b>".getShowDate($this->date)." (".displaySchoolTerm($SEMESTER_NAME).")</b>');");
     
     $OBJECT_GRID->addTBarItems("
         tbar.add(['-',{
@@ -288,7 +285,7 @@ Ext.onReady(function() {
     ");
     
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             text: '".REMOVE."'
             ,id:'REMOVE'
             ,disabled:true

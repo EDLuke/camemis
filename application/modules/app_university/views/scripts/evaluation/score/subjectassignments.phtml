@@ -525,7 +525,7 @@ Ext.onReady(function() {
                     text: '<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.text
                     ,iconCls: 'icon-table_edit'
                     ,handler: function(){
-                        clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date);
+                        clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date);
                     }
                 },{
                     text: '<?=MODIFY_DATE?> &raquo; ' + node.text
@@ -566,7 +566,7 @@ Ext.onReady(function() {
         }else{
             var dateMenu = new Ext.menu.DateMenu({
                 handler: function(dp, date){
-                    clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
+                    clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                 }
             });
             event.stopEvent();
