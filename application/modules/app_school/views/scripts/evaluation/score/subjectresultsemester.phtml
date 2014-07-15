@@ -329,7 +329,12 @@ Ext.onReady(function() {
                 $html .= "Ext.Ajax.request({";
                     $html .= "url: '/evaluation/jsonsave/'";
                     $html .= ",method: 'POST'";
-                    $html .= ",params: {cmd:'jsonActionStudentSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."',id:e.record.get('ID'),field: e.field}";
+                    $html .= ",params: {";
+                            $html .= "cmd:'jsonActionStudentSubjectAssessment'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+                            $html .= ",id:e.record.get('ID')";
+                            $html .= ",field: e.field";
+                            $html .= ",comboValue:comboValue}";
                     $html .= ",success: function (result, request ) {";
                         $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
                         $html .= "grid.getStore().commitChanges();";

@@ -35,7 +35,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
         
-        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()?AcademicDateDBAccess::loadCurrentSchoolyear()->ID:"";
         $STORE_SCHOOLYEAR = "[";
         if(AcademicDateDBAccess::getAllSchoolyear()){
             $i = 0;
