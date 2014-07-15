@@ -416,9 +416,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 $data[$i]["RANK"] = $facette->RANK;
                                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                                 $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
-                                
-                                $data[$i]["MONTH_RESULT"] = $facette->MONTH_RESULT;
-                                $data[$i]["TERM_RESULT"] = $facette->TERM_RESULT;
                                 break;
                         }
                         $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
@@ -427,8 +424,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         switch ($this->getSubjectScoreType()) {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
-                                $data[$i]["RANK"] = "<input type='text' name='' value='" . $facette->SUBJECT_VALUE . "'>";
-                                //$data[$i]["AVERAGE"] = showPassFailStatus($facette->IS_FAIL) . " " . $facette->SUBJECT_VALUE;
+                                $data[$i]["AVERAGE"] = $facette->SUBJECT_VALUE;
                                 break;
                         }
                         break;
@@ -439,7 +435,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $stdClass->assignmentId = $object->ID;
                         $stdClass->date = $object->SCORE_INPUT_DATE;
                         $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject?$scoreObject->POINTS:"---";
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS : "---";
                     }
                 }
 
