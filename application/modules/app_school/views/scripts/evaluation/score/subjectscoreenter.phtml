@@ -158,7 +158,7 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80,align:'center', renderer:cssText, sortable: true, dataIndex: 'GENDER'");
     
     switch($subjectObject->SCORE_TYPE){
