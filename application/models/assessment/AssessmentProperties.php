@@ -99,6 +99,10 @@ abstract class AssessmentProperties {
         return AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
     }
 
+    public function getAssignmentScorePossible() {
+        return $this->getAssignment()->POINTS_POSSIBLE ? $this->getAssignment()->POINTS_POSSIBLE : 100;
+    }
+
     public function getAssignmentCoeff() {
         return $this->getAssignment()->COEFF_VALUE ? $this->getAssignment()->COEFF_VALUE : 1;
     }

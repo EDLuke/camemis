@@ -370,18 +370,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $stdClass->assignmentId = $object->ID;
                         $stdClass->date = $object->SCORE_INPUT_DATE;
                         $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS : "---";
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS . "/" . $scoreObject->POINTS_POSSIBLE : "---";
                     }
                 }
-
-//                if ($this->getSettingEvaluationOption() == self::EVALUATION_OF_ASSIGNMENT) {
-//                    if ($this->getCurrentClassAssignments()) {
-//                        foreach ($this->getCurrentClassAssignments() as $v) {
-//                            $stdClass->assignmentId = $v->ASSIGNMENT_ID;
-//                            $data[$i][$v->ASSIGNMENT_ID] = $this->getImplodeMonthSubjectAssignment($stdClass, false);
-//                        }
-//                    }
-//                }
 
                 $i++;
             }
@@ -445,7 +436,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $stdClass->assignmentId = $object->ID;
                         $stdClass->date = $object->SCORE_INPUT_DATE;
                         $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS : "---";
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS . "/" . $scoreObject->POINTS_POSSIBLE : "---";
                     }
                 }
 
@@ -789,24 +780,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
     }
 
-//    public function getImplodeSubjectAssignmentByAllMonths($stdClass, $include)
-//    {
-//
-//        if ($this->getSettingEvaluationOption())
-//        {
-//            return SQLEvaluationStudentSubject::getImplodeQueryMonthSubject($stdClass);
-//        }
-//        else
-//        {
-//            $stdClass->assignmentId = self::NO_ASSIGNMENT;
-//            return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
-//        }
-//    }
-//    public function getImplodeSubjectAssignmentByTerm($stdClass, $include) {
-//        $stdClass->assignmentId = self::NO_ASSIGNMENT;
-//        return SQLEvaluationStudentAssignment::getImplodeQuerySubjectAssignment($stdClass, $include);
-//    }
-
     protected function getScoreListSubjectMonthResult($stdClass) {
 
         $data = array();
@@ -997,6 +970,15 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 } else {
                     $data[$i]["SCORE"] = "---";
                     $data[$i]["SCORE_REPEAT"] = "---";
+                }
+
+                switch ($this->getSubjectScoreType()) {
+                    case 1:
+                        $data[$i]["POINTS_POSSIBLE"] = $this->getAssignmentScorePossible();
+                        break;
+                    case 2:
+                        $data[$i]["POINTS_POSSIBLE"] = $this->getSubjectScorePossible();
+                        break;
                 }
 
                 $data[$i]["TEACHER_COMMENTS"] = $facette ? $facette->TEACHER_COMMENTS : "";
