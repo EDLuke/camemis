@@ -393,7 +393,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $stdClass->assignmentId = $object->ID;
                         $stdClass->date = $object->SCORE_INPUT_DATE;
                         $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS . "/" . $scoreObject->POINTS_POSSIBLE : "---";
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $this->displayAssignmentResult($stdClass->evaluationType, $scoreObject);
                     }
                 }
 
@@ -467,7 +467,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $stdClass->assignmentId = $object->ID;
                         $stdClass->date = $object->SCORE_INPUT_DATE;
                         $scoreObject = SQLEvaluationStudentAssignment::getScoreSubjectAssignment($stdClass);
-                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $scoreObject ? $scoreObject->POINTS . "/" . $scoreObject->POINTS_POSSIBLE : "---";
+                        $data[$i]["A_" . $object->OBJECT_ID . ""] = $this->displayAssignmentResult($stdClass->evaluationType, $scoreObject);
                     }
                 }
 

@@ -432,9 +432,24 @@ abstract class AssessmentProperties {
         switch ($type)
         {
             case 0:
-                return $value?$value:"---";
+                return $value ? $value : "---";
             case 1:
-                return $value?$value . " %":"---";
+                return $value ? $value . " %" : "---";
+        }
+    }
+
+    public static function displayAssignmentResult($type, $object)
+    {
+
+        $firstValue = $object ? $object->POINTS : "";
+        $secondValue = $object ? $object->POINTS_POSSIBLE : "";
+        
+        switch ($type)
+        {
+            case 0:
+                return $firstValue;
+            case 1:
+                return $firstValue ? $firstValue . "/" . $secondValue : "";
         }
     }
 
