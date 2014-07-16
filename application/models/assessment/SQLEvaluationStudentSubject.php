@@ -297,7 +297,8 @@ class SQLEvaluationStudentSubject {
                     $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
                     $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
 
-                    self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
+                    if ($stdClass->studentId == "0n5CE2hU5wfpLCLJXo9ApyQLiQ1iIEydDvR")
+                        self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
                 }
             }
         }
@@ -324,31 +325,30 @@ class SQLEvaluationStudentSubject {
         );
     }
 
-    public static function getImplodeQueryMonthSubject($stdClass) {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_subject_assessment", array("*"));
-        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
-        $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
-        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
-        $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
-        $SQL->where("TERM = '" . $stdClass->term . "'");
-        $SQL->where("SECTION = 'MONTH'");
-
-        //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-
-        $data = array();
-
-        if ($result) {
-            foreach ($result as $value) {
-                $data[] = $value->SUBJECT_VALUE;
-            }
-        }
-
-        return $data ? implode("|", $data) : "---";
-    }
-
+//    public static function getImplodeQueryMonthSubject($stdClass) {
+//
+//        $SQL = self::dbAccess()->select();
+//        $SQL->from("t_student_subject_assessment", array("*"));
+//        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
+//        $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
+//        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
+//        $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
+//        $SQL->where("TERM = '" . $stdClass->term . "'");
+//        $SQL->where("SECTION = 'MONTH'");
+//
+//        //error_log($SQL->__toString());
+//        $result = self::dbAccess()->fetchAll($SQL);
+//
+//        $data = array();
+//
+//        if ($result) {
+//            foreach ($result as $value) {
+//                $data[] = $value->SUBJECT_VALUE;
+//            }
+//        }
+//
+//        return $data ? implode("|", $data) : "---";
+//    }
 }
 
 ?>

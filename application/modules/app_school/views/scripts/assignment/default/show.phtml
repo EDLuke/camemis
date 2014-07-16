@@ -150,7 +150,8 @@ Ext.onReady(function() {
     
     $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('INCLUDE_IN_EVALUATION', EVALUATION, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
-    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE, false, false, false, false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE." / ".COEFFICIENT, false, false, false, false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("POINTS_POSSIBLE", "POINTS_POSSIBLE", POINTS_POSSIBLE, false, false, false, false)."}";
     $EVALUATION_SETTINGS_ITEMS .= "]";
     
     $EVALUATION_SETTINGS = "

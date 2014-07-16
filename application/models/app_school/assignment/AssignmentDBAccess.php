@@ -51,6 +51,7 @@ class AssignmentDBAccess {
             $data["SMS_SEND"] = $facette->SMS_SEND;
             $data["TASK"] = $facette->TASK;
             $data["COEFF_VALUE"] = $facette->COEFF_VALUE;
+            $data["POINTS_POSSIBLE"] = $facette->POINTS_POSSIBLE;
             $data["INCLUDE_IN_EVALUATION"] = $facette->INCLUDE_IN_EVALUATION;
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["REMOVE_STATUS"] = $this->checkRemoveAssignment($facette->ID);
@@ -62,7 +63,6 @@ class AssignmentDBAccess {
             $data["MODIFY_DATE"] = getShowDateTime($facette->MODIFY_DATE);
             $data["ENABLED_DATE"] = getShowDateTime($facette->ENABLED_DATE);
             $data["DISABLED_DATE"] = getShowDateTime($facette->DISABLED_DATE);
-
             $data["CREATED_BY"] = setShowText($facette->CREATED_BY);
             $data["MODIFY_BY"] = setShowText($facette->MODIFY_BY);
             $data["ENABLED_BY"] = setShowText($facette->ENABLED_BY);
@@ -163,6 +163,9 @@ class AssignmentDBAccess {
 
         if (isset($params["COEFF_VALUE"]))
             $SAVEDATA["COEFF_VALUE"] = addText($params["COEFF_VALUE"]);
+
+        if (isset($params["POINTS_POSSIBLE"]))
+            $SAVEDATA["POINTS_POSSIBLE"] = addText($params["POINTS_POSSIBLE"]);
 
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA["EVALUATION_TYPE"] = $params["EVALUATION_TYPE"];

@@ -1110,6 +1110,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             $SAVEDATA['USED_IN_CLASS'] = 1;
             $SAVEDATA['INCLUDE_IN_EVALUATION'] = $value->INCLUDE_IN_EVALUATION;
             $SAVEDATA['COEFF_VALUE'] = $value->COEFF_VALUE;
+            $SAVEDATA['POINTS_POSSIBLE'] = $value->POINTS_POSSIBLE;
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
