@@ -149,6 +149,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'SCORE'");
     $OBJECT_GRID->addReadField("name: 'SCORE_REPEAT'");
+    $OBJECT_GRID->addReadField("name: 'POINTS_POSSIBLE'");
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
 
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -173,7 +174,7 @@ Ext.onReady(function() {
                 , editor: new Ext.form.NumberField({
                     allowBlank: false
                     ,minValue: 0
-                    ,maxValue: $subjectObject->SCORE_MAX
+                    ,maxValue: $assignmentObject->POINTS_POSSIBLE
                     ,name: 'SCORE'   
                 })
             ");
@@ -189,7 +190,7 @@ Ext.onReady(function() {
                     , editor: new Ext.form.NumberField({
                         allowBlank: false
                         ,minValue: 0
-                        ,maxValue: $subjectObject->SCORE_MAX
+                        ,maxValue: $assignmentObject->POINTS_POSSIBLE
                         ,name: 'SCORE_REPEAT'   
                     })
                 ");
@@ -242,6 +243,7 @@ Ext.onReady(function() {
             break;
     }
     
+    $OBJECT_GRID->addColumn("header: '<b>".POINTS_POSSIBLE."</b>', width: 100,align:'center', renderer:cssText, sortable: true, dataIndex: 'POINTS_POSSIBLE'");
     $OBJECT_GRID->addColumn("
         header: '<b>".TEACHER_COMMENTS."</b>'
         , width: 200
