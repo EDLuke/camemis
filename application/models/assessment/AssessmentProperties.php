@@ -434,7 +434,7 @@ abstract class AssessmentProperties {
             case 0:
                 return $value ? $value : "---";
             case 1:
-                return $value ? $value . " %" : "---";
+                return is_numeric($value) ? $value . " %" : "---";
         }
     }
 
@@ -443,7 +443,7 @@ abstract class AssessmentProperties {
 
         $firstValue = $object ? $object->POINTS : "";
         $secondValue = $object ? $object->POINTS_POSSIBLE : "";
-        
+
         switch ($type)
         {
             case 0:
