@@ -18,30 +18,36 @@ class AssignmentDBAccess {
     public $savedata = Array();
     public $wheredata = Array();
 
-    static function getInstance() {
+    static function getInstance()
+    {
         static $me;
 
-        if ($me == null) {
+        if ($me == null)
+        {
             $me = new AssignmentDBAccess();
         }
 
         return $me;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public function getAssignmentDataFromId($Id) {
+    public function getAssignmentDataFromId($Id)
+    {
 
         $data = Array();
         $facette = self::findAssignmentFromId($Id);
 
-        if ($facette) {
+        if ($facette)
+        {
 
             $data["ID"] = $facette->ID;
             $data["NAME"] = setShowText($facette->NAME);
@@ -75,16 +81,20 @@ class AssignmentDBAccess {
     /**
      * JSON: Student by StudentId....
      */
-    public function loadAssignmentFromId($Id) {
+    public function loadAssignmentFromId($Id)
+    {
 
         $result = self::findAssignmentFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = Array(
                 "success" => true
                 , "data" => $this->getAssignmentDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = Array(
                 "success" => true
                 , "data" => Array()
@@ -93,7 +103,8 @@ class AssignmentDBAccess {
         return $o;
     }
 
-    public static function findAssignmentFromId($Id) {
+    public static function findAssignmentFromId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_assignment', '*');
@@ -102,7 +113,8 @@ class AssignmentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function findAssignmentJoinCategory($Id) {
+    public static function findAssignmentJoinCategory($Id)
+    {
 
         $SQL = "SELECT         
             A.ID AS ID 
@@ -122,23 +134,30 @@ class AssignmentDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function removeitem($params) {
+    public function removeitem($params)
+    {
 
-        if (isset($params["removeId"])) {
+        if (isset($params["removeId"]))
+        {
 
-            if (!$this->checkRemoveAssignment($params["removeId"])) {
+            if (!$this->checkRemoveAssignment($params["removeId"]))
+            {
                 self::dbAccess()->delete('t_assignment', Array("ID='" . $params["removeId"] . "'"));
             }
         }
     }
 
-    public function actionAssignment($params) {
+    public function actionAssignment($params)
+    {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
 
-        if (substr($params["objectId"], 8)) {
+        if (substr($params["objectId"], 8))
+        {
             $objectId = str_replace('CAMEMIS_', '', $params["objectId"]);
-        } else {
+        }
+        else
+        {
             $objectId = $params["objectId"];
         }
 
@@ -179,15 +198,19 @@ class AssignmentDBAccess {
         if (isset($params["SMS_SEND"]))
             $SAVEDATA['SMS_SEND'] = addText($params["SMS_SEND"]);
 
-        if ($facette) {
+        if ($facette)
+        {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE[] = "ID = '" . $facette->ID . "'";
             self::dbAccess()->update('t_assignment', $SAVEDATA, $WHERE);
             self::updateStudentAssignment($objectId);
-        } else {
+        }
+        else
+        {
 
-            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
+            if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT)
+            {
                 $SAVEDATA['STATUS'] = 1;
             }
 
@@ -204,7 +227,8 @@ class AssignmentDBAccess {
         );
     }
 
-    public function searchAssignment($params) {
+    public function searchAssignment($params)
+    {
 
         $subjectId = $params["subjectId"] ? addText($params["subjectId"]) : "0";
         $academicId = $params["academicId"] ? addText($params["academicId"]) : "0";
@@ -222,7 +246,8 @@ class AssignmentDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function jsonAssignmentsByGrade($params, $isJson = true) {
+    public function jsonAssignmentsByGrade($params, $isJson = true)
+    {
 
         $data = Array();
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
@@ -252,7 +277,8 @@ class AssignmentDBAccess {
         $SQL .= " AND A.SUBJECT='" . $subjectId . "'";
         if ($academicId)
             $SQL .= " AND A.CLASS='" . $academicId . "'";
-        if ($assignmentId) {
+        if ($assignmentId)
+        {
             $SQL .= " AND A.ID='" . $assignmentId . "'";
         }
 
@@ -262,7 +288,8 @@ class AssignmentDBAccess {
 
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->NAME;
@@ -276,7 +303,8 @@ class AssignmentDBAccess {
             }
 
         $a = Array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -292,7 +320,8 @@ class AssignmentDBAccess {
             return $data;
     }
 
-    public function releaseObject($params) {
+    public function releaseObject($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
 
@@ -304,7 +333,8 @@ class AssignmentDBAccess {
         $SQL .= " t_assignment";
         $SQL .= " SET";
 
-        switch ($status) {
+        switch ($status)
+        {
             case 0:
                 $newStatus = 1;
                 $SQL .= " STATUS=1";
@@ -326,7 +356,8 @@ class AssignmentDBAccess {
         return Array("success" => true, "status" => $newStatus);
     }
 
-    public function checkStudentsByAssignment($Id) {
+    public function checkStudentsByAssignment($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_student_assignment', 'COUNT(*) AS C');
@@ -336,9 +367,11 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function removeObject($params) {
+    public function removeObject($params)
+    {
 
-        if (!$this->checkRemoveAssignment($params["objectId"])) {
+        if (!$this->checkRemoveAssignment($params["objectId"]))
+        {
             self::dbAccess()->delete('t_assignment', Array("ID='" . addText($params["objectId"]) . "'"));
         }
 
@@ -346,18 +379,23 @@ class AssignmentDBAccess {
         return $this->dataforjson;
     }
 
-    public function checkRemoveAssignment($Id) {
+    public function checkRemoveAssignment($Id)
+    {
 
         $CHECK = $this->checkStudentsByAssignment($Id);
 
-        if ($CHECK) {
+        if ($CHECK)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static function getAllAssignmentQuery($params) {
+    public static function getAllAssignmentQuery($params)
+    {
 
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
@@ -367,13 +405,18 @@ class AssignmentDBAccess {
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($academicObject) {
-            if ($academicObject->EDUCATION_SYSTEM) {
+        if ($academicObject)
+        {
+            if ($academicObject->EDUCATION_SYSTEM)
+            {
                 $classId = "";
                 $schoolyearId = $academicObject->SCHOOL_YEAR;
                 $USED_IN_CLASS = 0;
-            } else {
-                switch ($academicObject->OBJECT_TYPE) {
+            }
+            else
+            {
+                switch ($academicObject->OBJECT_TYPE)
+                {
                     case "CLASS":
                         $classId = $academicObject->ID;
                         $gradeId = $academicObject->GRADE_ID;
@@ -390,7 +433,8 @@ class AssignmentDBAccess {
             }
         }
 
-        if ($subjectObject) {
+        if ($subjectObject)
+        {
             $subjectId = $subjectObject->ID;
         }
 
@@ -427,10 +471,14 @@ class AssignmentDBAccess {
         if ($schoolyearId)
             $SQL->where("A.SCHOOLYEAR = ?", $schoolyearId);
 
-        if ($academicObject) {
-            if ($academicObject->EDUCATION_SYSTEM) {
+        if ($academicObject)
+        {
+            if ($academicObject->EDUCATION_SYSTEM)
+            {
                 $SQL->where("A.EDUCATION_SYSTEM = 1");
-            } else {
+            }
+            else
+            {
                 if ($academicId)
                     $SQL->where("A.CLASS = '" . $academicId . "'");
                 $SQL->where("A.EDUCATION_SYSTEM = 0");
@@ -446,7 +494,8 @@ class AssignmentDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function treeAssignmentBySubject($params) {
+    public function treeAssignmentBySubject($params)
+    {
 
         $result = self::getAllAssignmentQuery($params);
 
@@ -457,8 +506,10 @@ class AssignmentDBAccess {
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         if ($subjectId)
-            if ($result) {
-                foreach ($result as $value) {
+            if ($result)
+            {
+                foreach ($result as $value)
+                {
 
                     $data[$i]['id'] = $value->ID;
                     $data[$i]['leaf'] = true;
@@ -470,7 +521,8 @@ class AssignmentDBAccess {
         return $data;
     }
 
-    public function jsonClassInAssignment($params) {
+    public function jsonClassInAssignment($params)
+    {
 
         $data = Array();
         $start = $params["start"] ? (int) $params["start"] : "0";
@@ -487,14 +539,19 @@ class AssignmentDBAccess {
 
         $i = 0;
 
-        if ($RESULT) {
-            foreach ($RESULT as $value) {
+        if ($RESULT)
+        {
+            foreach ($RESULT as $value)
+            {
 
                 $data[$i]["ID"] = $value->ID;
 
-                if (in_Array($value->ID, $CLASS_IDS)) {
+                if (in_Array($value->ID, $CLASS_IDS))
+                {
                     $data[$i]["IN_CLASS"] = YES;
-                } else {
+                }
+                else
+                {
                     $data[$i]["IN_CLASS"] = NO;
                 }
 
@@ -505,7 +562,8 @@ class AssignmentDBAccess {
         }
 
         $a = Array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -517,7 +575,8 @@ class AssignmentDBAccess {
         );
     }
 
-    public function jsonSaveClassInAssignment($params) {
+    public function jsonSaveClassInAssignment($params)
+    {
 
         $SAVEDATA = Array();
         $WHERE = Array();
@@ -533,7 +592,8 @@ class AssignmentDBAccess {
         );
     }
 
-    public static function findCountMinAssignments($studentId, $subjectId, $academicId, $term, $min) {
+    public static function findCountMinAssignments($studentId, $subjectId, $academicId, $term, $min)
+    {
 
         $SQL = "
             SELECT COUNT(*) AS C  
@@ -553,7 +613,8 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function deleteStudentFromAssignment($studentId, $assignmentId, $subjectId, $academicId) {
+    public static function deleteStudentFromAssignment($studentId, $assignmentId, $subjectId, $academicId)
+    {
 
         $condition = Array(
             'STUDENT_ID = ? ' => $studentId
@@ -564,7 +625,8 @@ class AssignmentDBAccess {
         self::dbAccess()->delete('t_student_assignment', $condition);
     }
 
-    public function jsonTreeAssignmentsBySubjctClass($encrypParams) {
+    public function jsonTreeAssignmentsBySubjctClass($encrypParams)
+    {
 
         $data = Array();
 
@@ -577,19 +639,25 @@ class AssignmentDBAccess {
         $classObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($classObject->EDUCATION_SYSTEM) {
+        if ($classObject->EDUCATION_SYSTEM)
+        {
             $academicId = $classObject->PARENT;
             $subjectId = $classObject->SUBJECT_ID;
-        } else {
+        }
+        else
+        {
             $academicId = $classObject->ID;
             $subjectId = $subjectObject->ID;
         }
 
         $facette = self::findAssignmentFromId($node);
 
-        if ($facette) {
+        if ($facette)
+        {
             $entries = $this->getAllScoreDate($node, $academicId, $subjectId);
-        } else {
+        }
+        else
+        {
             $searchParams["subjectId"] = $subjectId;
             $searchParams["academicId"] = $academicId;
             $searchParams["gradeId"] = $classObject->GRADE_ID;
@@ -598,17 +666,21 @@ class AssignmentDBAccess {
             $entries = self::getAllAssignmentQuery($searchParams);
         }
 
-        if ($entries) {
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
 
-                if (!$facette) {
+                if (!$facette)
+                {
 
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "";
                     $data[$i]['text'] = "(" . $value->SHORT . ") " . $value->NAME . "";
                     $data[$i]['leaf'] = false;
                     $data[$i]['isClick'] = true;
-                    switch ($value->INCLUDE_IN_EVALUATION) {
+                    switch ($value->INCLUDE_IN_EVALUATION)
+                    {
                         case 1:
                             $data[$i]['iconCls'] = "icon-flag_blue";
                             break;
@@ -619,7 +691,9 @@ class AssignmentDBAccess {
                             $data[$i]['iconCls'] = "icon-flag_white";
                             break;
                     }
-                } else {
+                }
+                else
+                {
                     $data[$i]['cls'] = "nodeTextBlue";
                     $facette = self::findAssignmentFromId($node);
                     $data[$i]['leaf'] = true;
@@ -636,7 +710,8 @@ class AssignmentDBAccess {
         return $data;
     }
 
-    public function checkCountScoreDate($Id, $subjectId, $academicId) {
+    public function checkCountScoreDate($Id, $subjectId, $academicId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array("C" => "COUNT(*)"));
         $SQL->where("ASSIGNMENT_ID = ?", $Id);
@@ -648,7 +723,8 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function getAllScoreDate($assignmentId, $academicId, $subjectId) {
+    public static function getAllScoreDate($assignmentId, $academicId, $subjectId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array('*'));
@@ -659,7 +735,8 @@ class AssignmentDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function checkAssignmentInClass($subjectId, $academicId) {
+    public function checkAssignmentInClass($subjectId, $academicId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array("C" => "COUNT(*)"));
         $SQL->where("SUBJECT = ?", $subjectId);
@@ -668,7 +745,8 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function copyAssignmentToSubjctClass($subjectId, $academicId, $gradeId, $schoolyearId, $usedInClass) {
+    public static function copyAssignmentToSubjctClass($subjectId, $academicId, $gradeId, $schoolyearId, $usedInClass)
+    {
 
         $SAVEDATA = Array();
 
@@ -690,7 +768,8 @@ class AssignmentDBAccess {
         self::dbAccess()->delete('t_assignment', $where);
 
         //error_log($academicId);
-        foreach ($result as $value) {
+        foreach ($result as $value)
+        {
 
             $SAVEDATA['SORTKEY'] = $value->SORTKEY;
             $SAVEDATA['NAME'] = $value->NAME;
@@ -713,7 +792,8 @@ class AssignmentDBAccess {
         }
     }
 
-    public static function checkAcademicAssignment($subjectId, $academicId, $gradeId, $schoolyearId, $tempId) {
+    public static function checkAcademicAssignment($subjectId, $academicId, $gradeId, $schoolyearId, $tempId)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_assignment", Array("C" => "COUNT(*)"));
@@ -731,19 +811,22 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function mappingAcademicEvaluationType($type, $Id) {
+    public static function mappingAcademicEvaluationType($type, $Id)
+    {
         $WHERE = Array();
         $SAVEDATA['EVALUATION_TYPE'] = $type;
         $WHERE[] = "ID = '" . $Id . "'";
         self::dbAccess()->update('t_assignment', $SAVEDATA, $WHERE);
     }
 
-    public static function getListAssignmentsToAcademic($academicId, $subjectId) {
+    public static function getListAssignmentsToAcademic($academicId, $subjectId)
+    {
 
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($academicObject && $subjectObject) {
+        if ($academicObject && $subjectObject)
+        {
             $searchParams["gradeId"] = $academicObject->GRADE_ID;
             $searchParams["academicId"] = $academicObject->ID;
             $searchParams["subjectId"] = $subjectObject->ID;
@@ -752,19 +835,22 @@ class AssignmentDBAccess {
         }
     }
 
-    public static function updateStudentAssignment($objectId) {
+    public static function updateStudentAssignment($objectId)
+    {
 
         $facette = self::findAssignmentFromId($objectId);
 
         $WHERE = Array();
         $SAVEDATA['EVALUATION_TYPE'] = $facette->EVALUATION_TYPE;
         $SAVEDATA['COEFF_VALUE'] = $facette->COEFF_VALUE;
+        $SAVEDATA['POINTS_POSSIBLE'] = $facette->POINTS_POSSIBLE;
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = $facette->INCLUDE_IN_EVALUATION;
         $WHERE[] = "ASSIGNMENT_ID = '" . $facette->ID . "'";
         self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
     }
 
-    public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $monthyear, $isGroupBy) {
+    public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $monthyear, $isGroupBy)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT", "COEFF_VALUE"));
         $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
@@ -772,7 +858,8 @@ class AssignmentDBAccess {
         $SQL->where("B.CLASS_ID = ?", $academicId);
         if ($term)
             $SQL->where("B.TERM = ?", $term);
-        if ($monthyear) {
+        if ($monthyear)
+        {
             $SQL->where("B.MONTH(SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
             $SQL->where("B.YEAR(SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
         }

@@ -41,6 +41,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
+$SHOW_TOTAL_RESULT = $academicObject->EVALUATION_TYPE?TOTAL." (%)":TOTAL;
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -202,17 +203,12 @@ switch($subjectObject->SCORE_TYPE){
         , renderer:cssDefault
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
-                dataIndex:'AVERAGE'
-                ,header: '<b>".TERM_RESULT."</b>'
+                dataIndex:'TOTAL_RESULT'
+                ,header: '<b>".$SHOW_TOTAL_RESULT."</b>'
                 ,width: 80
+                ,renderer:cssDefault
                 ,align: 'center'
                 ,sortable: true
-                ,editor: new Ext.form.NumberField({
-                    allowBlank:false
-                    ,name:'AVERAGE'
-                    ,minValue: '".$subjectObject->SCORE_MIN."'
-                    ,maxValue: '".$subjectObject->SCORE_MAX."'
-                })
             }";
         break;
     default:
@@ -237,7 +233,7 @@ $FIELDS .= ",{name: 'GENDER'}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $FIELDS .= ",{name: 'AVERAGE'}";
+        $FIELDS .= ",{name: 'TOTAL_RESULT'}";
         $FIELDS .= ",{name: 'ASSESSMENT'}";
         $FIELDS .= ",{name: 'RANK'}";
         break;
@@ -284,13 +280,13 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#000;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
     }
     
     <?php
@@ -360,15 +356,19 @@ Ext.onReady(function() {
             break;
         }
         
-        $html .= "},'-',{";
-            $html .= "text: '".EXCEL_TEMPLATE."'";
-            $html .= ",iconCls:'icon-page_excel'";
-            $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
-        $html .= "},'-',{";
-            $html .= "text: '".IMPORT."'";
-            $html .= ",iconCls:'icon-database_copy'";
-            $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+        if($academicObject->EVALUATION_OPTION){
+            $html .= "},'-',{";
+                $html .= "text: '".EXCEL_TEMPLATE."'";
+                $html .= ",iconCls:'icon-page_excel'";
+                $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+            $html .= "},'-',{";
+                $html .= "text: '".IMPORT."'";
+                $html .= ",iconCls:'icon-database_copy'";
+                $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+            $html .= "";
+        }
         $html .= "}]";
+        
         $html .= ",clicksToEdit:1";
         $html .= ",border:false";
         $html .= ",store: myStore";

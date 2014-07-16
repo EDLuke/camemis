@@ -49,22 +49,15 @@ $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$academicObject->ID."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
-function getDataField($titte, $startdate, $enddate){
+function getDataField($startdate, $enddate){
     
     $html = "{";
-        $html .= "xtype:'fieldset'";
-        $html .= ",width:480";
-        $html .= ",checkboxToggle:true";
-        $html .= ",collapsed: false";
-        $html .= ",bodyStyle: 'padding:10px'";
-        $html .= ",title: '".constant($titte)."'";
-        $html .= ",autoHeight:true";
+        $html .= "bodyStyle: 'padding:10px'";
+        $html .= ",border:false";
         $html .= ",layout:'form'";
         $html .= ",labelWidth:130";
         $html .= ",items:[{";
-            $html .= "xtype: 'displayfield'";
-            $html .= ",fieldLabel: '".DATE."'";
-            $html .= ",value:'<b>".showSeconds2Date($startdate)." - ".showSeconds2Date($enddate)."</b>'";
+            $html .= CamemisField::Displayfield($startdate."_".$enddate,DATE,showSeconds2Date($startdate)." - ".showSeconds2Date($enddate));
         $html .= "}]";
     $html .= "}";
     
@@ -111,17 +104,11 @@ Ext.onReady(function() {
         ,layout:'form'
         ,labelWidth:130
         ,items:[{
-            xtype: 'displayfield'
-            ,fieldLabel: '".SCORE_TYPE."'
-            ,value:'<b>".getScoreType($subjectObject->SCORE_TYPE)."</b>'
+            ".CamemisField::Displayfield("SCORE_TYPE",SCORE_TYPE,getScoreType($subjectObject->SCORE_TYPE))."
         },{
-            xtype: 'displayfield'
-            ,fieldLabel: '".SCORE."'
-            ,value:'<b>".$SCORE_ITEMS."</b>'
+            ".CamemisField::Displayfield("SCORE",SCORE,$SCORE_ITEMS)."
         },{
-            xtype: 'displayfield'
-            ,fieldLabel: '".POINTS_POSSIBLE."'
-            ,value:'<b>".$MAX_POSSIBLE_SCORE."</b>'
+            ".CamemisField::Displayfield("POINTS_POSSIBLE",POINTS_POSSIBLE,$MAX_POSSIBLE_SCORE)."
         }]
     }";
     
@@ -134,7 +121,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("FIRST_TERM", $academicObject->TERM1_START, $academicObject->TERM1_END)."]
+                ,items:[".getDataField($academicObject->TERM1_START, $academicObject->TERM1_END)."]
             }";
             $INFORMATION_ITEMS[] = $FIRST_TERM;
             $SECOND_TERM = "{
@@ -142,7 +129,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("SECOND_TERM", $academicObject->TERM2_START, $academicObject->TERM2_END)."]
+                ,items:[".getDataField($academicObject->TERM2_START, $academicObject->TERM2_END)."]
             }";
             $INFORMATION_ITEMS[] = $SECOND_TERM;
             $THIRD_TERM = "{
@@ -150,7 +137,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("THIRD_TERM", $academicObject->TERM3_START, $academicObject->TERM3_END)."]
+                ,items:[".getDataField($academicObject->TERM3_START, $academicObject->TERM3_END)."]
             }";
             $INFORMATION_ITEMS[] = $THIRD_TERM;
             break;
@@ -160,7 +147,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("FIRST_QUARTER", $academicObject->QUARTER1_START, $academicObject->QUARTER1_END)."]
+                ,items:[".getDataField($academicObject->QUARTER1_START, $academicObject->QUARTER1_END)."]
             }";
             $INFORMATION_ITEMS[] = $FIRST_QUARTER;
             $SECOND_QUARTER = "{
@@ -168,7 +155,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("SECOND_QUARTER", $academicObject->QUARTER2_START, $academicObject->QUARTER2_END)."]
+                ,items:[".getDataField($academicObject->QUARTER2_START, $academicObject->QUARTER2_END)."]
             }";
             $INFORMATION_ITEMS[] = $SECOND_QUARTER;
             $THIRD_QUARTER = "{
@@ -176,7 +163,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("THIRD_QUARTER", $academicObject->QUARTER3_START, $academicObject->QUARTER3_END)."]
+                ,items:[".getDataField($academicObject->QUARTER3_START, $academicObject->QUARTER3_END)."]
             }";
             $INFORMATION_ITEMS[] = $THIRD_QUARTER;
             $FOURTH_QUARTER = "{
@@ -184,7 +171,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("FOURTH_QUARTER", $academicObject->QUARTER4_START, $academicObject->QUARTER4_END)."]
+                ,items:[".getDataField($academicObject->QUARTER4_START, $academicObject->QUARTER4_END)."]
             }";
             $INFORMATION_ITEMS[] = $FOURTH_QUARTER;
             break;
@@ -194,7 +181,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("FIRST_SEMESTER", $academicObject->SEMESTER1_START, $academicObject->SEMESTER1_END)."]
+                ,items:[".getDataField($academicObject->SEMESTER1_START, $academicObject->SEMESTER1_END)."]
             }";
             $INFORMATION_ITEMS[] = $FIRST_SEMESTER;
             $SECOND_SEMESTER = "{
@@ -202,7 +189,7 @@ Ext.onReady(function() {
                 ,width:480
                 ,bodyStyle: 'padding:15px'
                 ,border:false
-                ,items:[".getDataField("SECOND_SEMESTER", $academicObject->SEMESTER2_START, $academicObject->SEMESTER2_END)."]
+                ,items:[".getDataField($academicObject->SEMESTER2_START, $academicObject->SEMESTER2_END)."]
             }";
             $INFORMATION_ITEMS[] = $SECOND_SEMESTER;
             break;

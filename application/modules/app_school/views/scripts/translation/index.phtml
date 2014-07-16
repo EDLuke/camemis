@@ -56,26 +56,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     
     if(UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT"))
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
-            id: 'SHOW_DETAIL_ID'
-            ,text: '".SHOW_DETAIL."'
-            ,hidden: true
-            ,iconCls:'icon-magnifier'
-            ,scope:this
-            ,handler: function(){
-                var sm = this.getSelectionModel();
-                var record = sm.getSelected();
-                if(record){
-                    objectId = record.data.ID;
-                    var url = '".$this->URL_SHOWITEM."&objectId=' + objectId;
-                    clickOpenPage('center',record.data.NAME, url);
-                }
-            }
-        }]);
-    ");
-    if(UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT"))
-    $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             id: 'NOT_TRANSLATED_ID'
             ,text: '".NOT_TRANSLATED."'
             ,iconCls:'icon-application_form_magnify'
@@ -94,7 +75,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     ");
     if(UserAuth::getACLValue("SCHOOL_SETTING_READ_RIGHT"))
     $OBJECT_GRID->addTBarItems("
-        tbar.add([{
+        tbar.add(['-',{
             id: 'SHOW_ALL_ID'
             ,text: '".SHOW_ALL."'
             ,iconCls:'icon-application_form_magnify'
