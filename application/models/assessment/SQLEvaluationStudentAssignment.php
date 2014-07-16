@@ -318,6 +318,8 @@ class SQLEvaluationStudentAssignment {
                 $INSERT_DATA['SCORE_DATE'] = $stdClass->date;
             if (isset($stdClass->include_in_valuation))
                 $INSERT_DATA['INCLUDE_IN_EVALUATION'] = $stdClass->include_in_valuation;
+            if (isset($stdClass->pointsPossible))
+                $INSERT_DATA['POINTS_POSSIBLE'] = $stdClass->pointsPossible;
 
             $INSERT_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $INSERT_DATA['CREATED_DATE'] = getCurrentDBDateTime();

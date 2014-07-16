@@ -202,7 +202,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $TOTAL_RESULT = $this->getTotalResultsSubjectMonth($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
-                        $data[$i]["AVERAGE_PERCENT"] = getPercent($TOTAL_RESULT, $this->getSubjectScoreMax());
                         break;
                 }
 
@@ -250,7 +249,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $TOTAL_RESULT = $this->getTotalResultsSubjectTerm($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
-                        $data[$i]["AVERAGE_PERCENT"] = getPercent($TOTAL_RESULT, $this->getSubjectScoreMax());
                         $data[$i]["MONTH_RESULT"] = $this->getResultsMonthAssignmentsSubjectTerm($stdClass, self::WITH_FORMAT);
                         $data[$i]["TERM_RESULT"] = $this->getResultsSubjectTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
                         break;
@@ -301,7 +299,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $TOTAL_RESULT = $this->calculatedTotalResultSubjectYear($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                 $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
-                $data[$i]["AVERAGE_PERCENT"] = getPercent($TOTAL_RESULT, $this->getSubjectScoreMax());
 
                 switch ($this->getTermNumber())
                 {
@@ -1054,6 +1051,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "actionField" => $this->actionField
                     , "actionValue" => $this->newValue
                     , "coeffValue" => $this->getAssignmentCoeff()
+                    , "pointsPossible" => $this->getAssignmentPointsPossible()
                     , "evaluationType" => $this->getSettingEvaluationType()
                     , "include_in_valuation" => $this->getAssignmentInCludeEvaluation()
                     , "educationSystem" => $this->getEducationSystem()
@@ -1124,7 +1122,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType())
                 {
                     case 1:
-                        $data[$i]["POINTS_POSSIBLE"] = $this->getAssignmentScorePossible();
+                        $data[$i]["POINTS_POSSIBLE"] = $this->getAssignmentPointsPossible();
                         break;
                     case 2:
                         $data[$i]["POINTS_POSSIBLE"] = $this->getSubjectScorePossible();
@@ -1342,7 +1340,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         case self::SCORE_NUMBER:
                             $stdClass->assessmentId = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
                             $stdClass->mappingValue = isset($entries[$i]["TOTAL_RESULT"]) ? $entries[$i]["TOTAL_RESULT"] : "";
-                            $stdClass->averagePercent = isset($entries[$i]["AVERAGE_PERCENT"]) ? $entries[$i]["AVERAGE_PERCENT"] : "";
                             break;
                         case self::SCORE_CHAR:
                             switch ($this->target)
