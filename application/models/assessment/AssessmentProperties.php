@@ -427,6 +427,17 @@ abstract class AssessmentProperties {
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->academicId);
     }
 
+    public static function displayTotalResult($type, $value)
+    {
+        switch ($type)
+        {
+            case 0:
+                return $value?$value:"---";
+            case 1:
+                return $value?$value . " %":"---";
+        }
+    }
+
     public static function setGradingScale($academicObject)
     {
 

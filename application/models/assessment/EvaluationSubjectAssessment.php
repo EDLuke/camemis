@@ -165,7 +165,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // MONTH CLASS SUBJECT RESULT...
     ////////////////////////////////////////////////////////////////////////////
-    public function getListResultsSubjectMonth()
+    public function getListSubjectResultsForMonth()
     {
 
         $data = array();
@@ -199,7 +199,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType())
                 {
                     case self::SCORE_NUMBER:
-                        $TOTAL_RESULT = $this->getTotalResultsSubjectMonth($stdClass, self::WITH_FORMAT);
+                        $TOTAL_RESULT = $this->getTotalSubjectResultsMonth($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         break;
@@ -214,7 +214,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getListResultsSubjectTerm()
+    public function getListSubjectResultsForTerm()
     {
 
         $data = array();
@@ -246,11 +246,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType())
                 {
                     case self::SCORE_NUMBER:
-                        $TOTAL_RESULT = $this->getTotalResultsSubjectTerm($stdClass, self::WITH_FORMAT);
+                        $TOTAL_RESULT = $this->getTotalSubjectResultsForTerm($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         $data[$i]["MONTH_RESULT"] = $this->getResultsMonthAssignmentsSubjectTerm($stdClass, self::WITH_FORMAT);
-                        $data[$i]["TERM_RESULT"] = $this->getResultsSubjectTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
+                        $data[$i]["TERM_RESULT"] = $this->getSubjectResultsForTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
                         break;
                     case self::SCORE_CHAR:
                         $data[$i]["ASSESSMENT"] = $this->getAssessmentSubjectTerm($stdClass)->GRADING;
@@ -267,7 +267,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getListResultsSubjectYear()
+    public function getListSubjectResultsForYear()
     {
 
         $data = array();
@@ -342,7 +342,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //DISPLAY SUBJECT MONTH RESULT
     ////////////////////////////////////////////////////////////////////////////
-    public function getDisplaySubjectMonthResult()
+    public function getDisplaySubjectResultsForMonth()
     {
 
         $data = array();
@@ -377,7 +377,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
-                        $data[$i]["TOTAL_RESULT"] = $facette->SUBJECT_VALUE;
+                        $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SUBJECT_VALUE);
                         $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                         break;
                     case self::SCORE_CHAR:
@@ -407,7 +407,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //DISPLAY SUBJECT TERM RESULT
     ////////////////////////////////////////////////////////////////////////////
-    public function getDisplaySubjectTermResult()
+    public function getDisplaySubjectResultsForTerm()
     {
         $data = array();
 
@@ -444,7 +444,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                             case self::SCORE_NUMBER:
                                 $data[$i]["RANK"] = $facette->RANK;
                                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                                $data[$i]["TOTAL_RESULT"] = $facette->SUBJECT_VALUE;
+                                $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SUBJECT_VALUE);
                                 break;
                         }
                         $data[$i]["ASSIGNMENT_TERM"] = $facette->ASSIGNMENT_TERM;
@@ -488,7 +488,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //DISPLAY SUBJECT YEAR RESULT
     ////////////////////////////////////////////////////////////////////////////
-    public function getDisplaySubjectYearResult()
+    public function getDisplaySubjectResultsForYear()
     {
         $data = array();
 
@@ -520,25 +520,25 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
                         $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                        $data[$i]["TOTAL_RESULT"] = $facette->SUBJECT_VALUE;
+                        $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SUBJECT_VALUE);
                         break;
                 }
                 switch ($this->getTermNumber())
                 {
                     case 1:
-                        $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
-                        $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                        $data[$i]["FIRST_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                        $data[$i]["SECOND_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                        $data[$i]["THIRD_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
                         break;
                     case 2:
-                        $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
-                        $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
-                        $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
+                        $data[$i]["FIRST_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                        $data[$i]["SECOND_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                        $data[$i]["THIRD_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
+                        $data[$i]["FOURTH_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FOURTH_RESULT);
                         break;
                     default:
-                        $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
-                        $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                        $data[$i]["FIRST_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                        $data[$i]["SECOND_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
                         break;
                 }
 
@@ -553,36 +553,24 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public function getTotalResultsSubjectTerm($stdClass, $withFormat = false)
+    public function getTotalSubjectResultsForTerm($stdClass, $withFormat = false)
     {
 
-        switch ($this->getSettingFormulaTermResult())
+        $result = 0;
+        $TERM_RESULT = $this->getSubjectResultsForTerm($stdClass, self::INCLUDE_IN_TERM, false);
+        $MONTH_RESULT = $this->getSubjectResultsForAllMonths($stdClass, self::INCLUDE_IN_MONTH);
+
+        if ($MONTH_RESULT && !$TERM_RESULT)
         {
-            case 1:
-                $result = $this->getResultsSubjectTerm($stdClass, self::INCLUDE_MONTH_TERM, false);
-                break;
-            default:
-
-                $TERM_RESULT = $this->getResultsSubjectTerm($stdClass, self::INCLUDE_IN_TERM, false);
-                $MONTH_RESULT = $this->getResultAllMonthsSubject($stdClass, self::INCLUDE_IN_MONTH);
-
-                if ($MONTH_RESULT && !$TERM_RESULT)
-                {
-                    $result = $MONTH_RESULT;
-                }
-                elseif (!$MONTH_RESULT && $TERM_RESULT)
-                {
-                    $result = $TERM_RESULT;
-                }
-                elseif ($MONTH_RESULT && $TERM_RESULT)
-                {
-                    $result = ($MONTH_RESULT + $TERM_RESULT) / 2;
-                }
-                else
-                {
-                    $result = 0;
-                }
-                break;
+            $result = $MONTH_RESULT;
+        }
+        elseif (!$MONTH_RESULT && $TERM_RESULT)
+        {
+            $result = $TERM_RESULT;
+        }
+        elseif ($MONTH_RESULT && $TERM_RESULT)
+        {
+            $result = ($MONTH_RESULT + $TERM_RESULT) / 2;
         }
 
         if ($withFormat)
@@ -794,11 +782,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function getTotalResultsSubjectMonth($stdClass, $withFormat = false)
+    public function getTotalSubjectResultsMonth($stdClass, $withFormat = false)
     {
 
         $COUNT = "";
-        $result = SQLEvaluationStudentAssignment::calculatedSubjectResult($stdClass, false);
+        $result = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, false);
 
         if ($withFormat)
         {
@@ -820,11 +808,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function getResultAllMonthsSubject($stdClass, $include, $withFormat = false)
+    public function getSubjectResultsForAllMonths($stdClass, $include, $withFormat = false)
     {
 
         $COUNT = "";
-        $result = SQLEvaluationStudentAssignment::calculatedSubjectResult($stdClass, $include);
+        $result = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, $include);
 
         if ($withFormat)
         {
@@ -846,10 +834,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $output;
     }
 
-    public function getResultsSubjectTerm($stdClass, $include, $withFormat = false)
+    public function getSubjectResultsForTerm($stdClass, $include, $withFormat = false)
     {
 
-        $result = SQLEvaluationStudentAssignment::calculatedSubjectResult($stdClass, $include);
+        $result = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, $include);
 
         if ($withFormat)
         {
@@ -876,7 +864,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     {
 
         $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
-        $result = SQLEvaluationStudentAssignment::calculatedSubjectResult($stdClass, self::INCLUDE_IN_MONTH);
+        $result = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, self::INCLUDE_IN_MONTH);
 
         if (!$COUNT)
         {
@@ -905,7 +893,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value)
             {
                 $stdClass->studentId = $value->ID;
-                $data[] = $this->getTotalResultsSubjectMonth($stdClass);
+                $data[] = $this->getTotalSubjectResultsMonth($stdClass);
             }
         }
         return $data;
@@ -920,7 +908,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value)
             {
                 $stdClass->studentId = $value->ID;
-                $data[] = $this->getTotalResultsSubjectTerm($stdClass);
+                $data[] = $this->getTotalSubjectResultsForTerm($stdClass);
             }
         }
         return $data;
@@ -1020,12 +1008,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSection())
                 {
                     case "MONTH":
-                        $result = $this->getTotalResultsSubjectMonth($stdClass);
+                        $result = $this->getTotalSubjectResultsMonth($stdClass);
                         break;
                     case "TERM":
                     case "QUARTER":
                     case "SEMESTER":
-                        $result = $this->getTotalResultsSubjectTerm($stdClass);
+                        $result = $this->getTotalSubjectResultsForTerm($stdClass);
                         break;
                     case "YEAR":
                         $result = $this->calculatedTotalResultSubjectYear($stdClass);
@@ -1277,11 +1265,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         switch ($this->target)
         {
             case "MONTH":
-                $entries = $this->getListResultsSubjectMonth();
+                $entries = $this->getListSubjectResultsForMonth();
                 $section = "MONTH";
                 break;
             case "TERM":
-                $entries = $this->getResultsSubjectTerm();
+                $entries = $this->getListSubjectResultsForTerm();
                 switch ($this->term)
                 {
                     case "FIRST_SEMESTER":
@@ -1302,7 +1290,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 }
                 break;
             case "YEAR":
-                $entries = $this->getListResultsSubjectYear();
+                $entries = $this->getListSubjectResultsForYear();
                 $section = "YEAR";
                 break;
         }

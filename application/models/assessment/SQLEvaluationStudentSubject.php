@@ -318,8 +318,8 @@ class SQLEvaluationStudentSubject {
                     $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
                     $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
 
-                    if ($stdClass->studentId == "0n5CE2hU5wfpLCLJXo9ApyQLiQ1iIEydDvR")
-                        self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
+                    //if ($stdClass->studentId == "0n5CE2hU5wfpLCLJXo9ApyQLiQ1iIEydDvR")
+                    self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
                 }
             }
         }
