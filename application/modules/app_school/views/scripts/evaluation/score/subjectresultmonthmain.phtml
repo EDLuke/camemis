@@ -5,6 +5,7 @@
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
 require_once 'clients/CamemisTree.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
@@ -16,6 +17,9 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
 $OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
 $OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
+
+$OBJECT_TREE = new CamemisTree("EVALUATION", "LIST");
+$OBJECT_TREE->setURL('/evaluation/jsontree/');
 
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 
@@ -39,27 +43,19 @@ $data = array();
 if($monthList){
     foreach($monthList as $key=>$value){
         $setParams = "&section=1&subjectId=".$this->subjectId."&academicId=".$academicId."&monthyear=".$key."_".$value."";
-        $ITEMS = "{";
-            $ITEMS .= "title:'".constant($key)." (".$value.")'";
-            $ITEMS .= ",border:false";
-            $ITEMS .= ",layout:'fit'";
-            $ITEMS .= ",items:[new Ext.ux.IFrameComponent({ id: '".$key."_".$value."', url: '/evaluation/subjectresultmonth/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]";
-        $ITEMS .= "}";
-        $data[] = $ITEMS;
+        $clickUrl = "/evaluation/subjectresultmonth/?camIds=".$this->urlEncryp->encryptedGet($setParams)."";
+        $data[] = "{
+            text:'".constant($key)." (".$value.")'
+            ,id:'".$key."_".$value."'
+            ,leaf:true
+            ,url:'".$clickUrl."'
+            ,cls:'nodeTextBold'
+            ,iconCls: 'icon-date_magnify'
+        }";
     }  
 }
 
-if($data){
-    $TAB_ITEMS = implode(",",$data);
-}else{
-    $TAB_ITEMS = "{";
-        $TAB_ITEMS .= "title:'".NOT_AVAILABLE."'";
-        $TAB_ITEMS .= ",id:'NOT_AVAILABLE'";
-        $TAB_ITEMS .= ",border:false";
-        $TAB_ITEMS .= ",layout:'fit'";
-        $TAB_ITEMS .= ",html:'".NOT_AVAILABLE."'";
-    $TAB_ITEMS .= "}";
-}
+$TREE_ITEMS = "[".implode(",",$data)."]";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -78,17 +74,62 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_TREE->isAsyncTreeNode = true;
+    $OBJECT_TREE->setAsyncTreeNode($TREE_ITEMS);
+    $OBJECT_TREE->renderJS();
+    
     ?>
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
         ,items:[{
-            xtype: 'vrtabpanel'				
-            ,activeTab: 0
-            ,enableTabScroll:true       
-            ,defaults: {autoScroll:true}
-            ,items:[<?=$TAB_ITEMS;?>]
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible:true
+                ,split: true
+            }
+            ,items: [{
+                title: '&nbsp;'
+                ,id:'WEST_ID'
+                ,region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:180
+                ,minSize:180
+                ,maxSize:180
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+            },{
+                title: ''
+                ,collapsible: false
+                ,region:'center'
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,margins: '3 3 3 0'
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
         }]
+    });
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, event){
+        clickOpenPage('center','',node.attributes.url);
+        Ext.getCmp('WEST_ID').collapse();
     });
 });
 </script>

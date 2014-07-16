@@ -10,7 +10,7 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
-require_once 'models/app_university/assignment/AssignmentDBAccess.php';
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/assignment/AssignmentDBAccess.php";
  
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
@@ -45,7 +45,7 @@ if(!$CHECK_IN_SCHEDULE) {
 }
 
 $setParams = "";
-$setParams .="&subjectId=".$subjectId."";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$academicObject->ID."";
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
@@ -262,7 +262,7 @@ Ext.onReady(function() {
             });
         }
     ");
-    
+
     $paramImport = $setParams;
     $paramImport .= "&target=subjectassignments";
     $paramImport .= "&actionType=MULTI";
@@ -311,9 +311,9 @@ Ext.onReady(function() {
                 ,id: 'WEST_ID'
                 ,margins: '3 0 3 3'
                 ,cmargins: '3 3 3 3'
-                ,width: 350
-                ,minSize: 350
-                ,maxSize: 350
+                ,width: 300
+                ,minSize: 300
+                ,maxSize: 300
                 ,layout: 'fit'
                 ,items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]
             },{
@@ -339,17 +339,140 @@ Ext.onReady(function() {
         }]
     }";
     
+    ////////////////////////////////////////////////////////////////////////////
+    
     if(!$academicObject->EVALUATION_OPTION)
     $VIEWPORT_ITEMS[] = $TEACHER_ENTER_SCORE;
     
-    $SUBJECT_ASSESSMENT = "{
-        title: '".SUBJECT_ASSESSMENT."'
-        ,layout:'fit'
-        ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ASSESSMENT', url: '/evaluation/subjectmainscoresummary/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
-    }";
+    if($academicObject->DISPLAY_MONTH_RESULT){
+        $MONTHLY_RESULT = "{
+            title: '".MONTHLY_RESULT."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url: '/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+        }";
+    }
+    $VIEWPORT_ITEMS[] = $MONTHLY_RESULT;
     
-    $VIEWPORT_ITEMS[] = $SUBJECT_ASSESSMENT;
+    switch ($TERM_NUMBER) {
+        case 1:
+            
+            $setParamsFirst = $setParams;
+            $setParamsFirst .= "&term=FIRST_TERM";
+            $FIRST_TERM_RESULT = "{
+                title: '".FIRST_TERM_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_FIRST_RESULT)
+            $VIEWPORT_ITEMS[] = $FIRST_TERM_RESULT;
+
+            $setParamsSecond = $setParams;
+            $setParamsSecond .= "&term=SECOND_TERM";
+            $SECOND_TERM_RESULT = "{
+                title: '".SECOND_TERM_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_SECOND_RESULT)
+            $VIEWPORT_ITEMS[] = $SECOND_TERM_RESULT;
+            
+            $setParamsThird = $setParams;
+            $setParamsThird .= "&term=SECOND_TERM";
+            $THIRD_TERM_RESULT = "{
+                title: '".THIRD_TERM_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_THIRD_RESULT)
+            $VIEWPORT_ITEMS[] = $THIRD_TERM_RESULT;
+            
+        break;
+        case 2:
+            
+            $setParamsFirst = $setParams;
+            $setParamsFirst .= "&term=FIRST_QUARTER";
+            $FIRST_QUARTER_RESULT = "{
+                title: '".FIRST_QUARTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_FIRST_RESULT)
+            $VIEWPORT_ITEMS[] = $FIRST_QUARTER_RESULT;
+
+            $setParamsSecond = $setParams;
+            $setParamsSecond .= "&term=SECOND_QUARTER";
+            $SECOND_QUARTER_RESULT = "{
+                title: '".SECOND_QUARTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_SECOND_RESULT)
+            $VIEWPORT_ITEMS[] = $SECOND_QUARTER_RESULT;
+            
+            $setParamsThird = $setParams;
+            $setParamsThird .= "&term=THIRD_QUARTER";
+            $THIRD_QUARTER_RESULT = "{
+                title: '".THIRD_QUARTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_THIRD_RESULT)
+            $VIEWPORT_ITEMS[] = $THIRD_QUARTER_RESULT;
+            
+            if($academicObject->DISPLAY_SECOND_RESULT)
+            $VIEWPORT_ITEMS[] = $SECOND_QUARTER_RESULT;
+            
+            $setParamsFourth = $setParams;
+            $setParamsFourth .= "&term=FOURTH_QUARTER";
+            $FOURTH_QUARTER_RESULT = "{
+                title: '".FOURTH_QUARTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFourth)."'})]
+            }";
+            
+            if($academicObject->DISPLAY_FOURTH_RESULT)
+            $VIEWPORT_ITEMS[] = $FOURTH_QUARTER_RESULT;
+            
+        break;
+        default:
+            $setParamsFirst = $setParams;
+            $setParamsFirst .= "&term=FIRST_SEMESTER";
+            $FIRST_SEMESTER_RESULT = "{
+                title: '".FIRST_SEMESTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."'})]
+            }";
+            if($academicObject->DISPLAY_FIRST_RESULT)
+            $VIEWPORT_ITEMS[] = $FIRST_SEMESTER_RESULT;
+
+            $setParamsSecond = $setParams;
+            $setParamsSecond .= "&term=SECOND_SEMESTER";
+            $SECOND_SEMESTER_RESULT = "{
+                title: '".SECOND_SEMESTER_RESULT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER', url: '/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."'})]
+            }";
+            if($academicObject->DISPLAY_SECOND_RESULT)
+            $VIEWPORT_ITEMS[] = $SECOND_SEMESTER_RESULT;
+        break;
+    }
     
+    if($academicObject->DISPLAY_YEAR_RESULT){
+        $setParamsYear = $setParams;
+        $YEAR_RESULT = "{
+            title: '".YEAR_RESULT."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'YEAR_RESULT', url: '/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."'})]
+        }";
+        $VIEWPORT_ITEMS[] = $YEAR_RESULT;
+    }
+    ////////////////////////////////////////////////////////////////////////////
     $DISPLAY_VIEWPORT_ITEMS = implode(",",$VIEWPORT_ITEMS);
     ////////////////////////////////////////////////////////////////////////////
     
@@ -402,7 +525,7 @@ Ext.onReady(function() {
                     text: '<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.text
                     ,iconCls: 'icon-table_edit'
                     ,handler: function(){
-                        clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date);
+                        clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date);
                     }
                 },{
                     text: '<?=MODIFY_DATE?> &raquo; ' + node.text
@@ -443,7 +566,7 @@ Ext.onReady(function() {
         }else{
             var dateMenu = new Ext.menu.DateMenu({
                 handler: function(dp, date){
-                    clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
+                    clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                 }
             });
             event.stopEvent();

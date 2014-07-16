@@ -37,6 +37,7 @@ $columndataAddStudent = Utiles::getGridColumnData("EXTRACLASS_SEARCH_ID");
 
 $STUDENTS_GRID = new CamemisGrid("EXTRACLASS", "LIST");
 $STUDENTS_GRID->setLoadUrl("/extraclass/jsonload/");
+$STUDENTS_GRID->setSaveUrl("/extraclass/jsonsave/");
 $columndataStudent = Utiles::getGridColumnData("EXTRACLASS_LIST_ID");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -250,7 +251,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     $DETAIL_ITEMS = "
     [
         {".CamemisField::Box("CODE", CODE_ID, $OBJECT_DATA["CODE"])."}
-        ,{".CamemisField::Trigger2("NAME",NAME,$triggerOnClickSubject, false, 230)."}
+        ,{".CamemisField::Trigger2("NAME",NAME,$triggerOnClickSubject, false, 250)."}
         ,{".CamemisField::Textfield("SORTKEY","SORTKEY",SORTKEY)."}
     ]
     ";

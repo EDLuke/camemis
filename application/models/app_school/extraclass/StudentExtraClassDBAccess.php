@@ -56,6 +56,10 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
         $SELECT_C = array(
             'CLASS'
         );
+        
+        $SELECT_D = array(
+            'NAME AS CLASS_NAME'
+        );
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_extraclass'), $SELECT_A);
@@ -88,7 +92,7 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
                 $SQL .= " ORDER BY B.FIRSTNAME DESC";
                 break;
         }
-        //error_log($SQL->__toString());
+        //error_log($SQL);
 
         $result = self::dbAccess()->fetchAll($SQL);
 
@@ -105,14 +109,14 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $extraClassId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-        $facette = self::findExtraClasslFromId($extraClassId);
-        if ($facette) {
+        //$facette = self::findExtraClasslFromId($extraClassId);
+        /*if ($facette) {
             $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
             $SAVEDATA["TERM"] = $facette->TERM;
             $SAVEDATA["LEVEL"] = $facette->LEVEL;
             $WHERE = self::dbAccess()->quoteInto("EXTRACLASS = ?", $extraClassId);
             self::dbAccess()->update('t_student_extraclass', $SAVEDATA, $WHERE);
-        }
+        }*/
 
         $resultRows = self::sqlStudentExtraClass($globalSearch, $extraClassId, $studentId);
 
@@ -154,7 +158,6 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     }
 
     public static function actionRemoveStudentExtraClass($params) {
-
         $id = isset($params["id"]) ? addText($params["id"]) : "0";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "0";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
@@ -163,7 +166,7 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
         if ($field == "CHECKED") {
             if ($newValue) {
                 if ($objectId)
-                    self::dbAccess()->delete('t_student_extraclass', array("ID='" . $id . "'"));
+                    self::dbAccess()->delete('t_student_extraclass', array("ID=" . $id . ""));
             }
         }
 
@@ -181,7 +184,6 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
     }
 
     public static function jsonListStudentInSchool($params) {
-
         $data = array();
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -292,10 +294,10 @@ class StudentExtraClassDBAccess extends ExtraClassDBAccess {
         $extraClassId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
 
-        $classObject = self::findExtraClassFromId($extraClassId);
-        $LEVEL_OBJECT = self::findExtraClassFromId($classObject->PARENT);
-        $TERM_OBJECT = self::findExtraClassFromId($LEVEL_OBJECT->PARENT);
-        $PROGRAM_OBJECT = self::findExtraClassFromId($TERM_OBJECT->PARENT);
+        $classObject = ExtraClassDBAccess::findExtraClassFromId($extraClassId);
+        $LEVEL_OBJECT = ExtraClassDBAccess::findExtraClassFromId($classObject->PARENT);
+        $TERM_OBJECT = ExtraClassDBAccess::findExtraClassFromId($LEVEL_OBJECT->PARENT);
+        $PROGRAM_OBJECT = ExtraClassDBAccess::findExtraClassFromId($TERM_OBJECT->PARENT);
 
         if ($field == "ASSIGNED") {
             if ($newValue) {

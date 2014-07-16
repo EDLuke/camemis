@@ -191,13 +191,6 @@ class EvaluationController extends Zend_Controller_Action {
         }
     }
 
-    public function subjectmainscoresummaryAction() {
-
-        $this->view->academicId = $this->academicId;
-        $this->view->subjectId = $this->subjectId;
-        $this->_helper->viewRenderer('score/subjectmainscoresummary');
-    }
-
     public function subjectscoreenterexportAction() {
         $this->view->type = $this->type;
         $this->view->academicId = $this->academicId;
@@ -478,13 +471,6 @@ class EvaluationController extends Zend_Controller_Action {
     public function setUrlSubjectAssinments() {
 
         return UTILES::createUrl('evaluation/subjectassignments', array(
-                    "academicId" => $this->academicId, "subjectId" => $this->subjectId)
-        );
-    }
-
-    public function setUrlSubjectMainScoreSummary() {
-
-        return UTILES::createUrl('evaluation/subjectmainscoresummary', array(
                     "academicId" => $this->academicId, "subjectId" => $this->subjectId)
         );
     }

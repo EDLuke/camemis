@@ -1548,6 +1548,8 @@ class AcademicDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_academicdate', '*');
         $SQL->where("START <= '" . $date . "' AND END>='" . $date . "'");
+        
+        //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
 

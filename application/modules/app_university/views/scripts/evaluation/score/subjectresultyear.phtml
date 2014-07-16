@@ -86,12 +86,15 @@ Ext.onReady(function() {
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
     }
+    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
     $OBJECT_GRID->addReadField("name: 'CODE'");
-    $OBJECT_GRID->addReadField("name: 'STUDENT'");  
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'GENDER'");  
     $OBJECT_GRID->addReadField("name: 'RANK'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
@@ -124,9 +127,10 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, renderer: cssDefault, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80,align:'center', renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
@@ -203,55 +207,53 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("
         header: '<b>".constant($GRADING_TYPE)."</b>'
-        , width: 130
-        , align: 'right'
+        , width: 100
+        , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
         , editor: ".$comboAssessment."
-        ,filter:{}
     ");
     
     if($subjectObject->SCORE_TYPE == 1){
         if(!$academicObject->EVALUATION_OPTION){
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'RANK',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
         }else{
             $OBJECT_GRID->addColumn("
                 header: '<b>".RANK."</b>'
-                , width: 120
-                , align: 'right'
+                , width: 80
+                , align: 'center'
                 , sortable: true
                 , dataIndex: 'RANK'
-                , renderer:cssNumber
+                , renderer:cssDefault
                 , editor: new Ext.form.NumberField({
                     allowBlank: false
                     ,name: 'RANK'   
                 })
-                ,filter:{}
             ");
         }
         
         if($academicObject->DISPLAY_GRADE_POINTS){
-            $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS',filter:{}");
+            $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS'");
         }
-        $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 100, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'AVERAGE',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".YEAR_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'AVERAGE'");
     }
     
     switch($TERM_NUMBER){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FIRST_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'SECOND_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'THIRD_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'THIRD_TERM_RESULT'");
             break;
         case 2:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FIRST_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'SECOND_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'THIRD_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FOURTH_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'FOURTH_QUARTER_RESULT'");
             break;
         default:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'FIRST_SEMESTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'right', renderer:cssNumber, dataIndex: 'SECOND_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', width: 110, align: 'center', renderer:cssDefault, dataIndex: 'SECOND_SEMESTER_RESULT'");
             break;
     }
     
@@ -268,34 +270,36 @@ Ext.onReady(function() {
     $setActionPareams = $setParams;
     $setActionPareams .= "&target=YEAR";
     
-    $OBJECT_GRID->addTBarItems("
-        tbar.add(['-',{
-            text: '" . CALCULATION . "'
-            ,iconCls:'icon-calculator_add'
-            ,handler: function(){
-                Ext.MessageBox.show({
-                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                    progressText: 'Saving...',
-                    width:300,
-                    wait:true,
-                    waitConfig: {interval:200},
-                    icon:'ext-mb-download'
-                });
-                Ext.Ajax.request({
-                    url: '/evaluation/jsonsave/'
-                    ,method: 'POST'
-                    ,params:{
-                        cmd: 'jsonActionCalculationSubjectEvaluation'
-                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
-                    }
-                    ,success: function() {
-                        Ext.MessageBox.hide();
-                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
-                    }
-                });
-            }
-        }]);
-    ");
+    if($subjectObject->SCORE_TYPE == 1){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-',{
+                text: '" . CALCULATION . "'
+                ,iconCls:'icon-calculator_add'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    Ext.Ajax.request({
+                        url: '/evaluation/jsonsave/'
+                        ,method: 'POST'
+                        ,params:{
+                            cmd: 'jsonActionCalculationSubjectEvaluation'
+                            ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
+                        }
+                        ,success: function() {
+                            Ext.MessageBox.hide();
+                            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+                        }
+                    });
+                }
+            }]);
+        ");
+    }
     
     $OBJECT_GRID->baseParams = "
         start:0
@@ -316,7 +320,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->forceFit = "false";
-    $OBJECT_GRID->isFilterRow = true;
+    $OBJECT_GRID->isFilterRow = false;
     $OBJECT_GRID->renderJS();
     
     ?>      

@@ -162,26 +162,41 @@ switch($subjectObject->SCORE_TYPE){
 
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
+$GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
-$listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, true);
-if($listGroupAssignments){
-    foreach($listGroupAssignments as $value){
-        $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
-        $GROUP_ROW .= ",{header: '<b>".$value->SHORT."</b>', colspan: ".$colspan.", align: 'center'}";  
+if(!$academicObject->EVALUATION_OPTION){
+    $listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, true);
+    if($listGroupAssignments){
+        foreach($listGroupAssignments as $value){
+
+            switch($subjectObject->SCORE_TYPE){
+                case 1:
+                    $COEFF_VALUE = $value->COEFF_VALUE?$value->COEFF_VALUE:1;
+                    $TITLE = $academicObject->EVALUATION_TYPE?"$value->SHORT (".$COEFF_VALUE."%)":"$value->SHORT (".$COEFF_VALUE.")";
+                break;
+                default:
+                    $TITLE = $value->SHORT;
+                break;
+            }
+
+            $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
+            $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
+        }
     }
 }
 
 $COLUMS = "";
 $COLUMS .= "new Ext.grid.RowNumberer()";
-$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:80, renderer:cssStatus, align:'center',sortable: true}";
+$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:90, renderer:cssStatus, align:'center',sortable: true}";
 $COLUMS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,sortable: true, renderer:cssDefault}";
+$COLUMS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortable: true,align:'center',renderer:cssDefault}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
         $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
-        , align: 'right'
+        , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
@@ -203,7 +218,7 @@ switch($subjectObject->SCORE_TYPE){
     default:
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
-        , align: 'right'
+        , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssDefault
@@ -218,6 +233,7 @@ $FIELDS .= ",{name: 'BG_COLOR'}";
 $FIELDS .= ",{name: 'BG_COLOR_FONT'}";
 $FIELDS .= ",{name: 'STATUS_KEY'}";
 $FIELDS .= ",{name: 'STUDENT'}";
+$FIELDS .= ",{name: 'GENDER'}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
@@ -230,12 +246,14 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 
-$listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false);
-if($listAssignments){
-    foreach($listAssignments as $value){
-        
-        $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:83,align:'center',renderer:cssDefault}"; 
-        $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+if(!$academicObject->EVALUATION_OPTION){
+    $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, false);
+    if($listAssignments){
+        foreach($listAssignments as $value){
+
+            $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
+            $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
+        }
     }
 }
 
@@ -252,6 +270,7 @@ if($listAssignments){
 </style>
 
 <script>
+var _chooseValue,_chooseDisplay,term = '<?=$this->term?>',comboValue;
 Ext.onReady(function() {
     
     function cssStatus(v, p, record){
@@ -276,6 +295,9 @@ Ext.onReady(function() {
     
     <?php
 
+    $setActionPareams = $setParams;
+    $setActionPareams .= "&target=TERM";
+    
     $html = "";
     
     $html .= "var fields = [],columns = [],groupRow = [];";
@@ -307,6 +329,37 @@ Ext.onReady(function() {
             $html .= ",handler: function(){";
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
+            
+        switch($subjectObject->SCORE_TYPE){
+            case 1:
+                $html .= "},'-',{";
+                $html .= "text: '".CALCULATION."'";
+                $html .= ",iconCls:'icon-calculator_add'";
+                $html .= ",handler: function(){";
+                    $html .= "Ext.MessageBox.show({";
+                        $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
+                        $html .= "progressText: 'Saving...',";
+                        $html .= "width:300,";
+                        $html .= "wait:true,";
+                        $html .= "waitConfig: {interval:200},";
+                        $html .= "icon:'ext-mb-download'";
+                    $html .= "});";
+                    $html .= "Ext.Ajax.request({";
+                        $html .= "url: '/evaluation/jsonsave/'";
+                        $html .= ",method: 'POST'";
+                        $html .= ",params:{";
+                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
+                        $html .= "}";
+                        $html .= ",success: function() {";
+                            $html .= "Ext.MessageBox.hide();";
+                            $html .= "grid.store.load();";
+                        $html .= "}";
+                    $html .= "});";
+                $html .= "}";
+            break;
+        }
+        
         $html .= "},'-',{";
             $html .= "text: '".EXCEL_TEMPLATE."'";
             $html .= ",iconCls:'icon-page_excel'";
@@ -329,7 +382,13 @@ Ext.onReady(function() {
                 $html .= "Ext.Ajax.request({";
                     $html .= "url: '/evaluation/jsonsave/'";
                     $html .= ",method: 'POST'";
-                    $html .= ",params: {cmd:'jsonActionStudentSubjectAssessment',camIds: '".$this->urlEncryp->encryptedGet($setParams)."',id:e.record.get('ID'),field: e.field}";
+                    $html .= ",params: {";
+                            $html .= "cmd:'jsonActionStudentSubjectAssessment'";
+                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
+                            $html .= ",id:e.record.get('ID')";
+                            $html .= ",field: e.field";
+                            $html .= ",comboValue:comboValue";
+                    $html .= "}";
                     $html .= ",success: function (result, request ) {";
                         $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
                         $html .= "grid.getStore().commitChanges();";
