@@ -149,6 +149,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'SCORE'");
     $OBJECT_GRID->addReadField("name: 'SCORE_REPEAT'");
+    $OBJECT_GRID->addReadField("name: 'POINTS_POSSIBLE'");
     $OBJECT_GRID->addReadField("name: 'TEACHER_COMMENTS'");
 
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
@@ -160,6 +161,7 @@ Ext.onReady(function() {
     if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, renderer:cssText, sortable: true, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80,align:'center', renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>".POINTS_POSSIBLE."</b>', width: 100,align:'center', renderer:cssText, sortable: true, dataIndex: 'POINTS_POSSIBLE'");
     
     switch($subjectObject->SCORE_TYPE){
         case 1:
@@ -173,7 +175,7 @@ Ext.onReady(function() {
                 , editor: new Ext.form.NumberField({
                     allowBlank: false
                     ,minValue: 0
-                    ,maxValue: $subjectObject->SCORE_MAX
+                    ,maxValue: $assignmentObject->POINTS_POSSIBLE
                     ,name: 'SCORE'   
                 })
             ");
@@ -189,7 +191,7 @@ Ext.onReady(function() {
                     , editor: new Ext.form.NumberField({
                         allowBlank: false
                         ,minValue: 0
-                        ,maxValue: $subjectObject->SCORE_MAX
+                        ,maxValue: $assignmentObject->POINTS_POSSIBLE
                         ,name: 'SCORE_REPEAT'   
                     })
                 ");

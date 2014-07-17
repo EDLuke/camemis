@@ -315,11 +315,9 @@ class AcademicPerformances extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
 
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
-                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
-
+                
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
                 $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
 
@@ -365,10 +363,8 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $stdClass->studentId = $value->ID;
                 $AVERAGE = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
-                $AVERAGE_PERCENT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, true, false);
                 $data[$i]["RANK"] = $this->displayRank($AVERAGE, $scoreList);
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, $this->term);
                 $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass)->GRADING;
 
@@ -401,12 +397,10 @@ class AcademicPerformances extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
 
                 $AVERAGE = $this->getAverageYearStudentAcademicPerformance($stdClass, false);
-                $AVERAGE_PERCENT = $this->getAverageYearStudentAcademicPerformance($stdClass, true);
                 $RANK = $this->displayRank($AVERAGE, $scoreList);
 
                 $data[$i]["RANK"] = $RANK ? $RANK : "---";
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
-                $data[$i]["AVERAGE_PERCENT"] = $AVERAGE_PERCENT;
                 $data[$i]["ASSESSMENT"] = "----";
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
 
@@ -700,7 +694,6 @@ class AcademicPerformances extends AssessmentProperties {
 
                     $rank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
                     $average = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
-                    $stdClass->averagePercent = isset($entries[$i]["AVERAGE_PERCENT"]) ? $entries[$i]["AVERAGE_PERCENT"] : "";
                     $stdClass->gpaValue = isset($entries[$i]["GPA"]) ? $entries[$i]["GPA"] : "";
 
                     if (is_numeric($average)) {

@@ -70,6 +70,7 @@ class SQLEvaluationStudentAssignment {
 
         $SELECTION_A = array(
             "COEFF_VALUE AS COEFF_VALUE"
+            , "POINTS_POSSIBLE AS POINTS_POSSIBLE"
             , "INCLUDE_IN_EVALUATION AS INCLUDE_IN_EVALUATION"
         );
 
@@ -115,7 +116,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function calculatedPercentageAverageSubjectResult($stdClass, $include)
+    public static function calculateAVGPercentageSubjectResult($stdClass, $include)
     {
         $SUM_VALUE = 0;
         $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
@@ -134,22 +135,24 @@ class SQLEvaluationStudentAssignment {
                     case "LAO":
                         $stdClass->assignmentId = $value->ASSIGNMENT_ID;
                         $NEW_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                        $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 100;
                         break;
                     case "VNM":
                         $NEW_VALUE = $value->POINTS;
+                        $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 10;
                         break;
                 }
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
                 $VALUE = $NEW_VALUE ? $NEW_VALUE : 0;
-                $SUM_VALUE += ($VALUE * $COEFF_VALUE) / 100;
+                $SUM_VALUE += ($VALUE / $POINTS_POSSIBLE) * 100 * ($COEFF_VALUE / 100);
             }
         }
 
         return displayRound($SUM_VALUE);
     }
 
-    public static function calulateNumberAverageSubjectResult($stdClass, $include)
+    public static function calculateAVGNumberSubjectResult($stdClass, $include)
     {
 
         $SUM_VALUE = 0;
@@ -196,46 +199,21 @@ class SQLEvaluationStudentAssignment {
         return $output;
     }
 
-    public static function calculatedAverageSubjectResult($stdClass, $include)
+    public static function calculatedSubjectResults($stdClass, $include)
     {
 
         $output = "";
         switch ($stdClass->evaluationType)
         {
             case self::EVALUATION_TYPE_NUMBER:
-                $output = self::calulateNumberAverageSubjectResult($stdClass, $include);
+                $output = self::calculateAVGNumberSubjectResult($stdClass, $include);
                 break;
             case self::EVALUATION_TYPE_PERCENT:
-                if (self::CheckComplexPercentage($stdClass))
-                {
-                    $output = self::calculatedPercentageAverageSubjectResult($stdClass, $include);
-                }
-                else
-                {
-                    $output = self::calulateNumberAverageSubjectResult($stdClass, $include);
-                }
+                $output = self::calculateAVGPercentageSubjectResult($stdClass, $include);
                 break;
         }
 
         return $output;
-    }
-
-    public static function getImplodeQuerySubjectAssignment($stdClass, $include)
-    {
-
-        $result = self::getQueryStudentSubjectAssignments($stdClass, $include);
-
-        $data = array();
-
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
-                $data[] = $value->POINTS;
-            }
-        }
-
-        return $data ? implode("|", $data) : "---";
     }
 
     public static function getQueryStudentSubjectAssignments($stdClass, $include = false)
@@ -352,6 +330,8 @@ class SQLEvaluationStudentAssignment {
                 $INSERT_DATA['SCORE_DATE'] = $stdClass->date;
             if (isset($stdClass->include_in_valuation))
                 $INSERT_DATA['INCLUDE_IN_EVALUATION'] = $stdClass->include_in_valuation;
+            if (isset($stdClass->pointsPossible))
+                $INSERT_DATA['POINTS_POSSIBLE'] = $stdClass->pointsPossible;
 
             $INSERT_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $INSERT_DATA['CREATED_DATE'] = getCurrentDBDateTime();
@@ -545,23 +525,6 @@ class SQLEvaluationStudentAssignment {
         $SQL->where("A.ID = '" . $stdClass->setId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
-    }
-
-    protected static function CheckComplexPercentage($stdClass)
-    {
-        $calculate = 0;
-        $entries = self::getListStudentAssignmentScoreDate($stdClass);
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
-                if ($value->COEFF_VALUE)
-                {
-                    $calculate +=$value->COEFF_VALUE;
-                }
-            }
-        }
-        return ($calculate == 100) ? true : false;
     }
 
     public static function findTerm($data, $academicId)
