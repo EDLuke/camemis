@@ -18,9 +18,7 @@ $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
-
-$explode = explode("_",$setId);
-$objectId = isset($explode[0])?$explode[0]:"---";
+$objectId = isset($_GET["objectId"])? addText($_GET["objectId"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $assignmentObject = AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
@@ -392,7 +390,7 @@ Ext.onReady(function() {
                             title:'".ATTACHMENT."'
                             ,border:false
                             ,layout:'fit'
-                            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENT', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("setId=".$objectId."")."&template=SCORE_INPUT_DATE'})]
+                            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENT', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$objectId."&template=SCORE_INPUT_DATE")."'})]
                         }]
                     ";
                 }else{

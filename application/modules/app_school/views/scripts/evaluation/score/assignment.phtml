@@ -86,16 +86,6 @@ Ext.onReady(function() {
     ";
     
     $OBJECT_FORM->addObjectItems($items);
-
-    $OBJECT_FORM->addTBarItems("
-        text: '".CANCEL."'
-        ,id: 'CANCEL_ID'
-        ,formBind:true
-        ,iconCls:'icon-cancel'
-        ,scope:this
-        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
-    ");
-    
     $OBJECT_FORM->setonEmbeddedEvents("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
         window.location='".$_SERVER["REQUEST_URI"]."';
@@ -114,7 +104,6 @@ Ext.onReady(function() {
     ");
     
     $OBJECT_FORM->isObjectDefaultOnLoad = true;
-
     $OBJECT_FORM->labelAlign = "left";
     $OBJECT_FORM->labelWidth = 150;
     $OBJECT_FORM->renderJS();
@@ -125,24 +114,8 @@ Ext.onReady(function() {
         ,border: false
         ,items:[{
             layout:'fit'
-            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
             ,border:false
-            ,items:[{
-                xtype: 'tabpanel'
-                ,plain:true
-                ,activeTab: 0
-                ,items:[{
-                    border: false
-                    ,title:'<?=MAIN_CONTENT?>'
-                    ,layout: 'fit'
-                    ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
-                },{
-                    border: false
-                    ,title:'<?=ATTACHMENTS?>'
-                    ,layout: 'fit'
-                    ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url:'/dataset/attachment/?objectId=<?=$setId;?>&template=SCORE_INPUT_DATE'})]
-                }]
-            }]
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
         }]
     });
 });
