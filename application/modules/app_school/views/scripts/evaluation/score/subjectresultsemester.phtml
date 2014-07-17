@@ -341,7 +341,7 @@ Ext.onReady(function() {
 
     $html .= "var grid = new Ext.grid.EditorGridPanel({";
         $html .= "tbar:[{";
-            $html .= "text: '".REFRESH."'";
+            $html .= "text: '<b>".REFRESH."</b>'";
             $html .= ",iconCls:'icon-reload'";
             $html .= ",handler: function(){";
                 $html .= "".CamemisPage::setRequestURI(false)."";
