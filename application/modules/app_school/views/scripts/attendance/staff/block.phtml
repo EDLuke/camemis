@@ -57,7 +57,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $BLOCK_ATTENDANCE_GRID->addReadField("name: 'STATUS_KEY'");
         
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-            case "VIETNAMESE": $width = 125;break;
+            case "VIETNAMESE": $width = 100;break;
             default: $width = 85;break;
         }
     

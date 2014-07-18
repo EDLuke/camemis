@@ -177,7 +177,7 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
             case "SUPERADMIN":
             case "ADMIN":
                 switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-                    case "VIETNAMESE": $width = 125;break;
+                    case "VIETNAMESE": $width = 100;break;
                     default: $width = 85;break;
                 }
                 $ENROLLED_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(7, $columndataEnrolled).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
@@ -188,7 +188,7 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
             case "INSTRUCTOR": 
                 //@veasna
                 switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-                    case "VIETNAMESE": $width = 125;break;
+                    case "VIETNAMESE": $width = 100;break;
                     default: $width = 85;break;
                 }
                 $ENROLLED_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");

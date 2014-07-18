@@ -76,7 +76,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $LIST_OF_STUDENTS_GIRD->addReadField("name: 'STATUS_KEY'");
         
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-            case "VIETNAMESE": $width = 125;break;
+            case "VIETNAMESE": $width = 100;break;
             default: $width = 85;break;
         }
         
@@ -162,7 +162,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_TERM'");
         
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-            case "VIETNAMESE": $width = 125;break;
+            case "VIETNAMESE": $width = 100;break;
             default: $width = 85;break;
         }
 
