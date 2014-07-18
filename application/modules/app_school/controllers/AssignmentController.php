@@ -31,8 +31,6 @@ class AssignmentController extends Zend_Controller_Action {
 
         $this->DB_ASSIGNMENT_TEMP = AssignmentTempDBAccess::getInstance();
 
-        //$this->DB_ASSIGNMENT_TEMP = AssignmentTempDBAccess::getInstance();
-
         $this->objectId = null;
 
         $this->gradeId = null;
@@ -96,13 +94,12 @@ class AssignmentController extends Zend_Controller_Action {
         $this->view->term_number = $gradeObject->TERM_NUMBER;
         $this->view->subjectId = $this->subjectId;
     }
-
+    
     public function showitemAction() {
 
         //UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING");
 
         $this->view->objectData = $this->objectData;
-
         $this->view->gradeId = $this->gradeId;
         $this->view->classId = $this->classId;
         $this->view->facette = $this->facette;
@@ -112,8 +109,6 @@ class AssignmentController extends Zend_Controller_Action {
         } else {
             $gradeObject = AcademicDBAccess::findGradeFromId($this->gradeId);
         }
-
-        //$this->view->term_number = $gradeObject->TERM_NUMBER;
 
         $this->view->teacherId = $this->teacherId;
         $this->view->subjectId = $this->subjectId;
@@ -133,8 +128,6 @@ class AssignmentController extends Zend_Controller_Action {
                 $this->view->remove_status = true;
             }
         }
-
-        $this->_helper->viewRenderer('default/show');
     }
 
     public function showtempAction() {
@@ -252,11 +245,11 @@ class AssignmentController extends Zend_Controller_Action {
             case "jsonTreeAllAssignmentTemp":
                 $jsondata = $this->DB_ASSIGNMENT_TEMP->jsonTreeAllAssignmentTemp($this->REQUEST->getPost());
                 break;
-                                                 
+
             case "jsonTreeAssignmentsBySubjctClass":
                 $jsondata = $this->DB_ASSIGNMENT->jsonTreeAssignmentsBySubjctClass($this->REQUEST->getPost());
                 break;
-            
+
             case "jsonTreeAssignmentsBySubjctTraining":
                 $jsondata = $this->DB_ASSIGNMENT_TEMP->jsonTreeAssignmentsBySubjctTraining($this->REQUEST->getPost());
                 break;

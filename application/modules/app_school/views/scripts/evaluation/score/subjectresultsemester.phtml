@@ -21,19 +21,40 @@ $term = isset($_GET["term"])?addText($_GET["term"]):"";
 
 switch($term){
     case "FIRST_SEMESTER":
+        $section ="2";
+        $SELECTED_MENU = FIRST_SEMESTER_RESULT;
+        break;
     case "SECOND_SEMESTER":
         $section ="2";
-    break;
+        $SELECTED_MENU = SECOND_SEMESTER_RESULT;
+        break;
     case "FIRST_TERM":
+        $section ="4";
+        $SELECTED_MENU = FIRST_TERM_RESULT;
+        break;
     case "SECOND_TERM":
+        $section ="4";
+        $SELECTED_MENU = SECOND_TERM_RESULT;
+        break;
     case "THIRD_TERM":
         $section ="4";
-    break;
+        $SELECTED_MENU = THIRD_TERM_RESULT;
+        break;
     case "FIRST_QUARTER":
+        $section ="5";
+        $SELECTED_MENU = FIRST_QUARTER_RESULT;
+        break;
     case "SECOND_QUARTER":
+        $section ="5";
+        $SELECTED_MENU = SECOND_QUARTER_RESULT;
+        break;
     case "THIRD_QUARTER":
+        $section ="5";
+        $SELECTED_MENU = THIRD_QUARTER_RESULT;
+        break;
     case "FOURTH_QUARTER":
         $section ="5";
+        $SELECTED_MENU = FOURTH_QUARTER_RESULT;
     break;
 }
 
@@ -320,7 +341,7 @@ Ext.onReady(function() {
 
     $html .= "var grid = new Ext.grid.EditorGridPanel({";
         $html .= "tbar:[{";
-            $html .= "text: '".REFRESH."'";
+            $html .= "text: '<b>".REFRESH."</b>'";
             $html .= ",iconCls:'icon-reload'";
             $html .= ",handler: function(){";
                 $html .= "".CamemisPage::setRequestURI(false)."";
@@ -329,7 +350,7 @@ Ext.onReady(function() {
         switch($subjectObject->SCORE_TYPE){
             case 1:
                 $html .= "},'-',{";
-                $html .= "text: '".CALCULATION."'";
+                $html .= "text: '<b>".CALCULATION."</b>'";
                 $html .= ",iconCls:'icon-calculator_add'";
                 $html .= ",handler: function(){";
                     $html .= "Ext.MessageBox.show({";
@@ -358,16 +379,17 @@ Ext.onReady(function() {
         
         if($academicObject->EVALUATION_OPTION){
             $html .= "},'-',{";
-                $html .= "text: '".EXCEL_TEMPLATE."'";
+                $html .= "text: '<b>".EXCEL_TEMPLATE."</b>'";
                 $html .= ",iconCls:'icon-page_excel'";
                 $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
             $html .= "},'-',{";
-                $html .= "text: '".IMPORT."'";
+                $html .= "text: '<b>".IMPORT."</b>'";
                 $html .= ",iconCls:'icon-database_copy'";
                 $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
             $html .= "";
         }
-        $html .= "}]";
+        
+        $html .= "},'->','<b>".$SELECTED_MENU."</b>']";
         
         $html .= ",clicksToEdit:1";
         $html .= ",border:false";

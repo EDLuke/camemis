@@ -18,6 +18,7 @@ $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
+$objectId = isset($_GET["objectId"])? addText($_GET["objectId"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $assignmentObject = AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
@@ -53,7 +54,7 @@ if($CHECK_STATUS){
     $SQL = UserAuth::dbAccess()->select();
     $SQL->from("t_schedule", array("C" => "COUNT(*)"));
     $SQL->where("ACADEMIC_ID = ?",$academicId);
-    $SQL->where("SUBJECT_ID = ?",$subjectId);
+    $SQL->where("SUBJECT_ID = ?",$this->subjectId);
     $SQL->where("TERM = '" . $TERM_NAME . "'");
     //error_log($SQL);
     $result = UserAuth::dbAccess()->fetchRow($SQL);
@@ -360,36 +361,63 @@ Ext.onReady(function() {
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->renderJS();
     
-    if($CHECK_STATUS){
-        $VIEWPORT = "[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]";
-    }else{
-        $VIEWPORT = "
-        [{
-            layout: 'fit'
-            ,border: false
-            ,tbar:[{
-                text: '".CANCEL."'
-                ,id: 'CANCEL_ID'
-                ,formBind:true
-                ,iconCls:'icon-cancel'
-                ,scope:this
-                ,handler: function(){
-                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    $DISPLAY_VIEWPORT = "viewport = new Ext.Viewport({";
+        $DISPLAY_VIEWPORT .= "layout: 'fit'";
+        $DISPLAY_VIEWPORT .= ",border: false";
+        $DISPLAY_VIEWPORT .= ",items:[{";
+            $DISPLAY_VIEWPORT .= "border:false";
+            $DISPLAY_VIEWPORT .= ",layout:'fit'";
+            $DISPLAY_VIEWPORT .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+            $DISPLAY_VIEWPORT .= ",items:[{";
+                $DISPLAY_VIEWPORT .= "xtype: 'tabpanel'";
+                $DISPLAY_VIEWPORT .= ",tabPosition: 'top'";
+                $DISPLAY_VIEWPORT .= ",plain:true";
+                $DISPLAY_VIEWPORT .= ",activeTab: 0";
+                $DISPLAY_VIEWPORT .= ",enableTabScroll:true";
+                if($CHECK_STATUS){
+                    $DISPLAY_VIEWPORT .= "
+                        ,items:[{
+                            title:'".MAIN_CONTENT."'
+                            ,border:false
+                            ,layout:'fit'
+                            ,items:[{xtype: '".$OBJECT_GRID->getObjectXtype()."'}]
+                        },{
+                            title:'".ASSIGNMENT."'
+                            ,border:false
+                            ,layout:'fit'
+                            ,items:[new Ext.ux.IFrameComponent({ id: 'ASSIGNMENT', url: '/evaluation/classassignment/?camIds=".$this->urlEncryp->encryptedGet("setId=".$objectId."")."'})]
+                        },{
+                            title:'".ATTACHMENT."'
+                            ,border:false
+                            ,layout:'fit'
+                            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENT', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$objectId."&template=SCORE_INPUT_DATE")."'})]
+                        }]
+                    ";
+                }else{
+                    $DISPLAY_VIEWPORT .= "
+                    ,items:[{
+                        title:'".MAIN_CONTENT."'
+                        ,layout: 'fit'
+                        ,border: false
+                        ,tbar:[{
+                            text: '".CANCEL."'
+                            ,id: 'CANCEL_ID'
+                            ,formBind:true
+                            ,iconCls:'icon-cancel'
+                            ,scope:this
+                            ,handler: function(){
+                                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                            }
+                        }]
+                        ,contentEl: 'initCenter'
+                    }]";
                 }
-            }]
-            ,contentEl: 'initCenter'
-        }]";
-    }
+            $DISPLAY_VIEWPORT .= "}]";
+        $DISPLAY_VIEWPORT .= "}]";
+    $DISPLAY_VIEWPORT .= "});";
+    
+    echo $DISPLAY_VIEWPORT;
     ?>
-    viewport = new Ext.Viewport({
-        layout: 'fit'
-        ,border: false
-        ,items:[{
-            layout:'fit'
-            ,border: false
-            ,items:<?=$VIEWPORT?>
-        }]
-    });
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
     if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
         Ext.getCmp('REMOVE').enable();
