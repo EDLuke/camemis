@@ -567,30 +567,33 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $SAVEDATA = array();
         $studentTrainingOld = StudentTrainingDBAccess::sqlStudentTrainingRow($oldClass->ID, $studentId);
         if($studentTrainingOld){
+            /////////////////////////
+            //add new student record 
+            /////////////////////////
+            $SAVEDATA["STUDENT"] = $studentId;
             $SAVEDATA['PROGRAM'] = $newClass->PROGRAM? $newClass->PROGRAM : '';
             $SAVEDATA['LEVEL'] = $newClass->LEVEL? $newClass->LEVEL : '';
             $SAVEDATA['TERM'] = $newClass->TERM? $newClass->TERM : '';
-            $SAVEDATA['TRAINING'] = $newClass->ID? $newClass->ID : '';    
+            $SAVEDATA['TRAINING'] = $newClass->ID? $newClass->ID : '';
+            
+            $SAVEDATA['FROM_PROGRAM'] = $studentTrainingOld->PROGRAM? $studentTrainingOld->PROGRAM : '';
+            $SAVEDATA['FROM_LEVEL'] = $studentTrainingOld->LEVEL? $studentTrainingOld->LEVEL : '';
+            $SAVEDATA['FROM_TERM'] = $studentTrainingOld->TERM? $studentTrainingOld->TERM : '';
+            $SAVEDATA['FROM_TRAINING'] = $studentTrainingOld->TRAINING? $studentTrainingOld->TRAINING : '';
+            
+            $SAVEDATA['TRANSFER_FROM'] = $studentTrainingOld->OBJECT_ID? $studentTrainingOld->OBJECT_ID : '';
+            $SAVEDATA['TRANSFER_TYPE'] = 'TRANSFER';
+            $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+            $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+            self::dbAccess()->insert('t_student_training', $SAVEDATA);
+            
+            ////////////////////////////////////////
+            //update keep history student transfer
+            ///////////////////////////////////////  
+            $WHERE['ID = ?'] = $studentTrainingOld->OBJECT_ID;
+            self::dbAccess()->update('t_student_training', array('IS_TRANSFER'=>1), $WHERE);  
         }
-        $WHERE['ID = ?'] = $studentTrainingOld->OBJECT_ID;
-        self::dbAccess()->update('t_student_training', $SAVEDATA, $WHERE);
-        //$this->addStudentTrainingChangeClassHistory($studentTrainingOld,$studentId);///add student training to history
-    }
-    
-    public function addStudentTrainingChangeClassHistory($studentTrainingOldClass,$studentId){
-        $SAVEDATA = array();
-        $SAVEDATA['TRAINING_REF'] = $studentTrainingOldClass->OBJECT_ID? $studentTrainingOldClass->OBJECT_ID : '';
-        $SAVEDATA['STUDENT_ID'] = $studentId;  
-        $SAVEDATA['FROM_PROGRAM'] = $studentTrainingOldClass->PROGRAM? $studentTrainingOldClass->PROGRAM : '';
-        $SAVEDATA['FROM_LEVEL'] = $studentTrainingOldClass->LEVEL? $studentTrainingOldClass->LEVEL : '';
-        $SAVEDATA['FROM_TERM'] = $studentTrainingOldClass->TERM? $studentTrainingOldClass->TERM : '';
-        $SAVEDATA['FROM_CLASS'] = $studentTrainingOldClass->TRAINING? $studentTrainingOldClass->TRAINING : '';   
-        $SAVEDATA['TYPE'] = 'TRANSFER';   
-        
-        $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-        $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
-
-        self::dbAccess()->insert('t_student_training_history', $SAVEDATA);
+      
     }
     
     public function transferStudentTraining($params){
@@ -604,6 +607,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             $oldClass = TrainingDBAccess::findTrainingFromId($oldTrainingId);    
         }
         if($newTrainingId){
+            
             $newClass = TrainingDBAccess::findTrainingFromId($newTrainingId); 
             foreach(explode(',',$studentIds) as $value){
                 $this->classTransferTraining($oldClass,$newClass,$value); 
@@ -642,16 +646,23 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $choose_type = isset($params['CHOOSE_OPTION']) ? addText($params["CHOOSE_OPTION"]) : '';
         
         $SELECTION_A = array(
-            "TRAINING_REF"
-            , "FROM_PROGRAM"
-            , "FROM_LEVEL"
-            , "FROM_TERM"
-            , "FROM_CLASS"
-            , "TYPE"
-            , "CREATED_DATE AS CREATED_DATE"
-            , "CREATED_BY AS CREATED_BY"
+            "PROGRAM AS FROM_PROGRAM"
+            , "LEVEL AS FROM_LEVEL"
+            , "TERM AS FROM_TERM"
+            , "TRAINING AS FROM_TRAINING"     
         );
+                
         $SELECTION_B = array(
+            "PROGRAM AS CURRENT_PROGRAM"
+            , "LEVEL AS CURRENT_LEVEL"
+            , "TERM AS CURRENT_TERM"
+            , "TRAINING AS CURRENT_TRAINING"  
+            , "TRANSFER_TYPE" 
+            , "CREATED_DATE" 
+            , "CREATED_BY" 
+        );
+        
+        $SELECTION_C = array(
             "ID AS STUDENT_ID"
             , "CODE"
             , "FIRSTNAME"
@@ -663,54 +674,47 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             , "STATUS_COLOR_FONT"
         );
         
-        $SELECTION_C = array(
-            "PROGRAM AS CURRENT_PROGRAM"
-            , "LEVEL AS CURRENT_LEVEL"
-            , "TERM AS CURRENT_TERM"
-            , "TRAINING AS CURRENT_TRAINING"    
-        );
-        
         $SQL = self::dbSelectAccess();
-        $SQL->from(array('A' => 't_student_training_history'), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_student'), 'A.STUDENT_ID=B.ID', $SELECTION_B);
-        $SQL->joinLeft(array('C' => 't_student_training'),'A.TRAINING_REF=C.ID',$SELECTION_C);
-        
+        $SQL->from(array('A' => 't_student_training'), $SELECTION_A);
+        $SQL->joinLeft(array('B' => 't_student_training'),'A.ID=B.TRANSFER_FROM',$SELECTION_B);
+        $SQL->joinLeft(array('C' => 't_student'), 'A.STUDENT=C.ID', $SELECTION_C);
+        $SQL->where("A.IS_TRANSFER = ?",1);
         if ($choose_type) {
-            $SQL->where("A.TYPE = '" . $choose_type . "'");
+            $SQL->where("B.TRANSFER_TYPE = '" . $choose_type . "'");
         }
 
         if ($studentSchoolId)
-            $SQL->where("B.STUDENT_SCHOOL_ID LIKE ?","" . $studentSchoolId . "%");
+            $SQL->where("C.STUDENT_SCHOOL_ID LIKE ?","" . $studentSchoolId . "%");
 
         if ($code)
-            $SQL->where("B.CODE LIKE ?","" . $code . "%");
+            $SQL->where("C.CODE LIKE ?","" . $code . "%");
 
         if ($lastName)
-            $SQL->where("B.LASTNAME LIKE ?","" . $lastName . "%");
+            $SQL->where("C.LASTNAME LIKE ?","" . $lastName . "%");
 
         if ($firstName)
-            $SQL->where("B.FIRSTNAME LIKE ?","" . $firstName . "%");
+            $SQL->where("C.FIRSTNAME LIKE ?","" . $firstName . "%");
 
         if ($gender) {
-            $SQL->where("B.GENDER = '" . $gender . "'");
+            $SQL->where("C.GENDER = '" . $gender . "'");
         }
 
         if ($startDate && $endDate) {
-            $SQL->where("'" . setDate2DB($startDate) . "' <= A.CREATED_DATE AND A.CREATED_DATE <= '" . setDate2DB($endDate) . "'");
+            $SQL->where("'" . setDate2DB($startDate) . "' <= B.CREATED_DATE AND B.CREATED_DATE <= '" . setDate2DB($endDate) . "'");
         }
 
         if ($search) {
-            $SQL->where("B.FIRSTNAME LIKE '" . $search . "%' OR B.LASTNAME LIKE '" . $search . "%' OR B.CODE LIKE '" . $search . "%' OR B.STUDENT_SCHOOL_ID LIKE '" . $search . "%'");
+            $SQL->where("C.FIRSTNAME LIKE '" . $search . "%' OR C.LASTNAME LIKE '" . $search . "%' OR C.CODE LIKE '" . $search . "%' OR C.STUDENT_SCHOOL_ID LIKE '" . $search . "%'");
         }
         switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
             default:
-                $SQL .= " ORDER BY B.STUDENT_SCHOOL_ID DESC";
+                $SQL .= " ORDER BY C.STUDENT_SCHOOL_ID DESC";
                 break;
             case "1":
-                $SQL .= " ORDER BY B.LASTNAME DESC";
+                $SQL .= " ORDER BY C.LASTNAME DESC";
                 break;
             case "2":
-                $SQL .= " ORDER BY B.FIRSTNAME DESC";
+                $SQL .= " ORDER BY C.FIRSTNAME DESC";
                 break;
         }
         //error_log($SQL);
@@ -757,8 +761,8 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                     $data[$i]["PREVIOUS_LEVEL"] = setShowText($fromLevel->NAME);  
                 }
                 
-                if($value->FROM_CLASS){
-                    $fromTraining=TrainingDBAccess::findTrainingFromId($value->FROM_CLASS);
+                if($value->FROM_TRAINING){
+                    $fromTraining=TrainingDBAccess::findTrainingFromId($value->FROM_TRAINING);
                     $data[$i]["PREVIOUS_CLASS"] = setShowText($fromTraining->NAME);  
                 }
                 
@@ -767,7 +771,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                 $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
                 $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
                 
-                $data[$i]["TYPE"] = $value->TYPE;
+                $data[$i]["TYPE"] = $value->TRANSFER_TYPE;
                 $data[$i]["CREATED_DATE"] = getShowDate($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = $value->CREATED_BY;
                 ++$i;
