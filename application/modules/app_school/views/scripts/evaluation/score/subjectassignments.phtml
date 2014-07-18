@@ -296,9 +296,17 @@ Ext.onReady(function() {
             text: '".MONTHLY_RESULT."'
             ,id:'MONTHLY_RESULT'
             ,iconCls: 'icon-brick_magnify'
-            ,handler:function(){
-                clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."');
-            }
+            ,menu:[{
+                text:'".MONTHLY_RESULT."'
+                ,iconCls:'icon-application_view_detail'
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."');
+                }
+            },{
+                text:'".CHARTS."'
+                ,iconCls:'icon-chart_bar'
+                ,disabled:true
+            }]
         }";
         $BAR_ITEMS[] = $MONTHLY_RESULT;
     }
@@ -312,9 +320,17 @@ Ext.onReady(function() {
                 text: '".FIRST_TERM_RESULT."'
                 ,id:'FIRST_TERM_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
-                }
+                ,menu:[{
+                    text:'".FIRST_TERM_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_FIRST_RESULT)
@@ -326,9 +342,17 @@ Ext.onReady(function() {
                 text: '".SECOND_TERM_RESULT."'
                 ,id:'SECOND_TERM_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                }
+                ,menu:[{
+                    text:'".SECOND_TERM_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_SECOND_RESULT)
@@ -340,9 +364,17 @@ Ext.onReady(function() {
                 text: '".THIRD_TERM_RESULT."'
                 ,id:'THIRD_TERM_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
-                }
+                ,menu:[{
+                    text:'".THIRD_TERM_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_THIRD_RESULT)
@@ -357,9 +389,17 @@ Ext.onReady(function() {
                 text: '".FIRST_QUARTER_RESULT."'
                 ,id:'FIRST_QUARTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
-                }
+                ,menu:[{
+                    text:'".FIRST_QUARTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_FIRST_RESULT)
@@ -371,9 +411,17 @@ Ext.onReady(function() {
                 text: '".SECOND_QUARTER_RESULT."'
                 ,id:'SECOND_QUARTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                }
+                ,menu:[{
+                    text:'".SECOND_QUARTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_SECOND_RESULT)
@@ -385,9 +433,17 @@ Ext.onReady(function() {
                 text: '".THIRD_QUARTER_RESULT."'
                 ,id:'THIRD_QUARTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
-                }
+                ,menu:[{
+                    text:'".THIRD_QUARTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_THIRD_RESULT)
@@ -402,9 +458,17 @@ Ext.onReady(function() {
                 text: '".FOURTH_QUARTER_RESULT."'
                 ,id:'FOURTH_QUARTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFourth)."');
-                }
+                ,menu:[{
+                    text:'".FOURTH_QUARTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             
             if($academicObject->DISPLAY_FOURTH_RESULT)
@@ -418,9 +482,17 @@ Ext.onReady(function() {
                 text: '".FIRST_SEMESTER_RESULT."'
                 ,id:'FIRST_SEMESTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
-                }
+                ,menu:[{
+                    text:'".FIRST_SEMESTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             if($academicObject->DISPLAY_FIRST_RESULT)
             $BAR_ITEMS[] = $FIRST_SEMESTER_RESULT;
@@ -431,9 +503,17 @@ Ext.onReady(function() {
                 text: '".SECOND_SEMESTER_RESULT."'
                 ,id:'SECOND_SEMESTER_RESULT'
                 ,iconCls: 'icon-brick_magnify'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                }
+                ,menu:[{
+                    text:'".SECOND_SEMESTER_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultsemester/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
             }";
             if($academicObject->DISPLAY_SECOND_RESULT)
             $BAR_ITEMS[] = $SECOND_SEMESTER_RESULT;
@@ -446,9 +526,17 @@ Ext.onReady(function() {
             text: '".YEAR_RESULT."'
             ,id:'YEAR_RESULT'
             ,iconCls: 'icon-brick_magnify'
-            ,handler:function(){
-                clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."');
-            }
+            ,menu:[{
+                text:'".YEAR_RESULT."'
+                ,iconCls:'icon-application_view_detail'
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."');
+                }
+            },{
+                text:'".CHARTS."'
+                ,iconCls:'icon-chart_bar'
+                ,disabled:true
+            }]
         }";
         $BAR_ITEMS[] = $YEAR_RESULT;
     }
