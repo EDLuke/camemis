@@ -106,7 +106,7 @@ Ext.onReady(function() {
     }
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
-        case "VIETNAMESE": $width = 125;break;
+        case "VIETNAMESE": $width = 100;break;
         default: $width = 85;break;
     }
     
@@ -126,7 +126,7 @@ Ext.onReady(function() {
              $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 130
-                , align: 'right'
+                , align: 'center'
                 , sortable: true
                 , dataIndex: 'ASSESSMENT_TOTAL'
                 , renderer:cssDefault  
@@ -152,7 +152,7 @@ Ext.onReady(function() {
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
             , width: 120
-            , align: 'right'
+            , align: 'center'
             , sortable: true
             , dataIndex: 'RANK'
             , renderer:cssNumber
@@ -165,9 +165,9 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL'");
     
     if($entries){
         foreach($entries as $value){
