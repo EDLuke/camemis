@@ -35,21 +35,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 $entries = GradeSubjectDBAccess::getListSubjectsToAcademic($this->academicId, $this->term);
 
 ?>
-<style>
-    .filter-row-grid .x-grid3-header {
-    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
-}
-
-.filter-row-grid .filter-row-header {
-    height: 26px;
-}
-
-tr.filter-row-header .filter-row-icon input {
-    background-image: url(/public/images/filter-row-icon.png);
-    background-repeat: no-repeat;
-    padding-left: 16px;
-}
-</style>
 <script>
     
 Ext.onReady(function() {
@@ -75,6 +60,7 @@ Ext.onReady(function() {
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
     }
+    
     <?
     ////////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -124,12 +110,12 @@ Ext.onReady(function() {
         default: $width = 85;break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY',filter:{}");
-    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,renderer: cssDefault, dataIndex: 'CODE',filter:{}");
-    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150,renderer: cssDefault, dataIndex: 'STUDENT',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    if (UserAuth::isSuperAdmin()) $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80,renderer: cssDefault, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150,renderer: cssDefault, dataIndex: 'STUDENT'");
     
     if($academicObject->DISPLAY_GPA){
-        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'right', sortable: true, renderer:cssDefault, dataIndex: 'GPA',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GPA'");
     }
             
     switch(UserAuth::getUserType()){
@@ -145,7 +131,7 @@ Ext.onReady(function() {
                 , dataIndex: 'ASSESSMENT_TOTAL'
                 , renderer:cssDefault  
                 , editor: ".$comboEditor."
-                ,filter:{}
+                
             ");
             break;
          case 'STUDENT':
@@ -161,7 +147,7 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 80,sortable: true, renderer: cssDefault, dataIndex: 'RANK',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'RANK'");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
@@ -174,14 +160,14 @@ Ext.onReady(function() {
                 allowBlank: false
                 ,name: 'RANK'   
             })
-            ,filter:{}
+            
         ");
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS',filter:{}");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL',filter:{}");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL'");
     
     if($entries){
         foreach($entries as $value){
@@ -259,14 +245,13 @@ Ext.onReady(function() {
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->forceFit = "false";
-    $OBJECT_GRID->isFilterRow = true;
     $OBJECT_GRID->renderJS();
     ?>
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
         ,items:[{
-            border: true
+            border: false
             ,id:'content'
             ,layout: 'card'
             ,activeItem: 0

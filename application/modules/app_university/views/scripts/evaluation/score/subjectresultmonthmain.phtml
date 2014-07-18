@@ -14,10 +14,6 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$OBJECT_GRID = new CamemisGrid("SUBJECT_EVALUATION", "LIST");
-$OBJECT_GRID->setLoadUrl('/evaluation/jsonload/');
-$OBJECT_GRID->setSaveUrl('/evaluation/jsonsave/');
-
 $OBJECT_TREE = new CamemisTree("EVALUATION", "LIST");
 $OBJECT_TREE->setURL('/evaluation/jsontree/');
 
@@ -98,9 +94,9 @@ Ext.onReady(function() {
                 ,region:'west'
                 ,margins: '3 0 3 3'
                 ,cmargins: '3 3 3 3'
-                ,width:180
-                ,minSize:180
-                ,maxSize:180
+                ,width:230
+                ,minSize:230
+                ,maxSize:230
                 ,layout: 'fit'
                 ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
             },{
