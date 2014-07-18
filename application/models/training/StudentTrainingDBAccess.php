@@ -274,7 +274,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function sqlStudentTraining($globalSearch, $trainingId, $studentId)
+    public static function sqlStudentTraining($globalSearch, $trainingId, $studentId, $isTransfer=false)
     {
 
         $TRAINING_OBJECT = self::findTrainingFromId($trainingId);
@@ -338,7 +338,14 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                     $SQL->where('B.TRAINING = ?', $trainingId);
                     break;
             }
+            
+            if($isTransfer){
+                 $SQL->where('B.IS_TRANSFER = ?', 1);    
+            }else{
+                $SQL->where('B.IS_TRANSFER = ?', 0);    
+            }
         }
+        
 
         if ($globalSearch)
         {
