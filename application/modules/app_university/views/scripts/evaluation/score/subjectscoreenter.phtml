@@ -86,19 +86,19 @@ Ext.onReady(function() {
     function cssText(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="color:#333;background:#FFF;font-weight:normal;">' + value + '</div>';
+        return '<div style="color:#333;font-weight:normal;">' + value + '</div>';
     }
     
     function cssScore(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="color:#333;background:#FFF;font-weight:bold;">' + value + '</div>';
+        return '<div style="color:#333;font-weight:bold;">' + value + '</div>';
     }
     
     function cssScoreRepeat(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="color:#CC0000;background:#FFF;font-weight:bold;">' + value + '</div>';
+        return '<div style="color:#CC0000;font-weight:bold;">' + value + '</div>';
     }
     
     <?

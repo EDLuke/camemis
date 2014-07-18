@@ -76,7 +76,7 @@ Ext.onReady(function() {
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal;padding:4px; color:#333;background:#FFF;">' + value + '</div>';
     }
     
     <?
@@ -110,8 +110,8 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
-    $OBJECT_GRID->addReadField("name: 'AVERAGE_TOTAL'");   
-    $OBJECT_GRID->addReadField("name: 'ASSESSMENT_TOTAL'");
+    $OBJECT_GRID->addReadField("name: 'TOTAL_RESULT'");   
+    $OBJECT_GRID->addReadField("name: 'TOTAL_ASSESSMENT'");
     $OBJECT_GRID->addReadField("name: 'GPA'");
     $OBJECT_GRID->addReadField("name: 'GRADE_POINTS'");  
     
@@ -146,7 +146,7 @@ Ext.onReady(function() {
                 , width: 130
                 , align: 'center'
                 , sortable: true
-                , dataIndex: 'ASSESSMENT_TOTAL'
+                , dataIndex: 'TOTAL_ASSESSMENT'
                 , renderer:cssDefault
                 , editor: ".$comboEditor."
                 
@@ -158,7 +158,7 @@ Ext.onReady(function() {
                 , width: 120
                 , align: 'center'
                 , sortable: true
-                , dataIndex: 'ASSESSMENT_TOTAL'
+                , dataIndex: 'TOTAL_ASSESSMENT'
                 , renderer:cssDefault
                 
             ");
@@ -186,7 +186,7 @@ Ext.onReady(function() {
     if($academicObject->DISPLAY_GRADE_POINTS){
         $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssNumber, dataIndex: 'AVERAGE_TOTAL'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
     
     if($entries){
         foreach($entries as $value){
@@ -248,7 +248,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'jsonListStudentsTermAcademicPerformance'
+        ,cmd: 'jsonListAcademicPerformanceFromTerm'
         ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ";
     $OBJECT_GRID->setSaveParams("

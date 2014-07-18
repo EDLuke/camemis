@@ -61,12 +61,12 @@ class jsonAcademicPerformances extends AcademicPerformances {
         }
     }
 
-    public function jsonListStudentsMonthAcademicPerformance($encrypParams) {
+    public function jsonListAcademicPerformanceFromMonth($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getListDisplayStudentsMonthAcademicPerformance();
+        $data = $this->getDisplayListAcademicPerformanceFromMonth();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -81,11 +81,11 @@ class jsonAcademicPerformances extends AcademicPerformances {
         );
     }
 
-    public function jsonListStudentsTermAcademicPerformance($encrypParams) {
+    public function jsonListAcademicPerformanceFromTerm($encrypParams) {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplayListStudentsTermAcademicPerformance();
+        $data = $this->getDisplayListAcademicPerformanceFromTerm();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -100,12 +100,12 @@ class jsonAcademicPerformances extends AcademicPerformances {
         );
     }
 
-    public function jsonListStudentsYearAcademicPerformance($encrypParams) {
+    public function jsonListAcademicPerformanceFromYear($encrypParams) {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplayListStudentsYearAcademicPerformance();
+        $data = $this->getDisplayListAcademicPerformanceFromYear();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {

@@ -37,7 +37,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         function cssText(value, metadata, record){
             var name = record.data.NAME;
             metadata.attr = 'ext:qtip="' + name + '"';
-            return '<div style="font-weight:normal; color:#333; padding: 2px;background:#FFF;">' + value + '</div>';
+            return '<div style="font-weight:normal; color:#333; padding: 2px;">' + value + '</div>';
         }
         <?
         /**
