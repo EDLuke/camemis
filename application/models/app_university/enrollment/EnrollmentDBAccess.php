@@ -582,7 +582,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             $SAVEDATA['FROM_TRAINING'] = $studentTrainingOld->TRAINING? $studentTrainingOld->TRAINING : '';
             
             $SAVEDATA['TRANSFER_FROM'] = $studentTrainingOld->OBJECT_ID? $studentTrainingOld->OBJECT_ID : '';
-            $SAVEDATA['TRANSFER_TYPE'] = 'TRANSFER';
+            $SAVEDATA['TRANSFER_TYPE'] = 1;
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             self::dbAccess()->insert('t_student_training', $SAVEDATA);
@@ -770,8 +770,19 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                 $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
                 $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
                 $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
-                
-                $data[$i]["TYPE"] = $value->TRANSFER_TYPE;
+                if($value->TRANSFER_TYPE){
+                    switch($value->TRANSFER_TYPE){
+                        case'1':
+                            $data[$i]["TYPE"] = TRANSFER;
+                            break;
+                        case'2':
+                            $data[$i]["TYPE"] = UPGRADE;
+                            break;
+                        case'3':
+                            $data[$i]["TYPE"] = DOWNGRADE;
+                            break;   
+                    }
+                }
                 $data[$i]["CREATED_DATE"] = getShowDate($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = $value->CREATED_BY;
                 ++$i;
