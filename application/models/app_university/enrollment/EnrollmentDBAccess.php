@@ -15,6 +15,8 @@ require_once 'models/app_university/AcademicDateDBAccess.php';
 require_once 'models/app_university/student/StudentDBAccess.php';
 require_once 'models/app_university/student/StudentStatusDBAccess.php'; //@veasna
 //require_once 'models/app_university/evaluation/default/StudentSubjectAssessment.php'; 
+require_once 'models/training/TrainingDBAccess.php'; //@veasna
+require_once 'models/training/StudentTrainingDBAccess.php'; //@veasna
 
 require_once setUserLoacalization();
 
@@ -488,7 +490,301 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             "success" => true
         );
     }
+    
+    
+    ///@veasna
+    public static function jsonListStudentTraining($params, $isJson = true) {
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
+        $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
+        $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
+        $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $resultRows = StudentTrainingDBAccess::sqlStudentTraining($globalSearch, $trainingId, $studentId);
+        $data =array();
+        $i = 0;
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
+
+                $data[$i]["ID"] = $value->STUDENT_ID;
+
+                $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
+                $data[$i]["BG_COLOR"] = $value->STATUS_COLOR;
+                $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
+
+                $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
+                $data[$i]["CODE"] = setShowText($value->CODE);
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
+                    $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
+                }
+                else
+                {
+                    $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
+                }
+                $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
+                $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
+                $data[$i]["FIRSTNAME_LATIN"] = setShowText($value->FIRSTNAME_LATIN);
+                $data[$i]["LASTNAME_LATIN"] = setShowText($value->LASTNAME_LATIN);
+                $data[$i]["TRAINING_NAME"] = setShowText($value->TRAINING_NAME);
+                $data[$i]["PHONE"] = setShowText($value->PHONE);
+                $data[$i]["EMAIL"] = setShowText($value->EMAIL);
+                $data[$i]["MOBIL_PHONE"] = setShowText($value->MOBIL_PHONE);
+                $data[$i]["GENDER"] = getGenderName($value->GENDER);
+                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                $data[$i]["CREATED_DATE"] = getShowDate($value->CREATED_DATE);
+                $data[$i]["LEVEL_NAME"] = setShowText($value->LEVEL_NAME);
+                $data[$i]["TERM_NAME"] = getShowDate($value->START_DATE) . '-' . getShowDate($value->END_DATE);
+                $i++;
+            }
+        }
+
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        if ($isJson == true)
+        {
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }
+        else
+        {
+            return $data;
+        } 
+    }
+    
+    public function classTransferTraining($oldClass,$newClass,$studentId){
+        
+        $SAVEDATA = array();
+        $studentTrainingOld = StudentTrainingDBAccess::sqlStudentTrainingRow($oldClass->ID, $studentId);
+        if($studentTrainingOld){
+            $SAVEDATA['PROGRAM'] = $newClass->PROGRAM? $newClass->PROGRAM : '';
+            $SAVEDATA['LEVEL'] = $newClass->LEVEL? $newClass->LEVEL : '';
+            $SAVEDATA['TERM'] = $newClass->TERM? $newClass->TERM : '';
+            $SAVEDATA['TRAINING'] = $newClass->ID? $newClass->ID : '';    
+        }
+        $WHERE['ID = ?'] = $studentTrainingOld->OBJECT_ID;
+        self::dbAccess()->update('t_student_training', $SAVEDATA, $WHERE);
+        //$this->addStudentTrainingChangeClassHistory($studentTrainingOld,$studentId);///add student training to history
+    }
+    
+    public function addStudentTrainingChangeClassHistory($studentTrainingOldClass,$studentId){
+        $SAVEDATA = array();
+        $SAVEDATA['TRAINING_REF'] = $studentTrainingOldClass->OBJECT_ID? $studentTrainingOldClass->OBJECT_ID : '';
+        $SAVEDATA['STUDENT_ID'] = $studentId;  
+        $SAVEDATA['FROM_PROGRAM'] = $studentTrainingOldClass->PROGRAM? $studentTrainingOldClass->PROGRAM : '';
+        $SAVEDATA['FROM_LEVEL'] = $studentTrainingOldClass->LEVEL? $studentTrainingOldClass->LEVEL : '';
+        $SAVEDATA['FROM_TERM'] = $studentTrainingOldClass->TERM? $studentTrainingOldClass->TERM : '';
+        $SAVEDATA['FROM_CLASS'] = $studentTrainingOldClass->TRAINING? $studentTrainingOldClass->TRAINING : '';   
+        $SAVEDATA['TYPE'] = 'TRANSFER';   
+        
+        $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
+        $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+
+        self::dbAccess()->insert('t_student_training_history', $SAVEDATA);
+    }
+    
+    public function transferStudentTraining($params){
+        
+        $oldTrainingId = isset($params['oldTrainingId'])?addText($params['oldTrainingId']):'';
+        $newTrainingId = isset($params['newTrainingId'])?addText($params['newTrainingId']):'';
+        $studentIds = isset($params['selectionIds'])?addText($params['selectionIds']):'';
+        $selectedCount = 0;
+        $error='';
+        if($oldTrainingId){
+            $oldClass = TrainingDBAccess::findTrainingFromId($oldTrainingId);    
+        }
+        if($newTrainingId){
+            $newClass = TrainingDBAccess::findTrainingFromId($newTrainingId); 
+            foreach(explode(',',$studentIds) as $value){
+                $this->classTransferTraining($oldClass,$newClass,$value); 
+                $selectedCount++;           
+            }        
+        }else{
+            $error = 'Select New Class';    
+        }
+        
+        if($error){
+            return array(
+                "success" => true
+                , "error" => $error
+                , "selectedCount" => $selectedCount
+            );    
+        }else{
+            return array(
+                "success" => true
+                , "error" => $error
+                , "selectedCount" => $selectedCount
+            );
+        }
+    }   
+    
+    
+    public function getStudentTrainingHistory($params){
+        
+        $search = isset($params['query']) ? addText($params["query"]) : '';
+        $studentSchoolId = isset($params['STUDENT_SCHOOL_ID']) ? addText($params["STUDENT_SCHOOL_ID"]) : '';
+        $code = isset($params['CODE']) ? addText($params["CODE"]) : '';
+        $lastName = isset($params['LASTNAME']) ? addText($params["LASTNAME"]) : '';
+        $firstName = isset($params['FIRSTNAME']) ? addText($params["FIRSTNAME"]) : '';
+        $gender = isset($params['GENDER']) ? addText($params["GENDER"]) : '';
+        $startDate = isset($params['START_DATE']) ? addText($params["START_DATE"]) : '';
+        $endDate = isset($params['END_DATE']) ? addText($params["END_DATE"]) : '';
+        $choose_type = isset($params['CHOOSE_OPTION']) ? addText($params["CHOOSE_OPTION"]) : '';
+        
+        $SELECTION_A = array(
+            "TRAINING_REF"
+            , "FROM_PROGRAM"
+            , "FROM_LEVEL"
+            , "FROM_TERM"
+            , "FROM_CLASS"
+            , "TYPE"
+            , "CREATED_DATE AS CREATED_DATE"
+            , "CREATED_BY AS CREATED_BY"
+        );
+        $SELECTION_B = array(
+            "ID AS STUDENT_ID"
+            , "CODE"
+            , "FIRSTNAME"
+            , "LASTNAME"
+            , "GENDER"
+            , "DATE_BIRTH"
+            , "STATUS_SHORT"
+            , "STATUS_COLOR"
+            , "STATUS_COLOR_FONT"
+        );
+        
+        $SELECTION_C = array(
+            "PROGRAM AS CURRENT_PROGRAM"
+            , "LEVEL AS CURRENT_LEVEL"
+            , "TERM AS CURRENT_TERM"
+            , "TRAINING AS CURRENT_TRAINING"    
+        );
+        
+        $SQL = self::dbSelectAccess();
+        $SQL->from(array('A' => 't_student_training_history'), $SELECTION_A);
+        $SQL->joinLeft(array('B' => 't_student'), 'A.STUDENT_ID=B.ID', $SELECTION_B);
+        $SQL->joinLeft(array('C' => 't_student_training'),'A.TRAINING_REF=C.ID',$SELECTION_C);
+        
+        if ($choose_type) {
+            $SQL->where("A.TYPE = '" . $choose_type . "'");
+        }
+
+        if ($studentSchoolId)
+            $SQL->where("B.STUDENT_SCHOOL_ID LIKE ?","" . $studentSchoolId . "%");
+
+        if ($code)
+            $SQL->where("B.CODE LIKE ?","" . $code . "%");
+
+        if ($lastName)
+            $SQL->where("B.LASTNAME LIKE ?","" . $lastName . "%");
+
+        if ($firstName)
+            $SQL->where("B.FIRSTNAME LIKE ?","" . $firstName . "%");
+
+        if ($gender) {
+            $SQL->where("B.GENDER = '" . $gender . "'");
+        }
+
+        if ($startDate && $endDate) {
+            $SQL->where("'" . setDate2DB($startDate) . "' <= A.CREATED_DATE AND A.CREATED_DATE <= '" . setDate2DB($endDate) . "'");
+        }
+
+        if ($search) {
+            $SQL->where("B.FIRSTNAME LIKE '" . $search . "%' OR B.LASTNAME LIKE '" . $search . "%' OR B.CODE LIKE '" . $search . "%' OR B.STUDENT_SCHOOL_ID LIKE '" . $search . "%'");
+        }
+        switch (Zend_Registry::get('SCHOOL')->SORT_DISPLAY) {
+            default:
+                $SQL .= " ORDER BY B.STUDENT_SCHOOL_ID DESC";
+                break;
+            case "1":
+                $SQL .= " ORDER BY B.LASTNAME DESC";
+                break;
+            case "2":
+                $SQL .= " ORDER BY B.FIRSTNAME DESC";
+                break;
+        }
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
+            
+    }
+    
+    public function jsonAllStudentsTrainingHistory($params) {
+
+        $start = isset($params["start"]) ? (int) $params["start"] : "0";
+        $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+
+        $result = $this->getStudentTrainingHistory($params);
+
+        $data = array();
+
+        $i = 0;
+        if ($result)
+            foreach ($result as $value) {
+
+                $data[$i]["ID"] = $value->STUDENT_ID;
+                $data[$i]["CODE"] = $value->CODE;
+                $data[$i]["STUDENT_NAME"] = $value->LASTNAME . " " . $value->FIRSTNAME;
+                $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
+                $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
+                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                $data[$i]["GENDER"]= getGenderName($value->GENDER);
+                
+                if($value->CURRENT_TERM){
+                    $term=TrainingDBAccess::findTrainingFromId($value->CURRENT_TERM);
+                    $data[$i]["TERM"] = getShowDate($term->START_DATE).'-'.getShowDate($term->END_DATE);
+                }
+                if($value->CURRENT_TRAINING){
+                    $currentTraining=TrainingDBAccess::findTrainingFromId($value->CURRENT_TRAINING);
+                    $data[$i]["CURRENT_CLASS"] = setShowText($currentTraining->NAME);    
+                }
+                if($value->CURRENT_LEVEL){
+                    $currentLevel=TrainingDBAccess::findTrainingFromId($value->CURRENT_LEVEL);
+                    $data[$i]["CURRENT_LEVEL"] = setShowText($currentLevel->NAME);    
+                }
+                if($value->FROM_LEVEL){
+                    $fromLevel=TrainingDBAccess::findTrainingFromId($value->FROM_LEVEL);
+                    $data[$i]["PREVIOUS_LEVEL"] = setShowText($fromLevel->NAME);  
+                }
+                
+                if($value->FROM_CLASS){
+                    $fromTraining=TrainingDBAccess::findTrainingFromId($value->FROM_CLASS);
+                    $data[$i]["PREVIOUS_CLASS"] = setShowText($fromTraining->NAME);  
+                }
+                
+                $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->STUDENT_ID);
+                $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
+                $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
+                $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+                
+                $data[$i]["TYPE"] = $value->TYPE;
+                $data[$i]["CREATED_DATE"] = getShowDate($value->CREATED_DATE);
+                $data[$i]["CREATED_BY"] = $value->CREATED_BY;
+                ++$i;
+            }
+
+        $a = array();
+        for ($i = $start; $i < $start + $limit; $i++) {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $a
+        );
+    } 
 }
 
 ?>

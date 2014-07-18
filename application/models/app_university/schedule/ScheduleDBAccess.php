@@ -103,8 +103,11 @@ class ScheduleDBAccess {
             $data["EXTRA_START_DATE"] = showSeconds2Date($result->EXTRA_START_DATE);
             $data["EXTRA_END_DATE"] = showSeconds2Date($result->EXTRA_END_DATE);
             $data["SCHEDULE_TYPE"] = $result->SCHEDULE_TYPE;
+            $data["START_DATE"] = getShowDate($result->START_DATE);
+            $data["END_DATE"] = getShowDate($result->END_DATE);
             $data["START_TIME"] = secondToHour($result->START_TIME);
             $data["END_TIME"] = secondToHour($result->END_TIME);
+            
 
             if ($result->SUBJECT_ID)
             {
@@ -201,6 +204,9 @@ class ScheduleDBAccess {
         $roomId = isset($params["ROOM_HIDDEN"]) ? addText($params["ROOM_HIDDEN"]) : false;
         $teacherId = isset($params["TEACHER_HIDDEN"]) ? addText($params["TEACHER_HIDDEN"]) : false;
         $shared = isset($params["SHARED_SCHEDULE"]) ? addText($params["SHARED_SCHEDULE"]) : false;
+        
+        $startDate = isset($params["START_DATE"]) ? addText($params["START_DATE"]) : false;
+        $endDate = isset($params["END_DATE"]) ? addText($params["END_DATE"]) : false;
 
         $target = isset($params["target"]) ? addText($params["target"]) : false;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
@@ -229,6 +235,7 @@ class ScheduleDBAccess {
         $ERROR_ROOM_NAME = false;
         $ERROR_SUBJECT = false;
         $ERROR_EVENT = false;
+        $ERROR_START_DATE_END_DATE_TERM=false;
 
         if (!$_START_TIME)
             $ERROR_START_TIME_IS_INCORRECT = true;
@@ -256,12 +263,22 @@ class ScheduleDBAccess {
 
         if (!$academicId && $trainingId)
         {
+            $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
+            if($startDate && $endDate){
+                $checkInTerm=TrainingDBAccess::checkTrainingStartDateEnddate($startDate,$endDate,$trainingId);   
+                if(!$checkInTerm){
+                    $ERROR_START_DATE_END_DATE_TERM=true;    
+                }
+            
+            }
             $ERROR_TIME_HAS_BEEN_USED = $this->checkStartTimeANDEndTimeTraining(
                     $_START_TIME
                     , $_END_TIME
                     , $shortDay
                     , $trainingId
                     , $scheduleId
+                    , $startDate
+                    , $endDate
             );
         }
 
@@ -270,6 +287,19 @@ class ScheduleDBAccess {
         $SAVEDATA["SUBJECT_ID"] = $subjectId;
         $SAVEDATA["ROOM_ID"] = $roomId;
         $SAVEDATA["EVENT"] = $eventName;
+        if($startDate && $endDate){
+            $SAVEDATA["START_DATE"] = setDate2DB($startDate);
+            $SAVEDATA["END_DATE"] = setDate2DB($endDate);
+        }
+        if($trainingId){//@veasna
+            if($startDate && $endDate){
+            $SAVEDATA["START_DATE"] = setDate2DB($startDate);
+            $SAVEDATA["END_DATE"] = setDate2DB($endDate);
+            }else{
+            $SAVEDATA["START_DATE"] = $trainingObject->START_DATE;
+            $SAVEDATA["END_DATE"] = $trainingObject->END_DATE;    
+            }    
+        }
 
         $SAVEDATA["SHARED_SCHEDULE"] = $shared;
 
@@ -390,6 +420,12 @@ class ScheduleDBAccess {
             $SAVEDATA["ACADEMIC_ID"] = $academicId;
             $SAVEDATA["SHORTDAY"] = $shortDay;
             $SAVEDATA["TRAINING_ID"] = $trainingId;
+            if($trainingId){//@veasna
+                if($startDate)
+                $SAVEDATA["START_DATE"] = setDate2DB($startDate);
+                if($endDate)
+                $SAVEDATA["END_DATE"] = setDate2DB($endDate); 
+            }
 
             if (isset($academicObject))
             {
@@ -412,6 +448,11 @@ class ScheduleDBAccess {
                 $errors["START_TIME"] = true;
                 $errors["END_TIME"] = true;
             }
+            if($ERROR_START_DATE_END_DATE_TERM){
+                $errors["START_DATE"] = true;
+                $errors["END_DATE"] = true;    
+            }
+            
             if ($ERROR_START_TIME_IS_INCORRECT)
             {
                 $errors["START_TIME"] = true;
@@ -455,6 +496,11 @@ class ScheduleDBAccess {
             $errors["START_TIME"] = TIME_HAS_BEEN_USED;
             $errors["END_TIME"] = TIME_HAS_BEEN_USED;
         }
+        if($ERROR_START_DATE_END_DATE_TERM){
+            $errors["START_DATE"] = ERROR;
+            $errors["END_DATE"] = ERROR;    
+        }
+        
         if ($ERROR_START_TIME_IS_INCORRECT)
         {
             $errors["START_TIME"] = TIME_IS_INCORRECT;
@@ -498,7 +544,7 @@ class ScheduleDBAccess {
         }
     }
 
-    public static function loadSQLClassEvents($startTime, $endTime, $shortDay, $chooseId, $term, $single = true, $type = false, $teacherId = false)
+    public static function loadSQLClassEvents($startTime, $endTime, $shortDay, $chooseId, $term, $single = true, $type = false, $teacherId = false,$startDate=false,$endDate=false)
     {
 
         switch (strtoupper($type))
@@ -510,6 +556,10 @@ class ScheduleDBAccess {
             case "TRAINING":
                 $params["trainingId"] = $chooseId;
                 $params["target"] = "TRAINING";
+                if($startDate)
+                $params["startDate"]=$startDate;
+                if($endDate)
+                $params["endDate"]=$endDate;
                 break;
             case "CREDIT_SCHOOLYEAR":
                 $params["academicId"] = '';
@@ -570,6 +620,10 @@ class ScheduleDBAccess {
 
         $starttime = isset($params["starttime"]) ? addText($params["starttime"]) : "";
         $endtime = isset($params["endtime"]) ? addText($params["endtime"]) : "";
+        
+        $startDate = isset($params["startDate"]) ? $params["startDate"] : "";//@veasna
+        $endDate = isset($params["endDate"]) ? $params["endDate"] : "";//@veasna
+        $checkDay = isset($params["checkDay"]) ? $params["checkDay"] : "";//@veasna
 
         $target = isset($params["target"]) ? addText($params["target"]) : "GENERAL";
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
@@ -676,6 +730,15 @@ class ScheduleDBAccess {
             if ($trainingId)
             {
                 $SQL->where("A.TRAINING_ID='" . $trainingId . "'");
+                if($startDate){
+                    $SQL->where("A.START_DATE='" . $startDate . "'");    
+                }
+                if($endDate){
+                    $SQL->where("A.END_DATE='" . $endDate . "'");    
+                }
+                if($checkDay){
+                    $SQL->where("A.START_DATE >='" . $checkDay . "' AND A.END_DATE >='".$checkDay."'");        
+                }
             }
             else
             {
@@ -1564,19 +1627,22 @@ class ScheduleDBAccess {
         return $ERROR_TIME_HAS_BEEN_USED;
     }
 
-    public function checkStartTimeANDEndTimeTraining($starttime, $endtime, $shortday, $trainingId, $scheduleId = false)
+    public function checkStartTimeANDEndTimeTraining($starttime, $endtime, $shortday, $trainingId, $scheduleId = false,$startDate=false,$endDate=false)
     {
 
         $facette = self::findScheduleFromGuId($scheduleId);
-
+        $traininObject = TrainingDBAccess::findTrainingFromId($trainingId);//@veasna
         $ERROR_TIME_HAS_BEEN_USED = false;
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_schedule'), array("*"));
         $SQL->where("START_TIME <=" . $starttime . " AND END_TIME >=" . $endtime . "");
-        $SQL->where("TERM= '" . $term . "'");
+        //$SQL->where("TERM= '" . $term . "'");
         $SQL->where("SHORTDAY= '" . $shortday . "'");
         $SQL->where("TRAINING_ID= '" . $trainingId . "'");
+        if($traininObject->SCHEDULE_SETTING){
+            $SQL->where("START_DATE <='" . setDate2DB($startDate) . "' AND END_DATE >='" . setDate2DB($endDate) . "'");                            
+        }
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 

@@ -580,7 +580,7 @@ class ScheduleController extends Zend_Controller_Action {
                 $jsondata = $this->DB_SCHEDULE->loadClassEvents($this->REQUEST->getPost());
                 break;
                 
-            case "dataScheduleDayTrainingSetting":
+            case "dataScheduleDayTrainingSetting"://@veasna 
                 $jsondata = $this->DB_SCHEDULE_DAY_SETTING->dataScheduleDayTrainingSetting($this->REQUEST->getPost());
                 break;
 

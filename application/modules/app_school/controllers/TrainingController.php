@@ -534,6 +534,16 @@ class TrainingController extends Zend_Controller_Action {
             case "jsonListStudentsClassPerformanceTraining":
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonListStudentsClassPerformanceTraining($this->REQUEST->getPost());
                 break;
+            
+            case "selectComboLevelTraining":
+                $jsondata = $this->DB_TRAINING->selectComboLevelTraining($this->REQUEST->getPost());
+                break;    
+            case "selectComboTermTraining":
+                $jsondata = $this->DB_TRAINING->selectComboTermTraining($this->REQUEST->getPost());
+                break;    
+            case "selectComboClassTraining":
+                $jsondata = $this->DB_TRAINING->selectComboClassTraining($this->REQUEST->getPost());
+                break;
         }
 
         if (isset($jsondata))
@@ -630,6 +640,7 @@ class TrainingController extends Zend_Controller_Action {
             case "jsonActionDeleteAllScoresSubjectTraining":
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteAllScoresSubjectTraining($this->REQUEST->getPost());
                 break;
+            
         }
 
         if (isset($jsondata))

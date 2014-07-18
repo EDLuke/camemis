@@ -22,7 +22,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
     
-    var choosedate = '<?=date('m-d-Y');?>';
+    var choosedate = '<?=date('Y-m-d');?>';
     Ext.onReady(function() {
         var tabs =  new Ext.TabPanel({
             autoTabs:true

@@ -44,6 +44,20 @@ class EnrollmentController extends Zend_Controller_Action {
     }
     
     //@veasna
+    
+    public function trainingclasstransferAction(){
+        $this->_helper->viewRenderer("classtransfertraining/index");
+    }
+    public function trainingtransferAction(){
+        $this->_helper->viewRenderer("classtransfertraining/traininglist");    
+    }
+    public function transfertrainingAction(){
+        $this->view->objectId = $this->_getParam('objectId');
+        $this->_helper->viewRenderer("classtransfertraining/transfertraining");    
+    }
+    public function traininghistorytransferAction(){
+        $this->_helper->viewRenderer("classtransfertraining/historytransfer");    
+    }
     public function historytransferAction(){
         
     }
@@ -95,6 +109,15 @@ class EnrollmentController extends Zend_Controller_Action {
             case "jsonAllStudentsHistory":
                 $jsondata = EnrollmentDBAccess::jsonAllStudentsHistory($this->REQUEST->getPost());
                 break;
+            //@veasna
+            case "jsonListStudentTraining":
+                $jsondata = $this->DB_ENROLLMENT->jsonListStudentTraining($this->REQUEST->getPost());
+                break;
+            
+            case "jsonAllStudentsTrainingHistory":
+                $jsondata = $this->DB_ENROLLMENT->jsonAllStudentsTrainingHistory($this->REQUEST->getPost());
+                break;
+            
         }
 
         if (isset($jsondata))
@@ -115,6 +138,9 @@ class EnrollmentController extends Zend_Controller_Action {
             //
             case "deletestudentFromNewGradeSchoolyear":
                 $jsondata = EnrollmentDBAccess::deletestudentFromNewGradeSchoolyear($this->REQUEST->getPost());
+                break;
+            case "transferStudentTraining"://@veasna
+                $jsondata = $this->DB_ENROLLMENT->transferStudentTraining($this->REQUEST->getPost());
                 break;
         }
 

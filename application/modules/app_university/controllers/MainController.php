@@ -450,9 +450,20 @@ class MainController extends Zend_Controller_Action {
         $CLASS_TRANSFER = "{
             text: '" . CLASS_TRANSFER . "'
             ,iconCls:'icon-graduate'
-            ,handler: function(){
-                addTab('ENROLLMENT_EXAMINATION','" . ACADEMIC_MODUL . " &raquo; " . CLASS_TRANSFER . "','/enrollment/');
+            ,menu:[{
+                text: '" . TRADITIONAL_EDUCATION_SYSTEM . "'
+                ,iconCls:'icon-application_cascade'
+                ,handler: function(){
+                    addTab('ENROLLMENT_EXAMINATION','" . TRADITIONAL_EDUCATION_SYSTEM . " &raquo; " . CLASS_TRANSFER . "','/enrollment/');
+                }
+            },{
+                text: '" . TRAINING_PROGRAMS . "'
+                ,iconCls:'icon-application_double'
+                ,handler: function(){
+                    addTab('TRAINING_PROGRAMS','" . TRAINING_PROGRAMS . " &raquo; " . CLASS_TRANSFER . "','/enrollment/trainingclasstransfer');
+                }
             }
+        ]
         } ";
 
         ////////////////////////////////////////////////////////////////////////

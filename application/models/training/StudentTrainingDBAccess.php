@@ -228,6 +228,10 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SELECT_B = array(
             'ID AS OBJECT_ID'
             , 'SCHOLARSHIP AS SCHOLARSHIP'
+            , 'PROGRAM'
+            , 'LEVEL'
+            , 'TERM'
+            , 'TRAINING'
         );
 
         $SELECT_C = array(
@@ -363,7 +367,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $SQL .= " ORDER BY A.FIRSTNAME DESC";
                 break;
         }
-        //error_log($SQL->__toString());
+        //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 

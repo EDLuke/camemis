@@ -20,6 +20,7 @@ require_once 'models/app_university/schedule/TeacherScheduleDBAccess.php';
 require_once 'models/app_university/schedule/TeachingSessionDBAccess.php';
 require_once 'models/app_university/schedule/CopyScheduleDBAccess.php';
 require_once 'models/app_university/schedule/ImportScheduleDBAccess.php';
+require_once 'models/app_university/schedule/ScheduleDaySettingData.php';//@veasna
 require_once 'models/app_university/schedule/TeachingSessionDBAccess.php';
 
 class ScheduleController extends Zend_Controller_Action {
@@ -44,6 +45,8 @@ class ScheduleController extends Zend_Controller_Action {
         }
 
         $this->DB_TRAINING = TrainingDBAccess::getInstance();
+        
+        $this->DB_SCHEDULE_DAY_SETTING = new ScheduleDaySettingData();
 
         $this->DB_ACADEMIC = AcademicDBAccess::getInstance();
 
@@ -591,7 +594,11 @@ class ScheduleController extends Zend_Controller_Action {
             case "loadClassEvents":
                 $jsondata = $this->DB_SCHEDULE->loadClassEvents($this->REQUEST->getPost());
                 break;
-
+                
+            case "dataScheduleDayTrainingSetting"://@veasna 
+                $jsondata = $this->DB_SCHEDULE_DAY_SETTING->dataScheduleDayTrainingSetting($this->REQUEST->getPost());
+                break;
+                
             case "dayEventList":
                 $jsondata = $this->DB_DAY_SCHEDULE->dayEventList($this->REQUEST->getPost());
                 break;

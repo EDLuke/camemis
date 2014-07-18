@@ -92,6 +92,35 @@ Ext.onReady(function() {
         }]
     }";
     
+    $SCHEDULE_SETTING = "
+    {
+        title: 'Schedule Setting'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {
+                    xtype:'radiogroup'
+                    ,fieldLabel : 'Schedule Setting'
+                    ,items      : [
+                        { boxLabel : 'Week Setting', name : 'SCHEDULE_SETTING', inputValue : 0 },
+                        { boxLabel : 'Day Setting', name : 'SCHEDULE_SETTING', inputValue : 1 },
+                        
+                    ]   
+                }
+            ]
+        }]
+    }
+    ";
+    
     $DEFINE_TIME_BLOCKS = "
     {
         title: '".DEFINE_TIME_BLOCKS."'
@@ -303,6 +332,7 @@ Ext.onReady(function() {
     
     $ITEMS = $DETAIL_INFORMATION;
     $ITEMS .= ",".$EVALUATION_TYPE;
+    $ITEMS .= ",".$SCHEDULE_SETTING;
     $ITEMS .= ",".$DEFINE_TIME_BLOCKS;
     $ITEMS .= ",".$WORKING_DAYS;
     $ITEMS .= ",".$REGISTRATION;

@@ -745,6 +745,117 @@ class TrainingDBAccess {
             }
         }
     }
+    
+    public function selectTraining($params){
+        
+        $program = isset($params['program'])?addText($params['program']):'';
+        $level = isset($params['level'])?addText($params['level']):'';
+        $term = isset($params['term'])?addText($params['term']):'';
+        $type = isset($params['type'])?addText($params['type']):'';
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_training", array("*"));
+        if($type){
+            switch(strtoupper($type)){
+                case 'LEVEL':
+                    $SQL->where("OBJECT_TYPE=?",'LEVEL');
+                    if($program)
+                    $SQL->where("PARENT=?",$program);
+                    break;
+                case 'TERM':
+                    $SQL->where("OBJECT_TYPE=?",'TERM');
+                    if($level)
+                    $SQL->where("LEVEL=?",$level);
+                    $SQL->where("START_DATE<NOW() AND NOW()<END_DATE");
+                    $SQL->Orwhere("START_DATE>NOW() AND NOW()<END_DATE");
+                    $SQL->group("START_DATE");
+                    $SQL->group("END_DATE");
+                    break;
+                case 'CLASS':
+                    $SQL->where("OBJECT_TYPE=?",'CLASS');
+                    if($term)
+                    $SQL->where("TERM=?",$term);
+                    break;     
+            }
+        }
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;   
+    }
+    
+    public function selectComboLevelTraining($params)
+    {
+        $params['type']='LEVEL';
+        $result = $this->selectTraining($params);
+        $data = array();
+        $i = 0;
+
+        $data[$i]["ID"] = "0";
+        $data[$i]["NAME"] = "[---]";
+        if ($result)
+            foreach ($result as $value)
+            {
+                $data[$i + 1]["ID"] = $value->ID;
+                $data[$i + 1]["NAME"] = $value->NAME;
+
+                $i++;
+            }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $data
+        );
+    }
+    
+    public function selectComboTermTraining($params)
+    {
+        $params['type']='TERM';
+        $result = $this->selectTraining($params);
+        $data = array();
+        $i = 0;
+
+        $data[$i]["ID"] = "0";
+        $data[$i]["NAME"] = "[---]";
+        if ($result)
+            foreach ($result as $value)
+            {
+                $data[$i + 1]["ID"] = $value->ID;
+                $data[$i + 1]["NAME"] = getShowDate($value->START_DATE) . " - " . getShowDate($value->END_DATE);
+
+                $i++;
+            }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $data
+        );
+    }
+    
+    public function selectComboClassTraining($params)
+    {
+        $params['type']='CLASS';
+        $result = $this->selectTraining($params);
+        $data = array();
+        $i = 0;
+
+        $data[$i]["ID"] = "0";
+        $data[$i]["NAME"] = "[---]";
+        if ($result)
+            foreach ($result as $value)
+            {
+                $data[$i + 1]["ID"] = $value->ID;
+                $data[$i + 1]["NAME"] = $value->NAME;
+
+                $i++;
+            }
+
+        return array(
+            "success" => true
+            , "totalCount" => sizeof($data)
+            , "rows" => $data
+        );
+    }
 
 }
 
