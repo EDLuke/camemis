@@ -27,6 +27,9 @@ $facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
 
 if(!$facette) {header("Location: /main/permission/");exit;}
 
+$setParams = "";
+$setParams .="setId=".$setId."";
+
 print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 
@@ -37,10 +40,52 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
+    $winScript = "";
+    $winScript .= "var fp = new Ext.FormPanel({";
+        $winScript .= "labelAlign: 'left'";
+        $winScript .= ",border: false";
+        $winScript .= ",width:400";
+        $winScript .= ",autoHeight: true";
+        $winScript .= ",title: ''";
+        $winScript .= ",labelWidth:120";
+        $winScript .= ",defaults: {";
+            $winScript .= "anchor: '85%'";
+            $winScript .= ",allowBlank: false";
+            $winScript .= ",msgTarget: 'side'";
+        $winScript .= "}";
+        $winScript .= ",items:[{";
+            $winScript .= "xtype:'datefield'";
+            $winScript .= ",fieldLabel:'".DATE."'";
+            $winScript .= ",name:'MODIFY_DATE'";
+            $winScript .= ",value:''";
+            $winScript .= ",format:'<?=setExtDatafieldFormat()?>'";
+        $winScript .= "}]";
+    $winScript .= "});";
+    $winScript .= "var win = new Ext.Window({";
+        $winScript .= "title:'".MODIFY_DATE."',bodyStyle: 'padding:15px;background:#FFF'";
+        $winScript .= ",plain: false,closable:false,modal:true,width:450,height:150,items: fp";
+        $winScript .= ",tbar: ['->',{";
+            $winScript .= "text: '".CLOSE."',iconCls:'icon-cancel',handler: function(){win.hide();}";
+        $winScript .= "},'-',{";
+            $winScript .= "text:'".SAVE."',iconCls:'icon-page_save'";
+            $winScript .= ",handler:function(){";
+                $winScript .= "fp.getForm().submit({";
+                    $winScript .= "url:'/evaluation/jsonsave/'";
+                    $winScript .= ",scope:this";
+                    $winScript .= ",success: function(response, options) {";
+                        $winScript .= "window.location.href='".$_SERVER["REQUEST_URI"]."';";
+                    $winScript .= "}";
+                    $winScript .= ",params: {cmd:'jsonAcitonSubjectAssignmentModifyScoreDate',camIds:'".$this->urlEncryp->encryptedGet($setParams)."'}";
+                $winScript .= "});";
+            $winScript .= "}";
+        $winScript .= "}]";
+    $winScript .= "});";
+    
+    echo $winScript;
+    
     $DETAIL_ITEMS = "[";
-        $DETAIL_ITEMS .= "{".CamemisField::Displayfield("NAME", NAME)."}";
-        $DETAIL_ITEMS .= ",{".CamemisField::Displayfield("SHORT", SHORT)."}";
-        $DETAIL_ITEMS .= ",{".CamemisField::Displayfield("SCORE_INPUT_DATE", DATE)."}";
+        $DETAIL_ITEMS .= "{".CamemisField::Displayfield("SHORT", SHORT)."}";
+        $DETAIL_ITEMS .= ",{".CamemisField::Displayfield("NAME", NAME)."}";
     $DETAIL_ITEMS .= "]";
     
     $DETAIL_INFORMATION = "
@@ -55,6 +100,27 @@ Ext.onReady(function() {
             ,autoHeight:true
             ,bodyStyle: 'padding:10px'
             ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $MODIFY_DATE = "
+    {
+        title: '".DATE."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,tbar:['->',{
+            text:'".MODIFY_DATE."'
+            ,iconCls: 'icon-lightning_add'
+            ,handler:function(){if (win) win.show(win);}
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".CamemisField::Displayfield("SCORE_INPUT_DATE", DATE)."}]
         }]
     }
     ";
@@ -81,6 +147,7 @@ Ext.onReady(function() {
         ,bodyStyle: 'padding:0px'
         ,items: [
             ".$DETAIL_INFORMATION."
+            ,".$MODIFY_DATE."
             ,".$DESCRIPTION."
         ]
     ";
