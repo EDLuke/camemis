@@ -746,7 +746,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         $data[$i]['iconCls'] = "icon-flag_red";
                         break;
                     case 2:
-                        $data[$i]['iconCls'] = "icon-flag_white";
+                        $data[$i]['iconCls'] = "icon-flag_yellow";
                         break;
                 }
 
@@ -908,7 +908,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                                 $data[$i]['iconCls'] = "icon-flag_red";
                                 break;
                             case 2:
-                                $data[$i]['iconCls'] = "icon-flag_white";
+                                $data[$i]['iconCls'] = "icon-flag_yellow";
                                 break;
                         }
                     }

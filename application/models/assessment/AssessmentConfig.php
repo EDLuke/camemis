@@ -8,76 +8,96 @@
 
 class AssessmentConfig {
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function getGradePointsById($Id) {
+    public static function getGradePointsById($Id)
+    {
         return self::makeGrade($Id, "GRADE_POINTS");
     }
 
-    public static function makeGrade($Id, $type = false) {
+    public static function makeGrade($Id, $type = false)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("ID = ?", $Id);
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
-        if ($type) {
+        if ($type)
+        {
             return $result ? $result->$type : "---";
-        } else {
+        }
+        else
+        {
             return $result ? $result->DESCRIPTION : "---";
         }
     }
 
-    public static function getSQLGradingScale($score, $scoreType, $qualificationType, $all) {
+    public static function getSQLGradingScale($score, $scoreType, $qualificationType, $all)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '" . $scoreType . "'");
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
 
-        if ($all) {
+        if ($all)
+        {
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchAll($SQL);
-        } else {
+        }
+        else
+        {
             $SQL->where("LETTER_GRADE = '" . $score . "'");
             //error_log($SQL->__toString());
             return self::dbAccess()->fetchRow($SQL);
         }
     }
 
-    public static function findGradingAlphabet($score, $qualificationType) {
+    public static function findGradingAlphabet($score, $qualificationType)
+    {
         $result = self::getSQLGradingScale($score, 2, $qualificationType, false);
         return $result ? $result->NUMERIC_GRADE : "";
     }
 
-    public static function findAlphabetGradingScaleId($score, $qualificationType) {
+    public static function findAlphabetGradingScaleId($score, $qualificationType)
+    {
 
         $result = self::getSQLGradingScale($score, 2, $qualificationType, false);
         return $result ? $result->ID : "";
     }
 
-    public static function findGradingScaleId($score, $qualificationType) {
+    public static function findGradingScaleId($score, $qualificationType)
+    {
 
         $result = self::getSQLGradingScale($score, 1, $qualificationType, true);
 
         $make = "?";
-        if ($result) {
-            foreach ($result as $value) {
-                if (number_is_between($score, $value->SCORE_MIN, $value->SCORE_MAX)) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                if (number_is_between($score, $value->SCORE_MIN, $value->SCORE_MAX))
+                {
                     $make = $value->ID;
                 }
             }
         }
 
-        if ($score) {
+        if ($score)
+        {
             return $make;
-        } else {
+        }
+        else
+        {
             return "";
         }
     }
 
-    public static function findGrading($score, $qualificationType) {
+    public static function findGrading($score, $qualificationType)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
@@ -87,34 +107,47 @@ class AssessmentConfig {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $make = "?";
-        if ($result) {
-            foreach ($result as $value) {
-                if (number_is_between($score, $value->SCORE_MIN, $value->SCORE_MAX)) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                if (number_is_between($score, $value->SCORE_MIN, $value->SCORE_MAX))
+                {
                     $make = $value->DESCRIPTION;
                 }
             }
         }
 
-        if ($score) {
+        if ($score)
+        {
             return $make;
-        } else {
+        }
+        else
+        {
             return "";
         }
     }
 
-    public static function findRank($scoreList, $checkSchore) {
+    public static function findRank($scoreList, $checkSchore)
+    {
 
         $position = 0;
         $result = count($scoreList);
 
-        if (is_numeric($checkSchore)) {
+        if (is_numeric($checkSchore))
+        {
 
-            if ($scoreList) {
+            if ($scoreList)
+            {
                 rsort($scoreList);
-                if ($scoreList) {
-                    foreach ($scoreList as $key => $value) {
-                        if ($key) {
-                            if ($value == $checkSchore) {
+                if ($scoreList)
+                {
+                    foreach ($scoreList as $key => $value)
+                    {
+                        if ($key)
+                        {
+                            if ($value == $checkSchore)
+                            {
                                 $position = $key;
                                 break;
                             }
@@ -123,7 +156,8 @@ class AssessmentConfig {
                 }
 
                 $ranks = array(1);
-                for ($i = 1; $i < count($scoreList); $i++) {
+                for ($i = 1; $i < count($scoreList); $i++)
+                {
                     if ($scoreList[$i] != $scoreList[$i - 1])
                         $ranks[$i] = $i + 1;
                     else
@@ -132,14 +166,16 @@ class AssessmentConfig {
 
                 $result = isset($ranks[$position]) ? $ranks[$position] : count($scoreList);
             }
-        }else {
+        }else
+        {
             $result = "---";
         }
 
         return $result;
     }
 
-    public static function comboGPA($academicObject) {
+    public static function comboGPA($academicObject)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
@@ -150,9 +186,11 @@ class AssessmentConfig {
 
         $data[0] = "{chooseValue: '0', chooseDisplay: '---'}";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->GPA . "'}";
                 $i++;
             }
@@ -160,7 +198,8 @@ class AssessmentConfig {
         return implode(",", $data);
     }
 
-    public static function comboGradingSystem($scoreType, $academicObject) {
+    public static function comboGradingSystem($scoreType, $academicObject)
+    {
 
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
 
@@ -174,9 +213,11 @@ class AssessmentConfig {
 
         $data[0] = "{chooseValue: '0', chooseDisplay: '---'}";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->$GRADING_TYPE . "'}";
                 $i++;
             }
@@ -184,7 +225,8 @@ class AssessmentConfig {
         return implode(",", $data);
     }
 
-    public static function comboScoreAlphabet($qualificationType) {
+    public static function comboScoreAlphabet($qualificationType)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '2'");
@@ -195,9 +237,11 @@ class AssessmentConfig {
 
         $data[0] = "{chooseValue: '0', chooseDisplay: '---'}";
 
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i + 1] = "{chooseValue: '" . $value->ID . "', chooseDisplay: '" . $value->LETTER_GRADE . "'}";
                 $i++;
             }
@@ -205,7 +249,8 @@ class AssessmentConfig {
         return implode(",", $data);
     }
 
-    public static function calculateGradingScale($checkValue, $qualificationType) {
+    public static function calculateGradingScale($checkValue, $qualificationType)
+    {
 
         $output = "";
         $SQL = self::dbAccess()->select();
@@ -213,9 +258,12 @@ class AssessmentConfig {
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
-                if ($checkValue >= $value->SCORE_MIN && $checkValue <= $value->SCORE_MAX) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                if ($checkValue >= $value->SCORE_MIN && $checkValue <= $value->SCORE_MAX)
+                {
                     $output = $value->ID;
                     break;
                 }
@@ -225,6 +273,133 @@ class AssessmentConfig {
         return $output;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $monthyear, $isGroupBy)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT", "COEFF_VALUE"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        if ($term)
+            $SQL->where("B.TERM = ?", $term);
+        if ($monthyear)
+        {
+            $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
+            $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
+            $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
+        }
+        if ($isGroupBy)
+            $SQL->group("B.ASSIGNMENT_ID");
+        $SQL->order('A.SORTKEY ASC');
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchAll($SQL);
+    }
+
+    public static function getListAssignmentCategoryScoreDate($academicId, $subjectId, $term, $monthyear)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), array("INCLUDE_IN_EVALUATION"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        if ($term)
+            $SQL->where("B.TERM = ?", $term);
+        if ($monthyear)
+        {
+            $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
+            $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
+            $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
+        }
+        $SQL->group("A.INCLUDE_IN_EVALUATION");
+        $SQL->order('A.SORTKEY ASC');
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        $data = array();
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                $obj = new stdClass();
+                $obj->ID = $value->INCLUDE_IN_EVALUATION;
+                switch ($value->INCLUDE_IN_EVALUATION)
+                {
+                    case 1:
+                        $obj->TITLE = MONTHLY;
+                        break;
+                    case 2:
+                        $obj->TITLE = MIDDLE_SEMESTER;
+                        break;
+                    case 3:
+                        $obj->TITLE = SEMESTER;
+                        break;
+                }
+
+                $data[] = $obj;
+            }
+        }
+
+        return $data;
+    }
+
+    public static function getMonthCoutScoreDate($assignmentId, $academicId, $subjectId, $monthyear)
+    {
+        $SQL = UserAuth::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
+        $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
+        $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
+        $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
+        $result = UserAuth::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
+    public static function getTermCountScoreDate($assignmentId, $academicId, $subjectId, $term)
+    {
+        $SQL = UserAuth::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        $SQL->where("B.TERM = ?", $term);
+        $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
+        $result = UserAuth::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
+    public static function getMonthCoutCategoryScoreDate($category, $academicId, $subjectId, $monthyear)
+    {
+        $SQL = UserAuth::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
+        $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
+        $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
+        $SQL->where("A.INCLUDE_IN_EVALUATION = ?", $category);
+        $result = UserAuth::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
+    public static function getTermCountCategoryScoreDate($category, $academicId, $subjectId, $term)
+    {
+        $SQL = UserAuth::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.CLASS_ID = ?", $academicId);
+        $SQL->where("B.TERM = ?", $term);
+        $SQL->where("A.INCLUDE_IN_EVALUATION = ?", $category);
+        $result = UserAuth::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 }
 
 ?>

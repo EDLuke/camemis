@@ -149,25 +149,33 @@ switch($subjectObject->SCORE_TYPE){
         ";
     break;
 }
-////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+//CATEGORY OF ROW...
+////////////////////////////////////////////////////////////////////////////////
+$CATEGORY_ROW = "";
+$CATEGORY_ROW .= "{header: '<b>".PERSONAL_INFORMATION."</b>', colspan: 4, align: 'center'}";
+$CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 3, align: 'center'}";
+$listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
+        $academicId
+        , $subjectId
+        , $term
+        , false);
+if($listAssignmentCategory){
+    foreach($listAssignmentCategory as $value){
+        $colspan = AssessmentConfig::getTermCountCategoryScoreDate($value->ID, $academicId, $subjectId, $term);
+        $CATEGORY_ROW .= ",{header: '<b>".$value->TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//GROUP OF ROW...
+////////////////////////////////////////////////////////////////////////////////
 $setParams = "";
 $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$this->academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
-
-function getColspan($assignmentId, $academicId, $subjectId, $term){
-    $SQL = UserAuth::dbAccess()->select();
-    $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
-    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
-    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-    $SQL->where("B.CLASS_ID = ?", $academicId);
-    $SQL->where("B.TERM = ?", $term);
-    $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
-    $result = UserAuth::dbAccess()->fetchRow($SQL);
-    return $result ? $result->C : 0;
-}
 
 $GROUP_ROW = "";
 $GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
@@ -187,7 +195,7 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, true);
+    $listGroupAssignments = AssessmentConfig::getListAssignmentScoreDate($academicId, $subjectId, $term, false, true);
     if($listGroupAssignments){
         foreach($listGroupAssignments as $value){
 
@@ -201,7 +209,7 @@ if(!$academicObject->EVALUATION_OPTION){
                 break;
             }
 
-            $colspan = getColspan($value->ID, $academicId, $subjectId, $term);
+            $colspan =  AssessmentConfig::getTermCountScoreDate($value->ID, $academicId, $subjectId, $term);
             $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
         }
     }
@@ -264,7 +272,7 @@ switch($subjectObject->SCORE_TYPE){
 }
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, $term, false, false);
+    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicId, $subjectId, $term, false, false);
     if($listAssignments){
         foreach($listAssignments as $value){
 
@@ -317,9 +325,11 @@ Ext.onReady(function() {
     
     $html = "";
     
-    $html .= "var fields = [],columns = [],groupRow = [];";
+    $html .= "var fields = [],columns = [],categoryGroupRow = [],groupRow = [];";
+    
+    $html .="var categoryGroupRow = [".$CATEGORY_ROW."];";
     $html .= "var groupRow = [".$GROUP_ROW."];";
-    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [groupRow]});";
+    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [categoryGroupRow,groupRow]});";
     $html .= "var fields =  [".$FIELDS."];";
     $html .= "var columns = [".$COLUMS."];";
     
@@ -396,7 +406,7 @@ Ext.onReady(function() {
             $html .= ",disabled:true";
             $html .= ",handler: function(){}";
         $html .= "";
-        
+            
         $html .= "},'->','<b>".$SELECTED_MENU."</b>']";
         
         $html .= ",clicksToEdit:1";

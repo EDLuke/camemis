@@ -330,7 +330,7 @@ class SubjectDBAccess {
                                         $data[$i]['text'] = "(" . $value->SHORT . ")" . " - " . setShowText($value->NAME);
                                         $data[$i]['cls'] = "nodeTextBlue";
                                         $data[$i]['leaf'] = true;
-                                        $data[$i]['iconCls'] = "icon-flag_white";
+                                        $data[$i]['iconCls'] = "icon-flag_yellow";
                                         $i++;
                                     }
                                 }
@@ -351,7 +351,7 @@ class SubjectDBAccess {
                                     $data[$i]['text'] = "(" . $value->SHORT . ")" . " - " . setShowText($value->NAME);
                                     $data[$i]['cls'] = "nodeTextBlue";
                                     $data[$i]['leaf'] = true;
-                                    $data[$i]['iconCls'] = "icon-flag_white";
+                                    $data[$i]['iconCls'] = "icon-flag_yellow";
 
                                     if ($staffId)
                                     {

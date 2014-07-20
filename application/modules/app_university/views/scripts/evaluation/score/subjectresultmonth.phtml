@@ -119,20 +119,27 @@ switch($subjectObject->SCORE_TYPE){
         ";
     break;
 }
-////////////////////////////////////////////////////////////////////////////////
-function getColspan($assignmentId, $academicId, $subjectId, $monthyear){
-    $SQL = UserAuth::dbAccess()->select();
-    $SQL->from(Array('A' => 't_assignment'), Array("C" => "COUNT(*)"));
-    $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
-    $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-    $SQL->where("B.CLASS_ID = ?", $academicId);
-    $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
-    $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
-    $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
-    $result = UserAuth::dbAccess()->fetchRow($SQL);
-    return $result ? $result->C : 0;
-}
 
+////////////////////////////////////////////////////////////////////////////////
+//CATEGORY OF ROW...
+////////////////////////////////////////////////////////////////////////////////
+$CATEGORY_ROW = "";
+$CATEGORY_ROW .= "{header: '<b>".PERSONAL_INFORMATION."</b>', colspan: 4, align: 'center'}";
+$CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 3, align: 'center'}";
+$listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
+        $academicId
+        , $subjectId
+        , false
+        , $monthyear);
+if($listAssignmentCategory){
+    foreach($listAssignmentCategory as $value){
+        $colspan = AssessmentConfig::getMonthCoutCategoryScoreDate($value->ID, $academicId, $subjectId, $monthyear);
+        $CATEGORY_ROW .= ",{header: '<b>".$value->TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
+    }
+}
+////////////////////////////////////////////////////////////////////////////////
+//GROUP OF ROW...
+////////////////////////////////////////////////////////////////////////////////
 $GROUP_ROW = "";
 $GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
 switch($subjectObject->SCORE_TYPE){
@@ -151,7 +158,12 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listGroupAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, true);
+    $listGroupAssignments = AssessmentConfig::getListAssignmentScoreDate(
+            $academicId
+            , $subjectId
+            , false
+            , $monthyear
+            , true);
     if($listGroupAssignments){
         foreach($listGroupAssignments as $value){
 
@@ -165,7 +177,7 @@ if(!$academicObject->EVALUATION_OPTION){
                 break;
             }
 
-            $colspan = getColspan($value->ID, $academicId, $subjectId, $monthyear);
+            $colspan = AssessmentConfig::getMonthCoutScoreDate($value->ID, $academicId, $subjectId, $monthyear);
             $GROUP_ROW .= ",{header: '<b>".$TITLE."</b>', colspan: ".$colspan.", align: 'center'}";  
         }
     }
@@ -228,7 +240,7 @@ switch($subjectObject->SCORE_TYPE){
 }
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listAssignments = AssignmentDBAccess::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, false);
+    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, false);
     if($listAssignments){
         foreach($listAssignments as $value){
 
@@ -281,9 +293,11 @@ Ext.onReady(function() {
     
     $html = "";
     
-    $html .= "var fields = [],columns = [],groupRow = [];";
+    $html .= "var fields = [],columns = [],categoryGroupRow = [],groupRow = [];";
+    
+    $html .="var categoryGroupRow = [".$CATEGORY_ROW."];";
     $html .= "var groupRow = [".$GROUP_ROW."];";
-    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [groupRow]});";
+    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [categoryGroupRow,groupRow]});";
     $html .= "var fields =  [".$FIELDS."];";
     $html .= "var columns = [".$COLUMS."];";
     
@@ -359,7 +373,6 @@ Ext.onReady(function() {
                 $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
             $html .= "";
         }
-        
         //Task for Ratha
         $html .= "},'-',{";
             $html .= "text: '<b>".EXPORT_TO_EXCEL."</b>'";

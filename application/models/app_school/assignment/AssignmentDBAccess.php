@@ -691,7 +691,7 @@ class AssignmentDBAccess {
                             $data[$i]['iconCls'] = "icon-flag_red";
                             break;
                         case 2:
-                            $data[$i]['iconCls'] = "icon-flag_white";
+                            $data[$i]['iconCls'] = "icon-flag_yellow";
                             break;
                     }
                 }
@@ -795,28 +795,6 @@ class AssignmentDBAccess {
         $WHERE[] = "ASSIGNMENT_ID = '" . $facette->ID . "'";
         self::dbAccess()->update('t_student_assignment', $SAVEDATA, $WHERE);
     }
-
-    public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $monthyear, $isGroupBy)
-    {
-        $SQL = self::dbAccess()->select();
-        $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT", "COEFF_VALUE"));
-        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
-        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-        $SQL->where("B.CLASS_ID = ?", $academicId);
-        if ($term)
-            $SQL->where("B.TERM = ?", $term);
-        if ($monthyear)
-        {
-            $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
-            $SQL->where("YEAR(B.SCORE_INPUT_DATE) = ?", getYearFromMonthYear($monthyear) * 1);
-        }
-        if ($isGroupBy)
-            $SQL->group("B.ASSIGNMENT_ID");
-        $SQL->order('A.SORTKEY ASC');
-        //error_log($SQL->__toString());
-        return self::dbAccess()->fetchAll($SQL);
-    }
-
 }
 
 ?>
