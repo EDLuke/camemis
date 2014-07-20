@@ -88,7 +88,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addReadField("name: 'STATUS'");
         $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
         //
-        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width:percentWidth(30), renderer:cssContent, sortable: true, dataIndex: 'STATUS_KEY'");
+        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width:110, renderer:cssContent, sortable: true, dataIndex: 'STATUS_KEY'");
         $OBJECT_GRID->addColumn("header: '<b>".FROM_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'START_DATE'");
         $OBJECT_GRID->addColumn("header: '<b>".TO_DATE."</b>', align:'center', width: 120, renderer: renderText, sortable: true, dataIndex: 'END_DATE'");
         
