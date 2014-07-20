@@ -1,0 +1,96 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 15.01.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        
+        $SCHEDULE = "{
+            title: '".SCHEDULE."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'SCHEDULE_ID', url:'/schedule/byclass/?camIds=".$this->urlEncryp->encryptedGet("trainingId=".$this->trainingId."&target=training")."'})]
+        }";
+        $PENEL_ITEMS[] = $SCHEDULE;
+        
+        $EVENT = "{
+            title: '".EVENT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'EVENT_ID', url:'/schoolevent/classevents/?camIds=".$this->urlEncryp->encryptedGet("trainingId=".$this->trainingId."&target=training")."'})]
+        }";
+        $PENEL_ITEMS[] = $EVENT;
+        
+        $ASSESSMENT = "{
+            title: '".ASSESSMENT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'EVENT_ID', url:'/training/evaluationstudenttraining/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->trainingId."&studentId=".$this->studentId."")."'})]
+        }";
+        $PENEL_ITEMS[] = $ASSESSMENT;
+        
+        $HOMEWORK = "{
+            title: '".HOMEWORK."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'HOMEWORK_ID', url:'/homework/homeworklisttraining/?camIds=".$this->urlEncryp->encryptedGet("trainingId=".$this->trainingId."&studentId=".$this->studentId."")."'})]
+        }";
+        $PENEL_ITEMS[] = $HOMEWORK;
+        
+        $ATTENDANCE_INFORMATION = "{
+            title: '".ATTENDANCE_INFORMATION."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION_ID', url:'/student/trainingstudentattendance/?camIds=".$this->urlEncryp->encryptedGet("trainingId=".$this->trainingId."&objectId=".$this->studentId."")."'})]
+        }";
+        $PENEL_ITEMS[] = $ATTENDANCE_INFORMATION;
+        
+        $DISCIPLINE_INFORMATION = "{
+            title: '".DISCIPLINE_INFORMATION."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION_ID', url:'/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet("trainingId=".$this->trainingId."&studentId=".$this->studentId."&target=training")."'})]
+        }";
+        $PENEL_ITEMS[] = $DISCIPLINE_INFORMATION;
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

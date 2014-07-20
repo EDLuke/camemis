@@ -1,0 +1,111 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("SUBJECT", "SUBJECT_ACADEMIC");
+$OBJECT_GRID->setLoadUrl('/subject/jsonload/');
+$OBJECT_GRID->setSaveUrl('/subject/jsonsave/');
+
+$OBJECT_DATA = $this->objectData;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+Ext.onReady(function() {
+    
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addCellRenderer("
+        function rendererBold(v, p, record, rowIndex){
+            return '<span class=spanText>' + v + '</span>';
+        }
+    ");
+    
+    $OBJECT_GRID->addReadField("name: 'NAME'");
+    $OBJECT_GRID->addReadField("name: 'DURATION'");
+    $OBJECT_GRID->addReadField("name: 'MAX_LESSONS_PER_WEEK'");
+    $OBJECT_GRID->addReadField("name: 'SUBJECT_TYPE'");
+
+    $OBJECT_GRID->addColumn("header: '".NAME."', width: percentWidth(15), sortable: true, dataIndex: 'NAME'");
+    $OBJECT_GRID->addColumn("header: '".DURATION."', width: percentWidth(15), sortable: true, dataIndex: 'DURATION'");
+    $OBJECT_GRID->addColumn("header: '".MAX_LESSONS_PER_WEEK."', width: percentWidth(15), sortable: true, dataIndex: 'MAX_LESSONS_PER_WEEK'");
+    $OBJECT_GRID->addColumn("header: '".SUBJECT_TYPE."', width: percentWidth(15), sortable: true, dataIndex: 'SUBJECT_TYPE'");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,qualificationId: '".$this->objectId."'
+        ,cmd: 'subjectsByQualification'
+    ";
+	
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'addSubjectQualification'
+        ,qualificationId: '".$this->objectId."'
+    ");
+	
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-');
+        tbar.add([{
+            id: 'ADD_ID'
+            ,text: '".ADD_NEW_ITEM."'
+            ,iconCls:'icon-application_form_add'
+            ,scope:this
+            ,handler: this.onAddItem
+        }]);
+    ");
+    
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField = "SUBJECT_TYPE";
+    $OBJECT_GRID->renderJS();
+
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border',
+            defaults: {
+                collapsible: true,
+                split: true,
+                bodyStyle: 'padding:10px'
+            },
+            items: [{
+                title: '',
+                region: 'north',
+                height: 150,
+                minSize: 75,
+                maxSize: 250,
+                cmargins: '5 0 0 0'
+            },{
+                title: '',
+                collapsible: false,
+                region:'center',
+                margins: '0 0 0 0'
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

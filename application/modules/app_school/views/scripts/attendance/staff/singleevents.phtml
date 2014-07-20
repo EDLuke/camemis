@@ -1,0 +1,155 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 26.08.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("EVENTS_LIST", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
+
+if(!$this->facette) {header("Location: /main/permission/");exit;}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+Ext.onReady(function() {
+    
+    function showText(v, p, record, rowIndex){
+        return String.format('<div style=\"white-space:normal;font-weight:bold;height:30px; padding:20px;background-color:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+            ,record.data['COLOR_FONT']
+        );
+    }
+    
+    function showTextStatus(v, p, record, rowIndex){
+        return String.format('<div style=\"white-space:normal;font-weight:bold;height:30px; width: 145px; padding:20px;background-color:#EEEEEE;\">{0}</div>'
+            ,v
+        );
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'TIME'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'EVENT'");
+    $OBJECT_GRID->addReadField("name: 'TERM'");
+    $OBJECT_GRID->addReadField("name: 'CHECKED'");
+    $OBJECT_GRID->addReadField("name: 'COLOR'");
+    $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
+    $OBJECT_GRID->addReadField("name: 'DISABLED_SUBSTITUTE'");
+    $OBJECT_GRID->addReadField("name: 'DISABLED_DAYOFFSCHOOL'");
+    
+    $OBJECT_GRID->addColumn("xtype: 'checkboxcolumn', header: '', renderer: showText, dataIndex: 'CHECKED', width: 50, on: 1, off: 0");
+    $OBJECT_GRID->addColumn("header: '<b>" . TIME . "</b>',renderer: showText, align:'center', sortable: false, dataIndex: 'TIME', width: 130");
+    $OBJECT_GRID->addColumn("header: '<b>" . EVENT . "</b>',renderer: showText, align:'center', sortable: false, dataIndex: 'EVENT', width: 150");
+    $OBJECT_GRID->addColumn("header: '<b>" . GRADE_CLASS . "</b>', align:'center',renderer: showText, sortable: false, dataIndex: 'CLASS_NAME', width: 150");
+    $OBJECT_GRID->addColumn("header: '<b>" . TERM . "</b>', align:'center',renderer: showText, sortable: false, dataIndex: 'TERM', width: 150");
+    $OBJECT_GRID->addColumn("header: '<b>" . TEACHING . "</b>', align:'center',renderer: showTextStatus, sortable: false, dataIndex: 'TEACHING_STATUS', width: 200");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->objectId."'
+        ,staffId: '".$this->staffId."'
+        ,choosedate: '".$this->choosedate."'
+        ,target:'teacher'
+        ,cmd: 'jsonTeacherDayClassEvents'
+    ";
+    
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonActionTeacherAttendanceSubject'
+        ,choosedate: '".$this->choosedate."'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_GRID->setAftereditCallback("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+    ");
+    
+    $OBJECT_GRID->isGridEditing = $this->facette->STATUS?false:true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->isPagingToolbar = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            id: 'center'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem:0
+            ,items: [{
+                layout: 'fit'
+                ,title: '<?=getShortdayName(getWEEKDAY($this->choosedate))?> <?=getShowDate($this->choosedate)?>'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    
+    <?
+    $js = "";
+    $js .= "var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+    if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+        $js .= "grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $js .= "var record = grid.store.getAt(rowIndex);";
+            $js .= "if (record.data.DISABLED_SUBSTITUTE) disableSubstitute = true; else disableSubstitute = false; ";
+            $js .= "if (record.data.DISABLED_DAYOFFSCHOOL) disableDayOffSchool = true; else disableDayOffSchool = false; ";
+            $js .= "title1 = record.data.TIME + ' - '+record.data.EVENT + ' &raquo; ".SUBSTITUTE."';";
+            $js .= "title2 = record.data.TIME + ' - '+record.data.EVENT + ' &raquo; ".DAY_OFF_SCHOOL."';";
+            $js .= "var contextMenu = new Ext.menu.Menu({";
+                $js .= "items: [{";
+                    $js .= "text: title1";
+                    $js .= ",iconCls:'icon-date_edit'";
+                    $js .= ",disabled:disableSubstitute";
+                    $js .= ",scope:this";
+                    $js .= ",handler: function(){";
+                        $js .= "scheduleId = record.data.ID;";
+                        $js .= "clickOpenPage('center',title1, '/schedule/teachingsession/?type=substitute&scheduleId=' + scheduleId + '&choosedate=".$this->choosedate."');";
+                    $js .= "}";
+                $js .= "},{";
+                    $js .= "text: title2";
+                    $js .= ",iconCls:'icon-date_edit'";
+                    $js .= ",disabled:disableDayOffSchool";
+                    $js .= ",scope:this";
+                    $js .= ",handler: function(){";
+                        $js .= "scheduleId = record.data.ID;";
+                        $js .= "clickOpenPage('center',title2, '/schedule/teachingsession/?type=dayoffschool&scheduleId=' + scheduleId + '&choosedate=".$this->choosedate."');";
+                    $js .= "}";
+                $js .= "}]";
+            $js .= "});";
+            $js .= "event.stopEvent();";
+            $js .= "contextMenu.showAt(event.xy);";
+        $js .= "});";
+    }
+    echo $js;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

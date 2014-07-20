@@ -1,0 +1,319 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$OBJECT_FORM = new CamemisForm("SUBJECT");
+$OBJECT_FORM->setLoadUrl('/subject/jsonload/');
+$OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
+
+$target = isset($_GET["target"])?true:false; 
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+ 
+if(!$this->facette) {header("Location: /main/permission/");exit;}
+
+$parentObject = AcademicDBAccess::findGradeSchoolyear($this->facette->GRADE, $this->facette->SCHOOLYEAR);  
+
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOLYEAR);
+$HIDDEN_SCORE_ON_NUMBER = "true";
+$HIDDEN_SCORE_ON_ALPHABET = "true";
+
+if ($this->facette) {
+    $HIDDEN_TRADITINAL = $this->facette->EDUCATION_SYSTEM?true:false;
+    $HIDDEN_CREDIT = $this->facette->EDUCATION_SYSTEM?false:true;
+    $HIDDEN_SCORE_ON_NUMBER = ($this->facette->SCORE_TYPE==1)?"false":"true";
+    $HIDDEN_SCORE_ON_ALPHABET = ($this->facette->SCORE_TYPE==2)?"false":"true";
+} else {
+    $HIDDEN_TRADITINAL = false;
+    $HIDDEN_CREDIT = true;
+}
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Textfield("SHORT_ID", "SHORT", NAME_WITHOUT_SPECIAL_CHAR, true)."}
+                ,{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
+                ,{".CamemisField::Numberfield("NUMBER_CREDIT", "NUMBER_CREDIT", NUMBER_CREDIT, false, false, false) . "}
+                ,{".CamemisField::Numberfield("NUMBER_SESSION","NUMBER_SESSION", NUMBER_SESSION, false, false, false, false)."}
+                ,{".CamemisField::ComboSubjectType(TYPE, false, false, false)."}
+                ,{".CamemisField::comboScoreType(false, true)."}
+                ,{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 80)."}
+            ]
+        }]
+    }
+    ";
+    
+    $EVALUATION_SETTINGS_ITEMS = "
+    [
+        {".CamemisField::comboMathematicalOperation()."}
+        ,{".CamemisField::Numberfield("COEFF_VALUE","COEFF_VALUE", VALUE, false, false, false)."}
+        ,{".CamemisField::Checkbox("INCLUDE_IN_EVALUATION","INCLUDE_IN_EVALUATION",INCLUDE_IN_EVALUATION, 1, false, false)."}
+    ]
+    ";
+    
+    $AVERAGE_STORE = "[";
+        switch ($TERM_NUMBER) {
+            case 1:
+                $AVERAGE_STORE .= "[0, 'AVG(T1+T2+T3)']";
+                $AVERAGE_STORE .= ",[1, 'AVG(T1)']";
+                $AVERAGE_STORE .= ",[2, 'AVG(T2)']";
+                $AVERAGE_STORE .= ",[3, 'AVG(T3)']";
+                break;
+            case 2:
+                $AVERAGE_STORE .= "[0, 'AVG(Q1+Q2+Q3+Q4)']";
+                $AVERAGE_STORE .= ",[1, 'AVG(Q1)']";
+                $AVERAGE_STORE .= ",[2, 'AVG(Q2)']";
+                $AVERAGE_STORE .= ",[3, 'AVG(Q3)']";
+                $AVERAGE_STORE .= ",[4, 'AVG(Q4)']";
+                break;
+            default:
+                $AVERAGE_STORE .= "[0, 'AVG(S1+S2)']";
+                $AVERAGE_STORE .= ",[1, 'AVG(S1)']";
+                $AVERAGE_STORE .= ",[2, 'AVG(S2)']";
+            break;
+        }
+
+    $AVERAGE_STORE .= "]";
+    
+    $EVALUATION_SETTINGS = "
+    {
+        title: '".EVALUATION_SETTINGS."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom:5px'
+        ,width: 550
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'
+            ,border: false
+            ,height:160
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:[{
+                    title:'".SETTING."'
+                    ,items:[{
+                        layout: 'form'
+                        ,border: false
+                        ,bodyStyle: 'padding:10px'
+                        ,items:".$EVALUATION_SETTINGS_ITEMS."
+                    }]
+                },{
+                    title:'".YEAR_RESULT."'
+                    ,items:[{
+                        layout: 'form'
+                        ,border: false
+                        ,bodyStyle: 'padding:10px'
+                        ,items: [
+                            {".CamemisField::Combo('AVERAGE_FROM_SEMESTER', PLEASE_CHOOSE, $AVERAGE_STORE, false, false, false, false,false)."}
+                        ]
+                    }]
+                }]
+            }]
+        }]
+    }
+    ";
+    
+    $SCORE_NUMBER = "
+    {
+        title: '".SCORE_ON_NUMBER."'
+        ,id:'SCORE_ON_NUMBER'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,hidden:".$HIDDEN_SCORE_ON_NUMBER."
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Numberfield("SCORE_MIN","SCORE_MIN", MIN_POINTS, false, false, false, false)."}
+                ,{".CamemisField::Numberfield("SCORE_MAX","SCORE_MAX", MAX_POINTS, false, false, false, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $SCORE_ALPHABET = "
+    {
+        title: '".SCORE_ON_ALPHABET."'
+        ,id:'SCORE_ON_ALPHABET'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,hidden:".$HIDDEN_SCORE_ON_ALPHABET."
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Textarea("MAX_POSSIBLE_SCORE", POINTS_POSSIBLE, 50)."}
+            ]
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."   
+            ,".$SCORE_NUMBER."   
+            ,".$SCORE_ALPHABET."   
+            ,".$EVALUATION_SETTINGS."   
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+            if($target)
+            $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+            ");
+        break;
+        case "STUDENT":   
+            $OBJECT_FORM->addTBarItems("
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);}
+            ");
+        break;
+     }
+        
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+            
+            if(!$parentObject->EDUCATION_SYSTEM){
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+            }
+            //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+            
+            $OBJECT_FORM->setLoadParams("cmd: 'loadSubjectGrade',gradesubjectId: '".$this->facette->ID."'");
+            $OBJECT_FORM->setSaveParams("
+                cmd: 'updateSubjectGrade'
+                ,gradesubjectId: '".$this->facette->ID."'
+            ");
+            
+            $OBJECT_FORM->setonEmbeddedEvents("
+                XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            ");
+            $OBJECT_FORM->setRemoveParams("
+                cmd: 'removeSubjectGrade'
+                ,gradesubjectId: '".$this->facette->ID."'
+            ");
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                window.parent.parent.Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').root.reload(); 
+                window.parent.parent.Ext.getCmp('TREE.SUBJECT_ASSIGNMENT_ID').getRootNode().expand(true, false);
+                window.parent.parent.Ext.getCmp('center').getLayout().setActiveItem(0);       
+            ");  
+        break;
+        case "TEACHER":
+        case "INSTRUCTOR":   
+        case "STUDENT":   
+            $OBJECT_FORM->setLoadParams("cmd: 'loadSubjectGrade',gradesubjectId: '".$this->facette->ID."'");
+        break;
+     }
+     
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    if (Ext.getCmp('EDUCATION_SYSTEM')) Ext.getCmp('EDUCATION_SYSTEM').on('select', function() {
+        if(Ext.getCmp('EDUCATION_SYSTEM').getValue() == 1){
+            Ext.getCmp('NUMBER_SESSION').hide();    
+            Ext.getCmp('NUMBER_CREDIT').show(); 
+            Ext.getCmp('SCORE_ON_ALPHABET').hide();    
+            Ext.getCmp('SCORE_ON_NUMBER').show();    
+        }else{
+            Ext.getCmp('NUMBER_SESSION').show();    
+            Ext.getCmp('NUMBER_CREDIT').hide();     
+        }
+    });
+    if (Ext.getCmp('SCORE_TYPE')) Ext.getCmp('SCORE_TYPE').on('select', function() {
+        if(Ext.getCmp('SCORE_TYPE').getValue() == 1){
+            Ext.getCmp('SCORE_ON_ALPHABET').hide();    
+            Ext.getCmp('SCORE_ON_NUMBER').show();    
+        }else{
+            Ext.getCmp('SCORE_ON_ALPHABET').show();    
+            Ext.getCmp('SCORE_ON_NUMBER').hide();     
+        }
+        if (Ext.getCmp('MAX_POSSIBLE_SCORE_ID')) Ext.getCmp('MAX_POSSIBLE_SCORE_ID').setValue('');  
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

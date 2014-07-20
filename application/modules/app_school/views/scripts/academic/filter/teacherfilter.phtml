@@ -1,0 +1,254 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 17.05.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisChart.php';
+require_once 'clients/CamemisPage.php';
+require_once 'models/filter/FilterData.php';
+require_once 'models/filter/FilterDataSet.php';
+require_once setUserLoacalization();
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$gradeId = "";
+$campusId = "";
+$schoolyearId = "";
+$classId = "";
+
+if (strpos($objectId, "CAMPUS_") !== false) {
+    $Ids = explode("_",substr($objectId, 7));
+    $campusId = isset($Ids[0])?$Ids[0]:"";
+    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
+    $objectType = "CAMPUS";
+} elseif (strpos($objectId, "GRADE_") !== false) {
+    $objectType = "GRADE";
+    $Ids = explode("_",substr($objectId, 6));
+    $gradeId = isset($Ids[0])?$Ids[0]:"";
+    $campusId = isset($Ids[1])?$Ids[1]:"";
+    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+} else{
+    $objectType = "CLASS";
+    $classId = $objectId;
+}
+$setParams="";
+
+$objectDataSet = new FilterDataSet();
+if($campusId){
+    $objectDataSet->campusId = $campusId;
+    $setParams .= "&campusId=".$campusId.""; 
+}
+if($gradeId){
+    $objectDataSet->gradeId = $gradeId;
+    $setParams .= "&gradeId=".$gradeId.""; 
+}
+if($schoolyearId){
+    $objectDataSet->schoolyearId = $schoolyearId;
+    $setParams .= "&schoolyearId=".$schoolyearId.""; 
+}
+if($classId){
+    $objectDataSet->classId = $classId;
+    $setParams .= "&classId=".$classId.""; 
+}
+if($objectType)
+$objectDataSet->objectType = $objectType;
+
+$dataSetMaleFemale=$objectDataSet->getDataSetStaffGender();
+$chartMaleFemale = new CamemisChart("DONUT_CHART", 'chartMaleFemale', $dataSetMaleFemale);
+$chartMaleFemale->chartSVG = "displayMaleFemale";
+$chartMaleFemale->showLegend='true';
+$chartMaleFemale->width = 280;
+$chartMaleFemale->height = 280;
+
+$datasetStatusAcount = $objectDataSet->getDataSetStaffActiveAndDeactive();
+$chartStatusAcount = new CamemisChart("PIC_CHART", 'chartStatusAcount', $datasetStatusAcount);
+$chartStatusAcount->chartSVG = "displayStatusAcount";
+$chartStatusAcount->showLegend='true';
+$chartStatusAcount->width = 350;
+$chartStatusAcount->height = 300;
+
+$datasetAge=$objectDataSet->getDataSetStaffAge();
+$chartAge = new CamemisChart("DISCRETE_BAR_CHART", 'chartAge', $datasetAge);
+$chartAge->chartSVG = "displayAge";
+$chartAge->showLegend='true';
+$chartAge->tooltips = 'true';
+$chartAge->showValues ='true';
+$chartAge->height = 280;
+
+$dataSetNationality = $objectDataSet->getDataSetStaffNationality(); 
+$chartNationality = new CamemisChart("DISCRETE_BAR_CHART", 'chartNationality', $dataSetNationality);
+$chartNationality->chartSVG = "displayNationality";
+$chartNationality->showLegend='true';
+$chartNationality->tooltips = 'true';
+$chartNationality->showValues ='true';
+$chartNationality->height = 280;
+
+$datasetReligion=$objectDataSet->getDataSetStaffReligion();
+$chartReligion = new CamemisChart("DONUT_CHART", 'chartReligion', $datasetReligion);
+$chartReligion->showLegend = 'false';
+$chartReligion->chartSVG = "displayReligion";
+$chartReligion->showLegend='true';
+$chartReligion->width = 350;
+$chartReligion->height = 350;
+
+$datasetCity=$objectDataSet->getDataSetStaffCountryProvince(); 
+$chartCity = new CamemisChart("DISCRETE_BAR_CHART", 'chartCity', $datasetCity);
+$chartCity->chartSVG = "displayCity";
+$chartCity->showControls=true;
+$chartCity->showXAxis="false";
+$chartCity->tooltips=true;
+$chartCity->height = 280;
+
+$datasetEthnic = $objectDataSet->getDataSetStaffEthnicity();
+$chartEthnic = new CamemisChart("DISCRETE_BAR_CHART", 'chartEthnic', $datasetEthnic);
+$chartEthnic->showControls = 'true';
+$chartEthnic->tooltips='true';
+$chartEthnic->chartSVG = "displayEthnic";
+$chartEthnic->showValues="true";
+$chartEthnic->height = 350;
+?>
+
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/public/bootstrap/css/custom.css" rel="stylesheet">
+<script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
+    
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel-heading"><h5><b><?=GENDER;?></b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentGender"  class="btn btn-info">View Details</button>
+                    <?= $chartMaleFemale->setChartDisplay(); ?>
+                    <script><?= $chartMaleFemale->setChartScript(); ?></script>       
+                </div>
+                </div>
+            <div class="col-md-8">
+                 
+                 <div class="panel-heading"><h5><b><?=AGE;?></b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentAge" class="btn btn-info">View Details</button>
+                    <?= $chartAge->setChartDisplay(); ?>
+                    <script><?= $chartAge->setChartScript(); ?></script>    
+                </div>    
+           
+            </div>
+        </div>
+        
+        <div class="row">
+            
+             <div class="col-md-6">
+                <div class="panel-heading"><h5><b><?=RELIGION;?></b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentReligion" class="btn btn-info">View Details</button>
+                    <?= $chartReligion->setChartDisplay(); ?>
+                    <script><?= $chartReligion->setChartScript(); ?></script>    
+                </div>     
+               
+            </div>  
+            
+            <div class="col-md-6">
+                
+                <div class="panel-heading"><h5><b>Status Acount</b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentAcountStatus" class="btn btn-info">View Details</button>
+                    <?= $chartStatusAcount->setChartDisplay(); ?>
+                    <script><?= $chartStatusAcount->setChartScript(); ?></script> 
+                </div>
+            
+            </div>
+        </div>   
+        <div class="row">
+             
+            <div class="col-md-12">
+                
+                <div class="panel-heading"><h5><b><?=ETHNICITY;?></b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentEthnicity" class="btn btn-info">View Details</button>
+                    <?= $chartEthnic->setChartDisplay(); ?>
+                    <script><?= $chartEthnic->setChartScript(); ?></script>    
+                </div>  
+            </div>
+            
+        </div>
+        
+         <div class="row">
+            <div class="col-md-12">
+                <div class="panel-heading"><h5><b><?=NATIONALITY?></b></h5></div>
+                
+                <div class="panel-body">
+                    <button type="button" id="btnStudentNationality" class="btn btn-info">View Details</button>
+                    <?= $chartNationality->setChartDisplay(); ?>
+                    <script><?= $chartNationality->setChartScript(); ?></script> 
+                </div>     
+            </div>  
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-heading"><h5><b><?=CITY_PROVINCE?></b></h5></div>
+                <div class="panel-body">
+                    <button type="button" id="btnStudentCityProvince" class="btn btn-info">View Details</button>
+                    <?= $chartCity->setChartDisplay(); ?>
+                    <script><?= $chartCity->setChartScript(); ?></script> 
+                </div> 
+            </div>
+        </div>
+            
+    </div>
+    <script>
+        Ext.onReady(function() {
+            
+            /*viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                title: ''
+                ,id:'westcenter'
+                ,collapsible: false
+                ,region:'center'
+                ,layout: 'fit'
+                ,margins: '0 3 3 3'
+                ,border:false
+                ,bodyStyle: 'background:#dee7f6;'
+                ,items: [{
+                    border: false
+                    ,bodyStyle: 'background:#dee7f6;'
+                    ,autoScroll:true
+                    ,contentEl: 'initStatistic'
+                }]
+            }]
+        });*/
+            
+            Ext.get('btnStudentGender').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+            });
+            
+           Ext.get('btnStudentAge').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentSMS').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentAcountStatus').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           
+            Ext.get('btnStudentReligion').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentEthnicity').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentNationality').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentCityProvince').on('click', function(){
+               window.parent.openWinMax('', '/staff/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           
+        });
+    </script>
+</body>
+</html>

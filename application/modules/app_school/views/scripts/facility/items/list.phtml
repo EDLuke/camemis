@@ -1,0 +1,254 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 31.08.2013
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_TREE = new CamemisTree("FACILITY", "LIST");
+$OBJECT_TREE->setURL("/facility/jsontree/");
+$OBJECT_TREE->setSaveUrl("/facility/jsonsave/");
+
+$OBJECT_SCHOOLYEAR = new CamemisDynCombo("FACILITY_TYPE","COMBO");
+$OBJECT_SCHOOLYEAR->setLoadUrl('/facility/jsonload/');
+        
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var clickId;
+Ext.onReady(function() {
+    
+     fp = new Ext.FormPanel({
+        fileUpload: true
+        ,renderTo:'myForm'
+        ,labelAlign: 'left'
+        ,border: true
+        ,width: 500
+        ,height: 200
+        ,title: ''
+        ,bodyStyle: 'padding:10px'
+        ,labelWidth:100
+        ,defaults: {
+            anchor: '95%'
+            ,allowBlank: false
+            ,msgTarget: 'side'
+        },
+        items: [{
+            xtype: 'fileuploadfield'
+            ,id: 'form-file'
+            ,emptyText: '<?=SELECT_AN_XLS_FILE?>'
+            ,fieldLabel: '<?=FILE?>'
+            ,name: 'xlsfile'
+            ,buttonText: ''
+            ,buttonCfg: {
+                iconCls: 'upload-icon'
+            }
+        }]
+        ,tbar: [{
+            text: '<?=RESET;?>'
+            ,iconCls:'icon-arrow_undo'
+            ,handler: function(){
+                fp.getForm().reset();
+            }
+        },'-',{
+            text: '<?=UPLOAD?>'
+            ,id: 'UPLOAD'
+            ,iconCls:'icon-disk'
+            ,disabled: false
+            ,handler: function(){
+                if(fp.getForm().isValid()){
+                    Ext.Ajax.request({
+                        url: '/facility/jsonimport/'
+                        ,isUpload: true
+                        ,headers: {'Content-type':'multipart/form-data'}
+                        ,method: 'POST'
+                        ,params:{cmd: 'importXLS', parentId:clickId}
+                        ,waitMsg: 'Uploading your file...'
+                        ,form: fp.getForm().getEl().dom
+                        ,success: function(response, options) {
+                            <?=CamemisPage::setRequestURI(false);?>
+                        }
+                        ,failure: function(response, options) { console.log('fail'); }
+                    });
+                }
+            }
+        }]
+    });
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->setBaseParams("
+        cmd: 'jsonTreeAllFacilityItem'
+        ,type: '' 
+    ");
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    
+    $OBJECT_TREE->addTBarItems("
+        id: 'ADD_ID'
+        ,scope:this
+        ,tooltip:'".ADD_A_NEW_ITEM."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){   
+            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_MANAGE_ITEM."&objectId=new');
+            //Ext.getCmp('WEST_ID').collapse();
+        }
+    ");
+    
+    $OBJECT_TREE->addTBarItems("
+        xtype: 'buttongroup'
+        ,items:[{
+            width:180
+            ,emptyText: '" . QUICKY_SEARCH . "'
+            ,xtype: 'textfield'
+        }]
+    ");
+ 
+    $OBJECT_TREE->isTreeExpand = false; 
+    $OBJECT_TREE->renderJS();
+    
+    $VIEWPORT ="";
+    $VIEWPORT .="viewport = new Ext.Viewport({";
+    $VIEWPORT .="layout: 'fit'";
+    $VIEWPORT .=",border: false";
+    $VIEWPORT .=",items:[{";
+        $VIEWPORT .="layout:'border'";
+        $VIEWPORT .=",border: false";
+        $VIEWPORT .=",defaults: {";
+            $VIEWPORT .="collapsible: true";
+            $VIEWPORT .=",split: true";
+        $VIEWPORT .="}";
+        $VIEWPORT .=",items: [{";
+               $VIEWPORT .="region:'west'";
+               $VIEWPORT .=",title:''";
+               $VIEWPORT .=",id:'WEST_ID'";
+            $VIEWPORT .=",margins: '3 0 3 3'";
+            $VIEWPORT .=",cmargins: '3 3 3 3'";
+            $VIEWPORT .=",width:350";
+            $VIEWPORT .=",minSize:350";
+            $VIEWPORT .=",maxSize:350";
+            $VIEWPORT .=",layout: 'fit'";
+            $VIEWPORT .=",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
+        $VIEWPORT .="},{";
+               $VIEWPORT .="collapsible: false";
+            $VIEWPORT .=",id: 'center'";
+            $VIEWPORT .=",region:'center'";
+            $VIEWPORT .=",margins: '3 3 3 0'";
+            $VIEWPORT .=",layout: 'card'";
+            $VIEWPORT .=",activeItem: 0";
+            $VIEWPORT .=",items: [{";
+                $VIEWPORT .="border: false";
+                $VIEWPORT .=",layout: 'anchor'";
+                $VIEWPORT .=",bodyStyle: 'background:#FFFFFF; padding:25px;'";
+                $VIEWPORT .=",items: [{";
+                    $VIEWPORT .="title: ''";
+                    $VIEWPORT .=",height:60";
+                    $VIEWPORT .=",width:500";
+                    $VIEWPORT .=",bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'";
+                    $VIEWPORT .=",html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'";
+                $VIEWPORT .="}]";
+            $VIEWPORT .="}]";
+        $VIEWPORT .="}]";
+    $VIEWPORT .="}]";
+    $VIEWPORT .="});";
+     
+    $JS_EVENT="";
+    $JS_EVENT.="var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+    $JS_EVENT.="myTree.on('click', function(node, e){";
+
+    $JS_EVENT.="parentId = node.attributes.parent;clickId=node.id;";
+
+    $JS_EVENT.="if(!node.isLeaf()){ ";
+        $JS_EVENT.="url='".$this->URL_SHOW_MANAGE_ITEM."&objectId='+node.id;var isCollapse = true;isDisabled = false;";
+    $JS_EVENT.="}else{";
+        $JS_EVENT.="url='".$this->URL_SHOW_SUB_MANAGE_ITEM."&parentId='+node.attributes.parent+'&objectId='+node.id; var isCollapse = false; isDisabled = true;";
+    $JS_EVENT.="} ";
+
+    $JS_EVENT.="var contextMenu = new Ext.menu.Menu({";
+     $JS_EVENT.="items: [{";
+         $JS_EVENT.="text: '".SHOW_DETAIL."' ";
+         $JS_EVENT.=",iconCls:'icon-application_form_magnify'";
+         $JS_EVENT.=",handler:function(){ ";
+             $JS_EVENT.="clickOpenPage('center','',url);";
+             //$JS_EVENT.="if (isCollapse) Ext.getCmp('WEST_ID').collapse();";
+         $JS_EVENT.="} ";
+         
+    $JS_EVENT.="},{";
+        $JS_EVENT.="text: '".ADD_A_NEW_ITEM."' ";
+         $JS_EVENT.=",iconCls:'icon-add'";
+         $JS_EVENT.=",disabled:false";
+         $JS_EVENT.=",handler:function(){ ";
+             $JS_EVENT.="clickOpenPage('center','','".$this->URL_SHOW_MANAGE_ITEM."objectId=new&parentId='+node.id);";
+         $JS_EVENT.="} ";
+    
+    $JS_EVENT.="},{";
+    
+        $JS_EVENT .="text: '".IMPORT_FROM_EXCEL."'";
+            $JS_EVENT .=",iconCls:'icon-database_copy'";
+            #$JS_EVENT.=",disabled:isDisabled";
+            $JS_EVENT .=",menu:[{";
+                $JS_EVENT .="text: '".EXCEL_TEMPLATE."'";
+                $JS_EVENT .=",iconCls:'icon-page_excel'";
+                $JS_EVENT .=",handler:function(){";
+                    $JS_EVENT .="window.location='/facility/templatexls';";
+                $JS_EVENT .="}";
+            $JS_EVENT .="},{";
+                $JS_EVENT .="text: '".IMPORT."'";
+                $JS_EVENT .=",iconCls:'icon-database_save'";
+                $JS_EVENT .=",handler:function(){";
+                        $JS_EVENT .="win = new Ext.Window({";
+                            $JS_EVENT .="layout:'fit'";
+                            $JS_EVENT .=",id:'IMPORT_WIN'";
+                            $JS_EVENT .=",width:500";
+                            $JS_EVENT .=",height:200";
+                            $JS_EVENT .=",modal: true";
+                            $JS_EVENT .=",plain: true,closeAction:'hide'";
+                            $JS_EVENT .=",items:[{";
+                                $JS_EVENT .="border: false";
+                                $JS_EVENT .=",layout:'form'";
+                                $JS_EVENT .=",items: fp";
+                            $JS_EVENT .="}]";
+                            $JS_EVENT .=",fbar: ['->',{text: '".CLOSE."',iconCls: 'icon-cancel',handler: function (){".CamemisPage::setRequestURI().";}}]";
+                        $JS_EVENT .="});";
+                    $JS_EVENT .="Ext.getCmp('IMPORT_WIN').show(this);";
+                $JS_EVENT .="}";
+        $JS_EVENT .="}]";
+        
+    $JS_EVENT.="}]";
+    $JS_EVENT.="}); ";
+    $JS_EVENT.="e.stopEvent(); ";
+    $JS_EVENT.="contextMenu.showAt(e.xy); ";
+    $JS_EVENT.="});  ";
+    
+    $JS_EVENT.="var myCombo = Ext.getCmp('COMBO_ID');";
+    $JS_EVENT.="if (myCombo)";
+    $JS_EVENT.="myCombo.on('select', function() {";
+        $JS_EVENT.="myTree.loader.baseParams.type = Ext.getCmp('COMBO_ID').getValue();";
+        $JS_EVENT.="myTree.root.reload(); ";
+        $JS_EVENT.="myTree.getRootNode().expand(true, false);";
+        $JS_EVENT.="Ext.getCmp('center').getLayout().setActiveItem(0); ";
+    $JS_EVENT.="});";
+    
+    echo $VIEWPORT;
+    echo $JS_EVENT;
+    ?>
+    
+});
+</script>
+<div id="myForm" style="height:320px;"></div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

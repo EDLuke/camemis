@@ -1,0 +1,80 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$classObject = AcademicDBAccess::findGradeFromId($this->classId);
+
+if(!$classObject) {header("Location: /main/permission/");exit;}
+
+//error_log($this->classId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+///stores class
+/*$CREDIT_CLASS = ScheduleDBAccess::getCreditClassInAcademicSubject(array('academicId'=>$classObject->ID,'schoolyearId'=>$classObject->SCHOOL_YEAR,'teacherId'=>$this->objectId));
+
+$DEFAULT_CREDIT_CLASS = ""; 
+$DATA_STORE = "[";
+if($CREDIT_CLASS){
+    $i=0;
+    foreach($CREDIT_CLASS as $object){
+        
+            $icon = "icon-application_form_magnify";
+            //$DATA_STORE[$i] = $object->ID;
+            $DATA_STORE .= $i?",":"";
+            $DATA_STORE .= "['" . $object->ID . "', '" . $object->NAME . "', '".$icon."']";
+        $i++;
+    }
+    $DEFAULT_CREDIT_CLASS_ID = $CREDIT_CLASS?$CREDIT_CLASS[0]->ID:0;
+}
+$DATA_STORE .= "]";*/
+////
+
+$strParams = "";
+$strParams .= "&target=general";
+$strParams .= "&subjectId=".$this->subjectId."";
+$fistParams = $strParams."&classId=".$this->classId."";
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();  
+        
+        
+        $SHOW_LAYOUT = "new Ext.ux.IFrameComponent({ id: 'EVENT', url: '/schoolevent/classevents/?camIds=".$this->urlEncryp->encryptedGet($fistParams)."'})";
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false 
+            ,items:[{
+                layout:'card'
+                ,id:'content'
+                ,activeItem: 0
+                ,border: false
+                ,items:<?=$SHOW_LAYOUT?>
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,76 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.04.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_USER_SMS = new CamemisGrid("SMS", "SEARCH");
+$OBJECT_USER_SMS->setLoadUrl('/sms/jsonload/');
+$OBJECT_USER_SMS->setSaveUrl('sms/jsonsave/');
+$columndata = Utiles::getGridColumnData("SMS_LIST_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_USER_SMS->addReadField("name: 'CODE'");
+    $OBJECT_USER_SMS->addReadField("name: 'USER'");
+    $OBJECT_USER_SMS->addReadField("name: 'LASTNAME'");
+    $OBJECT_USER_SMS->addReadField("name: 'FIRSTNAME'");
+    $OBJECT_USER_SMS->addReadField("name: 'SEND_DATE'");
+    $OBJECT_USER_SMS->addReadField("name: 'SEND_BY'");
+    
+    $OBJECT_USER_SMS->addColumn("header: '<b>".CODE_ID."</b>', width: 100, hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'CODE'");
+    $OBJECT_USER_SMS->addColumn("header: '<b>".STAFF."</b>', width: 240, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'USER'");
+    $OBJECT_USER_SMS->addColumn("header: '<b>".SENT_ON."</b>', width: 150, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'SEND_DATE'");
+    $OBJECT_USER_SMS->addColumn("header: '<b>".SENT_BY."</b>', width: 150, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'SEND_BY'");
+    
+    $OBJECT_USER_SMS->isObjectDefaultOnLoad = true;
+    $OBJECT_USER_SMS->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonListUserSMS'
+        ,type: 'STAFF'
+    ";
+    $OBJECT_USER_SMS->objectTitle = LOGBOOK;
+    $OBJECT_USER_SMS->loadMask = true;
+    $OBJECT_USER_SMS->isQuickySearch = false;
+    $OBJECT_USER_SMS->forceFit = "false";
+    $OBJECT_USER_SMS->renderJS();
+    
+    ?>
+    
+    viewport = new Ext.Viewport({
+        border: false
+        ,layout: 'fit'
+        ,items:[{
+            border: false
+            ,layout: 'fit'
+            ,items:[{xtype: '<?=$OBJECT_USER_SMS->getObjectXtype();?>'}]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

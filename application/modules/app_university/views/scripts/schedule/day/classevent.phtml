@@ -1,0 +1,173 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 08.09.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$TERM_NAME = isset($_GET["term"])?displaySchoolTerm($_GET["term"]):FIRST_SEMESTER;
+$TERM = isset($_GET["term"])?addText($_GET["term"]):'FIRST_SEMESTER';
+$SHORTDAY = isset($_GET["shortday"]) ? addText($_GET["shortday"]):"MO";
+
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", $SHORTDAY);
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var UrlShowClassEvent = '<?=$this->URL_SHOW_CLASS_EVENT;?>';
+
+Ext.onReady(function() {
+    
+    function styleTime(v, p, record, rowIndex){
+    
+        if (record.data['STATUS'] == 0){
+            return String.format('<div style=\"font-weight:bold; padding: 20px; height: 35px; color:#FFFFFF; background:#CC0000;\">{0}</div>'
+                ,v
+            );
+        }else{
+            return String.format('<div style=\"font-weight:bold; padding: 20px; height: 35px;background:{1};\">{0}</div>'
+                ,v
+                ,record.data['COLOR']
+            );
+        }
+    }
+    
+    function showText(v, p, record, rowIndex){
+        return String.format('<div style=\"font-weight:bold; padding: 20px; height: 35px; background:{1};\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+        );
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'TIME'");
+    $OBJECT_GRID->addReadField("name: 'SCHEDULE_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'EVENT'");
+    $OBJECT_GRID->addReadField("name: 'TEACHER'");
+    $OBJECT_GRID->addReadField("name: 'ROOM'");
+    $OBJECT_GRID->addReadField("name: 'COLOR'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . TIME . "</b>'
+        , align:'center'
+        ,renderer: styleTime
+        , sortable: false
+        , dataIndex: 'TIME'
+        , width: 120
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . EVENT . "</b>'
+        ,renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'EVENT'
+        , width: 200
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . TEACHER . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'TEACHER'
+        , width: 150
+    ");
+        
+     $OBJECT_GRID->addColumn("
+        header: '<b>" . ROOM . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'ROOM'
+        , width: 150
+    ");
+
+     if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+         $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ADD_ENTRY'
+                ,text: '".ADD_ENTRY."'
+                ,disabled: false
+                ,iconCls:'icon-application_form_add'
+                ,scope:this
+                ,handler: function(){
+                    setUrl = UrlShowClassEvent + 'scheduleId=new' + '&shortday=".$SHORTDAY."&term=".$TERM."';
+                    openWinMax('".ADD_ENTRY."',setUrl);
+                }
+            }]);
+        ");
+     }
+     
+    if(UserAuth::getACLValue("GENERAL_EDUCATION_READ_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_READ_RIGHT")){
+        $OBJECT_GRID->addTBarItems("
+           tbar.add([{
+               id: 'SHOW_DETAIL'
+               ,text: '".SHOW_DETAIL."'
+               ,iconCls:'icon-application_form_magnify'
+               ,scope:this
+               ,handler: function(){
+                   var myGrid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
+                   var sm = myGrid.getSelectionModel();
+                   var record = sm.getSelected();
+                   if(record){
+                       scheduleId = record.data.ID;
+                       title = record.data.CODE;
+                       setUrl = UrlShowClassEvent + 'scheduleId=' + scheduleId;
+                       openWinMax(title,setUrl);
+                   }else{
+                       ".camemisPage::alertPleaseSelect()."
+                   }
+               }
+           }]);
+       ");
+    }
+     
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,academicId: '" . $this->academicId . "'
+        ,shortday: '".$SHORTDAY."'
+        ,cmd: 'loadClassEvents'
+        ,teacherId: '" . $this->teacherId . "'
+        ,interval: 'all'
+        ,term: '".$TERM."'
+    ";
+    
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,layout: 'fit'
+            ,items: [{xtype: '<?= $OBJECT_GRID->getObjectXType(); ?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

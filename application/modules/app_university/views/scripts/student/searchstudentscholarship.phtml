@@ -1,0 +1,494 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'models/UserAuth.php';
+require_once 'models/app_university/LocationDBAccess.php';
+require_once 'models/app_university/student/StudentDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$GENERAL_EDU_TREE = new CamemisTree("ACADEMIC","LIST");
+$GENERAL_EDU_TREE->setURL('/academic/jsontree/');
+$GENERAL_EDU_TREE->setSaveUrl('/academic/jsonsave/');
+
+///@veasna
+$OBJECT_TREE = new CamemisSchoolTree("ACADEMIC");
+$OBJECT_TREE->setURL("/academic/jsontree/");
+$OBJECT_TREE->setSaveUrl("/academic/jsonsave/");
+///
+
+$TRAINING_TREE = new CamemisTree("TRAINING","LIST");
+$TRAINING_TREE->setURL('/training/jsontree/');
+$TRAINING_TREE->setSaveUrl('/training/jsonsave/');
+
+$OBJECT_FORM = new CamemisForm("STUDENT");
+$OBJECT_FORM->setLoadUrl('/student/jsonload/');
+$OBJECT_FORM->setSaveUrl('/student/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST");
+$OBJECT_GRID->setLoadUrl("/student/jsonload/");
+$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+
+//$veasna
+$OBJECT_SCHOLARSHIP_TREE = new CamemisTree("DATASET", "LIST");
+$OBJECT_SCHOLARSHIP_TREE->setURL("/dataset/jsontree/");
+$OBJECT_SCHOLARSHIP_TREE->setSaveUrl("/dataset/jsonsave/");
+
+?>
+<script>
+Ext.onReady(function() {
+    
+    function cssTextBlueBold(value, metadata, record){
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#061f83; padding: 5px;">' + value + '</div>';
+    }
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+    $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+    $OBJECT_SCHOOLYEAR->objectTitle = false;
+    $OBJECT_SCHOOLYEAR->allowBlank = "true";
+    $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+    $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+    $OBJECT_SCHOOLYEAR->renderJS();
+    
+    /////////////////////////////////////////////////////////////////////////////
+    //// Select Class in Trianing Program
+    /////////////////////////////////////////////////////////////////////////////
+    
+    $TRAINING_TREE->isAsyncTreeNode = false;
+    $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+    $TRAINING_TREE->setBaseParams("
+        cmd: 'jsonTreeAllTrainings'
+    ");
+    $TRAINING_TREE->backgroundColor = "#F9F9F9";
+    $TRAINING_TREE->isTreeExpand = false;
+    $TRAINING_TREE->renderJS();
+    
+    $triggerOnClickTraining = "
+        openWinXType('XTYPE_TRAINING','".TRAINING_PROGRAMS."', '".$TRAINING_TREE->getObjectXType()."', 500, percentHeight(85));
+        var myTree = Ext.getCmp('".$TRAINING_TREE->getObjectId()."');
+        if (myTree) myTree.on('click', function(node, e){   
+            if(node.attributes.objecttype == 'TERM' || node.attributes.objecttype == 'CLASS'){
+                Ext.getCmp('CHOOSE_TRAINING_NAME_ID').setValue(node.text);
+                Ext.getCmp('CHOOSE_TRAINING').setValue(node.id);
+                Ext.getCmp('XTYPE_TRAINING').close();
+            }
+        });
+     ";
+     
+    /////////////////////////////////////////////////////////////////////////////
+    //// Select Class in General Education
+    /////////////////////////////////////////////////////////////////////////////
+    
+    $GENERAL_EDU_TREE->isAsyncTreeNode = false;
+    $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+    $GENERAL_EDU_TREE->addTBarItems("
+        xtype: 'buttongroup'
+        ,items:[{
+            width: 120
+            ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+        }]
+    ");
+    
+    $GENERAL_EDU_TREE->setBaseParams("
+        cmd: 'getTreeTraditionalEducationSystem'
+    ");
+    
+    $GENERAL_EDU_TREE->backgroundColor = "#F9F9F9";
+    $GENERAL_EDU_TREE->isOnClickContextMenu = false;
+    $GENERAL_EDU_TREE->isTreeExpand = false;
+    $GENERAL_EDU_TREE->renderJS();
+    
+    $triggerOnClick = "
+        openWinXType('SCHOOL_YEAR_OR_CLASS','".HIGHER_EDUCATION."', '".$GENERAL_EDU_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$GENERAL_EDU_TREE->getObjectId()."');
+
+            Ext.getCmp('COMBO_ID').on('select', function() {
+                myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+                myTree.root.reload();
+                myTree.getRootNode().expand(true, false);
+            });
+
+            myTree.getRootNode().expand(true, false);
+
+            if (myTree) myTree.on('click', function(node, e){   
+                if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' ){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
+                    Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                }
+            });
+    ";
+    
+    /////@veasna   credit system
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 80
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+    $OBJECT_TREE->setBaseParams("
+            cmd: 'getTreeCreditEducationSystem'
+            ,educationSystem:1
+        ");
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->isCrediSystem = true;
+    $OBJECT_TREE->isTreeExpand = true;
+    $OBJECT_TREE->renderJS();
+    
+    $triggerCreditTreeOnClick = "
+        openWinXType('SCHOOL_YEAR_OR_CLASS','".HIGHER_EDUCATION."', '".$OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+        var myTree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
+
+        Ext.getCmp('COMBO_ID').on('select', function() {
+            myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+            myTree.root.reload();
+            myTree.getRootNode().expand(true, false);
+        });
+
+        myTree.getRootNode().expand(true, false);
+
+        if (myTree) myTree.on('click', function(node, e){   
+            if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' || node.attributes.objecttype == 'SUBJECT'){
+                Ext.getCmp('CHOOSE_CREDIT_NAME_ID').setValue(node.attributes.title);
+                Ext.getCmp('CHOOSE_GRADE').setValue(node.id);
+                Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+            }
+        });
+    "; 
+ 
+    //$veasna
+    $OBJECT_SCHOLARSHIP_TREE->setBaseParams("
+        cmd: 'jsonTreeAllScholarship'
+    ");
+    
+    $OBJECT_SCHOLARSHIP_TREE->isAsyncTreeNode = false;
+    
+    $OBJECT_SCHOLARSHIP_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_SCHOLARSHIP_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_SCHOLARSHIP_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_SCHOLARSHIP_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_SCHOLARSHIP_TREE->isTreeExpand=true; 
+    $OBJECT_SCHOLARSHIP_TREE->renderJS();
+    $triggerOnClickScholarship="
+         openWinXType('SCHOLARSHIP','".SCHOLARSHIP."', '". $OBJECT_SCHOLARSHIP_TREE->getObjectXType()."', 500, percentHeight(85));
+         var scholarshipTree = Ext.getCmp('".$OBJECT_SCHOLARSHIP_TREE->getObjectId()."');
+         scholarshipTree.on('click', function(node, e){
+             if(node.isLeaf()){
+                Ext.getCmp('SCHOLARSHIP_NAME_ID').setValue(node.parentNode.text+' -- '+node.text);
+                Ext.getCmp('CHOOSE_SCHOLARSHIP').setValue(node.id);
+                Ext.getCmp('SCHOLARSHIP').close();
+             }
+             
+         });
+    ";
+    
+    if(!SchoolDBAccess::displayPersonNameInGrid()){
+       $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".PERSONAL_INFORMATION."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[
+                {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("STUDENT_CODE", "STUDENT_CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                ,{".CamemisField::Trigger("SCHOLARSHIP_NAME",SCHOLARSHIP,$triggerOnClickScholarship,false,false, false, 150)."}
+            ]
+        ");
+    }else{
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".PERSONAL_INFORMATION."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 310
+            ,items:[
+                {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("STUDENT_CODE", "STUDENT_CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}  
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+                ,{".CamemisField::Trigger("SCHOLARSHIP_NAME",SCHOLARSHIP,$triggerOnClickScholarship,false,false, false, 150)."}
+            ]
+        ");
+    } 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //// Select Class...
+    ////////////////////////////////////////////////////////////////////////////
+    $SEARCH_ITEMS = array();
+    
+    $GENERAL_EDUCATION="{".CamemisField::Radio("GENERAL_EDUCATION", "ACADEMIC", TRADITIONAL_EDUCATION_SYSTEM, "GENERAL", false)."}";
+    //@veasna
+    $CREDIT_EDUCATION="{".CamemisField::Radio("CREDIT_EDUCATION_SYSTEM", "ACADEMIC", CREDIT_EDUCATION_SYSTEM, "CREDIT", false)."}";
+    //
+    $TRAINING_PROGRAMS= "{".CamemisField::Radio("TRAINING", "ACADEMIC", TRAINING_PROGRAMS, "TRAINING", false)."}";
+    $CHOOSE_GRADE_NAME= "{".CamemisField::Trigger("CHOOSE_GRADE_NAME",GENERAL_EDUCATION,$triggerOnClick, false, true, false, 150)."}";
+    $CHOOSE_TRAINING_NAME= "{".CamemisField::Trigger("CHOOSE_TRAINING_NAME",TRAINING_PROGRAMS,$triggerOnClickTraining,false, true, false, 150)."}";
+    $CHOOSE_CREDIT_NAME= "{".CamemisField::Trigger("CHOOSE_CREDIT_NAME",CREDIT_EDUCATION_SYSTEM,$triggerCreditTreeOnClick,false, true, false, 150)."}";
+    
+    if (UserAuth::displayRoleGeneralEducation()){
+        if (UserAuth::displayTraditionalEducationSystem()) 
+        $SEARCH_ITEMS[]=  $GENERAL_EDUCATION ;
+        if (UserAuth::displayCreditEducationSystem()) 
+        $SEARCH_ITEMS[]= $CREDIT_EDUCATION ;      
+    }
+    
+    if (UserAuth::displayRoleTrainingEducation()){
+       $SEARCH_ITEMS[]=  $TRAINING_PROGRAMS ; 
+    }
+    $SEARCH_ITEMS[]=  $CHOOSE_GRADE_NAME ;
+    $SEARCH_ITEMS[]=  $CHOOSE_TRAINING_NAME ;
+    $SEARCH_ITEMS[]=  $CHOOSE_CREDIT_NAME ;//@veasna
+    $CHOOSE_SEARCH_ITEMS = implode(",", $SEARCH_ITEMS); 
+    $OBJECT_FORM->addObjectItems("
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed: false
+        ,title: '".SCHOOL_INFORMATION."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310
+        ,items:[".$CHOOSE_SEARCH_ITEMS."]
+    ");
+    
+    //////////////////////////////////////////////////////////////////////////////
+    //// Set selected Id in to campus, grade, schoolyear and class....
+    /////////////////////////////////////////////////////////////////////////////
+    
+    //Hidden Field grade
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_GRADE",false));
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_TRAINING",false));    
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("TARGET",false));
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_SCHOLARSHIP",false));
+        
+    ////////////////////////////////////////////////////////////////////////////
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".RESET."'
+        ,iconCls:'icon-arrow_undo'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false)."
+        }
+    ");
+    $STUDENT_SCHOOLARSHIP_READ_RIGHT = UserAuth::getACLValue("SCHOLARSHIP_EXECUTE_RIGHT")?"false":"true"; 
+    $OBJECT_FORM->addTBarItems("
+        text: '".FIND."'
+        ,disabled:".$STUDENT_SCHOOLARSHIP_READ_RIGHT."
+        ,id: 'FIND_ID'
+        ,formBind:true
+        ,iconCls:'icon-magnifier'
+        ,scope:this
+        ,handler: function(){
+            form = this.getForm();
+            var studentSchoolCode = form.findField('STUDENT_SCHOOL_ID').getValue();
+            var code = form.findField('STUDENT_CODE').getValue();
+            var firstname = form.findField('FIRSTNAME').getValue();
+            var lastname = form.findField('LASTNAME').getValue();
+            var gender = form.findField('GENDER_ID').getValue();
+            var scholarshipType = form.findField('CHOOSE_SCHOLARSHIP').getValue();
+            var target = form.findField('TARGET').getValue();
+            var academicId = this.getForm().findField('CHOOSE_GRADE').getValue();
+            var trainingId = this.getForm().findField('CHOOSE_TRAINING').getValue();
+           
+            var alertMsg = '';
+            alertMsg = alertMsg + ' || ".STUDENT_SCHOOL_ID."<br/>' +
+            alertMsg + ' || ".CODE_ID."<br/>' + 
+            alertMsg + ' || ".LASTNAME."<br/>' + 
+            alertMsg + ' || ".FIRSTNAME."<br/>' +
+            alertMsg + ' || ".GENDER."<br/>' + 
+            alertMsg + ' || ".SCHOOL_YEAR."<br/>' + 
+            alertMsg + ' || ".SCHOLARSHIP."<br/>'
+            ;
+                
+            if (firstname || lastname || code || studentSchoolCode || gender || scholarshipType || target || academicId || trainingId){
+
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonListStudentScholarship'
+                    ,code: code
+                    ,firstname: firstname
+                    ,lastname: lastname
+                    ,studentSchoolCode: studentSchoolCode
+                    ,gender: gender
+                    ,academicId:academicId
+                    ,trainingId:trainingId
+                    ,scholarshipType: scholarshipType
+                    ,target: target
+                };
+               
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+            }else{
+                Ext.Msg.show({
+                    title:'".STATUS."'
+                    ,width: '250'
+                    ,icon: Ext.MessageBox.QUESTION
+                    ,msg: '" . PLEASE_SELECT . " <br/><br/>'+ alertMsg
+                    ,buttons: Ext.Msg.OK
+                });  
+            }
+        }
+    ");
+    
+    $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->isKeys = false;
+    $OBJECT_FORM->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");        
+    $OBJECT_GRID->addReadField("name: 'GENDER'");
+    $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR'");
+    $OBJECT_GRID->addReadField("name: 'SCHOLARSHIP'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_TERM'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_COURSE'");
+    $OBJECT_GRID->addReadField("name: 'TERM'");
+    //$OBJECT_GRID->addReadField("name: 'COURSE'");
+
+    $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', align:'left', renderer: cssTextBlueBold, width: 200, sortable: true, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".SCHOLARSHIP."</b>', align:'left', renderer: cssText, width: 150, sortable: true, dataIndex: 'SCHOLARSHIP'");
+    $OBJECT_GRID->addColumn("header: '<b>".SCHOOL_YEAR."</b>', align:'left', renderer: cssText, width: 120, sortable: true, dataIndex: 'SCHOOLYEAR'");
+    $OBJECT_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', align:'center', renderer: cssText, width: 170, sortable: true, dataIndex: 'TERM'");
+    //$OBJECT_GRID->addColumn("header: '<b>".CURRENT_COURSE."</b>', align:'left', renderer: cssText, width: 120, sortable: true, dataIndex: 'COURSE'");
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonListStudentScholarship'
+    ";
+
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField = "STUDENT";
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+
+    ////////////////////////////////////////////////////////////////////////////
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                   region:'west'
+                ,id:'WEST_ID'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 350
+                ,minSize: 350
+                ,maxSize: 350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            },{
+                   collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        }]
+    });           
+    
+    var myGrid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+
+   /* myGrid.getColumnModel().setHidden(3, false);
+    myGrid.getColumnModel().setHidden(4, false);
+    myGrid.getColumnModel().setHidden(5, true);
+    myGrid.getColumnModel().setHidden(6, true);*/
+    
+    if(Ext.get('GENERAL_EDUCATION')){
+        Ext.get('GENERAL_EDUCATION').on('click', function(e){
+            if(Ext.getCmp('GENERAL_EDUCATION').getValue() === true){
+                Ext.getCmp('CHOOSE_GRADE_NAME_ID').show();
+                Ext.getCmp('CHOOSE_TRAINING').setValue('');
+                Ext.getCmp('CHOOSE_TRAINING_NAME_ID').hide();
+                Ext.getCmp('CHOOSE_CREDIT_NAME_ID').hide();
+                Ext.getCmp('TARGET').setValue('GENERAL');
+            }
+        });
+    }
+    
+    if(Ext.get('CREDIT_EDUCATION_SYSTEM')){
+        Ext.get('CREDIT_EDUCATION_SYSTEM').on('click', function(e){
+            if(Ext.getCmp('CREDIT_EDUCATION_SYSTEM').getValue() === true){
+                Ext.getCmp('CHOOSE_CREDIT_NAME_ID').show();
+                Ext.getCmp('CHOOSE_TRAINING').setValue('');
+                Ext.getCmp('CHOOSE_TRAINING_NAME_ID').hide();
+                Ext.getCmp('CHOOSE_GRADE_NAME_ID').hide();
+                Ext.getCmp('TARGET').setValue('GENERAL');
+            }
+        });
+    }
+    
+    if(Ext.get('TRAINING')){
+        Ext.get('TRAINING').on('click', function(e){
+            if(Ext.getCmp('TRAINING').getValue() === true){
+                Ext.getCmp('CHOOSE_TRAINING_NAME_ID').show();
+                Ext.getCmp('TARGET').setValue('TRAINING');
+                Ext.getCmp('CHOOSE_GRADE_NAME_ID').hide();
+                Ext.getCmp('CHOOSE_GRADE').setValue('');
+                Ext.getCmp('CHOOSE_CREDIT_NAME_ID').hide();
+            }
+        });
+    }
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

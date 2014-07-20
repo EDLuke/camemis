@@ -1,0 +1,290 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'models/app_university/examination/ExaminationDBAccess.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$UNASSIGNED_GRID = new CamemisGrid("EXAM_MANAGEMENT", "BY_GRADE");
+$UNASSIGNED_GRID->setLoadUrl("/examination/jsonload/");
+$UNASSIGNED_GRID->setSaveUrl("/examination/jsonsave/");
+
+$ASSIGNED_GRID = new CamemisGrid("EXAM_MANAGEMENT", "ASSIGNED");
+$ASSIGNED_GRID->setLoadUrl("/examination/jsonload/");
+$ASSIGNED_GRID->setSaveUrl("/examination/jsonsave/");
+
+if(!$this->facette) {header("Location: /main/permission/");exit;}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    Ext.onReady(function() {
+
+        function cssTextBold(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssRoom(value, metadata, record){
+            return '<div style="font-weight:bold; color:#3B5998; padding: 5px;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $UNASSIGNED_GRID->addReadField("name: 'CODE'");
+        $UNASSIGNED_GRID->addReadField("name: 'LASTNAME'");
+        $UNASSIGNED_GRID->addReadField("name: 'FIRSTNAME'");
+        $UNASSIGNED_GRID->addReadField("name: 'STUDENT_NAME'");
+        $UNASSIGNED_GRID->addReadField("name: 'GENDER'");
+        $UNASSIGNED_GRID->addReadField("name: 'CURRENT_CLASS'");
+        $UNASSIGNED_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssTextBold, sortable: true, width: 120, dataIndex: 'CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $UNASSIGNED_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 150, renderer:cssTextBold, sortable: false, dataIndex: 'LASTNAME'");
+            $UNASSIGNED_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 150, renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
+        }else{
+            $UNASSIGNED_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 150, renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
+            $UNASSIGNED_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 150, renderer:cssTextBold, sortable: false, dataIndex: 'LASTNAME'");
+        }
+        $UNASSIGNED_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssTextBold, sortable: true, dataIndex: 'GENDER'");
+        //$UNASSIGNED_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 100, renderer:cssTextBold, sortable: true, dataIndex: 'CURRENT_CLASS'");
+        
+        $UNASSIGNED_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonUnassignedStudentTmpExamination'
+            ,objectId: '" . $this->facette->GUID . "'
+            ,academicId: '". $this->academicId ."'
+        ";
+
+        $UNASSIGNED_GRID->setSelectionParams("
+            cmd: 'jsonActionChooseStudentTmpManually'
+            ,objectId: '" . $this->facette->GUID . "'
+        ");
+
+        $UNASSIGNED_GRID->setSelectionEmbeddedEvents("
+            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.reload();
+            Ext.getCmp('" . $UNASSIGNED_GRID->getObjectId() . "').store.reload();
+        ");
+
+        $UNASSIGNED_GRID->addTBarItems("
+            tbar.add([{
+                id: 'APLY_ID'
+                ,text: '<b>" . APPLY . "</b>'
+                ,iconCls:'icon-disk'
+                ,scope:this
+                ,handler: this.onSelection
+            }]);
+        ");
+        
+        $UNASSIGNED_GRID->isQuickySearch = true;
+        $UNASSIGNED_GRID->isCheckboxSelect = true;
+        $UNASSIGNED_GRID->forceFit = "false";
+        $UNASSIGNED_GRID->renderJS();
+        
+        ///////////////////////////////////////////////////
+
+        $ASSIGNED_GRID->addReadField("name: 'EXAM_CODE'");
+        $ASSIGNED_GRID->addReadField("name: 'CHECKED'");
+        $ASSIGNED_GRID->addReadField("name: 'STUDENT_NAME'");
+        $ASSIGNED_GRID->addReadField("name: 'LASTNAME'");
+        $ASSIGNED_GRID->addReadField("name: 'FIRSTNAME'");
+        $ASSIGNED_GRID->addReadField("name: 'ROOM_NAME'");
+        $ASSIGNED_GRID->addReadField("name: 'POINTS'");
+        
+        $ASSIGNED_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'CHECKED'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+
+        $ASSIGNED_GRID->addColumn("header: '<b>" . CANDIDATE_CODE . "</b>', renderer:cssTextBold, align:'center', sortable: true, width: 120, dataIndex: 'EXAM_CODE'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $ASSIGNED_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 120, renderer:cssTextBold, sortable: true, dataIndex: 'LASTNAME'");
+            $ASSIGNED_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 120, renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
+        }else{
+            $ASSIGNED_GRID->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 120, renderer:cssTextBold, sortable: false, dataIndex: 'FIRSTNAME'");
+            $ASSIGNED_GRID->addColumn("header: '<b>" . LASTNAME . "</b>', width: 120, renderer:cssTextBold, sortable: true, dataIndex: 'LASTNAME'");
+        }
+        $ASSIGNED_GRID->addColumn("header: '<b>" . ROOM . "</b>', width: 120, renderer:cssRoom, sortable: true, dataIndex: 'ROOM_NAME'");
+        $ASSIGNED_GRID->addColumn("header: '<b>" . POINTS . "</b>', width: 80, renderer:cssTextBold, align: 'center', sortable: true, dataIndex: 'POINTS'");
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add([{
+                text: '".CANCEL."'
+                ,id: 'CANCEL'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                    window.parent.Ext.getCmp('WEST_ID').expand();
+                }
+            }]);
+        ");  
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ADD_STUDENTS_ID'
+                ,text: '" . ADD_STUDENTS . "'
+                ,iconCls:'icon-group_add'
+                ,scope:this
+                ,menu: [{
+                    text:'" . AUTOMATIC . "'
+                    ,iconCls:'icon-application_form_add'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            title:'" . INFO_SHORT_HEADER . "'
+                            ,msg: '" . MSG_WANT_PERFORM_ACTION . "'
+                            ,buttons: Ext.MessageBox.OKCANCEL
+                            ,fn: function (btn){
+                                if (btn == 'ok'){
+                                    Ext.Ajax.request({
+                                        url: '/examination/jsonsave/'
+                                        ,method: 'POST'
+                                        ,params: {
+                                            cmd: 'jsonActionAllStudentsTmpToExamination'
+                                            ,objectId: '" . $this->facette->GUID . "'
+                                            ,academicId: '". $this->academicId ."'
+                                        }
+                                        ,success: function(response, options) {
+                                            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.sortInfo = null;
+                                            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.reload();
+                                        }
+                                    });
+                                }
+                            },
+                            icon: Ext.MessageBox.QUESTION
+                        });
+                    }
+                },{
+                    text:'" . MANUALLY . "'
+                    ,iconCls:'icon-application_form_add'
+                    ,disabled: false
+                    ,handler: function(){
+                        openWinXType('WinXType','" . ADD_STUDENTS . " &raquo; " . MANUALLY . "', '" . $UNASSIGNED_GRID->getObjectXType() . "', percentWidth(50), percentHeight(75));
+                    }
+                }]
+            }]);
+        ");
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add('-');
+        ");
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . REMOVE_ALL_STUDENTS . "'
+                ,id: 'REMOVE_EXAM'
+                ,iconCls:'icon-delete'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        title:'" . REMOVE_ALL_STUDENTS . "'
+                        ,msg: '" . MSG_DELETE_ASSIGNMENT . "'
+                        ,buttons: Ext.MessageBox.OKCANCEL
+                        ,fn: function (btn){
+                            if (btn == 'ok'){
+                                Ext.Ajax.request({
+                                    url: '/examination/jsonsave/'
+                                    ,method: 'POST'
+                                    ,params: {
+                                        cmd: 'jsonRemoveAllStudentsFromExamination'
+                                        ,objectId: '" . $this->facette->GUID . "'
+                                    }
+                                    ,success: function(response, options) {
+                                        Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.sortInfo = null;
+                                        Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.reload();
+                                    }
+                                });
+                            }
+                        },
+                        icon: Ext.MessageBox.QUESTION
+                    });
+                }
+            }]);
+        ");
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add('-');
+        ");
+        
+        $ASSIGNED_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/examshowcolumn/?objectId=".$this->objectId."&academicId=".$this->academicId."&type=6&bnt=1',550,percentHeight(85));
+                }
+            }]);
+        ");  
+        
+        $ASSIGNED_GRID->baseParams = "
+            start:0
+            ,limit: 100
+            ,cmd: 'jsonAssignedStudentTmpExamination'
+            ,seachDisplay:'room'
+            ,objectId: '" . $this->facette->GUID . "'
+        ";
+
+        $ASSIGNED_GRID->setSaveParams("
+            cmd: 'jsonActionRemoveStudentFromExamination'
+            ,objectId: '" . $this->facette->GUID . "'
+        ");
+
+        $ASSIGNED_GRID->setEditEmbeddedEvents("
+            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $ASSIGNED_GRID->getObjectId() . "').store.reload();
+        ");
+
+        /*
+        if ($status) {
+            $ASSIGNED_GRID->isGridEditing = false;
+        } else {
+            $ASSIGNED_GRID->isGridEditing = true;
+        }
+        */
+        $ASSIGNED_GRID->isGridEditing = true;
+        $ASSIGNED_GRID->loadMask = true;
+        $ASSIGNED_GRID->forceFit = "false";
+        $ASSIGNED_GRID->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items:[{xtype: '<?= $ASSIGNED_GRID->getObjectXtype(); ?>'}]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

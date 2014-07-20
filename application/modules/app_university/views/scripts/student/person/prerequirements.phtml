@@ -1,0 +1,150 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 20.20.2012
+// Am Stollheen 18, 55120 Mainz, Germany.....
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$OBJECT_GRID = new CamemisGrid("STUDENT_PREREQUIREMENTS", "LIST");//@CHHE Vathana
+$OBJECT_GRID->setLoadUrl("/student/jsonload/");
+$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
+
+function columnProperties($header, $dataindex, $width){
+    $js = "";
+    $js .= "editor: new Ext.form.TextArea({";
+        $js .= "allowBlank: false";
+    $js .= "})";
+    $js .= ",renderer:cssDefault";
+    $js .= ",align: 'left'";
+    $js .= ",height:25";
+    $js .= ",header: '<b>".$header."</b>'";
+    $js .= ",dataIndex: '".$dataindex."'";
+    $js .= ",width: $width";
+    
+    return $js;
+}
+?>
+<style type="text/css">
+    span.Text{
+        font:bold 10px Tahoma,Verdana,Arial,Sans-serif,Hanuman;
+        color:#333;
+    }
+</style>
+<script>
+   
+    Ext.onReady(function() {
+
+        Ext.QuickTips.init();
+        function cssDefault(value){
+            return '<div style="font-weight:normal; padding: 5px; height:15px;">' + value + '</div>';
+        }
+        <?
+        
+        $OBJECT_GRID->addReadField("name: 'DELETE'");
+        $OBJECT_GRID->addReadField("name: 'NAME'");
+        $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+
+        $OBJECT_GRID->addColumn(columnProperties(NAME,"NAME",150));
+        $OBJECT_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150));
+
+        $OBJECT_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,align: 'center'
+            ,header: '<b>".DELETE."</b>'
+            ,dataIndex: 'DELETE'
+            ,disabled: true
+            ,width: 80
+            ,on: 1
+            ,off: 0
+        ");
+
+        if($isCancel)
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+                }
+            },'-']);
+        ");
+        
+        if (UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_EDIT_RIGHT"))
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . ADD_ENTRY . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    data = {
+                        NAME:'---'
+                        ,DESCRIPTION:'---'
+                    };
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
+                }
+            }]);
+        ");
+
+        $OBJECT_GRID->setSaveParams("
+            cmd: 'actionStudentPrerequirements'
+            ,objectId: '".$this->objectId."'
+        ");
+
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonStudentPrerequirements'
+            ,objectId: '".$this->objectId."'
+        ";
+        $OBJECT_GRID->setAftereditCallback("
+            if(jsonData.DELETE){
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload(); 
+            }else{
+                e.record.set('ID',jsonData.ID);
+                e.record.set('NAME',jsonData.NAME);
+                e.record.set('DESCRIPTION',jsonData.DESCRIPTION); 
+            }
+        ");
+        $OBJECT_GRID->setAftereditEvent("
+            objectId = jsonData.ID;
+        ");
+        //if (UserAuth::getACLStudent("EDIT_RIGHT"))
+        $OBJECT_GRID->isGridEditing = true;
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->setUserColumn = true;//@CHHE Vathana
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType()?>'}]
+            }]
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

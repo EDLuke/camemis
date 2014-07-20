@@ -1,0 +1,475 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 08.07.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/CAMEMISUploadDBAccess.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("FILE_SYSTEM");
+$OBJECT_FORM->setLoadUrl("/file/jsonload/");
+$OBJECT_FORM->setSaveUrl("/file/jsonsave/");
+
+$STUDENT_TREE = new CamemisTree("FILE","STUDENT_LIST");
+$STUDENT_TREE->setURL('/file/jsontree/');
+
+$STAFF_TREE = new CamemisTree("FILE", "STAFF_LIST");
+$STAFF_TREE->setURL('/file/jsontree/');
+$USER_TYPE=UserAuth::getUserType();
+
+if($this->objectId == "new"){
+    $parentId = isset($_GET['parentId'])?addText($_GET['parentId']):'';
+}else{
+    $parentId = $this->facette?$this->facette->PARENT:'';
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        //
+        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+        $OBJECT_SCHOOLYEAR->objectTitle = false;
+        $OBJECT_SCHOOLYEAR->allowBlank = "true";
+        $OBJECT_SCHOOLYEAR->width = 150;
+        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+        $OBJECT_SCHOOLYEAR->renderJS();
+        //    
+        $STUDENT_TREE->isAsyncTreeNode = false;
+        $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh('STUDENT'));
+        $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeExpand('STUDENT'));
+        $STUDENT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse('STUDENT')); 
+        $STUDENT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 80
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+        
+        if($this->objectId != "new" || $USER_TYPE=='SUPERADMIN'){
+            $schoolyearObject = AcademicDateDBAccess::findSchoolyearByCurrentDate();
+            $STUDENT_TREE->setBaseParams("
+                cmd: 'getAcademicsByFile'
+                ,objectId:'".$this->objectId."'
+                ,SCHOOLYEAR:'".$schoolyearObject->ID."'
+            "); 
+        }
+        
+        $STUDENT_TREE->backgroundColor = "#F9F9F9";
+        $STUDENT_TREE->isOnClickContextMenu = false;
+        $STUDENT_TREE->isTreeExpand = true;
+        $STUDENT_TREE->renderJS();
+        
+        $STAFF_TREE->isAsyncTreeNode = false;
+        $STAFF_TREE->addTBarItems(CamemisBar::tbarTreeRefresh('STAFF'));
+        $STAFF_TREE->addTBarItems(CamemisBar::tbarTreeExpand('STAFF'));
+        $STAFF_TREE->addTBarItems(CamemisBar::tbarTreeCollapse('STAFF'));
+        if($this->objectId != "new" || $USER_TYPE=='SUPERADMIN'){
+            $STAFF_TREE->setBaseParams("
+                cmd: 'treeAllStaffs'
+                ,objectId:'".$this->objectId."'
+            ");
+        }
+        
+        $STAFF_TREE->backgroundColor = "#F9F9F9";
+        $STAFF_TREE->isOnClickContextMenu = false;
+        $STAFF_TREE->isTreeExpand = true;
+        $STAFF_TREE->renderJS();
+
+        $DETAIL_INFORMATION = "
+        {
+            title: '".NAME."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFF;padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("NAME", "NAME", NAME, true)."}
+                ]
+            }]
+        }
+        ";
+        
+        $DESCRIPTION = "
+        {
+            title: '".DESCRIPTION."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-top:5px'
+            ,width: 550
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items: [{".CamemisField::Textarea('DESCRIPTION', false,250, false, false, false)."}]
+            }]
+        }
+        ";
+        
+        $FORM_ITMES = "[";
+        switch (UserAuth::getUserType()) {
+            case "TEACHER":
+            case "INSTRUCTOR":
+            case "ADMIN":
+            case "SUPERADMIN":
+                $FORM_ITMES .= $DETAIL_INFORMATION;
+                $FORM_ITMES .= ",".$DESCRIPTION;
+            break;
+            case "STUDENT":
+                $FORM_ITMES .= "
+                {
+                    title: '".FILE."'
+                    ,layout: 'fit'
+                    ,width: 550
+                    ,height:percentHeight(92)
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                }
+                ";
+                break;
+        }
+        
+        $FORM_ITMES .= "]";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: ".$FORM_ITMES."
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        
+        $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadFile',objectId: '".$this->objectId."'");
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveFile'
+            ,objectId: '".$this->objectId."'
+            ,parentId: '".$parentId."'
+        ");   
+        
+        ////////////////////////////////////////////////////////////////////////
+        // Refresh tree node and buttons...
+        ////////////////////////////////////////////////////////////////////////
+        if($USER_TYPE=='SUPERADMIN' || $USER_TYPE=='ADMIN'){
+            if($this->objectId == "new"){
+                $OBJECT_FORM->setonEmbeddedEvents("
+                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                    myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');
+                    myNode = myTree.getNodeById('".$parentId."');
+                    if(myNode.parentNode==null){
+                        myTree.root.reload();
+                    }else{
+                        var parentId = myNode.parentNode.id
+                        myPerentNode = myTree.getNodeById(parentId);
+                        if(myNode.isLeaf()){
+                            if(myPerentNode){
+                                myPerentNode.reload();
+                                myPerentNode.expand(true, false);
+                            }else{
+                                myTree.root.reload();
+                            }
+                        }else{
+                            if (myNode.hasChildNodes()) {
+                                myNode.reload();
+                                myNode.expand(true, false);
+                            }
+                        }
+                    }
+                    var result = Ext.util.JSON.decode(action.response.responseText);
+                    window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+                ");
+                
+            }else{
+                
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
+                $OBJECT_FORM->setRemoveParams("
+                    cmd: 'jsonRemoveFile'
+                    ,objectId: '".$this->objectId."'
+                ");
+                
+                $OBJECT_FORM->setonEmbeddedEvents("
+                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                    myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');
+                    myNode = myTree.getNodeById('".$parentId."');
+                    if(myNode.parentNode.id==null){
+                        myTree.root.reload();
+                    }else{
+                        var parentId = myNode.parentNode.id
+                        myPerentNode = myTree.getNodeById(parentId);
+                        if(myNode.isLeaf()){
+                            if(myPerentNode){
+                                myPerentNode.reload();
+                                myPerentNode.expand(true, false);
+                            }else{
+                                myTree.root.reload();
+                            }
+                        }else{
+                            if (myNode.hasChildNodes()) {
+                                myNode.reload();
+                                myNode.expand(true, false);
+                            }
+                        }
+                    }
+                    ".camemisPage::setRequestURI()."
+                ");
+                
+                $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                    XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."'); 
+                    myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');
+                    myNode = myTree.getNodeById('".$parentId."');
+                    if(myNode.parentNode==null){
+                        myTree.root.reload();
+                    }else{
+                        var parentId = myNode.parentNode.id
+                        myPerentNode = myTree.getNodeById(parentId);
+                        if(myNode.isLeaf()){
+                            if(myPerentNode){
+                                myPerentNode.reload();
+                                myPerentNode.expand(true, false);
+                            }else{
+                                myTree.root.reload();
+                            }
+                        }else{
+                            if (myNode.hasChildNodes()) {
+                                myNode.reload();
+                                myNode.expand(true, false);
+                            }
+                        }
+                    }
+                    window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                ");
+            }
+            
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());   
+        }
+        ////////////////////////////////////////////////////////////////////////
+        
+        if($this->facette){
+            $OBJECT_FORM->isObjectDefaultOnLoad = true;
+        }else{
+            $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        }
+        
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        $VIEWPORT_ITEMS = "[{";
+        if($this->objectId == "new"){
+            $VIEWPORT_ITEMS .= "
+                layout:'fit'
+                ,border: false
+                ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]    
+            ";
+        }else{
+            
+            switch ($USER_TYPE) {
+                case "SUPERADMIN":
+                case "ADMIN":
+                    $VIEWPORT_ITEMS .= "
+                    bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px;'
+                    ,border:false
+                    ,items:[{
+                        xtype: 'tabpanel'
+                        ,plain:true
+                        ,activeTab: 0
+                        ,items:[{
+                            title: '".FILE."'
+                            ,layout:'fit'
+                            ,height:percentHeight(100)
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."&object=0f414800c09f2c991a4c9ead540e0d54")."'})]
+                        },{
+                            title:'".STUDENTS."'
+                            ,height:percentHeight(100)
+                            ,border: false
+                            ,items: [{xtype: '".$STUDENT_TREE->getObjectXType()."'}]
+                        },{
+                            title:'".STAFF."'
+                            ,height:percentHeight(100)
+                            ,border: false
+                            ,items: [{xtype: '".$STAFF_TREE->getObjectXType()."'}]
+                        },{
+                            title:'".MAIN_CONTENT."'
+                            ,border: false
+                            ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]    
+                        }]
+                    }]";
+                    break;
+                    
+                default:
+                    $VIEWPORT_ITEMS .= "
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        collapsible: false
+                        ,id: 'center'
+                        ,region:'center'
+                        ,margins: '3 3 3 0'
+                        ,layout: 'card'
+                        ,activeItem: 0
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                    }]
+                    ";
+                    break;
+            }  
+        }
+        $VIEWPORT_ITEMS .= "}]";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items: <?=$VIEWPORT_ITEMS;?>
+            }]
+        });
+        
+         <?
+        if($this->objectId != "new"){
+            
+            $js = "";
+            $js .= "var myTree = ".$STUDENT_TREE->ExtgetCmp().";"; 
+            $js .= "var myTraditionalTree = ".$STUDENT_TREE->ExtgetCmp().";";
+            $js .= "var myCombo = Ext.getCmp('COMBO_ID');";
+            $js .= "if (myCombo)";
+            $js .= "myCombo.on('select', function() {";
+                $js .= "myTraditionalTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();";
+                $js .= "myTraditionalTree.root.reload();";
+                $js .= "myTraditionalTree.getRootNode().expand(true, false);";
+            $js .= "});";
+            
+            $js .= "if (myTree) myTree.on('checkchange', function(node, checked){";
+            
+                ///////////////////////////////////////////////////////////////////////////
+                $js .= "myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');";
+                $js .= "myNode = myTree.getNodeById('".$parentId."');";
+                $js .= "if(myNode.parentNode==null){";
+                    $js .= "myTree.root.reload();";
+                $js .= "}else{";
+                    $js .= "var parentId = myNode.parentNode.id";
+                    $js .= "myPerentNode = myTree.getNodeById(parentId);";
+                    $js .= "if(myNode.isLeaf()){";
+                        $js .= "if(myPerentNode){";
+                            $js .= "myPerentNode.reload();";
+                            $js .= "myPerentNode.expand(true, false);";
+                        $js .= "}else{";
+                            $js .= "myTree.root.reload();";
+                        $js .= "}";
+                    $js .= "}else{";
+                        $js .= "if (myNode.hasChildNodes()) {";
+                            $js .= "myNode.reload();";
+                            $js .= "myNode.expand(true, false);";
+                        $js .= "}";
+                    $js .= "}";
+                $js .= "}";
+                ///////////////////////////////////////////////////////////////////////////
+                          
+                $js .= "Ext.Ajax.request({";
+                    $js .= "url:'/file/jsonsave/'";
+                    $js .= ",method:'POST'";
+                    $js .= ",params:{";
+                        $js .= "cmd:'jsonActionAcademicToFile'";
+                        $js .= ",checked: checked";
+                        $js .= ",academic: node.id";
+                        $js .= ",objectId: '".$this->objectId."'";
+                    $js .= "}";
+                    $js .= ",success: function(response, options) {";
+                        $js .= "result = Ext.util.JSON.decode(response.responseText);";
+                        $js .= "XMsg('".STATUS."',result.msg);";
+                    $js .= "}";
+                $js .= "});";
+            $js .= "});";    
+            
+            $js .= "var myTree = ".$STAFF_TREE->ExtgetCmp().";";
+            $js .= "if (myTree) myTree.on('checkchange', function(node, checked){";
+            
+                ///////////////////////////////////////////////////////////////////////////
+                $js .= "myTree = window.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');";
+                $js .= "myNode = myTree.getNodeById('".$parentId."');";
+                $js .= "if(myNode.parentNode==null){";
+                    $js .= "myTree.root.reload();";
+                $js .= "}else{";
+                    $js .= "var parentId = myNode.parentNode.id";
+                    $js .= "myPerentNode = myTree.getNodeById(parentId);";
+                    $js .= "if(myNode.isLeaf()){";
+                        $js .= "if(myPerentNode){";
+                            $js .= "myPerentNode.reload();";
+                            $js .= "myPerentNode.expand(true, false);";
+                        $js .= "}else{";
+                            $js .= "myTree.root.reload();";
+                        $js .= "}";
+                    $js .= "}else{";
+                        $js .= "if (myNode.hasChildNodes()) {";
+                            $js .= "myNode.reload();";
+                            $js .= "myNode.expand(true, false);";
+                        $js .= "}";
+                    $js .= "}";
+                $js .= "}";
+                ///////////////////////////////////////////////////////////////////////////
+                
+                $js .= "Ext.Ajax.request({";
+                    $js .= "url:'/file/jsonsave/'";
+                    $js .= ",method:'POST'";
+                    $js .= ",params:{";
+                        $js .= "cmd:'jsonActionAcademicToFile'";
+                        $js .= ",checked: checked";
+                        $js .= ",userroleId: node.id";
+                        $js .= ",objectId: '".$this->objectId."'";
+                    $js .= "}";
+                    $js .= ",success: function(response, options) {";
+                        $js .= "result = Ext.util.JSON.decode(response.responseText);";
+                        $js .= "XMsg('".STATUS."',result.msg);";
+                    $js .= "}";
+                $js .= "});";
+            $js .= "});";    
+            print $js;
+        }
+        
+        ?>
+        
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

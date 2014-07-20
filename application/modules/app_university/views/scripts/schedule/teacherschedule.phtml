@@ -1,0 +1,76 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$schoolyearId = isset($_GET["schoolyearId"])?addText($_GET["schoolyearId"]):"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
+
+$entries = AcademicDBAccess::listClassesByInstructorSchoolyear($teacherId, $schoolyearId);
+
+function setItem($name, $Id, $teacherId){
+    $js = "title: '<b>" . $name . "</b>'";
+    $js .= ",layout: 'fit'";
+    $js .= ",iconCls:'icon-package_white'";
+    $js .= ",items: [new Ext.ux.IFrameComponent({ id: '".strtoupper($name)."', url: '/schedule/byclass/?academicId=".$Id."&teacherId=".$teacherId."'})]";
+    return $js;
+}
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    Ext.onReady(function() {
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $data = array();
+        if($entries){
+            foreach($entries as $value){
+                $data[] = "{".setItem($value->NAME,$value->ID,$teacherId)."}";
+            }
+        }
+        $ITEMS ="[";
+            $ITEMS .= implode(",",$data);
+        $ITEMS .="]";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,layout: 'fit'
+                ,border: false
+                ,items:[{
+                    xtype: 'vrtabpanel'
+                    ,tabWidth: 200
+                    ,border: false			
+                    ,activeTab: 0
+                    ,plain:true
+                    ,width:200
+                    ,defaults:{autoScroll: true, border: false}
+                    ,items: <?=$ITEMS;?>      
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

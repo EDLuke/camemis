@@ -1,0 +1,108 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl('/training/jsonload/');
+$OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+$columndata = Utiles::getGridColumnData("TRAINING_LIST_ID");
+
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->setLoadUrl('/training/jsonload/');
+    $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+    
+    $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'ASSIGNED'");
+    $OBJECT_GRID->addReadField("name: 'TERM_NAME'");
+    $OBJECT_GRID->addReadField("name: 'LEVEL_NAME'");
+    $OBJECT_GRID->addReadField("name: 'PROGRAMM_NAME'");
+
+    $OBJECT_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'ASSIGNED'
+        ,width: 50
+        ,on: 1
+        ,off: 0
+    ");
+
+    $OBJECT_GRID->addColumn("header: '".GRADE_CLASS."', align:'center', renderer: renderText, width: 100, hidden:".checkColHidden(1, $columndata).", sortable: false, dataIndex: 'CLASS_NAME'");
+    $OBJECT_GRID->addColumn("header: '".LEVEL."', align:'left', renderer: renderText, width: 120, hidden:".checkColHidden(2, $columndata).", sortable: false, dataIndex: 'LEVEL_NAME'");
+    $OBJECT_GRID->addColumn("header: '".PROGRAM."', align:'left', renderer: renderText, width: 200, hidden:".checkColHidden(3, $columndata).", sortable: false, dataIndex: 'PROGRAMM_NAME'");
+    $OBJECT_GRID->addColumn("header: '".TERM."', align:'left', renderer: renderText, width: 200, hidden:".checkColHidden(4, $columndata).", sortable: false, dataIndex: 'TERM_NAME'");
+
+    $OBJECT_GRID->baseParams = "
+        objectId: '".$studentId."'
+        ,parentId: '".$trainingId."'
+        ,cmd: 'listStudentTrainings'
+    ";
+    
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'actionStudentTrainingTransfer'
+        ,parentId: '".$trainingId."'
+        ,objectId: '".$studentId."'
+    ");
+
+    $OBJECT_GRID->setEditEmbeddedEvents("
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+    ");
+    
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->isCheckboxSelect = false;
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,xtype: 'panel'
+            ,layout: 'card'
+            ,id: 'panel'
+            ,activeItem: 0
+            ,items:[{
+                border: false
+                ,title: ''
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,691 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("SMS");
+$OBJECT_FORM->setLoadUrl('/sms/jsonload/');
+$OBJECT_FORM->setSaveUrl('/sms/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("SMS", "PERSONS");
+$OBJECT_GRID->setLoadUrl('/sms/jsonload/');
+$OBJECT_GRID->setSaveUrl('sms/jsonsave/');
+
+$OBJECT_DATA = $this->OBJECT_DATA;
+
+$academicId = isset($_GET['academicId']) ? addText($_GET["academicId"]):"";
+$sendTo = isset($_GET['sendTo'])? addText($_GET["sendTo"]):"";
+$sent = isset($OBJECT_DATA['SENT'])?$OBJECT_DATA['SENT']:"";
+
+$HIDDEN_COPY = 'true';
+$HIDDEN_TO_ALL_USER = 'true';
+
+switch($sendTo){
+    case "STUDENT":
+        $CMD_ASSIGNED_PERSONS = 'jsonAssignedStudentsSMSServices';
+        $CMD_REMOVE_PERSON = 'jsonActionRemoveStudentFromSMSServices';
+        $CMD_REMOVE_ALL_PERSONS = 'jsonRemoveAllStudentsFromSMSServices';
+        $PRIORITY_VALUE = "STUDENT";
+        $REMOVE_MSG = REMOVE_ALL_STUDENTS;
+        $HIDDEN_TO_ALL_USER = 'false';
+        break;
+    case "STAFF":
+        $CMD_ASSIGNED_PERSONS = 'jsonAssignedStaffsSMSServices';
+        $CMD_REMOVE_PERSON = 'jsonActionRemoveStaffFromSMSServices';
+        $CMD_REMOVE_ALL_PERSONS = 'jsonRemoveAllStaffsFromSMSServices';
+        $PRIORITY_VALUE = "STAFF";
+        $REMOVE_MSG = REMOVE_ALL_STAFFS;
+        $HIDDEN_TO_ALL_USER = 'true';
+        break;
+}
+
+if ($sent){
+    $isGridEditing = false;
+    $DISABLED_SEND = "true";
+    
+    switch($sendTo){
+        case "STUDENT":
+            $HIDDEN_COPY = 'false';
+            break;
+        case "STAFF":
+            $HIDDEN_COPY = 'true';
+            break;
+    }
+    
+    $DISABLED_ADD_USER = 'true';
+    $DISABLED_REMOVE_ALL = 'true';
+    $SET_AUTO_LOADING = true;
+}else{
+    $isGridEditing = true;
+    
+    if ($this->objectId<>"new"){
+        $DISABLED_SEND = "false";
+        $DISABLED_ADD_USER = 'false';
+        $DISABLED_REMOVE_ALL = 'false';
+        $SET_AUTO_LOADING = true;
+    }else{
+        $DISABLED_SEND = "true";
+        $DISABLED_ADD_USER = 'true';
+        $DISABLED_REMOVE_ALL = 'true';
+        $SET_AUTO_LOADING = false;
+    }
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px;;">' + value + '</div>';
+        }
+        var charCount = new Ext.Toolbar.TextItem('<?=CHARS?>: <?=isset($OBJECT_DATA["CHARTS"])?$OBJECT_DATA["CHARTS"]:""?>');
+        
+        function renderTextSMS(value, metadata, record){
+            var SMS_SERVICES = record.data.SMS_SERVICES;
+            if (SMS_SERVICES == 1){
+                return '<div style="font-weight:bold; color: #333;">' + value + '</div>';
+            }else{
+                return '<div style="font-weight:bold; color: #CC0000;">' + value + '</div>';
+            }
+        }
+        
+        <?
+        switch(UserAuth::getUserType()) {
+            case "INSTRUCTOR":
+            case "TEACHER":
+                $HIDDEN_REGISTRATION = "true";
+                $HIDDEN_SETTINGS = "true";
+                $HIDDEN_FEES = "true";
+                $SEARCH_USER = "/sms/studentsbyclass/?objectId=$this->objectId&academicId=".$academicId."";
+            break;
+            default:
+                $HIDDEN_REGISTRATION = "false";
+                $HIDDEN_SETTINGS = "false";
+                $HIDDEN_FEES = "false";
+                
+                switch($sendTo){
+                    case "STUDENT":
+                        $SEARCH_USER = "/sms/searchstudents/?objectId=$this->objectId&academicId=$academicId";
+                        if ($sent){
+                            $HIDDEN_TO_ALL_USER = 'true';
+                        }else{
+                            $HIDDEN_TO_ALL_USER = 'false';
+                        }
+                        break;
+                    case "STAFF":
+                        $SEARCH_USER = "/sms/searchstaffs/?objectId=$this->objectId";
+                        break;
+                }
+                
+            break;
+        }
+        
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PRIORITY = "
+        {
+            title: '".PRIORITY."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: percentWidth(38)
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::ComboSMSPriority($PRIORITY_VALUE, 150)."}
+                ]
+            }]
+        }
+        ";
+        
+        $CONTENT = "
+        {
+            title: 'SMS - ".CONTENT."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width: percentWidth(38)
+            ,items:[{
+                border: false
+                ,layout: 'fit'
+                ,bodyStyle:'padding:10px'
+                ,items:[{
+                    xtype: 'displayfield'
+                    ,bodyStyle:'padding:10px'
+                    ,hideLabel: true
+                    ,value: '<b>".PLEASE_WRITE_UNSIGNED."</b>' 
+                }]
+            },{
+                layout: 'fit'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,bbar: new Ext.ux.StatusBar({
+                    id: 'word-status'
+                    ,items: [charCount, ' ']
+                })
+                ,items: [{
+                    xtype: 'textarea'
+                    ,height: 100
+                    ,hideLabel: true
+                    ,allowBlank: false
+                    ,id: 'WORD_TEXTAREA'
+                    ,name: 'CONTENT'
+                    ,enableKeyEvents: true
+                    ,listeners: {
+                        'keyup': {
+                            fn: function(t){
+                                var v = t.getValue();
+                                var   wc = 0;
+                                var cc = v.length ? v.length : 0;
+                                if(cc > 0){
+                                    wc = v.match(/\b/g);
+                                    wc = wc ? wc.length / 2 : 0;
+                                }
+                                countCharts = cc;
+                                Ext.fly(charCount.getEl()).update('".CHARS.": '+countCharts);
+                                
+//                                if (countCharts>150){
+//                                    Ext.getCmp('SINGLE_SAVE_ID').disable();
+//                                    //Ext.getCmp('SEND_ID').disable();
+//                                }else{
+//                                    Ext.getCmp('SINGLE_SAVE_ID').enable();
+//                                    //Ext.getCmp('SEND_ID').enable();
+//                                }
+                            }
+                        }
+                    }
+                }]
+            }]
+        }
+        ";
+        
+        $CREATE_INFO = "
+        {
+            title: '".CREATED."'
+            ,iconCls:'icon-about'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: percentWidth(38)
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,"".isset($OBJECT_DATA["CREATED_DATE"])?$OBJECT_DATA["CREATED_DATE"]:"---"."")."
+                },{
+                    ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,"".isset($OBJECT_DATA["CREATED_BY"])?$OBJECT_DATA["CREATED_BY"]:"---"."")."
+                }]
+            }]
+        }
+        ";
+        
+        $MODIFY_INFO = "
+        {
+            title: '".MODIFIED."'
+            ,iconCls:'icon-about'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: percentWidth(38)
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,"".isset($OBJECT_DATA["MODIFY_DATE"])?$OBJECT_DATA["MODIFY_DATE"]:"---"."")."
+                },{
+                    ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,"".isset($OBJECT_DATA["MODIFY_BY"])?$OBJECT_DATA["MODIFY_BY"]:"---"."")."
+                }]
+            }]
+        }
+        ";
+        
+        $SENT_INFO = "
+        {
+            title: '".SENT."'
+            ,iconCls:'icon-about'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: percentWidth(38)
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#FFFFFF; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("SENT_ON",SENT_ON,"".isset($OBJECT_DATA["SENT_ON"])?$OBJECT_DATA["SENT_ON"]:"---"."")."
+                },{
+                    ".CamemisField::Displayfield("SENT_BY",SENT_BY,"".isset($OBJECT_DATA["SENT_BY"])?$OBJECT_DATA["SENT_BY"]:"---"."")."
+                }]
+            }]
+        }
+        ";
+        
+        $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,width: percentWidth(40)
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$PRIORITY."
+            ,".$CONTENT."
+            ,".$CREATE_INFO."
+            ,".$MODIFY_INFO."
+            ,".$SENT_INFO."
+        ]
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('WEST_ID').expand();
+                window.parent. Ext.getCmp('SMS_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('CENTER_ID').getLayout().setActiveItem(0);
+            }
+        ");
+        
+        if (!$sent){
+            
+            if ($this->objectId <>"new"){
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+            }
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+            $OBJECT_FORM->addTBarItems("
+                text: '".SEND."'
+                ,id: 'SEND_ID'
+                ,formBind:true
+                ,disabled: ".$DISABLED_SEND."
+                ,iconCls:'icon-sms'
+                ,scope:this
+                ,handler: function(){
+                    
+                    Ext.MessageBox.show({
+                        title: '".STATUS."'
+                        ,msg: '".SEND_MESSAGE."'
+                        ,width:300
+                        ,icon: Ext.MessageBox.QUESTION
+                        ,buttons: Ext.MessageBox.OKCANCEL
+                        ,fn: function(btn){
+                            
+                            if (btn == 'ok'){
+                                Ext.Ajax.request({
+                                    url: '/sms/jsonsend/'
+                                    ,method: 'POST'
+                                    ,params: {
+                                        cmd: 'jsonSendSMSToAllPersons'
+                                        ,objectId: '".$this->objectId."'
+                                        ,sendTo: '".$sendTo."'
+                                    }
+                                    ,success: function(response, options) {
+                                        
+                                        jsonData = Ext.util.JSON.decode(response.responseText);
+                                        
+                                        if (jsonData.sendCount == 0){
+                                            ".camemisPage::alertMSG("Error"," Stystem error...",1)."
+                                        }else{
+                                            Ext.MessageBox.show({
+                                                title: '".STATUS."'
+                                                ,msg: '('+jsonData.sendCount+')' + ' ".MSG_SEND_SUCCESS." '
+                                                ,width:300
+                                                ,buttons: Ext.MessageBox.OK
+                                                ,fn: function(btn){
+                                                    if (btn == 'ok'){
+                                                        " . camemisPage::setRequestURI(false) . "
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                    ,failure: function(response, options) {}
+                                });
+                            }
+                        }
+                    });
+                }
+            ");
+        }
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".COPY."'
+            ,hidden: ".$HIDDEN_COPY."
+            ,id: 'COPY_ID'
+            ,formBind:true
+            ,iconCls:'icon-disk_multiple'
+            ,scope:this
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    title: '".STATUS."'
+                    ,msg: '".MSG_COPY_DATA."'
+                    ,width:300
+                    ,icon: Ext.MessageBox.QUESTION
+                    ,buttons: Ext.MessageBox.OKCANCEL
+                    ,fn: function(btn){
+                        if (btn == 'ok'){
+                            Ext.Ajax.request({
+                                url: '/sms/jsonsave/'
+                                ,method: 'POST'
+                                ,params: {
+                                    cmd: 'jsonCopySMS'
+                                    ,objectId: '".$this->objectId."'
+                                }
+                                ,success: function(response, options) {
+                                    data = Ext.decode(response.responseText);
+                                    objectId = data.newObjectId;
+                                    Ext.MessageBox.show({
+                                        title: '".STATUS."'
+                                        ,msg: '".MSG_COMPLETED_SUCCESSFULLY."'
+                                        ,width:300
+                                        ,buttons: Ext.MessageBox.OK
+                                        ,fn: function(btn){
+                                            if (btn == 'ok'){
+                                                window.location='".$_SERVER["REQUEST_URI"]."&objectId=' + objectId;
+                                            }
+                                        }
+                                    });
+                                }
+                                ,failure: function(response, options) {}
+                            });
+                        }
+                    }
+                });
+            }
+        ");
+        
+        $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadSMS',objectId: '".$this->objectId."'");
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonActionSaveSMSContent'
+            ,academicId: '".$academicId."'
+            ,objectId: '".$this->objectId."'
+            ,sendTo: '".$sendTo."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('SMS_LIST_ID').store.sortInfo = null;
+            window.parent.Ext.getCmp('SMS_LIST_ID').store.reload();
+            
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            var objectId = result.objectId;
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+objectId;
+
+        ");
+        
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'jsonRemoveSMS'
+            ,objectId: '".$this->objectId."'
+            ,academicId: '".$academicId."'
+        ");
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('SMS_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('WEST_ID').expand();
+            window.parent.Ext.getCmp('CENTER_ID').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 150;
+        $OBJECT_FORM->renderJS();
+        
+        switch($sendTo){
+            case "STUDENT":
+                $OBJECT_GRID->addReadField("name: 'CODE'");
+                $OBJECT_GRID->addReadField("name: 'ICON_SMS_SERVICES'");
+                $OBJECT_GRID->addReadField("name: 'CHECKED'");
+                $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+                $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+                $OBJECT_GRID->addReadField("name: 'GENDER'");
+                $OBJECT_GRID->addReadField("name: 'MOBIL_PHONE'");
+                $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
+                $OBJECT_GRID->addReadField("name: 'SMS_SERVICES'");
+                break;
+            case "STAFF":
+            case "TEACHER":
+                $OBJECT_GRID->addReadField("name: 'CHECKED'");
+                $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+                $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+                $OBJECT_GRID->addReadField("name: 'MOBIL_PHONE'");
+                $OBJECT_GRID->addReadField("name: 'USER_ROLE'");
+                break;
+        }
+        
+        $OBJECT_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,header: ''
+            ,dataIndex: 'CHECKED'
+            ,width: 50
+            ,on: 1
+            ,off: 0
+        ");
+        
+        switch($sendTo){
+            case "STUDENT":
+                $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 100, sortable: true, dataIndex: 'CODE'");
+                if(!SchoolDBAccess::displayPersonNameInGrid()){
+                    $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', align:'left', width: 120, renderer: renderTextSMS, sortable: false, dataIndex: 'LASTNAME'");
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', align:'left', width: 120, renderer: renderTextSMS, sortable: false, dataIndex: 'FIRSTNAME'");
+                }else{
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', align:'left', width: 120, renderer: renderTextSMS, sortable: false, dataIndex: 'FIRSTNAME'");
+                    $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', align:'left', width: 120, renderer: renderTextSMS, sortable: false, dataIndex: 'LASTNAME'");
+                }
+                $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', align:'left', width: 100, renderer: renderTextSMS, sortable: true, dataIndex: 'GENDER'");
+                $OBJECT_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', align:'left', width: 120, renderer: renderTextSMS, sortable: true, dataIndex: 'DATE_BIRTH'");
+                $OBJECT_GRID->addColumn("header: '<b>".MOBIL_PHONE."</b>', align:'left', width: 150, renderer: renderTextSMS, sortable: true, dataIndex: 'MOBIL_PHONE'");
+                $OBJECT_GRID->addColumn("header: '<b>".SMS_SERVICES."</b>', align:'center', width: 100, sortable: true, dataIndex: 'ICON_SMS_SERVICES'");
+                
+                break;
+            case "STAFF":
+            case "TEACHER":
+                if(!SchoolDBAccess::displayPersonNameInGrid()){
+                    $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+                }else{
+                    $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+                    $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+                }
+                $OBJECT_GRID->addColumn("header: '<b>".MOBIL_PHONE."</b>', align:'left', width: 150, renderer: cssText, sortable: true, dataIndex: 'MOBIL_PHONE'");
+                $OBJECT_GRID->addColumn("header: '<b>".USER_ROLE."</b>', align:'left', width: 200, renderer: cssText, sortable: true, dataIndex: 'USER_ROLE'");
+                break;
+        }
+        
+        $OBJECT_GRID->isObjectDefaultOnLoad = $SET_AUTO_LOADING;
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,academicId: '".$academicId."'
+            ,objectId: '".$this->objectId."'
+            ,cmd: '".$CMD_ASSIGNED_PERSONS."'
+        ";
+        
+        $OBJECT_GRID->setSaveParams("
+            cmd: '".$CMD_REMOVE_PERSON."'
+            ,academicId: '".$academicId."'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_GRID->setEditEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.sortInfo = null;
+            Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+        ");
+        
+        $OBJECT_GRID->isGridEditing = true; 
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        $TABAR = "
+        [{
+            text: '".REMOVE_ALL."'
+            ,disabled: ".$DISABLED_REMOVE_ALL."
+            ,iconCls:'icon-user_delete'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    title:'" . $REMOVE_MSG . "'
+                    ,msg: '" . MSG_DELETE_ASSIGNMENT . "'
+                    ,buttons: Ext.MessageBox.OKCANCEL
+                    ,fn: function (btn){
+                        if (btn == 'ok'){
+                            Ext.Ajax.request({
+                                url: '/sms/jsonsave/'
+                                ,method: 'POST'
+                                ,params: {
+                                    cmd: '".$CMD_REMOVE_ALL_PERSONS."'
+                                    ,objectId: '" . $this->objectId . "'
+                                }
+                                ,success: function(response, options) {
+                                    Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                                }
+                            });
+                        }
+                    },
+                    icon: Ext.MessageBox.QUESTION
+                });
+            }
+        },{
+            text: '".ADD_ENTRY." (".ADVENCED_SEARCH.")'
+            ,disabled: ".$DISABLED_ADD_USER."
+            ,iconCls:'icon-user_add'
+            ,handler: function(){
+                openWinIFrame('".ADD_ENTRY."', '".$SEARCH_USER."', percentWidth(85), percentHeight(85));
+            }
+        },{
+            text: '".ALL_PERSONS."'
+            ,hidden: ".$HIDDEN_TO_ALL_USER."
+            ,iconCls:'icon-user_add'
+            ,menu:[{
+                text: '".ONLY_REGISTERED_PERSONS."'
+                ,iconCls:'icon-user'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        title:'" . STATUS . "'
+                        ,msg: '" . MSG_WANT_PERFORM_ACTION . "'
+                        ,buttons: Ext.MessageBox.OKCANCEL
+                        ,fn: function (btn){
+                            if (btn == 'ok'){
+                                Ext.Ajax.request({
+                                    url: '/sms/jsonsave/'
+                                    ,method: 'POST'
+                                    ,params: {
+                                        cmd: 'chooseAllPersons'
+                                        ,registered: 1
+                                        ,academicId: '" . $academicId . "'
+                                        ,objectId: '" . $this->objectId . "'
+                                    }
+                                    ,success: function(response, options) {
+                                        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                                    }
+                                });
+                            }
+                        }
+                        ,icon: Ext.MessageBox.QUESTION
+                    });
+                }
+            },{
+                text: '".ALL_PERSONS."'
+                ,iconCls:'icon-user'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        title:'" . STATUS . "'
+                        ,msg: '" . MSG_WANT_PERFORM_ACTION . "'
+                        ,buttons: Ext.MessageBox.OKCANCEL
+                        ,fn: function (btn){
+                            if (btn == 'ok'){
+                                Ext.Ajax.request({
+                                    url: '/sms/jsonsave/'
+                                    ,method: 'POST'
+                                    ,params: {
+                                        cmd: 'chooseAllPersons'
+                                        ,registered: 0
+                                        ,academicId: '" . $academicId . "'
+                                        ,objectId: '" . $this->objectId . "'
+                                    }
+                                    ,success: function(response, options) {
+                                        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
+                                    }
+                                });
+                            }
+                        }
+                        ,icon: Ext.MessageBox.QUESTION
+                    });
+                }
+            }]
+        }]    
+        ";
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'CONTENT_ID'
+                ,layout: 'fit'
+                ,activeItem: 0
+                ,items:[{
+                    border: false
+                    ,layout: 'fit'
+                    ,items:[{
+                        layout:'border'
+                        ,border: false
+                        ,defaults: {
+                            collapsible: true
+                            ,split: true
+                        }
+                        ,items: [{
+                            region:'west'
+                            ,id: 'WEST_ID'
+                            ,margins: '3 0 3 3'
+                            ,cmargins: '3 3 3 3'
+                            ,width: percentWidth(43)
+                            ,minSize: percentWidth(43)
+                            ,maxSize: percentWidth(43)
+                            ,layout: 'fit'
+                            ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                        },{
+                            collapsible: false
+                            ,id: 'center'
+                            ,region:'center'
+                            ,margins: '3 3 3 0'
+                            ,layout: 'fit'
+                            ,tbar: <?=$TABAR;?>
+                            ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                        }]
+                    }]
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

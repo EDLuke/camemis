@@ -1,0 +1,104 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 30.11.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$key = isset($_GET['key'])?addText($_GET['key']):"";
+
+$DB_ACCESS = Zend_Registry::get('ADMIN_DB_ACCESS');
+$SQL = $DB_ACCESS->select();
+$SQL->from("t_help", array("*"));
+$SQL->where("TEXT_KEY = '" . $key . "'");
+//error_log($SQL->__toString());
+$facette = $DB_ACCESS->fetchRow($SQL);
+
+if(!$facette) {header("Location: /main/permission/");exit;}
+
+switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+    case "ENGLISH":
+        $YOUTUBE_KEY = $facette->YOUTUBE_KEY_ENGLISH?$facette->YOUTUBE_KEY_ENGLISH:"";
+        $CONTENT = $facette->CONTENT_ENGLISH;
+        break;
+    case "KHMER":
+        $YOUTUBE_KEY = $facette->YOUTUBE_KEY_KHMER?$facette->YOUTUBE_KEY_KHMER:$facette->YOUTUBE_KEY_ENGLISH;
+        $CONTENT = $facette->CONTENT_KHMER?$facette->CONTENT_KHMER:$facette->CONTENT_ENGLISH;
+        break;
+    case "VIETNAMESE":
+        $YOUTUBE_KEY = $facette->YOUTUBE_KEY_VIETNAMESE?$facette->YOUTUBE_KEY_VIETNAMESE:$facette->YOUTUBE_KEY_ENGLISH;
+        $CONTENT = $facette->CONTENT_VIETNAMESE?$facette->CONTENT_VIETNAMESE:$facette->CONTENT_ENGLISH;
+        break;
+}
+
+?>
+<script type="text/javascript" src="/public/ckeditor/ckeditor.js"></script>
+<link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
+
+<script>
+    //Load player api asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    var done = false;
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '390'
+            ,width: '640'
+            ,videoId:'<?=$YOUTUBE_KEY?>'
+        });
+    }
+    
+    function onPlayerReady(evt) {
+        evt.target.playVideo();
+    }
+    
+    function onPlayerStateChange(evt) {
+        if (evt.data == YT.PlayerState.PLAYING && !done) {
+            setTimeout(stopVideo, 6000);
+            done = true;
+        }
+    }
+    function stopVideo() {
+        player.stopVideo();
+    }
+</script>
+
+<script type="text/javascript">
+    var editor;
+    CKEDITOR.on( 'instanceReady', function( ev ) {
+        editor = ev.editor;
+        document.getElementById( 'readOnlyOn' ).style.display = '';
+        editor.on( 'readOnly', function() {
+            document.getElementById( 'readOnlyOn' ).style.display = this.readOnly ? 'none' : '';
+            document.getElementById( 'readOnlyOff' ).style.display = this.readOnly ? '' : 'none';
+        });
+    });
+    function toggleReadOnly( isReadOnly ) {
+        editor.setReadOnly( isReadOnly );
+    }
+</script>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>CAMEMIS</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<script type="text/javascript" src="/public/ckeditor/ckeditor.js"></script>
+<link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body style='background:#FFF;'>
+    <?=html_entity_decode($CONTENT);?>
+    <?
+    if($YOUTUBE_KEY){
+        echo "<div id=\"player\"></div>";
+    }
+    ?>
+</body>
+</html>

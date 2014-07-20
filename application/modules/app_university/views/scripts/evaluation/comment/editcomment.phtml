@@ -1,0 +1,187 @@
+<?
+require_once("Zend/Loader.php");
+require_once 'clients/CamemisPage.php';
+require_once 'models/assessment/SQLEvaluationStudentSubject.php';
+require_once 'models/assessment/SQLAcademicPerformances.php';
+require_once setUserLoacalization();
+
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
+$studentId = isset($_GET["studentId"])?addText($_GET["studentId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+$term = isset($_GET["term"])?addText($_GET["term"]):"";
+$section = isset($_GET["section"])?addText($_GET["section"]):"";
+$monthyear = isset($_GET["monthyear"])?addText($_GET["monthyear"]):"";
+
+$stdClass = new stdClass;
+$stdClass->studentId = $studentId;
+$stdClass->academicId = $academicId;
+$stdClass->term = $term;
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+$stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
+    
+if($monthyear){
+    
+    $stdClass->month = getMonthNumberFromMonthYear($monthyear);
+    $stdClass->year = getYearFromMonthYear($monthyear);
+}
+
+switch ($section)
+{
+    case 1:
+        $stdClass->section = "MONTH";
+        break;
+    case 2:
+        $stdClass->section = "SEMESTER";
+        break;
+    case 3:
+        $stdClass->section = "YEAR";
+        break;
+    case 4:
+        $stdClass->section = "TERM";
+        break;
+    case 5:
+        $stdClass->section = "QUARTER";
+        break;
+}
+
+if($subjectId){
+    
+    $stdClass->subjectId = $subjectId;
+    $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+    
+}else{
+    
+    $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
+}
+
+$TEACHER_COMMENT = $facette?$facette->TEACHER_COMMENT:"---";
+
+if ($_POST){
+    
+    $stdClass = new stdClass;
+    
+    $studentId = isset($_POST["studentId"])?addText($_POST["studentId"]):"";
+    $term = isset($_POST["term"])?addText($_POST["term"]):"";
+    $subjectId = isset($_POST["subjectId"])?addText($_POST["subjectId"]):"";
+    $monthyear = isset($_POST["monthyear"])?addText($_POST["monthyear"]):"";
+    $section = isset($_POST["section"])?addText($_POST["section"]):"";
+    $academicId = isset($_POST["academicId"])?addText($_POST["academicId"]):"";
+    
+    $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+    $stdClass->schoolyearId = $academicObject->SCHOOL_YEAR;
+    
+    if($monthyear){
+        $stdClass->month = getMonthNumberFromMonthYear($monthyear);
+        $stdClass->year = getYearFromMonthYear($monthyear);
+    }
+    
+    switch ($section)
+    {
+        case 1:
+            $stdClass->section = "MONTH";
+        break;
+        case 2:
+            $stdClass->section = "SEMESTER";
+        break;
+        case 3:
+            $stdClass->section = "YEAR";
+        break;
+        case 4:
+            $stdClass->section = "TERM";
+        break;
+        case 5:
+            $stdClass->section = "QUARTER";
+        break;
+    }
+    
+    $stdClass->studentId = $studentId;
+    $stdClass->academicId = $academicId;
+    $stdClass->term = $term;
+    $stdClass->comment = isset($_POST["comment"])?addText($_POST["comment"]):"";
+    
+    if($subjectId){
+        $stdClass->subjectId = $subjectId;
+        SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+
+    }else{
+
+        SQLAcademicPerformances::getActionStudentAcademicPerformance($stdClass);
+    }
+
+    header("Location: ".$_SERVER['REQUEST_URI']."");
+    exit;
+}
+
+$SHOW_EDITOR = "";
+
+switch(UserAuth::getUserType()){
+    case 'STUDENT':
+        $SHOW_EDITOR = "
+            CKEDITOR.replace( 'comment',{
+                language:'".CamemisPage::ckeditorLanguage()."'
+                ,height:350
+                ,readOnly: true
+                ,uiColor: '#e0e7f7'
+                ,toolbar :
+                [
+                    { name: 'document', items : [ 'Print'] }
+                    ,{ name: 'basicstyles', items : [ 'Bold','Italic' ] }
+                    ,{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] }
+                    ,{ name: 'insert', items : [ 'Table','HorizontalRule','SpecialChar','PageBreak'] }
+                    ,{ name: 'tools', items : [ 'Maximize','-','About' ] }
+                ]
+            });
+        ";
+        break;
+    case 'SUPERADMIN':
+    case 'ADMIN':
+    case 'INSTRUCTOR':
+    case 'TEACHER':
+        $SHOW_EDITOR = "
+            CKEDITOR.replace( 'comment',{
+                language:'".CamemisPage::ckeditorLanguage()."'
+                ,height:350
+                ,uiColor: '#e0e7f7'
+                ,toolbar :
+                [
+                    { name: 'document', items : [ 'Save','DocProps','Print'] }
+                    ,{ name: 'basicstyles', items : [ 'Bold','Italic' ] }
+                    ,{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] }
+                    ,{ name: 'insert', items : [ 'Table','HorizontalRule','SpecialChar','PageBreak'] }
+                    ,{ name: 'tools', items : [ 'Maximize','-','About' ] }
+                ]
+            });
+        "; 
+    break;
+}
+
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>CAMEMIS</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<script type="text/javascript" src="/public/ckeditor/ckeditor.js"></script>
+<link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body style='background:#e0e7f7;'>
+    <form action="" method="post">
+        <textarea id="comment" name="comment"><?=$TEACHER_COMMENT;?></textarea>
+        <script type="text/javascript">
+        //<![CDATA[ 
+        CKEDITOR.on('instanceReady',function(evt){
+            var editor = evt.editor;
+            editor.execCommand('maximize');
+        });
+        <?= $SHOW_EDITOR;?>
+        //]]>
+        </script> 
+        <input type="hidden" name="studentId" value="<?=$studentId?>">
+        <input type="hidden" name="academicId" value="<?=$academicId;?>">  
+        <input type="hidden" name="term" value="<?=$term;?>">  
+        <input type="hidden" name="section" value="<?=$section;?>">  
+        <input type="hidden" name="monthyear" value="<?=$monthyear;?>">  
+        <input type="hidden" name="subjectId" value="<?=$subjectId;?>">      
+    </form>
+</body>
+</html>

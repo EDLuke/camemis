@@ -1,0 +1,177 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/AbsentTypeDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$STUDENT_TREE_OBJECT = new CamemisTree("DATASET", "STUDENT_TYPE");
+$STUDENT_TREE_OBJECT->setURL("/dataset/jsontree/");
+$STUDENT_TREE_OBJECT->setSaveUrl("/dataset/jsonsave/");
+
+$STAFF_TREE_OBJECT = new CamemisTree("DATASET", "STAFF_TYPE");
+$STAFF_TREE_OBJECT->setURL("/dataset/jsontree/");
+$STAFF_TREE_OBJECT->setSaveUrl("/dataset/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $STUDENT_TREE_OBJECT->isAsyncTreeNode = false;
+	$STUDENT_TREE_OBJECT->addTBarItems("
+        id: 'SETTING_REFRESH_STUDENT'
+        ,scope:this
+        ,text:'".REFRESH."'
+        ,iconCls:'icon-arrow_refresh'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false)."
+        }
+    ");
+     if(UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+	$STUDENT_TREE_OBJECT->addTBarItems("
+        id: 'ADD_A_NEW_FOLDER_STUDENT'
+        ,scope:this
+        ,text:'".ADD_A_NEW_ITEM."'
+        ,tooltip:'".ADD_A_NEW_ITEM."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){
+            clickOpenPage('center', '".STUDENT."', '".$this->URL_SHOW_ABSENT_TYPE."?objectId=new&objectType=STUDENT');
+        }
+    ");
+    $STUDENT_TREE_OBJECT->setSaveParams("objectType: 'STUDENT'");
+    $STUDENT_TREE_OBJECT->setBaseParams("
+    	cmd: 'jsonTreeAllAbsentType'
+		,objectType: 'STUDENT'
+    ");
+    $STUDENT_TREE_OBJECT->backgroundColor = "#F9F9F9";
+    $STUDENT_TREE_OBJECT->setWindowLocation($this->URL_WINDOW_LOCATION);
+    $STUDENT_TREE_OBJECT->isOnClickContextMenu = false;
+    $STUDENT_TREE_OBJECT->renderJS();
+    ////////////////////////////////////////////////////////////////////////////////////
+    $STAFF_TREE_OBJECT->isAsyncTreeNode = false;
+    $STAFF_TREE_OBJECT->addTBarItems("
+        id: 'SETTING_REFRESH_STAFF'
+        ,scope:this
+        ,text:'".REFRESH."'
+        ,iconCls:'icon-arrow_refresh'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false)."
+        }
+    ");
+     if(UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $STAFF_TREE_OBJECT->addTBarItems("
+        id: 'ADD_A_NEW_FOLDER_STAFF'
+        ,scope:this
+        ,text:'".ADD_A_NEW_ITEM."'
+        ,tooltip:'".ADD_A_NEW_ITEM."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){
+            clickOpenPage('center', '".STAFF."', '".$this->URL_SHOW_ABSENT_TYPE."?objectId=new&objectType=STAFF');
+        }
+    ");
+    $STAFF_TREE_OBJECT->setSaveParams("objectType: 'STAFF'");
+    $STAFF_TREE_OBJECT->setBaseParams("
+        cmd: 'jsonTreeAllAbsentType'
+        ,objectType: 'STAFF'
+    ");
+    $STAFF_TREE_OBJECT->backgroundColor = "#F9F9F9";
+    $STAFF_TREE_OBJECT->setWindowLocation($this->URL_WINDOW_LOCATION);
+    $STAFF_TREE_OBJECT->isOnClickContextMenu = false;
+    $STAFF_TREE_OBJECT->renderJS();
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,title: '<?=ATTENDANCE ?>'
+                ,id:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{
+                    layout:'fit'
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                    ,border: false
+                    ,items:[{
+                        xtype: 'tabpanel'
+                        ,tabPosition: 'top'
+                        ,plain:true
+                        ,activeTab: 0
+                        ,enableTabScroll:true
+                        ,items:[{
+                            title:'<?=STUDENT?>'
+                            ,layout:'fit'
+                            ,items:[{xtype: '<?=$STUDENT_TREE_OBJECT->getObjectXtype();?>'}]
+                        },{
+                            title:'<?=STAFF?>'
+                            ,layout:'fit'
+                            ,items:[{xtype: '<?=$STAFF_TREE_OBJECT->getObjectXtype();?>'}]
+                        }]
+                    }]
+                }]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+
+    var studentAbsentTypeTree = <?=$STUDENT_TREE_OBJECT->ExtgetCmp();?>;
+    studentAbsentTypeTree.on('click', function(node, e){
+        if(node.isLeaf()){
+            clickOpenPage('center', '<?=STUDENT;?>', '<?=$this->URL_SHOW_ABSENT_TYPE;?>' + 'objectType=STUDENT&objectId=' + node.id);
+        }
+    });
+    var staffAbsentTypeTree = <?=$STAFF_TREE_OBJECT->ExtgetCmp();?>;
+    staffAbsentTypeTree.on('click', function(node, e){
+        if(node.isLeaf()){
+            clickOpenPage('center', '<?=STAFF;?>', '<?=$this->URL_SHOW_ABSENT_TYPE;?>' + 'objectType=STAFF&objectId=' + node.id);
+        }
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

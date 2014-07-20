@@ -1,0 +1,753 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$gradeSchoolyearObject = AcademicDBAccess::findGradeFromId($this->academicId);
+if(!$gradeSchoolyearObject) {header("Location: /main/permission/");exit;}
+
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($gradeSchoolyearObject->SCHOOL_YEAR);
+
+$term = isset($_GET["term"])?addText($_GET["term"]):"FIRST_SEMESTER";
+
+if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+    
+    switch($gradeSchoolyearObject->OBJECT_TYPE){
+        case "SUBJECT":
+            $academicId = $gradeSchoolyearObject->ID;
+            $actionMenu = true;
+            break;
+        case "CLASS":
+            $academicId = $gradeSchoolyearObject->PARENT;
+            $actionMenu = false;
+            break;
+    }
+}else{
+    $academicId = $gradeSchoolyearObject->ID;
+    $actionMenu = true;
+}
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
+$setParams = "";
+$setParams .= "academicId=".$academicId."";
+$setParams .= "&term=".$term."";
+
+$setNewparams = $setParams;
+$setNewparams .= "&scheduleId=new";
+
+$setparamsMO = $setParams;
+$setparamsMO .= "&shortday=MO";
+
+$setparamsTH = $setParams;
+$setparamsTH .= "&shortday=TH";
+
+$setparamsWE = $setParams;
+$setparamsWE .= "&shortday=WE";
+
+$setparamsTU = $setParams;
+$setparamsTU .= "&shortday=TU";
+
+$setparamsFR = $setParams;
+$setparamsFR .= "&shortday=FR";
+
+$setparamsSA = $setParams;
+$setparamsSA .= "&shortday=SA";
+
+$setparamsSU = $setParams;
+$setparamsSU .= "&shortday=SU";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+function getExtCopyTerm($academicId, $title, $fromTerm, $toTerm, $executeRight){
+    
+    return "{
+        text: '".constant($title)."'
+        ,disabled:".$executeRight."
+        ,iconCls:'icon-database_copy'
+        ,handler: function(){
+            Ext.MessageBox.show({
+                title:'".WARNING."'
+                ,width: 350
+                ,msg:'".MSG_WANT_PERFORM_ACTION."'
+                ,buttons: Ext.MessageBox.YESNO
+                ,icon: Ext.MessageBox.QUESTION
+                ,fn: function(btn, text){
+                    if (btn == 'yes'){
+                        Ext.Ajax.request({
+                            url: '/schedule/jsonsave/'
+                            ,method: 'POST'
+                            ,params: {
+                                cmd: 'copyScheduleFromPreviousTerm'
+                                ,academicId: '".$academicId."'
+                                ,fromterm: '".$fromTerm."'
+                                ,toterm: '".$toTerm."'
+                            }
+                            ,success: function(response, options) {
+                                ".CamemisPage::setRequestURI()."
+                            }
+                            ,failure: function(response, options) {}
+                        });
+                    }
+                }
+            });
+        }
+    }";
+}
+
+$EDIT_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT")?"false":"true";
+$REMOVE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_REMOVE_RIGHT")?"false":"true";
+$EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
+
+$COPY_FROM_TERM = array();
+switch ($TERM_NUMBER) {
+    case 1:
+        switch($term){
+            case "SECOND_TERM":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_TERM", "FIRST_TERM", "SECOND_TERM", $EXECUTE_RIGHT);
+                break;
+            case "THIRD_TERM":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_TERM", "FIRST_TERM", "THIRD_TERM", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_TERM", "SECOND_TERM", "THIRD_TERM", $EXECUTE_RIGHT);
+            break;
+        }
+        break;
+    case 2:
+        switch($term){
+            case "SECOND_QUARTER":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "SECOND_QUARTER", $EXECUTE_RIGHT);
+                break;
+            case "THIRD_QUARTER":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "THIRD_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_QUARTER", "SECOND_QUARTER", "THIRD_QUARTER", $EXECUTE_RIGHT);
+                break;
+            case "FOUR_QUARTER":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_QUARTER", "FIRST_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_SECOND_QUARTER", "SECOND_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_THIRD_QUARTER", "THIRD_QUARTER", "FOUR_QUARTER", $EXECUTE_RIGHT);
+            break;
+        }
+        break;
+    default:
+        switch($term){
+            case "SECOND_SEMESTER":
+                $COPY_FROM_TERM[] = getExtCopyTerm($academicId, "APPLY_ALL_OF_THE_FIRST_SEMESTER", "FIRST_SEMESTER", "SECOND_SEMESTER", $EXECUTE_RIGHT);
+            break;
+        }
+    break;
+}
+
+$CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
+?>
+<script>
+    
+    <?
+    $js = "";
+    $js .= "var UrlShowClassEvent = '".$this->URL_SHOW_CLASS_EVENT."';";
+    $js .= "function jsDeleteDayClassEvent(shortday){";
+        $js .= "Ext.MessageBox.show({";
+            $js .= "title:'".WARNING."'";
+            $js .= ",width: 350";
+            $js .= ",msg:'".MSG_WANT_PERFORM_ACTION."'";
+            $js .= ",buttons: Ext.MessageBox.YESNO";
+            $js .= ",icon: Ext.MessageBox.WARNING";
+            $js .= ",fn: function(btn, text){";
+                $js .= "if (btn == 'yes'){";
+                    $js .= "Ext.Ajax.request({";
+                        $js .= "url: '/schedule/jsonsave/'";
+                        $js .= ",method: 'POST'";
+                        $js .= ",params: {";
+                            $js .= "cmd: 'jsonDeleteAllClassEventByDay'";
+                            $js .= ",academicId: '".$academicId."'";
+                            $js .= ",shortday: shortday";
+                            $js .= ",term: '".$term."'";
+                        $js .= "}";
+                        $js .= ",success: function(response, options) {";
+                            $js .= "Ext.getCmp('SCHEDULE_LIST_ID').store.load();";
+                        $js .= "}";
+                        $js .= ",failure: function(response, options) {}";
+                    $js .= "});";
+                $js .= "}";
+            $js .= "}";
+        $js .= "});";
+    $js .= "}";
+    
+    $js .= "function jsCopyDayClassEvent(sourceshortday, targetshortday){";   
+        $js .= "Ext.MessageBox.show({";
+            $js .= "title:'".WARNING."'";
+            $js .= ",width: 350";
+            $js .= ",msg:'".MSG_WANT_PERFORM_ACTION."'";
+            $js .= ",buttons: Ext.MessageBox.YESNO";
+            $js .= ",icon: Ext.MessageBox.QUESTION";
+            $js .= ",fn: function(btn, text){";
+                $js .= "if (btn == 'yes'){";
+                    $js .= "Ext.Ajax.request({";
+                        $js .= "url: '/schedule/jsonsave/'";
+                        $js .= ",method: 'POST'";
+                        $js .= ",params: {";
+                            $js .= "cmd: 'jsonCopyDayClassEvent'";
+                            $js .= ",academicId: '".$academicId."'";
+                            $js .= ",targetshortday: targetshortday";
+                            $js .= ",sourceshortday: sourceshortday";
+                            $js .= ",term: '".$term."'";
+                        $js .= "}";
+                        $js .= ",success: function(response, options) {";
+                            $js .= "Ext.getCmp('SCHEDULE_LIST_ID').store.reload();";
+                        $js .= "}";
+                        $js .= ",failure: function(response, options) {}";
+                    $js .= "});";
+                $js .= "}";
+            $js .= "}";
+        $js .= "});";
+    $js .= "}";
+    
+    print $js;
+    
+    function getCSSDay($shortday){
+        $js ="function css".$shortday."(v, metadata, record){";
+            $js .="var name = record.data.".$shortday."_DESCRIPTION;";
+            $js .="metadata.attr = 'ext:qtip=\"' + name + '\"';";
+            $js .="return String.format('<div style=\"white-space:normal; font-weight:normal; padding:10px; height:' + record.data.HEIGHT+ 'px; background:{1};color:{2};\">{0}</div>'";
+                $js .=",v,record.data['".$shortday."_COLOR'],record.data['".$shortday."_COLOR_FONT']";
+            $js .=");";
+        $js .="}";
+        echo $js;
+    }
+    ?>   
+    Ext.onReady(function() {
+        
+        function styleTime(v, p, record, rowIndex){
+            return String.format('<div style=\"font-weight:bold; padding:10px; height:' + record.data.HEIGHT+ 'px; color:#333; background:#FFF;\">{0}</div>'
+                ,v
+            );
+        }
+        <?
+        getCSSDay('MO');
+        getCSSDay('TU');
+        getCSSDay('WE');
+        getCSSDay('TH');
+        getCSSDay('FR');
+        getCSSDay('SA');
+        getCSSDay('SU');
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+        $OBJECT_GRID->addReadField("name: 'MO_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'TU_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'WE_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'TH_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'FR_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'SA_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'SU_GROUP'");
+        $OBJECT_GRID->addReadField("name: 'MO_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TU_GUID'");
+        $OBJECT_GRID->addReadField("name: 'WE_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TH_GUID'");
+        $OBJECT_GRID->addReadField("name: 'FR_GUID'");
+        $OBJECT_GRID->addReadField("name: 'SA_GUID'");
+        $OBJECT_GRID->addReadField("name: 'SU_GUID'");
+        $OBJECT_GRID->addReadField("name: 'TIME'");
+        $OBJECT_GRID->addReadField("name: 'MO'");
+        $OBJECT_GRID->addReadField("name: 'TU'");
+        $OBJECT_GRID->addReadField("name: 'WE'");
+        $OBJECT_GRID->addReadField("name: 'TH'");
+        $OBJECT_GRID->addReadField("name: 'FR'");
+        $OBJECT_GRID->addReadField("name: 'SA'");
+        $OBJECT_GRID->addReadField("name: 'SU'");
+        $OBJECT_GRID->addReadField("name: 'SCHEDULE_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'MO_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'TU_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'WE_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'TH_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'FR_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'SA_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'SU_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'MO_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'TU_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'WE_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'TH_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'FR_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'SA_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'SU_EVENT'");
+        $OBJECT_GRID->addReadField("name: 'MO_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'TU_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'WE_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'TH_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'FR_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'SA_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'SU_COLOR_FONT'");
+        
+        $OBJECT_GRID->addReadField("name: 'MO_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'TU_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'WE_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'TH_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'FR_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SA_DESCRIPTION'");
+        $OBJECT_GRID->addReadField("name: 'SU_DESCRIPTION'");
+        
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'STATUS'");    
+
+        $OBJECT_GRID->addColumn("header: '<b>" . TIME . "</b>', align:'center',renderer: styleTime, sortable: false, dataIndex: 'TIME', width: 110");
+        $OBJECT_GRID->addColumn("header: '<b>" . MONDAY . "</b>',renderer: cssMO, align:'center', sortable: false, dataIndex: 'MO', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . TUESDAY . "</b>',renderer: cssTU, align:'center', sortable: false, dataIndex: 'TU', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . WEDNESDAY . "</b>',renderer: cssWE, align:'center', sortable: false, dataIndex: 'WE', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . THURSDAY . "</b>',renderer: cssTH, align:'center', sortable: false, dataIndex: 'TH', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . FRIDAY . "</b>',renderer: cssFR, align:'center', sortable: false, dataIndex: 'FR', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . SATURDAY . "</b>',renderer: cssSA, align:'center', sortable: false, dataIndex: 'SA', width: 165");
+        $OBJECT_GRID->addColumn("header: '<b>" . SUNDAY . "</b>',renderer: cssSU, align:'center', sortable: false, dataIndex: 'SU', width: 165");
+        $OBJECT_GRID->baseParams = "start:0,limit:100,academicId: '" . $academicId . "',term: '" . $term . "',cmd: 'loadClassEvents',teacherId: '" . $this->teacherId . "'";
+        
+        $HIDDEN_MO = $academicObject->MO?"false":"true";
+        $HIDDEN_TU = $academicObject->TU?"false":"true";
+        $HIDDEN_WE = $academicObject->WE?"false":"true";
+        $HIDDEN_TH = $academicObject->TH?"false":"true";
+        $HIDDEN_FR = $academicObject->FR?"false":"true";
+        $HIDDEN_SA = $academicObject->SA?"false":"true";
+        $HIDDEN_SU = $academicObject->SU?"false":"true";
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-',[{
+                id: 'REFRESH_ID',text: '".REFRESH."',iconCls:'icon-reload',scope:this,disabled: false
+                ,handler: function(){
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                }
+            }]);
+        ");
+        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+            if($actionMenu){
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add('-',[{
+                        id: 'DAY'
+                        ,text: '".DAY."'
+                        ,disabled: false
+                        ,iconCls:'icon-list-items'
+                        ,menu:[{
+                            text:'".MONDAY."',iconCls:'icon-date',disabled:".$HIDDEN_MO."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_MO."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=MO');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('MO')}
+                            }]
+                        },{
+                            text:'".TUESDAY."',iconCls:'icon-date',disabled:".$HIDDEN_TU."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_TU."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=TU');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('TU')}
+                            }]
+                        },{
+                            text:'".WEDNESDAY."',iconCls:'icon-date',disabled:".$HIDDEN_WE."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_WE."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=WE');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('WE')}
+                            }]
+                        },{
+                            text:'".THURSDAY."',iconCls:'icon-date',disabled:".$HIDDEN_TH."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_TH."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=TH');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('TH')}
+                            }]
+                        },{
+                            text:'".FRIDAY."',iconCls:'icon-date',disabled:".$HIDDEN_FR."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_FR."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=FR');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('FR')}
+                            }]
+                        },{
+                            text:'".SATURDAY."',iconCls:'icon-date',disabled:".$HIDDEN_SA."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_SA."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=SA');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('SA')}
+                            }]
+                        },{
+                            text:'".SUNDAY."',iconCls:'icon-date',disabled:".$HIDDEN_SU."
+                            ,menu:[{
+                                text:'".ADD_ENTRY."',iconCls:'icon-application_form_add',disabled:".$HIDDEN_SU."
+                                ,handler:function(){
+                                    clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setNewparams)."&shortday=SU');  
+                                }
+                            },{
+                                text:'".DELETE."',iconCls:'icon-delete',disabled:".$REMOVE_RIGHT."
+                                ,handler:function(){jsDeleteDayClassEvent('SU')}
+                            }]
+                        }]
+                    }]);
+                ");
+            }
+        }
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+            if($actionMenu){
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add('-',[{
+                        id: 'COPY',text: '".COPY."',disabled: false,iconCls:'icon-list-items'
+                        ,menu:[{
+                            text:'".TUESDAY."',iconCls:'icon-date',disabled:".$HIDDEN_TU."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','TU');}
+                            }]
+                        },{
+                            text:'".WEDNESDAY."',iconCls:'icon-date',disabled:".$HIDDEN_WE."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','WE');}
+                            },{
+                                text:'".COPY_FROM_TU."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TU','WE');}
+                            }]
+                        },{
+                            text:'".THURSDAY."',iconCls:'icon-date',disabled:".$HIDDEN_TH."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','TH');}
+                            },{
+                                text:'".COPY_FROM_TU."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TU','TH');}
+                            },{
+                                text:'".COPY_FROM_WE."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('WE','TH');}
+                            }]
+                        },{
+                            text:'".FRIDAY."',iconCls:'icon-date',disabled:".$HIDDEN_FR."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','FR');}
+                            },{
+                                text:'".COPY_FROM_TU."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TU','FR');}
+                            },{
+                                text:'".COPY_FROM_WE."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('WE','FR');}
+                            },{
+                                text:'".COPY_FROM_TH."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TH','FR');}
+                            }]
+                        },{
+                            text:'".SATURDAY."',iconCls:'icon-date',disabled:".$HIDDEN_SA."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','SA');}
+                            },{
+                                text:'".COPY_FROM_TU."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TU','SA');}
+                            },{
+                                text:'".COPY_FROM_WE."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('WE','SA');}
+                            },{
+                                text:'".COPY_FROM_TH."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TH','SA');}
+                            },{
+                                text:'".COPY_FROM_FR."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('FR','SA');}
+                            }]
+                        },{
+                            text:'".SUNDAY."',iconCls:'icon-date',disabled:".$HIDDEN_SU."
+                            ,menu:[{
+                                text:'".COPY_FROM_MO."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('MO','SU');}
+                            },{
+                                text:'".COPY_FROM_TU."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TU','SU');}
+                            },{
+                                text:'".COPY_FROM_WE."'
+                                ,iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('WE','SU');}
+                            },{
+                                text:'".COPY_FROM_TH."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('TH','SU');}
+                            },{
+                                text:'".COPY_FROM_FR."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('FR','SU');}
+                            },{
+                                text:'".COPY_FROM_SA."',iconCls:'icon-disk_multiple'
+                                ,handler:function(){jsCopyDayClassEvent('SA','SU');}
+                            }]
+                        }]
+                    }]);
+                ");
+            }
+        }
+        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+            if($COPY_FROM_TERM){
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add('-',[{text:'".TERM."',iconCls:'icon-list-items',menu:[".$CHOOSE_COPY_FROM_TERM."]}])
+                ");
+            }
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        //EXPORT IN TO EXCEL...
+        ////////////////////////////////////////////////////////////////////////
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+            case "ADMIN":
+            case "TEACHER":
+            case "INSTRUCTOR":
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add(['->',{
+                        text: '" . EXPORT_TO_EXCEL . "'
+                        ,id: 'WEEK_EXPORT_TO_EXCEL'
+                        ,iconCls:'icon-page_excel'
+                        ,handler: function(){
+                            Ext.MessageBox.show({
+                                msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                                progressText: 'Saving...',
+                                width:300,
+                                wait:true,
+                                waitConfig: {interval:200},
+                                icon:'ext-mb-download'
+                            });
+                            Ext.Ajax.request({
+                                url: '/export/jsonexcel/'
+                                ,method: 'POST'
+                                ,params:{cmd: 'loadClassEvents',camIds:'".$this->urlEncryp->encryptedGet($setParams)."'}
+                                ,success: function(response, options) {
+                                    Ext.MessageBox.hide();
+                                    window.location='/export/openweekschedule/'
+                                }
+                            });
+                        }
+                    }]);        
+                ");
+            break;
+        }
+        
+        //END.....
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'content'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        var myGrid = <?=$OBJECT_GRID->ExtgetCmp();?>;
+        <?
+        
+        if (!$academicObject->MO) echo "myGrid.getColumnModel().setHidden(2, true);";
+        if (!$academicObject->TU) echo "myGrid.getColumnModel().setHidden(3, true);";
+        if (!$academicObject->WE) echo "myGrid.getColumnModel().setHidden(4, true);";
+        if (!$academicObject->TH) echo "myGrid.getColumnModel().setHidden(5, true);";
+        if (!$academicObject->FR) echo "myGrid.getColumnModel().setHidden(6, true);";
+        if (!$academicObject->SA) echo "myGrid.getColumnModel().setHidden(7, true);";
+        if (!$academicObject->SU) echo "myGrid.getColumnModel().setHidden(8, true);";
+        
+        $html = "";
+        $html .= "if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {"; 
+            $html .= "var record = grid.store.getAt(rowIndex);";
+            $html .= "switch(columnIndex){";
+                $html .= "case 2:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.MO_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.MO_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.MO_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}"; 
+                $html .= "break;";
+                $html .= "case 3:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TU_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.TU_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.TU_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}";
+                $html .= "break;";
+                $html .= "case 4:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.WE_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.WE_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsWE)."&scheduleId=' + record.data.WE_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsWE)."&scheduleId=' + record.data.WE_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.WE_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}"; 
+                $html .= "break;";
+                $html .= "case 5:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TH_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.TH_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.TH_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}"; 
+                $html .= "break;";
+                $html .= "case 6:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.FR_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.FR_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsFR)."&scheduleId=' + record.data.FR_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsFR)."&scheduleId=' + record.data.FR_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.FR_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}";
+                $html .= "break;";
+                $html .= "case 7:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SA_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.SA_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsSA)."&scheduleId=' + record.data.SA_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsSA)."&scheduleId=' + record.data.SA_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.SA_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}";  
+                $html .= "break;";
+                $html .= "case 8:";
+                    $html .= "var contextMenu = new Ext.menu.Menu({";
+                        $html .= "items: [{";
+                            $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SU_EVENT";
+                            $html .= ",iconCls: 'icon-application_form_magnify'";
+                            $html .= ",handler: function(){";
+                                $html .= "if(record.data.SU_GROUP >1){";
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsSU)."&scheduleId=' + record.data.SU_GUID);";        
+                                $html .= "}else{";
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsSU)."&scheduleId=' + record.data.SU_GUID);";        
+                                $html .= "}";
+                            $html .= "}";
+                        $html .= "}]";
+                    $html .= "});";
+                    $html .= "if (record.data.SU_GUID){";
+                        $html .= "event.stopEvent();";
+                        $html .= "contextMenu.showAt(event.xy);";
+                    $html .= "}"; 
+                $html .= "break;";
+            $html .= "}";
+        $html .= "})";
+        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT") || UserAuth::getACLValue("TRAINING_PROGRAMS_EDIT_RIGHT")){
+            
+            if($actionMenu){
+                print $html;
+            }
+        }
+        
+        ?> 
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

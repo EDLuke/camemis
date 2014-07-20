@@ -1,0 +1,485 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man
+// Date: 31.12.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/academic/AcademicDBAccess.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+if(!$academicObject){
+	header("Location: /main/permission/");
+}
+
+switch(UserAuth::getUserType()){
+	case "SUPERADMIN":
+	case "ADMIN":
+		$hasRight = true;
+		break;
+	default:
+		$hasRight = false;
+		break;
+}
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM_CAMPUS = new CamemisForm("ACADEMIC_CAMPUS");
+$OBJECT_FORM_CAMPUS->setLoadUrl('/academic/jsonload/');
+
+$OBJECT_FORM_SCHOOLYEAR = new CamemisForm("ACADEMIC_SCHOOLYEAR");
+$OBJECT_FORM_SCHOOLYEAR->setLoadUrl('/academic/jsonload/');
+
+$OBJECT_FORM_ADDITIONAL = new CamemisForm("ADDITIONAL_INFORMATION");
+$OBJECT_FORM_ADDITIONAL->setLoadUrl("/student/jsonload/");
+$OBJECT_FORM_ADDITIONAL->setSaveUrl("/student/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+	Ext.onReady(function() {
+		<?
+		$CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+		$CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		$FORM_ITEMS = array();
+
+		// CAMPUS information
+		$CAMPUS_DETAIL_INFORMATION = "{
+			title: '".DETAIL_INFORMATION."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 5px;'
+			,width: 550
+			,autoHeight: true
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'background: #FFF;padding: 10px;'
+				,items: [
+					{".CamemisField::Displayfield("CAMPUS_CODE", CODE_ID)."}
+					,{".CamemisField::Displayfield("CAMPUS_NAME", NAME)."}
+					,{".CamemisField::Displayfield("CAMPUS_SHORT", SHORT)."}
+					,{".CamemisField::Displayfield("QUALIFICATION_TYPE", QUALIFICATION_TYPE)."}
+				]
+			}]
+		}";
+
+		$CAMPUS_CONTACT_INFORMATION = "{
+			title: '".CONTACT_INFORMATION."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 5px;'
+			,width: 550
+			,autoHeight: true
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'background: #FFF;padding: 10px;'
+				,items: [
+					{".CamemisField::Displayfield("CAMPUS_CONTACT_EMAIL", CONTACT_EMAIL)."}
+					,{".CamemisField::Displayfield("CAMPUS_CONTACT_PERSON", CONTACT_PERSON)."}
+					,{".CamemisField::Displayfield("CAMPUS_PHONE", CONTACT_PHONE)."}
+				]
+			}]
+		}";
+
+		$CAMPUS_PRE_REQUIREMENTS = "{
+			title: '".PRE_REQUIREMENTS."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 0px;'
+			,width: 550
+			,autoHeight: true
+			,items:[{
+				layout: 'fit'
+				,border: false
+				,bodyStyle: 'padding:2px;'
+				,items: [
+					{".CamemisField::Displayfield("PRE_REQUIREMENTS",PRE_REQUIREMENTS)."}
+				]
+			}]
+		}";
+
+		$CAMPUS_ITEMS = "[
+			".$CAMPUS_DETAIL_INFORMATION."
+			,".$CAMPUS_CONTACT_INFORMATION."
+			,".$CAMPUS_PRE_REQUIREMENTS."
+		]";
+
+		$campus_items = "
+			border: false
+			,id: 'CAMPUS_FORM_ITEMS'
+			,bodyStyle: 'padding:0px;'
+			,items: ".$CAMPUS_ITEMS."
+		";
+
+		$OBJECT_FORM_CAMPUS->addObjectItems($campus_items);
+
+		$OBJECT_FORM_CAMPUS->setLoadParams("cmd: 'loadObject',objectId: '".$this->campusId."'");
+
+		$OBJECT_FORM_CAMPUS->labelAlign = "left";
+		$OBJECT_FORM_CAMPUS->labelWidth = 150;
+		$OBJECT_FORM_CAMPUS->renderJS();
+
+		$CAMPUS_INFO = "{
+			columnWidth:1
+			,baseCls:'x-plain'
+			,bodyStyle:'padding:5px 10px 0px 10px;'
+			,items: [{
+				title: '".CAMPUS_INFORMATION."'
+				,layout:'fit'
+				,collapsible: true
+				,collapsed: false
+				,autoHeight: true
+				,items: [{xtype: '".$OBJECT_FORM_CAMPUS->getObjectXtype()."'}]
+			}]
+		}";
+		$FORM_ITEMS[] = $CAMPUS_INFO;
+		/////////////////////////////////
+
+		// SCHOOLYEAR information
+		$DETAIL_INFORMATION = "{
+			title: '".DETAIL_INFORMATION."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 5px;'
+			,width: 550
+			,autoHeight: true
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'background: #FFF;padding: 10px;'
+				,items: [
+					{".CamemisField::Displayfield("CODE", CODE_ID)."}
+					,{".CamemisField::Displayfield("NAME", NAME)."}
+					,{".CamemisField::Displayfield("CONTACT_PERSON", CONTACT_PERSON)."}
+					,{".CamemisField::Displayfield("PHONE", PHONE)."}
+					,{".CamemisField::Displayfield("EMAIL", EMAIL)."}
+					,{".CamemisField::Displayfield("NUMBER_CREDIT", NUMBER_CREDIT)."}
+				]
+			}]
+		}";
+
+		$ACADEMIC_DATE = "{
+			title:'".ACADEMIC_DATE."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("SCHOOLYEAR_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("SCHOOLYEAR_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$FIRST_SEMESTER = "{
+			title:'".FIRST_SEMESTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("SEMESTER1_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("SEMESTER1_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$SECOND_SEMESTER = "{
+			title:'".SECOND_SEMESTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("SEMESTER2_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("SEMESTER2_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$FIRST_TERM = "{
+			title:'".FIRST_TERM."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("TERM1_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("TERM1_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$SECOND_TERM = "{
+			title:'".SECOND_TERM."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("TERM2_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("TERM2_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$THIRD_TERM = "{
+			title:'".THIRD_TERM."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("TERM3_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("TERM3_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$FIRST_QUARTER = "{
+			title:'".FIRST_QUARTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("QUARTER1_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("QUARTER1_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$SECOND_QUARTER = "{
+			title:'".SECOND_QUARTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("QUARTER2_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("QUARTER2_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$THIRD_QUARTER = "{
+			title:'".THIRD_QUARTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("QUARTER3_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("QUARTER3_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$FOURTH_QUARTER = "{
+			title:'".FOURTH_QUARTER."'
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'padding:15px;'
+				,items:[{
+					".CamemisField::Displayfield("QUARTER4_START",START_DATE,false)."
+				},{
+					".CamemisField::Displayfield("QUARTER4_END",END_DATE,false)."
+				}]
+			}]
+		}";
+
+		$ACADEMIC_DATE_SETTING_ITEMS = "[";
+
+		$ACADEMIC_DATE_SETTING_ITEMS .= $ACADEMIC_DATE;
+
+		switch (AcademicDBAccess::findAcademicTerm($this->academicId)) {
+			case 1:
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$FIRST_TERM;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$SECOND_TERM;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$THIRD_TERM;
+				break;
+			case 2:
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$FIRST_QUARTER;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$SECOND_QUARTER;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$THIRD_QUARTER;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$FOURTH_QUARTER; 
+				break;
+			default:
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$FIRST_SEMESTER;
+				$ACADEMIC_DATE_SETTING_ITEMS .= ",".$SECOND_SEMESTER;
+				break;
+		}
+
+		$ACADEMIC_DATE_SETTING_ITEMS .= "]";
+
+		$ACADEMIC_DATE_SETTING = "{
+			title: ''
+			,collapsible: true
+			,collapsed: false
+			,autoHeight: true
+			,style: 'padding-bottom:0px;'
+			,width: 550
+			,items:[{
+				layout:'fit'
+				,bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px;'
+				,border: false
+				,height:160
+				,items:[{
+					xtype: 'tabpanel'
+					,tabPosition: 'top'
+					,plain:true
+					,activeTab: 0
+					,enableTabScroll:true
+					,items:".$ACADEMIC_DATE_SETTING_ITEMS."
+				}]
+			}]
+		}";
+
+		$SCHOOLYEAR_ITEMS = "[
+			".$DETAIL_INFORMATION."
+			,".$ACADEMIC_DATE_SETTING."
+		]";
+
+		$schoolyear_items = "
+			border: false
+			,id: 'SCHOOLYEAR_FORM_ITEMS'
+			,bodyStyle: 'padding:0px;'
+			,items: ".$SCHOOLYEAR_ITEMS."
+		";
+
+		$OBJECT_FORM_SCHOOLYEAR->addObjectItems($schoolyear_items);
+
+		$OBJECT_FORM_SCHOOLYEAR->setLoadParams("cmd: 'loadObject',objectId: '".$this->academicId."'");
+
+		$OBJECT_FORM_SCHOOLYEAR->labelAlign = "left";
+		$OBJECT_FORM_SCHOOLYEAR->labelWidth = 150;
+		$OBJECT_FORM_SCHOOLYEAR->renderJS();
+
+		$SCHOOLYEAR_INFO = "{
+			columnWidth:1
+			,baseCls:'x-plain'
+			,bodyStyle:'padding:5px 10px 0px 10px;'
+			,items: [{
+				title: '".SCHOOLYEAR_INFORMATION."'
+				,layout:'fit'
+				,collapsible: true
+				,collapsed: false
+				,autoHeight: true
+				,items: [{xtype: '".$OBJECT_FORM_SCHOOLYEAR->getObjectXtype()."'}]
+			}]
+		}";
+		$FORM_ITEMS[] = $SCHOOLYEAR_INFO;
+
+		//Additional Information
+		$SHOW_ADDITIONAL_INFO = "[";
+		if (Utiles::studentAcademicDisplayFields($this->objectId, $academicObject->GUID, 'credit')) 
+			$SHOW_ADDITIONAL_INFO .= Utiles::studentAcademicDisplayFields($this->objectId, $academicObject->GUID, 'credit');
+		$SHOW_ADDITIONAL_INFO .= "]";
+
+		$additional_items = "
+			border: false
+			,id: 'ADDITIONAL_FORM_ITEMS'
+			,bodyStyle: 'padding:0px;height:auto;'
+			,items: [
+				".$SHOW_ADDITIONAL_INFO."
+			]
+		";
+
+		$OBJECT_FORM_ADDITIONAL->addObjectItems($additional_items);
+
+		$OBJECT_FORM_ADDITIONAL->setLoadParams("cmd: 'jsonAllTreeAdditionalInformation',objectId: '".$this->academicId."'");
+
+		if ($hasRight) {
+			$OBJECT_FORM_ADDITIONAL->setSaveParams("
+				cmd: 'jsonActionStudentAcademicTraditional'
+				,classId: '".$academicObject->GUID."'
+				,objectId: '".$this->objectId."'
+			");
+			$OBJECT_FORM_ADDITIONAL->addTBarItems(CamemisBar::tbarSingleSave());
+			$OBJECT_FORM_ADDITIONAL->setonEmbeddedEvents("
+				XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+			");
+		}
+
+		$OBJECT_FORM_ADDITIONAL->labelAlign = "left";
+		$OBJECT_FORM_ADDITIONAL->labelWidth = 150;
+		$OBJECT_FORM_ADDITIONAL->renderJS();
+
+		$ADDITIONAL_INFO = "{
+			columnWidth:1
+			,baseCls:'x-plain'
+			,bodyStyle:'padding:5px 10px 0px 10px;margin-bottom: 10px;'
+			,items: [{
+				title: '".ACADEMIC."&nbsp;".ADDITIONAL_INFORMATION."'
+				,layout:'fit'
+				,collapsible: true
+				,collapsed: false
+				,autoHeight: true
+				,items: [{xtype: '".$OBJECT_FORM_ADDITIONAL->getObjectXtype()."'}]
+			}]
+		}";
+		$FORM_ITEMS[] = $ADDITIONAL_INFO;
+
+		$FORM_VIEW_PORTS = "[".implode(',',$FORM_ITEMS)."]";
+		?>
+		viewport = new Ext.Viewport({
+			layout: 'fit'
+			,border: false
+			,items:[{
+				layout:'card'
+				,id: 'CONTENT'
+				,activeItem: 0
+				,border: false
+				,items: [{
+					layout:'column'
+					,border:false
+					,autoScroll:true
+					,items:<?=$FORM_VIEW_PORTS;?>
+				}]
+			}]
+		});
+	});
+</script>
+<style>
+	#ACADEMIC_CAMPUS_ID form,#ACADEMIC_SCHOOLYEAR_ID form {height: auto !important;}
+	#PRE_REQUIREMENTS_ID {height: auto !important;}
+</style>
+<?
+	print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

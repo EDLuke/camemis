@@ -1,0 +1,683 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man Web Application Developer
+// Date: 18.02.2014
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM= new CamemisForm("LETTER");
+$OBJECT_FORM->setSaveUrl("/letter/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/letter/jsonload/");
+
+$STUDENT_GRID = new CamemisGrid("LETTER", "STUDENT");
+$STUDENT_GRID->setSaveUrl("/letter/jsonsave/");
+$STUDENT_GRID->setLoadUrl("/letter/jsonload/");
+$columndataStudent = Utiles::getGridColumnData("LETTER_STUDENT_ID");
+
+$STAFF_FROM_GRID = new CamemisGrid("LETTER", "STAFF_FROM");
+$STAFF_FROM_GRID->setLoadUrl("/letter/jsonload/");
+$columndataStaffFrom = Utiles::getGridColumnData("LETTER_STAFF_FROM_ID");
+
+$STAFF_TO_GRID = new CamemisGrid("LETTER", "STAFF_TO");
+$STAFF_TO_GRID->setSaveUrl("/letter/jsonsave/");
+$STAFF_TO_GRID->setLoadUrl("/letter/jsonload/");
+$columndataStaffTo = Utiles::getGridColumnData("LETTER_STAFF_TO_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+class DisplayItem {
+
+public function renderAdditionalItem ($item) {
+    $newItem = ($item == "MODIFIED") ? "MODIFY" : $item;
+    return "
+    {
+        title: '".constant($item)."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("{$newItem}_DATE", constant("{$newItem}_DATE"),false)."
+            },{
+                ".CamemisField::Displayfield("{$newItem}_BY", constant("{$newItem}_BY"),false)."
+            }]
+            }]
+        }
+        ";
+    }
+
+}
+
+$DISPLAY_ITEM = new DisplayItem();
+?>
+<style>
+    .filter-row-grid .x-grid3-header {
+    background: #f9f9f9 url(/public/images/filter-row-hrow.gif) repeat-x left top;
+}
+
+.filter-row-grid .filter-row-header {
+    height: 26px;
+}
+
+tr.filter-row-header .filter-row-icon input {
+    background-image: url(/public/images/filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+</style>
+<script>
+<?
+camemisPage::ExtformVTypes();
+?>
+Ext.onReady(function() {
+
+    Ext.form.Field.prototype.msgTarget = 'side';
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+    }
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+        ,v
+        ,record.data['BG_COLOR']
+        ,record.data['BG_COLOR_FONT']
+        );
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    /*$DETAIL_INFORMATION_NEW = "{
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::comboCamemisTypes("LETTER_TYPE", TYPE, false,false, true)."}
+                ,{".CamemisField::Textfield("NAME", "NAME", NAME, true)."}
+                ,{".CamemisField::Datefield('DATE', DATE, true)."}
+            ]
+        }]
+    }";*/
+
+    $DETAIL_INFORMATION_UPDATE = "{
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::comboCamemisTypes("LETTER_TYPE", TYPE, false,false, true)."}
+                ,{".CamemisField::Textfield("NUMBER", "NUMBER", NUMBER, true)."}
+                ,{".CamemisField::Textfield("NAME", "NAME", SUBJECT, true)."}
+                ,{".CamemisField::Datefield('DATE', DATE, true)."}
+            ]
+        }]
+    }";
+
+    $DESCRIPTION = "{
+        title: '".LETTER." - ".NOTES."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,style: 'padding: 5px'
+            ,items: [
+                {".CamemisField::Textarea("COMMENT", COMMENT, 150)."}
+            ]
+        }]
+    }";
+
+    ///////////////////////////////////////
+    // List Staff From Grid
+    ///////////////////////////////////////
+    $STAFF_FROM_GRID->addReadField("name: 'ID'");
+    $STAFF_FROM_GRID->addReadField("name: 'CODE'");
+    $STAFF_FROM_GRID->addReadField("name: 'GENDER'");
+    $STAFF_FROM_GRID->addReadField("name: 'DATE_BIRTH'");
+    $STAFF_FROM_GRID->addReadField("name: 'BG_COLOR'");
+    $STAFF_FROM_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $STAFF_FROM_GRID->addReadField("name: 'FULL_NAME'");
+    $STAFF_FROM_GRID->addReadField("name: 'STATUS_KEY'");
+    $STAFF_FROM_GRID->addReadField("name: 'USER_ROLE'");
+
+    $STAFF_FROM_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStaffFrom).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $STAFF_FROM_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffFrom).", dataIndex: 'CODE',filter:{}");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STAFF_FROM_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100, hidden:".checkColHidden(4, $columndataStaffFrom)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffFrom).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+    $STAFF_FROM_GRID->addColumn("header: '<b>".USER_ROLE."</b>', width: 150, hidden:".checkColHidden(6, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'USER_ROLE',filter:{}");
+
+    $STAFF_FROM_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'showAllStudentsOrStaffs'
+        ,objectId: '" . $this->objectId . "'
+        ,personType: 'staff'
+        ,type: 'sender'
+    ";
+
+    $STAFF_FROM_GRID->loadMask = true;
+    $STAFF_FROM_GRID->isPagingToolbar = true;
+    $STAFF_FROM_GRID->isQuickySearch = true;
+    $STAFF_FROM_GRID->forceFit = "false";
+    $STAFF_FROM_GRID->isObjectDefaultOnLoad = true;
+    $STAFF_FROM_GRID->isFilterRow = true;
+    $STAFF_FROM_GRID->renderJS();
+    ////////////////////////////////////////////
+
+    ///////////////////////////////////////
+    // List Staff To Grid
+    ///////////////////////////////////////
+    $STAFF_TO_GRID->addReadField("name: 'ID'");
+    $STAFF_TO_GRID->addReadField("name: 'CODE'");
+    $STAFF_TO_GRID->addReadField("name: 'GENDER'");
+    $STAFF_TO_GRID->addReadField("name: 'DATE_BIRTH'");
+    $STAFF_TO_GRID->addReadField("name: 'BG_COLOR'");
+    $STAFF_TO_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $STAFF_TO_GRID->addReadField("name: 'FULL_NAME'");
+    $STAFF_TO_GRID->addReadField("name: 'STATUS_KEY'");
+    $STAFF_TO_GRID->addReadField("name: 'USER_ROLE'");
+
+    $STAFF_TO_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStaffTo).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $STAFF_TO_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStaffTo).", dataIndex: 'CODE',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STAFF_TO_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100, hidden:".checkColHidden(4, $columndataStaffTo)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
+    $STAFF_TO_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+    $STAFF_TO_GRID->addColumn("header: '<b>".USER_ROLE."</b>', width: 150, hidden:".checkColHidden(6, $columndataStaffTo).", renderer:cssText, sortable: true, dataIndex: 'USER_ROLE',filter:{}");
+
+    $STAFF_TO_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'showAllStudentsOrStaffs'
+        ,objectId: '" . $this->objectId . "'
+        ,personType: 'staff'
+        ,type: 'recipient'
+    ";
+
+    /*$STAFF_TO_GRID->setSelectionParams("
+        cmd: 'addPersonToLetter'
+        ,objectId: '" . $this->objectId . "'
+    ");*/
+
+    $STAFF_TO_GRID->addTBarItems("
+        tbar.add([{
+            id: 'APLY_ID'
+            ,text: '<b>" . APPLY . "</b>'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,handler: function(){
+                    var selids = '';
+                    var seltexts = '';
+                    var sels = Ext.getCmp('" . $STAFF_TO_GRID->getObjectId() . "').getSelectionModel().getSelections();
+                    for( var i = 0; i < sels.length; i++ ) {
+                        if (i >0) selids += ',';
+                        selids += sels[i].get('STAFF_ID');
+                        if (i >0) seltexts += '\\n';
+                        seltexts += i+1 + ') ' + sels[i].get('FULL_NAME');
+                    }
+                    Ext.getCmp('TO_TEXT_ID').setValue(seltexts);
+                    Ext.getCmp('TO_TEXT').setValue(selids);
+                }
+            }]);
+    ");
+
+    $STAFF_TO_GRID->loadMask = true;
+    $STAFF_TO_GRID->isPagingToolbar = true;
+    $STAFF_TO_GRID->isQuickySearch = true;
+    $STAFF_TO_GRID->isCheckboxSelect = true;
+    $STAFF_TO_GRID->forceFit = "false";
+    $STAFF_TO_GRID->isObjectDefaultOnLoad = true;
+    $STAFF_TO_GRID->isFilterRow = true;
+    $STAFF_TO_GRID->renderJS();
+    ////////////////////////////////////////////
+
+    ///////////////////////////////////////
+    // List Student Grid
+    ///////////////////////////////////////
+    $STUDENT_GRID->addReadField("name: 'ID'");
+    $STUDENT_GRID->addReadField("name: 'CODE'");
+    $STUDENT_GRID->addReadField("name: 'GENDER'");
+    $STUDENT_GRID->addReadField("name: 'DATE_BIRTH'");
+    $STUDENT_GRID->addReadField("name: 'BG_COLOR'");
+    $STUDENT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    $STUDENT_GRID->addReadField("name: 'FULL_NAME'");
+    $STUDENT_GRID->addReadField("name: 'STATUS_KEY'");
+
+    $STUDENT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: 85, hidden:".checkColHidden(1, $columndataStudent).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $STUDENT_GRID->addColumn("header: '<b>" .CODE. "</b>', align:'left', width: 100, hidden:".checkColHidden(2, $columndataStudent).", dataIndex: 'CODE',filter:{}");
+    $STUDENT_GRID->addColumn("header: '<b>".NAME."</b>', width: 200, hidden:".checkColHidden(3, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'FULL_NAME',filter:{}");
+    $STUDENT_GRID->addColumn("
+        header: '<b>".GENDER."</b>'
+        , width: 100
+        , hidden:".checkColHidden(4, $columndataStudent)."
+        , renderer:cssText
+        , sortable: true
+        , dataIndex: 'GENDER'
+        ,filter:{field: {
+                xtype: 'combo',
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: ['value'],
+                    data: [['-'], ['" . MALE . "'], ['" . FEMALE . "']]
+                }),
+                valueField: 'value',
+                displayField: 'value',
+                triggerAction: 'all',
+                value: '-'
+                },
+                fieldEvents: ['select'],
+                test: function(filterValue, value, record) {
+                    return filterValue === '-' || filterValue === value;
+                }
+            }
+        ");
+    $STUDENT_GRID->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 100, hidden:".checkColHidden(5, $columndataStudent).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH',filter:{}");
+
+    $STUDENT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'showAllStudentsOrStaffs'
+        ,objectId: '" . $this->objectId . "'
+        ,personType: 'student'
+        ,type: 'recipient'
+    ";
+
+    /*$STUDENT_GRID->setSelectionParams("
+        cmd: 'addPersonToLetter'
+        ,objectId: '" . $this->objectId . "'
+    ");*/
+
+    $STUDENT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'APLY_ID'
+            ,text: '<b>" . APPLY . "</b>'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,handler: function(){
+                    var selids = '';
+                    var seltexts = '';
+                    var sels = Ext.getCmp('" . $STUDENT_GRID->getObjectId() . "').getSelectionModel().getSelections();
+                    for( var i = 0; i < sels.length; i++ ) {
+                        if (i >0) selids += ',';
+                        selids += sels[i].get('STUDENT_ID');
+                        if (i >0) seltexts += '\\n';
+                        seltexts += i+1 + ') ' + sels[i].get('FULL_NAME');
+                    }
+                    Ext.getCmp('TO_TEXT_ID').setValue(seltexts);
+                    Ext.getCmp('TO_TEXT').setValue(selids);
+                }
+         }]);
+    ");
+
+    $STUDENT_GRID->loadMask = true;
+    $STUDENT_GRID->isPagingToolbar = true;
+    $STUDENT_GRID->isQuickySearch = true;
+    $STUDENT_GRID->isCheckboxSelect = true;
+    $STUDENT_GRID->forceFit = "false";
+    $STUDENT_GRID->isObjectDefaultOnLoad = true;
+    $STUDENT_GRID->isFilterRow = true;
+    $STUDENT_GRID->renderJS();
+    ////////////////////////////////////////////
+
+    $LETTER_FROM_INFO = "{
+        title: '".FROM_TEXT."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px;'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px;'
+            ,tbar: ['->',{
+                text: '<b>".AVAILABLE_PERSON."</b>'
+                ,iconCls:'icon-lightning'
+                ,handler: function(){
+                    var win = new Ext.Window({
+                        title: '".STAFF."'
+                        ,id: 'OPEN_WINDOW_FROM'
+                        ,closable:true
+                        ,width:percentWidth(70)
+                        ,height: percentHeight(85)
+                        ,plain:true
+                        ,modal: true
+                        ,layout:'border'
+                        ,border: false
+                        ,collapsible: false
+                        ,split: true
+                        ,items: [{
+                            collapsible: false
+                            ,id: 'center'
+                            ,region:'center'
+                            ,margins: '3 3 3 0'
+                            ,layout: 'fit'
+                            ,items: [{xtype: '".$STAFF_FROM_GRID->getObjectXType()."'}]
+                        }]
+                        ,fbar: ['->',{
+                            text: '" . CLOSE . "'
+                            ,iconCls: 'icon-cancel'
+                            ,handler: function (){
+                                win.close();
+                            }
+                        }]
+                    });
+                    win.show();
+                    
+                    var grid = Ext.getCmp('".$STAFF_FROM_GRID->getObjectId()."');
+                    if(grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+                    var record = grid.store.getAt(rowIndex);
+                    var contextMenu = new Ext.menu.Menu({
+                        items: [{
+                            text: '".APPLY."'
+                            ,iconCls:'icon-application_form_add'
+                            ,disabled: false
+                            ,handler: function(){ 
+                                Ext.getCmp('FROM_TEXT_ID').setValue(record.data.ID);
+                                Ext.getCmp('FROM_TEXT').setValue(record.data.FULL_NAME);
+                                Ext.getCmp('FROM_TYPE').setValue('INTERNAL');
+                                Ext.getCmp('OPEN_WINDOW_FROM').close();
+                            }
+                        }]
+                    });
+                    event.stopEvent();
+                    contextMenu.showAt(event.xy);
+                });
+                }
+            }]
+            ,layout: 'form'
+            ,items:[
+                {".CamemisField::Textfield("FROM_TEXT", "FROM_TEXT", FROM_TEXT, true)."}
+                ,{".CamemisField::Hidden("FROM_TEXT_ID")."}
+                ,{".CamemisField::Hidden("FROM_TYPE")."}
+            ]
+        }]
+    }";
+    
+    $LETTER_TO_INFO = "{
+                        title: '".TO_TEXT."'
+                        ,collapsible: true
+                        ,collapsed: false
+                        ,style: 'padding-bottom: 5px'
+                        ,width: 550
+                        ,items:[{
+                            layout: 'fit'
+                            ,border: false
+                            ,bodyStyle: 'padding:5px'
+                            ,items: [{".CamemisField::Textarea("TO_TEXT", false,150, true, true)."}]
+                        }]
+                        ,tbar:[{
+                            text: '".REMOVE."'
+                            ,iconCls:'icon-user_delete'
+                            ,handler: function(){
+                                Ext.getCmp('TO_TEXT_ID').setValue();
+                                Ext.getCmp('TO_TEXT').setValue();
+                            }
+                        },{
+                            text: '".STAFF."'
+                            ,iconCls:'icon-user_add'
+                            ,handler: function(){
+                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STAFF_TO_GRID->getObjectXType()."', percentWidth(80), percentHeight(80));
+                            }
+                        },{
+                            text: '".STUDENT."'
+                            ,iconCls:'icon-user_add'
+                            ,handler: function(){
+                                openWinXType('WinXType','".AVAILABLE_PERSON."', '".$STUDENT_GRID->getObjectXType()."', percentWidth(80), percentHeight(80));
+                            }
+                        }]
+                    }";
+     $LETTER_TO_EXTERNAL = "{
+        title: '".TO_TEXT."'
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,style: 'padding: 5px'
+            ,items: [
+                {".CamemisField::Textarea("TO_TEXT", TO_TEXT, 150)."}
+            ]
+        }]
+    }";
+
+    $ATTACHMENT = "{
+        title: '".ATTACHMENT."'
+        ,id: 'ATTACHMENT_ID'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,height: 285
+        ,style: 'padding-bottom: 5px'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENT', url: '/dataset/attachment/?objectId=".$this->objectId."&template=letter&count=1'})]
+    }";
+
+    $CREATED = $DISPLAY_ITEM->renderAdditionalItem("CREATED");
+    $MODIFIED = $DISPLAY_ITEM->renderAdditionalItem("MODIFIED");
+    //$ENABLED = $DISPLAY_ITEM->renderAdditionalItem("ENABLED");
+    //$DISABLED = $DISPLAY_ITEM->renderAdditionalItem("DISABLED");
+
+    $FORM_ITEMS = "[";
+        if ($this->objectId !="new") {
+            $FORM_ITEMS .= $DETAIL_INFORMATION_UPDATE;
+            $FORM_ITEMS .= ",".$LETTER_FROM_INFO;
+            switch (UserAuth::getUserType()) {
+                case "SUPERADMIN":
+                case "ADMIN":
+                    if($this->typeLetter == 'external'){
+                        $FORM_ITEMS .= ",".$LETTER_TO_EXTERNAL;
+                    }else{
+                        $FORM_ITEMS .= ",".$LETTER_TO_INFO;                        
+                    }
+                    $FORM_ITEMS .= ",".$DESCRIPTION;
+                    $FORM_ITEMS .= ",".$ATTACHMENT;
+                    $FORM_ITEMS .= ",".$CREATED;
+                    $FORM_ITEMS .= ",".$MODIFIED;
+                    //$FORM_ITEMS .= ",".$ENABLED;
+                    //$FORM_ITEMS .= ",".$DISABLED;
+                break;
+                case "TEACHER":
+                case "STUDENT":
+                default:
+                    $FORM_ITEMS .= ",".$DESCRIPTION;
+                    $FORM_ITEMS .= ",".$ATTACHMENT;
+                break;
+            }
+        }else{
+            switch($this->typeLetter){
+                case "external":
+                    $FORM_ITEMS .= $DETAIL_INFORMATION_UPDATE;
+                    $FORM_ITEMS .= ",".$LETTER_FROM_INFO;
+                    $FORM_ITEMS .= ",".$LETTER_TO_EXTERNAL;
+                    $FORM_ITEMS .= ",".$DESCRIPTION;
+                    break;
+                case "internal":
+                    $FORM_ITEMS .= $DETAIL_INFORMATION_UPDATE;
+                    $FORM_ITEMS .= ",".$LETTER_FROM_INFO;
+                    $FORM_ITEMS .= ",".$LETTER_TO_INFO;
+                    $FORM_ITEMS .= ",".$DESCRIPTION;
+                    break;
+                }
+        }
+    $FORM_ITEMS .= "]";
+
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: $FORM_ITEMS
+    ";
+
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+
+    switch(UserAuth::getUserType()) {
+        case "SUPERADMIN":
+        case "ADMIN":
+            if(UserAuth::getACLValue("LETTER_MANAGEMENT_REMOVE_RIGHT"))
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
+
+            if ($this->objectId !="new") {
+                //if(UserAuth::getACLValue("LETTER_MANAGEMENT_EDIT_RIGHT"))
+                //$OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+                if(UserAuth::getACLValue("LETTER_MANAGEMENT_EDIT_RIGHT"))
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave()); 
+            }else{
+                if(UserAuth::getACLValue("LETTER_MANAGEMENT_EDIT_RIGHT")) 
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+            }
+        break;
+    }
+
+    //$OBJECT_FORM->setReleaseParams("cmd: 'releaseLetter',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'loadLetter'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'actionLetter'
+        ,objectId: '".$this->objectId."'
+        ,type:'".$this->typeLetter."'
+    "); 
+
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeLetter'
+        ,objectId: '".$this->objectId."'
+    ");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        if(window.parent.Ext.getCmp('LETTER_LIST_ID'))
+        window.parent.Ext.getCmp('LETTER_LIST_ID').store.reload();
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        window.location ='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        if(window.parent.Ext.getCmp('LETTER_LIST_ID'))
+        window.parent.Ext.getCmp('LETTER_LIST_ID').store.reload();
+        " . camemisPage::setRequestURI() . "
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."');
+        if(window.parent.Ext.getCmp('LETTER_LIST_ID'))
+        window.parent.Ext.getCmp('LETTER_LIST_ID').store.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+
+    $OBJECT_FORM->isObjectDefaultOnLoad = ($this->objectId == "new") ? false : true;
+    $OBJECT_FORM->isWindowlocation = false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 170;
+    $OBJECT_FORM->renderJS();
+
+    $LAYOUT_ITEMS = "[{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            border: false
+            ,layout: 'fit'
+            ,items: <?=$LAYOUT_ITEMS;?>
+        }]
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,190 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 04.09.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/student/StudentDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$OBJECT_GRID = new CamemisGrid("SMS", "LIST");
+$OBJECT_GRID->setLoadUrl('/sms/jsonload/');
+$OBJECT_GRID->setSaveUrl('sms/jsonsave/');
+
+$OBJECT_FORM = new CamemisForm("SMS");
+$OBJECT_FORM->setLoadUrl('/sms/jsonload/');
+$OBJECT_FORM->setSaveUrl('/sms/jsonsave/');
+
+$studentId = isset($_GET["objectId"]) ? addText($_GET["objectId"]): null;
+$academicId = isset($_GET["academicId"]) ? $_GET["academicId"]: null;
+
+$STUDENT_OBJECT = StudentDBAccess::findStudentFromId($studentId);
+//
+?>
+<style>
+   div.content {
+        margin: 10px 10px 10px 10px;
+    }
+    span.textTime {
+        font-weight:bold;
+        color:#333;
+    }
+    span.text {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<script>
+    
+    Ext.onReady(function() {
+        showContent = {
+            content : function(value, p, record){
+            return String.format(
+                '<div class="content"><span class="textTime">{1}</span><br><br><span class="text">{0}</span></div>',
+                value, record.data.SEND_DATE, record.data.CONTENT);
+            }
+        };
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $items = "
+        border: false
+            ,id: 'FORM_ITEMS'
+            ,layout: 'fit'
+            ,bodyStyle: 'padding:0px'
+            ,items: [{
+                xtype: 'textarea'
+                ,id: 'CONTENT'
+                ,hideLabel: true
+                ,height: 80
+                ,allowBlank: false
+                ,name:'SMS_TEXT'
+            }]
+        ";
+        
+        $OBJECT_FORM->addObjectItems($items);
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSendSave());
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSendSMSToSingleStudent'
+            ,objectId: '".$studentId."'
+            ,academicId: '".$academicId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".MSG_SEND_SUCCESS."');
+            Ext.getCmp('CONTENT').setValue('');
+            Ext.getCmp('SMS_LIST_ID').store.reload();
+        ");
+        
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->labelAlign = "top";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+    
+        $OBJECT_GRID->addReadField("name: 'SEND_DATE'");
+        $OBJECT_GRID->addReadField("name: 'CONTENT'");
+        $OBJECT_GRID->addColumn("header: 'SMS', renderer: showContent.content, width: percentWidth(85), sortable: true, dataIndex: 'CONTENT'");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,objectId: '" . $studentId . "'
+            ,target: 'STUDENT_INDIVIDUAL'
+            ,cmd: 'jsonLoadUserSMS'
+        ";
+        
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        $VIEWPORT_SMS  = "
+            
+            viewport = new Ext.Viewport({
+                layout: 'fit'
+                ,border: false
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: false
+                        ,split: true
+                    }
+                    ,items: [{
+                        region:'north'
+                        ,margins: '3 3 0 3'
+                        ,cmargins: '3 3 3 3'
+                        ,height: 135
+                        ,minSize: 135
+                        ,maxSize: 135
+                        ,layout: 'fit'
+                        ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+                        
+                    },{
+                        collapsible: false
+                        ,title: 'SMS ".PROTOCOL."'
+                        ,id: 'center'
+                        ,region:'center'
+                        ,margins: '0 3 3 3'
+                        ,layout: 'fit'
+                        ,items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]
+                    }]
+                }]
+            });
+        ";
+        
+        $VIEWPORT_NOSMS  = "
+            viewport = new Ext.Viewport({
+                layout: 'fit'
+                ,border: false
+                ,items:[{
+                    border: false
+                    ,layout: 'fit'
+                    ,items: [{
+                        border: false
+                        ,layout: 'anchor'
+                        ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                        ,items: [{
+                            title: ''
+                            ,height:60
+                            ,width:500
+                            ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                            ,html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'
+                        }]
+                    }]
+                }]
+            });
+        ";
+        
+        if($STUDENT_OBJECT->SMS_SERVICES){
+            echo $VIEWPORT_SMS;
+        }else{
+            echo $VIEWPORT_NOSMS;
+        }
+        ?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

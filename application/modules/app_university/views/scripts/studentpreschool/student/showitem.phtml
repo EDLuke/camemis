@@ -1,0 +1,793 @@
+<?
+///////////////////////////////////////////////////////////
+// @THORN Visal
+// Date: 16.12.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once 'models/CAMEMISUploadDBAccess.php';
+require_once 'models/app_university/student/StudentPreschoolDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$getID = "";
+$refID = "";
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("STUDENT_PRESCHOOL");
+$OBJECT_FORM->setLoadUrl('/studentpreschool/jsonload/');
+$OBJECT_FORM->setSaveUrl('/studentpreschool/jsonsave/');
+
+$APPLICATION_GRID = new CamemisGrid("APPLICATION", "LIST");
+$APPLICATION_GRID->setLoadUrl("/studentpreschool/jsonload/");
+$APPLICATION_GRID->setSaveUrl("/studentpreschool/jsonsave/");
+
+$TESTING_GRID = new CamemisGrid("TESTING", "LIST");
+$TESTING_GRID->setLoadUrl("/studentpreschool/jsonload/");
+$TESTING_GRID->setSaveUrl("/studentpreschool/jsonsave/");
+
+$REF_FORM = new CamemisForm("REFERENCE_PRESCHOOL");
+$REF_FORM ->setLoadUrl('/studentpreschool/jsonload/');
+$REF_FORM ->setSaveUrl('/studentpreschool/jsonsave/');
+
+$columndata = Utiles::getGridColumnData("NEW_PRESCHOOL_LIST");
+
+function columnProperties($header, $dataindex, $width, $hidden=false){
+    $fg = "";
+    $fg .= "editor: new Ext.form.TextArea({";
+    $fg .= "allowBlank: false";                                                                              
+    $fg .= "})";
+    $fg .= ",renderer:cssDefault";
+    $fg .= ",align: 'left'";
+    $fg .= ",height:25";
+    $fg .= ",header: '<b>".$header."</b>'";
+    $fg .= ",dataIndex: '".$dataindex."'";
+    $fg .= ",width:".$width;   
+    $fg .= ",hidden:".$hidden;
+    
+    return $fg;
+}
+
+function columnPropertiesReadonly($header, $dataindex, $width, $hidden=false){
+    $fg = "";
+    $fg .= "editor: new Ext.form.TextField({";
+    $fg .= "allowBlank: false";                                                                              
+    $fg .= ",readOnly: true";                                                                              
+    $fg .= "})";
+    $fg .= ",renderer:cssDefault";
+    $fg .= ",align: 'left'";
+    $fg .= ",height:25";
+    $fg .= ",header: '<b>".$header."</b>'";
+    $fg .= ",dataIndex: '".$dataindex."'";
+    $fg .= ",width:".$width;   
+    $fg .= ",hidden:".$hidden;
+    
+    return $fg;
+}
+
+
+
+function columnDate($header, $dataindex, $width, $hidden){
+    $fg = "";
+    $fg .= "editor: new Ext.form.DateField({";
+        $fg .= "allowBlank: false,format: '" . setExtDatafieldFormat() . "'";
+        $fg .= ",readOnly: true"; 
+    $fg .= "})";
+    $fg .= ",renderer:Ext.util.Format.dateRenderer('".setExtDatafieldFormat()."')";
+    $fg .= ",header: '<b>".$header."</b>'";
+    $fg .= ",dataIndex: '".$dataindex."'";
+    $fg .= ",width: $width";
+    $fg .= ",hidden:".$hidden;
+    
+    return $fg;
+}
+
+
+$objectId = isset($params["objectId"])? addText($params["objectId"]) : $this->objectId;
+$getStd_preschoolId = StudentPreschoolDBAccess::sqlStudentPreschoolId($objectId);
+
+if($getStd_preschoolId){
+    $getID = $getStd_preschoolId[0]->ID;
+}
+
+
+$getRef_preschoolId = StudentPreschoolDBAccess::checkReferenceOfStudent($getID);
+if($getRef_preschoolId != 0){
+    $refID = $getID;
+}else{
+    $refID = 'new';
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style type="text/css">
+    span.Text{
+        font:bold 10px Tahoma,Verdana,Arial,Sans-serif,Hanuman;
+        color:#333;
+    }
+</style>
+<script>
+
+    var comboValue;
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+                var start = Ext.getCmp(field.startDateField);
+                start.setMaxValue(date);
+                start.validate();
+                this.dateRangeMax = date;
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+                var end = Ext.getCmp(field.endDateField);
+                end.setMinValue(date);
+                end.validate();
+                this.dateRangeMin = date;
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        Ext.QuickTips.init();
+        function cssDefault(value){
+            return '<div style="font-weight:normal; padding: 5px; height:15px;">' + value + '</div>';
+        }
+        
+        <?         
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $APPLICATION_GRID->addReadField("name: 'DEGREE_TYPE'");
+        $APPLICATION_GRID->addReadField("name: 'CAMEMIS_TYPE'");
+        $APPLICATION_GRID->addReadField("name: 'APPLICATION_STATUS'");
+        $APPLICATION_GRID->addReadField("name: 'DESCRIPTION'");
+        $APPLICATION_GRID->addReadField("name: 'SESSION_EVENT'");
+        $APPLICATION_GRID->addReadField("name: 'CREATED_DATE'");
+        $APPLICATION_GRID->addReadField("name: 'CREATED_BY'");
+        $APPLICATION_GRID->addReadField("name: 'DELETE'");
+        
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".TYPE."</b>',
+            dataIndex: 'CAMEMIS_TYPE',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('APPLICATION_TYPE')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".DEGREE_TYPE."</b>',
+            dataIndex: 'DEGREE_TYPE',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('QUALIFICATION_DEGREE_TYPE')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".SESSION_EVENT."</b>',
+            dataIndex: 'SESSION_EVENT',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('SESSION_EVENT')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $APPLICATION_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(3,$columndata)));
+        $APPLICATION_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(4,$columndata)));
+        $APPLICATION_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(5,$columndata)));
+        
+        $APPLICATION_GRID->addColumn("
+            header: '<b>".STATUS."</b>',
+            dataIndex: 'APPLICATION_STATUS',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('APPLICATION_STATUS')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $APPLICATION_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,align: 'center'
+            ,header: '<b>".DELETE."</b>'
+            ,dataIndex: 'DELETE'
+            ,disabled: true
+            ,width: 80
+            ,on: 1
+            ,off: 0
+        ");
+
+        //if($isCancel)
+        $APPLICATION_GRID->addTBarItems("
+            tbar.add([{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+            },'-']);
+        ");
+        
+        //if (UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_EDIT_RIGHT"))
+        $APPLICATION_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . ADD_ENTRY . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    data = {
+                        DEGREE_TYPE:''
+                        ,CAMEMIS_TYPE:''
+                        ,SESSION_EVENT:''
+                        ,DESCRIPTION:''
+                        ,APPLICATION_STATUS:''
+                    };
+                    Ext.getCmp('".$APPLICATION_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
+                }
+            }]);
+        ");
+
+        $APPLICATION_GRID->setSaveParams("
+            cmd: 'jsonSaveGridpreschool'
+            ,object: 'APPLICATION'
+            ,objectId: '".$getID."'
+            ,comboValue: comboValue
+        ");
+
+        $APPLICATION_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListGridpreschool'
+            ,objectId: '".$getID."'
+            ,object: 'APPLICATION'
+        ";
+        $APPLICATION_GRID->setAftereditCallback("
+            if(jsonData.DELETE){
+                Ext.getCmp('".$APPLICATION_GRID->getObjectId()."').store.reload();
+            }else{
+                e.record.set('ID',jsonData.ID);
+            }
+        ");
+        $APPLICATION_GRID->setAftereditEvent("
+            objectId = jsonData.ID;
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+            Ext.getCmp('".$APPLICATION_GRID->getObjectId()."').store.reload();
+        "); 
+        
+        //if (UserAuth::getACLStudent("EDIT_RIGHT"))
+        $APPLICATION_GRID->isGridEditing = true;
+        $APPLICATION_GRID->loadMask = false;
+        $APPLICATION_GRID->isObjectDefaultOnLoad = true;
+        $APPLICATION_GRID->forceFit = "false";
+        $APPLICATION_GRID->renderJS();
+            
+        ///////////////////////////////////////////////////////////
+        
+        $TESTING_GRID->addReadField("name: 'CAMEMIS_TYPE'");
+        $TESTING_GRID->addReadField("name: 'SCORE'");
+        $TESTING_GRID->addReadField("name: 'CREATED_BY'");
+        $TESTING_GRID->addReadField("name: 'DESCRIPTION'");
+        $TESTING_GRID->addReadField("name: 'TESTING_LEVEL'");
+        $TESTING_GRID->addReadField("name: 'TESTING_STATUS'");
+        $TESTING_GRID->addReadField("name: 'CREATED_DATE'");
+        $TESTING_GRID->addReadField("name: 'DELETE'");
+        
+        $TESTING_GRID->addColumn("
+            header: '<b>".TYPE."</b>',
+            dataIndex: 'CAMEMIS_TYPE',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('TESTING_TYPE')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $TESTING_GRID->addColumn(columnProperties(SCORE,"SCORE",150,checkColHidden(2,$columndata)));
+        
+        $TESTING_GRID->addColumn("
+            header: '<b>".LEVEL."</b>',
+            dataIndex: 'TESTING_LEVEL',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('TESTING_LEVEL')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        
+        $TESTING_GRID->addColumn("
+            header: '<b>".STATUS."</b>',
+            dataIndex: 'TESTING_STATUS',
+            width: 150,
+            align: 'left',
+            editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:".CamemisTypeDBAccess::comboxCamemisType('TESTING_STATUS')."
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        replaceValue = combo.getValue();
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = replaceValue;
+                    }
+                }
+            })
+        ");
+        $TESTING_GRID->addColumn(columnProperties(DESCRIPTION,"DESCRIPTION",150,checkColHidden(5,$columndata)));
+        $TESTING_GRID->addColumn(columnDate(CREATED_DATE,"CREATED_DATE",150,checkColHidden(6,$columndata)));
+        $TESTING_GRID->addColumn(columnPropertiesReadonly(CREATED_BY,"CREATED_BY",150,checkColHidden(7,$columndata)));
+        
+        $TESTING_GRID->addColumn("
+            xtype: 'checkboxcolumn'
+            ,align: 'center'
+            ,header: '<b>".DELETE."</b>'
+            ,dataIndex: 'DELETE'
+            ,disabled: true
+            ,width: 80
+            ,on: 1
+            ,off: 0
+        ");
+
+        //if($isCancel)
+        $TESTING_GRID->addTBarItems("
+            tbar.add([{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+            },'-']);
+        ");
+        
+        //if (UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_EDIT_RIGHT"))
+        $TESTING_GRID->addTBarItems("
+            tbar.add([{
+                text: '" . ADD_ENTRY . "'
+                ,iconCls:'icon-application_form_add'
+                ,handler: function(){
+                    data = {
+                        CAMEMIS_TYPE:''
+                        ,SCORE:''
+                        ,LEVEL:''
+                        ,STATUS:''
+                        ,DESCRIPTION:''
+                    };
+                    Ext.getCmp('".$TESTING_GRID->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
+                }
+            }]);
+        ");
+
+        $TESTING_GRID->setSaveParams("
+            cmd: 'jsonSaveGridpreschool'
+            ,object: 'TESTING'
+            ,objectId: '".$getID."'
+            ,comboValue: comboValue
+        ");
+
+        $TESTING_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListGridpreschool'
+            ,objectId: '".$getID."'
+            ,object: 'TESTING'
+        ";
+        $TESTING_GRID->setAftereditCallback("
+            if(jsonData.DELETE){
+                Ext.getCmp('".$TESTING_GRID->getObjectId()."').store.reload();
+            }else{
+                e.record.set('ID',jsonData.ID);
+            }
+        ");
+        
+        $TESTING_GRID->setAftereditEvent("
+            objectId = jsonData.ID;
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+            Ext.getCmp('".$TESTING_GRID->getObjectId()."').store.reload();
+        ");
+        
+        //if (UserAuth::getACLStudent("EDIT_RIGHT"))
+        $TESTING_GRID->isGridEditing = true;
+        $TESTING_GRID->loadMask = false;
+        $TESTING_GRID->isObjectDefaultOnLoad = true;
+        $TESTING_GRID->forceFit = "false";
+        $TESTING_GRID->renderJS();
+        ///////////////////////////////////////////////////////////
+
+        $REF_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'RE_CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+   
+        $REF_FORM->setLoadParams("
+            cmd: 'jsonLoadTypePreschool'
+            ,objectId: '".$getID."'
+            ,objectType: 'REFERENCE'
+        ");
+        
+        $REF_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $REF_FORM->setSaveParams("
+            cmd: 'jsonSaveTypePreschool'
+            ,objectId: '".$refID."'
+            ,stdId: '".$getID."'
+            ,objectType: 'REFERENCE'
+        ");
+        
+        
+    
+         $REF_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+         ");   
+         
+         $REF_FORM->addObjectItems("
+            title: '".REFERENCE_TYPE."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [{".CamemisField::comboCamemisTypes("REFERENCE_TYPE", TYPE, false,250, true)."}]
+            }]   
+        ");
+            
+        $REF_FORM->addObjectItems("
+            title: '".REFERENCE_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("REF_FIRSTNAME", "REF_FIRSTNAME", FIRSTNAME, false, false, false, 250)."}
+                    ,{".CamemisField::Textfield("REF_LASTNAME", "REF_LASTNAME", LASTNAME, false, false, false, 250)."}
+                    ,{".CamemisField::Textfield("REF_PHONE", "REF_PHONE", PHONE, false, false, false, 250)."}
+                    ,{".CamemisField::EMailfield("REF_EMAIL", EMAIL, false, false)."}
+                ]
+            }]   
+        ");
+            
+        $REF_FORM->addObjectItems("
+            title: '".DESCRIPTION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,width:550
+            ,style: 'padding-bottom: 5px'
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,bodyStyle: 'padding:5px'
+                ,items:[{".CamemisField::Textarea("DESCRIPTION",DESCRIPTION,200,false,false)."}]
+            }]   
+        ");
+        
+        $REF_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+        ");
+        
+        $REF_FORM->isObjectDefaultOnLoad = true; 
+        $REF_FORM->labelAlign = "left";
+        $REF_FORM->labelWidth = 120;
+        $REF_FORM->renderJS();
+        
+        //////////////////////////////////////////////////////////
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        
+        if($this->objectId != "new"){
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());            
+            $OBJECT_FORM->setLoadParams("
+                cmd: 'jsonLoadStudentPreschool'
+                ,objectId: '".$this->objectId."'
+            ");
+            
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."'); 
+                window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0); 
+            ");
+            
+            $OBJECT_FORM->setRemoveParams("
+                cmd: 'jsonRemoveStudentPreschool'
+                ,objectId: '".$this->objectId."'
+                ,stdId: '".$getID."'
+            "); 
+            
+        }
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveStudentPreschool'
+            ,objectId: '".$this->objectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            window.parent.Ext.getCmp('STUDENT_PRESCHOOL_LIST_ID').store.reload();
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+        ");    
+
+        $OBJECT_FORM->addObjectItems("
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, true, false, false, 250)."}
+                    ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, true, false, false, 250)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME_LATIN","FIRSTNAME_LATIN",FIRSTNAME_LATIN, false, false)."}
+                    ,{".CamemisField::Textfield("LASTNAME_LATIN","LASTNAME_LATIN",LASTNAME_LATIN, false, false)."}
+                    ,{".CamemisField::ComboGender(GENDER, false, false, 250)."}
+                    ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, false)."}
+                ]
+            }]   
+        ");
+        
+        $OBJECT_FORM->addObjectItems("
+            title: '".CONTACT_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Textarea("ADDRESS",ADDRESS,200,false,false)."}
+                    ,{".CamemisField::Textfield("PHONE_ID", "PHONE", PHONE, false, false, false, 250)."}
+                    ,{".CamemisField::EMailfield("EMAIL", EMAIL, false, false)."}
+                ]
+            }]   
+        ");
+        
+        $OBJECT_FORM->addObjectItems("
+            title: '".CREATED."'
+            ,autoHeight: true
+            ,style: 'padding-bottom:5px'
+            ,collapsible: true
+            ,collapsed: false
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Displayfield("CREATED_DATE", CREATED_DATE, "" . isset($data["CREATED_DATE"]) ? $data["CREATED_DATE"] : "---" . "")."}
+                    ,{".CamemisField::Displayfield("CREATED_BY", CREATED_BY, "" . isset($data["CREATED_BY"]) ? $data["CREATED_BY"] : "---" . "")."}
+                ]
+            }]   
+        ");
+
+        $OBJECT_FORM->isObjectDefaultOnLoad = ($this->objectId=="new")?false:true; 
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+        $js = "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+            $js .= ",items: [{" ;
+            if($this->objectId == "new"){
+                $js .= "xtype: 'panel'";
+                $js .= ",id: 'panel'";    
+                $js .= ",border: false";    
+                $js .= ",layout: 'card'";    
+                $js .= ",activeItem: 0";    
+                $js .= ",items: [{";    
+                    $js .= "layout: 'fit'";        
+                    $js .= ",border: false";        
+                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'";
+                    $js .= "}]";
+                $js .= "}]";
+            }else{
+                $js .= "layout: 'fit'";
+                $js .= ",border: false";
+                $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                    $js .= ",items: [{";  
+                        $js .= "xtype: 'tabpanel'";
+                        $js .= ",id:'TABPANEL_ID'";
+                        $js .= ",tabPosition: 'top'";
+                        $js .= ",plain:true";
+                        $js .= ",activeTab: 0";
+                        $js .= ",enableTabScroll:true";
+                        $js .= ",items:[{";
+                            $js .= "title: '".MAIN_CONTENT."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".APPLICATION."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$APPLICATION_GRID->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".TESTING."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$TESTING_GRID->getObjectXType()."'}]";
+                        $js .= "},{";
+                            $js .= "title:'".REFERENCE."'";
+                            $js .= ",layout:'fit'";
+                            $js .= ",items: [{xtype: '".$REF_FORM->getObjectXType()."'}]";
+                        $js .= "}]";
+                    $js .= "}]";
+            }
+            $js .= "}]"; 
+        $js .= "});";
+   
+           
+        print $js;
+        ?>
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+    
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

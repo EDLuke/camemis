@@ -1,0 +1,39 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:10px;padding:8px;height:80px">
+<h1 class="headerError">You do not have permission to access this object.!</h1>
+<br>
+
+</div>
+<script>    
+Ext.onReady(function() {
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,bodyStyle: 'padding:10px'
+            ,border: false
+            ,width:500
+            ,items: [{
+               title:''
+               ,border:false
+               ,width:500
+               ,bodyStyle: 'background:#FFF; padding:25px;'
+               ,contentEl: 'initCenter'
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

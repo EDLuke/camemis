@@ -1,0 +1,192 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 05.12.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'clients/CamemisPage.php';
+require_once 'models/app_school/staff/StaffDBAccess.php';
+require_once 'models/app_school/finance/FeeDBAccess.php';
+require_once 'models/app_school/finance/IncomeDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$school = Zend_Registry::get('SCHOOL');
+$staffObject = StaffDBAccess::findStaffFromId($this->objectId);
+$paymentObject = ExpenseDBAccess::findExpenseFromId($this->paymentId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style type="text/css">
+
+    table{
+        font-weight:bold; color:#333;
+        border-width: 0px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+    }
+    
+    table th.schoolHeader, table td.schoolHeader{
+        width:220px;
+        background-color:#FFF;
+        border-width: 0px;
+        padding: 6px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+    
+    table th.schoolBlock, table td.schoolBlock{
+        width:220px;
+        background-color:#FFF;
+        border-width: 0px;
+        padding: 6px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+    
+    table th.colHeader, table td.colHeader{
+        width:220px;
+        color:#000000;
+        background-color:#d7e3f3;
+        border-width: 1px;
+        padding: 5px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+
+    table th.colBlock, table td.colBlock{
+        width:220px;
+        background-color:#FFF;
+        border-width: 1px;
+        padding: 5px;
+        border-style: solid;
+        border-color: silver;
+        border-collapse: collapse;
+        font-weight:bold;
+    }
+
+</style>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <th colspan="2" class="schoolHeader"><?= $school->NAME; ?></th>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= ADDRESS ?></td>
+            <td class="schoolBlock"><?= $school->ADDRESS?$school->ADDRESS:"---" ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= EMAIL ?></td>
+            <td class="schoolBlock"><?= $school->EMAIL?$school->EMAIL:"---" ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= PHONE ?></td>
+            <td class="schoolBlock"><?= $school->PHONE?$school->PHONE:"---" ?></td>
+        </tr>
+    </table>
+</div>
+
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <th colspan="2" class="colHeader"><?= PERSONAL_INFORMATION; ?></th>
+        </tr>
+        <?
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+        ?>
+        <tr>
+            <td class="colBlock"><?= LASTNAME ?></td>
+            <td class="colBlock"><?= $staffObject->LASTNAME ?></td>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= FIRSTNAME ?></td>
+            <td class="colBlock"><?= $staffObject->FIRSTNAME ?></td>
+        </tr>
+        <?
+	}else{
+	?>
+        <tr>
+            <td class="colBlock"><?= FIRSTNAME ?></td>
+            <td class="colBlock"><?= $staffObject->FIRSTNAME ?></td>
+        </tr>
+        <tr>
+            <td class="colBlock"><?= LASTNAME ?></td>
+            <td class="colBlock"><?= $staffObject->LASTNAME ?></td>
+        </tr>
+        <?
+	}
+        ?>
+    </table>
+</div>
+
+<?
+    echo "<div style='margin:8px;padding:8px;'>";
+        echo "<table>";
+            echo "<tr>";
+                echo "<td colspan=2 class='colHeader'>".constant($paymentObject->PAYMENT_TYPE)."</td>";
+            echo "</tr>";
+            echo "<tr>";
+                echo "<td class='colBlock'>".TRANSACTION_NUMBER."</td>";
+                echo "<td class='colBlock'>".displayNumberFormat($paymentObject->TRANSACTION_NUMBER)."</td>";
+            echo "</tr>";
+            
+            echo "<tr>";
+                echo "<td class='colBlock'>".DATE_FROM."</td>";
+                echo "<td class='colBlock'>".getShowDate($paymentObject->START_DATE)."</td>";
+            echo "</tr>";
+            
+            echo "<tr>";
+                echo "<td class='colBlock'>".DATE_TO."</td>";
+                echo "<td class='colBlock'>".getShowDate($paymentObject->END_DATE)."</td>";
+            echo "</tr>";
+            
+            if($paymentObject->TOTAL_SESSION){
+                echo "<tr>";
+                    echo "<td class='colBlock'>".TOTAL_SESSION."</td>";
+                    echo "<td class='colBlock'>".displayNumberFormat($paymentObject->TOTAL_SESSION)."</td>";
+                echo "</tr>";    
+            }
+            
+            echo "<tr>";
+                echo "<td class='colBlock'>".TRANSACTION_AMOUNT."</td>";
+                echo "<td class='colBlock'>".displayNumberFormat($paymentObject->AMOUNT)." ". Zend_Registry::get('SCHOOL')->CURRENCY."</td>";
+            echo "</tr>";
+            
+            echo "<tr>";
+                echo "<td class='colBlock'>".TRANSACTION_DATE."</td>";
+                echo "<td class='colBlock'>".getShowDateTime($paymentObject->CREATED_DATE)."</td>";
+            echo "</tr>";
+            
+        echo "</table>"; 
+    echo "</div>";
+?>
+<div style='margin:8px;padding:8px;'>
+    <table>
+        <tr>
+            <td class="schoolBlock"><?= CREATED_DATE ?></td>
+            <td class="schoolBlock"><?= getShowDateTime(getCurrentDBDateTime()) ?></td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= CASHIER_SIGNATURE ?></td>
+            <td class="schoolBlock">---</td>
+        </tr>
+        <tr>
+            <td class="schoolBlock"><?= STAFF_SIGNATURE ?></td>
+            <td class="schoolBlock">---</td>
+        </tr>
+    </table>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

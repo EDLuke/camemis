@@ -1,0 +1,511 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisTree("DATASET", "LIST");
+$OBJECT_TREE->setURL("/dataset/jsontree/");
+$OBJECT_TREE->setSaveUrl("/dataset/jsonsave/");
+        
+$HIGHER_EDUCATION = new CamemisGrid("GRADINGSYSTEM", "H");
+$HIGHER_EDUCATION->setLoadUrl('/academicsetting/jsonload/');
+$HIGHER_EDUCATION->setSaveUrl('/academicsetting/jsonsave/');
+
+$TRAINING = new CamemisGrid("GRADINGSYSTEM", "T");
+$TRAINING->setLoadUrl('/academicsetting/jsonload/');
+$TRAINING->setSaveUrl('/academicsetting/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$result = Zend_Registry::get('DB_ACCESS')->fetchRow("SELECT * FROM t_qualification_type ORDER BY NAME ASC LIMIT 0 ,1");
+
+if(!$result) {header("Location: /main/permission/");exit;}
+
+?>
+<script>
+    
+var eduSystem = '<?=$result->ID;?>';
+function val() {
+    d = document.getElementById("COMBO_9").value;
+    
+    Ext.Ajax.request({
+        url: '/subject/jsonsave/'
+        ,method: 'POST'
+        ,params: {cmd: 'jsonAddSubjectToGrade', selectionIds: 10000, academicId:'2222222'}
+        ,success: function(response, options) {
+            XMsg('<?=STATUS?>',d);     
+        }
+        ,failure: function(response, options) {}
+    });
+    
+}
+Ext.onReady(function() {
+	
+    function showText(v){
+        return String.format('<div style=\"font-weight:normal;color:#333;\">{0}</div>'
+            ,v
+        );
+    }
+    function loadGrading(eduSystem){
+        Ext.getCmp('<?=$HIGHER_EDUCATION->getObjectId()?>').store.baseParams = {
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSGradingSystem'
+            ,eduSystem: eduSystem
+        };
+        Ext.getCmp('<?=$HIGHER_EDUCATION->getObjectId()?>').store.load();
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->setSaveParams("
+    	cmd: 'addObject'
+        ,type:'qualificationtype'
+    ");
+    
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'jsonTreeAllCamemisType'
+        ,objectType:'QUALIFICATION_TYPE'
+    ");
+    
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    $scoreType = "[
+        [1,'".SCORE_ON_NUMBER."']
+        ,[2,'".SCORE_ON_ALPHABET."']
+    ]";
+    
+    $HIGHER_EDUCATION->addReadField("name: 'ID'");
+    $HIGHER_EDUCATION->addReadField("name: 'ACTIVE'");
+    $HIGHER_EDUCATION->addReadField("name: 'LETTER_GRADE'");
+    $HIGHER_EDUCATION->addReadField("name: 'NUMERIC_GRADE'");
+    $HIGHER_EDUCATION->addReadField("name: 'MARK'");
+    $HIGHER_EDUCATION->addReadField("name: 'DESCRIPTION'");
+    $HIGHER_EDUCATION->addReadField("name: 'SCORE_TYPE'");
+    $HIGHER_EDUCATION->addReadField("name: 'ENGLISH'");
+    $HIGHER_EDUCATION->addReadField("name: 'DELETE'");
+    
+    $HIGHER_EDUCATION->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'ACTIVE'
+        ,width: 50
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".LETTER_GRADE."</b>'
+        ,dataIndex: 'LETTER_GRADE'
+        ,width: 120
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".NUMERIC_GRADE." (90-100)</b>'
+        ,dataIndex: 'NUMERIC_GRADE'
+        ,width: 150
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".MARK." (%)</b>'
+        ,dataIndex: 'MARK'
+        ,width: 130
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".DESCRIPTION."</b>'
+        ,dataIndex: 'DESCRIPTION'
+        ,width: 130
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".ENGLISH."</b>'
+        ,dataIndex: 'ENGLISH'
+        ,width: 120
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        align: 'center'
+        ,renderer: showText
+        ,header: '<b>".SCORE_TYPE."</b>'
+        ,dataIndex: 'SCORE_TYPE'
+        ,width: 150
+    ");
+    
+    $HIGHER_EDUCATION->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".DELETE."</b>'
+        ,dataIndex: 'DELETE'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $HIGHER_EDUCATION->setSaveParams("
+        cmd: 'actionGradingSystem'
+        ,eduSystem: eduSystem
+    ");
+    
+    $HIGHER_EDUCATION->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonSGradingSystem'
+        ,eduSystem: eduSystem
+    ";
+    
+    $HIGHER_EDUCATION->addTBarItems("
+        tbar.add([{
+            text: '" . REFRESH . "'
+            ,iconCls:'icon-arrow_refresh'
+            ,handler: function(){
+                Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').getColumnModel().setHidden(8, false);
+                Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $HIGHER_EDUCATION->addTBarItems("
+        tbar.add([{
+            text: '" . ADD_NEW_ITEM . "'
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+                Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').getColumnModel().setHidden(8, true);
+                data = {
+                    LETTER_GRADE:''
+                    ,NUMERIC_GRADE:''
+                    ,MARK:''
+                    ,DESCRIPTION:''
+                    ,SCORE_TYPE:''
+                    ,SCORE_TYPE:''
+                    ,ENGLISH:''
+                };
+                Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
+            }
+        }]);
+    ");
+
+    $HIGHER_EDUCATION->setAftereditCallback("
+        if(jsonData.DELETE){
+            Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').store.reload(); 
+        }else{
+            e.record.set('ID',jsonData.ID);
+            e.record.set('LETTER_GRADE',jsonData.LETTER_GRADE);
+            e.record.set('NUMERIC_GRADE',jsonData.NUMERIC_GRADE);
+            e.record.set('MARK',jsonData.MARK);
+            e.record.set('ENGLISH',jsonData.ENGLISH);
+            e.record.set('DESCRIPTION',jsonData.DESCRIPTION);
+            e.record.set('SCORE_TYPE',jsonData.SCORE_TYPE);
+        }
+        Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').getColumnModel().setHidden(8, false);
+    ");
+    
+    $HIGHER_EDUCATION->setAftereditEvent("
+        objectId = jsonData.ID;
+    ");
+    
+    $HIGHER_EDUCATION->forceFit = "false";
+    $HIGHER_EDUCATION->isObjectDefaultOnLoad = true;
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $HIGHER_EDUCATION->isGridEditing = true;
+    $HIGHER_EDUCATION->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    
+    $TRAINING->addReadField("name: 'ID'");
+    $TRAINING->addReadField("name: 'ACTIVE'");
+    $TRAINING->addReadField("name: 'LETTER_GRADE'");
+    $TRAINING->addReadField("name: 'NUMERIC_GRADE'");
+    $TRAINING->addReadField("name: 'MARK'");
+    $TRAINING->addReadField("name: 'DESCRIPTION'");
+    $TRAINING->addReadField("name: 'SCORE_TYPE'");
+    $TRAINING->addReadField("name: 'ENGLISH'");
+    $TRAINING->addReadField("name: 'DELETE'");
+    
+    $TRAINING->addColumn("
+        xtype: 'checkboxcolumn'
+        ,header: ''
+        ,dataIndex: 'ACTIVE'
+        ,width: 50
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".LETTER_GRADE."</b>'
+        ,dataIndex: 'LETTER_GRADE'
+        ,width: 120
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".NUMERIC_GRADE." (90-100)</b>'
+        ,dataIndex: 'NUMERIC_GRADE'
+        ,width: 150
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".MARK." (%)</b>'
+        ,dataIndex: 'MARK'
+        ,width: 130
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".DESCRIPTION."</b>'
+        ,dataIndex: 'DESCRIPTION'
+        ,width: 130
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".ENGLISH."</b>'
+        ,dataIndex: 'ENGLISH'
+        ,width: 120
+    ");
+    
+    $TRAINING->addColumn("
+        editor: new Ext.form.ComboBox({
+            typeAhead: true
+            ,editable:false
+            ,triggerAction: 'all'
+            ,store: ".$scoreType."
+            ,listClass: 'x-combo-list-small'
+        })
+        ,align: 'center'
+        ,renderer: showText
+        ,header: '<b>".SCORE_TYPE."</b>'
+        ,dataIndex: 'SCORE_TYPE'
+        ,width: 150
+    ");
+    
+    $TRAINING->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".DELETE."</b>'
+        ,dataIndex: 'DELETE'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    
+    $TRAINING->setSaveParams("
+        cmd: 'actionGradingSystem'
+        ,eduSystem:'training'
+    ");
+    
+    $TRAINING->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonSGradingSystem'
+        ,eduSystem:'training'
+    ";
+    
+    $TRAINING->addTBarItems("
+        tbar.add([{
+            text: '" . REFRESH . "'
+            ,iconCls:'icon-arrow_refresh'
+            ,handler: function(){
+                Ext.getCmp('".$TRAINING->getObjectId()."').getColumnModel().setHidden(8, false);
+                Ext.getCmp('".$TRAINING->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $TRAINING->addTBarItems("
+        tbar.add([{
+            text: '" . ADD_NEW_ITEM . "'
+            ,iconCls:'icon-application_form_add'
+            ,handler: function(){
+                Ext.getCmp('".$TRAINING->getObjectId()."').getColumnModel().setHidden(8, true);
+                data = {
+                    LETTER_GRADE:''
+                    ,NUMERIC_GRADE:''
+                    ,MARK:''
+                    ,DESCRIPTION:''
+                    ,SCORE_TYPE:''
+                    ,SCORE_TYPE:''
+                    ,ENGLISH:''
+                };
+                Ext.getCmp('".$TRAINING->getObjectId()."').getStore().add([new Ext.data.Record(data)]);
+            }
+        }]);
+    ");
+
+    $TRAINING->setAftereditCallback("
+        if(jsonData.DELETE){
+            Ext.getCmp('".$TRAINING->getObjectId()."').store.reload(); 
+        }else{
+            e.record.set('ID',jsonData.ID);
+            e.record.set('LETTER_GRADE',jsonData.LETTER_GRADE);
+            e.record.set('NUMERIC_GRADE',jsonData.NUMERIC_GRADE);
+            e.record.set('MARK',jsonData.MARK);
+            e.record.set('ENGLISH',jsonData.ENGLISH);
+            e.record.set('DESCRIPTION',jsonData.DESCRIPTION);
+            e.record.set('SCORE_TYPE',jsonData.SCORE_TYPE);
+        }
+        Ext.getCmp('".$TRAINING->getObjectId()."').getColumnModel().setHidden(8, false);
+    ");
+    
+    $TRAINING->setAftereditEvent("
+        objectId = jsonData.ID;
+    ");
+    
+    $TRAINING->forceFit = "false";
+    $TRAINING->isObjectDefaultOnLoad = true;
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $TRAINING->isGridEditing = true;
+    $TRAINING->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    $SQL = "SELECT * FROM t_gradingsystem WHERE 1=1 AND EDUCATION_TYPE=1";
+    $entries = Zend_Registry::get('DB_ACCESS')->fetchAll($SQL);
+        
+    if($entries){
+        foreach($entries as $value){
+            echo "var COMBO_".$value->ID." = Ext.get('COMBO_".$value->ID."');";
+        }
+    }
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+            ,border:false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'bottom'
+                ,plain:true
+                ,activeTab: 0
+                ,items:[{
+                    title: '<?=HIGHER_EDUCATION;?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout: 'fit'
+                    ,items:[{
+                        layout:'border'
+                        ,border: false
+                        ,defaults: {
+                            collapsible: false
+                            ,split: true
+                        }
+                        ,items: [{
+                            title: ''
+                            ,id:'WEST_ID'
+                            ,region:'west'
+                            ,margins: '3 0 3 3'
+                            ,cmargins: '3 3 3 3'
+                            ,width:350
+                            ,minSize:350
+                            ,maxSize:350
+                            ,layout: 'fit'
+                            ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+                        },{
+                            title:'<?=$result->NAME;?>'
+                            ,collapsible: false
+                            ,region:'center'
+                            ,id: 'center'
+                            ,layout: 'fit'
+                            ,margins: '3 3 3 0'
+                            ,items:[{xtype: '<?=$HIGHER_EDUCATION->getObjectXtype();?>'}]
+                        }]
+                    }]
+                },{
+                    title: '<?=TRAINING_PROGRAMS;?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$TRAINING->getObjectXtype();?>'}]
+                }]        
+            }]     
+        }]
+    });        
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, event){
+        eduSystem = node.id;
+        loadGrading(node.id);
+        Ext.getCmp('center').setTitle(node.text);
+    })
+    <?
+    if($entries){
+        foreach($entries as $value){
+            echo "if (COMBO_".$value->ID.") COMBO_".$value->ID.".on('select', function() {
+                alert(COMBO_".$value->ID.".getValue());
+            });
+            ";
+        }
+    }
+    ?>    
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

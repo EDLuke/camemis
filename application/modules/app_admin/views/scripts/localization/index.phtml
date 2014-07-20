@@ -1,0 +1,101 @@
+<?
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'models/app_admin/MyConfig.php';
+require_once 'models/app_admin/AdminUserAuth.php';
+
+$AdminPage = AdminPage::getInstance();
+$AdminPage->setLoadingMask = true;
+print $AdminPage->showCamemisHeader();
+
+$HIDDEN_PROVIDER_MANAGER = MyConfig::getACLValue("PROVIDER")?"false":"true";
+
+$USER_PERMISSIONS = AdminUserAuth::getACLValue();
+$DISABLED_SETTINGS = $USER_PERMISSIONS["SETTINGS"]?"false":"true";
+$HIDDEN_LOCAL = $USER_PERMISSIONS["LOCAL"]?"false":"true";
+$HIDDEN_CAMEMIS_HELP = $USER_PERMISSIONS["CAMEMIS_HELP"]?"false":"true";
+
+function setItem($name, $url){
+    $js = "title: '<b>" . $name . "</b>'";
+    $js .= ",layout: 'fit'";
+    $js .= ",items: [new Ext.ux.IFrameComponent({ id: '".strtoupper($name)."', url: '".$url."'})]";
+    return $js;
+}
+
+?>
+<style>
+    h1{
+        font-size: 18px;
+        color:#55555;
+        font-weight: bold;
+    }
+</style>
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection...</h1>
+</div>
+<script>
+Ext.onReady(function() {
+
+    Ext.QuickTips.init();
+    
+    
+    <?
+    $ITEMS ="
+    [{
+        ".setItem('English','/localization/list/?language=ENGLISH&languageName=Engish')."
+    },{
+        ".setItem('Myanmar','/localization/list/?language=BURMESE&languageName=Myanmar')."
+    },{
+        ".setItem('Khmer','/localization/list/?language=KHMER&languageName=Khmer')."
+    },{
+        ".setItem('Malay','/localization/list/?language=MALAY&languageName=Malay')."
+    },{
+        ".setItem('Indonesia','/localization/list/?language=INDONESIAN&languageName=Indonesia')."
+    },{
+        ".setItem('French','/localization/list/?language=FRANCE&languageName=French')."
+    },{
+        ".setItem('German','/localization/list/?language=GERMAN&languageName=German')."
+    },{
+        ".setItem('Chinese (Simplified)','/localization/list/?language=CHINESE_SIMPLIFIED&languageName=Chinese (Simplified)')."
+    },{
+        ".setItem('Lao','/localization/list/?language=LAO&languageName=Lao')."
+    },{
+        ".setItem('Filipino','/localization/list/?language=FILIPINO&languageName=Filipino')."
+    },{
+        ".setItem('Thai','/localization/list/?language=THAI&languageName=Thai')."
+    },{
+        ".setItem('Vietnamese','/localization/list/?language=VIETNAMESE&languageName=Vietnamese')."
+    },{
+        ".setItem('Spanish','/localization/list/?language=SPANISH&languageName=Spanish')."
+    },{
+        ".setItem('Russian','/localization/list/?language=RUSSIAN&languageName=Russian')."
+    }]";
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,layout: 'fit'
+            ,border: false
+            ,items:[{
+                xtype: 'vrtabpanel'
+                ,tabWidth: 200
+                ,border: false            
+                ,activeTab: 0
+                ,plain:true
+                ,width:percentWidth(25)
+                ,defaults:{autoScroll: true, border: false}
+                ,items: <?=$ITEMS;?>      
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $AdminPage->showCamemisFooter();
+?>

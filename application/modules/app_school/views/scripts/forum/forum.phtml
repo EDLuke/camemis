@@ -1,0 +1,425 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna
+// Date: 18.02.2014
+// 
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("FORUM", "LIST");
+$OBJECT_GRID->setLoadUrl('/forum/jsonload/');
+$OBJECT_GRID->setSaveUrl('/forum/jsonsave/');
+      
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style type="text/css">
+
+.x-grid3-col .topic {
+    padding-left:20px;
+    background:transparent url(/public/images/message.png) no-repeat 0 2px;
+}
+.x-grid3-col .x-grid3-cell-inner {
+    white-space:normal;
+}
+
+.x-grid3-row-body p {
+    margin:5px 20px 10px 25px !important;
+    color:#555;
+}
+
+.post-date {
+    font-weight:bold;
+    color:#333;
+}
+.x-tree-node div.forum-ct{
+    background:#eee url(/public/images/cmp-bg.gif) repeat-x;
+    margin-top:1px;
+    border-top:1px solid #ddd;
+    border-bottom:1px solid #ccc;
+    padding-top:2px;
+    padding-bottom:1px;
+}
+.forum-ct .x-tree-node-icon {
+    display:none;
+}
+.forum-ct a span {
+    font-weight:bold;
+    color:#222;
+}
+.forum {
+    border:1px solid #fff;
+}
+.forum .x-tree-ec-icon {
+    display:none;
+}
+.icon-forum {
+    background-image:url(/public/images/forum.gif) !important;
+}
+
+.x-tree-node .x-tree-selected a span{
+    background:transparent;
+    color:#15428b;
+    font-weight:bold;
+}
+
+#main-tabs .x-tab-panel-body {
+    background:transparent;
+    border:0 none;
+}
+
+#topic-grid .x-panel-tbar .x-toolbar {
+    border-top:0 none;
+}  
+#FORUM_LIST_ID .x-panel-tbar .x-toolbar {
+    border-top:0 none;
+}  
+.myclass{
+    margin-left: 20px;
+    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    white-space:normal;
+    color:#555; 
+    text-align: left;
+}
+.x-tree-selected a span.myclass{
+    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    white-space:normal;
+    color:#555;
+    text-align: left; 
+}
+.mytexnode .x-treegrid-col{
+    padding-bottom: 10px;
+    white-space:normal;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.x-action-col-cell img.public {
+    height: 16px;
+    width: 16px;
+    background-image: url(/public/images/green.png);
+}
+.x-action-col-cell img.unpublic {
+    height: 16px;
+    width: 16px;
+    background-image: url(/public/images/red.png);
+}
+</style>
+<script>
+
+Ext.onReady(function() {
+    
+    var forumCatagory = "";
+    function cssTopic(value, p, record){
+        return String.format(
+                '<div class="topic"><b>{0}</b></div>',
+                value);    
+    }
+    
+    function showPostDate(value, p, r){
+        return String.format('<span class="post-date">{0}</span><br/>by {1}', value, r.data['CREATED_BY']);    
+    } 
+    
+    var myTreeGrid = new Ext.ux.tree.TreeGrid({
+        title: '',
+        id: 'TREE_GRID_FORUM',
+        width: 450,
+        height: 300,
+        enableDD: true,
+        autoScroll: true,
+        border: false,
+        columns:[{
+            header: 'Topic',
+            dataIndex: 'TOPIC',
+            width: 400
+        },{
+            header: 'Post Date',
+            width: 100,
+            dataIndex: 'POST_DATE',
+            align:'center',
+        }
+        ],
+        loader: new Ext.tree.TreeLoader({
+            url: '/forum/jsontree/',
+            baseParams: {cmd:'jsonTreeGridForum',object_type: '<?=$this->target;?>'},
+            preLoadChildren:true,
+            loadMask: {msg:'Loading Topics...'},  
+        }), 
+        root: new Ext.tree.AsyncTreeNode({
+                          expanded:true,
+                          id: '0'
+                      })        
+    });
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'TOPIC'");
+    $OBJECT_GRID->addReadField("name: 'CONTENT'");
+    $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
+    $OBJECT_GRID->addReadField("name: 'POST_DATE'");
+    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+    $OBJECT_GRID->addReadField("name: 'REPLY_NUM'");  
+    $OBJECT_GRID->addReadField("name: 'STATUS'");     
+
+    $OBJECT_GRID->addColumn("header: '<b>Topic</b>', renderer: cssTopic, width: 250, sortable: true, dataIndex: 'TOPIC'");
+    $OBJECT_GRID->addColumn("header: '<b>Replies</b>', align:'center', width: 70, sortable: true, dataIndex: 'REPLY_NUM'");
+    $OBJECT_GRID->addColumn("header: '<b>Post Date</b>', width: 100, renderer: showPostDate, sortable: true, dataIndex: 'POST_DATE'");
+    $OBJECT_GRID->addColumn("xtype: 'actioncolumn', width: 50,items: [{
+                        icon   : '/public/images/message_edit.png',
+                        tooltip: 'edit',
+                        handler: function(grid, rowIndex, colIndex) {
+                            var rec = grid.store.getAt(rowIndex);
+                            clickOpenPage('main-tabs','','/forum/show/?&camemisType='+forumCatagory+'&target=".$this->target."&objectId='+rec.get('ID'));    
+                        }
+                    },{
+                    getClass: function(v, meta, rec) {      
+                        if (rec.get('STATUS')==0) {
+                            this.items[1].tooltip = 'Unpublic';
+                            return 'unpublic';
+                        } else {
+                            this.items[1].tooltip = 'Public';
+                            return 'public';
+                        }
+                    },
+                    handler: function(grid, rowIndex, colIndex) {
+                        var rec = grid.store.getAt(rowIndex);
+                        var status = (rec.get('STATUS')=='0')?1:0;
+                        
+                        Ext.Ajax.request({
+                            url: '/forum/jsonsave/'
+                            ,method: 'POST'
+                            ,params:{cmd: 'jsonSaveForum',STATUS: status, objectId:rec.get('ID')}
+                            ,success: function(response, options) {
+                                grid.store.reload(rowIndex);        
+                            }
+                        })
+                    }
+                }]
+                ");
+    
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonTopicForum'
+        ,parentId: '0'
+        ,object_type: '".$this->target."'
+        
+    ";
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'ADD_NEW_TOPIC'
+            ,iconCls:'icon-message_edit'
+            ,text: 'New Topic'
+            ,handler: function(){
+                 clickOpenPage('main-tabs','','/forum/show/?&camemisType='+forumCatagory+'&target=".$this->target."');
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            pressed: true,
+            enableToggle:true,
+            text:'Preview Pane',
+            tooltip: {title:'Preview Pane',text:'Show or hide the Preview Pane'},
+            iconCls: 'icon-preview', 
+            toggleHandler: togglePreview
+        }]);
+    ");
+
+    
+    $OBJECT_GRID->dataPreviewField('CONTENT', 'myclass');
+    $OBJECT_GRID->tbarSummary(true);
+    $OBJECT_GRID->isDataPreview = true;
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->isPagingToolbar = true;      
+    $OBJECT_GRID->isQuickySearch = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = false;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    $VIEWPORT ="";
+    $VIEWPORT .="viewport = new Ext.Viewport({";
+        $VIEWPORT .="layout:'border'";
+        $VIEWPORT .=",border: false";
+        $VIEWPORT .=",items: [";
+        $VIEWPORT .="new Ext.tree.TreePanel({";
+        $VIEWPORT .="id:'forum-tree',";
+                $VIEWPORT .="region:'west',";
+                $VIEWPORT .="title:'Forums',";
+                $VIEWPORT .="split:true,";
+                $VIEWPORT .="width:250,";
+                $VIEWPORT .="maxSize:250,";
+                $VIEWPORT .="minSize:250,";
+                $VIEWPORT .="collapsible: true,";
+                $VIEWPORT .="margins: '3 0 3 3',";
+                $VIEWPORT .="cmargins: '3 3 3 3',"; 
+                $VIEWPORT .="loader: new Ext.tree.TreeLoader({dataUrl:'/forum/jsontree/',baseParams: {cmd: 'jsonTreeCatagories',objectType: '".$this->camemisObjectType."',objectId: '".$this->camemisTypeParent."'}}),";
+                $VIEWPORT .="rootVisible:false,";
+                $VIEWPORT .="lines:false,";
+                $VIEWPORT .="autoScroll:true,";
+                $VIEWPORT .="root: new Ext.tree.AsyncTreeNode({";
+                          $VIEWPORT .="expanded:true,";
+                          $VIEWPORT .="id: '0'";
+                      $VIEWPORT .="}),";
+                $VIEWPORT .="tbar:['-',{";
+                    $VIEWPORT .="id: 'REFRESH'";
+                    $VIEWPORT .=",text:'".REFRESH."'";
+                    $VIEWPORT .=",scope:this";
+                    $VIEWPORT .=",iconCls:'icon-arrow_refresh'";
+                    $VIEWPORT .=",handler: function(){";
+                        $VIEWPORT .="Ext.getCmp('forum-tree').root.reload();";
+                        $VIEWPORT .="Ext.getCmp('forum-tree').getRootNode().expand(true, false);";    
+                    $VIEWPORT .="}";
+                $VIEWPORT .="},'-',";
+                $VIEWPORT .="{";
+                    $VIEWPORT .="id: 'EXPAND'";
+                    $VIEWPORT .=",scope:this";
+                    $VIEWPORT .=",iconCls:'icon-expand-all'";
+                    $VIEWPORT .=",handler: function(){"; 
+                        $VIEWPORT .="Ext.getCmp('forum-tree').getRootNode().expand(true, false);";  
+                    $VIEWPORT .="} ";   
+                $VIEWPORT .="},'-',";
+                $VIEWPORT .="{";
+                    $VIEWPORT .="id: 'COLLAPSE'";
+                    $VIEWPORT .=",scope:this";
+                    $VIEWPORT .=",iconCls:'icon-collapse-all'";
+                    $VIEWPORT .=",handler: function(){ ";
+                        $VIEWPORT .="Ext.getCmp('forum-tree').getRootNode().collapse(true, false);";    
+                    $VIEWPORT .="}";   
+                $VIEWPORT .="}";
+                $VIEWPORT .="]";
+                      
+            $VIEWPORT .="})";
+        $VIEWPORT .=",";
+        $VIEWPORT .="{";
+                $VIEWPORT .="layout: 'card',";
+                $VIEWPORT .="activeItem: 0,";
+                $VIEWPORT .="id:'main-tabs',";
+                $VIEWPORT .="region:'center',";
+                $VIEWPORT .="margins: '3 3 3 0',";
+                $VIEWPORT .="cmargins: '3 3 3 3',";
+                $VIEWPORT .="items: {";
+                    $VIEWPORT .="id:'main-view',";
+                    $VIEWPORT .="layout:'border',";
+                    $VIEWPORT .="title:'Loading...',";
+                    $VIEWPORT .="border:false,";    
+                    $VIEWPORT .="items:[";  
+                        $VIEWPORT .="{ layout:'fit',border:false,region:'center' ,xtype: '".$OBJECT_GRID->getObjectXtype()."'}";
+                        $VIEWPORT .=", {";
+                            $VIEWPORT .="id:'preview',";
+                            $VIEWPORT .="region:'east',";
+                            $VIEWPORT .="border:false,"; 
+                            $VIEWPORT .="layout:'card',";
+                            $VIEWPORT .="activeItem: 0,";
+                            $VIEWPORT .="width: 520,";
+                            $VIEWPORT .="title:'View Topic',";
+                            $VIEWPORT .="split:true,";
+                            
+                        $VIEWPORT .="}";
+                     $VIEWPORT .="]";
+                 $VIEWPORT .="}";
+              $VIEWPORT .="}";
+        $VIEWPORT .="]";
+    $VIEWPORT .="});";
+    echo $VIEWPORT;
+    ?>
+    var tree = Ext.getCmp('forum-tree');
+    tree.getRootNode().expand(true, false);
+    
+    tree.on('append', function(tree, p, node){
+       if(node.id == <?=$this->treeSelectId;?>){
+           node.select.defer(<?=$this->treeSelectId;?>, node);
+       } 
+    });
+    var sm = tree.getSelectionModel();
+    sm.on('beforeselect', function(sm, node){
+         return node.isLeaf();
+    });
+    sm.on('selectionchange', function(sm, node){
+        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').store.baseParams = {
+            start:0
+            ,limit:100
+            ,cmd: 'jsonTopicForum'
+            ,parentId: '0'
+            ,object_type: '<?=$this->target;?>' 
+            ,CAMEMIS_TYPE: node.id       
+        };
+        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').store.load();
+        Ext.getCmp('main-view').setTitle(node.text);
+        forumCatagory = node.id; 
+    });
+    
+    var topicGride =  Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>'); 
+    topicGride.getSelectionModel().addListener('selectionchange',function(sel){
+                                        var rec = sel.getSelected();
+                                        if(rec){
+                                        myTreeGrid.root.getLoader().baseParams={cmd:'jsonTreeGridForum',object_type: '<?=$this->target;?>',objectId:rec.get('ID')}; 
+                                        myTreeGrid.root.reload();
+                                        myTreeGrid.getRootNode().expand(true, false);
+                                        var panel = new Ext.Panel({
+                                                        layout: 'fit'
+                                                        ,border: false
+                                                        ,items: [myTreeGrid]
+                                        });
+                                        var show = Ext.getCmp('preview');
+                                        show.setTitle(rec.get('TOPIC'));
+                                        show.add(panel);
+                                        show.getLayout().setActiveItem(panel);                       
+                                        }
+                                    });
+    
+
+    function toggleDetails(btn, pressed){
+        var view = Ext.getCmp('topic-grid').getView();
+        view.showPreview = pressed;
+        view.refresh();
+    }
+
+    function togglePreview(btn, pressed){  
+        var preview = Ext.getCmp('preview');
+        preview[pressed ? 'show' : 'hide']();
+        preview.ownerCt.doLayout();
+    }
+    
+    myTreeGrid.on('click', function(node, e){
+        var contextMenu = new Ext.menu.Menu({
+            items: [{
+                text: 'Reply',
+                iconCls:'icon-application_form_magnify',
+                handler:function(){
+                    //clickOpenPage('main-tabs','','/forum/show/?&camemisType='+forumCatagory+'&target=".$this->target."');
+                    openWinIFrame('Reply To '+node.attributes.TOPIC, '/forum/show/?&camemisType='+forumCatagory+'&target=<?=$this->target;?>&parentId='+node.id+'&targetAction=reply', 610, 510);
+                    //myTreeGrid.getRootNode(node).appendChild(new Ext.tree.TreeNode({leaf:true,TOPIC:'sdfsdf',editable:true}));
+                     //myTreeGrid.root.reload(node);
+                    //myTreeGrid.TreeNode.appendChild('dfsad');
+                }
+            },{
+                text: 'Edit',
+                iconCls:'icon-message_edit',
+                handler:function(){
+                    openWinIFrame('', '/forum/show/?&camemisType='+forumCatagory+'&target=<?=$this->target;?>&objectId='+node.id+'&targetAction=reply', 610, 510);
+                }
+            }] 
+        });
+        e.stopEvent();
+        contextMenu.showAt(e.xy);
+    }); 
+   
+});
+</script>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

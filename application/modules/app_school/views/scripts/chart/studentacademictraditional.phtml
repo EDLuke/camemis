@@ -1,0 +1,48 @@
+<?
+require_once 'clients/CamemisChart.php';
+require_once 'models/statistic/StudentStatisticsDBAccess.php';
+
+$objectType = isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
+$campusId = isset($_GET["campusId"]) ? addText($_GET["campusId"]) : "";
+$gradeId = isset($_GET["gradeId"]) ? addText($_GET["gradeId"]) : "";
+$schoolyearId = isset($_GET["schoolyearId"]) ? addText($_GET["schoolyearId"]) : "";
+
+if (!$schoolyearId) {
+    $showLegen = "false";
+    switch ($objectType) {
+        case "CAMPUS":
+            $dataSet = StudentStatisticsDBAccess::getDataSetStudentTraditionalSystem("CAMPUS", false, false);
+            break;
+        case "GRADE":
+            $dataSet = StudentStatisticsDBAccess::getDataSetStudentTraditionalSystem("GRADE", $campusId, false);
+            break;
+        case "CLASS":
+            $dataSet = StudentStatisticsDBAccess::getDataSetStudentTraditionalSystem("CLASS", $campusId, $gradeId);
+            break;
+    }
+} else {
+    $showLegen = "true";
+    switch ($objectType) {
+        case "CAMPUS":
+            $dataSet = StudentStatisticsDBAccess::getDataSetStudentTradiionalEnrollment("CAMPUS", $campusId, $gradeId, $schoolyearId);
+            break;
+        case "GRADE":
+            $dataSet = StudentStatisticsDBAccess::getDataSetStudentTradiionalEnrollment("GRADE", $campusId, $gradeId, $schoolyearId);
+            break;
+    }
+}
+
+$chart = new CamemisChart("MULTI_BAR_CHART", 'chart1', $dataSet);
+$chart->chartSVG = "display";
+$chart->height = 230;
+?>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<body>
+    <script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
+</body>
+</html>

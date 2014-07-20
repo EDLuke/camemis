@@ -1,0 +1,187 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ATTENDANCE");
+$OBJECT_FORM->setLoadUrl('/attendance/jsonload/');
+$OBJECT_FORM->setSaveUrl('/attendance/jsonsave/');
+
+$type = isset($_GET["type"])? addText($_GET["type"]):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+    
+    Ext.onReady(function() {
+        Ext.apply(Ext.form.VTypes, {
+            daterange : function(val, field) {
+                var date = field.parseDate(val);
+                if(!date){
+                    return false;
+                }
+                if (field.startDateField) {
+                    var start = Ext.getCmp(field.startDateField);
+                    if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
+                        start.setMaxValue(date);
+                        start.validate();
+                    }
+                }
+                else if (field.endDateField) {
+                    var end = Ext.getCmp(field.endDateField);
+                    if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
+                        end.setMinValue(date);
+                        end.validate();
+                    }
+                }
+                return true;
+            }
+        });
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DETAIL_INFORMATION."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 250
+            ,items:[
+                {".CamemisField::Textfield("CODE", "CODE", SHORT." (FEE-)", false, false, false, 200)."}
+                ,{".CamemisField::Textfield("NAME", "NAME", FEE_NAME, false, false, false, 200)."}
+                ,{
+                    name: 'START_DATE'
+                    ,hidden: false
+                    ,width: 200
+                    ,fieldLabel: '" . START_DATE . "'
+                    ,xtype: 'datefield'
+                    ,id: 'START_DATE'
+                    ,vtype: 'daterange'
+                    ,endDateField: 'END_DATE'
+                    ,format: '" . setExtDatafieldFormat() . "'
+                    ,allowBlank: true
+                },{
+                    name: 'END_DATE'
+                    ,hidden: false
+                    ,width: 200
+                    ,fieldLabel: '" . END_DATE . "'
+                    ,xtype: 'datefield'
+                    ,id: 'END_DATE'
+                    ,vtype: 'daterange'
+                    ,format: '" . setExtDatafieldFormat() . "'
+                    ,startDateField: 'START_DATE'
+                    ,allowBlank: true
+                }
+            ]
+        ");
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+        
+        $FINANCIAL_MANAGEMENT_READ_RIGHT = UserAuth::getACLValue("FINANCIAL_MANAGEMENT_READ_RIGHT")?"false":"true";
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,hidden: ".$FINANCIAL_MANAGEMENT_READ_RIGHT."
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                name = this.getForm().findField('NAME').getValue();
+                code = this.getForm().findField('CODE').getValue();
+                endDate = this.getForm().findField('END_DATE').getValue();
+                startDate = this.getForm().findField('START_DATE').getValue();
+                searchString = 'type=".$type."'
+                + '&name=' + name
+                + '&code=' + code
+                + '&startDate=' + startDate
+                + '&endDate=' + endDate;
+                clickOpenPage('center','', '/finance/searchfeeservices/?' + searchString);
+                Ext.getCmp('WEST_ID').collapse();
+            }
+        ");
+        if( UserAuth::getACLValue("FINANCIAL_MANAGEMENT_EDIT_RIGHT"))
+        $OBJECT_FORM->addTBarItems("
+            text: '".ADD_NEW_ITEM."'
+            ,iconCls:'icon-application_form_add'
+            ,scope:this
+            ,handler: function(){
+                Ext.getCmp('WEST_ID').collapse();
+                clickOpenPage('center','', '/finance/showfeeservices/?type=".$type."&objectId=new');
+            }
+        ");
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "top";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = true;
+        $OBJECT_FORM->renderJS();
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,id: 'CONTENT'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: '<?=STUDENT_SERVICES;?>'
+                        ,region:'west'
+                        ,id: 'WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width: 270
+                        ,minSize: 270
+                        ,maxSize: 270
+                        ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                    },{
+                        title: ''
+                        ,collapsible: false
+                        ,id: 'center'
+                        ,region:'center'
+                        ,layout: 'card'
+                        ,activeItem: 0
+                        ,margins: '3 3 3 0'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'URL_SEARCH', url: '/finance/searchfeeservices/?type=<?=$type?>'})]
+                    }]
+                }]
+            }]
+        });
+        
+        //Ext.getCmp('WEST_ID').toggleCollapse(true);
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

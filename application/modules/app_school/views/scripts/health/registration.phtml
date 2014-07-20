@@ -1,0 +1,804 @@
+<?
+
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$GENERAL_EDU_TREE = new CamemisSchoolTree("ACADEMIC", "LIST");
+$GENERAL_EDU_TREE->setURL('/academic/jsontree/');
+$GENERAL_EDU_TREE->setSaveUrl('/academic/jsonsave/');
+
+$TRAINING_TREE = new CamemisTree("TRAINING","LIST");
+$TRAINING_TREE->setURL('/training/jsontree/');
+$TRAINING_TREE->setSaveUrl('/training/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_WIZARD_EDIT_RIGHT")?"false":"true";
+
+?>
+<div id="congratulations" class="x-hide-display">
+    <h1 class="header">CONGRATULATIONS</h1>
+    <br/><br/>
+    <p class="header"><?=STEP?> 6/6 - <?=COMPLETE?></p>
+    <p class="header">
+        <?=MSG_CREATE_NOW_RECORDS;?>
+        <br><br>
+        <?=MSG_CLICK_SAVE_BUTTON;?>
+    </p>
+</div>
+<script>
+
+    var classId;
+    var gradeId;
+    var schoolyearId;
+    var campusId;
+    var academicType;
+    var gradeSchoolYearId = '<?=isset($_GET["classId"]) ? addText($_GET["classId"]):0?>';
+    Ext.onReady(function() {
+
+        Ext.QuickTips.init();
+        // turn on validation errors beside the field globally
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $OBJECT_LOCATION_PARENT = new CamemisDynCombo("DATASET","PROVINCE");
+        $OBJECT_LOCATION_PARENT->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_PARENT->objectTitle = CITY_PROVINCE;
+        $OBJECT_LOCATION_PARENT->allowBlank = "true";
+        $OBJECT_LOCATION_PARENT->width = 230;
+        $OBJECT_LOCATION_PARENT->varName = "COUNTRY_PROVINCE";
+        $OBJECT_LOCATION_PARENT->setLoadParams("cmd: 'jsonAllLocation',parentId:0");
+        $OBJECT_LOCATION_PARENT->renderJS();
+
+        $OBJECT_LOCATION_CHILD = new CamemisDynCombo("DATASET","TWON");
+        $OBJECT_LOCATION_CHILD->setLoadUrl('/dataset/jsonload/');
+        $OBJECT_LOCATION_CHILD->objectTitle = TOWN_CITY;
+        $OBJECT_LOCATION_CHILD->allowBlank = "true";
+        $OBJECT_LOCATION_CHILD->width = 230;
+        $OBJECT_LOCATION_CHILD->varName = "TOWN_CITY";
+        $OBJECT_LOCATION_CHILD->setLoadParams("cmd: 'jsonAllLocation',parentId:'1010101010'");
+        $OBJECT_LOCATION_CHILD->renderJS();
+
+        $TRAINING_TREE->isAsyncTreeNode = false;
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $TRAINING_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+        $TRAINING_TREE->setBaseParams("
+            cmd: 'jsonTreeAllTrainings'
+        ");
+        $TRAINING_TREE->backgroundColor = "#F9F9F9";
+        $TRAINING_TREE->isTreeExpand = false;
+        $TRAINING_TREE->renderJS();
+        $triggerOnClickTraining = "
+            openWinXType('XTYPE_TRAINING','".TRAINING_PROGRAMS."', '".$TRAINING_TREE->getObjectXType()."', 500, percentHeight(85));
+            var trainingTree = Ext.getCmp('".$TRAINING_TREE->getObjectId()."');
+            trainingTree.on('click', function(node, e){
+                if(node.attributes.objecttype == 'TERM' || node.attributes.objecttype == 'CLASS'){
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').setValue(node.text);
+                    Ext.getCmp('CHOOSE_TRAINING').setValue(node.id);
+                    Ext.getCmp('XTYPE_TRAINING').close();
+                }
+            });
+        ";
+
+        $OBJECT_SCHOOLYEAR = new CamemisDynCombo("ACADEMICDATE","COMBO");
+        $OBJECT_SCHOOLYEAR->setLoadUrl('/academicdate/jsonload/');
+        $OBJECT_SCHOOLYEAR->objectTitle = false;
+        $OBJECT_SCHOOLYEAR->allowBlank = "true";
+        $OBJECT_SCHOOLYEAR->varName = "SCHOOLYEAR";
+        $OBJECT_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
+        $OBJECT_SCHOOLYEAR->renderJS();
+
+        $GENERAL_EDU_TREE->isAsyncTreeNode = false;
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $GENERAL_EDU_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+        $GENERAL_EDU_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                width: 120
+                ,xtype: '".$OBJECT_SCHOOLYEAR->getObjectXType()."'
+            }]
+        ");
+
+        $GENERAL_EDU_TREE->setBaseParams("
+            cmd: 'getAllAcademics'
+             ,gradeSchoolyearId: gradeSchoolYearId
+        ");
+        $GENERAL_EDU_TREE->isOnClickContextMenu = false;
+        $GENERAL_EDU_TREE->isTreeExpand = false;
+        $GENERAL_EDU_TREE->renderJS();
+
+        $studentschoolIdHandler = "
+            function(){
+                var win = new Ext.Window({
+                    modal: true
+                    ,title: '".CHECK_STUDENT_SCHOOL_ID."'
+                    ,width:330
+                    ,autoHeight: true
+	                ,closeAction:'hide'
+	                ,plain: false
+	                ,xtype: 'form'
+	                ,labelAlign: 'top'
+	                ,bodyStyle: 'padding:10px'
+                        ,items:[{
+                            xtype: 'textfield'
+                            ,allowBlank: false
+                            ,id: 'CHECK_FORM_ID'
+                            ,name: 'studentSchoolId'
+                            ,allowBlank: false
+                            ,width: 230
+	                }]
+                    ,tbar:['->',{
+                        text: '".APPLY."'
+                        ,id: 'APPLY_ID'
+                        ,iconCls:'icon-lightning_add'
+                        ,handler: function(){
+                            var checkFormId = document.getElementById('CHECK_FORM_ID').value;
+                            Ext.Ajax.request({
+                                url: '/student/jsonload/'
+                                ,method: 'POST'
+                                ,params: {
+                                    cmd: 'jsonCheckStudentSchoolID'
+                                    ,studentSchoolId: checkFormId
+                                }
+                                ,success: function(result) {
+                                    jsonData = Ext.util.JSON.decode(result.responseText);
+                                    if (jsonData.status){
+                                        Ext.getCmp('CHOOSE_STUDENT_SCHOOID_ID_NAME').setValue(checkFormId);
+                                        win.close();
+                                    }else{
+                                        ".camemisPage::alertPleaseSelect(WARNING, setICONV(SCHOOL_ID_EXISTS))."
+                                    }
+                                }
+                            });
+                        }
+                    },{
+                        text: '".CLOSE."'
+                        ,iconCls:'icon-cancel'
+                        ,handler: function(){
+                            win.close();
+                        }
+                    }]
+                });
+                win.show();
+            }
+        ";
+
+        $triggerOnClick = "
+            openWinXType('SCHOOL_YEAR_OR_CLASS','".SCHOOL_YEAR_OR_CLASS."', '".$GENERAL_EDU_TREE->getObjectXType()."', 500, percentHeight(85));
+            var academicTree = Ext.getCmp('".$GENERAL_EDU_TREE->getObjectId()."');
+
+            Ext.getCmp('COMBO_ID').on('select', function() {
+                academicTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+                academicTree.root.reload();
+                academicTree.getRootNode().expand(true, false);
+            });
+
+            academicTree.getRootNode().expand(true, false);
+            academicTree.on('click', function(node, e){
+
+                Ext.getCmp('CHOOSE_CAMPUS').setValue('');
+                Ext.getCmp('CHOOSE_GRADE').setValue('');
+                Ext.getCmp('CHOOSE_SCHOOLYEAR').setValue('');
+                Ext.getCmp('CHOOSE_CLASS').setValue('');
+                Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue('')
+
+                if(node.attributes.objecttype == 'SCHOOLYEAR' || node.attributes.objecttype == 'CLASS' ){
+
+                    //////////////////////
+                    //Choose Schoolyear
+                    //////////////////////
+                    if (node.attributes.objecttype == 'SCHOOLYEAR') {
+                        Ext.getCmp('CHOOSE_CAMPUS').setValue(node.attributes.campusId);
+                        Ext.getCmp('CHOOSE_GRADE').setValue(node.attributes.gradeId);
+                        Ext.getCmp('CHOOSE_SCHOOLYEAR').setValue(node.attributes.schoolyearId);
+                        Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
+                    }
+                    ///////////////////////
+                    //Choose Class
+                    ///////////////////////
+                    if (node.attributes.objecttype == 'CLASS') {
+                        Ext.getCmp('CHOOSE_CAMPUS').setValue(node.attributes.campusId);
+                        Ext.getCmp('CHOOSE_GRADE').setValue(node.attributes.gradeId);
+                        Ext.getCmp('CHOOSE_SCHOOLYEAR').setValue(node.attributes.schoolyearId);
+                        classId=node.id;
+                        Ext.getCmp('CHOOSE_CLASS').setValue(node.id);
+                        Ext.getCmp('CHOOSE_GRADE_NAME_ID').setValue(node.attributes.title);
+                    }
+
+                    Ext.getCmp('SCHOOL_YEAR_OR_CLASS').close();
+                }
+            });
+        ";
+
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+           $personItems = "[
+                {".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, true)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, true)."}
+                ,{".CamemisField::ComboGender(GENDER)."}
+                ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, true)."}
+                ,{".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 80)."}
+                ,{".CamemisField::comboReligion()."}
+                ,{".CamemisField::comboEthnic()."}
+                ,{".CamemisField::comboNationality()."}
+            ]";
+        }else{
+            $personItems = "[
+                {".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, true)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, true)."}
+                ,{".CamemisField::ComboGender(GENDER)."}
+                ,{".CamemisField::Datefield("DATE_BIRTH", DATE_BIRTH, true)."}
+                ,{".CamemisField::Textarea("BIRTH_PLACE", BIRTH_PLACE, 80)."}
+                ,{".CamemisField::comboReligion()."}
+                ,{".CamemisField::comboEthnic()."}
+                ,{".CamemisField::comboNationality()."}
+            ]";
+        }
+
+        $contactItems = "[
+            {".CamemisField::Textarea("STREET", STREET, 50)."},
+            {xtype: '".$OBJECT_LOCATION_PARENT->getObjectXType()."'},
+            {xtype: '".$OBJECT_LOCATION_CHILD->getObjectXType()."'},
+            {".CamemisField::Textfield("PHONE", "PHONE", PHONE, true)."},
+            {".CamemisField::Textfield("EMAIL", "EMAIL", EMAIL, false)."}
+        ]";
+
+        // MADD
+        // order of fields is ID NAME TITLE (I think)
+        $dentalItems = "[
+            {".CamemisField::Textfield("dental_id", "id", "ID")."}
+            ,{".CamemisField::Textfield("dental_name", "name", "Name")."}
+            ,{".CamemisField::DateField("dental_date_taken", "Date Taken")."}
+            ,{".CamemisField::Textfield("dental_ahc_id", "ahc_id", "AHC ID")."}
+            ,{".CamemisField::Textfield("dental_allergies", "allergies", "Allergies")."}
+            ,{".CamemisField::Textfield("dental_medications", "medications", "Medications")."}
+            ,{".CamemisField::Textfield("dental_history", "past_dental", "Past Dental")."}
+            ,{".CamemisField::Textfield("dental_initials", "initials", "Initials")."}
+            ,{".CamemisField::Textfield("dental_exam", "exam", "Exam")."}
+            ,{".CamemisField::Textfield("dental_fluoride", "fluoride", "Fluoride")."}
+            ,{".CamemisField::Textfield("dental_mouth_score", "mouth_score", "Mouth Score")."}
+        ]";
+
+        $growthChartItems = "[
+            {".CamemisField::Textfield("growth_chart_id", "id", "ID")."}
+            ,{".CamemisField::Textfield("growth_chart_height", "growth_chart_height", "Height")."}
+            ,{".CamemisField::Textfield("growth_chart_weight", "growth_chart_weight", "Weight")."}
+            ,{".CamemisField::DateField("growth_chart_date_taken", "Date Taken")."}
+            ,{".CamemisField::Textfield("growth_chart_birth_weight", "birth_weight", "Birth Weight")."}
+        ]";
+
+        $medicalHistoryItems = "[
+            {".CamemisField::Textfield("medical_history_id", "id", "ID")."}
+            ,{".CamemisField::Textfield("medical_history_bmi", "bmi", "BMI")."}
+            ,{".CamemisField::Textfield("medical_history_student_history", "student_history", "Student History")."}
+            ,{".CamemisField::Textfield("medical_history_family_history", "family_history", "Family History")."}
+            ,{".CamemisField::Textfield("medical_history_allergies", "allergies", "Allergies")."}
+            ,{".CamemisField::Textfield("medical_history_medications", "medications", "Medications")."}
+            ,{".CamemisField::Textfield("medical_history_health_center", "health_center", "Health Center")."}
+            ,{".CamemisField::Textfield("medical_history_commune", "commune", "Commune")."}
+            ,{".CamemisField::Textfield("medical_history_district", "district", "District")."}
+            ,{".CamemisField::Textfield("medical_history_province", "province", "Province")."}
+        ]";
+
+        $vaccinationItems = "[
+            {".CamemisField::Textfield("vaccination_id", "id", "ID")."}
+            ,{".CamemisField::Textfield("vaccination_name", "name", "Vaccination Name")."}
+            ,{".CamemisField::Textfield("vaccination_type_id", "vaccination_type_id", "Vaccination ID")."}
+            ,{".CamemisField::Datefield("vaccination_date_taken",  "Date Taken")."}
+            ,{".CamemisField::Textfield("vaccination_initials", "initials", "Initials")."}
+            ,{".CamemisField::Textfield("vaccination_medical_record", "medical_record", "Medical Record")."}
+            ,{".CamemisField::Textfield("vaccination_doctor_fee", "doctor_fee", "Doctor Fee")."}
+            ,{".CamemisField::Textfield("vaccination_health_center", "health_center", "Health Center")."}
+            ,{".CamemisField::Textfield("vaccination_signiture", "signiture", "Signiture")."}
+            ,{".CamemisField::Textfield("vaccination_doctor_first_name", "doctor_first_name", "Doctor First Name")."}
+            ,{".CamemisField::Textfield("vaccination_doctor_last_name", "doctor_last_name", "Doctor Last Name")."}
+            ,{".CamemisField::Textfield("vaccination_next_meeting", "next_meeting", "Next Meeting")."}
+        ]";
+
+        $visionItems = "[
+            {".CamemisField::Textfield("vision_id", "id", "ID")."}
+            ,{".CamemisField::Datefield("vision_date_taken", "Date Taken")."}
+            ,{".CamemisField::Textfield("vision_right_eye", "right_eye", "Right Eye")."}
+            ,{".CamemisField::Textfield("vision_left_eye", "left_eye", "Left Eye")."}
+            ,{".CamemisField::Textfield("vision_chart_type", "chart_type", "Chart Type")."}
+            ,{".CamemisField::Textfield("vision_initials", "initials", "Initials")."}
+            ,{".CamemisField::Textfield("vision_referrals", "referrals", "Referrals")."}
+            ,{".CamemisField::Textfield("vision_comments", "comments", "Comments")."}
+            ,{".CamemisField::ComboYesNO("glasses", "glasses", "Has Glasses")."}
+            ,{".CamemisField::ComboYesNO("contacts", "contacts", "Has Contacts")."}
+        ]";
+
+        $vitaminItems = "[
+            {".CamemisField::Textfield("vitamin_id", "id", "ID")."}
+            ,{".CamemisField::Textfield("vitamin_date_taken", "date_taken", "Date Taken")."}
+            ,{".CamemisField::Textfield("vitamin_name", "name", "Vitamin Name")."}
+            ,{".CamemisField::Textfield("vitamin_type_id", "vitamin_type_id", "Vitamin ID")."}
+            ,{".CamemisField::Textfield("vitamin_dosage_level", "dosage_level", "Dosage Level")."}
+        ]";
+
+        // MADD
+        // first form contains everything seen on the first screen
+        // personal and contact information
+        // MEND
+        $card1Items = "[{
+            title: '".PERSONAL_INFORMATION."'
+            ,width: 520
+            ,bodyStyle: 'padding:10px'
+            ,layout: 'form'
+            ,items: ".$personItems."
+        },{
+            title: '".CONTACT_INFORMATION."'
+            ,bodyStyle: 'padding:10px'
+            ,style:'padding:5px 0px 0px 0px'
+            ,layout: 'form'
+            ,width: 520
+            ,items: ".$contactItems."
+        }]";
+        $SEARCH_ITEMS = array();
+
+        $GENERAL_EDUCATION="{".CamemisField::Radio("GENERAL_EDUCATION", "ACADEMIC", GENERAL_EDUCATION, "GENERAL", false)."}";
+        $TRAINING_PROGRAMS= "{".CamemisField::Radio("TRAINING", "ACADEMIC", TRAINING_PROGRAMS, "TRAINING", false)."}";
+        $CHOOSE_GRADE_NAME= "{".CamemisField::Trigger("CHOOSE_GRADE_NAME",GENERAL_EDUCATION,$triggerOnClick, false, true, false)."}";
+        $CHOOSE_TRAINING_NAME= "{".CamemisField::Trigger("CHOOSE_TRAINING_NAME",TRAINING_PROGRAMS,$triggerOnClickTraining,false, true, false)."}";
+        $CHOOSE_CAMPUS="{".CamemisField::Hidden("CHOOSE_CAMPUS",false)."}";
+        $CHOOSE_GRADE="{".CamemisField::Hidden("CHOOSE_GRADE",false)."}";
+        $CHOOSE_SCHOOLYEAR="{".CamemisField::Hidden("CHOOSE_SCHOOLYEAR",false)."}";
+        $CHOOSE_CLASS="{".CamemisField::Hidden("CHOOSE_CLASS",false)."}";
+        $CHOOSE_TRAINING="{".CamemisField::Hidden("CHOOSE_TRAINING",false)."}";
+        $STUDENT_TRANSFER="{".CamemisField::ComboYesNO("TRANSFER", "TRANSFER", STUDENT_TRANSFER,false,false)."}";
+
+        if (UserAuth::displayRoleGeneralEducation()){
+           $SEARCH_ITEMS[]=  $GENERAL_EDUCATION ;
+        }
+        if (UserAuth::displayRoleTrainingEducation()){
+           $SEARCH_ITEMS[]=  $TRAINING_PROGRAMS ;
+        }
+        $SEARCH_ITEMS[]=  $CHOOSE_GRADE_NAME ;
+        $SEARCH_ITEMS[]=  $CHOOSE_TRAINING_NAME ;
+        $SEARCH_ITEMS[]=  $CHOOSE_CAMPUS ;
+        $SEARCH_ITEMS[]=  $CHOOSE_GRADE ;
+        $SEARCH_ITEMS[]=  $CHOOSE_SCHOOLYEAR ;
+        $SEARCH_ITEMS[]=  $CHOOSE_CLASS ;
+        $SEARCH_ITEMS[]=  $CHOOSE_TRAINING ;
+        $SEARCH_ITEMS[]=  $STUDENT_TRANSFER ;
+
+        $CHOOSE_SEARCH_ITEMS = implode(",", $SEARCH_ITEMS);
+
+        // MADD
+        // the second card holds form elements that correspond to screen 2
+        $card2Items = "[{
+            title: '".SCHOOL_INFORMATION."'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,tbar:['->',{
+                text: '".CHECK_STUDENT_SCHOOL_ID."'
+                ,iconCls:'icon-lightning'
+                ,handler: ".$studentschoolIdHandler."
+            }]
+            ,items: [{
+                name: 'STUDENT_SCHOOL_ID'
+                ,width: 230
+                ,fieldLabel: '".STUDENT_SCHOOL_ID."'
+                ,xtype: 'textfield'
+                ,allowBlank: false
+                ,readOnly: true
+                ,id: 'CHOOSE_STUDENT_SCHOOID_ID_NAME'
+            },{
+                xtype: 'hidden'
+                ,id: 'CHOOSE_STUDENT_SCHOOL_ID'
+            },".$CHOOSE_SEARCH_ITEMS."]
+        }]";
+
+        // MADD
+        $card3Items = "[{
+            title: 'Dental Information'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$dentalItems."
+        },{
+            title: 'Growth Chart Information'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$growthChartItems."
+        }]";
+
+        $card4Items = "[{
+            title: 'Medical History'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$medicalHistoryItems."
+            },{
+            title: 'Vaccination Information'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$vaccinationItems."
+        }]";
+
+        $card5Items = "[{
+            title: 'Vitamin Information'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$vitaminItems."
+            },{
+            title: 'Vision Information'
+            ,bodyStyle: 'padding:10px'
+            ,width: 520
+            ,layout: 'form'
+            ,items: ".$visionItems."
+        }]";
+
+
+        // MEND
+
+        $STUDENT_REGISTRATION_READ_RIGHT = (UserAuth::getACLValue("STUDENT_REGISTRATION_WIZARD_READ_RIGHT"))?"false":"true";
+        ?>
+
+        var cardNav = function(incr){
+            var l = Ext.getCmp('card-wizard-panel').getLayout();
+            var i = l.activeItem.id.split('card-')[1];
+            var next = parseInt(i) + incr;
+
+            console.log("When this happend next is: " + next);
+
+            l.setActiveItem(next);
+
+            Ext.getCmp('card-prev').setDisabled(next===0);
+            Ext.getCmp('card-next').setDisabled(next===2);
+            Ext.getCmp('card-next').setDisabled(next===3);
+            Ext.getCmp('card-next').setDisabled(next===4); // MADD
+            Ext.getCmp('card-next').setDisabled(next===5); // MADD
+            Ext.getCmp('card-next').setDisabled(next===6); // MADD
+
+            var formCard1 = Ext.getCmp('card-1').getForm();
+            var formCard2 = Ext.getCmp('card-2').getForm();
+            var formCard3 = Ext.getCmp('card-3').getForm(); // MADD
+            var formCard4 = Ext.getCmp('card-4').getForm(); // MADD
+            var formCard5 = Ext.getCmp('card-5').getForm(); // MADD
+
+            if (formCard1.isValid() === false){
+                l.setActiveItem(1);
+            }
+            if (formCard1.isValid() === true && formCard2.isValid() === false){
+                l.setActiveItem(2);
+            }
+
+            /* MADD
+            if (formCard2.isValid() === true && formCard3.isValid() === false){
+                l.setActiveItem(3);
+            }
+
+            if (formCard3.isValid() === true && formCard4.isValid() === false){
+                l.setActiveItem(3);
+            }
+
+            if (formCard4.isValid() === true && formCard5.isValid() === false){
+                l.setActiveItem(3);
+            }
+            */
+            // MEND
+        };
+
+        function actionSave(){
+
+            var formCard1 = Ext.getCmp('card-1').getForm();
+            var formCard2 = Ext.getCmp('card-2').getForm();
+
+            // MADD
+            var formCard3 = Ext.getCmp('card-3').getForm();
+            var formCard4 = Ext.getCmp('card-4').getForm();
+            var formCard5 = Ext.getCmp('card-5').getForm();
+
+            // MADD
+            // I imagine this is where I define the other forms I will add
+            // I'll be back to confirm this
+
+            var connection = new Ext.data.Connection();
+            connection.request({
+                url: '/student/jsonsave/'
+                ,scope:this
+                ,params:{
+                    cmd: 'createHealth'
+                    ,objectId: '<?=generateGuid();?>'
+
+                    ,dental_id: formCard3.findField('dental_id').getValue()
+                    ,dental_name: formCard3.findField('dental_name').getValue()
+                    ,dental_date_taken: formCard3.findField('dental_date_taken').getValue()
+                    ,dental_ahc_id: formCard3.findField('dental_ahc_id').getValue()
+                    ,dental_allergies: formCard3.findField('dental_allergies').getValue()
+                    ,dental_medications: formCard3.findField('dental_medications').getValue()
+                    ,dental_history: formCard3.findField('dental_history').getValue()
+                    ,dental_initials: formCard3.findField('dental_initials').getValue()
+                    ,dental_exam: formCard3.findField('dental_exam').getValue()
+                    ,dental_fluoride: formCard3.findField('dental_fluoride').getValue()
+                    ,dental_mouth_score: formCard3.findField('dental_mouth_score').getValue()
+                    ,growth_chart_id: formCard3.findField('growth_chart_id').getValue()
+                    ,growth_chart_height: formCard3.findField('growth_chart_height').getValue()
+                    ,growth_chart_weight: formCard3.findField('growth_chart_weight').getValue()
+                    ,growth_chart_date_taken: formCard3.findField('growth_chart_date_taken').getValue()
+                    ,growth_chart_birth_weight: formCard3.findField('growth_chart_birth_weight').getValue()
+
+                    ,medical_history_id: formCard4.findField('medical_history_id').getValue()
+                    ,medical_history_bmi: formCard4.findField('medical_history_bmi').getValue()
+                    ,medical_history_student_history: formCard4.findField('medical_history_student_history').getValue()
+                    ,medical_history_family_history: formCard4.findField('medical_history_family_history').getValue()
+                    ,medical_history_allergies: formCard4.findField('medical_history_allergies').getValue()
+                    ,medical_history_medications: formCard4.findField('medical_history_medications').getValue()
+                    ,medical_history_health_center: formCard4.findField('medical_history_health_center').getValue()
+                    ,medical_history_commune: formCard4.findField('medical_history_commune').getValue()
+                    ,medical_history_district: formCard4.findField('medical_history_district').getValue()
+                    ,medical_history_province: formCard4.findField('medical_history_province').getValue()
+                    ,vaccination_id: formCard4.findField('vaccination_id').getValue()
+                    ,vaccination_name: formCard4.findField('vaccination_name').getValue()
+                    ,vaccination_type_id: formCard4.findField('vaccination_type_id').getValue()
+                    ,vaccination_date_taken: formCard4.findField('vaccination_date_taken').getValue()
+                    ,vaccination_initials: formCard4.findField('vaccination_initials').getValue()
+                    ,vaccination_medical_record: formCard4.findField('vaccination_medical_record').getValue()
+                    ,vaccination_doctor_fee: formCard4.findField('vaccination_doctor_fee').getValue()
+                    ,vaccination_health_center: formCard4.findField('vaccination_health_center').getValue()
+                    ,vaccination_signiture: formCard4.findField('vaccination_signiture').getValue()
+                    ,vaccination_doctor_first_name: formCard4.findField('vaccination_doctor_first_name').getValue()
+                    ,vaccination_doctor_last_name: formCard4.findField('vaccination_doctor_last_name').getValue()
+                    ,vaccination_next_meeting: formCard4.findField('vaccination_next_meeting').getValue()
+
+                    ,vision_id: formCard5.findField('vision_id').getValue()
+                    ,vision_date_taken: formCard5.findField('vision_date_taken').getValue()
+                    ,vision_right_eye: formCard5.findField('vision_right_eye').getValue()
+                    ,vision_left_eye: formCard5.findField('vision_left_eye').getValue()
+                    ,vision_chart_type: formCard5.findField('vision_chart_type').getValue()
+                    ,vision_initials: formCard5.findField('vision_initials').getValue()
+                    ,vision_referrals: formCard5.findField('vision_referrals').getValue()
+                    ,vision_comments: formCard5.findField('vision_comments').getValue()
+                    ,vitamin_id: formCard5.findField('vitamin_id').getValue()
+                    ,vitamin_date_taken: formCard5.findField('vitamin_date_taken').getValue()
+                    ,vitamin_name: formCard5.findField('vitamin_name').getValue()
+                    ,vitamin_type_id: formCard5.findField('vitamin_type_id').getValue()
+                    ,vitamin_dosage_level: formCard5.findField('vitamin_dosage_level').getValue()
+
+                    ,firstname: formCard1.findField('FIRSTNAME').getValue()
+                    ,lastname: formCard1.findField('LASTNAME').getValue()
+                    ,gender: formCard1.findField('GENDER').getValue()
+                    ,religion: formCard1.findField('RELIGION').getValue()
+                    ,ethnic: formCard1.findField('ETHNIC').getValue()
+                    ,nationality: formCard1.findField('NATIONALITY').getValue()
+                    ,datebirth: formCard1.findField('DATE_BIRTH').getValue().format('Y-m-d')
+                    ,birth_place: formCard1.findField('BIRTH_PLACE').getValue()
+                    ,street: formCard1.findField('STREET').getValue()
+
+                    ,town_city: formCard1.findField('TOWN_CITY').getValue()
+
+                    ,country_province: formCard1.findField('COUNTRY_PROVINCE').getValue()
+                    ,phone: formCard1.findField('PHONE').getValue()
+                    ,email: formCard1.findField('EMAIL').getValue()
+
+                    ,campusId: formCard2.findField('CHOOSE_CAMPUS').getValue()
+                    ,gradeId: formCard2.findField('CHOOSE_GRADE').getValue()
+                    ,schoolyearId: formCard2.findField('CHOOSE_SCHOOLYEAR').getValue()
+                    ,classId: formCard2.findField('CHOOSE_CLASS').getValue()
+
+                    ,trainingId: formCard2.findField('CHOOSE_TRAINING').getValue()
+                    ,academicType: academicType
+                    ,student_school_id: formCard2.findField('STUDENT_SCHOOL_ID').getValue()
+                    ,transfer: formCard2.findField('TRANSFER').getValue()
+
+                }
+                ,method: 'POST'
+                ,success: function (result) {
+                    <?=camemisPage::setRequestURI();?>
+                }
+            });
+        }
+
+        viewport = new Ext.Viewport({
+            border: false
+            ,items: [{
+                layout:'fit'
+                ,border: false
+                ,items:[{
+                    xtype: 'panel'
+                    ,border: false
+                    ,width:550
+                    ,layout:'card'
+                    ,activeItem: 0
+                    ,id:'card-wizard-panel'
+                    ,title: ''
+                    ,items:[{
+                        xtype: 'form'
+                        ,title: ''
+                        ,border: false
+                        ,id: 'card-0'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,html: '<h1 class="header"><?=MSG_WELCOME_STUDENT_REGISTRATION?><p class="header"><br>6 <?=STEPS?><br><br><?=MSG_NEXT_CONTINUE;?></p></h1>'
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '1/6'
+                        ,border: false
+                        ,id: 'card-1'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,autoScroll: true
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card1Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '2/6'
+                        ,border: false
+                        ,id: 'card-2'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,autoScroll: true
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card2Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '3/6'
+                        ,border: false
+                        ,id: 'card-3'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,autoScroll: true
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card3Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '4/6'
+                        ,border: false
+                        ,id: 'card-4'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,autoScroll: true
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                           ,items: <?=$card4Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '5/6'
+                        ,border: false
+                        ,id: 'card-5'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,autoScroll: true
+                            ,border: false
+                            ,height: percentHeight(80)
+                            ,bodyStyle: 'padding:10px'
+                            ,items: <?=$card5Items?>
+                        }]
+                    },{
+                        xtype: 'form'
+                        ,labelWidth: 170
+                        ,title: '6/6'
+                        ,border: false
+                        ,id: 'card-6'
+                        ,items:[{
+                            title: ''
+                            ,width: 530
+                            ,border: false
+                            ,height: percentHeight(75)
+                            ,bodyStyle: 'padding:10px'
+                            ,contentEl:'congratulations'
+                            ,tbar:['->','-',{
+                                text: '<?=SAVE;?>'
+                                ,disabled: <?=$STUDENT_REGISTRATION_EDIT_RIGHT?>
+                                ,id: 'SAVE_ID'
+                                ,iconCls:'icon-disk'
+                                ,handler: function () {
+                                    actionSave();
+                                }
+                            }]
+                        }]
+                    }]
+                    ,tbar: [
+                    {
+                        text: '<?=REFRESH;?>'
+                        ,iconCls:'icon-reload'
+                        ,handler: function(){
+                            <?=camemisPage::setRequestURI();?>
+                        }
+                    },'->', {
+                        id: 'card-prev'
+                        ,text: '&laquo; <?=PREVIOUS;?>'
+                        ,handler: cardNav.createDelegate(this, [-1])
+                        ,disabled: true
+                    },'-',{
+                        id: 'card-next'
+                        ,disabled: <?=$STUDENT_REGISTRATION_READ_RIGHT;?>
+                        ,text: '<?=NEXT;?> &raquo;'
+                        ,handler: cardNav.createDelegate(this, [1])
+                    }]
+                }]
+            }]
+        });
+        if(Ext.get('GENERAL_EDUCATION')){
+            Ext.get('GENERAL_EDUCATION').on('click', function(e){
+                if(Ext.getCmp('GENERAL_EDUCATION').getValue() === true){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').show();
+                    Ext.getCmp('CHOOSE_TRAINING').setValue('');
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').hide();
+                }
+            });
+        }
+        if(Ext.get('TRAINING')){
+            Ext.get('TRAINING').on('click', function(e){
+                if(Ext.getCmp('TRAINING').getValue() === true){
+                    Ext.getCmp('CHOOSE_GRADE_NAME_ID').hide();
+                    Ext.getCmp('CHOOSE_GRADE').setValue('');
+                    Ext.getCmp('CHOOSE_TRAINING_NAME_ID').show();
+                }
+            });
+        }
+        var comboParent = Ext.getCmp('PROVINCE_ID');
+        var comboChild = Ext.getCmp('TWON_ID');
+
+        if(comboParent){
+            comboParent.on('select', function() {
+                comboChild.setValue('');
+                comboChild.store.baseParams = {
+                    cmd: 'jsonAllLocation'
+                    ,parentId: comboParent.getValue()
+                };
+                comboChild.store.reload();
+            });
+        }
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
+

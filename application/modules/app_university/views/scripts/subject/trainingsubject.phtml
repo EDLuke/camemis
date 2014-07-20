@@ -1,0 +1,189 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("SUBJECT");
+$OBJECT_FORM->setLoadUrl('/subject/jsonload/');
+$OBJECT_FORM->setSaveUrl('/subject/jsonsave/');
+
+$removeStatus = true;
+if ($this->facette) {
+    $status = $this->facette->STATUS;
+    if ($status){
+        $removeStatus = false;
+    }else{
+        $removeStatus = true;
+    }
+    
+} else {
+    
+    $status = false;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:20px;padding:8px;height:140px"><h1>Please make your selection!</h1></div>
+<script>
+Ext.onReady(function() {
+	
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_INFORMATION = "
+    {
+        border: false
+        ,width: 550
+        ,autoScroll: true
+        ,items: [{
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,collapsed: false
+            ,collapsible: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'background:#FFF;padding:10px'
+                ,items: [
+                    {".CamemisField::Textfield("SHORT_ID", "SHORT", NAME_WITHOUT_SPECIAL_CHAR, true)."}
+                    ,{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
+                    ,{".CamemisField::ComboSubjectType(TYPE, false, false, false)."}
+                    ,{".CamemisField::Colorfield("COLOR", COLOR, false)."}
+                    ,{".CamemisField::Numberfield("SCORE_MIN","SCORE_MIN", MIN_POINTS, false, false, false, false)."}
+                    ,{".CamemisField::Numberfield("SCORE_MAX","SCORE_MAX", MAX_POINTS, false, false, false, false)."}
+                    ,{".CamemisField::Textarea("DESCRIPTION", DESCRIPTION, 80)."}
+                ]
+            }]
+        }]
+    }
+    ";
+    
+    $WEIGHTING = "
+    {
+        title: '".COEFFICIENT_SETTING."'
+        ,id: 'ADDITIONAL_EVALUATION'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::comboMathematicalOperation()."}
+                ,{".CamemisField::Numberfield("COEFF_VALUE","COEFF_VALUE", VALUE, false, false, false)."}
+            ]
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+            ,".$WEIGHTING."
+        ]
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+    
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_REMOVE_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EXECUTE_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+    //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+        
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'loadObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActionSave'
+        ,objectId: '".$this->objectId."'
+    ");
+	
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').getRootNode().expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').getRootNode().expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'removeObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').root.reload();
+        window.parent.Ext.getCmp('TREE.SUBJECT_LIST_ID').getRootNode().expand(true, false);
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+    ");
+    
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

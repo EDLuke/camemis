@@ -1,0 +1,37 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 28.06.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
+
+    case "KHMER":
+        $subfolder = "english";
+        break;
+    case "VIETNAMESE":
+        $subfolder = "vietnamese";
+        break;
+    case "THAI":
+        $subfolder = "english";
+        break;
+    case "LAO":
+        $subfolder = "english";
+        break;
+    case "SPANISH":
+        $subfolder = "english";
+        break;
+    default:
+        $subfolder = "english";
+        break;
+}
+
+header("Content-Type: application/x-msexcel; name=\"staff_import.xls\"");
+header("Content-Disposition: attachment; filename=\"staff_import.xls\"");
+// IE <= 6 cache fix
+header('Expires: 0');
+header('Pragma: cache');
+header('Cache-Control: private');
+$fh=fopen("../application/import/".$subfolder."/staff_import.xls", "r");
+fpassthru($fh);
+?>

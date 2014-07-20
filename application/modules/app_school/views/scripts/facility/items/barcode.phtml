@@ -1,0 +1,15 @@
+<?
+
+require_once 'Zend/Barcode.php';
+
+$barcode = isset($_GET["code"]) ? addText($_GET["code"]) : "";
+
+$barcodeOptions = array('text' => strtoupper($barcode));
+// No required options
+$rendererOptions = array();
+// Draw the barcode in a new image,
+// send the headers and the image
+Zend_Barcode::factory(
+        'code39', 'image', $barcodeOptions, $rendererOptions
+)->render();
+?>

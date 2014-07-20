@@ -1,0 +1,310 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("STAFF");
+$OBJECT_FORM->setLoadUrl('/staff/jsonload/');
+$OBJECT_FORM->setSaveUrl('/staff/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("SMS", "STAFF_SEARCH");
+$OBJECT_GRID->setLoadUrl('/sms/jsonload/');
+$OBJECT_GRID->setSaveUrl('sms/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+var seachrSting = "";
+Ext.onReady(function() {
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px;;">' + value + '</div>';
+    }
+    
+    function renderTextSMS(value, metadata, record){
+        var SMS_SERVICES = record.data.SMS_SERVICES;
+        if (SMS_SERVICES == 1){
+            return '<div style="font-weight:normal; color: #141414;">' + value + '</div>';
+        }else{
+            return '<div style="font-weight:bold; color: #CC0000;">' + value + '</div>';
+        }
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+    $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+    $OBJECT_GRID->addReadField("name: 'MOBIL_PHONE'");
+    $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'USER_ROLE'");
+    $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'left', width: 80, renderer: cssText, sortable: false, dataIndex: 'CODE'");
+    $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+    $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', align:'left', width: 120, renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+    
+    $OBJECT_GRID->addColumn("
+        header: '<b>".MOBIL_PHONE."</b>',
+        dataIndex: 'MOBIL_PHONE',
+        width: 120,
+        align: 'left',
+        renderer: renderTextSMS,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+    ");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".USER_ROLE."</b>', align:'left', width: 200, renderer: cssText, sortable: true, dataIndex: 'USER_ROLE'");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->objectId."'
+        ,cmd: 'jsonUnassignedStaffsSMS'
+    ";
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            id: 'APPLY_ID'
+            ,text: '".APPLY."'
+            ,iconCls:'icon-disk'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+                var sm = this.getSelectionModel();
+                var record = sm.getSelected();
+                if(record){
+                    var clickId = record.data.ID;
+                    var clickName = record.data.FULL_NAME;   
+                    Ext.MessageBox.show({
+                        title:'".STATUS."'
+                        ,msg: '".MSG_ACCEPT_CHOICE."'
+                        ,buttons: Ext.MessageBox.YESNO
+                        ,fn: function(btn){
+                            if (btn == 'yes'){
+                                var selids = '';
+                                var seltexts = '';
+                                var sels = Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getSelectionModel().getSelections();
+                                for( var i = 0; i < sels.length; i++ ) {
+                                    if (i >0) selids += ',';
+                                    selids += sels[i].get('ID');
+                                    if (i >0) seltexts += '\\n';
+                                    seltexts += i+1 + ') ' + sels[i].get('LASTNAME') +' '+ sels[i].get('FIRSTNAME');
+                                }
+                                Ext.Ajax.request({
+                                    url: '/sms/jsonsave/'
+                                    ,method: 'POST'
+                                    ,params: {
+                                        cmd: 'actionAddStaffsToSMSSevices'
+                                        ,selectionIds: selids
+                                        ,objectId: '".$this->objectId."'
+                                    }
+                                    ,success: function(result) {
+                                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+                                        window.parent.Ext.getCmp('SMS_PERSONS_ID').store.reload();
+                                    }
+                                });
+                            }
+                        }
+                        ,icon: Ext.MessageBox.QUESTION
+                    });
+                }else{
+                    ".camemisPage::alertPleaseSelect()."
+                }
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'actionStaffProfil'
+    ");
+    
+    $OBJECT_GRID->isCheckboxSelect = true;
+    $OBJECT_GRID->isObjectDefaultOnLoad = false;
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->isQuickySearch = false;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    $OBJECT_FORM->addObjectItems("
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,title: '".STAFF_SEARCH."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
+        ,width: 310
+        ,items:[            
+            {".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+            ,{".CamemisField::Textfield("LASTNAME_ID", "LASTNAME", LASTNAME, false, false, false, 150)."}
+            ,{".CamemisField::Textfield("FIRSTNAME_ID", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+        ]
+    ");
+    
+    $OBJECT_FORM->addObjectItems("
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,title: '".SCHOOL_INFORMATION."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
+        ,width: 310
+        ,items:[
+            {".CamemisField::ComboUserRole(USER_ROLE, false, false, 150)."}
+        ]
+    ");
+        
+    $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_GRADE",false));
+    $OBJECT_FORM->addTBarItems("
+        text: '".RESET."'
+        ,iconCls:'icon-arrow_undo'
+        ,scope:this
+        ,handler: function(){
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+            Ext.getCmp('".$OBJECT_FORM->getObjectId()."').onReset();
+        }
+    ");
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".FIND."'
+        ,id: 'FIND_ID'
+        ,formBind:true
+        ,iconCls:'icon-magnifier'
+        ,scope:this
+        ,handler: function(){
+            
+            form = this.getForm();
+            var code = form.findField('CODE').getValue();
+            var firstname = form.findField('FIRSTNAME').getValue();
+            var lastname = form.findField('LASTNAME').getValue();
+            var searchUserRole = form.findField('USER_ROLE').getValue();
+            
+            var alertMsg = '';
+            alertMsg = alertMsg + ' || ".CODE_ID."<br/>' +
+            alertMsg + ' || ".LASTNAME."<br/>' + 
+            alertMsg + ' || ".FIRSTNAME."<br/>' + 
+            alertMsg + ' || ".USER_ROLE."<br/>';
+                
+            if (firstname || searchUserRole || 
+                lastname || code
+            ){
+                this.onEmbeddedEvents();
+            }else{
+                Ext.Msg.show({
+                    title:'".STATUS."'
+                    ,width: '250'
+                    ,icon: Ext.MessageBox.QUESTION
+                    ,msg: '" . PLEASE_SELECT . " <br/><br/>'+ alertMsg
+                    ,buttons: Ext.Msg.OK
+                });  
+            }
+        }
+    ");
+    
+    $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        
+        Ext.getCmp('center').getLayout().setActiveItem(1);
+
+        var code = this.getForm().findField('CODE').getValue();
+        var firstname = this.getForm().findField('FIRSTNAME').getValue();
+        var lastname = this.getForm().findField('LASTNAME').getValue();
+        var searchUserRole = this.getForm().findField('USER_ROLE').getValue();
+        
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {
+            start:0
+            ,limit:100
+            ,cmd: 'jsonUnassignedStaffsSMS'
+            ,code: code
+            ,objectId: '".$this->objectId."'
+            ,firstname: firstname
+            ,lastname: lastname
+            ,searchUserRole: searchUserRole
+        };
+
+        searchString = 'code=' + code
+        + '&firstname=' + firstname
+        + '&lastname=' + lastname;
+        
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.sortInfo = null;
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.commitChanges();
+    ");
+
+    $OBJECT_FORM->isKeys = true;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+	
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                title: ''
+                ,region:'west'
+                ,id: 'WEST_ID'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 350
+                ,minSize: 350
+                ,maxSize: 350
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            },{
+                title: ''
+                ,collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,bodyStyle: 'padding:0px'
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                },{
+                    border: false
+                    ,activeItem: 0
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+                }]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

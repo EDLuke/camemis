@@ -1,0 +1,245 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("HEALTH");
+$OBJECT_FORM->setLoadUrl('/health/jsonload/');
+$OBJECT_FORM->setSaveUrl('/health/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    var searchType;
+    var startDate;
+    
+    Ext.onReady(function() {
+        
+        var tabs =  new Ext.TabPanel({
+            autoTabs:true
+            ,plain:true
+            ,tabPosition: 'top'
+            ,enableTabScroll:true
+            ,activeTab:0,bodyStyle: 'background:<?=CamemisPage::userBgColor()?>'
+            ,items:[{
+                title: '<?=CHARTS?>'
+                ,layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'
+                ,items: [new Ext.ux.IFrameComponent({ id: 'DASHBOARD', url:'/health/chartreport/'})]
+            }]
+        });
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        $CAMEMIS_PAGE_OBJECT->setAddTab();
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,collapsed: false
+            ,title: '".HEALTH."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+            ,width: 310
+            ,items:[{".CamemisField::Combo('HEALTH_TYPE', TYPE, HealthSettingDBAccess::comboHealth(), false, false, 150, false,false)."}]
+        ");
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'PERSONAL_INFORMATION'
+            ,hidden: true
+            ,checkboxToggle:true
+            ,title: '" . PERSONAL_INFORMATION . "'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[
+                {".CamemisField::Textfield("STUDENT_SCHOOL_ID", "STUDENT_SCHOOL_ID", STUDENT_SCHOOL_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                ,{".CamemisField::ComboGender(GENDER, false, false, 150)."}
+            ]
+        "); 
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'START_AND_END'
+            ,hidden: true
+            ,checkboxToggle:true
+            ,title: '" . DATE . "'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[{
+                ".CamemisField::Datefield("START_DATE", START_DATE, false, false, 150)."
+            },{
+                ".CamemisField::Datefield("END_DATE", END_DATE, false, false, 150)."
+            }]
+        "); 
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'MEDICAL_VISIT'
+            ,hidden:true
+            ,checkboxToggle:true
+            ,title: 'Next visit'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[{
+                ".CamemisField::Datefield("NEXT_VISIT_DATE",DATE, false, false, 150)."
+            }]
+        "); 
+        
+        $BMI_STATUS_STORE = "[
+            [0, '[---]']
+            ,[1, 'Underweight']
+            ,[2, 'Normal weight']
+            ,[3, 'Overweight']
+            ,[4, 'Obesity']
+        ]";
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,id: 'BMI'
+            ,hidden:true
+            ,checkboxToggle:true
+            ,title: 'BMI Status'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+            ,width: 320
+            ,items:[{
+                ".CamemisField::Combo('BMI_STATUS', TYPE, $BMI_STATUS_STORE, false, false,150,false,false)."
+            }]
+        "); 
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,id: 'FIND_ID'
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    
+                gender = myForm.findField('GENDER_ID').getValue();
+                studentSchoolCode = myForm.findField('STUDENT_SCHOOL_ID').getValue();
+                codeId = myForm.findField('CODE_ID').getValue();     
+                firstName = myForm.findField('FIRSTNAME').getValue();    
+                lastName = myForm.findField('LASTNAME').getValue();       
+                
+                start = myForm.findField('START_DATE_ID').getValue();
+                end = myForm.findField('END_DATE_ID').getValue();
+                nextvisit = myForm.findField('NEXT_VISIT_DATE').getValue();
+                bmiStatus = myForm.findField('BMI_STATUS').getValue();                
+                start_ = start?start.format('Y-m-j'):'';
+                end_ = end?end.format('Y-m-j'):'';
+                
+                nextvisit_ = nextvisit?nextvisit.format('Y-m-j'):'';
+                
+                var searchparams='';
+                searchparams += '&target=' + searchType;
+                searchparams += '&start=' + start_;
+                searchparams += '&end=' + end_;
+                if (nextvisit_) searchparams += '&nextVisit=' + nextvisit_;
+                if (bmiStatus) searchparams += '&bmiStatus=' + bmiStatus;
+                if (studentSchoolCode) searchparams += '&studentSchoolCode=' + studentSchoolCode;
+                if (codeId) searchparams += '&codeId=' + codeId;
+                if (firstName) searchparams += '&firstName=' + firstName;
+                if (lastName) searchparams += '&lastName=' + lastName;
+                if (gender) searchparams += '&gender=' + gender;
+                
+                addTab('SEARCH_RESULT','" . SEARCH_RESULT . "','/health/searchresult/?' + searchparams)
+            }
+        ");
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = true;
+        $OBJECT_FORM->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    title: '&nbsp;'
+                    ,region:'west'
+                    ,id: 'WEST_ID'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 350
+                    ,minSize: 350
+                    ,maxSize: 350
+                    ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                },{
+                    title: ''
+                    ,border:true
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                    ,collapsible: false
+                    ,region:'center'
+                    ,id: 'center'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,margins: '3 3 3 3'
+                    ,items: tabs
+                }]
+            }]
+        });
+        
+        Ext.getCmp('HEALTH_TYPE_ID').on('select', function() {
+            var type = Ext.getCmp('HEALTH_TYPE_ID').getValue();
+            searchType = type;
+            
+            Ext.getCmp('START_AND_END').show();
+            Ext.getCmp('PERSONAL_INFORMATION').show();
+            
+            switch(type){
+                case 'MEDICAL_VISIT':
+                    Ext.getCmp('MEDICAL_VISIT').show();
+                    Ext.getCmp('BMI').hide();
+                break;
+                case 'BMI':
+                    Ext.getCmp('MEDICAL_VISIT').hide();
+                    Ext.getCmp('BMI').show();
+                break;
+            default:
+                Ext.getCmp('MEDICAL_VISIT').hide();
+                Ext.getCmp('BMI').hide();
+                break;
+            }
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,192 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.04.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ASSIGNMENT");
+$OBJECT_FORM->setLoadUrl('/evaluation/jsonload/');
+$OBJECT_FORM->setSaveUrl('/evaluation/jsonsave/');
+
+$setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
+$stdClass = new stdClass();
+$stdClass->setId = $setId;
+$facette = SQLEvaluationStudentAssignment::findScoreInputDate($stdClass);
+
+if(!$facette) {header("Location: /main/permission/");exit;}
+
+$setParams = "";
+$setParams .="setId=".$setId."";
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+Ext.onReady(function() {
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $winScript = "";
+    $winScript .= "var fp = new Ext.FormPanel({";
+        $winScript .= "labelAlign: 'left'";
+        $winScript .= ",border: false";
+        $winScript .= ",width:400";
+        $winScript .= ",autoHeight: true";
+        $winScript .= ",title: ''";
+        $winScript .= ",labelWidth:120";
+        $winScript .= ",defaults: {";
+            $winScript .= "anchor: '85%'";
+            $winScript .= ",allowBlank: false";
+            $winScript .= ",msgTarget: 'side'";
+        $winScript .= "}";
+        $winScript .= ",items:[{";
+            $winScript .= "xtype:'datefield'";
+            $winScript .= ",fieldLabel:'".DATE."'";
+            $winScript .= ",name:'MODIFY_DATE'";
+            $winScript .= ",value:''";
+            $winScript .= ",format:'<?=setExtDatafieldFormat()?>'";
+        $winScript .= "}]";
+    $winScript .= "});";
+    $winScript .= "var win = new Ext.Window({";
+        $winScript .= "title:'".MODIFY_DATE."',bodyStyle: 'padding:15px;background:#FFF'";
+        $winScript .= ",plain: false,closable:false,modal:true,width:450,height:150,items: fp";
+        $winScript .= ",tbar: ['->',{";
+            $winScript .= "text: '".CLOSE."',iconCls:'icon-cancel',handler: function(){win.hide();}";
+        $winScript .= "},'-',{";
+            $winScript .= "text:'".SAVE."',iconCls:'icon-page_save'";
+            $winScript .= ",handler:function(){";
+                $winScript .= "fp.getForm().submit({";
+                    $winScript .= "url:'/evaluation/jsonsave/'";
+                    $winScript .= ",scope:this";
+                    $winScript .= ",success: function(response, options) {";
+                        $winScript .= "window.location.href='".$_SERVER["REQUEST_URI"]."';";
+                    $winScript .= "}";
+                    $winScript .= ",params: {cmd:'jsonAcitonSubjectAssignmentModifyScoreDate',camIds:'".$this->urlEncryp->encryptedGet($setParams)."'}";
+                $winScript .= "});";
+            $winScript .= "}";
+        $winScript .= "}]";
+    $winScript .= "});";
+    
+    echo $winScript;
+    
+    $DETAIL_ITEMS = "[";
+        $DETAIL_ITEMS .= "{".CamemisField::Displayfield("SHORT", SHORT)."}";
+        $DETAIL_ITEMS .= ",{".CamemisField::Displayfield("NAME", NAME)."}";
+    $DETAIL_ITEMS .= "]";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $MODIFY_DATE = "
+    {
+        title: '".DATE."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,tbar:['->',{
+            text:'".MODIFY_DATE."'
+            ,iconCls: 'icon-lightning_add'
+            ,handler:function(){if (win) win.show(win);}
+        }]
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".CamemisField::Displayfield("SCORE_INPUT_DATE", DATE)."}]
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:3px'
+            ,items: [{".CamemisField::Textarea("CONTENT", DESCRIPTION, 300)."}]
+        }]
+    }
+    ";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: [
+            ".$DETAIL_INFORMATION."
+            ,".$MODIFY_DATE."
+            ,".$DESCRIPTION."
+        ]
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        window.location='".$_SERVER["REQUEST_URI"]."';
+    "); 
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActionContentTeacherScoreInputDate'
+        ,setId:'".$setId."'
+    ");
+
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadContentTeacherScoreInputDate'
+        ,setId:'".$setId."'
+    ");
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = true;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border:false
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

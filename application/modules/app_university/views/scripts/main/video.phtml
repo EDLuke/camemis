@@ -1,0 +1,40 @@
+<html><head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <!-- A minimal Flowplayer setup to get you started -->
+
+
+        <!-- 
+                include flowplayer JavaScript file that does  
+                Flash embedding and provides the Flowplayer API.
+        -->
+        <script type="text/javascript" src="/public/flowplayer/flowplayer-3.2.6.min.js"></script>
+
+        <!-- some minimal styling, can be removed -->
+        <link rel="stylesheet" type="text/css" href="/public/flowplayer/style.css">
+
+        <!-- page title -->
+        <title>Minimal Flowplayer setup</title>
+
+    </head><body>
+
+        <div id="page">
+
+            <h1>Plugin: Embedding Video in CAMEMIS without Youtube...</h1>
+
+            <p>Embedding</p>
+
+            <!-- this A tag is where your Flowplayer will be placed. it can be anywhere -->
+            <a  
+                href="/public/flowplayer/mycontent.flv"
+                style="display:block;width:600px;height:400px"  
+                id="player"> 
+            </a> 
+
+            <!-- this will install flowplayer inside previous A- tag. -->
+            <script>
+                flowplayer("player", "/public/flowplayer/flowplayer-3.2.7.swf");
+            </script>
+            <p>How to Use the Quadratic Formula to Solve Algebraic Equations For Dummies</p>
+            
+        </div>
+    </body></html>

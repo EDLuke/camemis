@@ -1,0 +1,164 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisSchoolTree("ACADEMIC");
+$OBJECT_TREE->setURL("/academic/jsontree/");
+$OBJECT_TREE->setSaveUrl("/academic/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    var firstId;
+    Ext.onReady(function() {
+
+        <?
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()?AcademicDateDBAccess::loadCurrentSchoolyear()->ID:"";
+        
+        $STORE_SCHOOLYEAR = "[";
+        if(AcademicDateDBAccess::getAllSchoolyear()){
+            $i = 0;
+            foreach(AcademicDateDBAccess::getAllSchoolyear() as $value){
+                $DATA[$i] = $value->ID;
+                $STORE_SCHOOLYEAR .= $i?",":"";
+                $STORE_SCHOOLYEAR .= "['" . $value->ID . "', '" . setShowText($value->NAME) ."', 'icon-date']";
+                $i++;
+            }
+        }
+
+        $OBJECT_TREE->isAsyncTreeNode = false;
+
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $STORE_SCHOOLYEAR .= "]";
+        $OBJECT_TREE->addTBarItems("
+            xtype: 'buttongroup'
+            ,items:[{
+                xtype:'combo'
+                ,id:'COMO_SCHOOLYEAR_ID'
+                ,width:170
+                ,fieldLabel:'IconCombo'
+                ,store: new Ext.data.SimpleStore({
+                    fields: ['comboCode', 'comboName', 'comboIcon'],
+                    data: ".$STORE_SCHOOLYEAR."
+                })
+                ,plugins:new Ext.ux.plugins.IconCombo()
+                ,valueField: 'comboCode'
+                ,displayField: 'comboName'
+                ,iconClsField: 'comboIcon'
+                ,triggerAction: 'all'
+                ,mode: 'local'
+                ,value:'".$currentSchoolyearId."'
+            }]
+        ");
+        
+        $OBJECT_TREE->setBaseParams("
+            cmd: 'getTreeCreditEducationSystem'
+            ,educationSystem:1
+            ,SCHOOLYEAR:'".$currentSchoolyearId."'
+        ");
+        
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = false;
+        $OBJECT_TREE->renderJS();
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,id: 'ACADEMIC_ID'
+                    ,title: '&nbsp;'
+                    ,autoScroll: true
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width:350
+                    ,minSize:350
+                    ,maxSize:350
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'center'
+                    ,region:'center'
+                    ,margins: '3 3 3 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,bodyStyle: 'padding:1px'
+                    ,items: [{
+                        border: false
+                        ,layout: 'anchor'
+                        ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                        ,items: [{
+                            title: ''
+                            ,height:60
+                            ,width:500
+                            ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                            ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                        }]
+                    }]
+                }]
+            }]
+        });
+
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        var myCombo = Ext.getCmp('COMBO_ID');
+        if (myCombo)
+        myCombo.on('select', function() {
+            myTree.loader.baseParams.SCHOOLYEAR = Ext.getCmp('COMBO_ID').getValue();
+            myTree.root.reload();
+            myTree.getRootNode().expand(true, false);
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+        });
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        
+        myTree.on('click', function(node, event){
+            if(node.isLeaf()){
+                var contextMenu = new Ext.menu.Menu({
+                    items: [{
+                        text: '<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.attributes.title
+                        ,iconCls:'icon-note_edit'
+                        ,disabled:false
+                        ,handler: function(){
+                             clickOpenPage('center','<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.attributes.title, '/evaluation/subjectassignments/?academicId=' + node.id);
+                             Ext.getCmp('ACADEMIC_ID').collapse();
+                        }
+                    }]
+                });
+                event.stopEvent();
+                contextMenu.showAt(event.xy); 
+            }
+        });
+    });
+        
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

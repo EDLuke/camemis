@@ -1,0 +1,195 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'clients/CamemisViewport.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/academic/AcademicDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHOOLEVENT", "LIST");
+$OBJECT_GRID->setLoadUrl("/schoolevent/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schoolevent/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+
+	Ext.apply(Ext.form.VTypes, {
+		daterange : function(val, field) {
+			var date = field.parseDate(val);
+
+			if(!date){
+				return false;
+			}
+			if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
+				var start = Ext.getCmp(field.startDateField);
+				start.setMaxValue(date);
+				start.validate();
+				this.dateRangeMax = date;
+			}
+			else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
+				var end = Ext.getCmp(field.endDateField);
+				end.setMinValue(date);
+				end.validate();
+				this.dateRangeMin = date;
+			}
+			return true;
+		}
+	});
+
+	var objectId = "new";
+	var eventType;
+
+	Ext.onReady(function() {
+
+		function cssText(v){
+			return String.format('<div style=\"font-weight:normal; white-space:normal; color:#333; padding: 5px;\">{0}</div>'
+				,v
+			);
+		}
+		function cssEvent(value, metadata, record){
+			if(record.data.STATUS==0){
+				var text='<span style="font-weight:bold; white-space:normal; color:#ff0000;">' + value + '</span><br/><br/>';
+			}
+			else{
+				var text='<span style="font-weight:bold; white-space:normal; color:#061f83;">' + value + '</span><br/><br/>';
+			}
+			return '<div style="padding: 5px;">'
+			+text
+			+'<span style="font-weight:normal; white-space:normal; color:#000;">' + record.data.REMARK + ' &nbsp;&nbsp;</span><br/><br/>'
+			+'<span style="font-weight:normal; white-space:normal; color:#000;">Time: ' + record.data.START_HOUR + ' - '+record.data.END_HOUR+' &nbsp;&nbsp;</span><br/><br/>'
+			;
+		}
+		<?
+		/**
+		* Extjs: s.gif
+		*/
+		$CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+		$CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		$OBJECT_GRID->addReadField("name: 'EVENT_NAME'");
+		$OBJECT_GRID->addReadField("name: 'DATE'");
+		$OBJECT_GRID->addReadField("name: 'LOCATION'");
+		$OBJECT_GRID->addReadField("name: 'START_DATE'");
+		$OBJECT_GRID->addReadField("name: 'END_DATE'");
+		$OBJECT_GRID->addReadField("name: 'START_HOUR'");
+		$OBJECT_GRID->addReadField("name: 'END_HOUR'");
+		$OBJECT_GRID->addReadField("name: 'REMARK'");
+		$OBJECT_GRID->addReadField("name: 'EVENT_TYPE'");
+
+		$OBJECT_GRID->addColumn("
+			header: '<b>".NAME."</b>'
+			,width: 300
+			,renderer:cssText
+			,sortable: false
+			,dataIndex: 'EVENT_NAME'
+			,editor: new Ext.form.TextField({allowBlank: false})
+		");
+
+		$OBJECT_GRID->addColumn("
+			header: '<b>".START_DATE."</b>'
+			,renderer:cssText
+			,width: 100
+			,sortable: false
+			,dataIndex: 'START_DATE'
+			,editor: new Ext.form.TextField({allowBlank: false})
+		");
+
+		$OBJECT_GRID->addColumn("
+			header: '<b>".END_DATE."</b>'
+			,renderer:cssText
+			,width: 100
+			,sortable: false
+			,dataIndex: 'END_DATE'
+			,editor: new Ext.form.TextField({allowBlank: false})
+		");
+
+		$OBJECT_GRID->addColumn("
+			header: '<b>".EVENT_TYPE."</b>'
+			,renderer:cssText
+			,width: 150
+			,sortable: false
+			,dataIndex: 'EVENT_TYPE'
+			,editor: new Ext.form.TextField({allowBlank: false})
+		");
+
+		$OBJECT_GRID->addTBarItems("
+			tbar.add([{
+				id: 'REFRESH_ID'
+				,text: '".REFRESH."'
+				,iconCls:'icon-reload'
+				,scope:this
+				,disabled: false
+				,handler: function(){
+					Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+				}
+			}]);
+		");
+
+		$OBJECT_GRID->baseParams = "
+			start:0
+			,limit:100
+			,schoolyearId: '".$this->schoolyearId."'
+			,cmd: 'allSchoolevents'
+			,target: 'general'
+		";
+
+		$SHOW_DETAIL ="{
+			text: '".SHOW_DETAIL." &raquo; ' + record.data.EVENT_NAME
+			,iconCls: 'icon-application_form_magnify'
+			,handler: function(){
+				contextMenu.hide();clickOpenPage('content','','/schoolevent/showitem/?&objectId=' + record.data.ID);
+			}
+		}";
+
+		$OBJECT_GRID->loadMask = false;
+		$OBJECT_GRID->forceFit = "false";
+		$OBJECT_GRID->renderJS();
+
+		?>
+		viewport = new Ext.Viewport({
+			layout: 'fit'
+			,border: false
+			,items:[{
+				xtype: 'panel'
+				,layout:'card'
+				,id:'content'
+				,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+				,activeItem: 0
+				,border:false
+				,items:[{
+					border: false
+					,title: ''
+					,layout: 'fit'
+					,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+				}]
+			}]
+		});
+
+		var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>');
+		if (grid)
+		grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+			var record = grid.store.getAt(rowIndex);
+			var contextMenu = new Ext.menu.Menu({
+				items: [<?=$SHOW_DETAIL;?>]
+			});
+			event.stopEvent();
+			contextMenu.showAt(event.xy);
+		});
+	});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

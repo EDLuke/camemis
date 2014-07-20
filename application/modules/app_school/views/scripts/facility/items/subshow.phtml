@@ -1,0 +1,644 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FACILITY_TYPE_TREE = new CamemisTree("FACILITY", "LIST");
+$OBJECT_FACILITY_TYPE_TREE->setURL("/facility/jsontree/");
+$OBJECT_FACILITY_TYPE_TREE->setSaveUrl("/facility/jsonsave/");
+
+$OBJECT_FORM = new CamemisForm("FACILITY");
+$OBJECT_FORM->setSaveUrl("/facility/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/facility/jsonload/");
+
+$FIELD_PANEL_ITEMS = Array();
+if($this->facette){
+    
+    FacilityDBAccess::mappingType4Child($this->facette->ID);
+    
+    function setItems($fieldObject){
+        
+        $data = Array();
+        switch($fieldObject->CHOOSE_TYPE){
+            case 1:
+                $entries = FieldSettingDBAccess::sqlFieldSetting($fieldObject->ID,1);
+                if($entries){
+                    foreach($entries as $value){
+                        $data[] = "{boxLabel: '" . setShowText($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                    }
+                }
+                break;
+            case 2:
+                $entries = FieldSettingDBAccess::sqlFieldSetting($fieldObject->ID,2);
+                if($entries){
+                    foreach($entries as $value){
+                        $data[] = "{boxLabel: '" . setShowText($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
+                    }
+                }
+                break;
+            case 3:
+                $entries = FieldSettingDBAccess::sqlFieldSetting($fieldObject->ID,3);
+                if($entries){
+                    foreach($entries as $value){
+                        $data[] = "
+                        {
+                            xtype: 'textfield'
+                            ,id: '" . $value->ID . "'
+                            ,fieldLabel: '" . setShowText($value->NAME) . "'
+                            ,width:250
+                            ,name: 'INPUTFIELD_" . $value->ID . "'
+                        }
+                        ";
+                    }
+                }
+                break;
+            case 4:
+                $entries = FieldSettingDBAccess::sqlFieldSetting($fieldObject->ID,4);
+                if($entries){
+                    foreach($entries as $value){
+                        $data[] = "
+                        {
+                            xtype: 'textarea'
+                            ,id: '" . $value->ID . "'
+                            ,fieldLabel: '" . setShowText($value->NAME) . "'
+                            ,width:250
+                            ,height:150
+                            ,name: 'TEXTAREA_" . $value->ID . "'
+                        }";
+                    }
+                }
+                break;
+             case 5:
+                $entries = FieldSettingDBAccess::sqlFieldSetting($fieldObject->ID,5);
+                if($entries){
+                    foreach($entries as $value){
+                        $data[] = "
+                        {
+                            xtype: 'datefield'
+                            ,id: '" . $value->ID . "'
+                            ,fieldLabel: '" . setShowText($value->NAME) . "'
+                            ,width:250
+                            ,format: '" . setExtDatafieldFormat() . "'
+                            ,name: 'DATE_" . $value->ID . "'
+                        }";
+                    }
+                }
+            break;
+        }
+        
+        return implode(",",$data);
+    }
+    
+    $categoryObject = FacilityDBAccess::findFacilityType($this->facette->FACILITY_TYPE);
+    $entries = array();
+    if ($categoryObject) {
+        if ($categoryObject->FIELD_SETTING) {
+            $entries = explode(",", $categoryObject->FIELD_SETTING);
+        }
+    }
+    
+    if($entries){
+        foreach($entries as $parentId){
+            
+            $fieldObject = FieldSettingDBAccess::findFieldSettingFromId($parentId);
+            if($fieldObject){
+                
+                $ITEMS = "";
+                $ITEMS .= "{";
+                $ITEMS .= "title: '".setShowText($fieldObject->NAME)."'";
+                $ITEMS .= ",layout: 'form'";
+                $ITEMS .= ",bodyStyle: 'padding:10px;background:".CamemisPage::userFormBgColor().";'";
+                $ITEMS .= ",collapsible: true";
+                $ITEMS .= ",collapsed: false";
+                $ITEMS .= ",style: 'padding-bottom: 5px'";
+                $ITEMS .= ",width: 550";
+                
+                switch($fieldObject->CHOOSE_TYPE){
+                    case 1:
+                        $ITEMS .= ",items:[{";
+                            $ITEMS .= "xtype: 'checkboxgroup'";
+                            $ITEMS .= ",fieldLabel: ''";
+                            $ITEMS .= ",hideLabel: true";
+                            $ITEMS .= ",border: false";
+                            $ITEMS .= ",autoHeight:true";
+                            $ITEMS .= ",columns:3";
+                            $ITEMS .= ",itemCls: 'x-check-group-alt'";
+                            $ITEMS .= ",items:[".setItems($fieldObject)."]";
+                        $ITEMS .= "}]";
+                        break;
+                    case 2:
+                        $ITEMS .= ",items:[{";
+                            $ITEMS .= "xtype: 'radiogroup'";
+                            $ITEMS .= ",fieldLabel: ''";
+                            $ITEMS .= ",hideLabel: true";
+                            $ITEMS .= ",border: false";
+                            $ITEMS .= ",autoHeight:true";
+                            $ITEMS .= ",columns:3";
+                            $ITEMS .= ",itemCls: 'x-check-group-alt'";
+                            $ITEMS .= ",items:[".setItems($fieldObject)."]";
+                        $ITEMS .= "}]";
+                        break;
+                    default:
+                        $ITEMS .= ",items:[{";
+                            $ITEMS .= "layout: 'form'";
+                            $ITEMS .= ",border: false";
+                            $ITEMS .= ",autoHeight:true";
+                            $ITEMS .= ",bodyStyle: 'background:".CamemisPage::userFormBgColor().";'";
+                            $ITEMS .= ",items:[".setItems($fieldObject)."]";
+                        $ITEMS .= "}]";
+                        break;
+                }
+                $ITEMS .= "}";
+                
+                $FIELD_PANEL_ITEMS[] = $ITEMS;
+            }
+        }
+    }
+}
+
+$DISPLAY_FIELDS = implode(",",$FIELD_PANEL_ITEMS);
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style type="text/css">
+    .x-check-group-alt {
+        background: #D1DDEF;
+        border-top:0px dotted #B5B8C8;
+        border-bottom:0px dotted #B5B8C8;
+    }
+</style>
+<script>
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    ////////////////////////////////////////////////////////////////////////////
+    $OBJECT_FACILITY_TYPE_TREE->setBaseParams("
+        cmd: 'jsonTreeAllFacilityType'
+    ");
+    
+    $OBJECT_FACILITY_TYPE_TREE->isAsyncTreeNode = false;
+    
+    $OBJECT_FACILITY_TYPE_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_FACILITY_TYPE_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_FACILITY_TYPE_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_FACILITY_TYPE_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $OBJECT_FACILITY_TYPE_TREE->isTreeExpand=true; 
+    $OBJECT_FACILITY_TYPE_TREE->renderJS();
+    
+    $triggerOnClickFacilityType="
+         openWinXType('FACILITY_TYPE','', '". $OBJECT_FACILITY_TYPE_TREE->getObjectXType()."', 500, percentHeight(85));
+         var facilityType = Ext.getCmp('".$OBJECT_FACILITY_TYPE_TREE->getObjectId()."');
+         facilityType.on('click', function(node, e){
+            Ext.getCmp('FACILITY_TYPE_ID').setValue(node.text);
+            Ext.getCmp('CHOOSE_FACILITY_TYPE').setValue(node.id);
+            Ext.getCmp('FACILITY_TYPE').close();
+         });
+    ";
+    ////////////////////////////////////////////////////////////////////////////
+    $checkBarcodeHandler="
+        var win = new Ext.Window({
+        modal: true
+        ,title: '".AVAILABLE_BARCODE."'
+        ,width:330
+        ,autoHeight: true
+        ,closeAction:'hide'
+        ,plain: false
+        ,xtype: 'form'
+        ,labelAlign: 'top'
+        ,bodyStyle: 'padding:10px'
+        ,items:[{
+            xtype: 'textfield'
+            ,allowBlank: false
+            ,id: 'CHECK_FORM_ID'
+            ,name: 'FacilityBarcode'
+            ,allowBlank: false
+            ,width: 250
+        }]
+        ,tbar:['->',{
+            text: '".APPLY."'
+            ,id: 'APPLY_ID'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                var checkFormId = document.getElementById('CHECK_FORM_ID').value;
+                Ext.Ajax.request({
+                    url: '/facility/jsonload/'
+                    ,method: 'POST'
+                    ,params: {
+                        cmd: 'jsonCheckBarcodeID'
+                        ,barcodeId: checkFormId    
+                    }
+                    ,success: function(result) {
+                        jsonData = Ext.util.JSON.decode(result.responseText);
+                        if (jsonData.status){
+                            Ext.getCmp('BARCODE_ID').setValue(checkFormId);
+                            win.close();
+                        }else{
+                            ".camemisPage::alertPleaseSelect(WARNING, setICONV(BARCODE_IS_USED_ALREADY))."
+                        }
+                    }
+                });
+            }
+        },{
+            text: '".CLOSE."'
+            ,iconCls:'icon-cancel'
+            ,handler: function(){
+                win.close();
+            }
+        }]
+    });
+    win.show();
+    ";
+    
+    $setCode = $this->facette?$this->facette->BARCODE?$this->facette->BARCODE:'No barcode':'No barcode';
+    $BARCODE_ITEM = "
+    {
+        title: '".BARCODE."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,tbar:['->',{
+                text: '".AVAILABLE_BARCODE."'
+                ,iconCls:'icon-lightning'
+                ,handler: function(){".$checkBarcodeHandler."}
+            }]
+            ,items: [{
+                ".CamemisField::Textfield("BARCODE_ID", "BARCODE", TEXT,false,true)."
+            },{
+                xtype:'box'
+                ,anchor:''
+                ,isFormField:true
+                ,fieldLabel:''
+                ,id: 'user_img'
+                ,autoEl:{
+                    tag:'div', children:[{
+                        tag:'img'
+                        ,border: true
+                        ,id: 'SHOW_BARCODE'
+                        ,src:'/facility/barcode/?&code=".$setCode."'
+                    }]
+                }
+            }]
+        }]
+    }
+    ";
+    
+    $DETAIL_INFORMATION_ITEMS = "[";
+    
+    $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Textfield("NAME","NAME",NAME,true)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield("SERIAL_NUMBER","SERIAL_NUMBER",SERIAL_NUMBER,false)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Numberfield("COST","COST",COST,true)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Trigger("FACILITY_TYPE",FACILITY_CATEGORY,$triggerOnClickFacilityType,true,false, false)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Hidden("CHOOSE_FACILITY_TYPE",false)."}";
+    $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Checkbox("PERMANENT_CHCK_OUT", "PERMANENT_CHCK_OUT", CHECK_OUT_PERMANENTLY, false, false)."}";
+    
+    if($this->parentObject->PERMANENT_CHECKOUT){
+        $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Numberfield("QUANTITY","QUANTITY",QUANTITY,true)."}";
+    }
+    $DETAIL_INFORMATION_ITEMS .= "]";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$DETAIL_INFORMATION_ITEMS."
+        }]
+    }
+    ";
+    
+    $LOCATION_ITEMS = "
+    {
+        title: '".LOCATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{".CamemisField::Textarea("LOCATION", false,50)."}]    
+            }]
+        }]
+    }
+    ";
+    
+    $DESCRIPTION_ITEMS = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{".CamemisField::Textarea("DESCRIPTION", false,120)."}]    
+            }]
+        }]
+    }
+    ";
+    
+    $FACILITY_DATE = "
+    {
+        title: '".DATE."'
+        ,autoHeight: true
+        ,frame:false
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#F9F9F9;padding:10px'
+            ,items:[
+                {".CamemisField::Datefield("DELIVERED_DATE",DELIVERED_DATE,false,false)."}
+                ,{".CamemisField::Datefield("EXPIRED_WARRANTY",EXPIRED_WARRANTY,false,false)."}
+            ]
+            
+        }]
+    }";
+    
+    $FORM_ITEMS = "[";
+        $FORM_ITEMS .= "".$DETAIL_INFORMATION;
+        $FORM_ITEMS .= ",".$BARCODE_ITEM; 
+        $FORM_ITEMS .= ",".$FACILITY_DATE;
+        $FORM_ITEMS .= ",".$LOCATION_ITEMS;
+        if ($DISPLAY_FIELDS) $FORM_ITEMS .= ",".$DISPLAY_FIELDS;
+        $FORM_ITEMS .= ",".$DESCRIPTION_ITEMS;
+    $FORM_ITEMS .= "]";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items:[".$FORM_ITEMS."]
+    ";
+    
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            if(window.parent.Ext.getCmp('CONTENT')){
+                window.parent.Ext.getCmp('ITEM_LIST_ID').store.load();
+                window.parent.parent.Ext.getCmp('TREE.FACILITY_LIST_ID').root.reload();
+                window.parent.Ext.getCmp('CONTENT').getLayout().setActiveItem(0); 
+            }
+            if(window.parent.Ext.getCmp('center')){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('WEST_ID').expand();
+            }
+        }
+    ");
+    
+    if ($this->objectId !="new") {
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject(true));
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            if(window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID')){
+                myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
+                myNode = myTree.getNodeById('".$this->facette->PARENT."');
+                var parentId = myNode.parentNode.id
+                myPerentNode = myTree.getNodeById(parentId);
+                if(myNode.isLeaf()){
+                    if(myPerentNode){
+                        myPerentNode.reload();
+                        myPerentNode.expand(true, false);
+                    }else{
+                        myTree.root.reload();
+                    }
+                }else{
+                    if (myNode.hasChildNodes()) {
+                        myNode.reload();
+                        myNode.expand(true, false);
+                    }
+                }
+            }
+            
+            if(window.parent.Ext.getCmp('FACILITY_LIST_ID')){
+                window.parent.Ext.getCmp('FACILITY_LIST_ID').store.reload();
+            }
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            window.location='".$_SERVER["REQUEST_URI"]."';
+        ");
+        
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            if(window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID')){
+                myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
+                myNode = myTree.getNodeById('".$this->facette->PARENT."');
+                var parentId = myNode.parentNode.id
+                myPerentNode = myTree.getNodeById(parentId);
+                if(myNode.isLeaf()){
+                    if(myPerentNode){
+                        myPerentNode.reload();
+                        myPerentNode.expand(true, false);
+                    }else{
+                        myTree.root.reload();
+                    }
+                }else{
+                    if (myNode.hasChildNodes()) {
+                        myNode.reload();
+                        myNode.expand(true, false);
+                    }
+                }
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            }
+            
+            if(window.parent.Ext.getCmp('FACILITY_LIST_ID')){
+                window.parent.Ext.getCmp('FACILITY_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('CONTENT').getLayout().setActiveItem(0);
+            }
+        ");
+        
+    }else{
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            if(window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID')){
+                myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
+                myNode = myTree.getNodeById('".$this->parentId."');
+                var parentId = myNode.parentNode.id
+                myPerentNode = myTree.getNodeById(parentId);
+                if(myNode.isLeaf()){
+                    if(myPerentNode){
+                        myPerentNode.reload();
+                        myPerentNode.expand(true, false);
+                    }else{
+                        myTree.root.reload();
+                    }
+                }else{
+                    if (myNode.hasChildNodes()) {
+                        myNode.reload();
+                        myNode.expand(true, false);
+                    }
+                }
+            }
+            if(window.parent.Ext.getCmp('FACILITY_LIST_ID')){
+                window.parent.Ext.getCmp('FACILITY_LIST_ID').store.reload();
+            }
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+        "); 
+    }
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
+    $OBJECT_FORM->setLoadParams(" 
+        cmd: 'jsonLoadFacilityItem'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveFacilityItem'
+        ,objectId: '".$this->objectId."'
+        ,parentId: '".$this->parentId."'
+        ,STATUS: 'CHECK-IN'
+          
+    ");
+    
+    $OBJECT_FORM->setRemoveParams("
+         cmd: 'deleteFacilityItem'
+         ,objectId: '".$this->objectId."' 
+    ");
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = $this->facette?true:false;
+
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 160;
+    $OBJECT_FORM->renderJS();
+    
+    $VIEPORT_ITEMS = Array();
+    $MAIN_CONTENT = "{
+        title:'".MAIN_CONTENT."'
+        ,border: false
+        ,layout: 'fit'
+        ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+    }";
+    $VIEPORT_ITEMS[] = $MAIN_CONTENT;
+    
+    $PHOTO = "{
+        title:'".PHOTO."'
+        ,border: false
+        ,layout: 'fit'
+        ,items:[{
+            border:false
+            ,width: 550
+            ,height:600
+            ,layout:'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/image/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&objectName=FACILITY_IMAGE")."'})]
+        }]
+    }";
+    if($this->facette)
+    $VIEPORT_ITEMS[] = $PHOTO;
+    
+    $ATTACHMENTS = "{
+        title:'".ATTACHMENTS."'
+        ,border: false
+        ,layout: 'fit'
+        ,items:[{
+            border:false
+            ,width: 550
+            ,height:600
+            ,layout:'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."&template=FACILITY")."'})]
+        }]
+    }";
+    if($this->facette)
+    $VIEPORT_ITEMS[] = $ATTACHMENTS;
+    
+    $CHOOSE_VIEPORT_ITEMS = "[".implode(',',$VIEPORT_ITEMS)."]";
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:<?=$CHOOSE_VIEPORT_ITEMS;?>
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

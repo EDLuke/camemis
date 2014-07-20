@@ -1,0 +1,373 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/subject/SubjectTeacherDBAccess.php';
+require_once 'models/app_school/student/StudentAttendanceDBAccess.php';
+require_once 'models/UserAuth.php';
+require_once setUserLoacalization();
+
+$choosedate = isset($_GET["choosedate"])? addText($_GET["choosedate"]):date('Y-m-d');   
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
+$trainingId = isset($_GET['trainingId'])?addText($_GET['trainingId']):"";
+
+$classObject = AcademicDBAccess::findGradeFromId($classId);
+$trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
+
+$error = true;
+$isTraining = false;
+$isGeneral = false;
+    
+if($classObject){
+    $error = false;
+    $isGeneral = true;
+}elseif($trainingObject){
+    $error = false;
+    $isTraining = true;
+}
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$STUDENT_ATTENDANCE_ACCESS = StudentAttendanceDBAccess::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("ATTENDANCE_MANAGEMENT", "LIST");
+$OBJECT_GRID->setLoadUrl('/attendance/jsonload/');
+$OBJECT_GRID->setSaveUrl('/attendance/jsonsave/');
+$columndata = Utiles::getGridColumnData("ATTENDANCE_MANAGEMENT_LIST_ID");
+
+$ABSENT_TYPES = AbsentTypeDBAccess::allAbsentType('STUDENT',1);
+
+if($error) {header("Location: /main/permission/");exit;}
+
+$check = false;
+
+if($isGeneral){
+    
+    $TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($choosedate, $classObject->ID);
+    $check = ($TERM_NAME == "TERM_ERROR")?false:true;
+}
+////@sor veasna
+
+$academicObject = AcademicDBAccess::findGradeFromId($classId);
+if($academicObject){
+    if($academicObject->EDUCATION_SYSTEM){
+        switch($academicObject->OBJECT_TYPE){
+            case "SUBJECT":
+                $tmpClassId = $academicObject->ID;
+
+                break;
+            case "CLASS":
+                $tmpClassId = $academicObject->PARENT;
+
+                break;
+        }
+    }else{
+        $tmpClassId = $classId;
+    } 
+}
+
+///
+$DB_ACCESS = Zend_Registry::get('DB_ACCESS');
+$SQL = $DB_ACCESS->select();
+$SQL->distinct();
+$SQL->from('t_schedule', array("*"));
+switch(UserAuth::getUserType()){
+    case "TEACHER":
+    case "INSTRUCTOR":
+        $SQL->where("TEACHER_ID = ?", $this->staffId);
+        break;
+}
+if($classId){
+    $SQL->where("ACADEMIC_ID = ?", $tmpClassId);
+    if($classId){
+        if ($check) $SQL->where("TERM = ?", $TERM_NAME);
+    }
+}elseif($trainingId){
+    $SQL->where("TRAINING_ID = ?", $trainingId);
+}
+
+$SQL->where("SHORTDAY = ?", getWEEKDAY($choosedate));
+$SQL->group("START_TIME");
+$SQL->order("START_TIME ASC");
+//error_log($SQL->__toString());
+$result = $DB_ACCESS->fetchAll($SQL);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$DATA = array();
+$scheduleId = "";
+$STORE_SCHEDULE_SUBJECT = "[";
+if($result){
+    $i=0;
+    foreach($result as $value){
+        if($value->GUID){
+            $icon = "icon-lock_edit";
+            //scheduleId
+            $NAME = "(".secondToHour($value->START_TIME)." - ".secondToHour($value->END_TIME).") ".$value->EVENT;
+            $DATA[$i] = $value->GUID;
+            $STORE_SCHEDULE_SUBJECT .= $i?",":"";
+            $STORE_SCHEDULE_SUBJECT .= "['" . $value->GUID . "', '" . $NAME . "', '".$icon."']";
+            $i++;
+        }
+    }
+    $scheduleId = isset($DATA[0])?$DATA[0]:0;
+}
+
+$STORE_SCHEDULE_SUBJECT .= "]";
+
+if($classId){
+    $studentEntries = StudentAcademicDBAccess::getQueryStudentEnrollment($classId, false, false);
+}elseif($trainingId){
+    $studentEntries = StudentTrainingDBAccess::sqlStudentTraining(false, $trainingId,false);
+}
+ 
+?>
+<style type="text/css">
+    .ux-icon-combo-icon {
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        width: 18px;
+        height: 14px;
+    }
+    .ux-icon-combo-input {
+        padding-left: 25px;
+    }
+    .x-form-field-wrap .ux-icon-combo-icon {
+        top: 3px;
+        left: 5px;
+    }
+    .ux-icon-combo-item {
+        background-repeat: no-repeat ! important;
+        background-position: 3px 50% ! important;
+        padding-left: 24px ! important;
+    }
+</style>
+
+<script>
+    var choosedate = '<?=getShowDate($choosedate);?>';
+    var scheduleId = '<?=$scheduleId?>';
+    var classId = '<?=$classId?>';
+    var trainingId = '<?=$trainingId?>';
+    var absenceValue=0;
+    
+    function setAjaxRequest(newValue, field, studentId, actionType, choosedate, scheduleId, absentType, classId, trainingId){
+        Ext.Ajax.request({
+            url: '/attendance/jsonsave/'
+            ,method: 'POST'
+            ,params: {
+                cmd: 'jsonActionStudentDailyAttendance'
+                ,id:studentId
+                ,newValue: newValue
+                ,field:field
+                ,choosedate:choosedate 
+                ,actionType:actionType 
+                ,scheduleId:scheduleId
+                ,trainingId:trainingId
+                ,absentType:absentType
+                ,classId:classId
+            }
+            ,success: function(response, options) {
+                jsonData = Ext.util.JSON.decode(response.responseText);
+                if(jsonData){
+                    XMsg('<?=STATUS?>',jsonData.msg);
+                    
+                    if (jsonData.checked && !jsonData.error){
+                        openWinIFrame('', '/attendance/studentdialydescription/?objectId='+ jsonData.objectId, 550,400);
+                    }
+                    
+                    if (jsonData.error) document.getElementById(jsonData.field).checked = jsonData.checked;
+                }
+            }
+            ,failure: function(response, options) {}
+        });
+    }
+    <?
+    if($studentEntries){
+        foreach($studentEntries as $value){
+            $studentIndex = $value->STUDENT_INDEX;
+            if($ABSENT_TYPES){
+                foreach($ABSENT_TYPES as $v){
+                    $newIndex = $studentIndex."_".$v->ID;
+                    echo "
+                        function functionActionDaily".$newIndex."() {
+                            var newValue = document.getElementById('TYPE_".$newIndex."').checked;
+                            if(newValue){
+                                setAjaxRequest(1, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."',1, choosedate, scheduleId, '".$v->ID."', classId, trainingId)
+                            }else{
+                                setAjaxRequest(0, 'TYPE_".$newIndex."', '".$value->STUDENT_ID."',1, choosedate, scheduleId, '".$v->ID."', classId, trainingId)    
+                            }
+                        }
+                    ";
+                }
+            }
+        }
+    }
+    ?>
+    Ext.onReady(function() {
+        
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+                ,v
+                ,record.data['BG_COLOR']
+                ,record.data['BG_COLOR_FONT']
+            );
+        }
+    
+        function renderText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding:5px;">' + value + '</div>';
+        }
+        
+        <?
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                echo "
+                function renderText".$value->ID."(v, p, record, rowIndex){
+                    return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+                    ,v
+                    ,record.data['".$value->ID."_COLOR']
+                    ,record.data['".$value->ID."_COLOR_FONT']
+                    );
+                }
+                ";
+            }
+        }
+        $OBJECT_GRID->addReadField("name: 'ID'");
+        $OBJECT_GRID->addReadField("name: 'CODE'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+        $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+        $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+        
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                $OBJECT_GRID->addReadField("name: 'TYPE_".$value->ID."'");
+                $OBJECT_GRID->addReadField("name: '".$value->ID."_COLOR'");
+                $OBJECT_GRID->addReadField("name: '".$value->ID."_COLOR_FONT'");
+            }
+        }
+        
+        switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+            case "VIETNAMESE": $width = 100;break;
+            default: $width = 85;break;
+        }
+
+        $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+        $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: renderText, sortable: true, dataIndex: 'CODE'");
+                
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+           $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'LASTNAME'");
+           $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FIRSTNAME'");
+        }else{
+           $OBJECT_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: renderText, sortable: true, dataIndex: 'FIRSTNAME'");
+           $OBJECT_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(3, $columndata).", renderer: renderText, sortable: true, dataIndex: 'LASTNAME'");
+        }
+        
+        if($ABSENT_TYPES){
+            foreach($ABSENT_TYPES as $value){
+                $OBJECT_GRID->addColumn("
+                    header: '<b>".setShowText($value->CODE)."</b>'
+                    ,renderer:renderText".$value->ID."
+                    ,dataIndex: 'TYPE_".$value->ID."'
+                    ,width: 80
+                    , hidden:".checkColHidden(5, $columndata)."
+                    ,align: 'center'
+                ");
+            }
+        }
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,classId: '".$classId."'
+            ,trainingId: '".$trainingId."'
+            ,scheduleId:scheduleId
+            ,choosedate:choosedate
+            ,cmd: 'jsonStudentDailyAttendance'
+        ";
+        
+        $OBJECT_GRID->isGridEditing = false;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+        
+        $STATUS_HIDDEN = $scheduleId?"false":"true";
+        
+        $VIEWPORT = "[{
+            layout:'fit'
+            ,border:false
+            ,tbar:['<b>".DATE."</b>: ',{
+                xtype:'datefield'
+                ,width:150
+                ,id:'CHOOSE_DATE'
+                ,name: 'CHOOSE_DATE'
+                ,format: '".setExtDatafieldFormat()."'
+                ,allowBlank:false
+                ,value:choosedate
+            },' &nbsp; '
+            ,{
+                xtype:'combo'
+                ,hidden:".$STATUS_HIDDEN."
+                ,id:'COMO_SCHEDULE_SUBJECT'
+                ,fieldLabel:'IconCombo'
+                ,store: new Ext.data.SimpleStore({
+                    fields: ['comboCode', 'comboName', 'comboIcon'],
+                    data: ".$STORE_SCHEDULE_SUBJECT."
+                })
+                ,width:300
+                ,plugins:new Ext.ux.plugins.IconCombo()
+                ,valueField: 'comboCode'
+                ,displayField: 'comboName'
+                ,iconClsField: 'comboIcon'
+                ,triggerAction: 'all'
+                ,mode: 'local'
+                ,editable:false
+                ,value:'".$scheduleId."'
+            }]
+            ,items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]
+        }]
+        ";
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items:<?=$VIEWPORT?>
+            }]
+        });
+        
+        Ext.getCmp('CHOOSE_DATE').setValue(choosedate);
+        Ext.getCmp('CHOOSE_DATE').on('select', function(date_picker, date) {
+            choosedate = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+            window.location='<?=$_SERVER["REQUEST_URI"]?>&choosedate='+choosedate;
+        });
+        var comboSubject = Ext.getCmp('COMO_SCHEDULE_SUBJECT');
+        comboSubject.on('select', function() {
+            scheduleId = comboSubject.getValue();
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.baseParams = {
+                start:0
+                ,limit:100
+                ,choosedate:choosedate
+                ,classId: '<?=$classId?>'
+                ,trainingId: '<?=$trainingId?>'
+                ,scheduleId:scheduleId
+                ,cmd:'jsonStudentDailyAttendance'
+            };
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.load();
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+    });
+</script>
+
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

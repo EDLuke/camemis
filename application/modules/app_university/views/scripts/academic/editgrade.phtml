@@ -1,0 +1,227 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_university/DepartmentDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+    
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->facette->GUID."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'updateObject'
+        ,objecttype: 'GRADE'
+        ,objectId: '".$this->facette->GUID."'
+    ");
+    $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->facette->GUID."'");
+    
+    $DETAIL_ITEMS = "
+    [
+        {".CamemisField::Textfield("NAME","NAME",NAME)."}
+        ,{".CamemisField::Checkbox("END_OF_GRADE","END_OF_GRADE",END_OF_GRADE, 1, false, false)."}
+        ,{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}    
+    ]
+    ";
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width:550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF;padding:10px'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom:5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:3px'
+            ,items: [{".CamemisField::HTML("REMARK",false,false)."}]
+        }]
+    }
+    ";
+    
+    ///////////////////////////////////////////////////
+    $CREATED = "
+    {
+        title: '".CREATED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,bodyStyle: 'padding:5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,frame:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,false)."
+            }]
+        }]
+    }";
+
+    $MODIFIED = "
+    {
+        title: '".MODIFIED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,bodyStyle: 'padding:5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,frame:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,false)."
+            }]
+        }]
+    }";
+
+    $DISABLED = "
+    {
+        title: '".DISABLED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,bodyStyle: 'padding:5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,frame:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,false)."
+            }]
+        }]
+    }";
+    ///////////////////////////////////////////////////
+        
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'padding:10px'
+        ,items: [
+            ".$DETAIL_INFORMATION."     
+            ," . $DESCRIPTION . "
+            ," . $CREATED . "
+            ," . $MODIFIED . "
+            ," . $DISABLED . "
+        ]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+            window.parent.Ext.getCmp('ACADEMIC_ID').expand();
+        }
+    ");
+    
+    if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+    if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+        myTree = window.parent.Ext.getCmp('ACADEMIC_TREE_ID');
+        myNode = myTree.getNodeById('".$this->facette->PARENT."');
+        myNode.reload();
+        myNode.expand(true, false);
+    ");
+	
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        myTree = window.parent.Ext.getCmp('ACADEMIC_TREE_ID');
+        myNode = myTree.getNodeById('".$this->facette->PARENT."');
+        myNode.reload();
+        myNode.expand(true, false);
+        window.location='".$_SERVER["REQUEST_URI"]."';
+    ");
+	
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id: 'content'
+            ,title: ''
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,233 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/student/StudentAcademicDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("DISCIPLINE", "GENERAL");
+$OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
+$OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+$view=isset($_GET['view'])? addText($_GET["view"]):0;
+
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
+
+$academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
+$disabled = false;
+if(UserAuth::getUserType()=="STUDENT" or UserAuth::getUserType()=="GUARDIAN")
+    $disabled = true;   
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style>
+    span.spanText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<script>
+Ext.onReady(function() {
+	
+    function renderText(v, p, record, rowIndex){
+        var str = '<span class=spanText>' + v + '</span>';
+        return str;
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+    $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+    $OBJECT_GRID->addReadField("name: 'INFRACTION_DATE'");
+    $OBJECT_GRID->addReadField("name: 'DISCIPLINE_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'PUNISHMENT_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+    $OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+    $OBJECT_GRID->addReadField("name: 'COMMENT'");
+  
+    $OBJECT_GRID->addReadField("name: 'GENDER'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
+    $OBJECT_GRID->addReadField("name: 'CURRENT_TERM'");
+    $OBJECT_GRID->addReadField("name: 'TRAINING_NAME'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', width: 200, renderer: renderText, sortable: true, dataIndex: 'DISCIPLINE_TYPE'"); 
+    switch (UserAuth::getUserType()){
+        case "INSTRUCTOR":
+        case "TEACHER":
+            $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, sortable: true, dataIndex: 'CODE'");
+            $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 200, renderer: renderText, sortable: true, dataIndex: 'FULL_NAME'");
+        break;
+    }
+    $OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', width: 120, renderer: renderText, sortable: true, dataIndex: 'PUNISHMENT_TYPE'");
+    $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 200, renderer: renderText, sortable: false, dataIndex: 'COMMENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', width: 150, renderer: renderText, sortable: true, dataIndex: 'INFRACTION_DATE'");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+
+    if(!$disabled){  
+        $disciplineParams = "&objectId=new&target=".$this->target."&academicId=".$academicId;    
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{
+                id: 'ADD_ID'
+                ,text: '".DISCIPLINE."'
+                ,iconCls:'icon-application_form_add'
+                ,scope:this
+                ,handler: function(){
+                   //clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&objectId=new&target=".$this->target."'); 
+                   clickOpenPage('center','".DISCIPLINE."', '".$this->URL_SHOWITEM."&camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'); 
+                }
+            }]);
+        ");    
+    }
+    if($this->personType=='STAFF'){
+         $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100                                                               
+            ,cmd: 'jsonListByDicipline'   
+            ,camIds:'".$this->urlEncryp->encryptedGet("classId=".$this->academicId)."'      
+        "; 
+    }else{
+         $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonListByDicipline'   
+            ,camIds:'".$this->urlEncryp->encryptedGet("studentId=".$this->studentId."&personType=".$this->personType)."'                  
+        "; 
+    } 
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'REFRESH_ID'
+            ,text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){
+               Ext.getCmp('START_DATE').setValue(''); 
+               Ext.getCmp('END_DATE').setValue('');
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE','');
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',''); 
+               Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',['<b>".START_DATE."<b>',{
+            xtype: 'buttongroup'
+           ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            }]
+        }]);
+    "); 
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['<b>".END_DATE."<b>',{
+            xtype: 'buttongroup'
+           ,items:[{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            id: 'FIND_ID'
+            ,text: '".FIND."'
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler: function(){
+                if(Ext.getCmp('END_DATE').getValue())
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('START_DATE',Ext.getCmp('START_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                if(Ext.getCmp('END_DATE').getValue())
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().setBaseParam('END_DATE',Ext.getCmp('END_DATE').getValue().format('".setExtDatafieldFormat()."'));
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();   
+            }
+        }]);
+    "); 
+       
+    $OBJECT_GRID->addTBarItems("tbar.add('->');");
+    //$OBJECT_GRID->isQuickySearch = true;   
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField = "DISCIPLINE_TYPE";
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'center'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+            }]
+        }]
+    });
+    <?
+    if(!$disabled){
+    ?>
+        var gridGeneral = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        if (gridGeneral) gridGeneral.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            clickOpenPage('center','','<?=$this->URL_SHOWITEM?>&objectId=' + record.data.ID);
+        });
+    <?
+    }
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

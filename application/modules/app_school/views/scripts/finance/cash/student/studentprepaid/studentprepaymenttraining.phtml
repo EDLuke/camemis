@@ -1,0 +1,326 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna
+// Date: 06.07.2013
+//
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+//$CATEGORY_OBJECT_TREE = new CamemisTree("DATASET", "CATEGORY");
+
+$OBJECT_FORM = new CamemisForm("FEEPREPAYMENT");
+
+$OBJECT_FORM ->setSaveUrl("/finance/jsonsave/");
+$OBJECT_FORM ->setLoadUrl("/finance/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$FEES_PREPAYMENT=0;
+$tax='';
+
+$facette=StudentFeePrepaidDBAccess::findStudentPrePaymentById($this->studentPrePaymentId);
+$CHECK=StudentFeePrepaidDBAccess::checkIncomePrePayment($this->objectId, $this->feePrePaymentId);
+
+if($facette){
+    $FEES_PREPAYMENT=$facette->AMOUNT;
+    $TAX_PERCENT= $facette->PERCENT;
+    $tax_type=2;
+    if($facette->FORMULAR==1){
+        $tax_type=1;
+        $tax.=$facette->TAX_NAME.' (+'.$facette->PERCENT.'%)';
+                    
+    }else{
+        $tax_type=2;
+        $tax.=$facette->TAX_NAME.' (-'.$facette->PERCENT.'%)';
+    }   
+}
+
+$entriesParentCheckbox = FinanceDescriptionDBAccess::sqlDescription(false, 1, 1);
+$CHECKBOX_JS = "";
+$CHECKBOX_DATA = array();
+$CHECKBOX_ITEMS = array();
+if($entriesParentCheckbox){
+    foreach($entriesParentCheckbox as $value){
+        if(FinanceDescriptionDBAccess::checkChild($value->ID)){
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 1, 1);
+            $CHECKBOX_JS .= "var CHECKBOX_$value->ID = new Ext.form.CheckboxGroup({";
+               $CHECKBOX_JS .= "fieldLabel: '".$value->NAME."'";
+               $CHECKBOX_JS .= ",columns: 2";
+               $CHECKBOX_JS .= ",items:[";
+                   $CHECKBOX_DATA = array();
+                   foreach($entries as $v){
+                       $CHECKBOX_DATA[] = "{boxLabel: '".$v->NAME."', name: 'CHECKBOX_".$v->ID."'}";
+                   }
+                   $CHECKBOX_JS .= implode(',',$CHECKBOX_DATA);
+               $CHECKBOX_JS .= "]";
+           $CHECKBOX_JS .= "});";
+
+           $CHECKBOX_ITEMS[] = "CHECKBOX_".$value->ID."";   
+        }
+    }
+}
+
+$entriesParentRadiobox = FinanceDescriptionDBAccess::sqlDescription(false, 2, 1);
+$RADIOBOX_JS = "";
+$RADIOBOX_DATA = array();
+$RADIOBOX_ITEMS = array();
+if($entriesParentRadiobox){
+    foreach($entriesParentRadiobox as $value){
+        if(FinanceDescriptionDBAccess::checkChild($value->ID)){
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 2, 1);
+            $RADIOBOX_JS .= "var RADIOBOX_$value->ID = new Ext.form.RadioGroup({";
+                $RADIOBOX_JS .= "fieldLabel: '".$value->NAME."'";
+                $RADIOBOX_JS .= ",columns: 2";
+                $RADIOBOX_JS .= ",items:[";
+                    $RADIOBOX_DATA = array();
+                    foreach($entries as $v){
+                        $RADIOBOX_DATA[] = "{boxLabel: '".$v->NAME."', name: 'RADIOBOX_".$value->ID."', inputValue: '".$v->ID."'}";
+                    }
+                    $RADIOBOX_JS .= implode(',',$RADIOBOX_DATA);
+                $RADIOBOX_JS .= "]";
+            $RADIOBOX_JS .= "});";
+
+            $RADIOBOX_ITEMS[] = "RADIOBOX_".$value->ID."";
+        }
+    }
+}
+
+?>
+<script>
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    echo $RADIOBOX_JS;
+    echo $CHECKBOX_JS;
+   
+    $js = "";
+    $js .= "xtype: 'numberfield'";
+    $js .= ",id: 'DISCOUNT_ID'";
+    $js .= ",name: 'DISCOUNT'";
+    $js .= ",fieldLabel: '" . DISCOUNT . " %'"; 
+    $js .= ",minValue:'0'";
+    $js .= ",maxValue:'100'";  
+    $js .= ",allowBlank: true";
+    $js .= ",decimalPrecision : 2";
+    $js .= ",width:250";
+    
+    $FORM_DETAIL_ITEMS = "[";
+   
+    $FORM_DETAIL_ITEMS .= "{".CamemisField::Displayfield("NAME",FEE_NAME, false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Displayfield("FEES",FEES, "0 (".Zend_Registry::get('SCHOOL')->CURRENCY.")")."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_FEES_AMOUNT',false)."}";
+    
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Displayfield("SCHOOL_YEAR",SCHOOL_YEAR,false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_SCHOOL_YEAR',false)."}";
+    
+    $FORM_DETAIL_ITEMS .= ",{".$js."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Displayfield("DISCOUNT_AMOUNT",DISCOUNT_AMOUNT, "0 (".Zend_Registry::get('SCHOOL')->CURRENCY.")")."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_DISCOUNT_AMOUNT',false)."}";
+    
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Displayfield("TAX_AMOUNT",$tax, false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_TAX_AMOUNT',false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_TAX_PERCENT',false)."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_TAX_FORMULAR',false)."}";    
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_INCOME_CATAGORY',false)."}";
+    
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Displayfield("TOTAL_PAY",TOTAL_AMOUNT, "0 (".Zend_Registry::get('SCHOOL')->CURRENCY.")")."}";
+    $FORM_DETAIL_ITEMS .= ",{".CamemisField::Hiddenfield('HIDDEN_TOTAL_PAY',false)."}";
+    $FORM_DETAIL_ITEMS .= "]";
+   
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: ".$FORM_DETAIL_ITEMS."
+        }]
+    }
+    ";
+
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", TEXT, 100)."}]
+        }]
+    }
+    ";
+    
+    $DETAIL_CHECKBOX = "
+    {
+        title: 'Check Box'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: [".implode(',',$CHECKBOX_ITEMS)."]
+        }]
+    }
+    ";
+        
+    $DETAIL_RADIOBOX = "
+    {
+        title: 'Radio Box'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+            ,items: [".implode(',',$RADIOBOX_ITEMS)."]
+        }]
+    }
+    ";
+    
+    if($CHECKBOX_ITEMS && $RADIOBOX_ITEMS){
+        $SET_ITEMS = "
+        [
+            ".$DETAIL_RADIOBOX."
+            ,".$DETAIL_CHECKBOX."
+        ]
+        ";
+    }elseif(!$CHECKBOX_ITEMS && $RADIOBOX_ITEMS){
+        $SET_ITEMS = "[".$DETAIL_RADIOBOX."]";
+    }elseif($CHECKBOX_ITEMS && !$RADIOBOX_ITEMS){
+        $SET_ITEMS = "[".$DETAIL_CHECKBOX."]";
+    }else{
+        $SET_ITEMS = "[]";
+    }
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= $DETAIL_INFORMATION;
+    $FORM_ITEMS .=",".$SET_ITEMS;
+    $FORM_ITEMS .=",".$DESCRIPTION;
+    $FORM_ITEMS .= "]";
+    
+    
+    $items = "
+        border:false
+        ,id:'FORM_ITEMS'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+   
+        
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){ 
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        }
+    ");
+   if(!$CHECK){
+        $OBJECT_FORM->addTbarItems(CamemisBar::tbarFormRemoveObject(true)); 
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+   }
+    
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadStudentPrePayment'
+        ,studentPrePaymentId: '".$this->studentPrePaymentId."'
+        ,feePrePaymentId: '".$this->feePrePaymentId."'
+        ,objectId:'".$this->objectId."'
+        ,training:'true'   
+    ");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonActionStudentPrePayment'
+        ,objectId: '".$this->objectId."'
+        ,feePrePaymentId: '".$this->feePrePaymentId."'
+        ,studentPrePaymentId: '".$this->studentPrePaymentId."'
+    ");
+    $OBJECT_FORM->setRemoveParams("
+         cmd: 'removeStudentFeePrePayment'
+        ,objectId:'".$this->studentPrePaymentId."'   
+    ");
+    
+    $OBJECT_FORM->setOnEmbeddedEvents("
+        if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();            
+    ");
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+         if(window.parent.Ext.getCmp('FINANCE_LIST_ID'))
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        window.parent.Ext.getCmp('FINANCE_LIST_ID').store.reload();   
+    ");
+   
+    $OBJECT_FORM->isObjectDefaultOnLoad = true;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 160;
+    $OBJECT_FORM->renderJS();
+    
+?>
+    viewport = new Ext.Viewport({
+    layout: 'fit'
+    ,border: false
+    ,items:[{
+        layout:'fit'
+        ,border: false
+        ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+    
+    var discountForm = Ext.getCmp('DISCOUNT_ID');
+    discountForm.on('change',function(){
+        var fee_prepayment=<?=$FEES_PREPAYMENT;?>;
+        var TAX_PERCENT=<?=$TAX_PERCENT;?>;
+        var tax_type=<?=$tax_type;?>;                                                                        
+        var DISCOUNT=discountForm.getValue();
+        var TOTAL=fee_prepayment;
+        DISCOUNT_AMOUNT = (fee_prepayment*DISCOUNT)/100;
+        TOTAL = (fee_prepayment-DISCOUNT_AMOUNT);
+        tax_amount=(TOTAL*TAX_PERCENT)/100;
+        if(tax_type==1){
+            TOTAL=TOTAL+tax_amount;    
+        }
+   
+        Ext.getCmp('DISCOUNT_AMOUNT_ID').setValue(DISCOUNT_AMOUNT + ' (<?=Zend_Registry::get('SCHOOL')->CURRENCY;?>)');
+        Ext.getCmp('HIDDEN_DISCOUNT_AMOUNT_ID').setValue(DISCOUNT_AMOUNT);
+        
+        Ext.getCmp('TAX_AMOUNT_ID').setValue(tax_amount + ' (<?=Zend_Registry::get('SCHOOL')->CURRENCY;?>)');
+        Ext.getCmp('HIDDEN_TAX_AMOUNT_ID').setValue(tax_amount);
+        
+        Ext.getCmp('TOTAL_PAY_ID').setValue(TOTAL+ ' (<?=Zend_Registry::get('SCHOOL')->CURRENCY;?>)'); 
+        Ext.getCmp('HIDDEN_TOTAL_PAY_ID').setValue(TOTAL);
+    });
+                
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,32 @@
+<?
+
+require_once 'clients/CamemisChart.php';
+require_once 'models/statistic/StudentStatisticsDBAccess.php';
+
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
+$trainingId = isset($_GET["trainingId"])? (int) $_GET["trainingId"]:"";
+
+switch($objectType){
+    case "PROGRAM":
+        $dataSet = StudentStatisticsDBAccess::getDataSetStudentTraining("PROGRAM", $trainingId);
+        break;
+    case "LEVEL":
+        $dataSet = StudentStatisticsDBAccess::getDataSetStudentTraining("LEVEL", $trainingId);
+        break;
+}
+
+$chart = new CamemisChart("MULTI_BAR_CHART", 'chart1', $dataSet);
+$chart->chartSVG = "display";
+$chart->height = 230;
+
+?>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<body>
+    <script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
+</body>
+</html>

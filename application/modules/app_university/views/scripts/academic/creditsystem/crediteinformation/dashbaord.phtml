@@ -1,0 +1,91 @@
+<?
+////////////////////////////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 06.01.2014
+// 
+////////////////////////////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$schoolyearObject = AcademicDBAccess::findAcademicBetweenDate(getCurrentDBDate());
+$creditInformation = StudentCreditInformationDBAccess::getInstance();
+$facette = $creditInformation->getAllCompusCredit();
+if($facette){
+    foreach ($facette as $compusObject){
+        $params = "";
+        $params .= "compusId=".$compusObject->ID;
+        $params .= "&schoolyearId=".$schoolyearObject->ID;
+         $item = "{";
+            $item .= "columnWidth:1";
+            $item .= ",style:'padding:10px 20px 0px 20px;'";
+            $item .= ",items:[{";
+                $item .= "title: '".$compusObject->NAME."'";
+                $item .= ",id:'".$compusObject->NAME."_ID'";
+                $item .= ",layout:'fit'";
+                $item .= ",tools: tools";
+                $item .= ",height:350";
+                $item .= ",items: [new Ext.ux.IFrameComponent({ id: 'CHART_CREDIT_INFORMATION', url:'/chart/studentcreditinformation/?camIds=".$this->urlEncryp->encryptedGet($params)."'})]";
+            $item .= "}]";
+        $item .= "}";
+        $items[] = $item; 
+    }
+}
+
+$VIEWPORT_ITEMS = implode(",",$items);
+?>
+<script type="text/javascript" src="/public/ux/Portal.js"></script>
+<script type="text/javascript" src="/public/ux/PortalColumn.js"></script>
+<script type="text/javascript" src="/public/ux/Portlet.js"></script>
+<script>
+Ext.onReady(function(){
+    
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+    var tools = [{
+        id:'gear',
+        handler: function(){
+            //Ext.Msg.alert('Message', 'The Settings tool was clicked.');
+        }
+    },{
+        id:'close',
+        handler: function(e, target, panel){
+            panel.ownerCt.remove(panel, true);    
+        }
+    }];
+
+    new Ext.Viewport({
+        layout:'fit',
+        items:[{
+            xtype:'portal'
+            ,region:'fit'
+            ,margins:'35 5 5 0'
+            ,tbar:[{
+                text:'<?=REFRESH?>'
+                ,iconCls:'icon-arrow_refresh'
+                ,handler:function(){
+                    window.location='<?=$_SERVER["REQUEST_URI"]?>';
+                }
+            },'-',{
+                text:'<?=SETTINGS?>'
+                ,iconCls:'icon-wrench'
+                ,handler:function(){
+                    
+                }
+            }]
+            ,items:[<?=$VIEWPORT_ITEMS;?>]
+            ,listeners: {
+                'drop': function(e){
+                    
+                }
+            }
+        }]
+    });
+});
+
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

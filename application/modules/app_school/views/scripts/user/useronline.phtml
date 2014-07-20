@@ -1,0 +1,94 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("USER_ONLINE", "LIST");
+$OBJECT_GRID->setLoadUrl("/user/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+    
+    Ext.onReady(function() {
+        var mainquoterefresh = {
+        run: function(){
+            Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>').store.load();
+        },
+            interval: 10000 //1 second
+        }
+        Ext.TaskMgr.start(mainquoterefresh);
+
+        function cssText(value, metadata, record){
+            return '<div style="color:#333; padding: 5px; height: 15px;">' + value + '</div>';
+        }
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addReadField("name: 'USER_LOGIN'");
+        $OBJECT_GRID->addReadField("name: 'USER_ROLE'");
+        $OBJECT_GRID->addReadField("name: 'ACTIVITY_DATE'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".USER."</b>', align:'left', renderer:cssText, sortable: true, width: 200, dataIndex: 'USER_LOGIN'");
+        $OBJECT_GRID->addColumn("header: '<b>".USER_ROLE."</b>', width: 250, renderer:cssText, sortable: true, dataIndex: 'USER_ROLE'");
+        $OBJECT_GRID->addColumn("header: '<b>".ACTIVITY_DATE."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'ACTIVITY_DATE'");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonUserOnline'
+            ,type:'live'
+        ";
+        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+                ,border:false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:[{
+                        title: '<?=SEARCH;?>'
+                        ,layout: 'fit'
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'SEARCH', url: '/user/useractivity/'})]
+                    },{
+                        title: '<?=USER_ONLINE;?>'
+                        ,id: 'USER_ONLINE' 
+                        ,layout: 'fit'
+                        ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+                    }]        
+                }]      
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,163 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 07.08.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+ 
+$OBJECT_GRID = new CamemisGrid("STAFF", "LIST_OF_STAFFS");
+$OBJECT_GRID->setLoadUrl('/staff/jsonload/');
+$OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$TEACHERLISTADMIN = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
+
+$term = isset($_GET["term"])?addText($_GET["term"]):"ALL";
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->objectId);
+if(!$academicObject) {header("Location: /main/permission/");exit;}
+ 
+?>
+<script>
+    
+    Ext.onReady(function() {
+        
+        <?    
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_GRID->addCellRenderer("
+            function renderText(v, p, record, rowIndex){
+                var str = '<span class=spanText>' + v + '</span>';
+                return str;
+            }
+        ");
+
+        $OBJECT_GRID->addReadField("name: 'TEACHER_NAME'");
+        $OBJECT_GRID->addReadField("name: 'PHONE'");
+        $OBJECT_GRID->addReadField("name: 'EMAIL'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_ID'");
+        $OBJECT_GRID->addReadField("name: 'TERM'");
+        $OBJECT_GRID->addReadField("name: 'GRADE_ID'"); 
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>".TEACHER."</b>'
+            , width: 150
+            , align:'left'
+            , menuDisabled : true
+            , sortable: true
+            , dataIndex: 'TEACHER_NAME'
+            , hideable: false
+        ");
+        
+        $OBJECT_GRID->addColumn("
+            header: '<b>".SUBJECT."</b>'
+            , align:'left'
+            , sortable: true
+            , width:200
+            , dataIndex: 'SUBJECT'
+            , summaryType: 'count'
+            , summaryRenderer: function(v, params, data){
+                return ((v === 0 || v > 1) ? '".TOTAL.": ' + v +'' : '".TOTAL.": 1');
+            }
+        ");
+        //$OBJECT_GRID->addColumn("header: '<b>".TERM."</b>', hidden: false, align:'left', menuDisabled : true, sortable: true, width:120, dataIndex: 'TERM'");
+        $OBJECT_GRID->addColumn("header: '<b>".PHONE."</b>', align:'left', menuDisabled : true, sortable: true, width:150, dataIndex: 'PHONE'");
+        $OBJECT_GRID->addColumn("header: '<b>".EMAIL."</b>', align:'left', menuDisabled : true, sortable: true, width:170, dataIndex: 'EMAIL'");
+
+        $OBJECT_GRID->loadMask = false;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "TEACHER_NAME";
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
+
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,gradingterm: '".$term."'
+            ,academicId: '".$academicObject->ID."'
+            ,cmd: 'jsonAssignedTeachersByClass'
+        ";
+        $OBJECT_GRID->renderJS();
+           
+        ?>    
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,id: 'center'
+                ,border: false
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    title:'<?=ASSIGNED_TEACHERS?>'
+                    ,id: 'center'
+                    ,border: false
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                }]
+            }]
+        });
+        
+        <?
+        $html = "var myGrid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $html .= "myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $html .= "var record = grid.store.getAt(rowIndex);";
+            $html .= "var clickId = record.data.ID;";
+            $html .= "var subjectId = record.data.SUBJECT_ID;";
+            $html .= "var grade_Id = record.data.GRADE_ID;";
+            $html .= "var clickName = record.data.TEACHER_NAME;";
+            $html .= "var contextMenu = new Ext.menu.Menu({";
+                $html .= "items: [{";
+                    $html .= "text: '".SUBJECT_AND_ASSIGNMENT." &raquo; ' + clickName";
+                    $html .= ",iconCls:'icon-flag_blue'";
+                    $html .= ",handler:function(){";
+                        $html .= "clickOpenPage('center','','/subject/subjectdisplaymainadmin/?target=".camemisId()."&subjectId=' + subjectId + '&teacherId=' + clickId + '&classId=".$academicObject->ID."');"; 
+                    $html .= "}";    
+                $html .= "},{";  
+                  $html .= "text: '".TEACHING_REPORT." &raquo; ' + clickName";
+                    $html .= ",iconCls:'icon-star'";
+                    $html .= ",handler:function(){";
+                        $html .= "clickOpenPage('center','','/subjectreport/subjectreportlist/?objectId=' + clickId + '&classId=".$academicObject->ID."&subjectId=' + subjectId + '&teacherId=' + clickId);";
+                    $html .= "}";  
+                $html .= "},{";
+                    $html .= "text: '".TEACHER_CHANGE." &raquo; ' + clickName";
+                    $html .= ",iconCls:'icon-arrow_switch'";
+                    $html .= ",handler:function(){";
+                        $html .= "var targetURL = '".$this->TEACHER_CHANGE."&oldTeacherId=' + clickId + '&subjectId=' + subjectId;";
+                        $html .= "openWinIFrame(clickName, targetURL, 450,300);";
+                    $html .= "}";
+                $html .= "}]";
+            $html .= "});";
+            $html .= "event.stopEvent();";
+            $html .= "contextMenu.showAt(event.xy);";
+         $html .= "});";
+         
+         switch(UserAuth::getUserType()){
+             case "SUPERADMIN":
+             case "ADMIN":
+                 echo $html;
+                 break;
+         }
+        ?>
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

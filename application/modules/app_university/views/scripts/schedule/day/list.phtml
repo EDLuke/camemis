@@ -1,0 +1,343 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
+$OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
+$OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
+
+$academicId = '';
+
+if($this->academicId){
+    $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+    if(!$academicObject) {header("Location: /main/permission/");exit;}
+    if($academicObject->EDUCATION_SYSTEM){
+        switch($academicObject->OBJECT_TYPE){
+            case "SUBJECT":
+                $academicId = $academicObject->ID;
+            break;
+            case "CLASS":
+                $academicId = $academicObject->PARENT;
+            break;
+        }
+    }else{
+        $academicId = $academicObject->ID;
+    }   
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$setParams = "";
+$setParams .= "academicId=".$this->academicId."";
+if ($this->trainingId) $setParams .= "&trainingId=".$this->trainingId."";
+if ($this->teacherId) $setParams .= "&teacherId=".$this->teacherId."";
+
+?>
+<script>
+var choosedate = '<?=date('Y-m-d')?>';
+var UrlShowSubstitute = '<?=$this->URL_SHOW_SUBSTITUTE;?>';
+Ext.onReady(function() {
+    
+    function styleTime(v, p, record, rowIndex){
+        switch(record.data.CHDECK_STATUS){
+            case 1:
+                textdecoration = 'none';
+                bgColor = '#f5f5f5';
+                fontColor = '#000';
+                break;
+            case 2:
+                textdecoration = 'line-through';
+                bgColor = '#E24F43';
+                fontColor = '#FFF';
+                break;
+            default:
+                textdecoration = 'none';
+                bgColor = record.data['COLOR'];
+                fontColor = record.data['COLOR_FONT'];
+                break;
+        }
+        return String.format('<div style=\"white-space:normal; text-decoration: ' + textdecoration + '; font-weight:bold; padding: 10px; height: 50px;background:' + bgColor + ';' + 'color:' + fontColor +';\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+            ,record.data['COLOR_FONT']
+        );
+    }
+    
+    function showText(v, p, record, rowIndex){
+        var description = record.data.GROUPS?record.data.GROUPS:record.data.DESCRIPTION;
+        p.attr = "ext:qtip='"+description+"'";
+        switch(record.data.CHDECK_STATUS){
+            case 1:
+                textdecoration = 'none';
+                bgColor = '#f5f5f5';
+                fontColor = '#000';
+                break;
+            case 2:
+                textdecoration = 'line-through';
+                bgColor = '#E24F43';
+                fontColor = '#FFF';
+                break;
+            default:
+                textdecoration = 'none';
+                bgColor = record.data['COLOR'];
+                fontColor = record.data['COLOR_FONT'];
+                break;
+        }
+        return String.format('<div style=\"white-space:normal; text-decoration: ' + textdecoration + '; font-weight:bold; padding: 10px; height: 50px;background:' + bgColor + ';' + 'color:' + fontColor +';\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+            ,record.data['COLOR_FONT']
+        );
+    }
+    
+    function showTextStatus(v, p, record, rowIndex){
+        return String.format('<div style=\"white-space:normal; font-weight:bold; padding: 10px; height: 50px;background:' + bgColor + ';' + 'color:' + fontColor +';\">{0}</div>'
+            ,v
+            ,record.data['COLOR']
+            ,record.data['COLOR_FONT']
+        );
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+    $OBJECT_GRID->addReadField("name: 'ID'");
+    $OBJECT_GRID->addReadField("name: 'TIME'");
+    $OBJECT_GRID->addReadField("name: 'SCHEDULE_TYPE'");
+    $OBJECT_GRID->addReadField("name: 'EVENT'");
+    $OBJECT_GRID->addReadField("name: 'TEACHER'");
+    $OBJECT_GRID->addReadField("name: 'ROOM'");
+    $OBJECT_GRID->addReadField("name: 'COLOR'");
+    $OBJECT_GRID->addReadField("name: 'COLOR_FONT'");
+    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STATUS'");
+    $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
+    $OBJECT_GRID->addReadField("name: 'DESCRIPTION'");
+    $OBJECT_GRID->addReadField("name: 'GROUPS'");
+    
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . TIME . "</b>'
+        , align:'center'
+        ,renderer: styleTime
+        , sortable: false
+        , dataIndex: 'TIME'
+        , width:130
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . EVENT . "</b>'
+        ,renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'EVENT'
+        , width:200
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . TEACHER . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'TEACHER'
+        , width: 150
+    ");
+        
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . ROOM . "</b>'
+        , renderer: showText
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'ROOM'
+        , width:150
+    ");
+    
+    $OBJECT_GRID->addColumn("
+        header: '<b>" . STATUS . "</b>'
+        , renderer: showTextStatus
+        , align:'center'
+        , sortable: false
+        , dataIndex: 'TEACHING_STATUS'
+        , width: 200
+    ");
+    
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,academicId: '".$academicId."'
+        ,trainingId: '".$this->trainingId."'
+        ,teacherId: '".$this->teacherId."'
+        ,eventDay: choosedate
+        ,cmd: 'dayEventList'
+        ,interval: 'all'
+    ";
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            id: 'REFRESH_ID'
+            ,text: '".REFRESH."'
+            ,iconCls:'icon-reload'
+            ,scope:this
+            ,disabled: false
+            ,handler: function(){
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-','<b>".DATE."</b>&nbsp;',[{
+            xtype:'datefield'
+            ,width:130
+            ,id:'CHOOSE_DATE'
+            ,name: 'CHOOSE_DATE'
+            ,format: '".setExtDatafieldFormat()."'
+            ,value:choosedate
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('->');
+    ");
+    
+    switch(UserAuth::getUserType()){
+        case "SUPERADMIN":
+        case "ADMIN":
+        case "TEACHER":
+        case "INSTRUCTOR":
+            $OBJECT_GRID->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'DAY_EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{cmd: 'dayEventList',camIds:'".$this->urlEncryp->encryptedGet($setParams)."',eventDay:choosedate}
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/opendayschedule/'
+                            }
+                        });
+                    }
+                }]);        
+            ");
+        break;
+    }
+    
+    $OBJECT_GRID->objectBorder = "true";
+    $OBJECT_GRID->isPagingToolbar = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+	
+    if(strtoupper($this->target) == "TRAINING"){
+        $viewport = "";
+        $viewport .= "viewport = new Ext.Viewport({";
+            $viewport .= "layout: 'fit'";
+            $viewport .= ",border: false";
+            $viewport .= ",items:[{";
+                $viewport .= "border:false";
+                $viewport .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                $viewport .= ",layout: 'card'";
+                $viewport .= ",id: 'center'";
+                $viewport .= ",activeItem: 0";
+                $viewport .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+            $viewport .= "}]";
+        $viewport .= "});";  
+        echo $viewport;
+    }else{
+        
+        $viewport = "";
+        $viewport .= "viewport = new Ext.Viewport({";
+            $viewport .= "layout: 'fit'";
+            $viewport .= ",border: false";
+            $viewport .= ",items:[{";
+                $viewport .= "border:false";
+                $viewport .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                $viewport .= ",layout: 'card'";
+                $viewport .= ",id: 'center'";
+                $viewport .= ",activeItem: 0";
+                $viewport .= ",title: ''";
+                $viewport .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+            $viewport .= "}]";
+        $viewport .= "});";
+        
+        echo $viewport;
+    }
+    
+    $js = "Ext.getCmp('CHOOSE_DATE').on('select', function(date_picker, date) {";
+        $js .= "choosedate = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();";
+        $js .= "Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.baseParams = {";
+            $js .= "start:0";
+            $js .= ",limit:100";
+            $js .= ",academicId: '".$academicId."'";
+            $js .= ",target: '".$this->target."'";
+            $js .= ",trainingId: '".$this->trainingId."'";
+            $js .= ",eventDay: choosedate";
+            $js .= ",cmd: 'dayEventList'";
+            $js .= ",interval: 'all'";
+        $js .= "};";
+        $js .= "if (Ext.getCmp('".$OBJECT_GRID->getObjectId()."')) Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();";
+    $js .= "});";
+    echo $js;
+    
+    $SUBSTITUTE ="{";
+    $SUBSTITUTE .="text: '".SUBSTITUTE." &raquo; ' + record.data.TIME + ' (' + record.data.EVENT +')'";
+    $SUBSTITUTE .=",iconCls: 'icon-calendar_link'";
+    $SUBSTITUTE .=",handler: function(){";
+    $SUBSTITUTE .="contextMenu.hide();clickOpenPage('center','','/schedule/teachingsession/?&type=substitute&scheduleId=' + record.data.ID + '&choosedate=' + choosedate);";
+    $SUBSTITUTE .="}";
+    $SUBSTITUTE .="}";
+    $CONTEXTMENU_ITEMS[] = $SUBSTITUTE;
+    
+    $DAY_OFF_SCHOOL ="{";
+    $DAY_OFF_SCHOOL .="text: '".DAY_OFF_SCHOOL." &raquo; ' + record.data.TIME + ' (' + record.data.EVENT +')'";
+    $DAY_OFF_SCHOOL .=",iconCls: 'icon-date_delete'";
+    $DAY_OFF_SCHOOL .=",handler: function(){";
+    $DAY_OFF_SCHOOL .="contextMenu.hide();clickOpenPage('center','','/schedule/teachingsession/?&type=dayoffschool&scheduleId=' + record.data.ID + '&choosedate=' + choosedate);";
+    $DAY_OFF_SCHOOL .="}";
+    $DAY_OFF_SCHOOL .="}";
+    $CONTEXTMENU_ITEMS[] = $DAY_OFF_SCHOOL;
+    
+    $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
+    
+    $contextMenu = "";
+    $contextMenu .="var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+    $contextMenu .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+        $contextMenu .="var record = grid.store.getAt(rowIndex);";
+        $contextMenu .="var contextMenu = new Ext.menu.Menu({";
+        $contextMenu .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+        $contextMenu .="});";
+        $contextMenu .="event.stopEvent();";
+        $contextMenu .="contextMenu.showAt(event.xy);";
+    $contextMenu .="});";
+    echo $contextMenu;
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

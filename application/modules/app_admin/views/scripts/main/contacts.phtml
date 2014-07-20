@@ -1,0 +1,78 @@
+<?
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminPage.php';
+
+$AdminPage = AdminPage::getInstance();
+$AdminPage->setLoadingMask = true;
+print $AdminPage->showCamemisHeader();
+
+$objectGrid = new AdminGrid("CUSTOMER", "LIST_OF_CUSTOMERS");
+
+?>
+<div id="iniContent" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection...</h1>
+</div>
+<script>
+Ext.onReady(function() {
+
+    Ext.QuickTips.init();
+    
+    <?
+    
+    $objectGrid->addReadField("name: 'NAME'");
+    $objectGrid->addReadField("name: 'EMAIL'");
+    $objectGrid->addReadField("name: 'PHONE'");
+    $objectGrid->addColumn("header: 'Name', align:'left', width: 200, sortable: true, dataIndex: 'NAME'");
+    $objectGrid->addColumn("header: 'EMail', align:'left', width: 120, sortable: true, dataIndex: 'EMAIL'");
+    $objectGrid->addColumn("header: 'Phone', align:'left', width: 120, sortable: true, dataIndex: 'PHONE'");
+
+    $objectGrid->isQuickySearch = true;
+    $objectGrid->forceFit = "false";
+    $objectGrid->isObjectDefaultOnLoad = false;
+    $objectGrid->renderJS();
+
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout:'fit'
+        ,border: false
+        ,items: [{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                region:'west'
+                ,title: ''
+                ,id: 'VIEWPORT_BWEST'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: percentWidth(30)
+                ,minSize: percentWidth(30)
+                ,maxSize: percentWidth(30)
+                ,layout: 'fit'
+                ,items:[{xtype: '<?= $objectGrid->getObjectXtype(); ?>'}]
+            },{
+                collapsible: false
+                ,id: 'VIEWPORT_CENTER'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,contentEl: 'iniContent'
+                }]
+            }]
+        }]
+    });        
+});
+</script>
+<?
+print $AdminPage->showCamemisFooter();
+?>

@@ -1,0 +1,137 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_TREE = new CamemisTree("DATASET", "LIST");
+$OBJECT_TREE->setURL("/dataset/jsontree/");
+$OBJECT_TREE->setSaveUrl("/dataset/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+Ext.onReady(function() {
+	
+    function showText(v){
+        return String.format('<div style=\"font-weight:normal;color:#333;\">{0}</div>'
+            ,v
+        );
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->setBaseParams("
+    	cmd: 'jsonTreeAllCamemisType'
+        ,objectType:'QUALIFICATION_TYPE'
+    ");
+    
+    $OBJECT_TREE->backgroundColor = "#F9F9F9";
+    $OBJECT_TREE->renderJS();
+    
+    $TABE_ITEMS=array();
+    $GENERAL_EDUCATION ="{
+        title: '".GENERAL_EDUCATION."'
+        ,layout: 'fit'
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                title: ''
+                ,id:'WEST_ID'
+                ,region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'fit'
+                ,items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]
+            },{
+                title:''
+                ,id:'myId'
+                ,collapsible: false
+                ,region:'center'
+                ,id: 'content'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'
+                    }]
+                }]
+            }]
+        }]
+    }";
+
+    $TRAINING_PROGRAMS ="{
+        title: '".TRAINING_PROGRAMS."'
+        ,layout: 'fit'
+        ,bodyStyle: 'padding:1px;'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url:'/academicsetting/gradingsystemlist/?target=training&eduSystem=training'})]
+    }";
+    if(UserAuth::displayRoleGeneralEducation())
+        $TABE_ITEMS[]=$GENERAL_EDUCATION;
+    if(UserAuth::displayRoleTrainingEducation())
+        $TABE_ITEMS[]=$TRAINING_PROGRAMS;
+    $CHOOSE_ITEMS = implode(",", $TABE_ITEMS);
+    
+    ////////////////////////////////////////////////////////////////////////////
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+            ,items:[{
+                xtype: 'tabpanel'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;'
+                ,border: false
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,items:[<?=$CHOOSE_ITEMS?>]        
+            }]     
+        }]
+    });        
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, event){
+        if(node.isLeaf()) clickOpenPage('content',node.text, '/academicsetting/gradingsystemlist/?target=general&eduSystem='+ node.id);
+    })
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

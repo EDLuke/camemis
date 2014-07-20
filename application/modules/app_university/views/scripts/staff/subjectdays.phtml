@@ -1,0 +1,144 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 19.02.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("SUBJECT");
+$OBJECT_FORM->setLoadUrl("/subject/jsonload/");
+$OBJECT_FORM->setSaveUrl("/subject/jsonsave/");
+
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $FIRST_SEMESTER_DAYS = "
+        {
+            title: '".FIRST_SEMESTER.": ".AVAILABILITY_IN_THE_FOLLOWING_DAYS_TEACHER_SCHEDUL."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width:550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Checkbox("FS1","FS_MONDAY", MONDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS2","FS_TUESDAY", TUESDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS3","FS_WEDNESDAY", WEDNESDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS4","FS_THURSDAY", THURSDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS5","FS_FRIDAY", FRIDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS6","FS_SATURDAY", SATURDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("FS7","FS_SUNDAY", SUNDAY, 1, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $SECOND_SEMESTER_DAYS = "
+        {
+            title: '".SECOND_SEMESTER.": ".AVAILABILITY_IN_THE_FOLLOWING_DAYS_TEACHER_SCHEDUL."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width:550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [
+                    {".CamemisField::Checkbox("SS1","SS_MONDAY", MONDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS2","SS_TUESDAY", TUESDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS3","SS_WEDNESDAY", WEDNESDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS4","SS_THURSDAY", THURSDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS5","SS_FRIDAY", FRIDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS6","SS_SATURDAY", SATURDAY, 1, false)."}
+                    ,{".CamemisField::Checkbox("SS7","SS_SUNDAY", SUNDAY, 1, false)."}
+                ]
+            }]
+        }
+        ";
+        
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: [
+                ".$FIRST_SEMESTER_DAYS."
+                ,".$SECOND_SEMESTER_DAYS."
+            ]
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+        ");
+        
+        $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadTeacherSubjectDays',objectId: '".$objectId."',subjectId: '".$subjectId."'");
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveTeacherSubjectDays'
+            ,objectId: '".$objectId."'
+            ,subjectId: '".$subjectId."'
+        ");
+        
+        $OBJECT_FORM->setonEmbeddedEvents("
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            ".camemisPage::setRequestURI()."
+        ");
+        
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+        
+        $OBJECT_FORM->isObjectDefaultOnLoad = true;
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 120;
+        $OBJECT_FORM->renderJS();
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        });
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

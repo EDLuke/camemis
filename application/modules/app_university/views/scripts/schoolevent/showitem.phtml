@@ -1,0 +1,622 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 25.12.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+//echo $this->subjectId;
+//print_r(Zend_Registry::get('USER')->ID);
+//exit();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("SCHOOLEVENT");
+$OBJECT_FORM->setLoadUrl('/schoolevent/jsonload/');
+$OBJECT_FORM->setSaveUrl('/schoolevent/jsonsave/');
+
+$eventType = isset($_GET["eventType"])? addText($_GET["eventType"]):"";
+$academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
+
+
+$classObject = AcademicDBAccess::findGradeFromId($academicId);
+
+$OBJECT_DATA = $this->objectData;
+
+$STATUS = isset($OBJECT_DATA["STATUS"])?$OBJECT_DATA["STATUS"]:0;
+
+$removeStatus = true;
+if ($STATUS) {
+    $status = true;
+    if ($STATUS){
+        $removeStatus = false;
+    }else{
+        $removeStatus = true;
+    }   
+}else{
+    $status = false;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+    <? camemisPage::ExtformVTypes(); ?>
+    Ext.onReady(function() {
+
+        <?
+        /**
+         * Extjs: s.gif
+         */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $DETAIL_ITEMS = "";
+        $LOCATION_ITEMS = "";
+        $TIME_ITEMS = "";
+        $REMARK_ITEMS = "";
+        switch(UserAuth::getUserType()){
+            case "STUDENT":
+                $DETAIL_ITEMS = "
+                    {".CamemisField::Displayfield("NAME", NAME)."}
+                    ,{".CamemisField::Displayfield("START_DATE", START_DATE)."}
+                    ,{".CamemisField::Displayfield("END_DATE", END_DATE)."}
+                    ,{".CamemisField::Displayfield('DAY_OFF_SCHOOL', DAY_OFF_SCHOOL)."}
+                ";
+
+                $LOCATION_ITEMS = "
+                    {".CamemisField::Displayfield("LOCATION", LOCATION)."}
+                ";
+
+                $TIME_ITEMS = "{
+                    title: '".TIME."'
+                    ,autoHeight: true
+                    ,style: 'padding-bottom: 5px'
+                    ,width:550
+                    ,items:[{
+                        layout: 'form'
+                        ,border: false
+                        ,autoHeight:true
+                        ,bodyStyle: 'padding:10px'
+                        ,items: [
+                            {".CamemisField::Displayfield("START_HOUR", START_TIME)."}
+                            ,{".CamemisField::Displayfield("END_HOUR", END_TIME)."}
+                        ]
+                    }]
+                }";
+
+                $REMARK_ITEMS = "
+                    {".CamemisField::Displayfield("REMARK", REMARK)."}
+                ";
+                break;
+            default:
+                $DETAIL_ITEMS = "
+                    {".CamemisField::Textfield("NAME", "NAME", NAME, false)."}
+                    ,{".CamemisField::StartDatefieldRange("START_DATE", START_DATE, "END_DATE", true)."}
+                    ,{".CamemisField::EndDatefieldRange("END_DATE", END_DATE, "START_DATE", true)."}
+                    ,{".CamemisField::Checkbox('DAY_OFF_SCHOOL', 'DAY_OFF_SCHOOL', DAY_OFF_SCHOOL, false, false, false)."}
+                ";
+
+                $LOCATION_ITEMS = "
+                    {".CamemisField::Textarea("LOCATION", LOCATION, 100)."}
+                ";
+                /////////// THORN Visal
+                if($this->classId){
+                    $TIME_ITEMS = "{
+                        title: '".TIME."'
+                        ,autoHeight: true
+                        ,style: 'padding-bottom: 5px'
+                        ,width:550
+                        ,items:[{
+                            layout: 'form'
+                            ,border: false
+                            ,autoHeight:true
+                            ,bodyStyle: 'padding:10px'
+                            ,items: [{
+                                xtype: 'timefield'
+                                ,fieldLabel: '" . START_TIME . "'
+                                ,id: 'START_HOUR'
+                                ,name :'START_HOUR'
+                                ,format:'H:i'
+                                ,increment: 15
+                                ,editable:false
+                                ,hidden: this.showTimes === false
+                                ,labelWidth: 0
+                                ,autoSelect: false
+                                ,anchor: '74.2%'
+                                ,minValue: '06:00'
+                                ,maxValue: '20:00'
+                                ,allowBlank: true
+                                ,listeners: {
+                                    'select': {
+                                        fn: function(e) {
+                                            var endTime = Ext.getCmp('END_HOUR').getValue();
+                                            var startTime = Ext.getCmp('START_HOUR').getValue();
+                                            var time = startTime.split(':');
+                                            var hour = time[0];
+                                            var min = parseInt(time[1]) + 15;
+                                            if(min == 60){
+                                                hour++;
+                                                min = '00';
+                                            }
+                                            var end = hour + ':'+min;
+                                            if(startTime >= endTime)
+                                                Ext.getCmp('END_HOUR').setValue(end);
+
+                                        },
+                                        scope: this
+                                    }
+                                }
+                            },{
+                                xtype: 'timefield'
+                                ,fieldLabel: '" . END_TIME . "'
+                                ,id: 'END_HOUR'
+                                ,name :'END_HOUR'
+                                ,format:'H:i'
+                                ,increment: 15
+                                ,editable:false
+                                ,hidden: this.showTimes === false
+                                ,labelWidth: 0
+                                ,autoSelect: false
+                                ,anchor: '74.2%'
+                                ,minValue: '06:00'
+                                ,maxValue: '20:00'
+                                ,allowBlank: true
+                                ,listeners: {
+                                    'select': {
+                                        fn: function(e) {
+                                            var endTime = Ext.getCmp('END_HOUR').getValue();
+                                            var startTime = Ext.getCmp('START_HOUR').getValue();
+                                            var time = endTime.split(':');
+                                            var hour = time[0];
+                                            var min = parseInt(time[1]) - 15;
+                                            if(min == 0){
+                                                min = '00';
+                                            }
+                                            if(min <0){
+                                                hour--;
+                                                min = '45';
+                                            }
+                                            var start = hour + ':'+min;
+                                            if(endTime <= startTime){
+                                                Ext.getCmp('START_HOUR').setValue(start);
+                                            }
+                                        },
+                                        scope: this
+                                    }
+                                }
+                            },{
+                                ".CamemisField::comboAcademicClasses($classObject->ID, $classObject->SCHOOL_YEAR, Zend_Registry::get('USER')->ID, CLASSES, false,237, true)."
+                            }]
+                        }]
+                    }";
+                } else {
+                    if($this->objectId != 'new'){
+                        $TIME_ITEMS = "{
+                            title: '".TIME."'
+                            ,autoHeight: true
+                            ,style: 'padding-bottom: 5px'
+                            ,width:550
+                            ,items:[{
+                                layout: 'form'
+                                ,border: false
+                                ,autoHeight:true
+                                ,bodyStyle: 'padding:10px'
+                                ,items: [{
+                                    xtype: 'timefield'
+                                    ,fieldLabel: '" . START_TIME . "'
+                                    ,id: 'START_HOUR'
+                                    ,name :'START_HOUR'
+                                    ,format:'H:i'
+                                    ,increment: 15
+                                    ,editable:false
+                                    ,hidden: this.showTimes === false
+                                    ,labelWidth: 0
+                                    ,autoSelect: false
+                                    ,anchor: '74.2%'
+                                    ,minValue: '06:00'
+                                    ,maxValue: '20:00'
+                                    ,allowBlank: true
+                                    ,listeners: {
+                                        'select': {
+                                            fn: function(e) {
+                                                var endTime = Ext.getCmp('END_HOUR').getValue();
+                                                var startTime = Ext.getCmp('START_HOUR').getValue();
+                                                var time = startTime.split(':');
+                                                var hour = time[0];
+                                                var min = parseInt(time[1]) + 15;
+                                                if(min == 60){
+                                                    hour++;
+                                                    min = '00';
+                                                }
+                                                var end = hour + ':'+min;
+                                                if(startTime >= endTime)
+                                                    Ext.getCmp('END_HOUR').setValue(end);
+
+                                            },
+                                            scope: this
+                                        }
+                                    }
+                                },{
+                                    xtype: 'timefield'
+                                    ,fieldLabel: '" . END_TIME . "'
+                                    ,id: 'END_HOUR'
+                                    ,name :'END_HOUR'
+                                    ,format:'H:i'
+                                    ,increment: 15
+                                    ,editable:false
+                                    ,hidden: this.showTimes === false
+                                    ,labelWidth: 0
+                                    ,autoSelect: false
+                                    ,anchor: '74.2%'
+                                    ,minValue: '06:00'
+                                    ,maxValue: '20:00'
+                                    ,allowBlank: true
+                                    ,listeners: {
+                                        'select': {
+                                            fn: function(e) {
+                                                var endTime = Ext.getCmp('END_HOUR').getValue();
+                                                var startTime = Ext.getCmp('START_HOUR').getValue();
+                                                var time = endTime.split(':');
+                                                var hour = time[0];
+                                                var min = parseInt(time[1]) - 15;
+                                                if(min == 0){
+                                                    min = '00';
+                                                }
+                                                if(min <0){
+                                                    hour--;
+                                                    min = '45';
+                                                }
+                                                var start = hour + ':'+min;
+                                                if(endTime <= startTime){
+                                                    Ext.getCmp('START_HOUR').setValue(start);
+                                                }
+                                            },
+                                            scope: this
+                                        }
+                                    }
+                                }
+                                 ]
+                            }]
+                        }";
+                    }else{
+                        $TIME_ITEMS = "{
+                            title: '".TIME."'
+                            ,autoHeight: true
+                            ,style: 'padding-bottom: 5px'
+                            ,width:550
+                            ,items:[{
+                                layout: 'form'
+                                ,border: false
+                                ,autoHeight:true
+                                ,bodyStyle: 'padding:10px'
+                                ,items: [{
+                                    xtype: 'timefield'
+                                    ,fieldLabel: '" . START_TIME . "'
+                                    ,id: 'START_HOUR'
+                                    ,name :'START_HOUR'
+                                    ,format:'H:i'
+                                    ,increment: 15
+                                    ,editable:false
+                                    ,hidden: this.showTimes === false
+                                    ,labelWidth: 0
+                                    ,autoSelect: false
+                                    ,anchor: '74.2%'
+                                    ,minValue: '06:00'
+                                    ,maxValue: '20:00'
+                                    ,allowBlank: true
+                                    ,listeners: {
+                                        'select': {
+                                            fn: function(e) {
+                                                var endTime = Ext.getCmp('END_HOUR').getValue();
+                                                var startTime = Ext.getCmp('START_HOUR').getValue();
+                                                var time = startTime.split(':');
+                                                var hour = time[0];
+                                                var min = parseInt(time[1]) + 15;
+                                                if(min == 60){
+                                                    hour++;
+                                                    min = '00';
+                                                }
+                                                var end = hour + ':'+min;
+                                                if(startTime >= endTime)
+                                                    Ext.getCmp('END_HOUR').setValue(end);
+                                            },
+                                            scope: this
+                                        }
+                                    }
+                                },{
+                                    xtype: 'timefield'
+                                    ,fieldLabel: '" . END_TIME . "'
+                                    ,id: 'END_HOUR'
+                                    ,name :'END_HOUR'
+                                    ,format:'H:i'
+                                    ,increment: 15
+                                    ,editable:false
+                                    ,hidden: this.showTimes === false
+                                    ,labelWidth: 0
+                                    ,autoSelect: false
+                                    ,anchor: '74.2%'
+                                    ,minValue: '06:00'
+                                    ,maxValue: '20:00'
+                                    ,allowBlank: true
+                                    ,listeners: {
+                                        'select': {
+                                            fn: function(e) {
+                                                var endTime = Ext.getCmp('END_HOUR').getValue();
+                                                var startTime = Ext.getCmp('START_HOUR').getValue();
+                                                var time = endTime.split(':');
+                                                var hour = time[0];
+                                                var min = parseInt(time[1]) - 15;
+                                                if(min == 0){
+                                                    min = '00';
+                                                }
+                                                if(min <0){
+                                                    hour--;
+                                                    min = '45';
+                                                }
+                                                var start = hour + ':'+min;
+                                                if(endTime <= startTime){
+                                                    Ext.getCmp('START_HOUR').setValue(start);
+                                                }
+                                            },
+                                            scope: this
+                                        }
+                                    }
+                                }
+                                ,{".CamemisField::comboAcademicClasses($classObject->ID, $classObject->SCHOOL_YEAR, Zend_Registry::get('USER')->ID, CLASSES, false,237, true)."}]
+                            }]
+                        }";
+                    }
+                }
+                //////////
+                $REMARK_ITEMS = "
+                    {".CamemisField::Textarea("REMARK", REMARK, 100)."}
+                ";
+                break;
+        }
+
+        $DETAIL_INFORMATION = "
+        {
+            title: '".DETAIL_INFORMATION."'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,width:550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: [".$DETAIL_ITEMS."]
+            }]
+        }
+        ";
+
+        $LOCATION = "
+        {
+            title: '".LOCATION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,layout: 'fit'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px;'
+            ,bodyStyle: 'padding:5px'
+            ,width:550
+            ,items: [".$LOCATION_ITEMS."]
+        }
+        ";
+
+        $REMARK = "
+        {
+            title: '".DESCRIPTION."'
+            ,collapsible: true
+            ,collapsed: false
+            ,layout: 'fit'
+            ,autoHeight: true
+            ,style: 'padding-bottom: 5px'
+            ,bodyStyle: 'padding:5px'
+            ,width:550
+            ,items: [".$REMARK_ITEMS."]
+        }
+        ";
+
+        ///////////////////////////////////////////////////
+        $CREATED = "
+        {
+            title: '".CREATED."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,false)."
+                }]
+            }]
+        }";
+        
+        $MODIFIED = "
+        {
+            title: '".MODIFIED."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,false)."
+                }]
+            }]
+        }";
+        
+        $DISABLED = "
+        {
+            title: '".DISABLED."'
+            ,autoHeight: true
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,autoHeight: true
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'background:#E0E7F7; padding:10px'
+                ,items:[{
+                    ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,false)."
+                },{
+                    ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,false)."
+                }]
+            }]
+        }";
+        ///////////////////////////////////////////////////
+        switch(UserAuth::getUserType()){
+            case "INSTRUCTOR":
+            case "TEACHER":
+            case "STUDENT":
+                $FORM_ITEMS = "[
+                    ".$DETAIL_INFORMATION."
+                    ,".$TIME_ITEMS."
+                    ,".$LOCATION."
+                    ,".$REMARK."
+                ]";
+            break;
+            default:
+                $FORM_ITEMS = "[
+                    ".$DETAIL_INFORMATION."
+                    ,".$TIME_ITEMS."
+                    ,".$LOCATION."
+                    ,".$REMARK."
+                    ," . $CREATED . "
+                    ," . $MODIFIED . "
+                    ," . $DISABLED . "
+                ]";
+            break;
+        }
+
+        $ITEMS = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:0px'
+            ,items: ".$FORM_ITEMS."
+        ";
+
+        $OBJECT_FORM->addObjectItems($ITEMS);
+
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);}
+        ");
+        // THORN Visal
+        
+        switch(UserAuth::getUserType()){
+            case "TEACHER":
+            case "INSTRUCTOR":
+            case "STUDENT":
+                if($this->classId){
+                //sea peng
+                    if($this->objectId != 'new'){
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                    }else{
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                    }
+                }
+            break;
+            default: 
+                if($this->objectId != 'new'){
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($removeStatus));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                }else{
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+                }
+            break;
+        }
+        $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->objectId."'");
+        
+        //sea peng
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'jsonSaveEvent'
+            ,schoolyearId: '".$this->schoolyearId."'
+            ,objectId: '".$this->objectId."'
+            ,target: '".$this->target."'
+            ,subjectId: '".$this->subjectId."'
+        ");
+           
+        $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
+
+        $OBJECT_FORM->setonEmbeddedEvents("
+            window.parent.Ext.getCmp('SCHOOLEVENT_LIST_ID').store.reload();
+            var objectId = '".$this->objectId."';
+            var result = Ext.util.JSON.decode(action.response.responseText);
+            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+        ");
+        //
+        
+        $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+            window.parent.Ext.getCmp('SCHOOLEVENT_LIST_ID').store.reload();
+            window.location='" . $_SERVER["REQUEST_URI"] . "';
+        ");
+        $OBJECT_FORM->setRemoveParams("
+            cmd: 'removeObject'
+            ,objectId: '".$this->objectId."'
+        ");   
+
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            window.parent.Ext.getCmp('SCHOOLEVENT_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        ");
+
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 150;
+        $OBJECT_FORM->renderJS();
+        
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'content'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            }]
+        });
+    });
+</script>
+<style>
+    #REMARK_ID,#LOCATION_ID {height: auto !important;}
+</style>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

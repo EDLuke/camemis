@@ -1,0 +1,317 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.04.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("SMS");
+$OBJECT_FORM->setLoadUrl('/sms/jsonload/');
+$OBJECT_FORM->setSaveUrl('/sms/jsonsave/');
+
+$OBJECT_GRID = new CamemisGrid("SMS", "LIST");
+$OBJECT_GRID->setLoadUrl('/sms/jsonload/');
+$OBJECT_GRID->setSaveUrl('sms/jsonsave/');
+$columndata = Utiles::getGridColumnData("DISCIPLINE_LIST_ID");
+
+$classId = isset($_GET['classId'])?addText($_GET['classId']):"";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+switch(UserAuth::getUserType()) {
+    case "INSTRUCTOR":
+    case "TEACHER":
+        $DISABLED_SMS_SERVICES = "false";
+        $HIDDEN_REGISTRATION = "true";
+        $HIDDEN_SETTINGS = "true";
+        $HIDDEN_FEES = "true";
+        break;
+    default:
+        $DISABLED_SMS_SERVICES = "false";
+        $HIDDEN_REGISTRATION = "false";
+        $HIDDEN_SETTINGS = "false";
+        $HIDDEN_FEES = "true";
+        break;
+}
+
+?>
+<script>
+Ext.onReady(function() {
+    
+    function geFormat(data){
+        return date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+    }
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    function cssText(value, metadata, record){
+        return '<div style="white-space:normal;font-weight:bold; color:#333; padding: 5px; height: 15px;;">' + value + '</div>';
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_FORM->addObjectItems("
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,title: '".DATE."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310
+        ,items:[{
+            name: 'START_DATE'
+            ,hidden: false
+            ,width: 150
+            ,fieldLabel: '" . START_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'START_DATE'
+            ,vtype: 'daterange'
+            ,endDateField: 'END_DATE'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,allowBlank: true
+        },{
+            name: 'END_DATE'
+            ,hidden: false
+            ,width: 150
+            ,fieldLabel: '" . END_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'END_DATE'
+            ,vtype: 'daterange'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,startDateField: 'START_DATE'
+            ,allowBlank: true
+        }]
+    ");
+    
+    $OBJECT_FORM->addObjectItems("
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,title: '".DETAIL_INFORMATION."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
+        ,width: 310
+        ,items:[
+            {".CamemisField::Textfield("CONTENT", "CONTENT", TEXT, false, false, false, 150)."}
+            ,{".CamemisField::ComboSMSPriority("SEARCH_STUDENT", 150)."}
+            ,{".CamemisField::ComboSendStatus(STATUS, 150)."}
+        ]
+    ");
+    if(UserAuth::getACLValue("SMS_STAFF_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems("
+        id: 'ADD_A_NEW_ITEM_ID'
+        ,disabled: ".$DISABLED_SMS_SERVICES."
+        ,text: '".ADD_ENTRY."'
+        ,iconCls:'icon-application_form_add'
+        ,scope:this
+        ,handler: function(){
+            Ext.getCmp('WEST_ID').collapse();
+            clickOpenPage('CENTER_ID','".ADD_ENTRY." SMS - ".STAFF."', '/sms/showitem/?objectId=new&sendTo=STAFF');
+        }
+    ");
+    if(UserAuth::getACLValue("SMS_STAFF_READ_RIGHT"))
+    $OBJECT_FORM->addTBarItems("
+        text: '" . RESET . "'
+        ,iconCls:'icon-arrow_undo'
+        ,scope:this
+        ,handler: this.onReset
+    ");
+    if(UserAuth::getACLValue("SMS_STAFF_READ_RIGHT"))
+    $OBJECT_FORM->addTBarItems("
+        text: '" . FIND . "'
+        ,formBind:true
+        ,disabled: false
+        ,iconCls:'icon-magnifier'
+        ,scope:this
+        ,handler:this.onEmbeddedEvents
+    ");
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+
+        var content = this.getForm().findField('CONTENT').getValue();
+        var priority = this.getForm().findField('PRIORITY').getValue();
+        var sent = this.getForm().findField('SENT').getValue();
+        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.sortInfo = null;
+        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.baseParams = {
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchSMS'
+            ,content: content
+            ,sendTo: 'STAFF'
+            ,priority: priority
+            ,sent: sent
+        };
+
+        searchString = 'content=' + content
+        + '&priority=' + priority
+        ;
+
+        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.sortInfo = null;
+        Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.load();
+    ");
+    
+    $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->isKeys = true;
+    $OBJECT_FORM->renderJS();
+        
+    $OBJECT_GRID->addCellRenderer("
+        
+        function showIcon(value, metadata, record, rowIndex, colIndex, store){
+            switch(record.data.PRIORITY){
+                case '0':
+                    var Tooltip = '".INFORMATION."';
+                break;
+                case '1':
+                    var Tooltip = '".IMPORTANT."';
+                break;
+                case '2':
+                    var Tooltip = '".URGENT."';
+                break;
+                case '3':
+                    var Tooltip = 'SOS';
+                break;
+            }
+            metadata.attr = 'ext:qtip=\"' + Tooltip + '\"';
+            return '<div style=\"padding: 5px;white-space:normal;padding:5px;\">' + value + '</div>';
+        }
+    ");
+    
+    $OBJECT_GRID->addReadField("name: 'CONTENT'");
+    $OBJECT_GRID->addReadField("name: 'SENT_ON'");
+    $OBJECT_GRID->addReadField("name: 'PRIORITY'");
+    $OBJECT_GRID->addReadField("name: 'PERSONS'");
+    $OBJECT_GRID->addReadField("name: 'PRIORITY_ICON'");
+    $OBJECT_GRID->addReadField("name: 'PRIORITY_NAME'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>".PRIORITY."</b>', align:'center', renderer: showIcon, width: 80, hidden:".checkColHidden(1, $columndata).", sortable: true, dataIndex: 'PRIORITY_ICON'");
+    $OBJECT_GRID->addColumn("header: '<b>".TEXT."</b>', align:'left', renderer: cssText, width: 450, hidden:".checkColHidden(2, $columndata).", sortable: true, dataIndex: 'CONTENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".SENT_ON."</b>', align:'left', renderer: cssText, width: 120, hidden:".checkColHidden(3, $columndata).", sortable: true, dataIndex: 'PERSONS'");
+    $OBJECT_GRID->addColumn("header: '<b>".SENT_ON."</b>', align:'left', renderer: cssText, width: 120, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'SENT_ON'");
+    
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,cmd: 'jsonAllSMS'
+        ,sendTo: 'STAFF'
+    ";
+    
+    $OBJECT_GRID->objectTitle = SEARCH_RESULT;
+    $OBJECT_GRID->loadMask = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    
+    viewport = new Ext.Viewport({
+        border: false
+        ,layout: 'fit'
+        ,items:[{
+            border: false
+            ,id: 'VIEWPORT_CONTENT'
+            ,layout: 'fit'
+            ,items:[{
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible: true
+                    ,split: true
+                }
+                ,items: [{
+                    region:'west'
+                    ,title: 'SMS-<?=STAFF?>'
+                    ,id: 'WEST_ID'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 350
+                    ,minSize: 350
+                    ,maxSize: 350
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?= $OBJECT_FORM->getObjectXType(); ?>'}]
+                },{
+                    collapsible: false
+                    ,id: 'CENTER_ID'
+                    ,region:'center'
+                    ,margins: '5 0 5 0'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+                },{
+                    region:'east'
+                    ,collapsible: false
+                    ,id: 'EAST_ID'
+                    ,margins: '3 3 3 0'
+                    ,cmargins: '3 3 3 3'
+                    ,width: 140
+                    ,minSize: 140
+                    ,maxSize: 140
+                    ,bodyStyle: 'background:#f4f4f4 ;padding:10px'
+                    ,layout :'form'
+                    ,labelWidth: 20
+                    ,items:[{
+                        xtype: 'displayfield'
+                        ,value : '<?=INFORMATION;?>'
+                        ,labelStyle: 'background:#306da6; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    },{
+                        xtype: 'displayfield'
+                        ,value : '<?=IMPORTANT;?>'
+                        ,labelStyle: 'background:#EDA12A; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    },{
+                        xtype: 'displayfield'
+                        ,value : '<?=URGENT;?>'
+                        ,labelStyle: 'background:#86a723; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    },{
+                        xtype: 'displayfield'
+                        ,value : 'SOS'
+                        ,labelStyle: 'background:#d63333; width : 12px; height: 12px; margin-top: 4px; padding : 0;' 
+                    }]
+                }] 
+            }]
+        }]
+    });
+    
+    Ext.getCmp('SMS_LIST_ID').on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        var record = grid.store.getAt(rowIndex);
+        var clickId = record.data.ID;
+        Ext.getCmp('WEST_ID').collapse();
+        clickOpenPage('CENTER_ID','', '<?=$this->URL_SHOWITEM?>&objectId=' + clickId + '&classId=<?=$classId;?>&sendTo=STAFF');
+    });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

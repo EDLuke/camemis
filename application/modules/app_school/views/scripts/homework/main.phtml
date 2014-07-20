@@ -1,0 +1,156 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$SUBJECT_TEACHER_ACCESS = SubjectTeacherDBAccess::getInstance();
+  
+$classId = isset($_GET["classId"])?addText($_GET["classId"]):"";
+$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):""; 
+
+$ENTRIES = GradeSubjectDBAccess::getListSubjectsFromAcademic($classId,false);
+
+function checkTeacherSchedule($academicId, $subjectId){
+    $SQL = Zend_Registry::get('DB_ACCESS')->select();
+    $SQL->from('t_schedule', 'COUNT(*) AS C');
+    $SQL->where("SUBJECT_ID = ?",$subjectId);
+    $SQL->where("TEACHER_ID = '" . Zend_Registry::get('USER')->ID . "'");
+    $SQL->where("ACADEMIC_ID = ?",$academicId);
+    $result = Zend_Registry::get('DB_ACCESS')->fetchRow($SQL);
+    //error_log($SQL);
+    return $result ? $result->C : 0;
+}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<style type="text/css">
+    .ux-icon-combo-icon {
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        width: 18px;
+        height: 14px;
+    }
+    .ux-icon-combo-input {
+        padding-left: 25px;
+    }
+    .x-form-field-wrap .ux-icon-combo-icon {
+        top: 3px;
+        left: 5px;
+    }
+    .ux-icon-combo-item {
+        background-repeat: no-repeat ! important;
+        background-position: 3px 50% ! important;
+        padding-left: 24px ! important;
+    }
+</style>
+<script>
+var subjectId;
+Ext.onReady(function() {
+
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $subjectId = "";
+    $setParams = "";
+    $setParams .= "&classId=".$classId."";
+    $setParams .= "&teacherId=".$teacherId."";
+    $DATA = array();
+    $STORE_SUBJECT = "[";
+    if($ENTRIES){ 
+        $i=0; 
+        $DATA[0] = '';
+        $STORE_SUBJECT = "[";
+        foreach($ENTRIES as $value){ 
+            if($value->SUBJECT_ID){ 
+                $CHECK = checkTeacherSchedule($classId, $value->SUBJECT_ID);
+                switch (UserAuth::getUserType()) {
+                    case "STUDENT":
+                    case "ADMIN":
+                    case "SUPERADMIN":
+                        $DATA[$i] = $value->SUBJECT_ID;
+                        $STORE_SUBJECT .= $i?",":"";
+                        $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
+                        $i++;
+                    break;
+                    case "TEACHER":
+                    case "INSTRUCTOR":  
+                        if($CHECK){
+                            $DATA[$i] = $value->SUBJECT_ID;
+                            $STORE_SUBJECT .= $i?",":"";
+                            $STORE_SUBJECT .= "['" . $value->SUBJECT_ID . "', '(".$value->SUBJECT_SHORT.") " . $value->SUBJECT_NAME ."', 'icon-application_form_magnify']";
+                            $i++;
+                        }
+                    break;
+                }  
+            } 
+        }
+         $subjectId = isset($DATA[0])?$DATA[0]:0;
+         $defaultParams = $setParams;
+         $defaultParams .= "&subjectId=".$subjectId."";
+         $SHOW_LAYOUT = "[new Ext.ux.IFrameComponent({ id: 'SHOW_SUBJECT', url: '/homework/homeworklist/?camIds=".$this->urlEncryp->encryptedGet($defaultParams)."'})]";
+    }else{
+        $SHOW_LAYOUT = "{
+            title:'".STATUS."'
+            ,layout: 'fit'
+            ,border: false
+            ,contentEl: 'initCenter'
+        }";
+    }
+    
+    $STORE_SUBJECT .= "]";
+    $COMBO_SUBJECT = "[{
+        xtype:'combo'
+        ,width:280
+        ,id:'COMO_SUBJECT_ID'
+        ,fieldLabel:'IconCombo'
+        ,store: new Ext.data.SimpleStore({
+            fields: ['comboCode', 'comboName', 'comboIcon'],
+            data: ".$STORE_SUBJECT."
+        }),
+        plugins:new Ext.ux.plugins.IconCombo()
+        ,valueField: 'comboCode'
+        ,displayField: 'comboName'
+        ,iconClsField: 'comboIcon'
+        ,triggerAction: 'all'
+        ,mode: 'local'
+        ,value:'".$subjectId."'
+    }]";
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout: 'card' 
+            ,id:'content'
+            ,activeItem: 0
+            ,border: false
+            ,tbar:['->','-',
+                '<b><?=SUBJECT?>:</b>',{
+                xtype: 'buttongroup' 
+                ,items:<?=$COMBO_SUBJECT;?>
+            }] 
+            ,items:<?=$SHOW_LAYOUT?>
+        }]
+    });
+    var comboSubject = Ext.getCmp('COMO_SUBJECT_ID');
+    comboSubject.on('select', function() {
+        clickOpenPage('content','','/homework/homeworklist/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&subjectId=' + comboSubject.getValue());
+    });
+});
+</script>
+<div id="initCenter" class="x-hide-display" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="headerError"><?=MSG_NO_DATA_AVAILABLE?></h1>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

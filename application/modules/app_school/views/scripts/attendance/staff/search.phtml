@@ -1,0 +1,424 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 22.08.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("ATTENDANCE_MANAGEMENT");
+$OBJECT_FORM->setLoadUrl('/attendance/jsonload/');
+
+$OBJECT_GRID = new CamemisGrid("STAFF_ATTENDANCE", "LIST");
+$OBJECT_GRID->setLoadUrl("/attendance/jsonload/");
+
+$OBJECT_TREE = new CamemisTree("SUBJECT", "LIST");
+$OBJECT_TREE->setURL('/subject/jsontree/');
+$OBJECT_TREE->setSaveUrl('/subject/jsonsave/');
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
+?>
+
+<script>
+  
+    function myAjaxRequest(formObject, gridObject){
+        var fieldValue = formObject.getForm().getFieldValues();
+        if(plsEnterKey(fieldValue)){
+            <?=CamemisPage::alertPleaseSelect(NOTES,PLS_ENTER_KEYWORD)?>
+        }else{
+            var myMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS <?=LOADING?></b>', msgCls:'x-mask-loading-camemis'});
+            myMask.show();
+            Ext.Ajax.request({
+                url: '/attendance/jsonload'
+                ,method: 'POST'
+                ,params:{cmd:'jsonSearchStaffAttendance'}
+                ,form: formObject.getForm().getEl().dom
+                ,success: function(response, options) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
+                    for(var i=0;i<myform.getForm().getEl().dom.length;i++){
+                        if(myform.getForm().getEl().dom[i].value){
+                            Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                        }
+                    }
+                    gridObject.getStore().loadData(jsonData);
+                    myMask.hide();
+                }
+            });
+        }
+    }
+
+    function plsEnterKey(obj){
+            var s;
+            if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER 
+                || obj.CODE || obj.CONTRACT_TYPE || obj.GENDER || obj.ABSENT_TYPE || obj.START_DATE || obj.END_DATE || obj.CHOOSE_SUBJECT
+            ){
+                s = 0;
+            }else{
+                s = 1;
+            }
+            return s;
+    }
+
+    function keyEnter(){
+        Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+        var formObject = Ext.getCmp('<?=$OBJECT_FORM->getObjectId()?>');
+        var gridObject = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        myAjaxRequest(formObject, gridObject);
+    }
+    
+    function geFormat(data){
+        return date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+    }
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        function cssTextBold(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+
+        function cssTextBlue(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#061f83; padding: 5px;">' + value + '</div>';
+        }
+
+        function cssText(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssTextRed(value, metadata, record){
+            var name = record.data.STAFF;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#CC0000; padding: 5px;">' + value + '</div>';
+        }
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $OBJECT_TREE->isAsyncTreeNode = false;   
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+        $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        $triggerOnClickSubject = "
+            openWinXType('SUBJECT_ID','".SUBJECT."', '".$OBJECT_TREE->getObjectXType()."', 500, percentHeight(85));
+            var myTree = Ext.getCmp('".$OBJECT_TREE->getObjectId()."');
+            myTree.on('click', function(node, e){
+                Ext.getCmp('CHOOSE_SUBJECT_NAME_ID').setValue(node.attributes.text);
+                Ext.getCmp('CHOOSE_SUBJECT').setValue(node.id);
+                Ext.getCmp('SUBJECT_ID').close();
+            });
+        ";
+        $OBJECT_TREE->setBaseParams("
+        cmd: 'treeAllSubjects'
+        ");
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isTreeExpand = false;
+        $OBJECT_TREE->isOnClickContextMenu = false;
+        $OBJECT_TREE->renderJS();
+        
+        $OBJECT_FORM->addObjectItems("
+            xtype:'fieldset'
+            ,checkboxToggle:true
+            ,title: '".DATE."'
+            ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
+            ,width: 310
+            ,items:[{
+                name: 'START_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . START_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'START_DATE'
+                ,vtype: 'daterange'
+                ,endDateField: 'END_DATE'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,allowBlank: true
+            },{
+                name: 'END_DATE'
+                ,hidden: false
+                ,width: 150
+                ,fieldLabel: '" . END_DATE . "'
+                ,xtype: 'datefield'
+                ,id: 'END_DATE'
+                ,vtype: 'daterange'
+                ,format: '" . setExtDatafieldFormat() . "'
+                ,startDateField: 'START_DATE'
+                ,allowBlank: true
+            }]
+        ");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $OBJECT_FORM->addObjectItems("
+                xtype:'fieldset'
+                ,checkboxToggle:true
+                ,title: '".PERSONAL_INFORMATION."'
+                ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
+                ,width: 310
+                ,items:[
+                    {".CamemisField::Textfield("STAFF_SCHOOL_ID", "STAFF_SCHOOL_ID", STAFF_SCHOOL_ID, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("CODE", "CODE", CODE_ID, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                    ,{".CamemisField::comboAbsentTypes("STAFF", false,150, false)."}
+                    ,{".CamemisField::Trigger2("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, false, 150)."}
+                    ,{".CamemisField::comboCamemisTypes("CONTRACT_TYPE", CONTRACT_TYPE, false,150, false)."}
+                ]
+            ");
+	}else{
+            $OBJECT_FORM->addObjectItems("
+                xtype:'fieldset'
+                ,checkboxToggle:true
+                ,title: '".PERSONAL_INFORMATION."'
+                ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
+                ,width: 310
+                ,items:[
+                    {".CamemisField::Textfield("STAFF_SCHOOL_ID", "STAFF_SCHOOL_ID", STAFF_SCHOOL_ID, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("CODE", "CODE", CODE_ID, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("FIRSTNAME", "FIRSTNAME", FIRSTNAME, false, false, false, 150)."}
+                    ,{".CamemisField::Textfield("LASTNAME", "LASTNAME", LASTNAME, false, false, false, 150)."}
+                    ,{".CamemisField::comboAbsentTypes("STAFF", false,150, false)."}
+                    ,{".CamemisField::Trigger2("CHOOSE_SUBJECT_NAME",SUBJECT,$triggerOnClickSubject, false, 150)."}
+                    ,{".CamemisField::comboCamemisTypes("CONTRACT_TYPE", CONTRACT_TYPE, false,150, false)."}
+                ]
+            ");
+	}
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".RESET."'
+            ,iconCls:'icon-arrow_undo'
+            ,scope:this
+            ,handler: function(){".CamemisPage::setRequestURI()."}
+        ");
+        
+        $OBJECT_FORM->addObjectItems(CamemisField::Hidden("CHOOSE_SUBJECT",false));
+        $STAFF_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STAFF_ATTENDANCE_READ_RIGHT")?"false":"true";
+        
+        $OBJECT_FORM->addTBarItems("
+            text: '".FIND."'
+            ,disabled: ".$STAFF_ATTENDANCE_READ_RIGHT."
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
+                contract_type = this.getForm().findField('CONTRACT_TYPE').getValue();
+                var formObject = Ext.getCmp('".$OBJECT_FORM->getObjectId()."');
+                var gridObject = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
+                myAjaxRequest(formObject, gridObject);
+                if(contract_type){
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getColumnModel().setHidden(6, false);
+                }else{
+                Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getColumnModel().setHidden(6, true);
+                }
+            }
+        ");
+        
+        $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;
+        $OBJECT_FORM->isKeys = true;
+        $OBJECT_FORM->renderJS();
+
+        ///////////////////////////////////////////////////
+        //Grid...
+        ///////////////////////////////////////////////////
+        
+        $OBJECT_GRID->addReadField("name: 'STAFF', type: 'string'");
+        $OBJECT_GRID->addReadField("name: 'ABSENT_ID'");
+        $OBJECT_GRID->addReadField("name: 'STAFF_ID'");
+        $OBJECT_GRID->addReadField("name: 'DATE'");
+        $OBJECT_GRID->addReadField("name: 'COUNT_DATE'");
+        $OBJECT_GRID->addReadField("name: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addReadField("name: 'SUBJECT_NAME'");
+        $OBJECT_GRID->addReadField("name: 'STAFF_CONTRACT_TYPE'");
+        
+        $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 190, hidden:".checkColHidden(1, $columndata).", renderer: cssTextBold, sortable: true, dataIndex: 'STAFF'");
+        $OBJECT_GRID->addColumn("header: '<b>".ATTENDANCE_TYPE."</b>', align:'center', width: 180, hidden:".checkColHidden(2, $columndata).", sortable: true, renderer: cssTextBlue, dataIndex: 'ABSENT_TYPE'");
+        $OBJECT_GRID->addColumn("header: '<b>".DATE."</b>', align:'center', width: 220, hidden:".checkColHidden(3, $columndata).", sortable: true, renderer: cssTextBlue, dataIndex: 'DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".COUNT_DATE."</b>', align:'center', width: 100, hidden:".checkColHidden(4, $columndata).", sortable: true, renderer: cssTextRed, dataIndex: 'COUNT_DATE'");
+        $OBJECT_GRID->addColumn("header: '<b>".SUBJECT."</b>',align:'center', width: 150, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'SUBJECT_NAME'");
+        $OBJECT_GRID->addColumn("header: '<b>".CONTRACT_TYPE."</b>',align:'center', width: 150, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'STAFF_CONTRACT_TYPE'");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-',{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,timeout: 600000
+                        ,params:{cmd: 'jsonSearchStaffAttendance',gridId:'".$OBJECT_GRID->getObjectId()."'}
+                        ,form: myForm.getEl().dom
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openstaffattendancelist/'
+                        }
+                    });
+                }
+            }]);
+        ");
+        
+        $OBJECT_GRID->baseParams = "
+            start:0
+            ,limit:100
+            ,cmd: 'jsonSearchStaffAttendance'
+        ";
+        
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
+        $OBJECT_GRID->isGroupingView = true;
+        $OBJECT_GRID->groupField = "STAFF";
+        $OBJECT_GRID->setUserColumn = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();  
+    
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout: 'fit'
+                ,border: false
+                ,id: 'CONTENT'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,collapsible: true
+                        ,region:'west'
+                        ,id: 'WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width: 350
+                        ,minSize: 350
+                        ,maxSize: 350
+                        ,keys:{
+                            key:[13]
+                            ,fn: keyEnter
+                            ,scope:this
+                        }
+                        ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+                    },{
+                        title: ''
+                        ,collapsible: false
+                        ,id: 'center'
+                        ,region:'center'
+                        ,layout: 'card'
+                        ,activeItem: 0
+                        ,margins: '3 3 3 0'
+                        ,items:[{
+                            layout:'fit'
+                            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                            ,border: false
+                            ,items:[{
+                                xtype: 'tabpanel'
+                                ,id:'TABPANEL_ID'
+                                ,tabPosition: 'top'
+                                ,plain:true
+                                ,activeTab: 0
+                                ,enableTabScroll:true
+                                ,items:[{
+                                    title:'<?=CHARTS;?>'
+                                    ,layout:'fit'
+                                    ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_CHARTS', url:'/attendance/staffchartreport/?key=<?=camemisId();?>'})]
+                                },{
+                                    title:'<?=SEARCH_RESULT;?>'
+                                    ,layout:'fit'
+                                    ,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        });
+        var myGrid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+
+            if(record.data.ABSENT_ID === "new"){
+                hasHidden = true;
+            }else{
+                hasHidden = false;
+            }
+            
+            showUrl = record.data.URL;
+            var contextMenu = new Ext.menu.Menu({
+                items: [{
+                    text: '<?=SHOW_DETAIL;?> &raquo; ' + record.data.STAFF + record.data.ABSENT_ID
+                    ,iconCls:'icon-application_form_magnify'
+                    ,hidden:hasHidden
+                    ,handler:function(){
+                        clickOpenPage('center','','/attendance/showbystaff/?staffId=' + record.data.STAFF_ID +'&objectId=' + record.data.ABSENT_ID);
+                    }
+                }]
+            });
+            event.stopEvent();
+            contextMenu.showAt(event.xy);
+        });
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+        //Ext.getCmp('WEST_ID').toggleCollapse(true);
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

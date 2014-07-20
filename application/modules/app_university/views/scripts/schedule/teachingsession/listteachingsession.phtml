@@ -1,0 +1,515 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 22.08.2013
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisDynamicCombo.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$GENERAL_EDUCATION = new CamemisGrid("GENERAL_EDUCATION", "LIST");
+$GENERAL_EDUCATION->setLoadUrl("/schedule/jsonload/");
+
+$CREDIT_EDUCATION = new CamemisGrid("CREDIT_EDUCATION", "LIST");
+$CREDIT_EDUCATION->setLoadUrl("/schedule/jsonload/");
+
+$TRAINING_EDUCATION = new CamemisGrid("TRAINING", "LIST");
+$TRAINING_EDUCATION->setLoadUrl("/schedule/jsonload/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$startDate = isset($_GET["startDate"])?addText($_GET["startDate"]):firstDayOfMonth();
+$endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
+
+?>
+<script>
+    var startDate = '<?=getShowDate($startDate)?>';
+    var endDate = '<?=getShowDate($endDate)?>';
+    
+    function geFormat(data){
+        return date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+    }
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+    
+    Ext.onReady(function() {
+        
+        function cssText(value, metadata, record){
+            var name = record.data.FULLNAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+        }
+        
+        function cssNoSession(value, metadata, record){
+            var name = record.data.FULLNAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#000; padding: 5px; background:#e6e6e6;">' + value + '</div>';
+        }
+        
+        function cssNoExtraSession(value, metadata, record){
+            var name = record.data.FULLNAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#000; padding: 5px; background:#c3d5ed;">' + value + '</div>';
+        }
+        
+        function cssNoAbsence(value, metadata, record){
+            var name = record.data.FULLNAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#FFF; padding: 5px; background:#e24f43;">' + value + '</div>';
+        }
+        
+        function cssTotal(value, metadata, record){
+            var name = record.data.FULLNAME;
+            metadata.attr = 'ext:qtip="' + name + '"';
+            return '<div style="font-weight:bold; color:#000; padding: 5px; background:#c3d5ed;">' + value + '</div>';
+        }
+
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $STAFF_ATTENDANCE_READ_RIGHT = UserAuth::getACLValue("STAFF_ATTENDANCE_READ_RIGHT")?"false":"true";
+        
+        $FIND_OBJECT = "{
+            text:'".FIND."'
+            ,disabled: ".$STAFF_ATTENDANCE_READ_RIGHT."
+            ,formBind:true
+            ,iconCls:'icon-magnifier'
+            ,scope:this
+            ,handler:function(){
+                var _startDate = Ext.getCmp('START_DATE').getValue();
+                if(_startDate){
+                    startDate = _startDate.getFullYear() + '-' + (parseInt(_startDate.getMonth()) + 1) + '-' + _startDate.getDate();
+                }else{
+                    startDate = '';
+                }
+                
+                var _endDate = Ext.getCmp('END_DATE').getValue(); 
+                if(_endDate){
+                    endDate = _endDate.getFullYear() + '-' + (parseInt(_endDate.getMonth()) + 1) + '-' + _endDate.getDate();
+                }else{
+                    endDate = ''; 
+                }
+                Ext.getCmp('center').getLayout().setActiveItem(1);
+                
+                Ext.getCmp('".$GENERAL_EDUCATION->getObjectId()."').store.baseParams = {
+                    start:0
+                    ,limit:100
+                    ,cmd: 'jsonListTeachingSession'
+                    ,endDate: endDate
+                    ,startDate: startDate
+                };
+                window.location='".$_SERVER["REQUEST_URI"]."&startDate='+startDate+'&endDate='+endDate;
+            }
+        }";
+        
+        $PENEL_ITEMS = Array();
+        
+        ////////////////////////////////////////////////////////////////////////
+        if (UserAuth::displayTraditionalEducationSystem()){
+            $GENERAL_EDUCATION->addReadField("name: 'STAFF_ID'");
+            $GENERAL_EDUCATION->addReadField("name: 'STAFF_CODE'");
+            $GENERAL_EDUCATION->addReadField("name: 'FULLNAME'");
+            $GENERAL_EDUCATION->addReadField("name: 'NUMBER_SESSION'");
+            $GENERAL_EDUCATION->addReadField("name: 'NUMBER_EXTRA_SESSION'");
+            $GENERAL_EDUCATION->addReadField("name: 'NUMBER_ABSENCE'");
+            $GENERAL_EDUCATION->addReadField("name: 'SUBSTITUTE'");
+            $GENERAL_EDUCATION->addReadField("name: 'CANCEL'");
+            $GENERAL_EDUCATION->addReadField("name: 'TOTAL'");
+
+            $GENERAL_EDUCATION->addColumn("header: '<b>".FULL_NAME."</b>', width: 170, renderer: cssText, sortable: true, dataIndex: 'FULLNAME'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".NUMBER_SESSION."</b>', width:130, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'NUMBER_SESSION'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".NUMBER_EXTRA_SESSION."</b>', width: 130, align:'right', renderer: cssNoExtraSession, sortable: true, dataIndex: 'NUMBER_EXTRA_SESSION'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".SUBSTITUTE."</b>', width: 120, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'SUBSTITUTE'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".ATTENDANCE."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'NUMBER_ABSENCE'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".CANCEL."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'CANCEL'");
+            $GENERAL_EDUCATION->addColumn("header: '<b>".TOTAL."</b>', width: 100, align:'right', renderer: cssTotal, sortable: true, dataIndex: 'TOTAL'");
+        
+            $GENERAL_EDUCATION->addTBarItems("
+                tbar.add(['-',{
+                    id: 'REFRESH_ID'
+                    ,text: '".REFRESH."'
+                    ,iconCls:'icon-reload'
+                    ,scope:this
+                    ,disabled: false
+                    ,handler: function(){
+                       Ext.getCmp('".$GENERAL_EDUCATION->getObjectId()."').store.reload();
+                    }
+                }]);
+            ");
+        
+            $GENERAL_EDUCATION->baseParams = "
+                start:0
+                ,limit:100
+                ,cmd: 'jsonListTeachingSession'
+                ,academicType:'general'
+                ,startDate: startDate
+                ,endDate: endDate
+            ";
+            
+            $GENERAL_EDUCATION->loadMask = true;
+            $GENERAL_EDUCATION->isPagingToolbar = true;
+            $GENERAL_EDUCATION->isQuickySearch = true;
+            $GENERAL_EDUCATION->isObjectDefaultOnLoad = true;
+            $GENERAL_EDUCATION->forceFit = "false";
+            $GENERAL_EDUCATION->renderJS(); 
+
+            $GENERAL_EDUCATION_ITEM = "{
+                title: '".TRADITIONAL_EDUCATION_SYSTEM."'
+                ,layout: 'fit'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,layout: 'fit'
+                        ,collapsible: true
+                        ,region:'west'
+                        ,id: 'GENERAL_EDUCATION_WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width:400
+                        ,minSize:400
+                        ,maxSize:400
+                        ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'GENERAL_EDUCATION_CHART', url:'/schedule/teachingsessionchart/?academicType=general&startDate=".getShowDate($startDate)."&endDate=".getShowDate($endDate)."'})]
+                    },{
+                        collapsible: false
+                        ,region:'center'
+                        ,margins: '3 3 3 0'
+                        ,layout: 'fit'
+                        ,items: [{
+                            layout: 'fit'
+                            ,border: false
+                            ,items: [{xtype: '".$GENERAL_EDUCATION->getObjectXType()."'}]
+                        }]
+                    }]
+                }]
+            }";
+            
+            $PENEL_ITEMS[] = $GENERAL_EDUCATION_ITEM;
+        }
+        
+        if (UserAuth::displayCreditEducationSystem()){
+            $CREDIT_EDUCATION->addReadField("name: 'STAFF_ID'");
+            $CREDIT_EDUCATION->addReadField("name: 'STAFF_CODE'");
+            $CREDIT_EDUCATION->addReadField("name: 'FULLNAME'");
+            $CREDIT_EDUCATION->addReadField("name: 'NUMBER_SESSION'");
+            $CREDIT_EDUCATION->addReadField("name: 'NUMBER_EXTRA_SESSION'");
+            $CREDIT_EDUCATION->addReadField("name: 'NUMBER_ABSENCE'");
+            $CREDIT_EDUCATION->addReadField("name: 'SUBSTITUTE'");
+            $CREDIT_EDUCATION->addReadField("name: 'CANCEL'");
+            $CREDIT_EDUCATION->addReadField("name: 'TOTAL'");
+
+            $CREDIT_EDUCATION->addColumn("header: '<b>".FULL_NAME."</b>', width: 170, renderer: cssText, sortable: true, dataIndex: 'FULLNAME'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".NUMBER_SESSION."</b>', width:130, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'NUMBER_SESSION'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".NUMBER_EXTRA_SESSION."</b>', width: 130, align:'right', renderer: cssNoExtraSession, sortable: true, dataIndex: 'NUMBER_EXTRA_SESSION'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".SUBSTITUTE."</b>', width: 120, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'SUBSTITUTE'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".ATTENDANCE."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'NUMBER_ABSENCE'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".CANCEL."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'CANCEL'");
+            $CREDIT_EDUCATION->addColumn("header: '<b>".TOTAL."</b>', width: 100, align:'right', renderer: cssTotal, sortable: true, dataIndex: 'TOTAL'");
+        
+            $CREDIT_EDUCATION->addTBarItems("
+                tbar.add(['-',{
+                    id: 'REFRESH_ID'
+                    ,text: '".REFRESH."'
+                    ,iconCls:'icon-reload'
+                    ,scope:this
+                    ,disabled: false
+                    ,handler: function(){
+                       Ext.getCmp('".$CREDIT_EDUCATION->getObjectId()."').store.reload();
+                    }
+                }]);
+            ");
+        
+            $CREDIT_EDUCATION->baseParams = "
+                start:0
+                ,limit:100
+                ,cmd: 'jsonListTeachingSession'
+                ,academicType:'credit'
+                ,startDate: startDate
+                ,endDate: endDate
+            ";
+            
+            $CREDIT_EDUCATION->loadMask = true;
+            $CREDIT_EDUCATION->isPagingToolbar = true;
+            $CREDIT_EDUCATION->isQuickySearch = true;
+            $CREDIT_EDUCATION->isObjectDefaultOnLoad = true;
+            $CREDIT_EDUCATION->forceFit = "false";
+            $CREDIT_EDUCATION->renderJS(); 
+
+            $CREDIT_EDUCATION_ITEM = "{
+                title: '".CREDIT_EDUCATION_SYSTEM."'
+                ,layout: 'fit'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,layout: 'fit'
+                        ,collapsible: true
+                        ,region:'west'
+                        ,id: 'CREDIT_EDUCATION_WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width:400
+                        ,minSize:400
+                        ,maxSize:400
+                        ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'CREDIT_EDUCATION_CHART', url:'/schedule/teachingsessionchart/?academicType=credit&startDate=".getShowDate($startDate)."&endDate=".getShowDate($endDate)."'})]
+                    },{
+                        collapsible: false
+                        ,region:'center'
+                        ,margins: '3 3 3 0'
+                        ,layout: 'fit'
+                        ,items: [{
+                            layout: 'fit'
+                            ,border: false
+                            ,items: [{xtype: '".$CREDIT_EDUCATION->getObjectXType()."'}]
+                        }]
+                    }]
+                }]
+            }";
+            $PENEL_ITEMS[] = $CREDIT_EDUCATION_ITEM;
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        if (UserAuth::displayRoleTrainingEducation()){
+            
+            $TRAINING_EDUCATION->addReadField("name: 'STAFF_ID'");
+            $TRAINING_EDUCATION->addReadField("name: 'STAFF_CODE'");
+            $TRAINING_EDUCATION->addReadField("name: 'FULLNAME'");
+            $TRAINING_EDUCATION->addReadField("name: 'NUMBER_SESSION'");
+            $TRAINING_EDUCATION->addReadField("name: 'NUMBER_EXTRA_SESSION'");
+            $TRAINING_EDUCATION->addReadField("name: 'SUBSTITUTE'");
+            $TRAINING_EDUCATION->addReadField("name: 'NUMBER_ABSENCE'");
+            $TRAINING_EDUCATION->addReadField("name: 'CANCEL'");
+            $TRAINING_EDUCATION->addReadField("name: 'TOTAL'");
+
+            $TRAINING_EDUCATION->addColumn("header: '<b>".FULL_NAME."</b>', width: 170, renderer: cssText, sortable: true, dataIndex: 'FULLNAME'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".NUMBER_SESSION."</b>', width:130, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'NUMBER_SESSION'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".NUMBER_EXTRA_SESSION."</b>', width: 130, align:'right', renderer: cssNoExtraSession, sortable: true, dataIndex: 'NUMBER_EXTRA_SESSION'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".SUBSTITUTE."</b>', width: 120, align:'right', renderer: cssNoSession, sortable: true, dataIndex: 'SUBSTITUTE'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".ATTENDANCE."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'NUMBER_ABSENCE'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".CANCEL."</b>', width: 100, align:'right', renderer: cssNoAbsence, sortable: true, dataIndex: 'CANCEL'");
+            $TRAINING_EDUCATION->addColumn("header: '<b>".TOTAL."</b>', width: 100, align:'right', renderer: cssTotal, sortable: true, dataIndex: 'TOTAL'");
+        
+            $TRAINING_EDUCATION->addTBarItems("
+                tbar.add(['-',{
+                    id: 'REFRESH_ID'
+                    ,text: '".REFRESH."'
+                    ,iconCls:'icon-reload'
+                    ,scope:this
+                    ,disabled: false
+                    ,handler: function(){
+                       Ext.getCmp('".$TRAINING_EDUCATION->getObjectId()."').store.reload();
+                    }
+                }]);
+            ");
+        
+            $TRAINING_EDUCATION->baseParams = "
+                start:0
+                ,limit:100
+                ,academicType:'training'
+                ,cmd: 'jsonListTeachingSession'
+                ,startDate: startDate
+                ,endDate: endDate
+            ";
+            
+            $TRAINING_EDUCATION->loadMask = true;
+            $TRAINING_EDUCATION->isPagingToolbar = true;
+            $TRAINING_EDUCATION->isQuickySearch = true;
+            $TRAINING_EDUCATION->isObjectDefaultOnLoad = true;
+            $TRAINING_EDUCATION->forceFit = "false";
+            $TRAINING_EDUCATION->renderJS(); 
+
+            $TRAINING_PROGRAMS_ITEM = "{
+                title: '".TRAINING_PROGRAMS."'
+                ,layout: 'fit'
+                ,items:[{
+                    layout:'border'
+                    ,border: false
+                    ,defaults: {
+                        collapsible: true
+                        ,split: true
+                    }
+                    ,items: [{
+                        title: ''
+                        ,layout: 'fit'
+                        ,collapsible: true
+                        ,region:'west'
+                        ,id: 'TRAINING_EDUCATION_WEST_ID'
+                        ,margins: '3 0 3 3'
+                        ,cmargins: '3 3 3 3'
+                        ,width:400
+                        ,minSize:400
+                        ,maxSize:400
+                        ,bodyStyle: 'background:#FFF; color:#000;padding:10px'
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'TRAIINING_EDUCATION_CHART', url:'/schedule/teachingsessionchart/?academicType=training&startDate=".getShowDate($startDate)."&endDate=".getShowDate($endDate)."'})]
+                    },{
+                        collapsible: false
+                        ,region:'center'
+                        ,margins: '3 3 3 0'
+                        ,layout: 'fit'
+                        ,items: [{
+                            layout: 'fit'
+                            ,border: false
+                            ,items: [{xtype: '".$TRAINING_EDUCATION->getObjectXType()."'}]
+                        }]
+                    }]
+                }]
+            }";
+            
+            $PENEL_ITEMS[] = $TRAINING_PROGRAMS_ITEM;
+        }
+        
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+
+        ?>
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,tbar:['<b><?=START_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'START_DATE'
+                    ,name: 'START_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: startDate
+                },'&nbsp;<b><?=END_DATE?></b>',{
+                    xtype:'datefield'
+                    ,width:120
+                    ,id:'END_DATE'
+                    ,name: 'END_DATE'
+                    ,format: '<?=setExtDatafieldFormat()?>'
+                    ,allowBlank:false
+                    ,value: endDate
+                }
+                ,<?=$FIND_OBJECT?>
+                ]
+                ,items:[{
+                    layout:'fit'
+                    ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                    ,border: false
+                    ,items:[{
+                        xtype: 'tabpanel'
+                        ,tabPosition: 'top'
+                        ,plain:true
+                        ,activeTab: 0
+                        ,enableTabScroll:true
+                        ,items:<?=$CHOOSE_ITEMS?>
+                    }]
+                }]
+            }]
+        });
+        <?
+        if (UserAuth::displayTraditionalEducationSystem()){
+            $gridGeneral ="var gridGeneral = Ext.getCmp('".$GENERAL_EDUCATION->getObjectId()."');";
+            $gridGeneral .="if (gridGeneral) gridGeneral.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+                $gridGeneral .="var record = gridGeneral.store.getAt(rowIndex);";
+                $gridGeneral .="Ext.getCmp('center').getLayout().setActiveItem(0);";
+                $gridGeneral .="var contextMenu = new Ext.menu.Menu({";
+                    $gridGeneral .="items: [{";
+                    $gridGeneral .="text: '".SHOW_DETAIL." &raquo; ' + record.data.FULLNAME";
+                    $gridGeneral .=",iconCls: 'icon-application_form_magnify'";
+                        $gridGeneral .=",handler: function(){";
+                            $gridGeneral .="clickOpenPage('center','','/finance/staffpaymentsession/?objectId='+record.data.STAFF_ID+'&startDate='+startDate+'&endDate='+endDate+'&actionType=1');";
+                        $gridGeneral .="}";
+                    $gridGeneral .="}]";
+                $gridGeneral .="});";
+                $gridGeneral .="event.stopEvent();";
+                $gridGeneral .="contextMenu.showAt(event.xy);";
+            $gridGeneral .="});";
+            echo $gridGeneral;
+        }
+        if (UserAuth::displayCreditEducationSystem()){
+            $gridCredit ="var gridCredit = Ext.getCmp('".$CREDIT_EDUCATION->getObjectId()."');";
+            $gridCredit .="if (gridCredit) gridCredit.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+                $gridCredit .="var record = gridCredit.store.getAt(rowIndex);";
+                $gridCredit .="Ext.getCmp('center').getLayout().setActiveItem(0);";
+                $gridCredit .="var contextMenu = new Ext.menu.Menu({";
+                    $gridCredit .="items: [{";
+                    $gridCredit .="text: '".SHOW_DETAIL." &raquo; ' + record.data.FULLNAME";
+                    $gridCredit .=",iconCls: 'icon-application_form_magnify'";
+                        $gridCredit .=",handler: function(){";
+                            $gridCredit .="clickOpenPage('center','','/finance/staffpaymentsession/?objectId='+record.data.STAFF_ID+'&startDate='+startDate+'&endDate='+endDate+'&actionType=1');";
+                        $gridCredit .="}";
+                    $gridCredit .="}]";
+                $gridCredit .="});";
+                $gridCredit .="event.stopEvent();";
+                $gridCredit .="contextMenu.showAt(event.xy);";
+            $gridCredit .="});";
+            echo $gridCredit;
+        }
+        
+        if (UserAuth::displayRoleTrainingEducation()){
+            $gridTraining ="var gridTraining = Ext.getCmp('".$TRAINING_EDUCATION->getObjectId()."');";
+            $gridTraining .="if (gridTraining) gridTraining.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+                $gridTraining .="var record = gridTraining.store.getAt(rowIndex);";
+                $gridTraining .="Ext.getCmp('center').getLayout().setActiveItem(0);";
+                $gridTraining .="var contextMenu = new Ext.menu.Menu({";
+                    $gridTraining .="items: [{";
+                    $gridTraining .="text: '".SHOW_DETAIL." &raquo; ' + record.data.FULLNAME";
+                    $gridTraining .=",iconCls: 'icon-application_form_magnify'";
+                        $gridTraining .=",handler: function(){";
+                            $gridTraining .="clickOpenPage('center','','/finance/staffpaymentsession/?objectId='+record.data.STAFF_ID+'&startDate='+startDate+'&endDate='+endDate+'&actionType=1');";
+                        $gridTraining .="}";
+                    $gridTraining .="}]";
+                $gridTraining .="});";
+                $gridTraining .="event.stopEvent();";
+                $gridTraining .="contextMenu.showAt(event.xy);";
+            $gridTraining .="});";
+            echo $gridTraining;
+        }
+        ?>
+    });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

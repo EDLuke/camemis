@@ -1,0 +1,133 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 07.08.2011
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();      
+
+$TEACHERLISTADMIN = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->objectId);
+if(!$academicObject) {header("Location: /main/permission/");exit;}
+
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
+
+$setParams = "&objectId=".$academicObject->ID."";
+?>
+<script>
+    
+    Ext.onReady(function() {
+		
+        <?    
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+        
+        $PENEL_ITEMS = Array();
+        switch ($TERM_NUMBER) {
+            case 1:
+                $FIRST_TERM = "{
+                    title: '".FIRST_TERM."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_TERM', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=FIRST_TERM")."'})]
+                }";
+                $PENEL_ITEMS[] = $FIRST_TERM;
+
+                $SECOND_TERM = "{
+                    title: '".SECOND_TERM."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_TERM', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=SECOND_TERM")."'})]
+                }";
+                $PENEL_ITEMS[] = $SECOND_TERM;
+
+                $THIRD_TERM = "{
+                    title: '".THIRD_TERM."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_TERM', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=THIRD_TERM")."'})]
+                }";
+                $PENEL_ITEMS[] = $THIRD_TERM;
+                break;
+            case 2:
+                $FIRST_QUARTER = "{
+                    title: '".FIRST_QUARTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_QUARTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=FIRST_QUARTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $FIRST_QUARTER;
+
+                $SECOND_QUARTER = "{
+                    title: '".SECOND_QUARTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_QUARTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=SECOND_QUARTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $SECOND_QUARTER;
+
+                $THIRD_QUARTER = "{
+                    title: '".THIRD_QUARTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'THIRD_QUARTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=THIRD_QUARTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $THIRD_QUARTER;
+
+                $FOURTH_QUARTER = "{
+                    title: '".FOURTH_QUARTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FOURTH_QUARTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=FOURTH_QUARTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $FOURTH_QUARTER;
+                break;
+            default:
+                $FIRST_SEMESTER = "{
+                    title: '".FIRST_SEMESTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'FIRST_SEMESTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=FIRST_SEMESTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $FIRST_SEMESTER;
+
+                $SECOND_SEMESTER = "{
+                    title: '".SECOND_SEMESTER."'
+                    ,layout: 'fit'
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SECOND_SEMESTER', url: '/academic/teachersbyclass/?camIds=".$this->urlEncryp->encryptedGet($setParams."&term=SECOND_SEMESTER")."'})]
+                }";
+                $PENEL_ITEMS[] = $SECOND_SEMESTER;
+                break;
+        }
+
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+           
+        ?>    
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
+            }]
+        });
+    });
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

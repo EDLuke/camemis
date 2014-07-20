@@ -1,0 +1,177 @@
+<?
+require_once 'clients/app_admin/AdminBar.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminTree.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminPage.php';
+
+$OBJECT_ADMIN_PAGE = AdminPage::getInstance();
+$OBJECT_ADMIN_PAGE->setLoadingMask = true;
+print $OBJECT_ADMIN_PAGE->showCamemisHeader();
+
+$RIGHT_TREE = new AdminTree("RIGHT", "LIST");
+?>
+<div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection...</h1>
+</div>
+<script>
+var parentId;
+var clickId;
+Ext.onReady(function() {
+
+    Ext.QuickTips.init();
+    
+    <?
+    $RIGHT_TREE->setURL('/app/jsontree/');
+    $RIGHT_TREE->isAsyncTreeNode = false;
+    $RIGHT_TREE->isTreeExpand = false;
+    $RIGHT_TREE->addTBarItems(AdminBar::tbarTreeRefresh());
+    $RIGHT_TREE->addTBarItems(AdminBar::tbarTreeExpand());
+    $RIGHT_TREE->addTBarItems(AdminBar::tbarTreeCollapse());
+    $RIGHT_TREE->addTBarItems("
+        text:'Role/Right of User'
+        ,iconCls:'icon-list-items'
+        ,menu:[{
+            text:'Role/Right of Administrator'
+            /*,iconCls: 'icon-tabs'*/
+            ,handler:function(){
+                Ext.getCmp('center').getLayout().setActiveItem(0);
+                Ext.getCmp('TREE.RIGHT_LIST_ID').loader.baseParams.defaultRole = 1;
+                Ext.getCmp('TREE.RIGHT_LIST_ID').root.reload();
+                Ext.getCmp('TREE.RIGHT_LIST_ID').getRootNode().expand(true, false);
+            }
+        },{
+            text:'Role/Right of Instructor'
+            /*,iconCls: 'icon-tabs'*/
+            ,handler:function(){
+                Ext.getCmp('center').getLayout().setActiveItem(0);
+                Ext.getCmp('TREE.RIGHT_LIST_ID').loader.baseParams.defaultRole = 2;
+                Ext.getCmp('TREE.RIGHT_LIST_ID').root.reload();
+                Ext.getCmp('TREE.RIGHT_LIST_ID').getRootNode().expand(true, false);
+            }
+        },{
+            text:'Role/Right of Teacher'
+            /*,iconCls: 'icon-tabs'*/
+            ,handler:function(){
+                Ext.getCmp('center').getLayout().setActiveItem(0);
+                Ext.getCmp('TREE.RIGHT_LIST_ID').loader.baseParams.defaultRole = 3;
+                Ext.getCmp('TREE.RIGHT_LIST_ID').root.reload();
+                Ext.getCmp('TREE.RIGHT_LIST_ID').getRootNode().expand(true, false);
+            }
+        },{
+            text:'Role/Right of Student'
+            /*,iconCls: 'icon-tabs'*/
+            ,handler:function(){
+                Ext.getCmp('center').getLayout().setActiveItem(0);
+                Ext.getCmp('TREE.RIGHT_LIST_ID').loader.baseParams.defaultRole = 4;
+                Ext.getCmp('TREE.RIGHT_LIST_ID').root.reload();
+                Ext.getCmp('TREE.RIGHT_LIST_ID').getRootNode().expand(true, false);
+            }
+        }]
+        
+    ");
+    
+    $RIGHT_TREE->addTBarItems("
+        text:'Folder'
+        ,disabled:false
+        ,id:'ADD_NEW_FOLDER'
+        ,iconCls:'icon-application_form_add'
+        ,handler:function(){
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+            clickOpenPage('center','','/app/showdetail/?objectId=new&parentId=0');
+        }
+    ");
+    
+    $RIGHT_TREE->setBaseParams("
+    	cmd: 'jsonTreeAllAppRights'
+    ");
+    $RIGHT_TREE->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,id: 'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 380
+                ,minSize: 380
+                ,maxSize: 380
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$RIGHT_TREE->getObjectXtype();?>'}]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,contentEl: 'initCenter'
+                }]
+            }]
+        }]
+    });
+    
+    var myTree = <?=$RIGHT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, e){
+        
+        clickId = node.id;
+        Ext.getCmp('center').getLayout().setActiveItem(0);
+        if(node.isLeaf()){
+            var button_disable = true;
+        }else{
+            var button_disable = false;
+            parentId = node.id;
+        }
+        //Ext.getCmp('SHOW_ITEM').enable();
+        
+        var contextMenu = new Ext.menu.Menu({
+            items: [{
+                text: 'Show Detail &raquo; ' + node.text
+                ,iconCls:'icon-application_form_magnify'
+                ,disable:button_disable
+                ,handler: function(){
+                     clickOpenPage('center','','/app/showdetail/?objectId=' + clickId + '&parentId='+node.attributes.parentId);
+                }
+            },{
+                text: 'Add new Item'
+                ,iconCls:'icon-application_form_add'
+                ,disable:button_disable
+                ,handler: function(){
+                     clickOpenPage('center','','/app/showdetail/?objectId=new&parentId=' + parentId);
+                }
+            }]
+        });
+        e.stopEvent();
+        contextMenu.showAt(e.xy); 
+        
+        
+        /*
+        clickId = node.id;
+        Ext.getCmp('center').getLayout().setActiveItem(0);
+        if(node.isLeaf()){
+            Ext.getCmp('ADD_NEW_ITEM').disable();
+        }else{
+            Ext.getCmp('ADD_NEW_ITEM').enable();
+            parentId = node.id;
+        }
+        Ext.getCmp('SHOW_ITEM').enable();
+        */
+    });
+});
+</script>
+<?
+print $OBJECT_ADMIN_PAGE->showCamemisFooter();
+?>

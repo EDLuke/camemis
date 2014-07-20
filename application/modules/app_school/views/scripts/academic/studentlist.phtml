@@ -1,0 +1,415 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once setUserLoacalization();   
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$LIST_OF_STUDENTS = new CamemisGrid("STUDENT", "LIST_OF_STUDENTS");
+$LIST_OF_STUDENTS->setLoadUrl("/student/jsonload/");
+$LIST_OF_STUDENTS->setSaveUrl("/student/jsonsave/");
+$columndataList = Utiles::getGridColumnData("STUDENT_LIST_OF_STUDENTS_ID");
+
+$ENROLLED_STUDENTS = new CamemisGrid("STUDENT", "STUDENT_GRID");
+$ENROLLED_STUDENTS->setLoadUrl("/student/jsonload/");
+$ENROLLED_STUDENTS->setSaveUrl("/student/jsonsave/");
+$columndataEnrolled = Utiles::getGridColumnData("STUDENT_STUDENT_GRID_ID");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$REMOVE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_REMOVE_RIGHT")?"false":"true";
+$EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")?"false":"true";
+
+?>
+
+<script>
+    var studentId;
+    Ext.onReady(function() {
+        
+        Ext.Ajax.timeout = 600000;
+        
+        function cssStatus(v, p, record){
+            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+            );
+        }
+        
+        function deleteItem(Id, academicId){
+            window.parent.Ext.MessageBox.show({
+                title:'<?=WARNING?>'
+                ,width: 350
+                ,msg:'<?=DELETE_THIS_ITEM?>'
+                ,buttons: Ext.MessageBox.YESNOCANCEL
+                ,icon: Ext.MessageBox.QUESTION
+                ,fn: function(btn){
+                    if (btn === 'yes'){
+                        Ext.Ajax.request({
+                            url: '/student/jsonsave/'
+                            ,method: 'POST'
+                            ,params: {cmd: 'jsonRemoveEnrolledStudentClass', objectId:Id, academicId:academicId}
+                            ,success: function(response, options) {Ext.getCmp('<?=$ENROLLED_STUDENTS->getObjectId()?>').store.reload();}
+                            ,failure: function(response, options) {}
+                        });
+                    }
+                }
+                ,icon:Ext.MessageBox.INFO
+            });
+        }
+        
+        function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 3px; height:10px;">' + value + '</div>';
+        }
+        <?
+        /**
+        * Extjs: s.gif
+        */
+        $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+        $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+        $LIST_OF_STUDENTS->addReadField("name: 'CODE'");
+        $LIST_OF_STUDENTS->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $LIST_OF_STUDENTS->addReadField("name: 'STUDENT_NAME'");
+        $LIST_OF_STUDENTS->addReadField("name: 'LASTNAME'");
+        $LIST_OF_STUDENTS->addReadField("name: 'FIRSTNAME'");
+        $LIST_OF_STUDENTS->addReadField("name: 'GENDER'");
+        $LIST_OF_STUDENTS->addReadField("name: 'DATE_BIRTH'");
+        $LIST_OF_STUDENTS->addReadField("name: 'CLASS_NAME'");
+        $LIST_OF_STUDENTS->addReadField("name: 'GRADE_NAME'");
+        $LIST_OF_STUDENTS->addReadField("name: 'RULE_ID'");
+        
+        $LIST_OF_STUDENTS->addColumn("header: '<b>" . CODE_ID . "</b>', align:'left', renderer:cssText, sortable: true, width: 100, hidden:".checkColHidden(1, $columndataList).", dataIndex: 'STUDENT_SCHOOL_ID'");
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $LIST_OF_STUDENTS->addColumn("header: '<b>" . LASTNAME . "</b>', width: 150, hidden:".checkColHidden(2, $columndataList).", renderer:cssText, sortable: false, dataIndex: 'LASTNAME'");
+            $LIST_OF_STUDENTS->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 150, hidden:".checkColHidden(3, $columndataList).", renderer:cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+        }else{
+            $LIST_OF_STUDENTS->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 150, hidden:".checkColHidden(2, $columndataList).", renderer:cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+            $LIST_OF_STUDENTS->addColumn("header: '<b>" . LASTNAME . "</b>', width: 150, hidden:".checkColHidden(3, $columndataList).", renderer:cssText, sortable: false, dataIndex: 'LASTNAME'");
+        }
+        $LIST_OF_STUDENTS->addColumn("header: '<b>" . GENDER . "</b>', width: 120, hidden:".checkColHidden(4, $columndataList).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 150, hidden:".checkColHidden(5, $columndataList).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>" . GRADE . "</b>', width: 150, hidden:".checkColHidden(6, $columndataList).", renderer:cssText, sortable: true, dataIndex: 'GRADE_NAME'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>" . GRADE_CLASS . "</b>', width: 150, hidden:".checkColHidden(7, $columndataList).", renderer:cssText, sortable: true, dataIndex: 'CLASS_NAME'");
+
+        $LIST_OF_STUDENTS->isQuickySearch = true;
+        $LIST_OF_STUDENTS->isCheckboxSelect = true;
+
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+            $LIST_OF_STUDENTS->addTBarItems("
+                tbar.add([{
+                    id: 'ADD_ENROLLMENT_RECORD_ID'
+                    ,text: '" . ENROLLMENT_RECORD . "'
+                    ,iconCls:'icon-disk'
+                    ,hidden: false
+                    ,scope:this
+                    ,handler: this.onSelection
+                }]);
+            ");
+        }
+        
+        switch(UserAuth::getUserType()){
+            case "ADMIN":
+            case "SUPERADMIN":
+                $LIST_OF_STUDENTS->baseParams = "
+                    start:0
+                    ,limit:100
+                    ,academicId: '" . $this->objectId . "'
+                    ,cmd: 'jsonUnassignedStudentsByClass'
+                ";
+                $LIST_OF_STUDENTS->setSelectionParams("
+                    cmd: 'jsonAddEnrollStudentClass'
+                    ,academicId: '" . $this->objectId . "'
+                ");
+                break;
+        }
+        
+        $LIST_OF_STUDENTS->setSelectionEmbeddedEvents("
+            Ext.getCmp('" . $ENROLLED_STUDENTS->getObjectId() . "').store.reload();
+        ");
+
+        $LIST_OF_STUDENTS->forceFit = "false";
+        $LIST_OF_STUDENTS->renderJS();
+    
+        ///////////////////////////////////////////////////////
+        /// ASSIGNED STUDENT...
+        ///////////////////////////////////////////////////////
+        $ENROLLED_STUDENTS->addReadField("name: 'CODE'");
+        $ENROLLED_STUDENTS->addReadField("name: 'STUDENT_SCHOOL_ID'");
+        $ENROLLED_STUDENTS->addReadField("name: 'FIRSTNAME'");
+        $ENROLLED_STUDENTS->addReadField("name: 'LASTNAME'");
+        $ENROLLED_STUDENTS->addReadField("name: 'GENDER'");
+        $ENROLLED_STUDENTS->addReadField("name: 'DATE_BIRTH'");
+        $ENROLLED_STUDENTS->addReadField("name: 'PHONE'");
+        $ENROLLED_STUDENTS->addReadField("name: 'EMAIL'");
+        $ENROLLED_STUDENTS->addReadField("name: 'SORTKEY'");
+        $ENROLLED_STUDENTS->addReadField("name: 'BG_COLOR'");
+        $ENROLLED_STUDENTS->addReadField("name: 'BG_COLOR_FONT'");
+        $ENROLLED_STUDENTS->addReadField("name: 'STATUS_KEY'");
+        
+        /*if(UserAuth::getUserType() == "INSTRUCTOR"){
+            $ENROLLED_STUDENTS->addColumn("
+                header: '<b>" . SORTKEY . "</b>'
+                , width: 80
+                , align:'center'
+                , sortable: true
+                , dataIndex: 'SORTKEY'
+                , editor: new Ext.form.TextField({
+                    allowBlank: false
+                    ,name: 'SORTKEY'
+                })
+            ");
+        } */
+        
+        switch(UserAuth::getUserType()){
+            case "SUPERADMIN":
+            case "ADMIN":
+                switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+                    case "VIETNAMESE": $width = 100;break;
+                    default: $width = 85;break;
+                }
+                $ENROLLED_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(7, $columndataEnrolled).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+                $ENROLLED_STUDENTS->addColumn("header: '<b>" . CODE_ID . "</b>', width: 80, hidden:".checkColHidden(8, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'CODE'");
+                $ENROLLED_STUDENTS->addColumn("header: '<b>" . STUDENT_SCHOOL_ID . "</b>', width: 100, hidden:".checkColHidden(9, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'CODE'");
+                break;
+            case "TEACHER":
+            case "INSTRUCTOR": 
+                //@veasna
+                switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+                    case "VIETNAMESE": $width = 100;break;
+                    default: $width = 85;break;
+                }
+                $ENROLLED_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+                ///   
+                /*$ENROLLED_STUDENTS->addColumn("
+                    header: '<b>" . SORTKEY . "</b>'
+                    , width: 80
+                    , align:'center'
+                    , sortable: true
+                    , dataIndex: 'SORTKEY'
+                    , editor: new Ext.form.TextField({
+                        allowBlank: false
+                        ,name: 'SORTKEY'
+                    })
+                "); */
+                break;
+        }
+        
+        if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $ENROLLED_STUDENTS->addColumn("header: '<b>" . LASTNAME . "</b>', width: 150, hidden:".checkColHidden(1, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+            $ENROLLED_STUDENTS->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 150, hidden:".checkColHidden(2, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+        }else{
+            $ENROLLED_STUDENTS->addColumn("header: '<b>" . FIRSTNAME . "</b>', width: 150, hidden:".checkColHidden(1, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'FIRSTNAME'");
+            $ENROLLED_STUDENTS->addColumn("header: '<b>" . LASTNAME . "</b>', width: 150, hidden:".checkColHidden(2, $columndataEnrolled).", renderer: cssText, sortable: false, dataIndex: 'LASTNAME'");
+        }
+        $ENROLLED_STUDENTS->addColumn("header: '<b>" . GENDER . "</b>', width: 110, hidden:".checkColHidden(3, $columndataEnrolled).", renderer:cssText, sortable: true, dataIndex: 'GENDER'");
+        $ENROLLED_STUDENTS->addColumn("header: '<b>" . DATE_BIRTH . "</b>', width: 120, hidden:".checkColHidden(4, $columndataEnrolled).", renderer:cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+        $ENROLLED_STUDENTS->addColumn("header: '<b>" . PHONE . "</b>', width: 200, hidden:".checkColHidden(5, $columndataEnrolled).", renderer:cssText, sortable: true, dataIndex: 'PHONE'");
+        $ENROLLED_STUDENTS->addColumn("header: '<b>" . EMAIL . "</b>', width: 200, hidden:".checkColHidden(6, $columndataEnrolled).", renderer:cssText, sortable: true, dataIndex: 'EMAIL'");
+                
+        $ENROLLED_STUDENTS->baseParams = "
+            start:0
+            ,limit:100
+            ,classId: '" . $this->objectId . "'
+            ,cmd: 'jsonListStudentsByClass'
+        ";
+        
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+            $ENROLLED_STUDENTS->addTBarItems("
+                tbar.add([{
+                    id: 'ADD_STUDENTS'
+                    ,text: '" . ADD_STUDENTS . "'
+                    ,iconCls:'icon-application_form_add'
+                    ,scope:this
+                    ,handler: function(){
+                        openWinXType('WinXType','".ADD_STUDENTS."', '".$LIST_OF_STUDENTS->getObjectXType()."', percentWidth(90), percentHeight(80));
+                    }
+                }]);
+            ");
+        }
+        
+//        //@soda                            
+//        if(UserAuth::getUserType() == "SUPERADMIN" || UserAuth::getUserType() == "ADMIN"){
+//            if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+//                $ENROLLED_STUDENTS->addTBarItems("
+//                    tbar.add(['->',{
+//                        text: '" . EXPORT_TO_EXCEL . "'
+//                        ,id: 'EXPORT_TO_EXCEL'
+//                        ,iconCls:'icon-page_excel'
+//                        ,handler: function(){
+//                            openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/showcolumn/?classId=$this->objectId&type=export_student&target=general',550,percentHeight(85));
+//                        }
+//                    }]);
+//                ");
+//            }
+//        }
+//        
+//        if(UserAuth::getUserType() == "INSTRUCTOR" || UserAuth::getUserType() == "TEACHER"){
+//            $ENROLLED_STUDENTS->addTBarItems("
+//                tbar.add(['->',{
+//                    text: '" . EXPORT_TO_EXCEL . "'
+//                    ,id: 'EXPORT_TO_EXCEL'
+//                    ,iconCls:'icon-page_excel'
+//                    ,handler: function(){ 
+//                        openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/showcolumn/?classId=$this->objectId&type=export_student&target=general',550,percentHeight(85));
+//                    }
+//                }]);
+//            ");
+//        }
+//        /////////////////////////////////////////
+        
+        if(UserAuth::getUserType() == "INSTRUCTOR"){
+            $ENROLLED_STUDENTS->isGridEditing = true;
+            $ENROLLED_STUDENTS->setSaveParams("
+                cmd: 'actionStudentSchoolYearSorting'
+                ,classId: '" . $this->objectId . "'
+            ");
+            $ENROLLED_STUDENTS->setAftereditCallback("
+                XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                Ext.getCmp('" . $ENROLLED_STUDENTS->getObjectId() . "').store.reload();
+            ");
+        }
+        
+        $ENROLLED_STUDENTS->isQuickySearch = true;
+        $ENROLLED_STUDENTS->isCheckboxSelect = false;
+        $ENROLLED_STUDENTS->forceFit = "false";
+        $ENROLLED_STUDENTS->removeNAME = "STUDENT_NAME";
+        $ENROLLED_STUDENTS->renderJS();
+
+        ?>                
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items:[{
+                border: false
+                ,id:'content'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{xtype: '<?= $ENROLLED_STUDENTS->getObjectXType(); ?>'}]
+            }]
+        });
+        <?
+        $CONTEXT_ITEMS = array();
+        
+        $DETAIL_INFORMATION = "
+        {
+            text: '".DETAIL_INFORMATION." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls:'icon-application_form_magnify'
+            ,handler:function(){
+                clickOpenPage('content','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID);
+            }
+        }
+        ";
+        
+        if(UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_READ_RIGHT"))
+        //$CONTEXT_ITEMS[] = $DETAIL_INFORMATION;
+        
+        $TEACHER_COMMENTS = "
+        {
+            text: '".TEACHER_COMMENTS." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls:'icon-application_form_add'
+             ,hidden:".$EXECUTE_RIGHT."
+            ,handler:function(){
+                clickOpenPage('content',record.data.LASTNAME + ' ' + record.data.FIRSTNAME,'/note/?target=1&classId=".$this->objectId."&objectId=' + record.data.ID);
+            }
+        }
+        ";
+        // if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
+        //$CONTEXT_ITEMS[] = $TEACHER_COMMENTS;
+
+        $CLASS_TRANSFER = "
+        {
+            text: '".CLASS_TRANSFER." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls:'icon-arrow_switch'
+            ,hidden:".$EXECUTE_RIGHT."
+            ,handler:function(){
+                openWinIFrame('', '/student/classtransfer/?classId=".$this->objectId."&objectId=' + record.data.ID + '&target=cancel',500,500);
+            }
+        }
+        ";
+        //if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_REMOVE_RIGHT"))
+        $CONTEXT_ITEMS[] = $CLASS_TRANSFER;
+
+        $STUDENT_REMOVE_FROM_CLASS = "
+        {
+            text: '".REMOVE." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls:'icon-delete'
+             ,hidden:".$REMOVE_RIGHT."
+            ,handler:function(){
+                deleteItem(record.data.ID, $this->objectId);    
+            }
+        }
+        ";
+        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
+        $CONTEXT_ITEMS[] = $STUDENT_REMOVE_FROM_CLASS;
+
+        //@sea peng 12.04.2013
+        $SEND_MESSAGE ="
+        {
+            text: '".SEND." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls: 'icon-email_add'
+            ,disabled:false
+            ,handler: function(){
+                clickOpenPage('content','".SEND_MAIL." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME,'/communication/tostudent/?page_name=loadstudentlist&objectId=' +  record.data.ID);
+            }
+        }
+        ";
+        $CONTEXT_ITEMS[] = $SEND_MESSAGE;
+        
+        $HEALTH_INFORMATION ="
+        {
+            text: '".HEALTH_INFORMATION." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            ,iconCls: 'icon-paste_plain'
+            ,disabled:false
+            ,handler: function(){  
+                clickOpenPage('content','".HEALTH_INFORMATION." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME, '/student/medicalinfo/?objectId=' + record.data.ID)
+            }
+        }";
+        $CONTEXT_ITEMS[] = $HEALTH_INFORMATION;
+        
+        //@end sea peng 12.04.2013
+        $CHOOSE_CONTEXT_ITEMS = implode(',', $CONTEXT_ITEMS);
+        
+        if(UserAuth::getUserType() != "STUDENT"){
+            $js = "";
+            $js .= "var myGrid = Ext.getCmp('".$ENROLLED_STUDENTS->getObjectId()."');";
+            $js .= "if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            if(UserAuth::getUserType() == "INSTRUCTOR"){
+                $js .="if(columnIndex>1){";
+                    $js .= "var record = grid.store.getAt(rowIndex);studentId=record.data.ID;";
+                    $js .= "var contextMenu = new Ext.menu.Menu({";
+                        $js .= "items: [".$CHOOSE_CONTEXT_ITEMS."]";
+                    $js .= "});";
+                    $js .= "event.stopEvent();";
+                    $js .= "contextMenu.showAt(event.xy);";
+                $js .="}";
+            }else{
+                $js .= "var record = grid.store.getAt(rowIndex);";
+                $js .= "var contextMenu = new Ext.menu.Menu({";
+                    $js .= "items: [".$CHOOSE_CONTEXT_ITEMS."]";
+                $js .= "});";
+                $js .= "event.stopEvent();";
+                $js .= "contextMenu.showAt(event.xy);";
+            }
+            $js .= "});";
+            if ($CONTEXT_ITEMS) echo $js;
+        }
+        ?>
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+   });
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

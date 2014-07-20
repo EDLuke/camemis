@@ -1,0 +1,162 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("TRAINING");
+$OBJECT_FORM->setLoadUrl("/training/jsonload/");
+$OBJECT_FORM->setSaveUrl("/training/jsonsave/");
+
+$template = isset($_GET["template"]) ? addText($_GET["template"]):"";
+$parentId = isset($_GET["parentId"])?addText($_GET["parentId"]):"0";
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $PROGRAMM_ITEMS = "
+    [
+        {".CamemisField::Textfield("NAME","NAME",NAME, true)."}
+    ]
+    ";
+    
+    $TERM_ITEMS = "
+    [
+        {".CamemisField::Datefield("START_DATE", DATE_FROM, true, false)."}
+        ,{".CamemisField::Datefield("END_DATE", DATE_TO, true, false)."}
+    ]
+    ";
+    
+    $LEVEL_ITEMS = "
+    [
+        {".CamemisField::Textfield("NAME","NAME",NAME)."}
+        ,{".CamemisField::Numberfield("LEVEL", "LEVEL", LEVEL, true, false)."}
+        ,{".CamemisField::Checkbox("EVALUATION","EVALUATION", EVALUATION, 1, false)."}
+        ,{".CamemisField::Checkbox("CERTIFICATE","CERTIFICATE", CERTIFICATE, 1, false)."}
+    ]
+    ";
+    
+    $CLASS_ITEMS = "
+    [
+        {".CamemisField::Textfield("NAME","NAME",NAME)."}
+    ]
+    ";
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveObject'
+        ,objectId: '".$this->objectId."'
+        ,parent: '".$parentId."'
+        ,objctType:'".$template."'
+    ");
+    
+    switch($template){
+        case "PROGRAM":
+            $DETAIL_ITEMS = $PROGRAMM_ITEMS;
+            break;
+        case "LEVEL":
+            $DETAIL_ITEMS = $LEVEL_ITEMS;
+            break;
+        case "TERM":
+            $DETAIL_ITEMS = $TERM_ITEMS;
+            break;
+        case "CLASS":
+            $DETAIL_ITEMS = $CLASS_ITEMS;
+            break;
+        default:
+            $DETAIL_ITEMS = $PROGRAMM_ITEMS;
+            break;
+    }
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    $ITEMS = $DETAIL_INFORMATION;
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'padding:10px'
+        ,items: [".$ITEMS."]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        window.parent.Ext.getCmp('TRAINING_TREE_ID').root.reload();
+        window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+        window.parent.Ext.getCmp('TRAINING_TREE_ID').getRootNode().expand(true, false);
+    ");
+    
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items: [{
+            xtype: 'panel'
+            ,id: 'panel'
+            ,border: false
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items: [{
+                layout: 'fit'
+                ,border: false
+                ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

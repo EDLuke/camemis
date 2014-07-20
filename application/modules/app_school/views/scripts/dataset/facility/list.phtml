@@ -1,0 +1,204 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$SCHOOL_FACILITY_TREE = new CamemisTree("DATASET", "SCHOOL");
+$SCHOOL_FACILITY_TREE->setURL("/dataset/jsontree/");
+$SCHOOL_FACILITY_TREE->setSaveUrl("/dataset/jsonsave/");
+
+$SETTING_FACILITY_TREE = new CamemisTree("DATASET", "SETTING");
+$SETTING_FACILITY_TREE->setURL("/dataset/jsontree/");
+$SETTING_FACILITY_TREE->setSaveUrl("/dataset/jsonsave/");
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$EDIT_RIGHT=UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT")?"false":"true";
+?>
+<script>
+var parentId;
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $SCHOOL_FACILITY_TREE->isAsyncTreeNode = false;
+    
+    $SCHOOL_FACILITY_TREE->addTBarItems("
+        id: 'SCHOOL_FACILITY_REFRESH'
+        ,scope:this
+        ,text:'".REFRESH."'
+        ,iconCls:'icon-arrow_refresh'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false)."
+        }
+    ");
+    
+    $SCHOOL_FACILITY_TREE->setBaseParams("
+        cmd: 'jsonTreeAllFacilities'
+        ,facilityType:'SCHOOL'
+        ,showCheck:0
+    ");
+    $SCHOOL_FACILITY_TREE->backgroundColor = "#F9F9F9";
+    $SCHOOL_FACILITY_TREE->isTreeExpand = true;
+    $SCHOOL_FACILITY_TREE->renderJS();
+    ///////////
+    $SETTING_FACILITY_TREE->isAsyncTreeNode = false;
+    
+    $SETTING_FACILITY_TREE->addTBarItems("
+        id: 'SETTING_REFRESH'
+        ,scope:this
+        ,text:'".REFRESH."'
+        ,iconCls:'icon-arrow_refresh'
+        ,handler: function(){
+            ".CamemisPage::setRequestURI(false)."
+        }
+    ");
+    if(UserAuth::getACLValue("SCHOOL_SETTING_EDIT_RIGHT"))
+    $SETTING_FACILITY_TREE->addTBarItems("
+        id: 'ADD_A_NEW_FOLDER'
+        ,scope:this
+        ,text:'".ADD_A_NEW_FOLDER."'
+        ,tooltip:'".ADD_A_NEW_FOLDER."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){
+            clickOpenPage('center','', '".$this->URL_SHOW_FACILITY."objectId=new&parentId=0');
+        }
+    ");
+    
+    $SETTING_FACILITY_TREE->setSaveParams("
+    	cmd: 'addObject'
+        ,type:'facility'
+        ,parentId:parentId
+    ");
+    
+    $SETTING_FACILITY_TREE->setBaseParams("
+    	cmd: 'jsonTreeAllFacilities'
+        ,showCheck:0
+    ");
+    
+    $SETTING_FACILITY_TREE->backgroundColor = "#F9F9F9";
+    $SETTING_FACILITY_TREE->isTreeExpand = true;
+    $SETTING_FACILITY_TREE->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+               	region:'west'
+                ,id:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'card'
+                ,activeItem: 0
+                ,tbar:[{
+                    text:'<?=SCHOOL_FACILITIES?>'
+                    /*,iconCls: 'icon-tabs'*/
+                    ,handler:function(){
+                        Ext.getCmp('west').getLayout().setActiveItem(0);
+                        Ext.getCmp('center').getLayout().setActiveItem(0);
+                    }
+                },'-',{
+                    text:'<?=SETTING?>'
+                    ,iconCls:'icon-wrench'
+                    ,handler:function(){
+                        Ext.getCmp('west').getLayout().setActiveItem(1);
+                        Ext.getCmp('center').getLayout().setActiveItem(0);
+                    }
+                }]
+                ,items:[{
+                    xtype: '<?=$SCHOOL_FACILITY_TREE->getObjectXtype();?>'
+                },{
+                    xtype: '<?=$SETTING_FACILITY_TREE->getObjectXtype();?>'
+                }]
+            },{
+               	collapsible: false
+                ,id: 'center'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    border: false
+                    ,layout: 'anchor'
+                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,items: [{
+                        title: ''
+                        ,height:60
+                        ,width:500
+                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    }]
+                }]
+            }]
+        }]
+    });
+    
+    var myTreeSchool = <?=$SCHOOL_FACILITY_TREE->ExtgetCmp();?>;
+    myTreeSchool.on('click', function(node, e){
+        if(node.isLeaf()){
+            parentId = node.attributes.parentId;
+            clickOpenPage('center','', '<?=$this->URL_SHOW_FACILITY;?>objectId=' + node.id + '&objectName=' + node.text);
+        }else{
+            parentId = node.id;
+        }
+        
+    });
+    
+    var myTreeSetting = <?=$SETTING_FACILITY_TREE->ExtgetCmp();?>;
+    myTreeSetting.on('click', function(node, e){
+        
+        parentId = node.attributes.parent;
+        
+        if(!node.isLeaf()){
+            var setDisabled = false;
+        }else{
+            var setDisabled = true;
+        }
+        
+        var contextMenu = new Ext.menu.Menu({
+            items: [{
+                text: '<?=SHOW_DETAIL;?>'
+                ,iconCls:'icon-application_form_magnify'
+                ,handler:function(){
+                    clickOpenPage('center','', '<?=$this->URL_SHOW_FACILITY;?>objectId=' + node.id);
+                }
+            },{
+                text: '<?=ADD_A_NEW_ITEM;?>'
+                ,iconCls:'icon-application_form_add'
+                ,disabled:setDisabled
+                ,hidden:<?=$EDIT_RIGHT;?>
+                ,handler: function(){
+                    clickOpenPage('center','', '<?=$this->URL_SHOW_FACILITY;?>objectId=new&parentId=' + node.id);
+                }
+            }]
+        });
+        e.stopEvent();
+        contextMenu.showAt(e.xy);
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

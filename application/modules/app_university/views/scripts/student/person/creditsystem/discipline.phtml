@@ -1,0 +1,132 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/student/StudentAcademicDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("DISCIPLINE", "GENERAL");
+$OBJECT_GRID->setLoadUrl('/discipline/jsonload/');
+$OBJECT_GRID->setSaveUrl('/discipline/jsonsave/');
+$view=isset($_GET['view'])? addText($_GET["view"]):0;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<style>
+	span.spanText {
+		font-weight:normal;
+		color:#333;
+		white-space:normal;
+	}
+</style>
+<script>
+	Ext.onReady(function() {
+
+		function renderText(v, p, record, rowIndex){
+			var str = '<span class=spanText>' + v + '</span>';
+			return str;
+		}
+		<?
+		/**
+		* Extjs: s.gif
+		*/
+		$CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+		$CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		$OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+		$OBJECT_GRID->addReadField("name: 'CODE'");
+		$OBJECT_GRID->addReadField("name: 'STATUS'");
+		$OBJECT_GRID->addReadField("name: 'STUDENT'");
+		$OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
+		$OBJECT_GRID->addReadField("name: 'LASTNAME'");
+		$OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+		$OBJECT_GRID->addReadField("name: 'INFRACTION_DATE'");
+		$OBJECT_GRID->addReadField("name: 'DISCIPLINE_TYPE'");
+		$OBJECT_GRID->addReadField("name: 'INFRACTION_TYPE'");
+		$OBJECT_GRID->addReadField("name: 'PUNISHMENT_TYPE'");
+		$OBJECT_GRID->addReadField("name: 'CLASS_NAME'");
+		$OBJECT_GRID->addReadField("name: 'SCHOOLYEAR_NAME'");
+		$OBJECT_GRID->addReadField("name: 'COMMENT'");
+
+		$OBJECT_GRID->addColumn("header: '<b>".INFRACTION_TYPE."</b>', width: 200, renderer: renderText, sortable: true, dataIndex: 'DISCIPLINE_TYPE'"); 
+		$OBJECT_GRID->addColumn("header: '<b>".PUNISHMENT_TYPE."</b>', width: 120, renderer: renderText, sortable: true, dataIndex: 'PUNISHMENT_TYPE'");
+
+		$OBJECT_GRID->addColumn("header: '<b>".SCHOOL_YEAR."</b>', width: 150, renderer: renderText, sortable: false, dataIndex: 'SCHOOLYEAR_NAME'");
+		$OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 300, renderer: renderText, sortable: false, dataIndex: 'COMMENT'");
+		$OBJECT_GRID->addColumn("header: '<b>".INFRACTION_DATE."</b>', width: 150, renderer: renderText, sortable: true, dataIndex: 'INFRACTION_DATE'");
+
+		$OBJECT_GRID->addTBarItems("
+			tbar.add([{
+				id: 'REFRESH_ID'
+				,text: '".REFRESH."'
+				,iconCls:'icon-reload'
+				,scope:this
+				,disabled: false
+				,handler: function(){
+					Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.reload();
+				}
+			}]);
+		");
+
+		$OBJECT_GRID->baseParams = "
+			start:0
+			,limit:100
+			,studentId: '".$this->objectId."'
+			,schoolyearId: '".$this->schoolyearId."'
+			,cmd: 'jsonListByDicipline'
+		";
+
+		$OBJECT_GRID->isGroupingView = true;
+		$OBJECT_GRID->groupField = "DISCIPLINE_TYPE";
+		$OBJECT_GRID->forceFit = "false";
+		$OBJECT_GRID->renderJS();
+		?>
+		viewport = new Ext.Viewport({
+			layout: 'fit'
+			,border: false
+			,items:[{
+				layout: 'fit'
+				,border: false
+				,id: 'CONTENT'
+				,items:[{
+					layout:'fit'
+					,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+					,border: false
+					,items:[{
+						xtype: 'tabpanel'
+						,id:'TABPANEL_ID'
+						,tabPosition: 'top'
+						,plain:true
+						,activeTab: 0
+						,enableTabScroll:true
+						,items:[{
+							title:'<?=CHARTS;?>'
+							,layout:'fit'
+							,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_CHARTS', url:'/discipline/chartreport/?camIds=<?=$this->urlEncryp->encryptedGet("&studentId=".$this->objectId."&academicId=".$this->academicId."")?>'})]
+						},{
+							title:'<?=SEARCH_RESULT;?>'
+							,layout:'fit'
+							,items: [{xtype: '<?=$OBJECT_GRID->getObjectXType();?>'}]
+						}]
+					}]
+				}]
+			}]
+		});
+	});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,167 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 09/11/2013
+// 
+///////////////////////////////////////////////////////////
+
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_university/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_GRID = new CamemisGrid("SCHEDULE", "TEACHER");
+$OBJECT_GRID->setLoadUrl('/schedule/jsonload/');
+$OBJECT_GRID->setSaveUrl('/schedule/jsonsave/');
+
+print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();  
+?>
+<script> 
+Ext.onReady(function() {
+         function cssText(value, metadata, record){
+            return '<div style="font-weight:normal; color:#333; padding: 5px;">' + value + '</div>';
+         } 
+         
+         function cssTextBlue(value, metadata, record){
+            return '<div style="font-weight:normal; color:#3764A0; padding: 5px;">' + value + '</div>';
+         }
+    <?    
+    
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'TEACHER_NAME'");
+    $OBJECT_GRID->addReadField("name: 'PHONE'");
+    $OBJECT_GRID->addReadField("name: 'EMAIL'");
+    
+    switch (AcademicDBAccess::findAcademicTerm($this->objectId)) {
+        case 1:
+            $OBJECT_GRID->addReadField("name: 'FIRST_TERM'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_TERM'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_TERM'");
+        break;
+        case 2:
+            $OBJECT_GRID->addReadField("name: 'FIRST_QUARTER'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_QUARTER'");
+            $OBJECT_GRID->addReadField("name: 'THIRD_QUARTER'");
+            $OBJECT_GRID->addReadField("name: 'FOURTH_QUARTER'");
+        break;
+        default:
+            $OBJECT_GRID->addReadField("name: 'FIRST_SEMESTER'");
+            $OBJECT_GRID->addReadField("name: 'SECOND_SEMESTER'");
+        break;    
+    }
+    
+    $OBJECT_GRID->addReadField("name: 'GROUP_NAME'");
+    $OBJECT_GRID->addReadField("name: 'GROUP_ID'");
+    $OBJECT_GRID->addReadField("name: 'SUBJECT'");
+    
+    $OBJECT_GRID->addColumn("header: '<b>" . TEACHER . "</b>', width: 200, renderer:cssTextBlue, sortable: true, dataIndex: 'TEACHER_NAME'");
+    if($this->facette){
+        switch($this->facette->OBJECT_TYPE){
+            case "CLASS":
+            case "SUBJECT":
+                $OBJECT_GRID->addColumn("header: '<b>GROUP</b>', width: 180, renderer:cssText, sortable: true, dataIndex: 'GROUP_NAME'");    
+            break; 
+            case "SCHOOLYEAR":
+                $OBJECT_GRID->addColumn("header: '<b>". SUBJECT ."</b>', width: 180, renderer:cssText, sortable: true, dataIndex: 'SUBJECT'");    
+            break;   
+        }    
+    }
+    
+    switch (AcademicDBAccess::findAcademicTerm($this->objectId)) {
+        case 1:
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRST_TERM . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'FIRST_TERM'");
+            $OBJECT_GRID->addColumn("header: '<b>" . SECOND_TERM . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'SECOND_TERM'");
+            $OBJECT_GRID->addColumn("header: '<b>" . THIRD_TERM . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'THIRD_TERM'");
+            break;
+            
+        case 2:
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRST_QUARTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'FIRST_QUARTER'");
+            $OBJECT_GRID->addColumn("header: '<b>" . SECOND_QUARTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'SECOND_QUARTER'");
+            $OBJECT_GRID->addColumn("header: '<b>" . THIRD_QUARTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'THIRD_QUARTER'");
+            $OBJECT_GRID->addColumn("header: '<b>" . FOURTH_QUARTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'FOURTH_QUARTER'");
+
+            break;
+        default:
+            $OBJECT_GRID->addColumn("header: '<b>" . FIRST_SEMESTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'FIRST_SEMESTER'");
+            $OBJECT_GRID->addColumn("header: '<b>" . SECOND_SEMESTER . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'SECOND_SEMESTER'");
+           
+            break;    
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>" . PHONE . "</b>', width: 110, renderer:cssText, sortable: true, dataIndex: 'PHONE'");
+    $OBJECT_GRID->addColumn("header: '<b>" . EMAIL . "</b>', width: 180, renderer:cssText, sortable: true, dataIndex: 'EMAIL'");
+    
+    $OBJECT_GRID->loadMask = false;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,objectId: '".$this->objectId."'
+        ,cmd: 'jsonListTeacherCredit'    
+    ";
+    
+    $OBJECT_GRID->isGroupingView = true;
+    $OBJECT_GRID->groupField='TEACHER_NAME';
+    $OBJECT_GRID->renderJS(); 
+    
+    $viewport = "";
+    $viewport .= "viewport = new Ext.Viewport({";
+    $viewport .= "layout: 'fit'";
+    $viewport .= ",border: false";
+    $viewport .= ",items: [{";
+        $viewport .= "xtype: 'panel'";
+        $viewport .= ",id: 'center'";
+        $viewport .= ",border: false";
+        $viewport .= ",layout: 'card'";
+        $viewport .= ",activeItem: 0";
+        $viewport .= ",items: [{";
+            $viewport .= "title:'".ASSIGNED_TEACHERS."'";
+            $viewport .= ",id: 'center'";
+            $viewport .= ",border: false";
+            $viewport .= ",layout: 'card'";
+            $viewport .= ",activeItem: 0";
+            $viewport .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+        $viewport .= "}]";
+    $viewport .= "}]";
+    $viewport .= "});";
+    
+    echo $viewport;
+    ?> 
+    var myGrid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+        
+        myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+            var record = grid.store.getAt(rowIndex);
+            var teacherId = record.data.ID;
+            var groupId = record.data.GROUP_ID;
+            var clickName = record.data.TEACHER_NAME;
+            var contextMenu = new Ext.menu.Menu({
+                items: [{  
+                  text: '<?=TEACHING_REPORT;?> &raquo; ' + clickName
+                    ,iconCls:'icon-star'
+                    ,handler:function(){
+                        clickOpenPage('center','','/subjectreport/subjectreportlist/?teacherId=' + teacherId +'&classId=' + groupId);
+                    }  
+                }]
+            });
+            event.stopEvent();
+            contextMenu.showAt(event.xy);
+         }); 
+        
+});
+</script>
+<?
+print$CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

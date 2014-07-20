@@ -1,0 +1,93 @@
+<?
+require_once 'clients/app_admin/AdminBar.php';
+require_once 'clients/app_admin/AdminPage.php';
+require_once 'clients/app_admin/AdminForm.php';
+require_once 'clients/app_admin/AdminGrid.php';
+require_once 'clients/app_admin/AdminTree.php';
+require_once 'clients/app_admin/AdminPage.php';
+
+$OBJECT_ADMIN_PAGE = AdminPage::getInstance();
+$OBJECT_ADMIN_PAGE->setLoadingMask = true;
+print $OBJECT_ADMIN_PAGE->showCamemisHeader();
+
+$OBJECT_TREE = new AdminTree("HELP", "LIST");
+
+$choose_language = isset($_GET["language"])?addText($_GET["language"]):"EN";
+
+?>
+<div id="iniContent" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">
+    <h1 class="header">Please make your selection...</h1>
+</div>
+<script>
+Ext.onReady(function() {
+
+    Ext.QuickTips.init();
+    
+    <?
+    
+    $OBJECT_TREE->setURL('/help/jsontree/');
+    $OBJECT_TREE->addTBarItems(AdminBar::tbarTreeRefresh(false));
+    $OBJECT_TREE->isAsyncTreeNode = false;
+    $OBJECT_TREE->isTreeExpand = true;
+    $OBJECT_TREE->setBaseParams("
+        cmd: 'jsonTreeHelps'
+    ");
+
+    $OBJECT_TREE->renderJS();
+    
+    $OBJECT_TREE->addTBarItems("
+        text: 'Add Help'
+        ,iconCls: 'icon-application_form_add'
+        ,scope:this
+        ,handler: this.onTBarAddParentItem
+    ");
+    
+    $OBJECT_TREE->renderJS();
+
+    ?>   
+    viewport = new Ext.Viewport({
+        layout:'fit'
+        ,border: false
+        ,items: [{
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                region:'west'
+                ,title: ''
+                ,id: 'VIEWPORT_BWEST'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width:350
+                ,minSize:350
+                ,maxSize:350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?= $OBJECT_TREE->getObjectXtype(); ?>'}]
+            },{
+                collapsible: false
+                ,id: 'VIEWPORT_CENTER'
+                ,region:'center'
+                ,margins: '3 3 3 0'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,items: [{
+                    layout: 'fit'
+                    ,border: false
+                    ,contentEl: 'iniContent'
+                }]
+            }]
+        }]
+    });
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, e){
+        clickOpenPage('VIEWPORT_CENTER','','/help/showmain/?objectId=' + node.id);
+    });
+});
+</script>
+<?
+print $OBJECT_ADMIN_PAGE->showCamemisFooter();
+?>

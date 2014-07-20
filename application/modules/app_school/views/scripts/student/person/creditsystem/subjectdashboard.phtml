@@ -1,0 +1,161 @@
+<?
+///////////////////////////////////////////////////////////
+// @Math Man
+// Date: 08.01.2014
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/academic/AcademicDBAccess.php';
+require_once 'models/app_school/AcademicDateDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+
+$PREREQUISITE_TREE = new CamemisTree("SUBJECT", "LIST");
+$PREREQUISITE_TREE->setURL("/subject/jsontree/");
+
+$academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+	Ext.onReady(function() {
+		<?
+		$CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+		$CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+		$DETAIL_INFORMATION_ITEMS = "[
+			{".CamemisField::Displayfield("CODE", CODE_ID)."}
+			,{".CamemisField::Displayfield("NAME", NAME)."}
+			,{".CamemisField::Displayfield("CREDITS", CREDITS)."}
+		]";
+
+		$DETAIL_INFORMATION = "{
+			title: '".DETAIL_INFORMATION."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 5px;'
+			,width: 550
+			,autoHeight: true
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'background: #FFF;padding: 10px;'
+				,items: ".$DETAIL_INFORMATION_ITEMS."
+			}]
+		}";
+
+		$WORKING_DAYS_ITEMS = "<ul class=\"working-days\">";
+		if ($academicObject->MO)
+			$WORKING_DAYS_ITEMS .= "<li>".MONDAY."</li>";
+		if ($academicObject->TU)
+			$WORKING_DAYS_ITEMS .= "<li>".TUESDAY."</li>";
+		if ($academicObject->WE)
+			$WORKING_DAYS_ITEMS .= "<li>".WEDNESDAY."</li>";
+		if ($academicObject->TH)
+			$WORKING_DAYS_ITEMS .= "<li>".THURSDAY."</li>";
+		if ($academicObject->FR)
+			$WORKING_DAYS_ITEMS .= "<li>".FRIDAY."</li>";
+		if ($academicObject->SA)
+			$WORKING_DAYS_ITEMS .= "<li>".SATURDAY."</li>";
+		if ($academicObject->SU)
+			$WORKING_DAYS_ITEMS .= "<li>".SUNDAY."</li>";
+		$WORKING_DAYS_ITEMS .= "</ul>";
+
+		$WORKING_DAYS = "{
+			title: '".WORKING_DAYS."'
+			,autoHeight: true
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom: 5px'
+			,width: 550
+			,height: true
+			,items:[{
+				layout: 'form'
+				,border: false
+				,autoHeight:true
+				,bodyStyle: 'background:#FFF;padding:10px'
+				,html: '".$WORKING_DAYS_ITEMS."'
+			}]
+		}";
+
+		$PREREQUISITE_TREE->isAsyncTreeNode = false;
+		$PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+		$PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+		$PREREQUISITE_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+		
+		$PREREQUISITE_TREE->setBaseParams("
+			cmd: 'treeAllSubjects'
+			,requisiteId:'".$academicObject->SUBJECT_ID."'
+			,gradeSubjectGradId: '".$this->campusId."'
+			,schoolyear: '".$this->schoolyearId."'
+		");
+
+		$PREREQUISITE_TREE->isTreeExpand = true;
+		$PREREQUISITE_TREE->isOnClickContextMenu = false;
+		$PREREQUISITE_TREE->renderJS();
+
+		$PRE_REQUISITE_COURSE = "{
+			title: '".PRE_REQUISITE_COURSE."'
+			,collapsible: true
+			,collapsed: false
+			,style: 'padding-bottom:5px'
+			,width: 550
+			,items:[{xtype: '".$PREREQUISITE_TREE->getObjectXtype()."'}]
+		}";
+
+		$ITEMS = "[
+			".$DETAIL_INFORMATION."
+			,".$WORKING_DAYS."
+			,".$PRE_REQUISITE_COURSE."
+		]";
+
+		$items = "
+			border: false
+			,id: 'FORM_ITEMS'
+			,bodyStyle: 'padding:0px;'
+			,items: ".$ITEMS."
+		";
+
+		$OBJECT_FORM->addObjectItems($items);
+		$OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->academicId."'");
+
+		$OBJECT_FORM->labelAlign = "left";
+		$OBJECT_FORM->labelWidth = 150;
+		$OBJECT_FORM->renderJS();
+		?>
+		viewport = new Ext.Viewport({
+			layout: 'fit'
+			,border: false
+			,items: [{
+				layout: 'fit'
+				,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px;'
+				,border: false
+				,items: [{
+					xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'
+					,tabPosition: 'top'
+					,plain: true
+					,activeTab: 0
+					,enableTabScroll: true
+				}]
+			}]
+		});
+	});
+</script>
+<style>
+	.working-days{list-style-type: circle;padding-left:15px;}
+	.working-days li{padding: 3px;}
+</style>
+<?
+	print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

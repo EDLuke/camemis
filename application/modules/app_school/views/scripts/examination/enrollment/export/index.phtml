@@ -1,0 +1,315 @@
+<?php
+    ///////////////////////////////////////////////////////////
+    // @sor veasna
+    // Date: 12/17/2012
+    // Adress
+    ///////////////////////////////////////////////////////////
+    require_once 'excel/phpexcel/Classes/PHPExcel.php';
+    require_once 'excel/phpexcel/Classes/PHPExcel/IOFactory.php';
+    require_once 'clients/CamemisExcelReport.php';
+    require_once 'clients/CamemisExportToExcel.php';
+    require_once 'models/app_school/examination/ExaminationDBAccess.php';
+    require_once 'models/app_school/examination/StudentExaminationDBAccess.php';
+    require_once 'models/app_school/subject/SubjectDBAccess.php'; 
+    require_once 'models/app_school/academic/AcademicDBAccess.php';
+    require_once 'models/app_school/student/StudentImportDBAccess.php';
+    require_once 'models/app_school/examination/StaffExaminationDBAccess.php';
+    require_once 'models/app_school/AcademicDateDBAccess.php';
+    require_once 'models/app_school/room/RoomDBAccess.php';
+    
+    $objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
+    $bnt=isset($_GET["bnt"])? addText($_GET["bnt"]):"";
+    $exportToExcel=new CamemisExportToExcel();
+    
+    //school information
+    $schoolObject = $exportToExcel->getSchoolInfo();
+    $SchoolName = $schoolObject->NAME;
+    $SchoolAdress=$schoolObject->ADDRESS;
+    $schoolInfo= $SchoolName."\n".$SchoolAdress;
+    
+    $facette='';
+    
+    if($bnt==5){ ///studnet enrollment exam result
+    
+        $myParams=array();
+        $myParams["type"]=isset($_GET["enrollExamType"]) ? addText($_GET["enrollExamType"]) : "";
+        $myParams["objectType"]=isset($_GET["objectType"]) ? addText($_GET["objectType"]) : "";
+        $myParams["campus"]=isset($_GET["campus"]) ? addText($_GET["campus"]) : "";
+        $myParams["gender"]=isset($_GET["gender"]) ? addText($_GET["gender"]) : "";
+        $myParams["examResult"]=isset($_GET["examResult"]) ? addText($_GET["examResult"]) : "";
+        if($myParams["campus"]){
+            $academicObject = AcademicDBAccess::findGradeFromId($myParams["campus"]);
+            
+        }
+        //
+        $studentImport=new StudentImportDBAccess();
+        //
+        $results=$studentImport->importStudents($myParams,false);
+        if (!$results) 
+        exit;  
+         
+    }elseif($bnt==6){  ///staff exam controller
+    
+        $myParams=array();
+        
+        $acdemicId=isset($_GET["academicId"])? (int) $_GET["academicId"]:'';
+        if($acdemicId){
+            $academicObject = AcademicDBAccess::findGradeFromId($acdemicId);
+        }
+        $myParams['objectId']=isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
+        
+        $objectEnrollExam=ExaminationDBAccess::findExamFromId($myParams['objectId']);
+        
+        $results=StaffExaminationDBAccess::jsonAssignedStaffExamination($myParams,false);
+        if (!$results) 
+        exit;
+        
+    }elseif($bnt==7){
+        $myParams=array();
+        $acdemicId=isset($_GET["academicId"])? (int) $_GET["academicId"]:'';
+        if($acdemicId){
+            $academicObject = AcademicDBAccess::findGradeFromId($acdemicId);
+        }
+        $myParams['objectId']=isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
+        $objectEnrollExam=ExaminationDBAccess::findExamFromId($myParams['objectId']);
+        $results=StaffExaminationDBAccess::jsonAssignedStaffExamRoom($myParams,false);
+        if (!$results) 
+        exit; 
+            
+    }else{///export student exam
+    //Exam Object
+        $acdemicId=isset($_GET["academicId"])? (int) $_GET["academicId"]:'';
+        $academicObject='';
+        if($acdemicId){
+            $academicObject = AcademicDBAccess::findGradeFromId($acdemicId);
+        }
+        
+        $facette = ExaminationDBAccess::findExamFromId($objectId);
+        if (!$facette) 
+        exit; 
+    }
+    
+    if($facette){
+          
+        $exam=EXAM.": ".$facette->NAME;
+        $startDate=START_DATE.': '.$facette->START_DATE;
+        $examTime=START_END_TIME.': '.$facette->START_TIME.' - '.$facette->END_TIME;   
+        //study year
+       
+        //subject
+        $subjectObject=SubjectDBAccess::findSubjectFromId($facette->SUBJECT_ID);
+        $subject=SUBJECT.": ".$subjectObject->NAME;
+        //room
+        $classInfo='';
+        if($facette->ROOM_ID){
+            $roomObject=RoomDBAccess::findRoomFromId($facette->ROOM_ID);
+              
+            //class information
+           
+            $classInfo=ROOM.': '.$roomObject->NAME; 
+        } 
+        //exam info
+        $examinfo=$classInfo."\n".$exam."\n".$subject."\n".$startDate."\n".$examTime; 
+    
+    
+        if($facette->PARENT){//have parents or chile room
+        
+            $parentObject = ExaminationDBAccess::findExamParentFromId($objectId);   
+            $params["objectId"] =  $parentObject->GUID;
+            $params["roomId"]= $facette->ROOM_ID;
+            $results = StudentExaminationDBAccess::getQueryAssignedStudentTmpExamination($params); 
+            
+        }else{//parents all students
+        
+            $params["objectId"] = $facette->GUID; 
+            $results = StudentExaminationDBAccess::getQueryAssignedStudentTmpExamination($params,false);  
+                         
+        }
+    }
+    
+    $filds=array();
+    $entries = array();
+    //catch button 
+    switch ($bnt) {
+        case "1":                    
+            $filds=array("NA","LASTNAME","FIRSTNAME","LASTNAME_LATIN","FIRSTNAME_LATIN","ROOM_NAME");
+            $showfilds=array("N°",LASTNAME,FIRSTNAME,LASTNAME_LATIN,FIRSTNAME_LATIN,ROOM);
+            $endCharExcel="F";
+            break;
+        case "2":                  
+            $filds=array("NA","LASTNAME","FIRSTNAME","LASTNAME_LATIN","FIRSTNAME_LATIN","ROOM_NAME","SIGNATURE");
+            $showfilds=array("N°",LASTNAME,FIRSTNAME,LASTNAME_LATIN,FIRSTNAME_LATIN,ROOM,SIGNATURE_STUDENT_SUBMISSION);
+            $endCharExcel="G";  
+            break;
+        case "3":
+            $filds=array("NA","LASTNAME","FIRSTNAME","LASTNAME_LATIN","FIRSTNAME_LATIN","EXAM_CODE");
+            $showfilds=array("N°",LASTNAME,FIRSTNAME,LASTNAME_LATIN,FIRSTNAME_LATIN,CANDIDATE_CODE); 
+            $endCharExcel="F";
+           
+            break;
+        case "4":
+            $filds=array("NA","EXAM_CODE","SCORE");
+            $showfilds=array("N°",CANDIDATE_CODE,SCORE); 
+            //$showfilds=array("N°","EXAM_CODE","SCORE"); 
+            $endCharExcel="C";   
+            break;
+        case "5":
+            $filds=array("NA","STUDENT_SCHOOL_ID","STUDENT","ENROLL_AVG","GENDER","DATE_BIRTH","RESULT");
+            $showfilds=array("N°",CANDIDATE_CODE,FULL_NAME,AVERAGE,GENDER,DATE_BIRTH,EXAM_RESULT); 
+            //$showfilds=array("N°","EXAM_CODE","SCORE"); 
+            $endCharExcel="G";   
+            break;
+        case "6":
+            $filds=array("NA","CODE","LASTNAME","FIRSTNAME","ROOM_NAME");
+            $showfilds=array("N°",CODE,LASTNAME,FIRSTNAME,ROOM); 
+            //$showfilds=array("N°","EXAM_CODE","SCORE"); 
+            $endCharExcel="E";   
+            break;
+         case "7":
+            $filds=array("NA","CODE","LASTNAME","FIRSTNAME","ROOM_NAME");
+            $showfilds=array("N°",CODE,LASTNAME,FIRSTNAME,ROOM); 
+            //$showfilds=array("N°","EXAM_CODE","SCORE"); 
+            $endCharExcel="E";   
+            break;
+
+    } 
+    //input entries
+    $filename = "List of Student"; 
+    
+    /////////////////////////////////////////////// check.....
+    
+    switch ($bnt) {
+        
+        case "7":
+                if($results){
+                    $filename="List Of Teachers";    
+                    $exportToExcel->objExcel($results,$filds,$showfilds,3);   
+                    $info['SCHOOL_INFO']=$schoolInfo;
+                    $info['CLASS_INFO']='';
+                    if($academicObject){
+                        $campusInfo=explode("&raquo;",$academicObject->TITLE);
+                        $info['CLASS_INFO'].=CAMPUS_INFORMATION.': '.$campusInfo[0]."\n";
+                        $info['CLASS_INFO'].=GRADE.': '.$campusInfo[1]."\n";
+                        $info['CLASS_INFO'].=ACADEMIC_DATE.': '.$campusInfo[2]."\n";
+                    }
+                    $info['CLASS_INFO'].= EXAM.': '.$objectEnrollExam->NAME; 
+                    $exportToExcel->excelHeader($info,1,$endCharExcel);    
+                }
+             break;
+        
+        case "6":
+                if($results){
+                    $filename="List Of Teachers";    
+                    $exportToExcel->objExcel($results,$filds,$showfilds,3);   
+                    $info['SCHOOL_INFO']=$schoolInfo;
+                    
+                    $info['CLASS_INFO']='';
+                    if($academicObject){
+                        $campusInfo=explode("&raquo;",$academicObject->TITLE);
+                        $info['CLASS_INFO'].=CAMPUS_INFORMATION.': '.$campusInfo[0]."\n";
+                        $info['CLASS_INFO'].=GRADE.': '.$campusInfo[1]."\n";
+                        $info['CLASS_INFO'].=ACADEMIC_DATE.': '.$campusInfo[2]."\n";
+                    }
+                    $info['CLASS_INFO'].= EXAM.': '.$objectEnrollExam->NAME; 
+                    $exportToExcel->excelHeader($info,1,$endCharExcel);    
+                }
+             break;
+            
+         case "5": 
+            
+                if($results){
+                $exportToExcel->objExcel($results,$filds,$showfilds,3);   
+                $info['SCHOOL_INFO']=$schoolInfo;
+                $info['CLASS_INFO']='';
+                if($academicObject){
+                    $campusInfo=explode("&raquo;",$academicObject->TITLE);
+                    $info['CLASS_INFO'].=CAMPUS_INFORMATION.': '.$campusInfo[0]."\n";
+                    $info['CLASS_INFO'].=GRADE.': '.$campusInfo[1]."\n";
+                    $info['CLASS_INFO'].=ACADEMIC_DATE.': '.$campusInfo[2]."\n"; 
+                }
+                $info['CLASS_INFO'].=EXAM.': '.$results[0]['ENROLL_EXAM_NAME']; 
+                $exportToExcel->excelHeader($info,1,$endCharExcel); 
+                    
+                }
+             
+             break;
+             
+         case "4":  
+                if($results){
+                    $exportToExcel->objExcel($results,$filds,$showfilds,2);
+                    $exportToExcel->objPHPExcel->getActiveSheet()->setCellValue("A1",'N°');
+                    $exportToExcel->objPHPExcel->getActiveSheet()->setCellValue("B1",'CANDIDATE_CODE');
+                    $exportToExcel->objPHPExcel->getActiveSheet()->setCellValue("C1",'SCORE');
+                    $count=count($results)+2;   
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setPassword('PHPExcel'); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setSheet(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setSort(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setInsertRows(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setFormatCells(true);
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('C3:C'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    
+                }
+         
+            break;
+            
+         case "3":  
+        
+                if($results){
+                    $exportToExcel->objExcel($results,$filds,$showfilds,3);
+                    $count=count($results)+3;   
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setPassword('PHPExcel'); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setSheet(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setSort(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setInsertRows(true); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getProtection()->setFormatCells(true);
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('A1:F1')->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('A2:F2')->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('A4:A'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED ); 
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('B4:B'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('C4:C'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('D4:D'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    $exportToExcel->objPHPExcel->getActiveSheet()->getStyle('E4:E'.$count)->getProtection()->setLocked( PHPExcel_Style_Protection::PROTECTION_UNPROTECTED );
+                    
+                    $info['SCHOOL_INFO']=$schoolInfo;
+                    
+                    $info['CLASS_INFO']='';
+                    if($academicObject){
+                        $campusInfo=explode("&raquo;",$academicObject->TITLE);
+                        
+                        $info['CLASS_INFO'].=CAMPUS_INFORMATION.': '.$campusInfo[0]."\n";
+                        $info['CLASS_INFO'].=GRADE.': '.$campusInfo[1]."\n";
+                        $info['CLASS_INFO'].=ACADEMIC_DATE.': '.$campusInfo[2]."\n";
+                    }
+                    $info['CLASS_INFO'].=$examinfo; 
+                    $exportToExcel->excelHeader($info,1,$endCharExcel);
+                }
+            
+            break;  
+                  
+        default:
+            
+                if($results){
+                    $exportToExcel->objExcel($results,$filds,$showfilds,3);
+                    $info['SCHOOL_INFO']=$schoolInfo;
+                    $info['CLASS_INFO']='';
+                    if($academicObject){
+                        $campusInfo=explode("&raquo;",$academicObject->TITLE);
+                        
+                        $info['CLASS_INFO'].=CAMPUS_INFORMATION.': '.$campusInfo[0]."\n";
+                        $info['CLASS_INFO'].=GRADE.': '.$campusInfo[1]."\n";
+                        $info['CLASS_INFO'].=ACADEMIC_DATE.': '.$campusInfo[2]."\n";
+                    }
+                    $info['CLASS_INFO'].=$examinfo; 
+                    $exportToExcel->excelHeader($info,1,$endCharExcel);
+                } 
+          
+            break;   
+    
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+    $exportToExcel->excelFooter();
+    $exportToExcel->save($filename);
+
+?>
+

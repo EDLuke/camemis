@@ -1,0 +1,110 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 13.03.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+
+Ext.onReady(function() {
+	
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $PANEL_ITEMS = array();
+
+    $ATTENDANCE_INFORMATION = "{
+        title: '".SCHEDULE."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'SCHEDULE', url: '/schedule/byclass/?target=training&trainingId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $ATTENDANCE_INFORMATION . "";
+    
+    $EVENTS = "{
+        title: '".EVENTS."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'EVENTS', url: '/schoolevent/classevents/?target=training&trainingId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $EVENTS . "";
+    
+    $HOMEWORK = "{
+        title: '".HOMEWORK."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/homework/homeworkmaintraining/?objectId=".$this->objectId."&trainingId=".$this->trainingId."'})] 
+    }";
+    $PANEL_ITEMS[] = "" . $HOMEWORK . "";
+    
+    $LIST_OF_STUDENTS = "{
+        title: '".LIST_OF_STUDENTS."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/training/studentlist/?target=TERM&objectId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $LIST_OF_STUDENTS . "";
+    
+    $LIST_OF_TEACHERS = "{
+        title: '".LIST_OF_TEACHERS."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'LIST_OF_TEACHERS', url: '/training/teacherlist/?objectId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $LIST_OF_TEACHERS . "";
+    
+    $ASSESSMENT = "{
+        title: '".ASSESSMENT."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'SUBJECT', url: '/training/scoremonitortraining/?classId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $ASSESSMENT . "";
+    
+    $ATTENDANCE_INFORMATION = "{
+        title: '".ATTENDANCE_INFORMATION."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '/attendance/studentclassmain/?target=training&trainingId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $ATTENDANCE_INFORMATION . "";
+    
+    $DISCIPLINE_INFORMATION = "{
+        title: '".DISCIPLINE_INFORMATION."'
+        ,layout:'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '/discipline/byclass/?target=training&trainingId=".$this->trainingId."'})]
+    }";
+    $PANEL_ITEMS[] = "" . $DISCIPLINE_INFORMATION . "";
+    
+    $CHOOSE_ITEMS = "[".implode(',',$PANEL_ITEMS)."]";
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:[{
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:<?=$CHOOSE_ITEMS?>
+            }]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

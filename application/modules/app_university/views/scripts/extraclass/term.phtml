@@ -1,0 +1,207 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 07.06.2013
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("EXTRACLASS");
+$OBJECT_FORM->setLoadUrl('/extraclass/jsonload/');
+$OBJECT_FORM->setSaveUrl('/extraclass/jsonsave/');
+
+$OBJECT_DATA = $this->objectData;
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+?>
+<script>
+<? camemisPage::ExtformVTypes(); ?>
+
+Ext.onReady(function() {
+    
+    <?
+    /**
+     * Extjs: s.gif
+     */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $DETAIL_ITEMS = "
+    [
+        {".CamemisField::Box("CODE", CODE_ID, $OBJECT_DATA["CODE"])."}
+        ,{".CamemisField::StartDatefieldRange("START_DATE", START_DATE, "END_DATE", true)."}
+        ,{".CamemisField::EndDatefieldRange("END_DATE", END_DATE, "START_DATE", true)."}
+    ]
+    ";
+    
+    $OBJECT_FORM->setLoadParams("cmd: 'jsonLoadObject',objectId: '".$this->objectId."'");
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonSaveObject'
+        ,objectId: '".$this->objectId."'
+    ");
+    
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);}
+    ");
+    
+    $OBJECT_FORM->setReleaseParams("cmd: 'jsonReleaseObject',objectId: '".$this->objectId."'");
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$DETAIL_ITEMS."
+        }]
+    }
+    ";
+    
+    //if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
+    //if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+        myTree = window.parent.Ext.getCmp('EXTRACLASS_TREE_ID');
+        myNode = myTree.getNodeById('".$this->objectId."');
+        myNode.reload();
+        myNode.expand(true, false);
+        myNode.setText(action.result.text);
+        ".camemisPage::setRequestURI()."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
+        myTree = window.parent.Ext.getCmp('EXTRACLASS_TREE_ID');
+        myNode = myTree.getNodeById('".$this->objectId."');
+        myNode.reload();
+        myNode.expand(true, false);
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    ///////////////////////////////////////////////////
+    $CREATED = "
+    {
+        title: '".CREATED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,false)."
+            }]
+        }]
+    }";
+
+    $MODIFIED = "
+    {
+        title: '".MODIFIED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,false)."
+            }]
+        }]
+    }";
+
+    $DISABLED = "
+    {
+        title: '".DISABLED."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'background:#E0E7F7; padding:10px'
+            ,items:[{
+                ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,false)."
+            },{
+                ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,false)."
+            }]
+        }]
+    }";
+    ///////////////////////////////////////////////////
+    
+    $ITEMS = $DETAIL_INFORMATION;
+    $ITEMS .= ",".$CREATED;
+    $ITEMS .= ",".$MODIFIED;
+    $ITEMS .= ",".$DISABLED;
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,autoScroll: true
+        ,bodyStyle: 'padding:10px'
+        ,items: [".$ITEMS."]
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    $OBJECT_FORM->bodyStyle = "padding:0px";
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id: 'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,72 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 22.12.2012
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$Ids = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+
+if (strpos($Ids, "CAMPUS") !== false) {
+    $explode = explode("_", substr($strNode, 7));
+    $campusId = isset($explode[0]) ? $explode[0] : "";
+    $schoolyearId = isset($explode[1]) ? $explode[1] : "";
+    $selectionType = "CAMPUS";
+} elseif (strpos($Ids, "GRADE") !== false) {
+    $explode = explode("_", substr($strNode, 6));
+    $gradeId = isset($explode[0]) ? $explode[0] : "";
+    $campusId = isset($explode[1]) ? $explode[1] : "";
+    $schoolyearId = isset($explode[2]) ? $explode[2] : "";
+    $selectionType = "GRADE";
+} else {
+    $selectionType = "";
+}
+
+if(!$selectionType) {header("Location: /main/permission/");exit;}
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+	<?
+    //
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            autoScroll: true
+            ,bodyStyle: 'background:#c3d5ed; padding:5px;'
+            ,border: false
+            ,items:[{
+                layout: 'anchor'
+                ,border:false
+                ,items: [{
+                    title: 'Panel 3'
+                    ,style: 'background:#c3d5ed;padding-bottom: 5px'
+                    ,height:300
+                    ,anchor: '100%'
+                },{
+                    title: 'Panel 3'
+                    ,style: 'background:#c3d5ed;padding-bottom: 5px'
+                    ,height:400
+                    ,anchor: '100%'
+                    ,layout:'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'FRAME_ID', url:'/chart/studentacademictraditional/?camIds=b2JqZWN0VHlwZT1DQU1QVVM'})]
+                }]
+            }]
+        }]
+    });
+});
+</script>
+<?
+print_r($_GET);
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

@@ -1,0 +1,68 @@
+<?
+
+require_once 'clients/CamemisChart.php';
+require_once 'models/statistic/StudentStatisticsDBAccess.php';
+require_once 'models/statistic/StaffStatisticsDBAccess.php';
+
+$objectType = isset($_GET["objectType"])?addText($_GET["objectType"]):"";
+$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
+$staffId = isset($_GET["staffId"])?addText($_GET["staffId"]):"";
+$personType = isset($_GET["personType"])?strtoupper($_GET["personType"]):""; //@Man
+
+$campusId = isset($_GET["campusId"])?addText($_GET["campusId"]):"";
+$gradeId = isset($_GET["gradeId"])?addText($_GET["gradeId"]):"";
+$schoolyearId = isset($_GET["schoolyearId"])? addText($_GET["schoolyearId"]):"";
+
+switch($personType){
+    case "STUDENT":
+        $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("WEEKLY", $studentId);
+        switch($objectType){
+            case "WEEKLY":
+                $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("WEEKLY", $studentId);
+                break;
+            case "MONTHLY":
+                $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("MONTHLY", $studentId);
+                break;
+            case "YEARLY":
+                $dataSet = StudentStatisticsDBAccess::getDataSetStudentDiscipline("YEARLY", $studentId);
+                break;
+             case "CAMPUS":
+                $params = array('campusId'=>$campusId,'schoolyearId'=>$schoolyearId);
+                $dataSet=StudentStatisticsDBAccess::getDataStudentDiscipline($params);
+                break;
+             case "GRADE":
+                $params = array('campusId'=>$campusId,'gradeId'=>$gradeId,'schoolyearId'=>$schoolyearId);
+                $dataSet = StudentStatisticsDBAccess::getDataStudentDiscipline($params);
+                break;
+        }
+        break;
+    case "STAFF":
+        $dataSet = StaffStatisticsDBAccess::getDataSetStaffDiscipline("WEEKLY", $studentId);
+        switch($objectType){
+            case "WEEKLY":
+                $dataSet = StaffStatisticsDBAccess::getDataSetStaffDiscipline("WEEKLY", $staffId);
+                break;
+            case "MONTHLY":
+                $dataSet = StaffStatisticsDBAccess::getDataSetStaffDiscipline("MONTHLY", $staffId);
+                break;
+            case "YEARLY":
+                $dataSet = StaffStatisticsDBAccess::getDataSetStaffDiscipline("YEARLY", $staffId);
+                break;
+        }
+        break;
+}
+
+$chart = new CamemisChart("MULTI_BAR_CHART", 'chart1', $dataSet);
+$chart->chartSVG = "display";
+$chart->height = 230;
+?>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<body>
+    <script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div><?= $chart->setChartDisplay(); ?></div>
+    <script><?= $chart->setChartScript(); ?></script>
+</body>
+</html>

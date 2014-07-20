@@ -1,0 +1,37 @@
+<html>
+    <head>
+    <title><?= Zend_Registry::get('TITLE');?></title>
+    <link rel="stylesheet" type="text/css" href="<?=Zend_Registry::get('CAMEMIS_URL')?>/public/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="<?=Zend_Registry::get('CAMEMIS_URL')?>/public/<?= Zend_Registry::get('EXTJS_VERSION');?>/resources/css/ext-all.css" />
+    <script type="text/javascript" src="<?=Zend_Registry::get('CAMEMIS_URL')?>/public/<?= Zend_Registry::get('EXTJS_VERSION');?>/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="<?=Zend_Registry::get('CAMEMIS_URL')?>/public/<?= Zend_Registry::get('EXTJS_VERSION');?>/ext-all.js"></script>
+    </head>
+    <body bgcolor="#FFFFFF">
+    <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:80px">
+    <h1 class="headerError">You do not have permission to access this object.!</h1>
+    <br>
+    
+    </div>
+    <script>    
+    Ext.onReady(function() {
+        viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                xtype: 'panel'
+                ,bodyStyle: 'padding:10px'
+                ,border: false
+                ,width:500
+                ,items: [{
+                   title:''
+                   ,border:false
+                   ,width:500
+                   ,bodyStyle: 'background:#FFF; padding:25px;'
+                   ,contentEl: 'initCenter'
+                }]
+            }]
+        });
+    });
+    </script>
+    </body>
+</html>

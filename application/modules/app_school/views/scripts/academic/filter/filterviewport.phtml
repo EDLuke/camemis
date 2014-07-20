@@ -1,0 +1,118 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 17.05.2014
+///////////////////////////////////////////////////////////
+require_once 'utiles/Utiles.php';
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+abstract class filterviewport{
+    
+    public $datafield = array();
+    private $urlTbarRefresh = null;
+    
+    public function __construct() {
+                      
+    }
+    
+    public function __get($name) {
+        if (array_key_exists($name, $this->datafield)) {
+            return $this->datafield[$name];
+        }
+        return null;
+    }
+
+    public function __set($name, $value) {
+        $this->datafield[$name] = $value;
+    }
+
+    public function __isset($name) {
+        return array_key_exists($name, $this->datafield);
+    }
+
+    public function __unset($name) {
+        unset($this->datafield[$name]);
+    }
+    
+    public function tbarRefresh($url){
+        $this->urlTbarRefresh = $url;
+    }
+    
+    private function setItems($charURLs){
+        $items = array();
+        if($charURLs)
+        {
+            foreach($charURLs as $key=>$value)
+            {
+                $stdClass = (object)$value;
+                $js="";
+                $js.="{";
+                    $js.="columnWidth: 1";
+                    $js.=",baseCls:'x-plain'";
+                    $js.=",bodyStyle:'padding:5px 5px 5px 5px'";
+                    $js.=",items:[{";
+                        $js.="title: '".$key."'";
+                        $js.=",layout: 'fit'";
+                        $js.=",collapsible: true";
+                        $js.=",collapsed: false";
+                        $js.=",height:".$stdClass->height."";
+                       /* $js .= ",tbar:[{";
+                            $js .= "text:'View Deatail'";
+                            $js .= ",iconCls:'icon-arrow_refresh'";
+                            $js .= ",disabled:true";
+                            $js .= ",handler: function(){";
+                                //$js .=$this->urlTbarRefresh;
+                            $js .= "}";
+                        $js .= "}]";*/
+                        $js.=",items: [new Ext.ux.IFrameComponent({ id: '".$key."_ID', url:'".$stdClass->url."'})]";
+                    $js.="}]";
+                $js.="}";
+               $items[] = $js;            
+            }    
+        }
+        return implode(",",$items);        
+    }
+    
+    
+    
+    public function redererViewPort($charURLs){
+        $js = "";
+        $js .= "Ext.onReady(function() {";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "border: false";
+                $js .= ",layout: 'fit'";
+                if($this->urlTbarRefresh){
+                $js .= ",tbar:[{";
+                    $js .= "text:'".REFRESH."'";
+                    $js .= ",iconCls:'icon-arrow_refresh'";
+                    $js .= ",handler: function(){";
+                        $js .=$this->urlTbarRefresh;
+                    $js .= "}";
+                $js .= "}]";
+                }
+                $js .= ",items:[{";
+                    $js .= "layout:'column'";
+                    $js .= ",height:percentHeight(100)";
+                    $js .= ",autoScroll:true";
+                    $js .= ",border:false";
+                    $js .= ",defaults: {";
+                        $js .= "layout: 'anchor'";
+                        $js .= ",defaults: {anchor: '100%'}";
+                    $js .= "}";
+                    $js .= ",items: [";
+                    $js .= $this->setItems($charURLs);
+                    $js .= "]";
+               $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+    $js .= "});";
+    echo $js;    
+    }
+      
+}
