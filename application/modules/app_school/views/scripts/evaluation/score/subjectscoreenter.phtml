@@ -309,6 +309,18 @@ Ext.onReady(function() {
         }]);
     ");
     
+    //Task for Ratha
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . EXPORT_TO_EXCEL . "</b>'
+            ,disabled:true
+            ,iconCls:'icon-page_excel'
+            ,handler: function(){
+                
+            }
+        }]);
+    ");
+    
     $importParams = $setParams;
     $importParams .= "&target=subjectscoreenter";
     $importParams .= "&setId=".$setId."";

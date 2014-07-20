@@ -389,6 +389,14 @@ Ext.onReady(function() {
             $html .= "";
         }
         
+        //Task for Ratha
+        $html .= "},'-',{";
+            $html .= "text: '<b>".EXPORT_TO_EXCEL."</b>'";
+            $html .= ",iconCls:'icon-page_excel'";
+            $html .= ",disabled:true";
+            $html .= ",handler: function(){}";
+        $html .= "";
+        
         $html .= "},'->','<b>".$SELECTED_MENU."</b>']";
         
         $html .= ",clicksToEdit:1";

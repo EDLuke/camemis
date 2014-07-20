@@ -302,6 +302,18 @@ Ext.onReady(function() {
         ");
     }
     
+    //Task for Ratha
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . EXPORT_TO_EXCEL . "</b>'
+            ,disabled:true
+            ,iconCls:'icon-page_excel'
+            ,handler: function(){
+                
+            }
+        }]);
+    ");
+    
     $OBJECT_GRID->addTBarItems("tbar.add(['->','<b>".YEAR_RESULT."</b>']);");
     
     $OBJECT_GRID->baseParams = "

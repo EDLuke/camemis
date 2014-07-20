@@ -359,6 +359,14 @@ Ext.onReady(function() {
                 $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
             $html .= "";
         }
+        //Task for Ratha
+        $html .= "},'-',{";
+            $html .= "text: '<b>".EXPORT_TO_EXCEL."</b>'";
+            $html .= ",iconCls:'icon-page_excel'";
+            $html .= ",disabled:true";
+            $html .= ",handler: function(){}";
+        $html .= "";
+        
         $html .= "}]";
         
         $html .= ",clicksToEdit:1";
