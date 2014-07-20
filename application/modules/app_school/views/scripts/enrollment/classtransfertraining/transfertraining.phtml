@@ -55,6 +55,61 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         /**
          * Extjs: s.gif
          */
+        $js = "";
+        $js .= "function selectAction(type){";
+        $js .= "var selids = '';";
+        $js .= "var seltexts = '';";
+        $js .= "var sels = Ext.getCmp('" . $ASSIGNED_STUDENTS_GRID->getObjectId() . "').getSelectionModel().getSelections();";
+        $js .= "for( var i = 0; i < sels.length; i++ ) {";
+        $js .= "if (i >0) selids += ',';";
+        $js .= "selids += sels[i].get('ID');";
+        $js .= "if (i >0) seltexts += ',';";
+        $js .= "seltexts += sels[i].get('NAME');";
+        $js .= "}";
+        $js .= "if (sels.length == 0){";
+        $js .= "Ext.MessageBox.alert('" . WARNING . "', '" . PLEASE_CHOOSE . "');";
+        $js .= "}else{";
+        $js .= "Ext.MessageBox.show({";
+        $js .= "title:'" . APPLY . "'";
+        $js .= ",msg: '" . MSG_ACCEPT_CHOICE . "'";
+        $js .= ",buttons: Ext.MessageBox.YESNO";
+        $js .= ",fn: function(btn){";
+        $js .= "if (btn=='yes'){";
+            $js .= "var connection = new Ext.data.Connection();";
+            $js .= "connection.request({";
+            $js .= "url: '/enrollment/jsonsave/'";
+            $js .= ",params: {";
+            $js .= "selectionIds: selids";
+            $js .= ",transferType: type";
+            $js .= ",cmd: 'transferStudentTraining'
+                    ,oldTrainingId: '".$this->objectId."'
+                    ,newTrainingId: toComboclass.getValue() ";
+            $js .= "}";
+            $js .= ",method: 'POST'";
+            $js .= ",success: function (result) {";
+            $js .= "jsonData = Ext.util.JSON.decode(result.responseText);";
+            $js .= "if (jsonData) {";
+            $js .= "if (jsonData.selectedCount > 0){";
+            $js .= "Ext.MessageBox.alert(";
+            $js .= "'" . ACTION_STATUS . "'";
+            $js .= ",jsonData.selectedCount + ' " . MSG_ACTION_ADDED_ITEM . "'";
+            $js .= ",function(btn){";
+            $js .= "if (btn == 'ok'){";
+            $js .= "Ext.getCmp('" . $ASSIGNED_STUDENTS_GRID->getObjectId() . "').store.reload();";
+            $js .= "}";
+            $js .= "}";
+            $js .= ");";
+            $js .= "}";
+            $js .= "}";
+            $js .= "}";
+            $js .= "});";
+        $js .= "}";
+        $js .= "}";
+        $js .= ",icon: Ext.MessageBox.QUESTION";
+        $js .= "});";
+        $js .= "}";
+        $js .= "}";
+        echo $js; 
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
   
@@ -77,7 +132,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TERM->renderJS();      
        
         $RIGHT_CLASS_OBJECT = new CamemisDynCombo("TRAINING","CLASS");
-        $RIGHT_CLASS_OBJECT->setLoadUrl("/TRAINING/jsonload/");
+        $RIGHT_CLASS_OBJECT->setLoadUrl("/training/jsonload/");
         $RIGHT_CLASS_OBJECT->objectTitle = "<b>".GRADE_CLASS."</b>";
         $RIGHT_CLASS_OBJECT->allowBlank = "true";
         $RIGHT_CLASS_OBJECT->width = 130;
@@ -146,13 +201,43 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]);
         "); 
         
-       $ASSIGNED_STUDENTS_GRID->addTBarItems("
+      /* $ASSIGNED_STUDENTS_GRID->addTBarItems("
             tbar.add('->',[{
                 id: 'APLY_ID'
                 ,text: '<b>" . APPLY . "</b>'
                 ,iconCls:'icon-group_add'
                 ,scope:this
                 ,handler: this.onSelection
+            }]);
+        ");*/
+        
+        $ASSIGNED_STUDENTS_GRID->addTBarItems("
+            tbar.add('->',[{
+                id: 'APLY_ID'
+                ,text: '<b>" . APPLY . "</b>'
+                ,iconCls:'icon-group_add'
+                ,scope:this
+                ,menu:[{
+                        text: '" . TRANSFER . "'
+                        ,iconCls:'icon-application_cascade'
+                        ,handler: function(){
+                            selectAction('TRANSFER');
+                        } 
+                     
+                    },{
+                        text: '" . UPGRADE . "'
+                        ,iconCls:'icon-application_double'
+                        ,handler: function(){
+                            selectAction('UPGRADE');    
+                        }
+                    },{
+                        text: '" . DOWNGRADE . "'
+                        ,iconCls:'icon-application_double'
+                        ,handler: function(){
+                            selectAction('DOWNGRADE');    
+                        }
+                    }
+                ]
             }]);
         ");
         

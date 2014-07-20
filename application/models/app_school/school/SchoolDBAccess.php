@@ -252,21 +252,19 @@ class SchoolDBAccess {
         if (isset($params["CAMEMIS_DATE_FORMAT"]))
             $SAVEDATA['CAMEMIS_DATE_FORMAT'] = addText($params["CAMEMIS_DATE_FORMAT"]);
 
-        if (isset($params["GENERAL_EDUCATION"])) {
-            $SAVEDATA['GENERAL_EDUCATION'] = isset($params["GENERAL_EDUCATION"]) ? 1 : 0;
-        }
+        //if (isset($params["GENERAL_EDUCATION"])) {
+        $SAVEDATA['GENERAL_EDUCATION'] = isset($params["GENERAL_EDUCATION"]) ? 1 : 0;
+        //}
 
-        if (isset($params["TRAINING_PROGRAMS"])) {
-            $SAVEDATA['TRAINING_PROGRAMS'] = isset($params["TRAINING_PROGRAMS"]) ? 1 : 0;
-        }
+        //if (isset($params["TRAINING_PROGRAMS"])) {
+        $SAVEDATA['TRAINING_PROGRAMS'] = isset($params["TRAINING_PROGRAMS"]) ? 1 : 0;
+        //}
 
-        if (isset($params["TRADITIONAL_EDUCATION_SYSTEM"])) {
-            $SAVEDATA['TRADITIONAL_EDUCATION_SYSTEM'] = isset($params["TRADITIONAL_EDUCATION_SYSTEM"]) ? 1 : 0;
-        }
+        //if (isset($params["TRADITIONAL_EDUCATION_SYSTEM"])) {
+        $SAVEDATA['TRADITIONAL_EDUCATION_SYSTEM'] = isset($params["TRADITIONAL_EDUCATION_SYSTEM"]) ? 1 : 0;
+        //}
 
-        if (isset($params["CREDIT_EDUCATION_SYSTEM"])) {
-            $SAVEDATA['CREDIT_EDUCATION_SYSTEM'] = isset($params["CREDIT_EDUCATION_SYSTEM"]) ? 1 : 0;
-        }
+        $SAVEDATA['CREDIT_EDUCATION_SYSTEM'] = isset($params["CREDIT_EDUCATION_SYSTEM"]) ? 1 : 0;
 
         if (isset($params["SCHOOL_LETTER_FOOTER"]))
             $SAVEDATA['SCHOOL_LETTER_FOOTER'] = addText($params["SCHOOL_LETTER_FOOTER"]);

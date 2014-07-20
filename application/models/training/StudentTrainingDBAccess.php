@@ -250,7 +250,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $SQL->joinLeft(array('B' => 't_student_training'), 'A.ID=B.STUDENT', $SELECT_B);
         $SQL->joinLeft(array('C' => 't_training'), 'C.ID=B.TRAINING', $SELECT_C);
         $SQL->joinLeft(array('D' => 't_training'), 'D.ID=B.LEVEL', $SELECT_D);   /* @soda */
-
+        $SQL->where('B.IS_TRANSFER = ?', 0);
         if ($TRAINING_OBJECT)
         {
             switch ($TRAINING_OBJECT->OBJECT_TYPE)

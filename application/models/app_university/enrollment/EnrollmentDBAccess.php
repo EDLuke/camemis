@@ -562,7 +562,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         } 
     }
     
-    public function classTransferTraining($oldClass,$newClass,$studentId){
+    public function classTransferTraining($oldClass,$newClass,$studentId,$transferType){
         
         $SAVEDATA = array();
         $studentTrainingOld = StudentTrainingDBAccess::sqlStudentTrainingRow($oldClass->ID, $studentId);
@@ -582,7 +582,20 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             $SAVEDATA['FROM_TRAINING'] = $studentTrainingOld->TRAINING? $studentTrainingOld->TRAINING : '';
             
             $SAVEDATA['TRANSFER_FROM'] = $studentTrainingOld->OBJECT_ID? $studentTrainingOld->OBJECT_ID : '';
-            $SAVEDATA['TRANSFER_TYPE'] = 1;
+            if($transferType){
+                switch(strtoupper($transferType)){
+                    case 'TRANSFER':
+                        $SAVEDATA['TRANSFER_TYPE'] = 1;
+                        break; 
+                    case 'UPGRADE':
+                        $SAVEDATA['TRANSFER_TYPE'] = 2;
+                        break;
+                    case 'DOWNGRADE':
+                        $SAVEDATA['TRANSFER_TYPE'] = 3;
+                        break;   
+                }    
+            }
+            
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             self::dbAccess()->insert('t_student_training', $SAVEDATA);
@@ -601,6 +614,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $oldTrainingId = isset($params['oldTrainingId'])?addText($params['oldTrainingId']):'';
         $newTrainingId = isset($params['newTrainingId'])?addText($params['newTrainingId']):'';
         $studentIds = isset($params['selectionIds'])?addText($params['selectionIds']):'';
+        $transferType = isset($params['transferType'])?addText($params['transferType']):'';
         $selectedCount = 0;
         $error='';
         if($oldTrainingId){
@@ -610,7 +624,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             
             $newClass = TrainingDBAccess::findTrainingFromId($newTrainingId); 
             foreach(explode(',',$studentIds) as $value){
-                $this->classTransferTraining($oldClass,$newClass,$value); 
+                $this->classTransferTraining($oldClass,$newClass,$value,$transferType); 
                 $selectedCount++;           
             }        
         }else{
@@ -783,6 +797,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                             break;   
                     }
                 }
+                
                 $data[$i]["CREATED_DATE"] = getShowDate($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = $value->CREATED_BY;
                 ++$i;
