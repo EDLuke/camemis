@@ -73,19 +73,22 @@ Ext.onReady(function() {
         case 1:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_TERM_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_TERM_EVALUATION."']
             ]";
         break;
         case 2:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_QUARTER_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_QUARTER_EVALUATION."']
             ]";
         break;
         default:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_SEMESTER_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_SEMESTER_EVALUATION."']
             ]";
         break;
     }

@@ -129,26 +129,29 @@ Ext.onReady(function() {
         case 1:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_TERM_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_TERM_EVALUATION."']
             ]";
         break;
         case 2:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_QUARTER_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_QUARTER_EVALUATION."']
             ]";
         break;
         default:
             $INCLUDE_IN_EVALUATION_STORE = "[
                 [1, '" . INCLUDE_MONTHLY_EVALUATION . "']
-                ,[2, '".INCLUDE_SEMESTER_EVALUATION."']
+                ,[2, '".INCLUDE_MIDTERM_EVALUATION."']
+                ,[3, '".INCLUDE_SEMESTER_EVALUATION."']
             ]";
         break;
     }
     
     $EVALUATION_SETTINGS_ITEMS = "[";
     
-    $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('INCLUDE_IN_EVALUATION', EVALUATION, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
+    $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('INCLUDE_IN_EVALUATION', CATEGORY, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE." / ".COEFFICIENT, true, false, false, false)."}";
     $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("POINTS_POSSIBLE", "POINTS_POSSIBLE", POINTS_POSSIBLE, true, false, false, false)."}";

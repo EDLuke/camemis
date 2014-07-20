@@ -300,10 +300,10 @@ class AssignmentTempDBAccess {
                                         case 1:
                                             $data[$i]['iconCls'] = "icon-flag_blue";
                                             break;
-                                        case 2:
+                                        case 3:
                                             $data[$i]['iconCls'] = "icon-flag_red";
                                             break;
-                                        default:
+                                        case 2:
                                             $data[$i]['iconCls'] = "icon-flag_white";
                                             break;
                                     }
@@ -353,10 +353,10 @@ class AssignmentTempDBAccess {
                                 case 1:
                                     $data[$i]['iconCls'] = "icon-flag_blue";
                                     break;
-                                case 2:
+                                case 3:
                                     $data[$i]['iconCls'] = "icon-flag_red";
                                     break;
-                                default:
+                                case 2:
                                     $data[$i]['iconCls'] = "icon-flag_white";
                                     break;
                             }
@@ -389,10 +389,10 @@ class AssignmentTempDBAccess {
                         case 1:
                             $data[$i]['iconCls'] = "icon-flag_blue";
                             break;
-                        case 2:
+                        case 3:
                             $data[$i]['iconCls'] = "icon-flag_red";
                             break;
-                        default:
+                        case 2:
                             $data[$i]['iconCls'] = "icon-flag_white";
                             break;
                     }
