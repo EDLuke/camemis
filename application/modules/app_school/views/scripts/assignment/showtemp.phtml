@@ -82,7 +82,7 @@ Ext.onReady(function() {
             
             $EVALUATION_TYPE_STORE = "[
                 [0, '" . NUMBER . "']
-                ,[1, '".PERCENT."']
+                ,[1, '".PERCENTAGE."']
             ]";
             
             $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('INCLUDE_IN_EVALUATION', CATEGORY, $INCLUDE_IN_EVALUATION_STORE, false, false, false, false,false)."}";
@@ -120,7 +120,7 @@ Ext.onReady(function() {
             $EVALUATION_SETTINGS_ITEMS = "[";
             $EVALUATION_TYPE_STORE = "[
                 [0, '" . NUMBER . "']
-                ,[1, '".PERCENT."']
+                ,[1, '".PERCENTAGE."']
             ]";
             $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, false, false, false, false,false)."}";
             $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE." / ".COEFFICIENT, false, false, false, false)."}";
