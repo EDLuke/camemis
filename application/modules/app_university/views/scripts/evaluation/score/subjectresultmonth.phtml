@@ -125,7 +125,14 @@ switch($subjectObject->SCORE_TYPE){
 ////////////////////////////////////////////////////////////////////////////////
 $CATEGORY_ROW = "";
 $CATEGORY_ROW .= "{header: '<b>".PERSONAL_INFORMATION."</b>', colspan: 4, align: 'center'}";
-$CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 3, align: 'center'}";
+switch($subjectObject->SCORE_TYPE){
+    case 1:
+        $CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 3, align: 'center'}";
+        break;
+    default:
+        $CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 1, align: 'center'}";
+        break;
+}
 $listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
         $academicId
         , $subjectId
