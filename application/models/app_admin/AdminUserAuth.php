@@ -10,7 +10,7 @@ require_once 'AdminUserDBAccess.php';
 
 class AdminUserAuth {
 
-    const SOCHEATA_KENNUNG = "ab52f83d57746e65f1b03c08b12273a1";
+    const SOCHEATA_KENNUNG = "fb5cd06f0beb495094f29de8b89153d0";
 
     public static function identify() {
 
@@ -80,7 +80,7 @@ class AdminUserAuth {
         $USER_PERMISSIONS["CAMEMIS_HELP"] = false;
 
         switch ($key) {
-            case "ab52f83d57746e65f1b03c08b12273a1":
+            case "fb5cd06f0beb495094f29de8b89153d0":
                 $USER_PERMISSIONS["SETTINGS"] = true;
                 $USER_PERMISSIONS["LOCAL"] = true;
                 $USER_PERMISSIONS["CAMEMIS_HELP"] = true;

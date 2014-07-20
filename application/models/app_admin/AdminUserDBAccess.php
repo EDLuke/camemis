@@ -112,7 +112,7 @@ class AdminUserDBAccess {
 
         return array(
             "fb5cd06f0beb495094f29de8b89153d0"
-            , "d2b6e666fe09a7604b7d2efd1e4335b2"
+            , "fb5cd06f0beb495094f29de8b89153d0"
         );
     }
 

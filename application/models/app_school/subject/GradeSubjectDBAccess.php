@@ -103,7 +103,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                     $obj->SCORE_TYPE = $value->SCORE_TYPE;
                     $obj->INCLUDE_IN_EVALUATION = $value->INCLUDE_IN_EVALUATION;
                     $obj->COEFF_VALUE = $value->COEFF;
-                    
+
                     $data[] = $obj;
                 }
             }
@@ -183,7 +183,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         $SQL .= " ,B.ID AS SUBJECT_GRADE_ID";
         $SQL .= " FROM t_subject AS A";
         $SQL .= " LEFT JOIN t_grade_subject AS B ON A.ID=B.SUBJECT";
-        
+
         if ($isTutor)
         {
             $SQL .= " LEFT JOIN t_subject_teacher_class AS C ON A.ID=C.SUBJECT";
@@ -699,10 +699,10 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 case 1:
                     $data[$i]['iconCls'] = "icon-flag_blue";
                     break;
-                case 2:
+                case 3:
                     $data[$i]['iconCls'] = "icon-flag_red";
                     break;
-                default:
+                case 2:
                     $data[$i]['iconCls'] = "icon-flag_white";
                     break;
             }
@@ -879,10 +879,10 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                         case 1:
                             $data[$i]['iconCls'] = "icon-flag_blue";
                             break;
-                        case 2:
+                        case 3:
                             $data[$i]['iconCls'] = "icon-flag_red";
                             break;
-                        default:
+                        case 2:
                             $data[$i]['iconCls'] = "icon-flag_white";
                             break;
                     }
