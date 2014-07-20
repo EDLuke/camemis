@@ -204,7 +204,7 @@ Ext.onReady(function() {
         case 'TEACHER':
             $OBJECT_GRID->addTBarItems("
                 tbar.add('-',[{
-                    text: '" . REFRESH . "'
+                    text: '<b>" . REFRESH . "</b>'
                     ,iconCls:'icon-reload'
                     ,handler: function(){
                         ".CamemisPage::setRequestURI(false)."
@@ -218,7 +218,7 @@ Ext.onReady(function() {
     $setActionPareams .= "&target=TERM";
     $OBJECT_GRID->addTBarItems("
         tbar.add(['-',{
-            text: '" . CALCULATION . "'
+            text: '<b>" . CALCULATION . "</b>'
             ,iconCls:'icon-calculator_add'
             ,handler: function(){
                 Ext.MessageBox.show({

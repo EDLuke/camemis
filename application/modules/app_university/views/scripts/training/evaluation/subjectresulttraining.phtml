@@ -96,7 +96,7 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addTBarItems("
         tbar.add([{
-            text: '" . REFRESH . "'
+            text: '<b>" . REFRESH . "</b>'
             ,iconCls:'icon-reload'
             ,handler: function(){
                 Ext.getCmp('" . $OBJECT_GRID->getObjectId() . "').store.reload();
@@ -106,7 +106,7 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addTBarItems("
         tbar.add('-',[{
-            text: '" . CALCULATION . "'
+            text: '<b>" . CALCULATION . "</b>'
             ,iconCls:'icon-calculator_add'
             ,handler: function(){
                 Ext.MessageBox.show({

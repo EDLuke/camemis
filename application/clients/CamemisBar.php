@@ -72,7 +72,7 @@ class CamemisBar {
 
         $js = "";
         $js .= "id: '" . $Id . "'";
-        $js .= ",text: '" . REFRESH . "'";
+        $js .= ",text: '<b>" . REFRESH . "</b>'";
         $js .= ",iconCls:'icon-reload'";
         $js .= ",handler: function(){";
         $js .= camemisPage::setRequestURI();
@@ -484,7 +484,7 @@ class CamemisBar {
         } else {
             $js .= "id: 'REFRESH_ID'";
         }
-        $js .= ",tooltip:'" . REFRESH . "'";
+        $js .= ",tooltip:'<b>" . REFRESH . "</b>'";
         $js .= ",scope:this";
         $js .= ",iconCls:'icon-reload'";
         $js .= ",handler: this.onTBarRefresh";

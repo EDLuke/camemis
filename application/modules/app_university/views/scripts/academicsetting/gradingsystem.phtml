@@ -199,7 +199,7 @@ Ext.onReady(function() {
     
     $HIGHER_EDUCATION->addTBarItems("
         tbar.add([{
-            text: '" . REFRESH . "'
+            text: '<b>" . REFRESH . "</b>'
             ,iconCls:'icon-arrow_refresh'
             ,handler: function(){
                 Ext.getCmp('".$HIGHER_EDUCATION->getObjectId()."').getColumnModel().setHidden(8, false);
@@ -369,7 +369,7 @@ Ext.onReady(function() {
     
     $TRAINING->addTBarItems("
         tbar.add([{
-            text: '" . REFRESH . "'
+            text: '<b>" . REFRESH . "</b>'
             ,iconCls:'icon-arrow_refresh'
             ,handler: function(){
                 Ext.getCmp('".$TRAINING->getObjectId()."').getColumnModel().setHidden(8, false);
