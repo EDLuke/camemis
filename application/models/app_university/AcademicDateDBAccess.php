@@ -147,7 +147,7 @@ class AcademicDateDBAccess {
             $SQL .= " AND PARENT='" . $facette->INDEX_ID . "'";
         }
 
-        $SQL .= " ORDER BY A.YEAR_LEVEL";
+        $SQL .= " ORDER BY A.SORT DESC";
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -228,7 +228,7 @@ class AcademicDateDBAccess {
         $SQL .= " AND START<NOW() AND NOW()<END";
         $SQL .= " OR START>NOW() AND NOW()<END";
         $SQL .= " AND STATUS=1";
-        $SQL .= " ORDER BY YEAR_LEVEL ASC";
+        $SQL .= " ORDER BY SORT DESC";
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
@@ -343,7 +343,7 @@ class AcademicDateDBAccess {
         $SQL .= " WHERE 1=1";
         $SQL .= " AND STATUS=1";
         $SQL .= " AND NOW()<=END";
-        $SQL .= " ORDER BY YEAR_LEVEL ASC";
+        $SQL .= " ORDER BY SORT DESC";
 
         $result = self::dbAccess()->fetchAll($SQL);
 
@@ -427,7 +427,7 @@ class AcademicDateDBAccess {
         $SQL .= " WHERE 1=1";
         $SQL .= " AND STATUS=1";
         $SQL .= " AND DISPLAY=1";
-        $SQL .= " ORDER BY YEAR_LEVEL ASC";
+        $SQL .= " ORDER BY SORT DESC";
 
         $result = self::dbAccess()->fetchAll($SQL);
 
@@ -549,9 +549,6 @@ class AcademicDateDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    //
-    //YEAR(`date`) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
-
     public static function getNextSchoolyearFromLast($Id) {
 
         $facette = self::findAcademicDateFromId($Id);
@@ -668,7 +665,7 @@ class AcademicDateDBAccess {
         $SQL .= " AND STATUS=1";
         if ($facette)
             $SQL .= " AND YEAR_LEVEL<'" . $facette->YEAR_LEVEL . "'";
-        $SQL .= " ORDER BY YEAR_LEVEL ASC";
+        $SQL .= " ORDER BY SORT DESC";
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
