@@ -252,7 +252,7 @@ class AssessmentConfig {
     public static function calculateGradingScale($checkValue, $qualificationType)
     {
 
-        $output = "";
+        $OUTPUT = "";
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
@@ -264,13 +264,13 @@ class AssessmentConfig {
             {
                 if ($checkValue >= $value->SCORE_MIN && $checkValue <= $value->SCORE_MAX)
                 {
-                    $output = $value->ID;
+                    $OUTPUT = $value->ID;
                     break;
                 }
             }
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     ////////////////////////////////////////////////////////////////////////////

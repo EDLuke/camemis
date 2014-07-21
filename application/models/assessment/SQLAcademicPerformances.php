@@ -61,14 +61,14 @@ class SQLAcademicPerformances {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
-        $output = "";
+        $OUTPUT = "";
 
         if ($result) {
             if ($result->SUM_SECOND)
-                $output = displayRound($result->SUM_FIRST / $result->SUM_SECOND);
+                $OUTPUT = displayRound($result->SUM_FIRST / $result->SUM_SECOND);
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public static function getSQLAverageStudentAcademicPerformance($stdClass, $term = false) {
@@ -103,14 +103,14 @@ class SQLAcademicPerformances {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
-        $output = "";
+        $OUTPUT = "";
 
         if ($result) {
             if ($result->SUM_COEFF)
-                $output = displayRound($result->SUM_VALUE / $result->SUM_COEFF);
+                $OUTPUT = displayRound($result->SUM_VALUE / $result->SUM_COEFF);
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public static function getCallStudentAcademicPerformance($stdClass) {

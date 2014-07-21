@@ -539,7 +539,7 @@ class AcademicPerformances extends AssessmentProperties {
 
     public function getAverageYearStudentAcademicPerformance($stdClass)
     {
-        $output = "---";
+        $OUTPUT = "---";
 
         switch ($this->getTermNumber())
         {
@@ -548,13 +548,13 @@ class AcademicPerformances extends AssessmentProperties {
                 switch ($this->getSettingYearResult())
                 {
                     case self::AVG_T1:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
                         break;
                     case self::AVG_T2:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
                         break;
                     case self::AVG_T3:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
                         break;
                     default:
                         $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
@@ -563,21 +563,21 @@ class AcademicPerformances extends AssessmentProperties {
 
                         if ($FIRST && !$SECOND && !$THIRD)
                         {
-                            $output = $FIRST;
+                            $OUTPUT = $FIRST;
                         }
                         elseif (!$FIRST && $SECOND && !$THIRD)
                         {
-                            $output = $SECOND;
+                            $OUTPUT = $SECOND;
                         }
                         elseif (!$FIRST && !$SECOND && $THIRD)
                         {
-                            $output = $THIRD;
+                            $OUTPUT = $THIRD;
                         }
                         elseif ($FIRST && $SECOND && $THIRD)
                         {
                             $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
-                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
+                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
 
                         break;
@@ -589,16 +589,16 @@ class AcademicPerformances extends AssessmentProperties {
                 switch ($this->getSettingYearResult())
                 {
                     case self::AVG_Q1:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
                         break;
                     case self::AVG_Q2:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
                         break;
                     case self::AVG_Q3:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
                         break;
                     case self::AVG_Q4:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
                         break;
                     default:
                         $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
@@ -608,25 +608,25 @@ class AcademicPerformances extends AssessmentProperties {
 
                         if ($FIRST && !$SECOND && !$THIRD && !$FOURTH)
                         {
-                            $output = $FIRST;
+                            $OUTPUT = $FIRST;
                         }
                         elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH)
                         {
-                            $output = $SECOND;
+                            $OUTPUT = $SECOND;
                         }
                         elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH)
                         {
-                            $output = $THIRD;
+                            $OUTPUT = $THIRD;
                         }
                         elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH)
                         {
-                            $output = $FOURTH;
+                            $OUTPUT = $FOURTH;
                         }
                         elseif ($FIRST && $SECOND && $THIRD && $FOURTH)
                         {
                             $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
-                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
+                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
 
                         break;
@@ -638,10 +638,10 @@ class AcademicPerformances extends AssessmentProperties {
                 switch ($this->getSettingYearResult())
                 {
                     case self::AVG_S1:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
                         break;
                     case self::AVG_S2:
-                        $output = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
+                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
                         break;
                     default:
                         $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
@@ -649,17 +649,17 @@ class AcademicPerformances extends AssessmentProperties {
 
                         if ($FIRST && !$SECOND)
                         {
-                            $output = $FIRST;
+                            $OUTPUT = $FIRST;
                         }
                         elseif (!$FIRST && $SECOND)
                         {
-                            $output = $SECOND;
+                            $OUTPUT = $SECOND;
                         }
                         elseif ($FIRST && $SECOND)
                         {
                             $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
                             $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
-                            $output = displayRound($SUM_VALUE / $SUM_COEFF);
+                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
                         }
 
                         break;
@@ -667,7 +667,7 @@ class AcademicPerformances extends AssessmentProperties {
                 break;
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public function setActionStudentAcademicPerformance()

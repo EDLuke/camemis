@@ -664,15 +664,15 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
 
         if (!$COUNT) {
-            $output = "---";
+            $OUTPUT = "---";
         } else {
             if ($result == 0) {
-                $output = 0;
+                $OUTPUT = 0;
             } else {
-                $output = displayRound($result);
+                $OUTPUT = displayRound($result);
             }
         }
-        return $output;
+        return $OUTPUT;
     }
 
     public function getTotalSubjectResultsByMonth($stdClass, $withFormat = false) {
@@ -683,15 +683,15 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             if (!$COUNT) {
-                $output = "---";
+                $OUTPUT = "---";
             } else {
-                $output = $result;
+                $OUTPUT = $result;
             }
         } else {
-            $output = $result;
+            $OUTPUT = $result;
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public function getSubjectResultsForAllMonths($stdClass, $include, $withFormat = false) {
@@ -702,15 +702,15 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         if ($withFormat) {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass, $include);
             if (!$COUNT) {
-                $output = "---";
+                $OUTPUT = "---";
             } else {
-                $output = $result;
+                $OUTPUT = $result;
             }
         } else {
-            $output = $result;
+            $OUTPUT = $result;
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public function getSubjectResultsByTerm($stdClass, $include, $withFormat = false) {
@@ -721,15 +721,15 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass, $include);
 
             if (!$COUNT) {
-                $output = "---";
+                $OUTPUT = "---";
             } else {
-                $output = $result;
+                $OUTPUT = $result;
             }
         } else {
-            $output = $result;
+            $OUTPUT = $result;
         }
 
-        return $output;
+        return $OUTPUT;
     }
 
     public function getImplodeMonthSubjectAssignment($stdClass, $include) {
