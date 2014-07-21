@@ -62,7 +62,14 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$TOTAL_AVG_RESULT = $academicObject->EVALUATION_TYPE?AVERAGE." (%)":AVERAGE;
+if($academicObject->EVALUATION_TYPE){
+    $TOTAL_AVG_RESULT = "AVG (%)";
+    $TOTAL_AVG_RESULT_REPEAT = "REPEAT (%)";
+}else{
+    $TOTAL_AVG_RESULT = "AVG";
+    $TOTAL_AVG_RESULT_REPEAT = "REPEAT";
+}
+
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +164,7 @@ $CATEGORY_ROW = "";
 $CATEGORY_ROW .= "{header: '<b>".PERSONAL_INFORMATION."</b>', colspan: 4, align: 'center'}";
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 3, align: 'center'}";
+        $CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 4, align: 'center'}";
         break;
     default:
         $CATEGORY_ROW .= ",{header: '<b>".ASSESSMENT_INFORMATION."</b>', colspan: 1, align: 'center'}";
@@ -188,6 +195,7 @@ $GROUP_ROW = "";
 $GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
 switch($subjectObject->SCORE_TYPE){
     case 1:
+        $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
         $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
         $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
         $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
@@ -239,13 +247,21 @@ switch($subjectObject->SCORE_TYPE){
         , renderer:cssDefault
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
-                dataIndex:'TOTAL_RESULT'
-                ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
-                ,width: 80
-                ,renderer:cssDefault
-                ,align: 'center'
-                ,sortable: true
-            }";
+            dataIndex:'TOTAL_RESULT'
+            ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
+            ,width:70
+            ,renderer:cssDefault
+            ,align: 'center'
+            ,sortable: true
+        }";
+        $COLUMS .= ",{
+            dataIndex:'TOTAL_REPEAT'
+            ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
+            ,width:80
+            ,renderer:cssDefault
+            ,align: 'center'
+            ,sortable: true
+        }";
         break;
     default:
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
@@ -272,6 +288,7 @@ switch($subjectObject->SCORE_TYPE){
         $FIELDS .= ",{name: 'TOTAL_RESULT'}";
         $FIELDS .= ",{name: 'ASSESSMENT'}";
         $FIELDS .= ",{name: 'RANK'}";
+        $FIELDS .= ",{name: 'TOTAL_REPEAT'}";
         break;
     default:
         $FIELDS .= ",{name: 'ASSESSMENT'}";
