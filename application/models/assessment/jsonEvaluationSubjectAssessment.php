@@ -143,7 +143,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplaySubjectResultsForMonth();
+        $data = $this->getDisplaySubjectResultsByMonth();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++)
@@ -164,7 +164,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplaySubjectResultsForTerm();
+        $data = $this->getDisplaySubjectResultsByTerm();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++)
@@ -185,7 +185,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplaySubjectResultsForYear();
+        $data = $this->getDisplaySubjectResultsByYear();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++)

@@ -113,29 +113,38 @@ class SQLEvaluationStudentAssignment {
     public static function calculateAVGPercentageSubjectResult($stdClass, $include) {
         $SUM_VALUE = 0;
         $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
+        
         if ($enties) {
             foreach ($enties as $value) {
 
-                switch (UserAuth::getCountryEducation()) {
-                    case "DEFAULT":
-                    case "COL":
-                    case "KHM":
-                    case "PER":
-                    case "THA":
-                    case "LAO":
-                        $stdClass->assignmentId = $value->ASSIGNMENT_ID;
-                        $NEW_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
-                        $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 100;
-                        break;
-                    case "VNM":
-                        $NEW_VALUE = $value->POINTS;
-                        $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 10;
-                        break;
-                }
+                $NEW_VALUE = $value->POINTS;
+                $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 10;
 
                 $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
                 $VALUE = $NEW_VALUE ? $NEW_VALUE : 0;
                 $SUM_VALUE += ($VALUE / $POINTS_POSSIBLE) * 100 * ($COEFF_VALUE / 100);
+                /*
+                  switch (UserAuth::getCountryEducation()) {
+                  case "DEFAULT":
+                  case "COL":
+                  case "KHM":
+                  case "PER":
+                  case "THA":
+                  case "LAO":
+                  $stdClass->assignmentId = $value->ASSIGNMENT_ID;
+                  $NEW_VALUE = self::getAverageSubjectAssignment($stdClass, $include);
+                  $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 100;
+                  break;
+                  case "VNM":
+                  $NEW_VALUE = $value->POINTS;
+                  $POINTS_POSSIBLE = $value->POINTS_POSSIBLE ? $value->POINTS_POSSIBLE : 10;
+                  break;
+                  }
+
+                  $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
+                  $VALUE = $NEW_VALUE ? $NEW_VALUE : 0;
+                  $SUM_VALUE += ($VALUE / $POINTS_POSSIBLE) * 100 * ($COEFF_VALUE / 100);
+                 */
             }
         }
 
