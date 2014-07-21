@@ -4,8 +4,8 @@
 // @Sor Veasna
 // Date: 21.05.2014
 ////////////////////////////////////////////////////////////////////////////////
-require_once 'models/app_school/schedule/SQLScheduleDaySetting.php';
-require_once 'models/app_school/schedule/ScheduleDBAccess.php';
+require_once 'models/app_university/schedule/SQLScheduleDaySetting.php';
+require_once 'models/app_university/schedule/ScheduleDBAccess.php';
 
 class ScheduleDaySettingData {
 
