@@ -499,14 +499,28 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
         $trainingId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $selectedTrainingId = isset($params["selectedTrainingId"]) ? addText($params["selectedTrainingId"]) : "";
         $resultRows = StudentTrainingDBAccess::sqlStudentTraining($globalSearch, $trainingId, $studentId);
+        $checkStudent=array();
+        if($selectedTrainingId){
+            $selectedStudentTraining = StudentTrainingDBAccess::sqlStudentTraining($globalSearch, $selectedTrainingId, $studentId);  
+            if($selectedStudentTraining){
+                foreach($selectedStudentTraining as $student){
+                    $checkStudent[]=$student->STUDENT_ID;   
+                }
+            }      
+        }
         $data =array();
         $i = 0;
         if ($resultRows)
         {
             foreach ($resultRows as $value)
             {
-
+                if($selectedTrainingId){
+                    if (in_array($value->STUDENT_ID, $checkStudent)){
+                    continue;   
+                    }
+                }
                 $data[$i]["ID"] = $value->STUDENT_ID;
 
                 $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
@@ -585,6 +599,11 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
                 switch(strtoupper($transferType)){
                     case 'TRANSFER':
                         $SAVEDATA['TRANSFER_TYPE'] = 1;
+                        ////////////////////////////////////////
+                        //update keep history student transfer
+                        ///////////////////////////////////////  
+                        $WHERE['ID = ?'] = $studentTrainingOld->OBJECT_ID;
+                        self::dbAccess()->update('t_student_training', array('IS_TRANSFER'=>1), $WHERE); 
                         break; 
                     case 'UPGRADE':
                         $SAVEDATA['TRANSFER_TYPE'] = 2;
@@ -597,13 +616,7 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
             
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
-            self::dbAccess()->insert('t_student_training', $SAVEDATA);
-            
-            ////////////////////////////////////////
-            //update keep history student transfer
-            ///////////////////////////////////////  
-            $WHERE['ID = ?'] = $studentTrainingOld->OBJECT_ID;
-            self::dbAccess()->update('t_student_training', array('IS_TRANSFER'=>1), $WHERE);  
+            self::dbAccess()->insert('t_student_training', $SAVEDATA); 
         }
       
     }
@@ -689,9 +702,9 @@ class EnrollmentDBAccess extends StudentAcademicDBAccess {
         
         $SQL = self::dbSelectAccess();
         $SQL->from(array('A' => 't_student_training'), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_student_training'),'A.ID=B.TRANSFER_FROM',$SELECTION_B);
-        $SQL->joinLeft(array('C' => 't_student'), 'A.STUDENT=C.ID', $SELECTION_C);
-        $SQL->where("A.IS_TRANSFER = ?",1);
+        $SQL->join(array('B' => 't_student_training'),'A.ID=B.TRANSFER_FROM',$SELECTION_B);
+        $SQL->join(array('C' => 't_student'), 'A.STUDENT=C.ID', $SELECTION_C);
+        //$SQL->where("A.IS_TRANSFER = ?",1);
         if ($choose_type) {
             $SQL->where("B.TRANSFER_TYPE = '" . $choose_type . "'");
         }

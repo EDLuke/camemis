@@ -317,6 +317,19 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 
             });     
        }
+       
+       if(toComboclass){
+            toComboclass.on('select', function() {
+                Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>').store.baseParams = {
+                     start:0
+                     ,limit:100
+                    ,objectId: '<?=$this->objectId?>'
+                    ,selectedTrainingId: toComboclass.getValue()
+                    ,cmd: 'jsonListStudentTraining'
+                };
+                Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>').store.load();
+            });        
+       }
         
        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
     });
