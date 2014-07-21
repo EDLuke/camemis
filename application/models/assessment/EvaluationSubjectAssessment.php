@@ -187,7 +187,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                $data[$i]["ASSESSMENT_ID"] = $this->getAssessmentSubjectMonth($stdClass)->ASSESSMENT_ID;
+                $data[$i]["ASSESSMENT_ID"] = $this->getTotalSubjectAssessmentByMonth($stdClass)->ASSESSMENT_ID;
 
                 $i++;
             }
@@ -231,12 +231,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["TERM_RESULT"] = $this->getSubjectResultsByTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
                         break;
                     case self::SCORE_CHAR:
-                        $data[$i]["ASSESSMENT"] = $this->getAssessmentSubjectTerm($stdClass)->GRADING;
+                        $data[$i]["ASSESSMENT"] = $this->getTotalSubjectAssessmentByTerm($stdClass)->GRADING;
                         break;
                 }
 
-                if ($this->getAssessmentSubjectTerm($stdClass))
-                    $data[$i]["ASSESSMENT_ID"] = $this->getAssessmentSubjectTerm($stdClass)->ASSESSMENT_ID;
+                if ($this->getTotalSubjectAssessmentByTerm($stdClass))
+                    $data[$i]["ASSESSMENT_ID"] = $this->getTotalSubjectAssessmentByTerm($stdClass)->ASSESSMENT_ID;
 
                 $i++;
             }
@@ -305,7 +305,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                $data[$i]["ASSESSMENT_ID"] = $this->getSubjectYearAssessment($stdClass)->ASSESSMENT_ID;
+                $data[$i]["ASSESSMENT_ID"] = $this->getTotalSubjectAssessmentByYear($stdClass)->ASSESSMENT_ID;
                 $i++;
             }
         }
@@ -351,7 +351,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
                         break;
                     case self::SCORE_CHAR:
-                        $data[$i]["ASSESSMENT"] = $this->getAssessmentSubjectMonth($stdClass)->GRADING;
+                        $data[$i]["ASSESSMENT"] = $this->getTotalSubjectAssessmentByMonth($stdClass)->GRADING;
                         break;
                 }
 
@@ -761,7 +761,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getAssessmentSubjectMonth($stdClass) {
+    public function getTotalSubjectAssessmentByMonth($stdClass) {
 
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
@@ -778,12 +778,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $data;
     }
 
-    public function getAssessmentSubjectTerm($stdClass) {
+    public function getTotalSubjectAssessmentByTerm($stdClass) {
 
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
-    public function getSubjectYearAssessment($stdClass) {
+    public function getTotalSubjectAssessmentByYear($stdClass) {
 
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }

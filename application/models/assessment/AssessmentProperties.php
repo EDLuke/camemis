@@ -367,7 +367,11 @@ abstract class AssessmentProperties {
 
         switch ($type) {
             case 0:
-                return $firstValue;
+                if (is_numeric($firstValue) && is_numeric($secondValue)) {
+                    return $firstValue ? $firstValue . "/" . $secondValue : "";
+                } else {
+                    return "---";
+                }
             case 1:
                 if (is_numeric($firstValue) && is_numeric($secondValue)) {
                     return $firstValue ? $firstValue . "/" . $secondValue : "";
