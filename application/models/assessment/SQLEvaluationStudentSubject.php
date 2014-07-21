@@ -26,6 +26,7 @@ class SQLEvaluationStudentSubject {
 
         $data = array(
             'SUBJECT_VALUE' => ""
+            ,' SUBJECT_VALUE_REPEAT' => ""
             , 'RANK' => ""
             , 'GRADE_POINTS' => ""
             , 'GRADING' => ""
@@ -48,6 +49,7 @@ class SQLEvaluationStudentSubject {
             {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
+                    , 'SUBJECT_VALUE_REPEAT'
                     , 'RANK'
                     , 'GRADE_POINTS'
                     , 'ASSESSMENT_ID'
@@ -122,6 +124,7 @@ class SQLEvaluationStudentSubject {
                 {
                     $data = array(
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
+                        , 'SUBJECT_VALUE_REPEAT' => $result->SUBJECT_VALUE_REPEAT ? $result->SUBJECT_VALUE_REPEAT : "---"
                         , 'RANK' => $result->RANK ? $result->RANK : "---"
                         , 'GRADE_POINTS' => $result->GRADE_POINTS
                         , 'GRADING' => $result->GRADING ? $result->GRADING : "---"
@@ -188,6 +191,11 @@ class SQLEvaluationStudentSubject {
         if (isset($stdClass->average))
         {
             $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
+        }
+
+        if (isset($stdClass->repeat))
+        {
+            $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = $stdClass->repeat;
         }
 
         if (isset($stdClass->mappingValue))

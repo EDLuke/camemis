@@ -261,6 +261,10 @@ switch($subjectObject->SCORE_TYPE){
             ,renderer:cssDefault
             ,align: 'center'
             ,sortable: true
+            , editor: new Ext.form.NumberField({
+                allowBlank: false
+                ,name: 'TOTAL_REPEAT'   
+            })
         }";
         break;
     default:
