@@ -21,7 +21,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$SHOW_TOTAL_RESULT = $academicObject->EVALUATION_TYPE?TOTAL." (%)":TOTAL;
+$TOTAL_AVG_RESULT = $academicObject->EVALUATION_TYPE?AVERAGE." (%)":AVERAGE;
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -237,7 +237,7 @@ Ext.onReady(function() {
         if($academicObject->DISPLAY_GRADE_POINTS){
             $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS'");
         }
-        $OBJECT_GRID->addColumn("header: '<b>".$SHOW_TOTAL_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'TOTAL_RESULT'");
+        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'TOTAL_RESULT'");
     }
     
     switch($TERM_NUMBER){

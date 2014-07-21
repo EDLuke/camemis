@@ -23,8 +23,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     CONST SCORE_NUMBER = 1;
     CONST SCORE_CHAR = 2;
     CONST INCLUDE_IN_MONTH = 1;
-    CONST INCLUDE_IN_TERM = 2;
-    CONST INCLUDE_MONTH_TERM = "1,2";
+    CONST INCLUDE_IN_TERM = "2,3";
     CONST SCORE_TYPE_NUMBER = 1;
     CONST SCORE_TYPE_CHAR = 2;
 
@@ -510,9 +509,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     public function getTotalSubjectResultsForTerm($stdClass, $withFormat = false) {
 
         $result = 0;
-        $TERM_RESULT = $this->getSubjectResultsForTerm($stdClass, self::INCLUDE_IN_TERM, false);
+        
         $MONTH_RESULT = $this->getSubjectResultsForAllMonths($stdClass, self::INCLUDE_IN_MONTH);
+        $TERM_RESULT = $this->getSubjectResultsForTerm($stdClass, self::INCLUDE_IN_TERM, false);
 
+        //error_log("Month: ".$MONTH_RESULT." Semester: ".$TERM_RESULT);
+        
         if ($MONTH_RESULT && !$TERM_RESULT) {
             $result = $MONTH_RESULT;
         } elseif (!$MONTH_RESULT && $TERM_RESULT) {

@@ -26,7 +26,7 @@ if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 $academicId = $academicObject->ID;
 
-$SHOW_TOTAL_RESULT = $academicObject->EVALUATION_TYPE?TOTAL." (%)":TOTAL;
+$TOTAL_AVG_RESULT = $academicObject->EVALUATION_TYPE?AVERAGE." (%)":AVERAGE;
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ switch($subjectObject->SCORE_TYPE){
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
                 dataIndex:'TOTAL_RESULT'
-                ,header: '<b>".$SHOW_TOTAL_RESULT."</b>'
+                ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
                 ,width: 80
                 ,renderer:cssDefault
                 ,align: 'center'
