@@ -20,7 +20,7 @@ $tmpArr = explode("-",$setId);
 $classId = $tmpArr[0];
 $subjectId = $tmpArr[1]; 
 $objectGradeSubject=SubjectDBAccess::getAcademicSubject($subjectId, $classId);
-$setParams = "target=ACADEMIC_SUBJECT&objectId=".$objectGradeSubject->GRADE_SUBJECT_ID."&academicId=".$classId."";
+$setParams = "template=ACADEMIC_SUBJECT&objectId=".$objectGradeSubject->GRADE_SUBJECT_ID."&academicId=".$classId."";
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 <script>
