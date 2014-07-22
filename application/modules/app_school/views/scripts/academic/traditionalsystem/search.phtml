@@ -137,7 +137,7 @@ Ext.onReady(function() {
                         $js .= "text: '".ADDITIONAL_INFORMATION."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                         $js .= ",handler: function(){";
-                            
+                            $js .= "clickOpenPage('center','".ADDITIONAL_INFORMATION." &raquo; ' + node.text,'/academic/studentadditionalfilter/?objectId=' + node.attributes.id);";
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".EDUCATION_BACKGROUND."'";
