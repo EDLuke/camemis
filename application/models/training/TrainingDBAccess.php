@@ -419,10 +419,10 @@ class TrainingDBAccess {
             {
 
                 case "LEVEL":
-                    $TERM_OBJECT = self::findTrainingFromId($parentObject->ID);
-                    $PROGRAM_OBJECT = self::findTrainingFromId($TERM_OBJECT->PROGRAM);
-                    $SAVEDATA['PROGRAM'] = $TERM_OBJECT->PROGRAM;
-                    $SAVEDATA['TERM'] = $TERM_OBJECT->ID;
+                    $PROGRAME_OBJECT = self::findTrainingFromId($parentObject->ID);
+                    //$PROGRAM_OBJECT = self::findTrainingFromId($TERM_OBJECT->PROGRAM);
+                    $SAVEDATA['PROGRAM'] = $PROGRAME_OBJECT->ID;
+                    $SAVEDATA['TERM'] = "";
                     $SAVEDATA['LEVEL'] = "";
                     break;
 
@@ -437,12 +437,12 @@ class TrainingDBAccess {
                     $SAVEDATA['SU'] = isset($params["SU"]) ? 1 : 0;
 
                     $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
-                    $SAVEDATA['LEVEL'] = "";
+                    $SAVEDATA['LEVEL'] = $parentObject->ID;
                     $SAVEDATA['TERM'] = "";
 
                     $TERM_OBJECT = self::findTrainingFromId($objectId);
                     if ($TERM_OBJECT)
-                        $PROGRAM_OBJECT = self::findTrainingFromId($TERM_OBJECT->PARENT);
+                        $PROGRAM_OBJECT = self::findTrainingFromId($TERM_OBJECT->PROGRAM);
                     if ($PROGRAM_OBJECT)
                         $SAVEDATA['PROGRAM'] = $PROGRAM_OBJECT->ID;
                     //@veasna
@@ -452,26 +452,26 @@ class TrainingDBAccess {
 
                 case "CLASS":
 
-                    $LEVEL_OBJECT = self::findTrainingFromId($parentObject->ID);
-                    $SAVEDATA['PROGRAM'] = $LEVEL_OBJECT->PROGRAM;
-                    $SAVEDATA['TERM'] = $LEVEL_OBJECT->TERM;
-                    $SAVEDATA['LEVEL'] = $LEVEL_OBJECT->ID;
-                    $SAVEDATA['CERTIFICATE'] = $LEVEL_OBJECT->CERTIFICATE;
-                    $SAVEDATA['EVALUATION'] = $LEVEL_OBJECT->EVALUATION;
-                    $SAVEDATA['TRAINING_END'] = $LEVEL_OBJECT->TRAINING_END;
-                    $SAVEDATA['START_DATE'] = $LEVEL_OBJECT->START_DATE;
-                    $SAVEDATA['END_DATE'] = $LEVEL_OBJECT->END_DATE;
+                    $TERM_OBJECT = self::findTrainingFromId($parentObject->ID);
+                    $SAVEDATA['PROGRAM'] = $TERM_OBJECT->PROGRAM;
+                    $SAVEDATA['TERM'] = $TERM_OBJECT->ID;
+                    $SAVEDATA['LEVEL'] = $TERM_OBJECT->LEVEL;
+                    $SAVEDATA['CERTIFICATE'] = $TERM_OBJECT->CERTIFICATE;
+                    $SAVEDATA['EVALUATION'] = $TERM_OBJECT->EVALUATION;
+                    $SAVEDATA['TRAINING_END'] = $TERM_OBJECT->TRAINING_END;
+                    $SAVEDATA['START_DATE'] = $TERM_OBJECT->START_DATE;
+                    $SAVEDATA['END_DATE'] = $TERM_OBJECT->END_DATE;
 
-                    $SAVEDATA['MO'] = $LEVEL_OBJECT->MO;
-                    $SAVEDATA['TU'] = $LEVEL_OBJECT->TU;
-                    $SAVEDATA['WE'] = $LEVEL_OBJECT->WE;
-                    $SAVEDATA['TH'] = $LEVEL_OBJECT->TH;
-                    $SAVEDATA['FR'] = $LEVEL_OBJECT->FR;
-                    $SAVEDATA['SA'] = $LEVEL_OBJECT->SA;
-                    $SAVEDATA['SU'] = $LEVEL_OBJECT->SU;
+                    $SAVEDATA['MO'] = $TERM_OBJECT->MO;
+                    $SAVEDATA['TU'] = $TERM_OBJECT->TU;
+                    $SAVEDATA['WE'] = $TERM_OBJECT->WE;
+                    $SAVEDATA['TH'] = $TERM_OBJECT->TH;
+                    $SAVEDATA['FR'] = $TERM_OBJECT->FR;
+                    $SAVEDATA['SA'] = $TERM_OBJECT->SA;
+                    $SAVEDATA['SU'] = $TERM_OBJECT->SU;
                     //@veasna
-                    if($LEVEL_OBJECT->SCHEDULE_SETTING)
-                    $SAVEDATA['SCHEDULE_SETTING'] = $LEVEL_OBJECT->SCHEDULE_SETTING;
+                    if($TERM_OBJECT->SCHEDULE_SETTING)
+                    $SAVEDATA['SCHEDULE_SETTING'] = $TERM_OBJECT->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
@@ -490,16 +490,16 @@ class TrainingDBAccess {
             {
 
                 case "LEVEL":
-                    $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
-                    $SAVEDATA['TERM'] = $parentObject->ID;
+                    $SAVEDATA['PROGRAM'] = $parentObject->ID;
+                    $SAVEDATA['TERM'] = '';
                     $SAVEDATA['START_DATE'] = $parentObject->START_DATE;
                     $SAVEDATA['END_DATE'] = $parentObject->END_DATE;
                     $SAVEDATA['LEVEL'] = '';
                     break;
 
                 case "TERM":
-                    $SAVEDATA['PROGRAM'] = $parentObject->ID;
-                    $SAVEDATA['LEVEL'] = '';
+                    $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
+                    $SAVEDATA['LEVEL'] = $parentObject->ID;
                     //@veasna
                     if (isset($params["SCHEDULE_SETTING"]))  
                     $SAVEDATA['SCHEDULE_SETTING'] =addText($params["SCHEDULE_SETTING"]); 
@@ -509,8 +509,8 @@ class TrainingDBAccess {
                     $SAVEDATA['CERTIFICATE'] = $parentObject->CERTIFICATE;
                     $SAVEDATA['EVALUATION'] = $parentObject->EVALUATION;
                     $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
-                    $SAVEDATA['TERM'] = $parentObject->TERM;
-                    $SAVEDATA['LEVEL'] = $parentObject->ID;
+                    $SAVEDATA['TERM'] = $parentObject->ID;
+                    $SAVEDATA['LEVEL'] = $parentObject->LEVEL;
                     $SAVEDATA['START_DATE'] = $parentObject->START_DATE;
                     $SAVEDATA['END_DATE'] = $parentObject->END_DATE;
                     //@veasna
