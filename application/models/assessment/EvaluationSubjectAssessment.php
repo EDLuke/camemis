@@ -193,7 +193,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 $PERCENTAGE_VALUE = $TOTAL_RESULT;
                                 break;
                         }
-
+                        
                         $data[$i]["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
 
                         break;

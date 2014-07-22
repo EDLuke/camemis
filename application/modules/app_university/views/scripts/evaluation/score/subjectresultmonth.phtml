@@ -297,6 +297,7 @@ Ext.onReady(function() {
     <?php
 
     $setActionPareams = $setParams;
+    $setActionPareams .= "&target=MONTH";
     
     $html = "";
     
@@ -357,7 +358,7 @@ Ext.onReady(function() {
                         $html .= "url: '/evaluation/jsonsave/'";
                         $html .= ",method: 'POST'";
                         $html .= ",params:{";
-                            $html .= "cmd: 'jsonActionStudentSubjectAssessment'";
+                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
                             $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
                         $html .= "}";
                         $html .= ",success: function() {";
