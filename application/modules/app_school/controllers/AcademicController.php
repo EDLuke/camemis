@@ -599,6 +599,11 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/studentfilter");
         $this->view->gridType = "STUDENT_FILTER";
     }
+    //@Visal
+    public function studentadditionalfilterAction() {
+        $this->_helper->viewRenderer("filter/studentadditionalfilter");
+        $this->view->gridType = "STUDENT_ADDITIONAL_FILTER";
+    }
 
     public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
