@@ -217,6 +217,35 @@ class FilterData extends FilterProperties {
         $result = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
         return $result?count($result):0;    
     }
+    //@Visal
+    public function getCountStudentAdditionalInformation(){
+        
+        if($this->objectType){
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['dataType'] = $this->dataValue;
+                    break;
+                case 'GRADE':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['gradeId'] = $this->gradeId;
+                    $params['dataType'] = $this->dataValue;
+                    break;
+                case 'CLASS':
+                    $params['schoolyearId'] = $this->schoolyearId;
+                    $params['campusId'] = $this->campusId;
+                    $params['classId'] = $this->classId;
+                    $params['dataType'] = $this->dataValue;
+                    break;
+            }
+        }
+        
+        $stdClass = (object) $params;   
+        $result = SQLStudentFilterReport::getCountStudentAdditional($stdClass);
+        return $result?count($result):0;    
+    }
     
 }
 

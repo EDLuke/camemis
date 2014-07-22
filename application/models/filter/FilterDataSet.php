@@ -397,7 +397,29 @@ class FilterDataSet extends FilterData{
         $DATASET .= "]";
         return $DATASET;      
     }
-    
+    //@Visal
+    public function getDataSetStudentAdditional($parentId){
+        
+        $entries = SQLStudentFilterReport::getAllAdditionalChild($parentId);
+        
+        $DATASET = "[";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->dataValue = $value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'key':'" . str_replace("'","\'",$value->NAME ). "'";
+                $DATASET .= ",'y':'" . $this->getCountStudentAdditionalInformation() . "'";  
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        return $DATASET;      
+    }  
     
 }
 
