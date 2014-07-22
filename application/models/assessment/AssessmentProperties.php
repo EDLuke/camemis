@@ -401,7 +401,6 @@ abstract class AssessmentProperties {
             }
         }
     }
-
 }
 
 ?>
