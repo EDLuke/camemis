@@ -66,7 +66,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $COMBO_SCHOOLYEAR->varName = "SCHOOLYEAR";
         $COMBO_SCHOOLYEAR->setLoadParams("cmd: 'allSchoolyearCombo'");
         $COMBO_SCHOOLYEAR->renderJS();
-        
         /////
         
         $STUDENT_TREE->isAsyncTreeNode = false;
@@ -192,7 +191,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     ,layout: 'fit'
                     ,width: 550
                     ,height:percentHeight(92)
-                    ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("template=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
                 }
                 ";
                 break;
@@ -379,7 +378,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             title: '".FILE."'
                             ,layout:'fit'
                             ,height:percentHeight(100)
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("isUpload=1&template=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
                         },{ 
                             title: '".STUDENT."'   
                             ,layout:'fit' 
@@ -419,7 +418,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,margins: '3 3 3 0'
                         ,layout: 'card'
                         ,activeItem: 0
-                        ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("template=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
                     }]
                     ";
                     break;
