@@ -954,6 +954,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["SCORE"] = $facette ? $facette->POINTS : "---";
                         $data[$i]["SCORE_REPEAT"] = "---";
                     }
+                    $data[$i]["TEACHER_COMMENTS"] = $facette ? $facette->TEACHER_COMMENTS : "";
                 } else {
                     $data[$i]["SCORE"] = "---";
                     $data[$i]["SCORE_REPEAT"] = "---";
@@ -967,8 +968,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["POINTS_POSSIBLE"] = $this->getSubjectScorePossible();
                         break;
                 }
-
-                $data[$i]["TEACHER_COMMENTS"] = $facette ? $facette->TEACHER_COMMENTS : "";
 
                 $i++;
             }
@@ -1207,7 +1206,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             }
         }
     }
-
 }
 
 ?>

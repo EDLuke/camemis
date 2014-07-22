@@ -22,7 +22,7 @@ class SQLEvaluationStudentAssignment {
     public static function getScoreSubjectAssignment($stdClass) {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student_assignment'), array("A.POINTS"));
+        $SQL->from(array('A' => 't_student_assignment'), array("A.POINTS","A.POINTS_REPEAT","A.TEACHER_COMMENTS"));
         $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array("B.POINTS_POSSIBLE"));
         $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
