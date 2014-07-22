@@ -858,7 +858,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 break;
         }
-
+        
         $stdClass = $defaultObject;
 
         return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
