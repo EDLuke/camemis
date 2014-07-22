@@ -230,10 +230,10 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
-
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $TOTAL_RESULT = $this->getTotalSubjectResultsByTerm($stdClass, self::WITH_FORMAT);
+                        
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         $data[$i]["MONTH_RESULT"] = $this->getTotalSubjectResultsByMonth($stdClass, self::WITH_FORMAT);
