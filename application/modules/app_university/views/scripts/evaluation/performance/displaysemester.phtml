@@ -192,7 +192,7 @@ Ext.onReady(function() {
         foreach($entries as $value){
             if($value->SUBJECT_ID){
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width:60, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'right', width:80, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
             }
         }
     }

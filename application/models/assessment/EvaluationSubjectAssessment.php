@@ -836,6 +836,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 break;
             case "TOTAL_REPEAT":
                 $defaultObject->repeat = $this->newValue;
+                $defaultObject->oldValue = $this->oldValue;
                 break;
             case "RANK":
                 $defaultObject->actionRank = $this->newValue;
