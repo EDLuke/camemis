@@ -143,7 +143,7 @@ class FileDBAccess {
         if ($globalSearch) {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
         }
-        error_log($SQL);
+        //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
