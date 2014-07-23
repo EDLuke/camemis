@@ -61,11 +61,12 @@ if($entries){
     
     foreach($entries as $value){
         $dataSetAdditional = $objectDataSet->getDataSetStudentAdditional($value->ID);
-        $data[$i] = new CamemisChart("PIC_CHART", 'chart'.$value->ID, $dataSetAdditional);
+        $data[$i] = new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value->ID, $dataSetAdditional);
         $data[$i]->chartSVG = "display".$value->ID;
-        $data[$i]->showLegend='true';
-        $data[$i]->width = 350;
-        $data[$i]->height = 300;
+        $data[$i]->showControls='true';
+        $data[$i]->tooltips = 'true';
+        $data[$i]->showValues = 'true';
+        $data[$i]->height = 350;
         $i++;
     }
      
