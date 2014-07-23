@@ -114,8 +114,8 @@ class FileDBAccess {
         $SQL->from(array('A' => 't_file'));
         switch (UserAuth::getUserType()) {
             case "STUDENT":
-                $SQL->joinRight(array('B' => 't_file_user'), 'A.GUID=B.FILE', array('B.FILE', 'B.ACADEMIC_ID'));
-                $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.ACADEMIC_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
+                $SQL->joinRight(array('B' => 't_file_user'), 'A.GUID=B.FILE', array('B.FILE', 'B.SCHOOLYEAR_ID'));
+                $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.SCHOOLYEAR_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
                 if ($studentId) {
                     $SQL->where("C.STUDENT='" . $studentId . "'");
                 }
@@ -143,7 +143,7 @@ class FileDBAccess {
         if ($globalSearch) {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
         }
-        //error_log($SQL);
+        error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
