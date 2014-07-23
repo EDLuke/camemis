@@ -816,6 +816,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //ACTION EDITING...
+    ////////////////////////////////////////////////////////////////////////////
     public function actionStudentSubjectAssessment() {
 
         $defaultObject = (object) array(
@@ -835,10 +838,8 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         switch ($this->actionField) {
             case "DISPLAY_TOTAL":
                 $defaultObject->average = $this->newValue;
-                break;
-            case "TOTAL_REPEAT":
-                $defaultObject->repeat = $this->newValue;
                 $defaultObject->oldValue = $this->oldValue;
+                $defaultObject->assessmentId = AssessmentConfig::calculateGradingScale($this->newValue, $this->getSettingQualificationType());
                 break;
             case "RANK":
                 $defaultObject->actionRank = $this->newValue;
@@ -863,8 +864,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
 
         $stdClass = $defaultObject;
+        SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
 
-        return SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
+        return SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
     }
 
     public function getSubjectValue($stdClass) {
@@ -1098,6 +1100,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //CLICK ACTION CALCULATION...
+    ////////////////////////////////////////////////////////////////////////////
     public function actionCalculationSubjectEvaluation() {
 
         switch ($this->target) {

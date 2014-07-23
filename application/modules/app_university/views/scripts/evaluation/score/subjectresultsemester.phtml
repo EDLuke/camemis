@@ -238,33 +238,33 @@ $COLUMS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortabl
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssNumber}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
+        , renderer:cssNumber
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
             dataIndex:'DISPLAY_TOTAL'
             ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
             ,width:70
-            ,renderer:cssDefault
+            ,renderer:cssNumber
             ,align: 'center'
             ,sortable: true
+            ,editor: new Ext.form.NumberField({
+                allowBlank: false
+                ,name: 'DISPLAY_TOTAL'   
+            })
         }";
         $COLUMS .= ",{
             dataIndex:'DISPLAY_REPEAT'
             ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
             ,width:80
-            ,renderer:cssDefault
+            ,renderer:cssNumberRepeat
             ,align: 'center'
             ,sortable: true
-            , editor: new Ext.form.NumberField({
-                allowBlank: false
-                ,name: 'TOTAL_REPEAT'   
-            })
         }";
         break;
     default:
@@ -273,7 +273,7 @@ switch($subjectObject->SCORE_TYPE){
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
+        , renderer:cssNumber
         , editor: ".$comboAssessment."}";
         break;
 }
@@ -328,7 +328,7 @@ var _chooseValue,_chooseDisplay,term = '<?=$this->term?>',comboValue;
 Ext.onReady(function() {
     
     function cssStatus(v, p, record){
-        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+        return String.format('<div style=\"font-weight:normal;padding:3px;background:{1};color:{2};\">{0}</div>'
             ,v
             ,record.data['BG_COLOR']
             ,record.data['BG_COLOR_FONT']
@@ -344,7 +344,13 @@ Ext.onReady(function() {
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding:3px;">' + value + '</div>';
+        return '<div style="font-weight:bold; color:#333; padding:3px;">' + value + '</div>';
+    }
+    
+    function cssNumberRepeat(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:bold; color:#FFF; padding:3px;background:#FF0000">' + value + '</div>';
     }
     
     <?php
@@ -463,6 +469,8 @@ Ext.onReady(function() {
                     $html .= "}";
                     $html .= ",success: function (result, request ) {";
                         $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
+                        $html .= "jsonData = Ext.util.JSON.decode(result.responseText);";
+                        $html .= "if (jsonData.data.DISPLAY_REPEAT) e.record.set('DISPLAY_REPEAT',jsonData.data.DISPLAY_REPEAT);";
                         $html .= "grid.getStore().commitChanges();";
                     $html .= "}";
                 $html .= "});";
