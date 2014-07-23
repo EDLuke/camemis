@@ -81,6 +81,9 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         {
             $this->target = addText($params["target"]);
         }
+        
+        if (isset($params["oldValue"]))
+            $this->oldValue = addText($params["oldValue"]);
     }
 
     public function jsonListStudentSubjectAssignments($encrypParams)

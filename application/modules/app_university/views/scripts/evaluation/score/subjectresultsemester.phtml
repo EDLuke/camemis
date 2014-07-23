@@ -455,6 +455,7 @@ Ext.onReady(function() {
                             $html .= "cmd:'jsonActionStudentSubjectAssessment'";
                             $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
                             $html .= ",id:e.record.get('ID')";
+                            $html .= ",oldValue:e.record.get('TOTAL_RESULT')";
                             $html .= ",field: e.field";
                             $html .= ",newValue: e.value";
                             $html .= ",comboValue:comboValue";
