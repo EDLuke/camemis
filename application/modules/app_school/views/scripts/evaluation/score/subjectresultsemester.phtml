@@ -63,11 +63,11 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 if($academicObject->EVALUATION_TYPE){
-    $TOTAL_AVG_RESULT = "AVG (%)";
-    $TOTAL_AVG_RESULT_REPEAT = "REPEAT (%)";
+    $TOTAL_AVG_RESULT = "AVG(%)";
+    $TOTAL_AVG_RESULT_REPEAT = "AVGR(%)";
 }else{
     $TOTAL_AVG_RESULT = "AVG";
-    $TOTAL_AVG_RESULT_REPEAT = "REPEAT";
+    $TOTAL_AVG_RESULT_REPEAT = "AVGR";
 }
 
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
@@ -261,7 +261,7 @@ switch($subjectObject->SCORE_TYPE){
         $COLUMS .= ",{
             dataIndex:'DISPLAY_REPEAT'
             ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
-            ,width:80
+            ,width:70
             ,renderer:cssNumberRepeat
             ,align: 'center'
             ,sortable: true
@@ -344,13 +344,13 @@ Ext.onReady(function() {
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#333; padding:3px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding:3px;">' + value + '</div>';
     }
     
     function cssNumberRepeat(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#FFF; padding:3px;background:#FF0000">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#FFF; padding:3px;background:#FF0000">' + value + '</div>';
     }
     
     <?php
