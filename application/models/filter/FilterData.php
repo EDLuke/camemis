@@ -150,6 +150,7 @@ class FilterData extends FilterProperties {
         
         return $data;
     }
+    
     //@Visal
     public function groupStaffAge(){
         $data = array();
@@ -218,7 +219,7 @@ class FilterData extends FilterProperties {
         return $result?count($result):0;    
     }
     //@Visal
-    public function getCountStudentAdditionalInformation(){
+   public function getCountStudentAdditionalInformation(){
         
         if($this->objectType){
             switch ($this->objectType) {
@@ -246,7 +247,6 @@ class FilterData extends FilterProperties {
         $result = SQLStudentFilterReport::getCountStudentAdditional($stdClass);
         return $result?count($result):0;    
     }
-    
 }
 
 ?>

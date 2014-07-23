@@ -401,8 +401,10 @@ class FilterDataSet extends FilterData{
     public function getDataSetStudentAdditional($parentId){
         
         $entries = SQLStudentFilterReport::getAllAdditionalChild($parentId);
-        
-        $DATASET = "[";
+        $this->dataType='ethnicity';
+        $DATASET = "[{";
+        $DATASET .= "key: '".ADDITIONAL_INFORMATION."',";
+        $DATASET .= "values: [";
         if ($entries)
         {
             $i = 0;
@@ -411,15 +413,17 @@ class FilterDataSet extends FilterData{
                 $this->dataValue = $value->ID;
                 $DATASET .= $i ? "," : "";
                 $DATASET .= "{";
-                $DATASET .= "'key':'" . str_replace("'","\'",$value->NAME ). "'";
-                $DATASET .= ",'y':'" . $this->getCountStudentAdditionalInformation() . "'";  
+                $DATASET .= "'label':'" . str_replace("'","\'",$value->NAME ) . "'";
+                $DATASET .= ",'value':'" . $this->getCountStudentAdditionalInformation() . "'";
                 $DATASET .= "}";
                 $i++;
             }
         }
         $DATASET .= "]";
+        $DATASET .= "}]";
+        
         return $DATASET;      
-    }  
+    }
     
 }
 
