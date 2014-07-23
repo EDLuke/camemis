@@ -346,25 +346,6 @@ abstract class AssessmentProperties {
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->academicId);
     }
 
-    public static function displayTotalResult($type, $value, $valueRepeat = false) {
-
-        if ($valueRepeat) {
-            switch ($type) {
-                case 0:
-                    return $value ? $valueRepeat . " (" . $valueRepeat . ")" : "";
-                case 1:
-                    return is_numeric($value) ? $valueRepeat . " (" . $value . ")" . " %" : "";
-            }
-        } else {
-            switch ($type) {
-                case 0:
-                    return $value ? $value : "";
-                case 1:
-                    return is_numeric($value) ? $value . " %" : "";
-            }
-        }
-    }
-
     public static function displayAssignmentResult($type, $object) {
 
         $firstValue = $object ? $object->POINTS : "---";

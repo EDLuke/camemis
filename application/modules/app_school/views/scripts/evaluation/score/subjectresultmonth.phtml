@@ -207,7 +207,7 @@ switch($subjectObject->SCORE_TYPE){
         , renderer:cssDefault
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
-                dataIndex:'TOTAL_RESULT'
+                dataIndex:'DISPLAY_TOTAL'
                 ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
                 ,width: 80
                 ,renderer:cssDefault
@@ -237,7 +237,7 @@ $FIELDS .= ",{name: 'GENDER'}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $FIELDS .= ",{name: 'TOTAL_RESULT'}";
+        $FIELDS .= ",{name: 'DISPLAY_TOTAL'}";
         $FIELDS .= ",{name: 'ASSESSMENT'}";
         $FIELDS .= ",{name: 'RANK'}";
         break;
@@ -314,7 +314,7 @@ Ext.onReady(function() {
         $html .= ",baseParams:{";
             $html .= "start:0";
             $html .= ",limit:100";
-            $html .= ",cmd:'jsonSubjectMonthResult'";
+            $html .= ",cmd:'jsonSubjectResultsByMonth'";
             $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
         $html .= "}";
         $html .= ",reader:new Ext.data.JsonReader({";

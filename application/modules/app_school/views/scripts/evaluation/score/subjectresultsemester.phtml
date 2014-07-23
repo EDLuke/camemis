@@ -247,24 +247,24 @@ switch($subjectObject->SCORE_TYPE){
         , renderer:cssDefault
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
-            dataIndex:'TOTAL_RESULT'
+            dataIndex:'DISPLAY_TOTAL'
             ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
             ,width:70
             ,renderer:cssDefault
             ,align: 'center'
             ,sortable: true
+            ,editor: new Ext.form.NumberField({
+                allowBlank: false
+                ,name: 'DISPLAY_TOTAL'   
+            })
         }";
         $COLUMS .= ",{
-            dataIndex:'TOTAL_REPEAT'
+            dataIndex:'DISPLAY_REPEAT'
             ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
             ,width:80
             ,renderer:cssDefault
             ,align: 'center'
             ,sortable: true
-            , editor: new Ext.form.NumberField({
-                allowBlank: false
-                ,name: 'TOTAL_REPEAT'   
-            })
         }";
         break;
     default:
@@ -289,10 +289,11 @@ $FIELDS .= ",{name: 'GENDER'}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
+        $FIELDS .= ",{name: 'DISPLAY_TOTAL'}";
         $FIELDS .= ",{name: 'TOTAL_RESULT'}";
         $FIELDS .= ",{name: 'ASSESSMENT'}";
         $FIELDS .= ",{name: 'RANK'}";
-        $FIELDS .= ",{name: 'TOTAL_REPEAT'}";
+        $FIELDS .= ",{name: 'DISPLAY_REPEAT'}";
         break;
     default:
         $FIELDS .= ",{name: 'ASSESSMENT'}";
@@ -366,7 +367,7 @@ Ext.onReady(function() {
         $html .= ",baseParams:{";
             $html .= "start:0";
             $html .= ",limit:100";
-            $html .= ",cmd:'jsonSubjectTermResult'";
+            $html .= ",cmd:'jsonSubjectResultsByTerm'";
             $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setParams)."'";
         $html .= "}";
         $html .= ",reader:new Ext.data.JsonReader({";

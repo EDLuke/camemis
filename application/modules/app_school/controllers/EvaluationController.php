@@ -523,19 +523,19 @@ class EvaluationController extends Zend_Controller_Action {
                 $jsondata = $DB_ACCESS->jsonListStudentSubjectAssignments($this->REQUEST->getPost());
                 break;
 
-            case "jsonSubjectMonthResult":
+            case "jsonSubjectResultsByMonth":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
-                $jsondata = $DB_ACCESS->jsonSubjectMonthResult($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonSubjectResultsByMonth($this->REQUEST->getPost());
                 break;
 
-            case "jsonSubjectTermResult":
+            case "jsonSubjectResultsByTerm":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
-                $jsondata = $DB_ACCESS->jsonSubjectTermResult($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonSubjectResultsByTerm($this->REQUEST->getPost());
                 break;
 
-            case "jsonSubjectYearResult":
+            case "jsonSubjectResultsByYear":
                 $DB_ACCESS = new jsonEvaluationSubjectAssessment();
-                $jsondata = $DB_ACCESS->jsonSubjectYearResult($this->REQUEST->getPost());
+                $jsondata = $DB_ACCESS->jsonSubjectResultsByYear($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsTeacherScoreEnter":

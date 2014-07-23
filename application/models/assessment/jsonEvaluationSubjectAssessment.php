@@ -140,7 +140,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectMonthResult($encrypParams)
+    public function jsonSubjectResultsByMonth($encrypParams)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -162,7 +162,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectTermResult($encrypParams)
+    public function jsonSubjectResultsByTerm($encrypParams)
     {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
@@ -183,7 +183,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
         );
     }
 
-    public function jsonSubjectYearResult($encrypParams)
+    public function jsonSubjectResultsByYear($encrypParams)
     {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);

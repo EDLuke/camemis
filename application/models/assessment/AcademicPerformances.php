@@ -113,7 +113,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->TOTAL_RESULT);
+                $data[$i]["DISPLAY_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["TOTAL_ASSESSMENT"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
 
@@ -122,7 +122,7 @@ class AcademicPerformances extends AssessmentProperties {
                         if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
                             $SUBJECT_VALUE = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
-                            $data[$i][$v->SUBJECT_ID] = $this->displayTotalResult($stdClass->evaluationType, $SUBJECT_VALUE);
+                            $data[$i][$v->SUBJECT_ID] = $SUBJECT_VALUE;
                         }
                     }
                 }
@@ -161,7 +161,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->TOTAL_RESULT);
+                $data[$i]["DISPLAY_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["TOTAL_ASSESSMENT"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
 
@@ -173,8 +173,7 @@ class AcademicPerformances extends AssessmentProperties {
                             $performance = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
                             if ($performance) {
                                 $SUBJECT_VALUE = $performance->SUBJECT_VALUE;
-                                $SUBJECT_VALUE_REPEAT = $performance->SUBJECT_VALUE_REPEAT;
-                                $data[$i][$v->SUBJECT_ID] = $this->displayTotalResult($stdClass->evaluationType, $SUBJECT_VALUE, $SUBJECT_VALUE_REPEAT);
+                                $data[$i][$v->SUBJECT_ID] = $SUBJECT_VALUE;
                             }
                         }
                     }
@@ -213,7 +212,7 @@ class AcademicPerformances extends AssessmentProperties {
 
                 $data[$i]["RANK"] = $facette->RANK;
                 $data[$i]["GRADE_POINTS"] = $facette->GRADE_POINTS;
-                $data[$i]["TOTAL_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->TOTAL_RESULT);
+                $data[$i]["DISPLAY_TOTAL"] = $facette->TOTAL_RESULT;
                 $data[$i]["TOTAL_ASSESSMENT"] = $facette->GRADING;
                 $data[$i]["GPA"] = $facette->GPA;
 
@@ -222,18 +221,18 @@ class AcademicPerformances extends AssessmentProperties {
 
                         switch ($this->getSettingYearResult()) {
                             case self::AVG_T1:
-                                $data[$i]["FIRST_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                                $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
                                 break;
                             case self::AVG_T2:
-                                $data[$i]["SECOND_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                                $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
                                 break;
                             case self::AVG_T3:
-                                $data[$i]["THIRD_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
+                                $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
                                 break;
                             default:
-                                $data[$i]["FIRST_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
-                                $data[$i]["SECOND_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
-                                $data[$i]["THIRD_TERM_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
+                                $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
+                                $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
                                 break;
                         }
 
@@ -242,22 +241,22 @@ class AcademicPerformances extends AssessmentProperties {
 
                         switch ($this->getSettingYearResult()) {
                             case self::AVG_Q1:
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                                $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
                                 break;
                             case self::AVG_Q2:
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                                $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
                                 break;
                             case self::AVG_Q3:
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
+                                $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
                                 break;
                             case self::AVG_Q4:
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FOURTH_RESULT);
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
                                 break;
                             default:
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->THIRD_RESULT);
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FOURTH_RESULT);
+                                $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
+                                $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
+                                $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
                                 break;
                         }
 
@@ -266,14 +265,14 @@ class AcademicPerformances extends AssessmentProperties {
 
                         switch ($this->getSettingYearResult()) {
                             case self::AVG_S1:
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
                                 break;
                             case self::AVG_S2:
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
                                 break;
                             default:
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->FIRST_RESULT);
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $this->displayTotalResult($stdClass->evaluationType, $facette->SECOND_RESULT);
+                                $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
+                                $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
                                 break;
                         }
                         break;
