@@ -1010,7 +1010,7 @@ function iconTeacherInClass($status) {
         return "<img src='" . Zend_Registry::get('CAMEMIS_URL') . "/public/images/user_cross.png' border='0'>";
 }
 
-function callPercent($pts_possible, $pts_received) {
+function calculatePercentage($pts_possible, $pts_received) {
     $percent = 0;
     if ($pts_received)
         $percent = round((100 / $pts_possible) * $pts_received, 2);
@@ -2487,9 +2487,8 @@ function getPercent($a, $b) {
     $result = "";
     if (is_numeric($a) && is_numeric($b)) {
         if ($b)
-            $result = $a * 100 / $b;
+            $result = round($a * 100 / $b, Zend_Registry::get('SCHOOL')->DECIMAL_PLACES);
     }
-
     return $result;
 }
 

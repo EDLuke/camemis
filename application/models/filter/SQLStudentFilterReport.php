@@ -149,6 +149,28 @@ class SQLStudentFilterReport {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result?$result->C:0;    
     }
+    //@Visal
+    public static function getCountStudentAdditional($stdClass){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' =>'t_person_description_item'), array('*'));
+        $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'B.STUDENT=A.PERSON_ID', array());
+        if ($stdClass->campusId)
+            $SQL->where("B.CAMPUS = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("B.GRADE = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("B.CLASS = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("B.SCHOOL_YEAR = ?",$stdClass->schoolyearId);
+        if (isset($stdClass->dataType))
+            $SQL->where("A.ITEM = ?",$stdClass->dataType);
+            //$SQL->group("A.ITEM");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result?$result:0;
+    }
+    
     
     public static function getAgeStudentEnroll($stdClass){
         $SQL = self::dbAccess()->select();
@@ -177,6 +199,30 @@ class SQLStudentFilterReport {
         $SQL->where("PARENT=?",0);
         $SQL->order("NAME");
         $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
+    }
+    
+    public static function getAllAdditional(){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_personal_description", array("*"));
+        $SQL->where("PARENT=?",0);
+        $SQL->where("PERSON=?","STUDENT");
+        $SQL->order("NAME");
+        $result = self::dbAccess()->fetchAll($SQL);
+        //error_log($SQL);
+        return $result;
+    }
+    
+    public static function getAllAdditionalChild($parentID){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_personal_description", array("*"));
+        $SQL->where("PARENT=?",$parentID);
+        $SQL->where("PERSON=?","STUDENT");
+        $SQL->order("NAME");
+        $result = self::dbAccess()->fetchAll($SQL);
+        //error_log($SQL);
         return $result;
     }
 }

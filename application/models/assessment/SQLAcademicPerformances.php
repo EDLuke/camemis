@@ -273,23 +273,7 @@ class SQLAcademicPerformances {
         if (isset($stdClass->fourthResult)) {
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
         }
-
-        if (isset($stdClass->firstResultPercent)) {
-            $SAVE_DATA["FIRST_RESULT_PERCENT"] = $stdClass->firstResultPercent;
-        }
-
-        if (isset($stdClass->secondResultPercent)) {
-            $SAVE_DATA["SECOND_RESULT_PERCENT"] = $stdClass->secondResultPercent;
-        }
-
-        if (isset($stdClass->thirdResultPercent)) {
-            $SAVE_DATA["THIRD_RESULT_PERCENT"] = $stdClass->thirdResultPercent;
-        }
-
-        if (isset($stdClass->fourthResultPercent)) {
-            $SAVE_DATA["FOURTH_RESULT_PERCENT"] = $stdClass->fourthResultPercent;
-        }
-
+        
         if (isset($stdClass->gpaValue)) {
             $SAVE_DATA["GPA"] = $stdClass->gpaValue;
         }

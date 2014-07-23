@@ -11,35 +11,32 @@ class SQLEvaluationStudentAssignment {
     CONST EVALUATION_TYPE_NUMBER = 0;
     CONST EVALUATION_TYPE_PERCENT = 1;
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return false::dbAccess()->select();
     }
 
-    public static function getScoreSubjectAssignment($stdClass)
-    {
+    public static function getScoreSubjectAssignment($stdClass) {
+
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_assignment", array("*"));
-        $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
-        $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
-        $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
-        $SQL->where("ASSIGNMENT_ID = '" . $stdClass->assignmentId . "'");
-        $SQL->where("SCORE_DATE = '" . $stdClass->date . "'");
-        //error_log($SQL->__toString());
+        $SQL->from(array('A' => 't_student_assignment'), array("A.POINTS","A.POINTS_REPEAT","A.TEACHER_COMMENTS"));
+        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array("B.POINTS_POSSIBLE"));
+        $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
+        $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
+        $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
+        $SQL->where("A.ASSIGNMENT_ID = '" . $stdClass->assignmentId . "'");
+        $SQL->where("A.SCORE_DATE = '" . $stdClass->date . "'");
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getAVGSubjectAssignment($stdClass, $include)
-    {
+    public static function getAVGSubjectAssignment($stdClass, $include) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("AVG(A.POINTS) AS AVG_POINTS"));
-        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array("AVG(A.POINTS_POSSIBLE) AS AVG_POINTS_POSSIBLE"));
+        $SQL->joinInner(array('B' => 't_assignment'), 'B.ID=A.ASSIGNMENT_ID', array("AVG(B.POINTS_POSSIBLE) AS AVG_POINTS_POSSIBLE"));
         $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
         $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
@@ -63,8 +60,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getListStudentAssignmentScoreDate($stdClass, $include)
-    {
+    public static function getListStudentAssignmentScoreDate($stdClass, $include) {
 
         $SELECTION_A = array(
             "COEFF_VALUE AS COEFF_VALUE"
@@ -99,11 +95,9 @@ class SQLEvaluationStudentAssignment {
         if ($include)
             $SQL->where("A.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
-        switch ($stdClass->evaluationType)
-        {
+        switch ($stdClass->evaluationType) {
             case self::EVALUATION_TYPE_NUMBER:
-                switch (UserAuth::getCountryEducation())
-                {
+                switch (UserAuth::getCountryEducation()) {
                     case "DEFAULT":
                     case "COL":
                     case "KHM":
@@ -122,30 +116,25 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function calculateAVGPercentageSubjectResult($stdClass, $include)
-    {
+    public static function calculateAVGPercentageSubjectResult($stdClass, $include) {
         $SUM_VALUE = 0;
         $AVG_POINTS = 0;
         $AVG_POINTS_POSSIBLE = 0;
 
         $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
 
-        if ($enties)
-        {
-            foreach ($enties as $value)
-            {
+        if ($enties) {
+            foreach ($enties as $value) {
 
                 $stdClass->assignmentId = $value->ASSIGNMENT_ID;
                 $facette = self::getAVGSubjectAssignment($stdClass, $include);
 
-                if ($facette)
-                {
+                if ($facette) {
                     $AVG_POINTS = $facette->AVG_POINTS;
                     $AVG_POINTS_POSSIBLE = $facette->AVG_POINTS_POSSIBLE;
                 }
 
-                if ($AVG_POINTS && $AVG_POINTS_POSSIBLE)
-                {
+                if ($AVG_POINTS && $AVG_POINTS_POSSIBLE) {
                     $COEFF_VALUE = $value->COEFF_VALUE ? $value->COEFF_VALUE : 1;
                     $SUM_VALUE += ($AVG_POINTS / $AVG_POINTS_POSSIBLE) * 100 * ($COEFF_VALUE / 100);
                 }
@@ -155,21 +144,17 @@ class SQLEvaluationStudentAssignment {
         return displayRound($SUM_VALUE);
     }
 
-    public static function calculateAVGNumberSubjectResult($stdClass, $include)
-    {
+    public static function calculateAVGNumberSubjectResult($stdClass, $include) {
 
         $SUM_VALUE = 0;
         $SUM_COEFF_VALUE = 0;
         $OUTPUT = 0;
         $enties = self::getListStudentAssignmentScoreDate($stdClass, $include);
 
-        if ($enties)
-        {
-            foreach ($enties as $value)
-            {
+        if ($enties) {
+            foreach ($enties as $value) {
 
-                switch (UserAuth::getCountryEducation())
-                {
+                switch (UserAuth::getCountryEducation()) {
                     case "DEFAULT":
                     case "COL":
                     case "KHM":
@@ -192,10 +177,8 @@ class SQLEvaluationStudentAssignment {
             }
         }
 
-        if (is_numeric($SUM_COEFF_VALUE))
-        {
-            if ($SUM_COEFF_VALUE)
-            {
+        if (is_numeric($SUM_COEFF_VALUE)) {
+            if ($SUM_COEFF_VALUE) {
                 $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF_VALUE);
             }
         }
@@ -203,12 +186,10 @@ class SQLEvaluationStudentAssignment {
         return $OUTPUT;
     }
 
-    public static function calculatedSubjectResults($stdClass, $include)
-    {
+    public static function calculatedSubjectResults($stdClass, $include) {
 
         $OUTPUT = "";
-        switch ($stdClass->evaluationType)
-        {
+        switch ($stdClass->evaluationType) {
             case self::EVALUATION_TYPE_NUMBER:
                 $OUTPUT = self::calculateAVGNumberSubjectResult($stdClass, $include);
                 break;
@@ -220,8 +201,7 @@ class SQLEvaluationStudentAssignment {
         return $OUTPUT;
     }
 
-    public static function getQueryStudentSubjectAssignments($stdClass, $include = false)
-    {
+    public static function getQueryStudentSubjectAssignments($stdClass, $include = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("*"));
@@ -230,26 +210,22 @@ class SQLEvaluationStudentAssignment {
         $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
         $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
 
-        if (isset($stdClass->assignmentId))
-        {
+        if (isset($stdClass->assignmentId)) {
             if ($stdClass->assignmentId)
                 $SQL->where("A.ASSIGNMENT_ID = '" . $stdClass->assignmentId . "'");
         }
 
-        if (isset($stdClass->month))
-        {
+        if (isset($stdClass->month)) {
             if ($stdClass->month)
                 $SQL->where("A.MONTH = '" . $stdClass->month . "'");
         }
 
-        if (isset($stdClass->year))
-        {
+        if (isset($stdClass->year)) {
             if ($stdClass->year)
                 $SQL->where("A.YEAR = '" . $stdClass->year . "'");
         }
 
-        if (isset($stdClass->term))
-        {
+        if (isset($stdClass->term)) {
             if ($stdClass->term)
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
@@ -261,30 +237,25 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function setActionStudentScoreSubjectAssignment($stdClass)
-    {
+    public static function setActionStudentScoreSubjectAssignment($stdClass) {
 
         $facette = self::getScoreSubjectAssignment($stdClass);
 
-        if (isset($stdClass->actionType))
-        {
-            if ($stdClass->actionType == "IMPORT")
-            {
+        if (isset($stdClass->actionType)) {
+            if ($stdClass->actionType == "IMPORT") {
                 $stdClass->month = getMonthByDate($stdClass->date);
                 $stdClass->year = getYearByDate($stdClass->date);
             }
         }
 
-        if ($facette)
-        {
+        if ($facette) {
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
             $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
             $WHERE[] = "SUBJECT_ID = '" . $stdClass->subjectId . "'";
             $WHERE[] = "ASSIGNMENT_ID = '" . $stdClass->assignmentId . "'";
             $WHERE[] = "SCORE_DATE = '" . $stdClass->date . "'";
 
-            switch ($stdClass->actionField)
-            {
+            switch ($stdClass->actionField) {
                 case "SCORE":
                     $UPDATE_DATA['POINTS'] = $stdClass->actionValue;
                     $UPDATE_DATA['POINTS_REPEAT'] = "";
@@ -302,12 +273,9 @@ class SQLEvaluationStudentAssignment {
             $UPDATE_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
             self::dbAccess()->update('t_student_assignment', $UPDATE_DATA, $WHERE);
-        }
-        else
-        {
+        } else {
 
-            switch ($stdClass->actionField)
-            {
+            switch ($stdClass->actionField) {
                 case "SCORE":
                     $INSERT_DATA['POINTS'] = $stdClass->actionValue;
                     break;
@@ -334,23 +302,19 @@ class SQLEvaluationStudentAssignment {
                 $INSERT_DATA['SCORE_DATE'] = $stdClass->date;
             if (isset($stdClass->include_in_valuation))
                 $INSERT_DATA['INCLUDE_IN_EVALUATION'] = $stdClass->include_in_valuation;
-            if (isset($stdClass->pointsPossible))
-                $INSERT_DATA['POINTS_POSSIBLE'] = $stdClass->pointsPossible;
 
             $INSERT_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $INSERT_DATA['CREATED_DATE'] = getCurrentDBDateTime();
             $INSERT_DATA['TEACHER_ID'] = Zend_Registry::get('USER')->CODE;
 
-            if ($stdClass->term != 'TERM_ERROR')
-            {
+            if ($stdClass->term != 'TERM_ERROR') {
                 self::dbAccess()->insert("t_student_assignment", $INSERT_DATA);
                 self::addStudentScoreDate($stdClass);
             }
         }
     }
 
-    public static function checkExistStudentSubjectAssignmentByYear($stdClass)
-    {
+    public static function checkExistStudentSubjectAssignmentByYear($stdClass) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_assignment", array("C" => "COUNT(*)"));
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
@@ -361,8 +325,7 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->C : 0;
     }
 
-    public static function checkExistStudentSubjectAssignment($stdClass, $include = false)
-    {
+    public static function checkExistStudentSubjectAssignment($stdClass, $include = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_assignment'), array("C" => "COUNT(*)"));
@@ -370,20 +333,17 @@ class SQLEvaluationStudentAssignment {
         $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("A.STUDENT_ID = '" . $stdClass->studentId . "'");
 
-        if (isset($stdClass->month))
-        {
+        if (isset($stdClass->month)) {
             if ($stdClass->month)
                 $SQL->where("A.MONTH = '" . $stdClass->month . "'");
         }
 
-        if (isset($stdClass->year))
-        {
+        if (isset($stdClass->year)) {
             if ($stdClass->year)
                 $SQL->where("A.YEAR = '" . $stdClass->year . "'");
         }
 
-        if (isset($stdClass->term))
-        {
+        if (isset($stdClass->term)) {
             if ($stdClass->term)
                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
         }
@@ -391,8 +351,7 @@ class SQLEvaluationStudentAssignment {
         if ($include)
             $SQL->where("B.INCLUDE_IN_EVALUATION IN (" . $include . ")");
 
-        if (isset($stdClass->subjectId))
-        {
+        if (isset($stdClass->subjectId)) {
             if ($stdClass->subjectId)
                 $SQL->where("A.SUBJECT_ID = '" . $stdClass->subjectId . "'");
         }
@@ -404,11 +363,9 @@ class SQLEvaluationStudentAssignment {
         return $result ? $result->C : 0;
     }
 
-    public static function getCountTeacherScoreDate($stdClass)
-    {
+    public static function getCountTeacherScoreDate($stdClass) {
 
-        if (isset($stdClass->term))
-        {
+        if (isset($stdClass->term)) {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_student_score_date", array("C" => "COUNT(*)"))
                     ->where("CLASS_ID = '" . $stdClass->academicId . "'")
@@ -419,21 +376,16 @@ class SQLEvaluationStudentAssignment {
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public static function addStudentScoreDate($stdClass)
-    {
+    public static function addStudentScoreDate($stdClass) {
         $count = self::getCountTeacherScoreDate($stdClass);
 
-        if (isset($stdClass->term))
-        {
-            if (!$count)
-            {
+        if (isset($stdClass->term)) {
+            if (!$count) {
                 $INSERT_DATA['CLASS_ID'] = $stdClass->academicId;
                 $INSERT_DATA['SUBJECT_ID'] = $stdClass->subjectId;
                 $INSERT_DATA['ASSIGNMENT_ID'] = $stdClass->assignmentId;
@@ -444,8 +396,7 @@ class SQLEvaluationStudentAssignment {
         }
     }
 
-    public static function getActionDeleteAllStudentsTeacherScoreEnter($stdClass)
-    {
+    public static function getActionDeleteAllStudentsTeacherScoreEnter($stdClass) {
 
         $SQL = "DELETE FROM t_student_assignment WHERE";
         $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
@@ -455,8 +406,7 @@ class SQLEvaluationStudentAssignment {
         self::dbAccess()->query($SQL);
     }
 
-    public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass)
-    {
+    public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
 
         $SQL = "DELETE FROM t_student_assignment WHERE";
         $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
@@ -467,8 +417,7 @@ class SQLEvaluationStudentAssignment {
         self::dbAccess()->query($SQL);
     }
 
-    public static function getAcitonSubjectAssignmentModifyScoreDate($stdClass)
-    {
+    public static function getAcitonSubjectAssignmentModifyScoreDate($stdClass) {
         $setIds = explode("_", $stdClass->setId);
         $assignmentId = isset($setIds[0]) ? $setIds[0] : "";
         $olddate = isset($setIds[1]) ? $setIds[1] : "";
@@ -480,8 +429,7 @@ class SQLEvaluationStudentAssignment {
         $CHECK_ERROR = ($TERM_NAME == "TERM_ERROR") ? true : false;
 
         $ACTION_ERROR = true;
-        if (!$CHECK_ERROR && $olddate)
-        {
+        if (!$CHECK_ERROR && $olddate) {
             $ACTION_ERROR = false;
             $date = new DateTime($stdClass->modify_date);
             $FIRST = "UPDATE t_student_assignment";
@@ -510,19 +458,16 @@ class SQLEvaluationStudentAssignment {
         }
     }
 
-    public static function getActionContentTeacherScoreInputDate($stdClass)
-    {
+    public static function getActionContentTeacherScoreInputDate($stdClass) {
 
-        if ($stdClass->setId && $stdClass->content)
-        {
+        if ($stdClass->setId && $stdClass->content) {
             $SAVEDATA['CONTENT'] = $stdClass->content;
             $WHERE[] = "ID = '" . $stdClass->setId . "'";
             self::dbAccess()->update('t_student_score_date', $SAVEDATA, $WHERE);
         }
     }
 
-    public static function findScoreInputDate($stdClass)
-    {
+    public static function findScoreInputDate($stdClass) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => "t_student_score_date"), array("SCORE_INPUT_DATE", "CONTENT"));
         $SQL->joinLeft(array('B' => 't_assignment'), 'A.ASSIGNMENT_ID=B.ID', array("SHORT", "NAME"));
@@ -531,8 +476,7 @@ class SQLEvaluationStudentAssignment {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function findTerm($data, $academicId)
-    {
+    public static function findTerm($data, $academicId) {
 
         return AcademicDBAccess::getNameOfSchoolTermByDate($data, $academicId);
     }

@@ -346,7 +346,7 @@
             $SQL->where("B.FEE = '" . $feeId . "'");
             
             $SQL->where("B.SCHOOLYEAR = '" . $schoolyear . "'");
-            
+            $SQL->where("D.SCHOOL_YEAR = '" . $schoolyear . "'");
             if ($globalSearch) {
                 
                 $SEARCH = " ((A.LASTNAME LIKE '" . $globalSearch . "%')";

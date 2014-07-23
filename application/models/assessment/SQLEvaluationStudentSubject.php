@@ -26,7 +26,7 @@ class SQLEvaluationStudentSubject {
 
         $data = array(
             'SUBJECT_VALUE' => ""
-            ,' SUBJECT_VALUE_REPEAT' => ""
+            ,'SUBJECT_VALUE_REPEAT' => ""
             , 'RANK' => ""
             , 'GRADE_POINTS' => ""
             , 'GRADING' => ""
