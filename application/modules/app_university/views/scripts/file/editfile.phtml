@@ -149,7 +149,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     ,layout: 'fit'
                     ,width: 550
                     ,height:percentHeight(92)
-                    ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("template=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
                 }
                 ";
                 break;
@@ -312,7 +312,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             title: '".FILE."'
                             ,layout:'fit'
                             ,height:percentHeight(100)
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."&object=0f414800c09f2c991a4c9ead540e0d54")."'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("isUpload=1&template=SCHOOL_DOCUMENT&objectId=".$this->objectId."&object=0f414800c09f2c991a4c9ead540e0d54")."'})]
                         },{
                             title:'".STUDENTS."'
                             ,height:percentHeight(100)
@@ -346,7 +346,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         ,margins: '3 3 3 0'
                         ,layout: 'card'
                         ,activeItem: 0
-                        ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
+                        ,items: [new Ext.ux.IFrameComponent({ id: 'FILE', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("template=SCHOOL_DOCUMENT&objectId=".$this->objectId."")."'})]
                     }]
                     ";
                     break;
@@ -465,7 +465,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             $js .= "});";    
             print $js;
         }
-        
         ?>
         
     });

@@ -124,12 +124,12 @@ Ext.onReady(function() {
             ,items: [{             
                 layout: 'form'
                 ,border: false
-                ,bodyStyle: 'padding:10px' 
+                ,bodyStyle: 'background:#FFF' 
                 ,items: [{".CamemisField::Box("SUBJECT", SUBJECT, $this->facette->SUBJECT_NAME)."}]
             },{
                 layout: 'form'
                 ,border: false
-                ,bodyStyle: 'padding:10px'
+                ,bodyStyle: 'background:#FFF'
                 ,items: [{".CamemisField::Box("NAME", HOMEWORK_NAME, $this->facette->NAME)."}]
             }]            
         }]
@@ -263,7 +263,7 @@ Ext.onReady(function() {
     }";
     $PENEL_ITEMS[] = $MAIN_CONTENT;
     
-    $TEACHER_ATTACHMENTS = "{
+    /*$TEACHER_ATTACHMENTS = "{
         title: '".TEACHER.'&nbsp;'.ATTACHMENTS."'
         ,layout: 'fit'
         ,items: [new Ext.ux.IFrameComponent({ id: 'TEACHER_ATTACHMENTS', url: '/dataset/attachment/?objectId=".$teacher_id."&template=homework&display=1&attachment=download'})]
@@ -276,15 +276,16 @@ Ext.onReady(function() {
         case 'TEACHER':
             $PENEL_ITEMS[] = $TEACHER_ATTACHMENTS;
             break;
-    }  
+    }*/ 
     
     $STUDENT_ATTACHMENTS = "{
         title: '".STUDENT.'&nbsp;'.ATTACHMENTS."'
         ,layout: 'fit'
         ,items: [new Ext.ux.IFrameComponent({id: 'STUDENT_ATTACHMENTS', url: '/dataset/attachment/?objectId=".$student_id."&template=homework&display=1&attachment=upload'})]
     }";
+    $PENEL_ITEMS[] = $STUDENT_ATTACHMENTS;
     
-    switch(UserAuth::getUserType()){
+    /*switch(UserAuth::getUserType()){
         case 'STUDENT':
             if($this->facette){
                 if($entries){
@@ -292,7 +293,7 @@ Ext.onReady(function() {
                 }  
             }
             break;
-    }
+    }*/
     
     $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
     

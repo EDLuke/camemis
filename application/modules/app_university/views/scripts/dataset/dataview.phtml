@@ -12,68 +12,34 @@ require_once 'utiles/Utiles.php';
 require_once 'models/CAMEMISUploadDBAccess.php';
 require_once 'models/app_university/FileDBAccess.php';
 require_once 'models/app_university/student/StudentAdvisoryDBAccess.php';
-require_once 'models/app_university/staff/StaffContractDBAccess.php';
-require_once 'models/app_university/student/StudentPreschoolDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $ATTACHMENT_ITEMS = "[{".CamemisField::Uploadfield("uploaded_file_1", false)."}]";
 
-$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:"";
-$target = isset($_GET["target"])?addText($_GET["target"]):"";
+$template = isset($_GET["template"])?addText($_GET["template"]):"";
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$academicId = isset($_GET["academicId"])? (int)$_GET["academicId"]:0;
+$isUpload = isset($_GET["isUpload"])? (int)$_GET["isUpload"]:0;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     
-if($target){
-    switch($target){
+if($template){
+    switch($template){
         case "SCHOOL_DOCUMENT":
-            $template = "SCHOOL_DOCUMENT";
             $facette = FileDBAccess::findFileFromGuId($objectId);
             $parentId = $facette->PARENT;
             if(!$facette) {header("Location: /main/permission/");exit;}
             break;
-        case "SUBJECT":
-            $template = "SUBJECT";
-            $this->objectId = $objectId;
-            break;
-        case "ACADEMIC_SUBJECT":
-            $template = "ACADEMIC_SUBJECT";
-            $this->objectId = $objectId;
-            break;
         case "STUDENT_ADVISORY":
-            $template = "STUDENT_ADVISORY";
             $facette = StudentAdvisoryDBAccess::findObjectFromId($objectId);
             if(!$facette){header("Location: /main/permission/"); exit;}
             break;
-        case "STAFF_CONTRACT":
-            $template = "STAFF_CONTRACT";
-            $facette = StaffContractDBAccess::findObjectFromId($objectId);
-            if(!$facette){header("Location: /main/permission/"); exit;}
-            break;
-
     }
+    $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template, $academicId);   
 }else{
-    if(!$target) {header("Location: /main/permission/");exit;}
+    header("Location: /main/permission/");exit;
 }
-switch($target){
-        case "ACADEMIC_SUBJECT":
-        if($academicId){
-            $check = CAMEMISUploadDBAccess::getCountFileFromAcademicId($academicId);
-            if($check == 0){
-               $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template); 
-            }else{
-               $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template, $academicId); 
-            }
-        }else{
-            $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template);
-        }
-        break;
-        default:
-        $resultRows = CAMEMISUploadDBAccess::getAllFileFromObjectId($this->objectId, $template);
-        break;
-}
-
 ?>
 
 <script>
@@ -84,7 +50,7 @@ Ext.onReady(function() {
     camemisPage::uploadBlob();
     
     ////////////////////////////////////////////////////////
-    switch($target){
+    switch($template){
         case "SCHOOL_DOCUMENT":
             $tree = "";
             $tree .= "myTree = window.parent.parent.Ext.getCmp('TREE.FILE_SYSTEM_LIST_ID');";
@@ -110,41 +76,24 @@ Ext.onReady(function() {
             $tree .= "}";
             
             print $tree;
-            break;
-        
+            break; 
     }
-    ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     
-    //@File Action
     if($resultRows){
         foreach ($resultRows as $doc){
-            $FROM_USER = $doc->USER_ID;
             $FILE_SHOW=$doc->FILE_SHOW;
             $file = "var clickFile = Ext.get('".$FILE_SHOW."');";
             $file .= "clickFile.on('click', function(event){;";
                 $file .= "var contextMenu = new Ext.menu.Menu({";
-                $file .= "items: [{";
-                    $file .= "text: '".DOWNLOAD."'";
-                    $file .= ",iconCls: 'icon-breakpoint_down'";
-                    $file .= ",handler: function(){";
-                        $file .= "showBlob('".$FILE_SHOW."')";
-                    $file .= "}";
-                $file .= "}";
-                ////////////////////////////////////////////////////////////////
-            switch($target){
-                case "ACADEMIC_SUBJECT":
-                     $file .= ",{"; 
-                        $file .= "text: '".REMOVE."'";
-                        $file .= ",iconCls: 'icon-breakpoint_delete'";
+                    $file .= "items: [{";
+                        $file .= "text: '".DOWNLOAD."'";
+                        $file .= ",iconCls: 'icon-breakpoint_down'";
                         $file .= ",handler: function(){";
-                            $file .= "deleteBlob('".$FILE_SHOW."')"; 
+                            $file .= "showBlob('".$FILE_SHOW."')";
                         $file .= "}";
                     $file .= "}";
-                break;
-                default:
-                switch(UserAuth::getUserType()){
-                    case "ADMIN":
-                    case "SUPERADMIN":
+                    if($isUpload){
                         $file .= ",{"; 
                             $file .= "text: '".REMOVE."'";
                             $file .= ",iconCls: 'icon-breakpoint_delete'";
@@ -152,29 +101,16 @@ Ext.onReady(function() {
                                 $file .= "deleteBlob('".$FILE_SHOW."')"; 
                             $file .= "}";
                         $file .= "}";
-                        break; 
-                    default:
-                        if($FROM_USER == Zend_Registry::get('USER')->ID){
-                            $file .= ",{"; 
-                                $file .= "text: '".REMOVE."'";
-                                $file .= ",iconCls: 'icon-breakpoint_delete'";
-                                $file .= ",handler: function(){";
-                                    $file .= "deleteBlob('".$FILE_SHOW."')"; 
-                                $file .= "}";
-                            $file .= "}"; 
-                        }
-                        break;
-                }
-                break;
-            }
-            ////////////////////////////////////////////////////////////////
-            $file .= "]"; 
+                    }
+                    $file .= "]";
+                $file .= "});";
+                
+                $file .= "event.stopEvent();";
+                $file .= "contextMenu.showAt(event.xy);";
             $file .= "});";
-            $file .= "event.stopEvent();";
-            $file .= "contextMenu.showAt(event.xy);";
-            $file .= "});";
-            print $file;
-        }  
+            
+             print $file;
+        }    
     }
     $js = "";
     $js .="viewport = new Ext.Viewport({";
@@ -187,13 +123,9 @@ Ext.onReady(function() {
                 $js .="title: ''";
                 $js .=",border:false";
                 $js .=",layout: 'fit'";
-                ////////////////////////////////////////////////////////////////
-             switch($target){
-                case "ACADEMIC_SUBJECT":
-                    switch(UserAuth::getUserType()){
-                    case "ADMIN":
-                    case "SUPERADMIN":
-                        $js .=",tbar:[{";
+                //@Upload Bar
+                if($isUpload){
+                    $js .=",tbar:[{";
                         $js .="text: '".UPLOAD."'";
                         $js .=",iconCls: 'icon-breakpoint_up'";
                         $js .=",handler: function(){";
@@ -229,103 +161,12 @@ Ext.onReady(function() {
                                         $js .="win.close();";
                                     $js .="}";
                                 $js .="}]";
-                            $js .="});";
-                            $js .="win.show();";
-                        $js .="}";
-                        $js .="}]"; 
-                    break;
-                    default:
-                        $js .=",tbar:[{";
-                            $js .="text: '".UPLOAD."'";
-                            $js .=",iconCls: 'icon-breakpoint_up'";
-                            $js .=",handler: function(){";
-                                $js .="win = new Ext.Window({";
-                                    $js .="title: '".UPLOAD."'";
-                                    $js .=",id: 'myWin'";
-                                    $js .=",width: 350";
-                                    $js .=",height: 150";
-                                    $js .=",modal: true";
-                                    $js .=",layout: 'fit'";
-                                    $js .=",items:[{";
-                                        $js .="layout: 'form'";
-                                        $js .=",border: false";
-                                        $js .=",bodyStyle: 'padding:10px'";
-                                        $js .=",items:[{";
-                                            $js .="xtype: 'form'";
-                                            $js .=",id: 'UPLOAD_FORM'";
-                                            $js .=",border: false";
-                                            $js .=",items: ".$ATTACHMENT_ITEMS."";
-                                        $js .="}]";
-                                    $js .="}]";
-                                    $js .=",tbar:[{";
-                                        $js .="tooltip:'".UPLOAD." (".ATTACHMENT.")'";
-                                        $js .=",iconCls: 'icon-breakpoint_up'";
-                                        $js .=",handler: function(){";
-                                            $js .="uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$template."', '".$academicId."');";
-                                        $js .="}";
-                                    $js .="}]";
-                                    $js .=",buttons:[{";
-                                        $js .="text: '".CLOSE."'";
-                                        $js .=",iconCls:'icon-close'";
-                                        $js .=",handler: function(){";
-                                            $js .="win.close();";
-                                        $js .="}";
-                                    $js .="}]";
-                                $js .="});";
-                                $js .="win.show();";
-                            $js .="}";
-                        $js .="}]";
-                    break;
-                    }
-                break;
-                default:
-                switch(UserAuth::getUserType()){
-                    case "ADMIN":
-                    case "SUPERADMIN":
-                        $js .=",tbar:[{";
-                        $js .="text: '".UPLOAD."'";
-                        $js .=",iconCls: 'icon-breakpoint_up'";
-                        $js .=",handler: function(){";
-                            $js .="win = new Ext.Window({";
-                                $js .="title: '".UPLOAD."'";
-                                $js .=",id: 'myWin'";
-                                $js .=",width: 350";
-                                $js .=",height: 150";
-                                $js .=",modal: true";
-                                $js .=",layout: 'fit'";
-                                $js .=",items:[{";
-                                    $js .="layout: 'form'";
-                                    $js .=",border: false";
-                                    $js .=",bodyStyle: 'padding:10px'";
-                                    $js .=",items:[{";
-                                        $js .="xtype: 'form'";
-                                        $js .=",id: 'UPLOAD_FORM'";
-                                        $js .=",border: false";
-                                        $js .=",items: ".$ATTACHMENT_ITEMS."";
-                                    $js .="}]";
-                                $js .="}]";
-                                $js .=",tbar:[{";
-                                    $js .="tooltip:'".UPLOAD." (".ATTACHMENT.")'";
-                                    $js .=",iconCls: 'icon-breakpoint_up'";
-                                    $js .=",handler: function(){";
-                                        $js .="uploadBlob('UPLOAD_FORM', 'SHOW_FILE_NAME', '".$this->objectId."', '".$template."', '');";
-                                    $js .="}";
-                                $js .="}]";
-                                $js .=",buttons:[{";
-                                    $js .="text: '".CLOSE."'";
-                                    $js .=",iconCls:'icon-close'";
-                                    $js .=",handler: function(){";
-                                        $js .="win.close();";
-                                    $js .="}";
-                                $js .="}]";
+                                
                             $js .="});";
                             $js .="win.show();";
                         $js .="}";
                     $js .="}]";
-                    break;
-                }
-                break;
-             }
+                } 
                 ////////////////////////////////////////////////////////////////
                 $js .=",items:[{";
                     $js .="border:false";
@@ -336,7 +177,7 @@ Ext.onReady(function() {
             $js .="}]";
         $js .="}]";
     $js .="});";
-    
+
     print $js;
     ?>
 });
@@ -344,7 +185,7 @@ Ext.onReady(function() {
 
 <style type="text/css">
 .wrapper{
-    width:80%;
+    width:100%;
     margin:0 auto;
     }
 .content{
@@ -409,6 +250,7 @@ Ext.onReady(function() {
                             $SRC_FILE = "/public/images/file.png";
                             break;
                     }
+                    
                     //error_log($fileExtension);
                     $html = '<div class="file_box">';
                         $html .= '<div id="'.$FILE_SHOW.'" class="file_text"><img src="'.$SRC_FILE.'"></div>';

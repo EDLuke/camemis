@@ -282,7 +282,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         },{
                             title:'".ATTACHMENTS."'
                             ,layout:'fit'
-                            ,items: [new Ext.ux.IFrameComponent({ id: 'STUDENT_ADVISORY', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("target=STUDENT_ADVISORY&objectId=".$this->objectId."")."'})]
+                            ,items: [new Ext.ux.IFrameComponent({ id: 'STUDENT_ADVISORY', url:'/dataset/dataview/?camIds=".$this->urlEncryp->encryptedGet("template=STUDENT_ADVISORY&objectId=".$this->objectId."")."'})]
                         }]
                     }]
                 }]
