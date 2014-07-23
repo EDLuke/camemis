@@ -63,8 +63,8 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
 if($academicObject->EVALUATION_TYPE){
-    $TOTAL_AVG_RESULT = "AVG(%)";
-    $TOTAL_AVG_RESULT_REPEAT = "AVGR(%)";
+    $TOTAL_AVG_RESULT = "AVG (%)";
+    $TOTAL_AVG_RESULT_REPEAT = "AVGR (%)";
 }else{
     $TOTAL_AVG_RESULT = "AVG";
     $TOTAL_AVG_RESULT_REPEAT = "AVGR";
@@ -238,19 +238,19 @@ $COLUMS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortabl
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssNumber}";
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssNumber
+        , renderer:cssAssessment
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
             dataIndex:'DISPLAY_TOTAL'
             ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
             ,width:70
-            ,renderer:cssNumber
+            ,renderer:cssAssessment
             ,align: 'center'
             ,sortable: true
             ,editor: new Ext.form.NumberField({
@@ -262,7 +262,7 @@ switch($subjectObject->SCORE_TYPE){
             dataIndex:'DISPLAY_REPEAT'
             ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
             ,width:70
-            ,renderer:cssNumberRepeat
+            ,renderer:cssRepeat
             ,align: 'center'
             ,sortable: true
         }";
@@ -338,19 +338,25 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding:3px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding:2px;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding:3px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding:2px;">' + value + '</div>';
     }
     
-    function cssNumberRepeat(value, metadata, record){
+    function cssAssessment(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#FFF; padding:3px;background:#FF0000">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000; padding:2px;background:#CCFFFF">' + value + '</div>';
+    }
+    
+    function cssRepeat(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#FFF; padding:2px;background:#FF9900">' + value + '</div>';
     }
     
     <?php
