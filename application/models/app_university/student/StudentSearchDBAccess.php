@@ -124,7 +124,7 @@ class StudentSearchDBAccess {
                     break;
                 case "CREDIT":
                     $SQL->joinLeft(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
-                    $SQL->v(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
+                    $SQL->joinLeft(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
                     $SQL->joinLeft(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=CREDIT.SCHOOLYEAR_ID', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
                     $SQL->joinLeft(array('SUBJECT' => 't_subject'), 'SUBJECT.ID=CREDIT.SUBJECT_ID', array("NAME AS SUBJECT_NAME"));
 
