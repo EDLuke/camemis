@@ -189,17 +189,10 @@ class DepartmentDBAccess {
     }
 
     public function jsonRemoveDepartment($Id) {
-
-        $SQL = "DELETE FROM t_department";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_department", "ID = '" . $Id . "'");
 
         if (self::checkChild($Id)) {
-            $SQL = "DELETE FROM t_department";
-            $SQL .= " WHERE";
-            $SQL .= " PARENT='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_department", "PARENT ='" . $Id . "'");
         }
 
         return array("success" => true);

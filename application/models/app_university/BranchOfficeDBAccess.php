@@ -87,10 +87,7 @@ class BranchOfficeDBAccess {
 
         if ($facette) {
             if ($facette->PARENT) {
-                $SQL = "DELETE FROM t_branch_office";
-                $SQL .= " WHERE";
-                $SQL .= " PARENT='" . $removeId . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->delete("t_branch_office", "PARENT = '" . $removeId . "'");
             }
         }
 
@@ -99,11 +96,7 @@ class BranchOfficeDBAccess {
     }
 
     public static function sqlRemoveObject($Id) {
-
-        $SQL = "DELETE FROM t_branch_office";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_branch_office", "ID = '" . $Id . "'");
     }
 
     public static function updateObject($params) {

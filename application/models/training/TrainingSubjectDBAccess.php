@@ -402,11 +402,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         if ($trainingId && $subjectId)
         {
-            $SQL = "DELETE FROM 't_grade_subject'";
-            $SQL .= " WHERE 1=1";
-            $SQL .= " AND TRAINING = '" . $trainingId . "'";
-            $SQL .= " AND SUBJECT = '" . $subjectId . "'";
-            self::dbAccess()->query($SQL);
+            $whereSQL  = " 1=1 AND TRAINING = '" . $trainingId . "'";
+            $whereSQL .= " AND SUBJECT = '" . $subjectId . "'";
+            self::dbAccess()->delete("t_grade_subject", $whereSQL);
         }
 
         return array("success" => true);

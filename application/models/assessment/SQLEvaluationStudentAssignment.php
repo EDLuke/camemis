@@ -398,23 +398,21 @@ class SQLEvaluationStudentAssignment {
 
     public static function getActionDeleteAllStudentsTeacherScoreEnter($stdClass) {
 
-        $SQL = "DELETE FROM t_student_assignment WHERE";
-        $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
-        $SQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
-        $SQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
-        $SQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
-        self::dbAccess()->query($SQL);
+        $whereSQL  = " CLASS_ID='" . $stdClass->academicId . "'";
+        $whereSQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
+        $whereSQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
+        $whereSQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
+        self::dbAccess()->delete("t_student_assignment", $wherSQL); 
     }
 
     public static function getActionDeleteOneStudentTeacherScoreEnter($stdClass) {
 
-        $SQL = "DELETE FROM t_student_assignment WHERE";
-        $SQL .= " CLASS_ID='" . $stdClass->academicId . "'";
-        $SQL .= " AND STUDENT_ID='" . $stdClass->studentId . "'";
-        $SQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
-        $SQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
-        $SQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
-        self::dbAccess()->query($SQL);
+        $whereSQL  = " CLASS_ID='" . $stdClass->academicId . "'";
+        $whereSQL .= " AND STUDENT_ID='" . $stdClass->studentId . "'";
+        $whereSQL .= " AND SUBJECT_ID='" . $stdClass->subjectId . "'";
+        $whereSQL .= " AND ASSIGNMENT_ID='" . $stdClass->assignmentId . "'";
+        $whereSQL .= " AND SCORE_DATE='" . $stdClass->date . "'";
+        self::dbAccess()->delete("t_student_assignment", $wherSQL); 
     }
 
     public static function getAcitonSubjectAssignmentModifyScoreDate($stdClass) {

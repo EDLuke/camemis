@@ -537,9 +537,8 @@ class StaffImportDBAccess {
 
             if ($entries)
                 foreach ($entries as $staffId) {
-
-                    self::dbAccess()->query("DELETE FROM t_staff WHERE ID ='" . $staffId . "'");
-                    self::dbAccess()->query("DELETE FROM t_staff_temp WHERE ID ='" . $staffId . "'");
+                    self::dbAccess()->delete("t_staff", " ID ='" . $staffId . "'");
+                    self::dbAccess()->delete("t_staff_temp", " ID ='" . $staffId . "'");
                 }
         }
 

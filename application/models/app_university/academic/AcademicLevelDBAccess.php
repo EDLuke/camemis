@@ -1124,14 +1124,11 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
     protected function removeTeachersFromSchoolYear($subjectId) {
 
-        $SQL = "
-            DELETE FROM t_subject_teacher_class
-            WHERE 1=1 
+        $whereSQL = " 1=1 
             AND GRADE ='" . Zend_Registry::get('OBJECT_SCHOOLYEAR')->GRADE_ID . "'
             AND SUBJECT ='" . $subjectId . "'
-            AND SCHOOL_YEAR ='" . Zend_Registry::get('OBJECT_SCHOOLYEAR')->SCHOOL_YEAR . "'
-            ";
-        self::dbAccess()->query($SQL);
+            AND SCHOOL_YEAR ='" . Zend_Registry::get('OBJECT_SCHOOLYEAR')->SCHOOL_YEAR . "'";
+        self::dbAccess()->delete("t_subject_teacher_class", $whereSQL);
     }
 
     protected function addTeacherSchoolYear($teacherId, $subjectId) {
@@ -1285,17 +1282,12 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
             // Teacher in Schedule?
             ///////////////////////////////////////////////
             if (!$checkSchedule) {
-
-                $SQL = "";
-                $SQL .= "DELETE FROM t_subject_teacher_class";
-                $SQL .= " WHERE";
-                $SQL .= " TEACHER='" . $teacherId . "'";
-                $SQL .= " AND GRADE='" . $gradeId . "'";
-                $SQL .= " AND ACADEMIC='" . $academicId . "'";
-                $SQL .= " AND SUBJECT='" . $subjectId . "'";
-                $SQL .= " AND SCHOOLYEAR='" . $schoolyearId . "'";
-
-                self::dbAccess()->query($SQL);
+                $whereSQL  = " TEACHER='" . $teacherId . "'";
+                $whereSQL .= " AND GRADE='" . $gradeId . "'";
+                $whereSQL .= " AND ACADEMIC='" . $academicId . "'";
+                $whereSQL .= " AND SUBJECT='" . $subjectId . "'";
+                $whereSQL .= " AND SCHOOLYEAR='" . $schoolyearId . "'";
+                self::dbAccess()->delete("t_subject_teacher_class", $whereSQL);
             }
         }
 
@@ -1326,12 +1318,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
     }
 
     protected function removeScheduleFromClass($academicId) {
-
-        $SQL = "DELETE FROM ";
-        $SQL .= " t_schedule";
-        $SQL .= " WHERE ";
-        $SQL .= " ACADEMIC_ID = '" . $academicId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_schedule", "ACADEMIC_ID = '" . $academicId . "'");
     }
 
     protected function checkSchoolyearByGrade($gradeId, $schoolyearId) {

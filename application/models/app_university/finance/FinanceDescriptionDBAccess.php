@@ -151,11 +151,7 @@
         }
 
         public static function sqlRemoveObject($Id) {
-
-            $SQL = "DELETE FROM t_finance_description";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_finance_description", " ID='" . $Id . "'");
         }
 
         public static function updateObject($params) {

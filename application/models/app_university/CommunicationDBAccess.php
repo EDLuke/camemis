@@ -342,7 +342,7 @@ class CommunicationDBAccess{
     }
 
     protected function removeRecipientCommunication($Id) {
-        self::dbAccess()->query("DELETE FROM t_recipient_communication WHERE COMMUNICATION_ID = '" . $Id . "'");
+        self::dbAccess()->delete("t_recipient_communication", "COMMUNICATION_ID = '" . $Id . "'");
     }
 
     protected function addRecipientCommunication($objectId, $recipientId, $recipientType) {

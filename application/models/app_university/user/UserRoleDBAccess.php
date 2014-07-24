@@ -308,10 +308,7 @@
 
             $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-            $SQL = "DELETE FROM t_memberrole";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $removeId . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_memberrole", " ID='" . $removeId . "'");
 
             return array("success" => true);
         }
