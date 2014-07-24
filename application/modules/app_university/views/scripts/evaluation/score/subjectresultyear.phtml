@@ -79,13 +79,13 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#000;">' + value + '</div>';
+        return '<div style="font-weight:bold; color:#000;background:#FFF;">' + value + '</div>';
     }
     
     <?
@@ -97,7 +97,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STUDENT'");
     $OBJECT_GRID->addReadField("name: 'GENDER'");  
     $OBJECT_GRID->addReadField("name: 'RANK'");
-    $OBJECT_GRID->addReadField("name: 'TOTAL_RESULT'");
+    $OBJECT_GRID->addReadField("name: 'DISPLAY_TOTAL'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
@@ -237,7 +237,7 @@ Ext.onReady(function() {
         if($academicObject->DISPLAY_GRADE_POINTS){
             $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS'");
         }
-        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'TOTAL_RESULT'");
+        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'DISPLAY_TOTAL'");
     }
     
     switch($TERM_NUMBER){
@@ -264,18 +264,6 @@ Ext.onReady(function() {
             ,iconCls:'icon-reload'
             ,handler: function(){
                 ".CamemisPage::setRequestURI(false)."
-            }
-        }]);
-    ");
-    
-    //Task for Ratha
-    $OBJECT_GRID->addTBarItems("
-        tbar.add('-',[{
-            text: '<b>" . EXPORT_TO_EXCEL . "</b>'
-            ,disabled:true
-            ,iconCls:'icon-page_excel'
-            ,handler: function(){
-                
             }
         }]);
     ");
@@ -313,6 +301,18 @@ Ext.onReady(function() {
             }]);
         ");
     }
+    
+    //Task for Ratha
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . EXPORT_TO_EXCEL . "</b>'
+            ,disabled:true
+            ,iconCls:'icon-page_excel'
+            ,handler: function(){
+                
+            }
+        }]);
+    ");
     
     $OBJECT_GRID->addTBarItems("tbar.add(['->','<b>".YEAR_RESULT."</b>']);");
     
