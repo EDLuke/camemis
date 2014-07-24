@@ -263,8 +263,8 @@ class CamemisGrid {
         $js .= "]";
 
         /**
-         * 16.04.2014 KAOM Vibolrith
-         */
+        * 16.04.2014 KAOM Vibolrith
+        */
         if ($this->isFilterRow)
         {
             $js .= ",plugins:[new Ext.ux.grid.FilterRow({refilterOnStoreUpdate: true})]";
@@ -272,8 +272,8 @@ class CamemisGrid {
         }
 
         /**
-         * 18.04.2014 KAOM Vibolrith
-         */
+        * 18.04.2014 KAOM Vibolrith
+        */
         if ($this->isGroupingView)
         {
             $js .= ",plugins: [new Ext.ux.grid.HybridSummary()]";
@@ -296,8 +296,8 @@ class CamemisGrid {
         $js .= "" . $this->setBufferView() . "";
 
         /**
-         * 16.04.2014 KAOM Vibolrith
-         */
+        * 16.04.2014 KAOM Vibolrith
+        */
         if ($this->isPagingToolbar)
             $js .= "" . $this->PagingToolbar() . "";
 
@@ -529,10 +529,10 @@ class CamemisGrid {
                 $js .= "if (e.field == 'DELETE'){";
 
                 /**
-                 * KAOM Vibolrith
-                 * 19.05.2014
-                 * Editing Grid Delete and message box
-                 */
+                * KAOM Vibolrith
+                * 19.05.2014
+                * Editing Grid Delete and message box
+                */
                 $js .= "Ext.MessageBox.show({";
                 $js .= "title: '" . ACTION_STATUS . "'";
                 $js .= ",msg: '" . DELETE_THIS_ITEM . "'";
