@@ -70,8 +70,7 @@ class AdminSessionDBAccess {
 
         $current = time();
         $still_valid = $current - CAMEMISConfigBasic::EXPIRE_TIME;
-        $SQL = "DELETE FROM ".T_SESSIONS." WHERE TS_UPDATE<'" . $still_valid . "'";
-        $this->DB_ACCESS->query($SQL);
+        $this->DB_ACCESS->delete(T_SESSIONS, "TS_UPDATE<'" . $still_valid . "'");
     }
 
     public function verifyTime() {
