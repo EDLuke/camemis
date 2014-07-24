@@ -261,12 +261,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
             ,type:'traditional'
             ,academicId: '".$this->facette->GUID."'
         ");
-
-        $ASSIGNED_STUDENTS_GRID->setSaveParams("
-            cmd: 'actionStudentSchoolYear'
-            ,academicId: '".$this->facette->GUID."'
-        ");
-
+        
         ////////////////// Begin....
         $ASSIGNED_STUDENTS_GRID->setAftereditLoadParams("
             cmd: 'loadActionStudentSchoolYear'
@@ -293,7 +288,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         
         $ASSIGNED_STUDENTS_GRID->forceFit = "false";
         $ASSIGNED_STUDENTS_GRID->removeNAME = "STUDENT";
-		$ASSIGNED_STUDENTS_GRID->setUserColumn = true;
+        $ASSIGNED_STUDENTS_GRID->setUserColumn = true;
         $ASSIGNED_STUDENTS_GRID->renderJS();
         
         $TAB_ITEMS = "";

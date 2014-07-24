@@ -200,7 +200,7 @@ Ext.onReady(function() {
         cmd: 'jsonRemoveEnrolledStudentSubject'
         ,academicId: '".$this->facette->GUID."'
     ");
-           
+    
     $ASSIGNED_STUDENTS_GRID->baseParams = "
         start:0
         ,limit:100
@@ -219,6 +219,21 @@ Ext.onReady(function() {
         $ASSIGNED_STUDENTS_GRID->isGroupingView=true;
         $ASSIGNED_STUDENTS_GRID->groupField = "SUBJECT_TGRADE";        
     }
+    
+    switch(UserAuth::getUserType()){
+        case "ADMIN":
+        case "SUPERADMIN":
+            $ASSIGNED_STUDENTS_GRID->setSaveParams("
+                cmd: 'actionStudentSchoolYear'
+                ,academicId: '".$this->facette->GUID."'
+            ");
+            $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
+                XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+            ");
+            $ASSIGNED_STUDENTS_GRID->isGridEditing = true;
+            break;
+    }
+    
     $ASSIGNED_STUDENTS_GRID->removeNAME = "STUDENT";
     $ASSIGNED_STUDENTS_GRID->loadMask = true;
     $ASSIGNED_STUDENTS_GRID->isPagingToolbar = true;
