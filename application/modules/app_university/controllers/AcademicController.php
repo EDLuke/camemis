@@ -101,14 +101,12 @@ class AcademicController extends Zend_Controller_Action {
                     case "CAMPUS":
 
                         $this->campusId = $this->facette->ID;
-                        Zend_Registry::set('OBJECT_CAMPUS', $this->DB_GRADE->findObjectCampusFromId($this->objectId));
 
                         break;
                     case "GRADE":
 
                         $this->gradeId = $this->facette->ID;
                         $this->campusId = $this->facette->CAMPUS_ID;
-                        Zend_Registry::set('OBJECT_GRADE', $this->DB_GRADE->findObjectGradeFromId($this->objectId));
 
                         break;
                     case "SCHOOLYEAR":
@@ -119,7 +117,6 @@ class AcademicController extends Zend_Controller_Action {
                         $this->schoolyearId = $facette->SCHOOL_YEAR;
                         $schoolyear = AcademicDateDBAccess::getInstance();
                         $this->isCurrentYear = $schoolyear->isCurrentSchoolyear($facette->SCHOOL_YEAR);
-                        Zend_Registry::set('OBJECT_SCHOOLYEAR', $this->DB_GRADE->findObjectGradeSchoolyearFromId($this->objectId));
 
                         break;
                     case "CLASS":
@@ -129,7 +126,6 @@ class AcademicController extends Zend_Controller_Action {
                         $this->gradeId = $this->facette->GRADE_ID;
                         $this->objectData = $this->DB_GRADE->getGradeDataFromId($this->classId);
                         //$this->isCurrentYear = $this->objectData["IS_CURRENT_YEAR"];
-                        Zend_Registry::set('OBJECT_CLASS', $this->DB_GRADE->findObjectClassFromId($this->objectId));
 
                         break;
                 }
@@ -599,6 +595,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/studentfilter");
         $this->view->gridType = "STUDENT_FILTER";
     }
+
     //@Visal
     public function studentadditionalfilterAction() {
         $this->_helper->viewRenderer("filter/studentadditionalfilter");
