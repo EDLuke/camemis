@@ -131,11 +131,7 @@ class StudentNoteDBAccess {
     }
 
     public static function jsonDeleteNote($Id) {
-
-        $SQL = "DELETE FROM";
-        $SQL .= " t_student_notes";
-        $SQL .= " WHERE ID = '" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_student_notes", " ID = '" . $Id . "'");
         return array(
             "success" => true
         );

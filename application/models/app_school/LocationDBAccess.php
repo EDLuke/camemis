@@ -131,11 +131,7 @@ class LocationDBAccess {
 
     public static function sqlRemoveObject($Id)
     {
-
-        $SQL = "DELETE FROM t_location";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_location", " ID='" . $Id . "'");
     }
 
     public static function updateObject($params)

@@ -128,11 +128,7 @@ class SchoolFacilityDBAccess {
     }
 
     public static function sqlRemoveObject($Id) {
-
-        $SQL = "DELETE FROM t_school_facility";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_school_facility", " ID='" . $Id . "'");
     }
 
     public static function updateObject($params) {

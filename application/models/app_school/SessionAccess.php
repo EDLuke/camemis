@@ -74,8 +74,7 @@ class SessionAccess {
         $current = time();
         $still_valid = $current - CAMEMISConfigBasic::EXPIRE_TIME;
 
-        $SQL = "DELETE FROM t_sessions WHERE TS_UPDATE<'" . $still_valid . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_sessions", " TS_UPDATE<'" . $still_valid . "'");
     }
 
     public function verifyTimeByUser($userId) {

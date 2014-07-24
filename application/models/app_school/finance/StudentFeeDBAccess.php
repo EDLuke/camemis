@@ -991,7 +991,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         foreach ($result as $value) {
 
             if (!$value->ACTION_PAYMENT) {
-                self::dbAccess()->query("DELETE FROM t_student_fee WHERE STUDENT='" . $value->STUDENT_ID . "' AND FEE='" . $value->FEE_ID . "'");
+                self::dbAccess()->delete("t_student_fee", " STUDENT='" . $value->STUDENT_ID . "' AND FEE='" . $value->FEE_ID . "'");
                 self::deleteStudentFromFeeANDIncome(
                         $value->STUDENT_ID
                         , $value->FEE_ID
@@ -1570,24 +1570,18 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
     public static function deleteStudentFromFeeANDIncome($studentId, $feeId, $deleteFee = false, $deleteIncome = false, $paymentRemove = false) {
 
-        $DE_FEE = "";
-        $DE_FEE .= "DELETE FROM t_student_fee";
-        $DE_FEE .= " WHERE";
-        $DE_FEE .= " STUDENT='" . $studentId . "'";
+        $DE_FEE  = " STUDENT='" . $studentId . "'";
         $DE_FEE .= " AND FEE='" . $feeId . "'";
         if ($deleteFee)
-            self::dbAccess()->query($DE_FEE);
+            self::dbAccess()->delete("t_student_fee", $DE_FEE);
 
-        $DEL_INCOME = "";
-        $DEL_INCOME .= "DELETE FROM t_income";
-        $DEL_INCOME .= " WHERE";
-        $DEL_INCOME .= " STUDENT='" . $studentId . "'";
+        $DEL_INCOME = " STUDENT='" . $studentId . "'";
         if ($paymentRemove) {
             $DEL_INCOME .= " AND PAYMENT_REMOVE='0'";
         }
         $DEL_INCOME .= " AND FEE='" . $feeId . "'";
         if ($deleteIncome)
-            self::dbAccess()->query($DEL_INCOME);
+            self::dbAccess()->delete("t_income", $DEL_INCOME); 
     }
     
     

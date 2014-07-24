@@ -263,9 +263,7 @@ class OrganizationDBAccess {
     }
 
     public function deleteOrganizationFromId($Id) {
-
-        $SQL = "DELETE FROM " . self::T_ORGANIZATION . " WHERE ID='" . $Id . "'";
-        $this->DB_ACCESS->query($SQL);
+        $this->DB_ACCESS->delete(self::T_ORGANIZATION, "ID = '" . $Id . "'");
     }
 
     public function assignedUserOrganization($params) {
@@ -326,12 +324,11 @@ class OrganizationDBAccess {
                 break;
         }
 
-        $SQL = "DELETE FROM " . self::T_USER_ORGANIZATION . "";
-        $SQL .= " WHERE 1=1";
-        $SQL .= " AND ORGANIZATION_ID='" . $organizationId . "'";
-        $SQL .= " AND USER_ID='" . $userId . "'";
 
-        $this->DB_ACCESS->query($SQL);
+        $whereSQL  = " 1=1 AND ORGANIZATION_ID='" . $organizationId . "'";
+        $whereSQL .= " AND USER_ID='" . $userId . "'";
+
+        $this->DB_ACCESS->delete(self::T_USER_ORGANIZATION, $whereSQL);
 
         $SAVEDATA['USER_ID'] = $userId;
         $SAVEDATA['ORGANIZATION_ID'] = $organizationId;
