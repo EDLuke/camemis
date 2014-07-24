@@ -97,7 +97,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'STUDENT'");
     $OBJECT_GRID->addReadField("name: 'GENDER'");  
     $OBJECT_GRID->addReadField("name: 'RANK'");
-    $OBJECT_GRID->addReadField("name: 'TOTAL_RESULT'");
+    $OBJECT_GRID->addReadField("name: 'DISPLAY_TOTAL'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
@@ -237,7 +237,7 @@ Ext.onReady(function() {
         if($academicObject->DISPLAY_GRADE_POINTS){
             $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS'");
         }
-        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'TOTAL_RESULT'");
+        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'DISPLAY_TOTAL'");
     }
     
     switch($TERM_NUMBER){

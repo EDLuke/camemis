@@ -288,7 +288,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
                 $TOTAL_RESULT = $this->getTotalSubjectResultsByYear($stdClass);
                 $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
-                $data[$i]["DISPLAY_TOTAL"] = $TOTAL_RESULT;
+                $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
 
                 switch ($this->getTermNumber()) {
                     case 1:
