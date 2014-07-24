@@ -62,7 +62,7 @@ if($entries){
         
         $CAMEMIS_PAGE_OBJECT->setAddTab();
         
-        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()?AcademicDateDBAccess::loadCurrentSchoolyear()->ID:"";
         $STORE_SCHOOLYEAR = "[";
         if(AcademicDateDBAccess::getAllSchoolyear()){
             $i = 0;
