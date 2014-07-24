@@ -1,0 +1,149 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 17.05.2014
+///////////////////////////////////////////////////////////
+
+require_once 'clients/CamemisChart.php';
+require_once 'clients/CamemisPage.php';
+require_once 'models/filter/FilterData.php';
+require_once 'models/filter/FilterDataSet.php';
+require_once setUserLoacalization();
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$gradeId = "";
+$campusId = "";
+$schoolyearId = "";
+$classId = "";
+
+if (strpos($objectId, "CAMPUS_") !== false) {
+    $Ids = explode("_",substr($objectId, 7));
+    $campusId = isset($Ids[0])?$Ids[0]:"";
+    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
+    $objectType = "CAMPUS";
+} elseif (strpos($objectId, "GRADE_") !== false) {
+    $objectType = "GRADE";
+    $Ids = explode("_",substr($objectId, 6));
+    $gradeId = isset($Ids[0])?$Ids[0]:"";
+    $campusId = isset($Ids[1])?$Ids[1]:"";
+    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+} else{
+    $objectType = "CLASS";
+    $classId = $objectId;
+}
+$setParams="";
+
+$objectDataSet = new FilterDataSet();
+if($campusId){
+    $objectDataSet->campusId = $campusId;
+    $setParams .= "&campusId=".$campusId.""; 
+}
+if($gradeId){
+    $objectDataSet->gradeId = $gradeId;
+    $setParams .= "&gradeId=".$gradeId.""; 
+}
+if($schoolyearId){
+    $objectDataSet->schoolyearId = $schoolyearId;
+    $setParams .= "&schoolyearId=".$schoolyearId.""; 
+}
+if($classId){
+    $objectDataSet->classId = $classId;
+    $setParams .= "&classId=".$classId.""; 
+}
+if($objectType)
+$objectDataSet->objectType = $objectType;
+
+$entries = SQLStudentFilterReport::getAllAdditional();
+$data = array();
+$i = 0;
+if($entries){
+    
+    foreach($entries as $value){
+        $dataSetAdditional = $objectDataSet->getDataSetStudentAdditional($value->ID);
+        $data[$i] = new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value->ID, $dataSetAdditional);
+        $data[$i]->chartSVG = "display".$value->ID;
+        $data[$i]->showControls='true';
+        $data[$i]->tooltips = 'true';
+        $data[$i]->showValues = 'true';
+        $data[$i]->height = 350;
+        $i++;
+    }
+     
+        
+}
+
+
+
+?>
+
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/public/bootstrap/css/custom.css" rel="stylesheet">
+<script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
+    
+         <?php 
+            if($entries){
+                $i = 0;
+                foreach($entries as $value){
+         ?>
+         <div class="row">
+            <div class="col-md-12">
+                <div class="panel-heading"><h5><b><?=$value->NAME;?></b></h5></div>
+                
+                <div class="panel-body">
+                    <button type="button" id="<?=$value->ID;?>" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
+                    <?= $data[$i]->setChartDisplay(); ?>
+                    <script><?= $data[$i]->setChartScript(); ?></script> 
+                </div>     
+            </div>  
+        </div>
+       
+        <?php 
+                $i++;
+                }
+            }
+        ?>    
+    </div>
+    <script>
+        Ext.onReady(function() {
+            
+            /*viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                title: ''
+                ,id:'westcenter'
+                ,collapsible: false
+                ,region:'center'
+                ,layout: 'fit'
+                ,margins: '0 3 3 3'
+                ,border:false
+                ,bodyStyle: 'background:#dee7f6;'
+                ,items: [{
+                    border: false
+                    ,bodyStyle: 'background:#dee7f6;'
+                    ,autoScroll:true
+                    ,contentEl: 'initStatistic'
+                }]
+            }]
+        });*/
+            <?php 
+                if($entries){
+                $i = 0;
+                foreach($entries as $value){
+            ?>
+                    Ext.get('<?=$value->ID;?>').on('click', function(){
+                       window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+                    });
+            <?php
+                $i++;
+                }
+            }
+            ?>
+        });
+    </script>
+</body>
+</html>
