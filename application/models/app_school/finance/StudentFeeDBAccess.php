@@ -1325,21 +1325,20 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
         //error_log($studentId." Fee: ".$feeId);
         if ($facette) {
-            $SQL = "UPDATE t_student_fee";
-            $SQL .= " SET";
+            $data  = array();
+            $where = array();
             if ($newValue) {
-                $SQL .= " CHOOSE_SERVICE = '2'";
+                $data['CHOOSE_SERVICE'] = '2';
             } else {
                 if ($facette->AMOUNT_PAID) {
-                    $SQL .= " CHOOSE_SERVICE = '2'";
+                    $data['CHOOSE_SERVICE'] = '2';
                 } else {
-                    $SQL .= " CHOOSE_SERVICE = '0'";
+                    $data['CHOOSE_SERVICE'] = '0';
                 }
             }
-            $SQL .= " WHERE";
-            $SQL .= " STUDENT= '" . $studentId . "'";
-            $SQL .= " AND FEE= '" . $feeId . "'";
-            self::dbAccess()->query($SQL);
+            $where[] = "STUDENT= '". $studentId ."'";
+            $where[] = "FEE= '". $feeId ."'";
+            self::dbAccess()->update("t_student_fee", $data, $where);
         }
 
         return array(
@@ -1516,17 +1515,18 @@ class StudentFeeDBAccess extends FeeDBAccess {
                 $PAID_STATUS = 'PAID';
             }
 
-            $SQL = "";
-            $SQL .= "UPDATE t_student_fee";
-            $SQL .= " SET";
-            $SQL .= " PAID_STATUS ='" . $PAID_STATUS . "'";
+
+            $data  = array();
+            $where = array();
+            $data['PAID_STATUS'] = "'". $PAID_STATUS ."'";
 
             if ($USER_OWED)
-                $SQL .= ",AMOUNT_OWED ='" . $USER_OWED . "'";
+                $data['AMOUNT_OWED'] = "'". $USER_OWED ."'";
 
-            $SQL .= " WHERE STUDENT='" . $studentId . "' AND FEE='" . $feeId . "' AND ACTION_PAYMENT='1'";
-            //error_log($SQL);
-            self::dbAccess()->query($SQL);
+            $where[] = "STUDENT='" . $studentId . "'";
+            $where[] = "FEE='" . $feeId . "'";
+            $where[] = "ACTION_PAYMENT='1'";
+            self::dbAccess()->update("t_student_fee", $data, $where);
         }
     }
 
@@ -1621,13 +1621,12 @@ class StudentFeeDBAccess extends FeeDBAccess {
                 ///////////////////////////////////////
                 }
 
-                $UPDATE_STUDENT_FEE = "UPDATE t_student_fee";
-                $UPDATE_STUDENT_FEE .= " SET";
-                
+
+                $data = array();                
                 if ($feeObject->STUDENT_SERVICES) {
-                    $UPDATE_STUDENT_FEE .= " CHOOSE_SERVICE = '0'";
+                    $data['CHOOSE_SERVICE'] = '0';
                 } else {
-                    $UPDATE_STUDENT_FEE .= " CHOOSE_SERVICE = '1'";
+                    $data['CHOOSE_SERVICE'] = '1';
                 } 
 
                 $TOTAL_AMOUNT = $facette->TOTAL_AMOUNT;
@@ -1639,39 +1638,32 @@ class StudentFeeDBAccess extends FeeDBAccess {
                     $CALL_AMOUNT_OWED = $facette->AMOUNT_OWED + $PAYMENT_OBJECT->AMOUNT;
                     
                     if ($CALL_AMOUNT_PAID == 0) {
-                        $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
-                        $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $PAYMENT_OBJECT->AMOUNT . "'";
+                        $data['ACTION_PAYMENT'] = '0';
+                        $data['PAID_STATUS'] = 'NOT_YET_PAID';
+                        $data['AMOUNT_PAID'] = '0';
+                        $data['AMOUNT_OWED'] = "'". $PAYMENT_OBJECT->AMOUNT ."'";
                     } else {
-                        $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '1'";
-                        $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'PARTLY_PAID'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '" . $CALL_AMOUNT_PAID . "'";
-                        $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $CALL_AMOUNT_OWED . "'";
+                        $data['ACTION_PAYMENT'] = '1';
+                        $data['PAID_STATUS'] = 'PARTLY_PAID';
+                        $data['AMOUNT_PAID'] = "'". $CALL_AMOUNT_PAID ."'";
+                        $data['AMOUNT_OWED'] = "'". $CALL_AMOUNT_OWED ."'";
                     }
                 } else {
-                    $UPDATE_STUDENT_FEE .= " ,ACTION_PAYMENT = '0'";
-                    $UPDATE_STUDENT_FEE .= " ,PAID_STATUS = 'NOT_YET_PAID'";
-                    $UPDATE_STUDENT_FEE .= " ,AMOUNT_PAID = '0'";
-                    $UPDATE_STUDENT_FEE .= " ,AMOUNT_OWED = '" . $TOTAL_AMOUNT . "'";
+                    $data['ACTION_PAYMENT'] = '0';
+                    $data['PAID_STATUS']    = 'NOT_YET_PAID';
+                    $data['AMOUNT_PAID']    = '0';
+                    $data['AMOUNT_OWED']    = "'". $TOTAL_AMOUNT ."'";
                 }
-                
-                $UPDATE_STUDENT_FEE .= " WHERE";
-                $UPDATE_STUDENT_FEE .= " STUDENT= '" . $studentId . "'";
-                $UPDATE_STUDENT_FEE .= " AND FEE= '" . $feeId . "'";
-                //error_log($UPDATE_STUDENT_FEE);
-                self::dbAccess()->query($UPDATE_STUDENT_FEE);
+                $where   = array();
+                $where[] = "STUDENT= '". $studentId ."'";
+                $where[] = "FEE= '". $feeId ."'";
+                self::dbAccess()->update("t_student_fee", $data, $where);
 
                 ////////////////////////////////////////////////////////////////
                 if($type=="REFUND"){
-                    $UPDATE_INCOME = "UPDATE t_income";
-                    $UPDATE_INCOME .= " SET";
-                    $UPDATE_INCOME .= " PAYMENT_REMOVE = '1'";
-                    $UPDATE_INCOME .= " WHERE";
-                    $UPDATE_INCOME .= " GUID= '" . $paymentId . "'";
-                    self::dbAccess()->query($UPDATE_INCOME);
+                    self::dbAccess()->update("t_income", array('PAYMENT_REMOVE' => '1'), "GUID='". $paymentId ."'");
                 }elseif($type=="DELETE"){
-                    self::dbAccess()->delete('t_income', array("GUID='" . $paymentId . "'"));    
+                    self::dbAccess()->delete('t_income', array("GUID='". $paymentId ."'"));    
                 }
             }
         }

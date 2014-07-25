@@ -721,8 +721,8 @@ class ExaminationDBAccess {
                     break;
                 case "ITEM":
                     $where = array();
-                    $where['EXAM_ID'] = "'" . $Id . "'";
-                    $where['ROOM_ID'] = "'" . $facette->ROOM_ID . "'";
+                    $where[] = "EXAM_ID = '" . $Id . "'";
+                    $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
                     self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
                     self::dbAccess()->delete('t_examination', array("GUID ='" . $Id . "'"));
                     break;
@@ -738,13 +738,13 @@ class ExaminationDBAccess {
         if ($facette) {
             $parentFacette = self::findExamFromId($facette->PARENT);
             $where = array();
-            $where['EXAM_ID'] = "'" . $parentFacette->GUID . "'";
-            $where['ROOM_ID'] = "'" . $facette->ROOM_ID . "'";
+            $where[] = "EXAM_ID = '" . $parentFacette->GUID . "'";
+            $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
             self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
 
             $where = array();
-            $where['EXAM_ID'] = "'" . $parentFacette->GUID . "'";
-            $where['ROOM_ID'] = "'" . $facette->ROOM_ID . "'";
+            $where[] = "EXAM_ID = '" . $parentFacette->GUID . "'";
+            $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
             self::dbAccess()->update("t_teacher_examination", array('ROOM_ID' => '0'), $where);
 
             self::dbAccess()->delete('t_examination', array("GUID ='" . $Id . "'"));

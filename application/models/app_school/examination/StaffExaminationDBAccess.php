@@ -312,8 +312,8 @@ class StaffExaminationDBAccess extends ExaminationDBAccess {
                     $STAFF_EXAM = self::getStaffExam($staffId, $parentObject->GUID);
                     if ($STAFF_EXAM->ROOM_ID == 0) {    
                         $where = array();
-                        $where['STAFF_ID'] = "'" . $staffId . "'";
-                        $where['EXAM_ID']  = "'" . $parentObject->GUID . "'";
+                        $where[] = "STAFF_ID ='" . $staffId . "'";
+                        $where[] = "EXAM_ID ='" . $parentObject->GUID . "'";
                         self::dbAccess()->update("t_teacher_examination", array('ROOM_ID' => "'". $facette->ROOM_ID ."'"), $where);
 
                         ++$selectedCount;

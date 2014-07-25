@@ -159,15 +159,13 @@
             $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
             if ($objectId != "new") {
-                $SQL = "UPDATE t_finance_description";
-                $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
+                $data = array();
+                $data['NAME'] = "'". addText($params["NAME"]) ."'";
                 if (isset($params["CHOOSE_TYPE"]))
-                    $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
+                    $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
                 if (isset($params["LINK"]))
-                    $SQL .= " ,LINK='" . $params["LINK"] . "'";
-                $SQL .= " WHERE";
-                $SQL .= " ID='" . addText($params["objectId"]) . "'";
-                self::dbAccess()->query($SQL);
+                    $data['LINK'] = "'". $params["LINK"] ."'";
+                self::dbAccess()->update("t_finance_description", $data, "ID='". addText($params["objectId"]) ."'");
                 self::updateChildren($objectId);
             }else {
                 self::addObject($params);
@@ -264,12 +262,10 @@
 
             if ($result) {
                 foreach ($result as $value) {
-                    $SQL = "UPDATE t_finance_description";
-                    $SQL .= " SET CHOOSE_TYPE='" . $facette->CHOOSE_TYPE . "'";
-                    $SQL .= " ,LINK='" . $facette->LINK . "'";
-                    $SQL .= " WHERE";
-                    $SQL .= " PARENT='" . $value->PARENT . "'";
-                    self::dbAccess()->query($SQL);
+                    $data = array();
+                    $data['CHOOSE_TYPE'] = "'". $facette->CHOOSE_TYPE ."'";
+                    $data['LINK'] = "'". $facette->LINK ."'";
+                    self::dbAccess()->update("t_finance_description", $data, "PARENT='". $value->PARENT ."'");
                 }
             }
         }

@@ -427,8 +427,8 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         $parentObject = self::findExamParentFromId($objectId);
         $facette = self::findExamFromId($objectId);
         $where = array();
-        $where['ROOM_ID'] = "'" . $facette->ROOM_ID . "'";
-        $where['EXAM_ID'] = "'" . $parentObject->GUID . "'";
+        $where[] = "ROOM_ID ='" . $facette->ROOM_ID . "'";
+        $where[] = "EXAM_ID ='" . $parentObject->GUID . "'";
         self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
         return array(
             "success" => true
