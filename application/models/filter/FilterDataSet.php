@@ -191,6 +191,62 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
+    
+    
+    public function getDataSetStudentEDMajor(){
+        
+        $entries = FilterProperties::getCamemisType('MAJOR_TYPE');
+        $this->type="MAJOR";
+        $DATASET = "[{";
+        $DATASET .= "key: '".MAJOR_TYPE."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->camemisType=$value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getcountStudentEDBackgroundDegreeOrMajor() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    public function getDataSetStudentEDDegree(){
+        
+        $entries = FilterProperties::getCamemisType('QUALIFICATION_DEGREE_TYPE');
+        $this->type="QUALIFICATION_DEGREE";
+        $DATASET = "[{";
+        $DATASET .= "key: '".DEGREE_TYPE."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->camemisType=$value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getcountStudentEDBackgroundDegreeOrMajor() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
     //@Visal
     public function getDataSetStaffNationality(){
         

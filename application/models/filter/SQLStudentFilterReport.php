@@ -149,6 +149,40 @@ class SQLStudentFilterReport {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result?$result->C:0;    
     }
+    
+    public static function countStudentEDBackgroundDegreeOrMajor($stdClass){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_person_infos'), array("C" => "COUNT(*)"));
+        $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'A.USER_ID=B.STUDENT', array());
+        $SQL->where("A.OBJECT_TYPE = ?",'EDUBACK');  
+        $SQL->where("A.USER_TYPE = ?",'STUDENT'); 
+        
+        if($stdClass->type){
+            switch(strtoupper($stdClass->type)){
+                case'QUALIFICATION_DEGREE':
+                    $SQL->where("A.QUALIFICATION_DEGREE = ?",$stdClass->camemisType);
+                    break;
+                case'MAJOR':
+                    $SQL->where("A.MAJOR = ?",$stdClass->camemisType);
+                    break;
+                        
+            }
+        }  
+        if ($stdClass->campusId)
+            $SQL->where("B.CAMPUS = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("B.GRADE = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("B.CLASS = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("B.SCHOOL_YEAR = ?",$stdClass->schoolyearId);  
+        
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result?$result->C:0;    
+    }
+    
     //@Visal
     public static function getCountStudentAdditional($stdClass){
         

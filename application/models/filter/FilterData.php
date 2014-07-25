@@ -89,6 +89,21 @@ class FilterData extends FilterProperties {
         return $result;    
     }
     
+    public function getcountStudentEDBackgroundDegreeOrMajor(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "type"  => $this->type
+                , "camemisType"  => $this->camemisType
+        );
+        $result = SQLStudentFilterReport::countStudentEDBackgroundDegreeOrMajor($stdClass);
+        
+        return $result;    
+    }
+    
     //@Visal
     public function getCountStaffActive(){
         

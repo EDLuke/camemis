@@ -143,7 +143,7 @@ Ext.onReady(function() {
                         $js .= "text: '".EDUCATION_BACKGROUND."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                         $js .= ",handler: function(){";
-                            
+                            $js .= "clickOpenPage('center','".EDUCATION_BACKGROUND." &raquo; ' + node.text,'/academic/studenteducationbackgroundfilter/?objectId=' + node.attributes.id);";    
                         $js .= "}";
                     $js .= "},{";
                         $js .= "text: '".STUDENT_ATTENDANCE."'";
