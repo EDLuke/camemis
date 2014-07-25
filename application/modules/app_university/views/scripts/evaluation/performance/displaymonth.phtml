@@ -52,13 +52,13 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;padding:4px;height:18px;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; padding:4px; color:#333;">' + value + '</div>';
+        return '<div style="font-weight:normal;color:#333;padding:4px;height:18px;">' + value + '</div>';
     }
     
     <?
