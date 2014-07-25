@@ -761,31 +761,23 @@ class AcademicDBAccess {
         $facette = self::findGradeFromId($objectId);
         $status = $facette->STATUS;
         $newStatus = 0;
+        $data = array();
         if ($facette) {
-            $SQL = "";
-            $SQL .= "UPDATE ";
-            $SQL .= " t_grade";
-            $SQL .= " SET";
-
             switch ($status) {
                 case 0:
                     $newStatus = 1;
-                    $SQL .= " STATUS=1";
-                    $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['STATUS']      = 1;
+                    $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                    $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                     break;
                 case 1:
                     $newStatus = 0;
-                    $SQL .= " STATUS=0";
-                    $SQL .= " ,DISABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,DISABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['STATUS']       = 0;
+                    $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                    $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                     break;
             }
-
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $facette->ID . "'";
-
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->update("t_grade", $data, "ID='". $facette->ID ."'");
         }
         return array("success" => true, "status" => $newStatus);
     }
@@ -1342,14 +1334,14 @@ class AcademicDBAccess {
         $result1 = self::dbAccess()->fetchAll("SELECT * FROM t_grade");
         if ($result1) {
             foreach ($result1 as $value) {
-                self::dbAccess()->query("UPDATE t_grade SET GUID='" . generateGuid() . "' WHERE ID='" . $value->ID . "'");
+                self::dbAccess()->update("t_grade", array('GUID' => "'". generateGuid() ."'"),  "ID='". $value->ID ."'" );
             }
         }
 
         $result2 = self::dbAccess()->fetchAll("SELECT * FROM t_subject");
         if ($result2) {
             foreach ($result2 as $value) {
-                self::dbAccess()->query("UPDATE t_subject SET GUID='" . generateGuid() . "' WHERE ID='" . $value->ID . "'");
+                self::dbAccess()->update("t_subject", array('GUID' => "'". generateGuid() ."'"),  "ID='". $value->ID ."'" );
             }
         }
     }
@@ -1744,7 +1736,7 @@ class AcademicDBAccess {
                     $entries = self::dbAccess()->fetchAll("SELECT * FROM t_grade WHERE PARENT='" . $facette->ID . "' AND OBJECT_TYPE='CLASS'");
                     if ($entries) {
                         foreach ($entries as $value) {
-                            self::dbAccess()->query("UPDATE t_grade SET STAFF_SCORE_PERMISSION='" . addText($selecteds) . "' WHERE ID='" . $value->ID . "'");
+                            self::dbAccess()->update("t_grade", array('STAFF_SCORE_PERMISSION' => "'". addText($selecteds) ."'"),  "ID='". $value->ID ."'" );
                         }
                     }
                     break;
@@ -1786,7 +1778,7 @@ class AcademicDBAccess {
             $name = isset($params["newValue"]) ? addText($params["newValue"]) : "";
             $Id = isset($params["id"]) ? addText($params["id"]) : "";
             if ($name && $facette) {
-                self::dbAccess()->query("UPDATE t_grade SET NAME='" . addText($name) . "' WHERE ID='" . $Id . "'");
+                self::dbAccess()->update("t_grade", array('NAME' => "'". addText($name) ."'"),  "ID='". $id ."'" );
             }
         } else {
             $name = isset($params["name"]) ? addText($params["name"]) : "";
@@ -2241,10 +2233,9 @@ class AcademicDBAccess {
             foreach ($result as $value) {
                 if (in_array($value->ACADEMIC_ID, $data)) {
                     $dateObject = self::getDateBySchoolTerm($value->ACADEMIC_ID, $value->TERM);
-                    $SQL = "UPDATE t_schedule SET";
-                    $SQL .= " START_DATE='" . $dateObject->START_DATE . "', END_DATE='" . $dateObject->END_DATE . "'";
-                    $SQL .= " WHERE ACADEMIC_ID='" . $value->ACADEMIC_ID . "'";
-                    self::dbAccess()->query($SQL);
+                    $data       = array('START_DATE' => "'". $dateObject->START_DATE ."'", 
+                                        'END_DATE'   => "'". $dateObject->END_DATE ."'");
+                    self::dbAccess()->update("t_schedule", $data, "ID='". $id ."'" );
                 }
             }
         }

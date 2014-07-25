@@ -122,17 +122,14 @@ class BranchOfficeDBAccess {
             self::dbAccess()->insert('t_branch_office', $SAVEDATA);
             $objectId = self::dbAccess()->lastInsertId();
         } else {
-            $SQL = "UPDATE t_branch_office";
-            $SQL .= " SET";
-            $SQL .= " NAME='" . addText($name) . "'";
-            $SQL .= " ,EMAIL='" . addText($email) . "'";
-            $SQL .= " ,PHONE='" . addText($phone) . "'";
-            $SQL .= " ,SHORT='" . addText($short) . "'";
-            $SQL .= " ,SORTKEY='" . addText($sortkey) . "'";
-            $SQL .= " ,CONTACT_PERSON='" . addText($contact_person) . "'";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $objectId . "'";
-            self::dbAccess()->query($SQL);
+            $data = array();
+            $data['NAME']    = "'" . addText($name) . "'";
+            $data['EMAIL']   = "'" . addText($email) . "'";
+            $data['PHONE']   = "'" . addText($phone) . "'";
+            $data['SHORT']   = "'" . addText($short) . "'";
+            $data['SORTKEY'] = "'" . addText($sortkey) . "'";
+            $data['CONTACT_PERSON']= "'" . addText($contact_person) . "'";
+            self::dbAccess()->update("t_branch_office", $data, "ID='". $objectId ."'");
         }
 
         return array("success" => true, 'objectId' => $objectId);
