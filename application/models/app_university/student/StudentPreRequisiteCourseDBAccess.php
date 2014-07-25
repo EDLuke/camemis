@@ -67,7 +67,7 @@ class StudentPreRequisiteCourseDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function jsonListStudentPreRequisiteCourse($params)
+    public static function jsonListStudentsSubjectCreditStatus($params)
     {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";

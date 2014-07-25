@@ -16,7 +16,7 @@ abstract class AssessmentProperties {
     public $datafield = array();
 
     public function __construct() {
-        
+
     }
 
     public static function dbAccess() {
@@ -119,13 +119,13 @@ abstract class AssessmentProperties {
 
         if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
             return AssignmentDBAccess::getListAssignmentsToAcademic(
-                            $this->getCurrentClass()->PARENT
-                            , $this->subjectId
+                $this->getCurrentClass()->PARENT
+                , $this->subjectId
             );
         } else {
             return AssignmentDBAccess::getListAssignmentsToAcademic(
-                            $this->academicId
-                            , $this->subjectId
+                $this->academicId
+                , $this->subjectId
             );
         }
     }

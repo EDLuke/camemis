@@ -201,17 +201,10 @@ class ClubDBAccess {
     }
 
     public function jsonRemoveClub($Id) {
-
-        $SQL = "DELETE FROM t_club";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_club", " ID='" . $Id . "'");
 
         if (self::checkChild($Id)) {
-            $SQL = "DELETE FROM t_club";
-            $SQL .= " WHERE";
-            $SQL .= " PARENT='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_club", " PARENT='" . $Id . "'");
         }
         return array("success" => true);
     }
@@ -466,10 +459,7 @@ class ClubDBAccess {
 
         $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-        $SQL = "DELETE FROM t_clubevent";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $removeId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_clubevent", " ID='" . $removeId . "'");
 
         return array("success" => true);
     }

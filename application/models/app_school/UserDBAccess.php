@@ -362,10 +362,7 @@ class UserDBAccess {
 
             if ($facette)
             {
-
-                $SQL = "DELETE FROM t_sessions";
-                $SQL .= " WHERE MEMBERS_ID = '" . $facette->ID . "' AND ISSUPERADMIN <> 1";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->delete("t_sessions", "MEMBERS_ID = '" . $facette->ID . "' AND ISSUPERADMIN <> 1");
             }
             else
             {
@@ -380,10 +377,9 @@ class UserDBAccess {
 
     private function deleteExpiredSessions($tokenId, $Members_ID)
     {
-        $SQL = "DELETE FROM t_sessions";
-        $SQL .= " WHERE TS_UPDATE < " . (time() - CAMEMISConfigBasic::EXPIRE_TIME);
-        $SQL .= " OR (ID = '" . $tokenId . "' AND MEMBERS_ID = '" . $Members_ID . "')";
-        self::dbAccess()->query($SQL);
+        $whereSQL  = " TS_UPDATE < " . (time() - CAMEMISConfigBasic::EXPIRE_TIME);
+        $whereSQL .= " OR (ID = '" . $tokenId . "' AND MEMBERS_ID = '" . $Members_ID . "')";
+        self::dbAccess()->delete("t_sessions", $whereSQL);
     }
 
     private static function getSocheataList($change_password = false)

@@ -171,11 +171,7 @@
         }
 
         public static function sqlRemoveIncome($Id) {
-
-            $SQL = "DELETE FROM t_income";
-            $SQL .= " WHERE";
-            $SQL .= " GUID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_income", "GUID = '" . $Id . "'");
         }
 
         public static function saveIncome($params) {

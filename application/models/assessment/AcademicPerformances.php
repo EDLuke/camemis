@@ -25,8 +25,8 @@ class AcademicPerformances extends AssessmentProperties {
     CONST SCORE_TYPE_CHAR = 2;
 
     /**
-     * Formular for year result of performance
-     */
+    * Formular for year result of performance
+    */
     CONST AVG_S1 = 1;
     CONST AVG_S2 = 2;
     CONST AVG_T1 = 1;
@@ -93,13 +93,13 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "evaluationType" => $this->getSettingEvaluationType()
+            "academicId" => $this->academicId
+            , "term" => $this->term
+            , "month" => $this->getMonth()
+            , "year" => $this->getYear()
+            , "section" => $this->getSection()
+            , "schoolyearId" => $this->getSchoolyearId()
+            , "evaluationType" => $this->getSettingEvaluationType()
         );
 
         if ($this->listClassStudents()) {
@@ -142,11 +142,11 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "evaluationType" => $this->getSettingEvaluationType()
+            "academicId" => $this->academicId
+            , "term" => $this->term
+            , "section" => $this->getSection()
+            , "schoolyearId" => $this->getSchoolyearId()
+            , "evaluationType" => $this->getSettingEvaluationType()
         );
 
         if ($this->listClassStudents()) {
@@ -194,10 +194,10 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "evaluationType" => $this->getSettingEvaluationType()
+            "academicId" => $this->academicId
+            , "section" => $this->getSection()
+            , "schoolyearId" => $this->getSchoolyearId()
+            , "evaluationType" => $this->getSettingEvaluationType()
         );
 
         if ($this->listClassStudents()) {
@@ -219,63 +219,63 @@ class AcademicPerformances extends AssessmentProperties {
                 switch ($this->getTermNumber()) {
                     case 1:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_T1:
-                                $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
-                                break;
-                            case self::AVG_T2:
-                                $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
-                                break;
-                            case self::AVG_T3:
-                                $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
-                                break;
-                            default:
-                                $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
-                                $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
-                                $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
-                                break;
-                        }
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_T1:
+                            $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
+                            break;
+                        case self::AVG_T2:
+                            $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
+                            break;
+                        case self::AVG_T3:
+                            $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                            break;
+                        default:
+                            $data[$i]["FIRST_TERM_RESULT"] = $facette->FIRST_RESULT;
+                            $data[$i]["SECOND_TERM_RESULT"] = $facette->SECOND_RESULT;
+                            $data[$i]["THIRD_TERM_RESULT"] = $facette->THIRD_RESULT;
+                            break;
+                    }
 
-                        break;
+                    break;
                     case 2:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_Q1:
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
-                                break;
-                            case self::AVG_Q2:
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
-                                break;
-                            case self::AVG_Q3:
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
-                                break;
-                            case self::AVG_Q4:
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
-                                break;
-                            default:
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
-                                break;
-                        }
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_Q1:
+                            $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
+                            break;
+                        case self::AVG_Q2:
+                            $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
+                            break;
+                        case self::AVG_Q3:
+                            $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
+                            break;
+                        case self::AVG_Q4:
+                            $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
+                            break;
+                        default:
+                            $data[$i]["FIRST_QUARTER_RESULT"] = $facette->FIRST_RESULT;
+                            $data[$i]["SECOND_QUARTER_RESULT"] = $facette->SECOND_RESULT;
+                            $data[$i]["THIRD_QUARTER_RESULT"] = $facette->THIRD_RESULT;
+                            $data[$i]["FOURTH_QUARTER_RESULT"] = $facette->FOURTH_RESULT;
+                            break;
+                    }
 
-                        break;
+                    break;
                     default:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_S1:
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
-                                break;
-                            case self::AVG_S2:
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
-                                break;
-                            default:
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
-                                break;
-                        }
-                        break;
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_S1:
+                            $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
+                            break;
+                        case self::AVG_S2:
+                            $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                            break;
+                        default:
+                            $data[$i]["FIRST_SEMESTER_RESULT"] = $facette->FIRST_RESULT;
+                            $data[$i]["SECOND_SEMESTER_RESULT"] = $facette->SECOND_RESULT;
+                            break;
+                    }
+                    break;
                 }
 
                 $i++;
@@ -292,13 +292,13 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "section" => $this->getSection()
-                    , "educationSystem" => $this->getEducationSystem()
-                    , "schoolyearId" => $this->getSchoolyearId()
+            "academicId" => $this->academicId
+            , "term" => $this->term
+            , "month" => $this->getMonth()
+            , "year" => $this->getYear()
+            , "section" => $this->getSection()
+            , "educationSystem" => $this->getEducationSystem()
+            , "schoolyearId" => $this->getSchoolyearId()
         );
 
         if ($this->listClassStudents()) {
@@ -306,8 +306,8 @@ class AcademicPerformances extends AssessmentProperties {
             $data = $this->listStudentsData();
 
             $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
-                            $this->listClassStudents()
-                            , $stdClass
+                $this->listClassStudents()
+                , $stdClass
             );
 
             $i = 0;
@@ -343,11 +343,11 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "term" => $this->term
-                    , "educationSystem" => $this->getEducationSystem()
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
+            "academicId" => $this->academicId
+            , "term" => $this->term
+            , "educationSystem" => $this->getEducationSystem()
+            , "section" => $this->getSection()
+            , "schoolyearId" => $this->getSchoolyearId()
         );
 
         if ($this->listClassStudents()) {
@@ -355,8 +355,8 @@ class AcademicPerformances extends AssessmentProperties {
             $data = $this->listStudentsData();
 
             $scoreList = SQLAcademicPerformances::scoreListAcademicPerformance(
-                            $this->listClassStudents()
-                            , $stdClass
+                $this->listClassStudents()
+                , $stdClass
             );
 
             $i = 0;
@@ -381,10 +381,10 @@ class AcademicPerformances extends AssessmentProperties {
         $data = array();
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "educationSystem" => $this->getEducationSystem()
-                    , "section" => $this->getSection()
-                    , "schoolyearId" => $this->getSchoolyearId()
+            "academicId" => $this->academicId
+            , "educationSystem" => $this->getEducationSystem()
+            , "section" => $this->getSection()
+            , "schoolyearId" => $this->getSchoolyearId()
         );
 
         if ($this->listClassStudents()) {
@@ -408,87 +408,87 @@ class AcademicPerformances extends AssessmentProperties {
                 switch ($this->getTermNumber()) {
                     case 1:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_T1:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
-                                $data[$i]["FIRST_TERM_RESULT"] = $RESULT ? $RESULT : "----";
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_T1:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
+                            $data[$i]["FIRST_TERM_RESULT"] = $RESULT ? $RESULT : "----";
 
-                                break;
-                            case self::AVG_T2:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
-                                $data[$i]["SECOND_TERM_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_T2:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
+                            $data[$i]["SECOND_TERM_RESULT"] = $RESULT ? $RESULT : "----";
 
-                                break;
-                            case self::AVG_T3:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
-                                $data[$i]["THIRD_TERM_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_T3:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
+                            $data[$i]["THIRD_TERM_RESULT"] = $RESULT ? $RESULT : "----";
 
-                                break;
-                            default:
-                                $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
-                                $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
-                                $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
+                            break;
+                        default:
+                            $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
+                            $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
+                            $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
 
-                                $data[$i]["FIRST_TERM_RESULT"] = $FIRST ? $FIRST : "----";
-                                $data[$i]["SECOND_TERM_RESULT"] = $SECOND ? $SECOND : "----";
-                                $data[$i]["THIRD_TERM_RESULT"] = $THIRD ? $THIRD : "----";
-                                break;
-                        }
+                            $data[$i]["FIRST_TERM_RESULT"] = $FIRST ? $FIRST : "----";
+                            $data[$i]["SECOND_TERM_RESULT"] = $SECOND ? $SECOND : "----";
+                            $data[$i]["THIRD_TERM_RESULT"] = $THIRD ? $THIRD : "----";
+                            break;
+                    }
 
-                        break;
+                    break;
                     case 2:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_Q1:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            case self::AVG_Q2:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            case self::AVG_Q3:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            case self::AVG_Q4:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            default:
-                                $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
-                                $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
-                                $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
-                                $FOURTH = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_Q1:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
+                            $data[$i]["FIRST_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_Q2:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
+                            $data[$i]["SECOND_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_Q3:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
+                            $data[$i]["THIRD_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_Q4:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
+                            $data[$i]["FOURTH_QUARTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        default:
+                            $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
+                            $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
+                            $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
+                            $FOURTH = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
 
-                                $data[$i]["FIRST_QUARTER_RESULT"] = $FIRST ? $FIRST : "----";
-                                $data[$i]["SECOND_QUARTER_RESULT"] = $SECOND ? $SECOND : "----";
-                                $data[$i]["THIRD_QUARTER_RESULT"] = $THIRD ? $THIRD : "----";
-                                $data[$i]["FOURTH_QUARTER_RESULT"] = $FOURTH ? $FOURTH : "----";
-                                break;
-                        }
+                            $data[$i]["FIRST_QUARTER_RESULT"] = $FIRST ? $FIRST : "----";
+                            $data[$i]["SECOND_QUARTER_RESULT"] = $SECOND ? $SECOND : "----";
+                            $data[$i]["THIRD_QUARTER_RESULT"] = $THIRD ? $THIRD : "----";
+                            $data[$i]["FOURTH_QUARTER_RESULT"] = $FOURTH ? $FOURTH : "----";
+                            break;
+                    }
 
-                        break;
+                    break;
                     default:
 
-                        switch ($this->getSettingYearResult()) {
-                            case self::AVG_S1:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            case self::AVG_S2:
-                                $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $RESULT ? $RESULT : "----";
-                                break;
-                            default:
-                                $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
-                                $data[$i]["FIRST_SEMESTER_RESULT"] = $FIRST ? $FIRST : "----";
-                                $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
-                                $data[$i]["SECOND_SEMESTER_RESULT"] = $SECOND ? $SECOND : "----";
+                    switch ($this->getSettingYearResult()) {
+                        case self::AVG_S1:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
+                            $data[$i]["FIRST_SEMESTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        case self::AVG_S2:
+                            $RESULT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
+                            $data[$i]["SECOND_SEMESTER_RESULT"] = $RESULT ? $RESULT : "----";
+                            break;
+                        default:
+                            $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
+                            $data[$i]["FIRST_SEMESTER_RESULT"] = $FIRST ? $FIRST : "----";
+                            $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
+                            $data[$i]["SECOND_SEMESTER_RESULT"] = $SECOND ? $SECOND : "----";
 
-                                break;
-                        }
-                        break;
+                            break;
+                    }
+                    break;
                 }
 
                 $i++;
@@ -504,102 +504,102 @@ class AcademicPerformances extends AssessmentProperties {
         switch ($this->getTermNumber()) {
             case 1:
 
-                switch ($this->getSettingYearResult()) {
-                    case self::AVG_T1:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
-                        break;
-                    case self::AVG_T2:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
-                        break;
-                    case self::AVG_T3:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
-                        break;
-                    default:
-                        $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
-                        $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
-                        $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
+            switch ($this->getSettingYearResult()) {
+                case self::AVG_T1:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
+                    break;
+                case self::AVG_T2:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
+                    break;
+                case self::AVG_T3:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
+                    break;
+                default:
+                    $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_TERM");
+                    $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_TERM");
+                    $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_TERM");
 
-                        if ($FIRST && !$SECOND && !$THIRD) {
-                            $OUTPUT = $FIRST;
-                        } elseif (!$FIRST && $SECOND && !$THIRD) {
-                            $OUTPUT = $SECOND;
-                        } elseif (!$FIRST && !$SECOND && $THIRD) {
-                            $OUTPUT = $THIRD;
-                        } elseif ($FIRST && $SECOND && $THIRD) {
-                            $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
-                            $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
-                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
-                        }
+                    if ($FIRST && !$SECOND && !$THIRD) {
+                        $OUTPUT = $FIRST;
+                    } elseif (!$FIRST && $SECOND && !$THIRD) {
+                        $OUTPUT = $SECOND;
+                    } elseif (!$FIRST && !$SECOND && $THIRD) {
+                        $OUTPUT = $THIRD;
+                    } elseif ($FIRST && $SECOND && $THIRD) {
+                        $SUM_COEFF = $this->getFirstTermCoeff() + $this->getSecondTermCoeff() + $this->getThirdTermCoeff();
+                        $SUM_VALUE = $FIRST * $this->getFirstTermCoeff() + $SECOND * $this->getSecondTermCoeff() + $THIRD * $this->getThirdTermCoeff();
+                        $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
+                    }
 
-                        break;
-                }
+                    break;
+            }
 
-                break;
+            break;
             case 2:
 
-                switch ($this->getSettingYearResult()) {
-                    case self::AVG_Q1:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
-                        break;
-                    case self::AVG_Q2:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
-                        break;
-                    case self::AVG_Q3:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
-                        break;
-                    case self::AVG_Q4:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
-                        break;
-                    default:
-                        $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
-                        $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
-                        $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
-                        $FOURTH = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
+            switch ($this->getSettingYearResult()) {
+                case self::AVG_Q1:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
+                    break;
+                case self::AVG_Q2:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
+                    break;
+                case self::AVG_Q3:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
+                    break;
+                case self::AVG_Q4:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
+                    break;
+                default:
+                    $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_QUARTER");
+                    $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_QUARTER");
+                    $THIRD = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "THIRD_QUARTER");
+                    $FOURTH = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FOURTH_QUARTER");
 
-                        if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
-                            $OUTPUT = $FIRST;
-                        } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
-                            $OUTPUT = $SECOND;
-                        } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
-                            $OUTPUT = $THIRD;
-                        } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
-                            $OUTPUT = $FOURTH;
-                        } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
-                            $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
-                            $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
-                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
-                        }
+                    if ($FIRST && !$SECOND && !$THIRD && !$FOURTH) {
+                        $OUTPUT = $FIRST;
+                    } elseif (!$FIRST && $SECOND && !$THIRD && !$FOURTH) {
+                        $OUTPUT = $SECOND;
+                    } elseif (!$FIRST && !$SECOND && $THIRD && !$FOURTH) {
+                        $OUTPUT = $THIRD;
+                    } elseif (!$FIRST && !$SECOND && !$THIRD && $FOURTH) {
+                        $OUTPUT = $FOURTH;
+                    } elseif ($FIRST && $SECOND && $THIRD && $FOURTH) {
+                        $SUM_COEFF = $this->getFirstQuarterCoeff() + $this->getSecondQuarterCoeff() + $this->getThirdQuarterCoeff() + $this->getFourthQuarterCoeff();
+                        $SUM_VALUE = $FIRST * $this->getFirstQuarterCoeff() + $SECOND * $this->getSecondQuarterCoeff() + $THIRD * $this->getThirdQuarterCoeff() + $FOURTH * $this->getFourthQuarterCoeff();
+                        $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
+                    }
 
-                        break;
-                }
+                    break;
+            }
 
-                break;
+            break;
             default:
 
-                switch ($this->getSettingYearResult()) {
-                    case self::AVG_S1:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
-                        break;
-                    case self::AVG_S2:
-                        $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
-                        break;
-                    default:
-                        $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
-                        $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
+            switch ($this->getSettingYearResult()) {
+                case self::AVG_S1:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
+                    break;
+                case self::AVG_S2:
+                    $OUTPUT = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
+                    break;
+                default:
+                    $FIRST = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "FIRST_SEMESTER");
+                    $SECOND = SQLAcademicPerformances::getSQLAverageStudentAcademicPerformance($stdClass, "SECOND_SEMESTER");
 
-                        if ($FIRST && !$SECOND) {
-                            $OUTPUT = $FIRST;
-                        } elseif (!$FIRST && $SECOND) {
-                            $OUTPUT = $SECOND;
-                        } elseif ($FIRST && $SECOND) {
-                            $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
-                            $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
-                            $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
-                        }
+                    if ($FIRST && !$SECOND) {
+                        $OUTPUT = $FIRST;
+                    } elseif (!$FIRST && $SECOND) {
+                        $OUTPUT = $SECOND;
+                    } elseif ($FIRST && $SECOND) {
+                        $SUM_COEFF = $this->getFirstSemesterCoeff() + $this->getSecondSemesterCoeff();
+                        $SUM_VALUE = $FIRST * $this->getFirstSemesterCoeff() + $SECOND * $this->getSecondSemesterCoeff();
+                        $OUTPUT = displayRound($SUM_VALUE / $SUM_COEFF);
+                    }
 
-                        break;
-                }
-                break;
+                    break;
+            }
+            break;
         }
 
         return $OUTPUT;
@@ -608,15 +608,15 @@ class AcademicPerformances extends AssessmentProperties {
     public function setActionStudentAcademicPerformance() {
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "studentId" => $this->studentId
-                    , "assessmentId" => $this->comboValue
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "term" => $this->term
-                    , "section" => $this->getSection()
-                    , "educationSystem" => $this->getEducationSystem()
-                    , "schoolyearId" => $this->getSchoolyearId()
+            "academicId" => $this->academicId
+            , "studentId" => $this->studentId
+            , "assessmentId" => $this->comboValue
+            , "month" => $this->getMonth()
+            , "year" => $this->getYear()
+            , "term" => $this->term
+            , "section" => $this->getSection()
+            , "educationSystem" => $this->getEducationSystem()
+            , "schoolyearId" => $this->getSchoolyearId()
         );
         SQLAcademicPerformances::getActionStudentAcademicPerformance($stdClass);
     }
@@ -636,15 +636,15 @@ class AcademicPerformances extends AssessmentProperties {
         }
 
         $stdClass = (object) array(
-                    "academicId" => $this->academicId
-                    , "studentId" => $this->studentId
-                    , "month" => $this->getMonth()
-                    , "year" => $this->getYear()
-                    , "term" => $this->term
-                    , "section" => $this->getSection()
-                    , "educationSystem" => $this->getEducationSystem()
-                    , "schoolyearId" => $this->getSchoolyearId()
-                    , "qualificationType" => $this->getSettingQualificationType()
+            "academicId" => $this->academicId
+            , "studentId" => $this->studentId
+            , "month" => $this->getMonth()
+            , "year" => $this->getYear()
+            , "term" => $this->term
+            , "section" => $this->getSection()
+            , "educationSystem" => $this->getEducationSystem()
+            , "schoolyearId" => $this->getSchoolyearId()
+            , "qualificationType" => $this->getSettingQualificationType()
         );
 
         if ($entries) {

@@ -147,19 +147,11 @@
         }
 
         public static function sqlRemoveChilObject($Id) {
-
-            $SQL = "DELETE FROM t_expense_category";
-            $SQL .= " WHERE";
-            $SQL .= " PARENT='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_expense_category", " PARENT='" . $Id . "'");
         }
 
         public static function sqlRemoveObject($Id) {
-
-            $SQL = "DELETE FROM t_expense_category";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_expense_category", " ID='" . $Id . "'");
         }
 
         public static function updateObject($params) {

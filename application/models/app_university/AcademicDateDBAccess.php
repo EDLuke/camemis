@@ -172,10 +172,7 @@ class AcademicDateDBAccess {
 
         $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-        $SQL = "DELETE FROM t_academicdate";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $removeId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_academicdate", "ID = '" . $removeId . "'");
 
         return array("success" => true);
     }

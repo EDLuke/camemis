@@ -24,7 +24,11 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$academicId = $academicObject->ID;
+if($academicObject->EDUCATION_SYSTEM){
+    $academicId = $academicObject->PARENT;
+}else{
+    $academicId = $this->academicId;
+}
 
 $TOTAL_AVG_RESULT = $academicObject->EVALUATION_TYPE?AVERAGE." (%)":AVERAGE;
 $GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";

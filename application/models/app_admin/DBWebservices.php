@@ -207,7 +207,7 @@ class DBWebservices {
 
         if ($CONST)
         {
-            self::dbAccess()->query("DELETE FROM t_localization WHERE CONST='" . $CONST . "'");
+            self::dbAccess()->delete("t_localization", "CONST='" . $CONST . "'");
             if ($entries)
             {
 
@@ -217,8 +217,7 @@ class DBWebservices {
                     {
                         if (self::checkUseConst($DB_NAME, $CONST))
                         {
-                            $SQL = "DELETE FROM $DB_NAME.t_localization WHERE CONST='" . $CONST . "'";
-                            self::dbAccess()->query($SQL);
+                            self::dbAccess()->delete($DB_NAME.t_localization, "CONST='" . $CONST . "'");
                         }
                     }
                 }

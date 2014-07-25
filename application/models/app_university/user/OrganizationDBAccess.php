@@ -276,9 +276,7 @@
         }
 
         public function deleteOrganizationFromId($Id) {
-
-            $SQL = "DELETE FROM " . self::T_ORGANIZATION . " WHERE ID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete(self::T_ORGANIZATION, " ID='" . $Id . "'");
         }
 
         public function actionUserOrganization($params) {

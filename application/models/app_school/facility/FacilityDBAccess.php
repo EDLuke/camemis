@@ -229,12 +229,7 @@ class FacilityDBAccess {
     }
 
     public static function deleteParendsChilesTypeTree($id) {
-
-        $SQL_DELETE = "DELETE FROM t_facility_type";
-        $SQL_DELETE .= " WHERE";
-        $SQL_DELETE .= " ID IN (" . $id . ")";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL_DELETE);
+        self::dbAccess()->delete("t_facility_type", " ID IN (" . $id . ")");
         self::dbAccess()->delete('t_facility', array("FACILITY_TYPE='" . $id . "'"));
 
         $SQL = self::dbAccess()->select();
@@ -690,13 +685,7 @@ class FacilityDBAccess {
     }
 
     public static function deleteParendsChilesItemTree($id) {
-
-        $SQL_DELETE = "DELETE FROM t_facility";
-        $SQL_DELETE .= " WHERE";
-        $SQL_DELETE .= " ID IN (" . $id . ")";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL_DELETE);
-
+        self::dbAccess()->delete("t_facility", " ID IN (" . $id . ")");
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility", array("*"));
         $SQL->where("PARENT IN (" . $id . ")");

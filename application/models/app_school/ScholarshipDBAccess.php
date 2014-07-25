@@ -456,12 +456,7 @@ class ScholarshipDBAccess {
     }
 
     public static function deleteParendsChilesTee($id) {
-
-        $SQL_DELETE = "DELETE FROM t_scholarship";
-        $SQL_DELETE .= " WHERE";
-        $SQL_DELETE .= " ID IN (" . $id . ")";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL_DELETE);
+        self::dbAccess()->delete("t_scholarship", " ID IN (" . $id . ")");
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_scholarship", array("*"));

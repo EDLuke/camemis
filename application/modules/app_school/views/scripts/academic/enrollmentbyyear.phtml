@@ -298,13 +298,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
             cmd: 'jsonRemoveEnrolledStudentSchoolyear'
             ,academicId: '".$this->objectId."'
         ");
-
-        $ASSIGNED_STUDENTS_GRID->setSaveParams("
-            cmd: 'actionStudentSchoolYear'
-            ,schoolyearId: '".$this->schoolyearId."'
-            ,academicId: '".$this->objectId."'
-        ");
-
+        
         ////////////////// Begin....
         $ASSIGNED_STUDENTS_GRID->setAftereditLoadParams("
             cmd: 'loadActionStudentSchoolYear'
@@ -321,6 +315,20 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         ");
         ////////////////// End...
 
+        switch(UserAuth::getUserType()){
+            case "ADMIN":
+            case "SUPERADMIN":
+                $ASSIGNED_STUDENTS_GRID->setSaveParams("
+                    cmd: 'actionStudentSchoolYear'
+                    ,academicId: '".$this->facette->GUID."'
+                ");
+                $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
+                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                ");
+                $ASSIGNED_STUDENTS_GRID->isGridEditing = true;
+                break;
+        }
+    
         $ASSIGNED_STUDENTS_GRID->forceFit = "false";
         $ASSIGNED_STUDENTS_GRID->removeNAME = "STUDENT";
         $ASSIGNED_STUDENTS_GRID->setUserColumn = true;

@@ -163,12 +163,7 @@ class ExpenseDBAccess {
     }
 
     public static function sqlRemoveExpense($Id) {
-
-        $SQL = "DELETE FROM t_expense";
-        $SQL .= " WHERE";
-        $SQL .= " GUID = '" . $Id . "'";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_expense", " GUID = '" . $Id . "'");
     }
 
     public static function saveExpense($params) {

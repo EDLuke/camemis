@@ -81,7 +81,7 @@ if($entries){
             ");
         }
 
-        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+        $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()?AcademicDateDBAccess::loadCurrentSchoolyear()->ID:"";
         $STORE_SCHOOLYEAR = "[";
         if(AcademicDateDBAccess::getAllSchoolyear()){
             $i = 0;

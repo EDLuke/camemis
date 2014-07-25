@@ -62,6 +62,12 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
+if($academicObject->EDUCATION_SYSTEM){
+    $academicId = $academicObject->PARENT;
+}else{
+    $academicId = $this->academicId;
+}
+
 if($academicObject->EVALUATION_TYPE){
     $TOTAL_AVG_RESULT = "AVG (%)";
     $TOTAL_AVG_RESULT_REPEAT = "AVGR (%)";
@@ -83,7 +89,6 @@ if($academicObject->EDUCATION_SYSTEM){
 
 if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
-$academicId = $academicObject->ID;
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -187,7 +192,7 @@ if($listAssignmentCategory){
 ////////////////////////////////////////////////////////////////////////////////
 $setParams = "";
 $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
-$setParams .="&academicId=".$this->academicId."";
+$setParams .="&academicId=".$academicId."";
 $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
 
@@ -338,25 +343,25 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding:2px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding:2px;height:13px;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding:2px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding:2px;height:13px;">' + value + '</div>';
     }
     
     function cssAssessment(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:2px;background:#CCFFFF">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000; padding:2px;height:13px;background:#CCFFFF">' + value + '</div>';
     }
     
     function cssRepeat(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#FFF; padding:2px;background:#FF9900">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#FFF; padding:2px;height:13px;background:#FF9900">' + value + '</div>';
     }
     
     <?php

@@ -31,7 +31,7 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
     $OBJECT_TREE->isAsyncTreeNode = false;
     
-    $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()->ID;
+    $currentSchoolyearId = AcademicDateDBAccess::loadCurrentSchoolyear()?AcademicDateDBAccess::loadCurrentSchoolyear()->ID:"";
     $STORE_SCHOOLYEAR = "[";
     if(AcademicDateDBAccess::getAllSchoolyear()){
         $i = 0;

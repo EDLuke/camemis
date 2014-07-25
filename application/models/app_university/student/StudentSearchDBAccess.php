@@ -47,9 +47,9 @@ class StudentSearchDBAccess {
     }
 
     public function searchStudents($params, $isJson = true) {
-        
+
         ini_set('memory_limit', '128M');
-        
+
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $this->displayCurrentAcademic = isset($params["displayCurrentAcademic"]) ? addText($params["displayCurrentAcademic"]) : 1;
@@ -124,7 +124,7 @@ class StudentSearchDBAccess {
                     break;
                 case "CREDIT":
                     $SQL->joinLeft(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
-                    $SQL->v(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
+                    $SQL->joinLeft(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
                     $SQL->joinLeft(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=CREDIT.SCHOOLYEAR_ID', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
                     $SQL->joinLeft(array('SUBJECT' => 't_subject'), 'SUBJECT.ID=CREDIT.SUBJECT_ID', array("NAME AS SUBJECT_NAME"));
 
@@ -210,7 +210,7 @@ class StudentSearchDBAccess {
         }
 
         $SQL->group('STUDENT.ID');
-        
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -360,6 +360,7 @@ class StudentSearchDBAccess {
         $data["CURRENT_ACADEMIC"] = $facette ? $facette->ACADEMIC : "---";
         return (object) $data;
     }
+
 }
 
 ?>

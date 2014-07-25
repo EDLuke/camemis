@@ -758,12 +758,8 @@ class SubjectDBAccess {
 
     public function removeObject($params)
     {
+        self::dbAccess()->delete("t_subject", "ID = '" . addText($params["objectId"]) . "'");
 
-        $SQL = "
-		DELETE FROM t_subject
-		WHERE ID = '" . addText($params["objectId"]) . "'
-		";
-        self::dbAccess()->query($SQL);
         return array("success" => true);
     }
 
@@ -945,13 +941,7 @@ class SubjectDBAccess {
 
     protected function removeSubjectFromTeacher($teacherId, $subjectId)
     {
-
-        $SQL = "
-		DELETE FROM t_teacher_subject
-		WHERE TEACHER = '" . $teacherId . "'
-		AND SUBJECT = '" . $subjectId . "'
-		";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_teacher_subject", "TEACHER = '" . $teacherId . "' AND SUBJECT = '" . $subjectId . "'");
     }
 
     protected function addTeacherSubject($teacherId, $subjectId)

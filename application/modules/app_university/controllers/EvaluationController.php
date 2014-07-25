@@ -210,6 +210,12 @@ class EvaluationController extends Zend_Controller_Action {
         }
     }
 
+    public function creditsubjectstatusAction() {
+        $this->view->academicId = $this->academicId;
+        $this->view->subjectId = $this->subjectId;
+        $this->_helper->viewRenderer('score/creditsubjectstatus');
+    }
+    
     public function importassignmentxlsAction() {
 
         $this->view->academicId = $this->academicId;

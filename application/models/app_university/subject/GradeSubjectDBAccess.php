@@ -1156,12 +1156,8 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
         if ($academicObject)
         {
-
-            $DELETE_SUBJECT = "DELETE FROM t_grade_subject WHERE CLASS = '" . $academicObject->ID . "'";
-            self::dbAccess()->query($DELETE_SUBJECT);
-
-            $DELETE_ASSIGNMENT = "DELETE FROM t_assignment WHERE CLASS = '" . $academicObject->ID . "'";
-            self::dbAccess()->query($DELETE_ASSIGNMENT);
+            self::dbAccess()->delete("t_grade_subject", " CLASS = '" . $academicObject->ID . "'");
+            self::dbAccess()->delete("t_assignment", " CLASS = '" . $academicObject->ID . "'");
 
             if ($copyFrom == "schoolyear")
             {

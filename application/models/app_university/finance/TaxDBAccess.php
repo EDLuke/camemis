@@ -118,19 +118,11 @@
         }
 
         public static function sqlRemoveChilObject($Id) {
-
-            $SQL = "DELETE FROM t_tax";
-            $SQL .= " WHERE";
-            $SQL .= " PARENT='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_tax", " PARENT ='" . $Id . "'");
         }
 
         public static function sqlRemoveObject($Id) {
-
-            $SQL = "DELETE FROM t_tax";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $Id . "'";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_tax", " ID ='" . $Id . "'");
         }
 
         public static function updateObject($params) {

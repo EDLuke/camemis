@@ -530,12 +530,7 @@ class DisciplineDBAccess extends StudentDBAccess {
     public function removeDiscipline($Id) {
 
         if ($Id) {
-            $SQL = "
-            DELETE FROM t_discipline
-            WHERE 1=1
-            AND ID = '" . $Id . "'
-            ";
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->delete("t_discipline", "1=1 AND ID = '" . $Id . "'");
         }
 
         return array("success" => true);

@@ -863,7 +863,7 @@ class MainController extends Zend_Controller_Action {
     }
 
     protected static function actionRemovePanel($Id) {
-        self::dbAccess()->query("DELETE FROM t_user_dashboard WHERE CONST='" . $Id . "' AND USER_ID='" . Zend_Registry::get('USER')->ID . "'");
+        self::dbAccess()->delete("t_user_dashboard", " CONST='" . $Id . "' AND USER_ID='" . Zend_Registry::get('USER')->ID . "'");
         return array("success" => true);
     }
 

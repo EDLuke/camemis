@@ -340,11 +340,7 @@ class SubjectHomeworkDBAccess {
     }
 
     public static function jsonDeleteSubjectHomework($Id) {
-
-        $SQL = "DELETE FROM";
-        $SQL .= " t_subject_homework";
-        $SQL .= " WHERE ID = '" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_subject_homework", " ID= '" . $Id . "'");
         return array(
             "success" => true
         );

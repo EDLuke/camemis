@@ -2200,7 +2200,15 @@ class StudentDBAccess {
         $SQL->where("ID = '" . $studentId . "'");
         //echo $SQL->__toString();
         $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->AGE : "--";
+
+        $output = "---";
+        if ($result) {
+            if (is_numeric($result->AGE)) {
+                $output = $result->AGE;
+            }
+        }
+
+        return $output;
     }
 
 }

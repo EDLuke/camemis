@@ -346,12 +346,12 @@ class RoomDBAccess {
 
         if ($CHECK) {
             if ($REMVOE)
-                self::dbAccess()->query("DELETE FROM t_room WHERE ID = '" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " ID = '" . $objectId . "'");
             if ($REMVOE)
-                self::dbAccess()->query("DELETE FROM t_room WHERE PARENT = '" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " PARENT = '" . $objectId . "'");
         }else {
             if ($REMVOE)
-                self::dbAccess()->query("DELETE FROM t_room WHERE ID = '" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " ID = '" . $objectId . "'");
         }
 
         return array("success" => true);

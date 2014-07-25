@@ -662,10 +662,7 @@ class SchooleventDBAccess {
 
         $removeId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
-        $SQL = "DELETE FROM t_schoolevent";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $removeId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_schoolevent", " ID='" . $removeId . "'");
 
         return array("success" => true);
     }

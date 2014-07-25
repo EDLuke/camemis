@@ -242,12 +242,7 @@ class ForumDBAccess {
     }
     
     public static function deleteParendsChilesItemTree($id) {
-
-        $SQL_DELETE = "DELETE FROM t_forum";
-        $SQL_DELETE .= " WHERE";
-        $SQL_DELETE .= " ID IN (" . $id . ")";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL_DELETE);
+        self::dbAccess()->delete("t_forum", " ID IN (" . $id . ")");
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_forum", array("*"));

@@ -845,11 +845,7 @@ class StudentImportDBAccess {
     }
 
     protected function deleteStudentFromImport($removeId) {
-
-        $SQL = "DELETE FROM t_student_temp";
-        $SQL .= " WHERE 1=1";
-        $SQL .= " AND ID ='" . $removeId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->delete("t_student_temp", " 1=1 AND ID ='" . $removeId . "'");
     }
 
     protected function checkStudent($STUDENT_SCHOOL_ID, $FIRSTNAME, $LASTNAME) {
@@ -887,10 +883,7 @@ class StudentImportDBAccess {
                     $success = 'false';
                     $checkStudentInExam = self::checkStudentExam($studentId);
                     if (!$checkStudentInExam) {
-                        $SQL = "DELETE FROM t_student_temp";
-                        $SQL .= " WHERE 1=1";
-                        $SQL .= " AND ID ='" . $studentId . "'";
-                        self::dbAccess()->query($SQL);
+                        self::dbAccess()->delete("t_student_temp", " 1=1 AND ID ='" . $studentId . "'");
                         $success = 'true';
                         $i++;
                     }

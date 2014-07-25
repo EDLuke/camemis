@@ -515,8 +515,8 @@ class StudentController extends Zend_Controller_Action {
                 $jsondata = StudentAcademicDBAccess::jsonListStudentsByTeacherClass($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentPreRequisiteCourse":
-                $jsondata = StudentPreRequisiteCourseDBAccess::jsonListStudentPreRequisiteCourse($this->REQUEST->getPost());
+            case "jsonListStudentsSubjectCreditStatus":
+                $jsondata = StudentPreRequisiteCourseDBAccess::jsonListStudentsSubjectCreditStatus($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsByStudentClass":

@@ -118,7 +118,7 @@ class EvaluationController extends Zend_Controller_Action {
         if ($this->_getParam('schoolyearId'))
             $this->schoolyearId = $this->_getParam('schoolyearId');
     }
-    
+
     public function classassignmentAction() {
 
         $this->view->academicId = $this->academicId;
@@ -208,6 +208,12 @@ class EvaluationController extends Zend_Controller_Action {
                 $this->_helper->viewRenderer('export/subjectscoreentertrainingexport');
                 break;
         }
+    }
+
+    public function creditsubjectstatusAction() {
+        $this->view->academicId = $this->academicId;
+        $this->view->subjectId = $this->subjectId;
+        $this->_helper->viewRenderer('score/creditsubjectstatus');
     }
 
     public function importassignmentxlsAction() {
