@@ -888,11 +888,10 @@ class AcademicDBAccess {
     public static function updateAllSchoolyearChildren($schoolyearObject) {
 
         if (isset($schoolyearObject->ID)) {
-            $FIRST_SQL = self::dbAccess()->select();
-            $FIRST_SQL->from("t_grade", array("*"));
 
             if ($schoolyearObject->EDUCATION_SYSTEM) {
-                $FIRST_SQL->where("OBJECT_TYPE <>'CAMPUS'");
+                $FIRST_SQL->where("CAMPUS_ID = '" . $schoolyearObject->CAMPUS_ID . "'");
+                $FIRST_SQL->where("SCHOOL_YEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
             } else {
                 $FIRST_SQL->where("PARENT = '" . $schoolyearObject->ID . "'");
                 $FIRST_SQL->where("OBJECT_TYPE = 'CLASS'");
@@ -903,6 +902,7 @@ class AcademicDBAccess {
             if ($firstEntries) {
                 foreach ($firstEntries as $value) {
 
+                    $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $schoolyearObject->YEAR_MULTI_ENROLLMENT;
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["NUMBER_CREDIT"] = $schoolyearObject->NUMBER_CREDIT;
@@ -911,6 +911,7 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["DISPLAY_GPA"] = $schoolyearObject->DISPLAY_GPA;
                     $FIRST_SAVEDATA["DISPLAY_GRADE_POINTS"] = $schoolyearObject->DISPLAY_GRADE_POINTS;
+                    $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
 
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;

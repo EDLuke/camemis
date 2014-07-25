@@ -899,18 +899,19 @@ class AcademicDBAccess {
             $FIRST_SQL->from("t_grade", array("*"));
 
             if ($schoolyearObject->EDUCATION_SYSTEM) {
-                $FIRST_SQL->where("OBJECT_TYPE <>'CAMPUS'");
+                $FIRST_SQL->where("CAMPUS_ID = '" . $schoolyearObject->CAMPUS_ID . "'");
+                $FIRST_SQL->where("SCHOOL_YEAR = '" . $schoolyearObject->SCHOOL_YEAR . "'");
             } else {
                 $FIRST_SQL->where("PARENT = '" . $schoolyearObject->ID . "'");
                 $FIRST_SQL->where("OBJECT_TYPE = 'CLASS'");
             }
-
             //error_log($FIRST_SQL->__toString());
             $firstEntries = self::dbAccess()->fetchAll($FIRST_SQL);
 
             if ($firstEntries) {
                 foreach ($firstEntries as $value) {
 
+                    $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $schoolyearObject->YEAR_MULTI_ENROLLMENT;
                     $FIRST_SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearObject->QUALIFICATION_TYPE;
                     $FIRST_SAVEDATA["EDUCATION_SYSTEM"] = $schoolyearObject->EDUCATION_SYSTEM;
