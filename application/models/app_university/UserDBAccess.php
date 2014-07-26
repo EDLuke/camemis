@@ -318,8 +318,7 @@ class UserDBAccess {
 
     protected function setUserLogin($table, $Id)
     {
-        $SQL = "UPDATE " . $table . " SET ISLOGIN = 1 WHERE ID = '" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update($table, array('ISLOGIN' => 1), "ID='". $Id ."'");
     }
 
     protected static function findUserByLogin($login, $userType = false)

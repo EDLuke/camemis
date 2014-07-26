@@ -1055,10 +1055,7 @@ class StudentImportDBAccess {
 
     public function jsonActionChangeStudentImport($params) {
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_student_temp";
-        $SQL .= " SET";
+        $data = array();
         switch ($params["field"]) {
             case "DATE_BIRTH":
                 $date = str_replace("/", ".", $params["newValue"]);
@@ -1068,17 +1065,14 @@ class StudentImportDBAccess {
                     $m = isset($explode[1]) ? trim($explode[1]) : "00";
                     $y = isset($explode[2]) ? trim($explode[2]) : "0000";
                     $newValue = $y . "-" . $m . "-" . $d;
-                    $SQL .= " " . $params["field"] . "='" . $newValue . "'";
+                    $data["'". $params["field"] ."'"] = "'". $newValue ."'";
                 }
                 break;
             default:
-                $SQL .= " " . $params["field"] . "='" . $params["newValue"] . "'";
+                $data["'". $params["field"] ."'"] = "'". $params["newValue"] ."'";
                 break;
         }
-
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $params["id"] . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_student_temp", $data, "ID='". $params["id"] ."'");
 
         return array("success" => true);
     }

@@ -418,15 +418,13 @@ class SubjectTeacherDBAccess extends SubjectDBAccess {
 
         $SS_DAYS = implode(",", $CHOOSE_DAYS_SS);
 
-        $SQL = "";
-        $SQL .= "UPDATE t_teacher_subject";
-        $SQL .= " SET";
-        $SQL .= " FS_DAYS='" . $FS_DAYS . "'";
-        $SQL .= " ,SS_DAYS='" . $SS_DAYS . "'";
-        $SQL .= " WHERE";
-        $SQL .= " TEACHER='" . $objectId . "'";
-        $SQL .= " AND SUBJECT='" . $subjectId . "'";
-        self::dbAccess()->query($SQL);
+        $data  = array();
+        $where = array();
+        $data['FS_DAYS'] = "'". $FS_DAYS ."'";
+        $data['SS_DAYS'] = "'". $SS_DAYS ."'";
+        $where[] = "TEACHER='". $objectId ."'";
+        $where[] = "SUBJECT='". $subjectId ."'";
+        self::dbAccess()->update("t_teacher_subject", $data, $where);
 
         return array(
             "success" => true

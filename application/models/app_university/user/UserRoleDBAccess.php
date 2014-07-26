@@ -322,30 +322,23 @@
             $facette = $this->findUserRoleFromId($objectId);
             $status = $facette->STATUS;
 
-            $SQL = "";
-            $SQL .= "UPDATE ";
-            $SQL .= " t_memberrole";
-            $SQL .= " SET";
-
+            
+            $data = array();
             switch ($status) {
                 case 0:
                     $newStatus = 1;
-                    $SQL .= " STATUS=1";
-                    $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['STATUS']      = 1;
+                    $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                    $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                     break;
                 case 1:
                     $newStatus = 0;
-                    $SQL .= " STATUS=0";
-                    $SQL .= " ,DISABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,DISABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['STATUS']       = 0;
+                    $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                    $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                     break;
             }
-
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . $objectId . "'";
-
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->update("t_memberrole", $data, "ID='". $objectId ."'");
 
             return array("success" => true, "status" => $newStatus);
         }
