@@ -423,13 +423,10 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
         $parentObject = self::findExamParentFromId($objectId);
         $facette = self::findExamFromId($objectId);
 
-        $SQL = "UPDATE t_student_examination";
-        $SQL .= " SET ROOM_ID='0'";
-        $SQL .= " WHERE";
-        $SQL .= " ROOM_ID='" . $facette->ROOM_ID . "'";
-        $SQL .= " AND EXAM_ID='" . $parentObject->GUID . "'";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL);
+        $where = array();
+        $where[] = "ROOM_ID='". $facette->ROOM_ID ."'";
+        $where[] = "EXAM_ID='". $parentObject->GUID ."'";
+        self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
         return array(
             "success" => true
         );
@@ -515,12 +512,10 @@ class StudentExaminationDBAccess extends ExaminationDBAccess {
 
                     if ($selectedCount < $COUNT) {
                         if ($STUDENT_EXAM->ROOM_ID == 0) {
-                            $SQL = "UPDATE t_student_examination";
-                            $SQL .= " SET ROOM_ID='" . $facette->ROOM_ID . "'";
-                            $SQL .= " WHERE";
-                            $SQL .= " STUDENT_ID='" . $studentId . "'";
-                            $SQL .= " AND EXAM_ID='" . $parentObject->GUID . "'";
-                            self::dbAccess()->query($SQL);
+                            $where = array();
+                            $where[] = "STUDENT_ID='". $studentId ."'";
+                            $where[] = "EXAM_ID='". $parentObject->GUID ."'";
+                            self::dbAccess()->update("t_student_examination", array('ROOM_ID' => "'". $facette->ROOM_ID ."'"), $where);
 
                             ++$selectedCount;
                         }
