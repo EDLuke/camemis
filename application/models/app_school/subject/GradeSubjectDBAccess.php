@@ -1273,7 +1273,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 {
                     $where = array();
                     $where[] = "CLASS='". $classId ."'";
-                    $where[] = "SUBJECT='". $subjectId ."'"
+                    $where[] = "SUBJECT='". $subjectId ."'";
                     self::dbAccess()->update("t_grade_subject", array('USED_IN_CLASS' => 1), $where);
                 }
             }

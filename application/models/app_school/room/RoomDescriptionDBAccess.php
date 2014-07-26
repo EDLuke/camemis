@@ -129,7 +129,7 @@ class RoomDescriptionDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         if ($objectId != "new") {
-            $data = array():
+            $data = array();
             $data['NAME'] = "'". addText($params["NAME"]) ."'";
             if (isset($params["CHOOSE_TYPE"]))
                 $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";

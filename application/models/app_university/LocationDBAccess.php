@@ -136,12 +136,7 @@ class LocationDBAccess {
 
     public static function updateObject($params)
     {
-
-        $SQL = "UPDATE t_location";
-        $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . addText($params["objectId"]) . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_location", array('NAME' => "'". addText($params["NAME"]) ."'"), "ID='". addText($params["objectId"]) ."'");
         return array("success" => true);
     }
 
