@@ -1048,79 +1048,54 @@ class StudentDBAccess {
             case "ACADEMIC_TYPE":
             case "TRANSFER":
             case "STATUS":
-                $SQL = "UPDATE ";
-                $SQL .= " t_student_schoolyear";
-                $SQL .= " SET";
-                $SQL .= " " . $field . " ='" . $newValue . "'";
+                $data = array();
+                $data["'". $field ."'"] = "'". $newValue ."'";
                 if ($newValue == 1) {
-                    $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['ENABLED_DATE'] = "'". getCurrentDBDateTime() ."'";
+                    $data['ENABLED_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
                 } elseif ($params["newValue"] == 0) {
-                    $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                    $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['ENABLED_DATE'] = "'". getCurrentDBDateTime() . "'";
+                    $data['ENABLED_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
                 }
 
-                $SQL .= ",MODIFY_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= ",MODIFY_BY='" . Zend_Registry::get('USER')->CODE . "'";
-                $SQL .= " WHERE ID = '" . $studentId . "'";
-                self::dbAccess()->query($SQL);
+                $data['MODIFY_DATE'] = "'". getCurrentDBDateTime() ."'";
+                $data['MODIFY_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
+                self::dbAccess()->update("t_student_schoolyear", $data, "ID ='". $studentId ."'");
                 break;
             case "GENDER":
-                $SQL = "UPDATE ";
-                $SQL .= " t_student";
-                $SQL .= " SET";
-                $SQL .= " GENDER ='" . $newValue . "'";
-                $SQL .= " WHERE ID = '" . $studentId . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_student", array('GENDER' => "'". $newValue ."'"), "ID ='". $studentId ."'");
                 break;
             case "DATE_BIRTH":
-                $SQL = "UPDATE ";
-                $SQL .= " t_student";
-                $SQL .= " SET";
-                $SQL .= " DATE_BIRTH ='" . setDate2DB($newValue) . "'";
-                $SQL .= " WHERE ID = '" . $studentId . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_student", array('DATE_BIRTH' => "'". setDate2DB($newValue) ."'"), "ID ='". $studentId ."'");
                 break;
             case "FIRSTNAME":
-                $SQL = "UPDATE ";
-                $SQL .= " t_student";
-                $SQL .= " SET";
-                $SQL .= " FIRSTNAME ='" . $newValue . "'";
-                $SQL .= " WHERE ID = '" . $studentId . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_student", array('FIRSTNAME' => "'". $newValue ."'"), "ID ='". $studentId ."'");
                 break;
             case "LASTNAME":
-                $SQL = "UPDATE ";
-                $SQL .= " t_student";
-                $SQL .= " SET";
-                $SQL .= " LASTNAME ='" . $newValue . "'";
-                $SQL .= " WHERE ID = '" . $studentId . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_student", array('LASTNAME' => "'". $newValue ."'"), "ID ='". $studentId ."'");
                 break;
             case "CURRENT_LEVEL":
 
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
                 $CHECK = self::checkStudentCurrentLevel($studentId, $academicObject->SCHOOL_YEAR);
 
-                $SQL = "UPDATE ";
-                $SQL .= " t_student_schoolyear";
-                $SQL .= " SET";
-
+                $data  = array();
+                $where = array();
                 if ($newValue && $CHECK) {
-                    $SQL .= " CURRENT_LEVEL ='0'";
+                    $data['CURRENT_LEVEL'] = '0';
                     $callData["CURRENT_LEVEL"] = 0;
                 } elseif ($newValue && !$CHECK) {
-                    $SQL .= " CURRENT_LEVEL ='1'";
+                    $data['CURRENT_LEVEL'] = '1';
                     $callData["CURRENT_LEVEL"] = 1;
                 } else {
-                    $SQL .= " CURRENT_LEVEL ='0'";
+                    $data['CURRENT_LEVEL'] = '0';
                     $callData["CURRENT_LEVEL"] = 0;
                 }
 
-                $SQL .= " WHERE STUDENT = '" . $studentId . "'";
-                $SQL .= " AND GRADE = '" . $academicObject->GRADE_ID . "'";
-                $SQL .= " AND SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
-                self::dbAccess()->query($SQL);
+                $where[] = "STUDENT = '". $studentId ."'";
+                $where[] = "GRADE = '". $academicObject->GRADE_ID ."'";
+                $where[] = "SCHOOL_YEAR = '". $academicObject->SCHOOL_YEAR ."'";
+                self::dbAccess()->update("t_student_schoolyear", $data, $where);
                 break;
         }
         //error_log($SQL);
@@ -2136,16 +2111,16 @@ class StudentDBAccess {
         $studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
 
-        $SQL = "UPDATE t_student_schoolyear";
+        $data  = array();
+        $where = array();
         if ($newValue) {
-            $SQL .= " set SECTION='" . $sectionId . "'";
+            $data['SECTION'] = "'". $sectionId ."'";
         } else {
-            $SQL .= " set SECTION='0'";
+            $data['SECTION'] = "0";
         }
-        $SQL .= " WHERE";
-        $SQL .= " STUDENT='" . $studentId . "'";
-        $SQL .= " AND CLASS='" . $academicId . "'";
-        self::dbAccess()->query($SQL);
+        $where[] = "STUDENT='". $studentId ."'";
+        $where[] = "CLASS='". $academicId ."'";
+        self::dbAccess()->update("t_student_schoolyear", $data, $where);
 
         return array(
             "success" => true

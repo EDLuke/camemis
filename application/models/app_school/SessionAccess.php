@@ -65,8 +65,7 @@ class SessionAccess {
     }
 
     public function resetTime($sessionId) {
-        $SQL = "UPDATE t_sessions SET TS_UPDATE='" . time() . "' WHERE ID='" . $sessionId . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_sessions", array('TS_UPDATE' => "'". time() ."'"), "ID='". $sessionId ."'");
     }
 
     public function cleanUp() {

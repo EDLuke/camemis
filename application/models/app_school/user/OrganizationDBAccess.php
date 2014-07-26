@@ -197,29 +197,23 @@ class OrganizationDBAccess {
 
         $status = $facette->STATUS;
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " " . self::T_ORGANIZATION . "";
-        $SQL .= " SET";
-
+        $data = array();
         switch ($status) {
             case 0:
                 $newStatus = 1;
-                $SQL .= " STATUS=1";
+                $data['STATUS'] = 1;
                 $STAFF_DATA["STATUS"] = 1;
 
                 break;
             case 1:
                 $newStatus = 0;
-                $SQL .= " STATUS=0";
+                $data['STATUS'] = 0;
                 $STAFF_DATA["STATUS"] = 0;
 
                 break;
         }
 
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $objectId . "'";
-        $this->DB_ACCESS->query($SQL);
+        $this->DB_ACCESS->update(self::T_ORGANIZATION, $data, "ID='". $objectId ."'");
 
         return array("success" => true, "status" => $newStatus);
     }

@@ -585,12 +585,10 @@ class StudentHealthDBAccess {
                     break;
             }
             if ($value) {
-                $SQL = "UPDATE t_student_medical";
-                $SQL .= " SET";
-                $SQL .= " BMI='" . $value . "'";
-                $SQL .= " ,STATUS='" . self::calculationBMIStatus($value) . "'";
-                $SQL .= " WHERE ID='" . $facette->ID . "'";
-                self::dbAccess()->query($SQL);
+                $data = array();
+                $data['BMI']   = "'". $value ."'";
+                $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
+                self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
         }
     }

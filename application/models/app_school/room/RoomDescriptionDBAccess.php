@@ -129,13 +129,11 @@ class RoomDescriptionDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         if ($objectId != "new") {
-            $SQL = "UPDATE t_room_description";
-            $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
+            $data = array():
+            $data['NAME'] = "'". addText($params["NAME"]) ."'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . addText($params["objectId"]) . "'";
-            self::dbAccess()->query($SQL);
+                $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
+            self::dbAccess()->update("t_room_description", $data, "ID='". addText($params["objectId"]) ."'");
         }else {
             self::addObject($params);
         }
@@ -205,11 +203,7 @@ class RoomDescriptionDBAccess {
 
         if ($result) {
             foreach ($result as $value) {
-                $SQL = "UPDATE t_room_description";
-                $SQL .= " SET CHOOSE_TYPE='" . $facette->CHOOSE_TYPE . "'";
-                $SQL .= " WHERE";
-                $SQL .= " ID='" . $value->ID . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_room_description", array('CHOOSE_TYPE' => "'". $facette->CHOOSE_TYPE ."'"), "ID='". $value->ID ."'");
             }
         }
     }

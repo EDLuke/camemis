@@ -137,28 +137,25 @@ class SchoolFacilityDBAccess {
 
         if ($objectId != "new") {
             $facette = self::findObjectFromId($objectId);
-
-            $SQL = "UPDATE t_school_facility";
-            $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
+            $data = array();
+            $data['NAME'] = "'". addText($params["NAME"]) ."'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
-            $SQL .= " ,SORTKEY='" . $params["SORTKEY"] . "'";
+                $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
+            $data['SORTKEY'] = "'". $params["SORTKEY"] ."'";
 
             if ($facette->PARENT > 0) {
                 $parentObject = self::findObjectFromId($facette->PARENT);
-                $SQL .= " ,TYPE='" . $parentObject->TYPE . "'";
+                $data['TYPE'] = "'". $parentObject->TYPE ."'";
             } else {
                 if (isset($params["FACILITY_TYPE"]))
-                    $SQL .= " ,TYPE='" . $params["FACILITY_TYPE"] . "'";
+                    $data['TYPE'] = "'". $params["FACILITY_TYPE"] ."'";
             }
 
             if (isset($params["COUNT"]))
-                $SQL .= " ,COUNT='" . $params["COUNT"] . "'";
+                $data['COUNT'] = "'". $params["COUNT"] ."'";
             if (isset($params["DESCRIPTION"]))
-                $SQL .= " ,DESCRIPTION='" . addText($params["DESCRIPTION"]) . "'";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . addText($params["objectId"]) . "'";
-            self::dbAccess()->query($SQL);
+                $data['DESCRIPTION'] = "'". addText($params["DESCRIPTION"]) ."'";
+            self::dbAccess()->update("t_school_facility", $data, "ID='". addText($params["objectId"]) ."'");
         }else {
             self::addObject($params);
         }
@@ -238,12 +235,10 @@ class SchoolFacilityDBAccess {
 
         if ($result) {
             foreach ($result as $value) {
-                $SQL = "UPDATE t_school_facility";
-                $SQL .= " SET CHOOSE_TYPE='" . $facette->CHOOSE_TYPE . "'";
-                $SQL .= ", TYPE='" . $facette->TYPE . "'";
-                $SQL .= " WHERE";
-                $SQL .= " PARENT='" . $value->PARENT . "'";
-                self::dbAccess()->query($SQL);
+                $data = array();
+                $data['CHOOSE_TYPE'] = "'". $facette->CHOOSE_TYPE ."'";
+                $data['TYPE']= "'". $facette->TYPE ."'";
+                self::dbAccess()->update("t_school_facility", $data, "PARENT='". $value->PARENT ."'");
             }
         }
     }

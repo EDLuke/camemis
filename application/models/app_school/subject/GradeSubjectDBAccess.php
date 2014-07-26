@@ -1009,28 +1009,27 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
                     if (!$value->USED_IN_CLASS)
                     {
-                        $SQL = "UPDATE t_grade_subject";
-                        $SQL .= " SET";
-                        $SQL .= " SUBJECT_TYPE ='" . $facette->SUBJECT_TYPE . "'";
-                        $SQL .= " ,INCLUDE_IN_EVALUATION ='" . $facette->INCLUDE_IN_EVALUATION . "'";
-                        $SQL .= " ,EDUCATION_TYPE ='" . $facette->EDUCATION_TYPE . "'";
-                        $SQL .= " ,EVALUATION_TYPE ='" . $facette->EVALUATION_TYPE . "'";
-                        $SQL .= " ,NATIONAL_EXAM ='" . $facette->NATIONAL_EXAM . "'";
-                        $SQL .= " ,SCORE_TYPE ='" . $facette->SCORE_TYPE . "'";
-                        $SQL .= " ,TEMPLATE ='" . $facette->TEMPLATE . "'";
-                        $SQL .= " ,TRAINING ='" . $facette->TRAINING . "'";
-                        $SQL .= " ,MAX_POSSIBLE_SCORE ='" . $facette->MAX_POSSIBLE_SCORE . "'";
-                        $SQL .= " ,SCORE_MIN ='" . $facette->SCORE_MIN . "'";
-                        $SQL .= " ,SCORE_MAX ='" . $facette->SCORE_MAX . "'";
-                        $SQL .= " ,COEFF_VALUE ='" . $facette->COEFF_VALUE . "'";
-                        $SQL .= " ,FORMULA_TYPE ='" . $facette->FORMULA_TYPE . "'";
-                        $SQL .= " ,COEFF ='" . $facette->COEFF . "'";
-                        $SQL .= " ,WHERE";
-                        $SQL .= " SUBJECT='" . $value->SUBJECT . "'";
-                        $SQL .= " AND GRADE='" . $gradeId . "'";
-                        $SQL .= " AND SCHOOLYEAR='" . $schoolyearId . "'";
+                        $data  = array();
+                        $where = array();
+                        $data['SUBJECT_TYPE']    = "'". $facette->SUBJECT_TYPE ."'";
+                        $data['INCLUDE_IN_EVALUATION'] = "'". $facette->INCLUDE_IN_EVALUATION ."'";
+                        $data['EDUCATION_TYPE']  = "'". $facette->EDUCATION_TYPE ."'";
+                        $data['EVALUATION_TYPE'] = "'". $facette->EVALUATION_TYPE ."'";
+                        $data['NATIONAL_EXAM']   = "'". $facette->NATIONAL_EXAM ."'";
+                        $data['SCORE_TYPE']      = "'". $facette->SCORE_TYPE ."'";
+                        $data['TEMPLATE']        = "'". $facette->TEMPLATE ."'";
+                        $data['TRAINING']        = "'". $facette->TRAINING ."'";
+                        $data['MAX_POSSIBLE_SCORE'] = "'". $facette->MAX_POSSIBLE_SCORE ."'";
+                        $data['SCORE_MIN']       = "'". $facette->SCORE_MIN ."'";
+                        $data['SCORE_MAX']       = "'". $facette->SCORE_MAX ."'";
+                        $data['COEFF_VALUE']     = "'". $facette->COEFF_VALUE ."'";
+                        $data['FORMULA_TYPE']    = "'". $facette->FORMULA_TYPE ."'";
+                        $data['COEFF']           = "'". $facette->COEFF ."'";
+                        $where[] = "SUBJECT='". $value->SUBJECT ."'";
+                        $where[] = "GRADE='". $gradeId ."'";
+                        $where[] = "SCHOOLYEAR='". $schoolyearId ."'";
 
-                        self::dbAccess()->query($SAVEDATA);
+                        self::dbAccess()->update("t_grade_subject", $data, $where);
                     }
                 }
             }
@@ -1272,7 +1271,10 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
             {
                 if (!$result->C)
                 {
-                    self::dbAccess()->query("UPDATE t_grade_subject SET USED_IN_CLASS=1 WHERE CLASS='" . $classId . "' AND SUBJECT='" . $subjectId . "'");
+                    $where = array();
+                    $where[] = "CLASS='". $classId ."'";
+                    $where[] = "SUBJECT='". $subjectId ."'"
+                    self::dbAccess()->update("t_grade_subject", array('USED_IN_CLASS' => 1), $where);
                 }
             }
         }

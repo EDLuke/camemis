@@ -1076,33 +1076,26 @@ class StaffDBAccess {
 
         $status = $facette->STATUS;
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_staff";
-        $SQL .= " SET";
-
+        $data = array();
         switch ($status)
         {
             case 0:
                 $newStatus = 1;
-                $USERDATA["STATUS"] = 1;
-                $SQL .= " STATUS=1";
-                $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $USERDATA["STATUS"]  = 1;
+                $data['STATUS']      = 1;
+                $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
             case 1:
                 $newStatus = 0;
-                $USERDATA["STATUS"] = 0;
-                $SQL .= " STATUS=0";
-                $SQL .= " ,DISABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,DISABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $USERDATA["STATUS"]   = 0;
+                $data['STATUS']       = 0;
+                $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
 
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $objectId . "'";
-
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_staff", $data, "ID='". $objectId ."'");
 
         $WHERE[] = "ID = '" . $objectId . "'";
         self::dbAccess()->update('t_members', $USERDATA, $WHERE);
@@ -2858,11 +2851,7 @@ class StaffDBAccess {
 
     public static function actionStaffProfil($params)
     {
-
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_staff";
-        $SQL .= " SET";
+        $data = array();
         switch ($params["field"])
         {
             case "DATE_BIRTH":
@@ -2874,18 +2863,14 @@ class StaffDBAccess {
                     $m = isset($explode[1]) ? trim($explode[1]) : "00";
                     $y = isset($explode[2]) ? trim($explode[2]) : "0000";
                     $newValue = $y . "-" . $m . "-" . $d;
-                    $SQL .= " " . $params["field"] . "='" . $newValue . "'";
+                    $data["'". $params["field"] ."'"] = "'". $newValue ."'";
                 }
                 break;
             default:
-                $SQL .= " " . $params["field"] . "='" . $params["newValue"] . "'";
+                $data["'". $params["field"] ."'"] = "'". $params["newValue"] ."'";
                 break;
         }
-
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $params["id"] . "'";
-        //error_log($SQL);
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_staff", $data, "ID='". $params["id"] ."'");
         return array("success" => true);
     }
 

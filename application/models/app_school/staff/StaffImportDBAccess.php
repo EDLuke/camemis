@@ -573,10 +573,7 @@ class StaffImportDBAccess {
 
     public function jsonActionChangeStaffImport($params) {
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_staff_temp";
-        $SQL .= " SET";
+        $data = array();
         switch ($params["field"]) {
             case "START_DATE":
                 $date = str_replace("/", ".", $params["newValue"]);
@@ -586,17 +583,14 @@ class StaffImportDBAccess {
                     $m = isset($explode[1]) ? trim($explode[1]) : "00";
                     $y = isset($explode[2]) ? trim($explode[2]) : "0000";
                     $newValue = $y . "-" . $m . "-" . $d;
-                    $SQL .= " " . $params["field"] . "='" . $newValue . "'";
+                    $data["'". $params["field"] ."'"] = "'". $newValue ."'";
                 }
                 break;
             default:
-                $SQL .= " " . $params["field"] . "='" . $params["newValue"] . "'";
+                $data["'". $params["field"] ."'"] = "'". $params["newValue"] ."'";
                 break;
         }
-
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $params["id"] . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_staff_temp", $data, "ID='". $params["id"] ."'");
 
         return array("success" => true);
     }
