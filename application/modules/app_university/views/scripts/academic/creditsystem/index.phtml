@@ -323,15 +323,6 @@ if($entries){
                                     $html .= "clickOpenPage('center','".EXTRA_TEACHING_SESSION."','/schedule/trainingscheduleweek/?academicId=' + node.id);";
                                 $html .= "}";
                             $html .= "}]";
-                       $html .= "},{";
-                            $html .= "text: '".PRE_REQUISITE_COURSE."'";
-                            $html .= ",iconCls: 'icon-basket_put'";
-                            $html .= ",handler: function(){";
-                                $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/evaluation/creditsubjectstatus/?academicId=' +  node.id);";
-                                $html .="Ext.getCmp('ACADEMIC_ID').collapse();";
-                            $html .= "}";
-
                         $html .= "}]";
                     $html .= "});";
                 $html .= "break;";

@@ -52,13 +52,13 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;padding:4px;height:18px;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; padding:4px; color:#333;background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal;color:#333;padding:4px;height:18px;">' + value + '</div>';
     }
     
     <?
@@ -126,7 +126,7 @@ Ext.onReady(function() {
              $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
                 , width: 130
-                , align: 'center'
+                , align: 'right'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
                 , renderer:cssDefault  
@@ -152,7 +152,7 @@ Ext.onReady(function() {
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
             , width: 120
-            , align: 'center'
+            , align: 'right'
             , sortable: true
             , dataIndex: 'RANK'
             , renderer:cssNumber
@@ -165,9 +165,9 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'right', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'right', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
     
     if($entries){
         foreach($entries as $value){

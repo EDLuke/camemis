@@ -956,7 +956,7 @@ class CamemisPage {
             url:'/dataset/remote/'
             ,method: 'POST'
             ,params: {cmd: 'actionLogoutWarning'}
-            ,success: function(response, options) { }
+            ,success: function(response, options) {}
             ,failure: function(response, options) {}
             });
             }

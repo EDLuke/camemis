@@ -130,15 +130,13 @@ class DescriptionDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         if ($objectId != "new") {
-            $SQL = "UPDATE t_personal_description";
-            $SQL .= " SET NAME='" . addText($params["NAME"]) . "'";
+            $data         = array();
+            $data['NAME'] = "'". addText($params["NAME"]) ."'";
             if (isset($params["CHOOSE_TYPE"]))
-                $SQL .= " ,CHOOSE_TYPE='" . addText($params["CHOOSE_TYPE"]) . "'";
+                $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
             if (isset($params["SORTKEY"]))//@veasna
-                $SQL .= " ,SORTKEY='" . $params["SORTKEY"] . "'";
-            $SQL .= " WHERE";
-            $SQL .= " ID='" . addText($params["objectId"]) . "'";
-            self::dbAccess()->query($SQL);
+                $data['SORTKEY']     = "'". $params["SORTKEY"] ."'";
+            self::dbAccess()->update("t_personal_description", $data, "ID='". addText($params["objectId"]) ."'");
         }else {
             self::addObject($params);
         }
@@ -230,11 +228,7 @@ class DescriptionDBAccess {
 
         if ($result) {
             foreach ($result as $value) {
-                $SQL = "UPDATE t_personal_description";
-                $SQL .= " SET CHOOSE_TYPE='" . $facette->CHOOSE_TYPE . "'";
-                $SQL .= " WHERE";
-                $SQL .= " ID='" . $value->ID . "'";
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_personal_description", array( 'CHOOSE_TYPE' => "'". $facette->CHOOSE_TYPE ."'" ), "ID='". $value->ID ."'");
             }
         }
     }

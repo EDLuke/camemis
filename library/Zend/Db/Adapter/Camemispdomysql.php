@@ -32,10 +32,11 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql
         $values["OBJECT_ID"  ] = '';  // $objId;    // foreign key of table
         $values["ACCESS_TYPE"] = $operation;
         $data = "";
+        $whereSQL = parent::whereExpr($where);
         if ("UPDATE" === $operation) {
-            $data = $this->getLogUpdate($table, $where, $fields);
+            $data = $this->getLogUpdate($table, $whereSQL, $fields);
         } else if ("DELETE" === $operation) {
-            $data = $this->getLogDelete($table, $where);
+            $data = $this->getLogDelete($table, $whereSQL);
         }
         $values["FIELD_NOTE" ] = $data;
         error_log("By USER: ". $values["ACCESSED_BY"]);

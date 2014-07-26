@@ -515,31 +515,24 @@ class ExaminationDBAccess {
         $facette = self::findExamFromId($objectId);
         $status = $facette->STATUS;
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_examination";
-        $SQL .= " SET";
-
+        $data = array();
         switch ($status) {
             case 0:
                 $newStatus = 1;
-                $SQL .= " STATUS=1";
-                $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $data['STATUS']      = 1;
+                $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
             case 1:
                 $newStatus = 0;
-                $SQL .= " STATUS=0";
-                $SQL .= " ,DISABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,DISABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $data['STATUS']        = 0;
+                $data['DISABLED_DATE'] = "'". getCurrentDBDateTime() ."'";
+                $data['DISABLED_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
 
-        $SQL .= " WHERE";
-        $SQL .= " GUID='" . $objectId . "'";
-
         if ($facette)
-            self::dbAccess()->query($SQL);
+            self::dbAccess()->update("t_examination", $data, "GUID='". $objectId ."'");
         return array("success" => true, "status" => $newStatus);
     }
 
@@ -727,13 +720,10 @@ class ExaminationDBAccess {
                     self::dbAccess()->delete('t_examination', array("GUID ='" . $Id . "'"));
                     break;
                 case "ITEM":
-                    $SQL = "UPDATE t_student_examination";
-                    $SQL .= " SET";
-                    $SQL .= " ROOM_ID = '0'";
-                    $SQL .= " WHERE";
-                    $SQL .= " EXAM_ID= '" . $Id . "'";
-                    $SQL .= " AND ROOM_ID= '" . $facette->ROOM_ID . "'";
-                    self::dbAccess()->query($SQL);
+                    $where = array();
+                    $where[] = "EXAM_ID = '" . $Id . "'";
+                    $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
+                    self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
                     self::dbAccess()->delete('t_examination', array("GUID ='" . $Id . "'"));
                     break;
             }
@@ -747,21 +737,15 @@ class ExaminationDBAccess {
         $facette = self::findExamFromId($Id);
         if ($facette) {
             $parentFacette = self::findExamFromId($facette->PARENT);
-            $SQL = "UPDATE t_student_examination";
-            $SQL .= " SET";
-            $SQL .= " ROOM_ID = '0'";
-            $SQL .= " WHERE";
-            $SQL .= " EXAM_ID= '" . $parentFacette->GUID . "'";
-            $SQL .= " AND ROOM_ID= '" . $facette->ROOM_ID . "'";
-            self::dbAccess()->query($SQL);
+            $where = array();
+            $where[] = "EXAM_ID = '" . $parentFacette->GUID . "'";
+            $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
+            self::dbAccess()->update("t_student_examination", array('ROOM_ID' => '0'), $where);
 
-            $SQL = "UPDATE t_teacher_examination";
-            $SQL .= " SET";
-            $SQL .= " ROOM_ID = '0'";
-            $SQL .= " WHERE";
-            $SQL .= " EXAM_ID= '" . $parentFacette->GUID . "'";
-            $SQL .= " AND ROOM_ID= '" . $facette->ROOM_ID . "'";
-            self::dbAccess()->query($SQL);
+            $where = array();
+            $where[] = "EXAM_ID = '" . $parentFacette->GUID . "'";
+            $where[] = "ROOM_ID = '" . $facette->ROOM_ID . "'";
+            self::dbAccess()->update("t_teacher_examination", array('ROOM_ID' => '0'), $where);
 
             self::dbAccess()->delete('t_examination', array("GUID ='" . $Id . "'"));
         }

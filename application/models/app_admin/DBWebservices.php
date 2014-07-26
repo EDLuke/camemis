@@ -236,10 +236,7 @@ class DBWebservices {
 
         if (self::checkUseConst('t_localization', $CONST, true))
         {
-            $adminSQL = "UPDATE t_localization SET";
-            $adminSQL .= " $LANGUAGE='" . addslashes(stripslashes($POST_CONTENT)) . "'";
-            $adminSQL .= " WHERE CONST='" . $CONST . "'";
-            self::dbAccess()->query($adminSQL);
+            self::dbAccess()->update("t_localization", array( 'LANGUAGE' => "'". addslashes(stripslashes($POST_CONTENT)) ."'" ), "CONST='". $CONST ."'");
         }
         else
         {
@@ -259,10 +256,7 @@ class DBWebservices {
                 {
                     if (self::checkUseConst($DB_NAME, $CONST))
                     {
-                        $SQL = "UPDATE $DB_NAME.t_localization SET";
-                        $SQL .= " $LANGUAGE='" . addslashes(stripslashes($POST_CONTENT)) . "'";
-                        $SQL .= " WHERE CONST='" . $CONST . "'";
-                        self::dbAccess()->query($SQL);
+                        self::dbAccess()->update($DB_NAME.t_localization, array( 'LANGUAGE'=> "'". addslashes(stripslashes($POST_CONTENT)) ."'"), "CONST='". $CONST ."'");
                     }
                     else
                     {
@@ -358,11 +352,7 @@ class DBWebservices {
         {
             foreach ($result as $value)
             {
-                $adminSQL = "UPDATE t_localization SET";
-                $adminSQL .= " " . $language . "='" . addslashes(stripslashes($value->$language)) . "'";
-                $adminSQL .= " WHERE CONST='" . $value->CONST . "';";
-
-                self::dbAccess()->query($adminSQL);
+                self::dbAccess()->update("t_localization", array('language' => "'". addslashes(stripslashes($value->$language)) ."'"), "CONST='". $value->CONST ."'");
             }
         }
     }

@@ -76,7 +76,7 @@ if($entries){
                 ,scope:this
                 ,iconCls:'icon-application_form_add'
                 ,handler: function(){
-                    clickOpenPage('center','".ADD_NEW_QUALIFICATION."', '/academic/addcampus/?parentId=0');
+                    clickOpenPage('center','".ADD_NEW_QUALIFICATION."', '/academic/addcampus/?objectId=new&parentId=0');
                 }
             ");
         }
@@ -200,7 +200,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','".$this->URL_EDIT_CAMPUS."objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','/academic/editcampus/?objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "}]";
@@ -230,7 +230,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','".$this->URL_EDIT_GRADE."objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center',node.text + ' &raquo; ".MAIN_CONTENT."','/academic/editgrade/?objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "}]";
@@ -261,7 +261,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','".$this->URL_EDIT_SCHOOLYEAR."objectId=' + node.attributes.guId);";
+                                $html .= "clickOpenPage('center','','/academic/editschoolyear/?objectId=' + node.attributes.guId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
@@ -300,13 +300,6 @@ if($entries){
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
                                 $html .= "clickOpenPage('center','".WEEK_SCHEDULE."','/academic/schoolyearschedule/?academicId=' + node.id+'&target=WEEK_SCHEDULE');";
                             $html .= "}";
-//                        $html .= "},{"; 
-//                            $html .= "text: '".EXTRA_TEACHING_SESSION."'";
-//                            $html .= ",iconCls: 'icon-date_magnify'";
-//                            $html .= ",handler: function(){";
-//                                $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-//                                $html .= "clickOpenPage('center','".EXTRA_TEACHING_SESSION."','/academic/schoolyearschedule/?academicId=' + node.id+'&target=EXTRA_TEACHING_SESSION');";
-//                            $html .= "}";
                         $html .= "}]";
                         $html .= "},{"; 
                             $html .= "text: '".ADDITIONAL_INFORMATION."'";

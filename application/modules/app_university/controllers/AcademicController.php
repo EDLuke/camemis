@@ -113,9 +113,9 @@ class AcademicController extends Zend_Controller_Action {
 
                         $this->gradeId = $this->facette->GRADE_ID;
                         $this->campusId = $this->facette->CAMPUS_ID;
-                        $this->schoolyearId = $facette->SCHOOL_YEAR;
+                        $this->schoolyearId = $this->facette->SCHOOL_YEAR;
                         $schoolyear = AcademicDateDBAccess::getInstance();
-                        $this->isCurrentYear = $schoolyear->isCurrentSchoolyear($facette->SCHOOL_YEAR);
+                        $this->isCurrentYear = $schoolyear->isCurrentSchoolyear($this->facette->SCHOOL_YEAR);
 
                         break;
                     case "CLASS":
@@ -123,7 +123,6 @@ class AcademicController extends Zend_Controller_Action {
                         $this->classId = $this->facette->ID;
                         $this->campusId = $this->facette->CAMPUS_ID;
                         $this->gradeId = $this->facette->GRADE_ID;
-                        //$this->isCurrentYear = $this->objectData["IS_CURRENT_YEAR"];
 
                         break;
                 }
