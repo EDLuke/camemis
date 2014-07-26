@@ -389,6 +389,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SAVEDATA['LEVEL'] = $facette->LEVEL;
             $SAVEDATA['TRAINING'] = $trainingId;
             $SAVEDATA['SUBJECT'] = $subjectId;
+            $SAVEDATA['INCLUDE_IN_EVALUATION']=1;//default
             $SAVEDATA['OBJECT_TYPE'] = "FOLDER";
             self::dbAccess()->insert('t_training_subject', $SAVEDATA);
         }

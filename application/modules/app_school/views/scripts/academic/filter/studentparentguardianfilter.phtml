@@ -54,23 +54,15 @@ if($classId){
 if($objectType)
 $objectDataSet->objectType = $objectType;
 
-$dataSetStudentEDMajor = $objectDataSet->getDataSetStudentEDMajor(); 
+$dataSetParentGuardianRelationship = $objectDataSet->getDataSetStudentRelationship(); 
 
-//print($dataSetNationality);exit;
-$chartStudentEDMajor = new CamemisChart("DISCRETE_BAR_CHART", 'chartStudentEDMajor', $dataSetStudentEDMajor);
-$chartStudentEDMajor->chartSVG = "displayMajor";
-$chartStudentEDMajor->showLegend='true';
-$chartStudentEDMajor->tooltips = 'true';
-$chartStudentEDMajor->showValues ='true';
-$chartStudentEDMajor->height = 280;
+$chartParentGuardianRelationship = new CamemisChart("DISCRETE_BAR_CHART", 'chartParentGuardianRelationship', $dataSetParentGuardianRelationship);
+$chartParentGuardianRelationship->chartSVG = "displayParentGuardianRelation";
+$chartParentGuardianRelationship->showLegend='true';
+$chartParentGuardianRelationship->tooltips = 'true';
+$chartParentGuardianRelationship->showValues ='true';
+$chartParentGuardianRelationship->height = 280;
 
-$datasetStudentEDDegree=$objectDataSet->getDataSetStudentEDDegree(); 
-$chartStudentEDDegree = new CamemisChart("DISCRETE_BAR_CHART", 'chartStudentEDDegree', $datasetStudentEDDegree);
-$chartStudentEDDegree->chartSVG = "displayStudentEDDegree";
-$chartStudentEDDegree->showControls=true;
-$chartStudentEDDegree->showXAxis="false";
-$chartStudentEDDegree->tooltips=true;
-$chartStudentEDDegree->height = 280;
 ?>
 
 <link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
@@ -82,27 +74,16 @@ $chartStudentEDDegree->height = 280;
     
          <div class="row">
             <div class="col-md-12">
-                <div class="panel-heading"><h5><b><?=MAJOR?></b></h5></div>
+                <div class="panel-heading"><h5><b><?=PARENT_GUARDIAN_RELATIONSHIP?></b></h5></div>
                 
                 <div class="panel-body">
                     <button type="button" id="btnStudentEDMajor" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
-                    <?= $chartStudentEDMajor->setChartDisplay(); ?>
-                    <script><?= $chartStudentEDMajor->setChartScript(); ?></script> 
+                    <?= $chartParentGuardianRelationship->setChartDisplay(); ?>
+                    <script><?= $chartParentGuardianRelationship->setChartScript(); ?></script> 
                 </div>     
             </div>  
         </div>
         
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel-heading"><h5><b><?=QUALIFICATION_DEGREE?></b></h5></div>
-                <div class="panel-body">
-                    <button type="button" id="btnStudentCityProvince" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
-                    <?= $chartStudentEDDegree->setChartDisplay(); ?>
-                    <script><?= $chartStudentEDDegree->setChartScript(); ?></script> 
-                </div> 
-            </div>
-        </div>
-            
     </div>
     <script>
         Ext.onReady(function() {
@@ -130,10 +111,8 @@ $chartStudentEDDegree->height = 280;
         
            /*Ext.get('btnStudentEDMajor').on('click', function(){
                window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
-           });
-           Ext.get('btnStudentCityProvince').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
            });*/
+          
            
         });
     </script>

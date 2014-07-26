@@ -350,6 +350,7 @@ function columnProperties($header, $dataindex, $width){
             start:0
             ,limit:100
             ,cmd: 'jsonListPersonInfos'
+            ,object: '".$this->target."'
             ,objectId: '".$this->objectId."'
         ";
         $OBJECT_GRID->setAftereditCallback("

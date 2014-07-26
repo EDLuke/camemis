@@ -150,25 +150,14 @@ class SQLStudentFilterReport {
         return $result?$result->C:0;    
     }
     
-    public static function countStudentEDBackgroundDegreeOrMajor($stdClass){
+    public static function getStudentInfo($stdClass){
         
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_person_infos'), array("C" => "COUNT(*)"));
+        $SQL->from(array('A' => 't_person_infos'), array("*"));
         $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'A.USER_ID=B.STUDENT', array());
-        $SQL->where("A.OBJECT_TYPE = ?",'EDUBACK');  
-        $SQL->where("A.USER_TYPE = ?",'STUDENT'); 
         
-        if($stdClass->type){
-            switch(strtoupper($stdClass->type)){
-                case'QUALIFICATION_DEGREE':
-                    $SQL->where("A.QUALIFICATION_DEGREE = ?",$stdClass->camemisType);
-                    break;
-                case'MAJOR':
-                    $SQL->where("A.MAJOR = ?",$stdClass->camemisType);
-                    break;
-                        
-            }
-        }  
+        $SQL->where("A.USER_TYPE = ?",'STUDENT'); 
+           
         if ($stdClass->campusId)
             $SQL->where("B.CAMPUS = ?",$stdClass->campusId);     
         if (isset($stdClass->gradeId)) 
@@ -176,11 +165,30 @@ class SQLStudentFilterReport {
         if (isset($stdClass->classId))
             $SQL->where("B.CLASS = ?",$stdClass->classId);
         if (isset($stdClass->schoolyearId))
-            $SQL->where("B.SCHOOL_YEAR = ?",$stdClass->schoolyearId);  
-        
+            $SQL->where("B.SCHOOL_YEAR = ?",$stdClass->schoolyearId);
+        if($stdClass->objecttype)
+            $SQL->where("A.OBJECT_TYPE = ?",strtoupper($stdClass->objecttype));   
+        if($stdClass->type){
+            switch(strtoupper($stdClass->type)){
+                case'QUALIFICATION_DEGREE':
+                    $SQL->where("A.QUALIFICATION_DEGREE = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.QUALIFICATION_DEGREE");
+                    break;
+                case'MAJOR':
+                    $SQL->where("A.MAJOR = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.MAJOR");
+                    break;
+                case'RELATIONSHIP':
+                    $SQL->where("A.RELATIONSHIP = ?",$stdClass->camemisType);
+                    break;
+                        
+            }
+        }  
         //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result?$result->C:0;    
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;    
     }
     
     //@Visal

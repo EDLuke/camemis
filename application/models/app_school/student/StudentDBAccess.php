@@ -1763,10 +1763,11 @@ class StudentDBAccess {
     public static function jsonListPersonInfos($params) {
 
         $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-
+        $objecttype = isset($params["object"]) ? addText($params["object"]) : "";
         $SQL = self::dbAccess()->select()
                 ->from("t_person_infos", array('*'))
-                ->where("USER_ID = '" . $studentId . "'");
+                ->where("USER_ID =?", $studentId)
+                ->where("OBJECT_TYPE =?",strtoupper($objecttype));
         $result = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
