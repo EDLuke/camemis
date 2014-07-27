@@ -198,19 +198,19 @@ $COLUMS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortabl
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssDefault}";
+        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
         $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
+        , renderer:cssAssessment
         , editor: ".$comboAssessment."}";
         $COLUMS .= ",{
                 dataIndex:'DISPLAY_TOTAL'
                 ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
                 ,width: 80
-                ,renderer:cssDefault
+                ,renderer:cssAssessment
                 ,align: 'center'
                 ,sortable: true
             }";
@@ -221,7 +221,7 @@ switch($subjectObject->SCORE_TYPE){
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
+        , renderer:cssAssessment
         , editor: ".$comboAssessment."}";
         break;
 }
@@ -275,7 +275,7 @@ var _chooseValue,_chooseDisplay,comboValue;
 Ext.onReady(function() {
     
     function cssStatus(v, p, record){
-        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+        return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
             ,v
             ,record.data['BG_COLOR']
             ,record.data['BG_COLOR_FONT']
@@ -286,6 +286,12 @@ Ext.onReady(function() {
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#333; padding:4px;height:18px;">' + value + '</div>';
+    }
+    
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){

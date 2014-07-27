@@ -214,29 +214,8 @@ $chartEthnic->height = 350;
     <script>
         Ext.onReady(function() {
             
-            /*viewport = new Ext.Viewport({
-            layout: 'fit'
-            ,border: false
-            ,items: [{
-                title: ''
-                ,id:'westcenter'
-                ,collapsible: false
-                ,region:'center'
-                ,layout: 'fit'
-                ,margins: '0 3 3 3'
-                ,border:false
-                ,bodyStyle: 'background:#dee7f6;'
-                ,items: [{
-                    border: false
-                    ,bodyStyle: 'background:#dee7f6;'
-                    ,autoScroll:true
-                    ,contentEl: 'initStatistic'
-                }]
-            }]
-        });*/
-            
             Ext.get('btnStudentGender').on('click', function(){
-               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+                window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
             });
             
            Ext.get('btnStudentAge').on('click', function(){

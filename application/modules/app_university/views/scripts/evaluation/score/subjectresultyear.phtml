@@ -82,6 +82,12 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000;background:#FFF;padding:4px;height:18px;">' + value + '</div>';
     }
     
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+    }
+    
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
@@ -212,13 +218,13 @@ Ext.onReady(function() {
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
-        , renderer:cssDefault
+        , renderer:cssAssessment
         , editor: ".$comboAssessment."
     ");
     
     if($subjectObject->SCORE_TYPE == 1){
         if(!$academicObject->EVALUATION_OPTION){
-            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssDefault, dataIndex: 'RANK'");
+            $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssAssessment, dataIndex: 'RANK'");
         }else{
             $OBJECT_GRID->addColumn("
                 header: '<b>".RANK."</b>'
@@ -226,7 +232,7 @@ Ext.onReady(function() {
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'RANK'
-                , renderer:cssDefault
+                , renderer:cssAssessment
                 , editor: new Ext.form.NumberField({
                     allowBlank: false
                     ,name: 'RANK'   
@@ -235,9 +241,9 @@ Ext.onReady(function() {
         }
         
         if($academicObject->DISPLAY_GRADE_POINTS){
-            $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GRADE_POINTS'");
+            $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'GRADE_POINTS'");
         }
-        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'DISPLAY_TOTAL'");
+        $OBJECT_GRID->addColumn("header: '<b>".$TOTAL_AVG_RESULT."</b>', width: 100, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'DISPLAY_TOTAL'");
     }
     
     switch($TERM_NUMBER){
