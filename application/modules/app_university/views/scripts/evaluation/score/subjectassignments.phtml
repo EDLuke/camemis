@@ -18,11 +18,13 @@ $OBJECT_TREE = new CamemisTree("ASSIGNMENT", "LIST");
 $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
+$myObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+if(!$myObject) {header("Location: /main/permission/");exit;}
+
+AcademicDBAccess::mappingAcademicSchoolyear($myObject);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
-if(!$academicObject) {header("Location: /main/permission/");exit;}
-
-AcademicDBAccess::mappingAcademicSchoolyear($academicObject);
 AssessmentProperties::setGradingScale($academicObject);
 
 $DB_SCHOOLYEAR = AcademicDateDBAccess::getInstance();

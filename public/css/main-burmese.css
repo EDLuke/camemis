@@ -1,21 +1,3 @@
-@font-face {
-    font-family: bit;
-    font-style:  normal;
-    font-weight: 500;
-    font-size: 12pt;
-    src:url(bit.eot);
-    src: local("☺"),url(../font/burmese/bit.ttf) format('truetype');
-}
-
-@font-face {
-    font-family: Zawgyi-One;
-    font-style:  normal;
-    font-weight: 500;
-    font-size: 12pt;
-    src:url(../font/burmese/zawgyi-one.eot);
-    src: local("☺"),url(../font/burmese/zawgyi-one.ttf) format('truetype');
-}
-
 html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
     margin: 0;
     padding: 0;
