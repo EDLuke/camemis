@@ -26,7 +26,7 @@ ini_set('memory_limit', '128M');
 <style>
     h1{
         font-size: 18px;
-        color:#55555;
+        color:#555;
         font-weight: bold;
     }
 </style>
@@ -230,25 +230,16 @@ Ext.onReady(function() {
                 ,xtype:'panel'
                 ,items:[{
                     layout:'border'
+                    ,border:false
                     ,defaults: {
                         collapsible: false
                         ,split: false
                     },
                     items: [{
-                        region: 'north'
-                        ,id: 'VIEWPORT_NORTH'
-                        ,collapsible: false
-                        ,height: 60
-                        ,minSize: 60
-                        ,maxSize: 60
-                        ,margins: '0 0 0 0'
-                        ,bodyStyle: 'background-color:#4FACE0'
-                        ,items: <?=$COLUMN_ITEM;?>
-                    },{
                         collapsible: false
                         ,region:'center'
                         ,id: 'VIEWPORT_CENTER'
-                        ,margins: '0 0 0 0'
+                        ,margins: '5 5 5 5'
                         ,layout: 'card'
                         ,activeItem: 0
                         ,items:[new Ext.ux.IFrameComponent({ id: 'IFRAM_ID', url: '<?=$defaultUrl;?>'})]

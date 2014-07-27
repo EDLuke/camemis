@@ -8,6 +8,9 @@ require_once 'clients/app_admin/AdminBar.php';
 require_once 'clients/app_admin/AdminPage.php';
 require_once 'models/app_admin/AdminHelpDBAccess.php';
 
+$objectId = isset($_GET["objectId"])?$_GET["objectId"]:"";
+$parentId = isset($_GET["parentId"])?$_GET["parentId"]:"";
+
 $CAMEMIS_PAGE = AdminPage::getInstance();
 print $CAMEMIS_PAGE->showCamemisHeader();
 ?>
@@ -19,22 +22,26 @@ print $CAMEMIS_PAGE->showCamemisHeader();
         $ENGLISH = "{
             title: 'English'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ENGLISH', url: '/help/showdetail/?objectId=".$this->objectId."&type=1'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'ENGLISH', url: '/help/showdetail/?objectId=".$objectId."&type=1&parentId=".$parentId."'})]
         }";
         $PENEL_ITEMS[] = $ENGLISH;
         
         $KHMER = "{
             title: 'Khmer'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'KHMER', url: '/help/showdetail/?objectId=".$this->objectId."&type=2'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'KHMER', url: '/help/showdetail/?objectId=".$objectId."&type=2'})]
         }";
+        
+        if($objectId!="new")
         $PENEL_ITEMS[] = $KHMER;
         
         $VIETNAMESE = "{
             title: 'Vietnamese'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'VIETNAMESE', url: '/help/showdetail/?objectId=".$this->objectId."&type=3'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'VIETNAMESE', url: '/help/showdetail/?objectId=".$objectId."&type=3'})]
         }";
+        
+        if($objectId!="new")
         $PENEL_ITEMS[] = $VIETNAMESE;
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";

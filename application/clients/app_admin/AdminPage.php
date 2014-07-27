@@ -13,24 +13,29 @@ class AdminPage {
     public $stylename = "xtheme-blue";
     public $setLoadingMask = false;
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->setExtJsVersion();
     }
 
-    public function setExtJsVersion() {
+    public function setExtJsVersion()
+    {
         return $this->ext_version = "" . Zend_Registry::get('CAMEMIS_URL') . "/public/" . Zend_Registry::get('EXTJS_VERSION') . "";
     }
 
-    static function getInstance() {
+    static function getInstance()
+    {
         static $me;
-        if ($me == null) {
+        if ($me == null)
+        {
             $me = new AdminPage();
         }
         return $me;
     }
 
-    public function showCamemisHeader() {
+    public function showCamemisHeader()
+    {
 
         $js = "";
         $js .= $this->pageHeader();
@@ -53,7 +58,20 @@ class AdminPage {
         return $js;
     }
 
-    protected function pageHeader() {
+    static function setRequestURI($params = false)
+    {
+        if ($params)
+        {
+            return "window.location='" . $_SERVER["REQUEST_URI"] . "&" . $params . "';";
+        }
+        else
+        {
+            return "window.location='" . $_SERVER["REQUEST_URI"] . "';";
+        }
+    }
+
+    protected function pageHeader()
+    {
 
         $js = "";
         $js .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
@@ -65,26 +83,23 @@ class AdminPage {
         return $js;
     }
 
-    protected function loadCSS() {
+    protected function loadCSS()
+    {
 
         $js = "";
-        
+
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $this->setExtJsVersion() . "/resources/css/ext-all.css\" />";
         if ($this->setLoadingMask)
             $js .= "<script type=\"text/javascript\">document.getElementById('loading-msg').innerHTML = 'Loading  Components...';</script> ";
 
-//        $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $this->setExtJsVersion() . "/resources/css/xtheme-gray.css\" />";
-//        if ($this->setLoadingMask)
-//            $js .= "<script type=\"text/javascript\">document.getElementById('loading-msg').innerHTML = 'Loading  Components...';</script> ";
-        
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Zend_Registry::get('CAMEMIS_URL') . "/public/css/main.css\" />";
         if ($this->setLoadingMask)
             $js .= "<script type=\"text/javascript\">document.getElementById('loading-msg').innerHTML = 'Loading  Components...';</script> ";
-        
+
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Zend_Registry::get('CAMEMIS_URL') . "/public/css/main-burmese.css\" />";
         if ($this->setLoadingMask)
             $js .= "<script type=\"text/javascript\">document.getElementById('loading-msg').innerHTML = 'Loading  Components...';</script> ";
-        
+
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Zend_Registry::get('CAMEMIS_URL') . "/public/css/main-khmer.css\" />";
         if ($this->setLoadingMask)
             $js .= "<script type=\"text/javascript\">document.getElementById('loading-msg').innerHTML = 'Loading  Components...';</script> ";
@@ -104,7 +119,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function loadExtjs() {
+    protected function loadExtjs()
+    {
 
         $js = "";
         $js .= "<script type=\"text/javascript\" src=\"" . $this->setExtJsVersion() . "/adapter/ext/ext-base.js\"></script>";
@@ -122,10 +138,23 @@ class AdminPage {
         $js .= $this->percentWidth();
         $js .= "</script>";
 
+        $js .= "<script>";
+        $js .= "function XMsg(title, format){";
+        $js .= "if(!msgCt){";
+        $js .= "msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);";
+        $js .= "}";
+        $js .= "msgCt.alignTo(document, 't-t');";
+        $js .= "var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));";
+        $js .= "var m = Ext.DomHelper.append(msgCt, {html:createBox(title, s)}, true);";
+        $js .= "m.slideIn('t').pause(3).ghost('t', {remove:true});";
+        $js .= "}";
+        $js .= "</script>";
+
         return $js;
     }
 
-    public function setExtDefaultGif() {
+    public function setExtDefaultGif()
+    {
 
         $js = "";
         $js .= "Ext.SSL_SECURE_URL=\"" . $this->setExtJsVersion() . "/resources/images/default/s.gif\";";
@@ -135,7 +164,8 @@ class AdminPage {
         return print$js;
     }
 
-    protected function loadPluginJS() {
+    protected function loadPluginJS()
+    {
 
         $js = "";
         $js .= "<script type=\"text/javascript\" src=\"" . Zend_Registry::get('CAMEMIS_URL') . "/public/plugin/Cookies.js\"></script>";
@@ -196,20 +226,24 @@ class AdminPage {
         return $js;
     }
 
-    protected function loadCamemisExtendJS() {
+    protected function loadCamemisExtendJS()
+    {
 
         //
     }
 
-    protected function openPageBody() {
+    protected function openPageBody()
+    {
         return "<body>";
     }
 
-    protected function closeHead() {
+    protected function closeHead()
+    {
         return "</head>";
     }
 
-    protected function percentWidth() {
+    protected function percentWidth()
+    {
 
         $js = "";
         $js .= "function percentWidth(value){";
@@ -220,7 +254,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function percentHeight() {
+    protected function percentHeight()
+    {
 
         $js = "";
         $js .= "function percentHeight(value){";
@@ -231,7 +266,8 @@ class AdminPage {
         return $js;
     }
 
-    public function showCamemisFooter() {
+    public function showCamemisFooter()
+    {
 
         $js = "";
         $js .= $this->loadingIndicators();
@@ -241,7 +277,8 @@ class AdminPage {
         return $js;
     }
 
-    public function openWinIFrame() {
+    public function openWinIFrame()
+    {
 
         $js = "";
         $js .= "<script>";
@@ -271,7 +308,8 @@ class AdminPage {
         return $js;
     }
 
-    public function openWinXType() {
+    public function openWinXType()
+    {
 
         $js = "";
         $js .= "<script>";
@@ -301,7 +339,8 @@ class AdminPage {
         return $js;
     }
 
-    public function gotoIFrameURL() {
+    public function gotoIFrameURL()
+    {
 
         $js = "";
         $js .= "<script>";
@@ -327,7 +366,8 @@ class AdminPage {
         return $js;
     }
 
-    public function gotoExtype() {
+    public function gotoExtype()
+    {
 
         $js = "";
         $js .= "<script>";
@@ -347,7 +387,8 @@ class AdminPage {
         return $js;
     }
 
-    public function setActivePanel() {
+    public function setActivePanel()
+    {
 
         $js = "";
         $js .= "<script>";
@@ -372,7 +413,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function openWinMax() {
+    protected function openWinMax()
+    {
         $js = "";
         $js .= "<script>";
         $js .= "function openWinMax(winTitle,winURL){";
@@ -407,7 +449,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function openWinMaxXType() {
+    protected function openWinMaxXType()
+    {
         $js = "";
         $js .= "<script>";
         $js .= "function openWinMaxXType(winTitle,xtype){";
@@ -427,7 +470,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function getAddTab() {
+    protected function getAddTab()
+    {
         $js = "";
         $js .= "function addTab(ID,TITLE,URL){";
         $js .= "var title = TITLE;";
@@ -448,7 +492,8 @@ class AdminPage {
         return $js;
     }
 
-    protected function getTabId() {
+    protected function getTabId()
+    {
         $js = "";
         $js .= "function tabId(panel, title){";
         $js .= "for(var i = 0; i<panel.items.length; i++){";
@@ -462,7 +507,8 @@ class AdminPage {
         return $js;
     }
 
-    public function setAddTab() {
+    public function setAddTab()
+    {
 
         $js = "";
         $js .= $this->getAddTab();
@@ -471,7 +517,8 @@ class AdminPage {
         return print$js;
     }
 
-    protected function loadingMask() {
+    protected function loadingMask()
+    {
         $js = "";
         $js .= "<style>";
         $js .= "#loading-mask{";
@@ -525,19 +572,22 @@ class AdminPage {
         return $js;
     }
 
-    public function setCostumerCSS() {
+    public function setCostumerCSS()
+    {
         print"
     	Ext.util.CSS.swapStyleSheet('style','" . $this->ext_version . "/resources/css/" . $this->stylename . ".css');
     	";
     }
 
-    public function setdefaultHeaders() {
+    public function setdefaultHeaders()
+    {
         print"
     	Ext.Ajax.defaultHeaders = ({'Content-Type': 'application/json; charset=TIS-620;'});
     	";
     }
 
-    protected function loadingIndicators() {
+    protected function loadingIndicators()
+    {
         $js = "";
         $js .= "
     	<script type=\"text/javascript\">";
@@ -549,7 +599,8 @@ class AdminPage {
         return $js;
     }
 
-    static public function alertMSG($title, $msg_text) {
+    static public function alertMSG($title, $msg_text)
+    {
 
         $js = "";
         $js .= "Ext.MessageBox.show({";
@@ -562,22 +613,30 @@ class AdminPage {
         return $js;
     }
 
-    public function buildURL($script, $parms=array()) {
+    public function buildURL($script, $parms = array())
+    {
 
         $ret = $script;
         $ret.= "?camemisId=" . camemisId() . "";
         $ret.= "&pageId=" . addText(Zend_Registry::get('SESSIONID')) . "";
         $ret.= "&";
 
-        if (is_array($parms)) {
+        if (is_array($parms))
+        {
 
-            while (list($key, $value) = each($parms)) {
-                if (!empty($value)) {
-                    if (is_array($value)) {
-                        while (list($key1, $value1) = each($value)) {
+            while (list($key, $value) = each($parms))
+            {
+                if (!empty($value))
+                {
+                    if (is_array($value))
+                    {
+                        while (list($key1, $value1) = each($value))
+                        {
                             $ret .= $key . "[" . $key1 . "]=" . $value1 . "&";
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $ret .= "" . $key . "=" . $value . "&";
                     }
                 }
@@ -586,6 +645,7 @@ class AdminPage {
 
         return "" . Zend_Registry::get('CAMEMIS_URL') . "/" . $ret;
     }
+
 }
 
 ?>

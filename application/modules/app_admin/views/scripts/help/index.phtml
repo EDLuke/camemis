@@ -83,8 +83,24 @@ Ext.onReady(function() {
     });
     
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-    myTree.on('click', function(node, e){
-        clickOpenPage('VIEWPORT_CENTER','','/help/showmain/?objectId=' + node.id);
+    myTree.on('click', function(node, event){
+        var contextMenu = new Ext.menu.Menu({
+            items:[{
+                text:'Show detail'
+                ,iconCls: 'icon-application_form_magnify'
+                ,handler:function(){
+                    clickOpenPage('VIEWPORT_CENTER','','/help/showmain/?objectId=' + node.id);
+                }
+            },{
+                text:'Add new Item'
+                ,iconCls: 'icon-add'
+                ,handler:function(){
+                    clickOpenPage('VIEWPORT_CENTER','','/help/showmain/?objectId=new&parentId=' + node.id);
+                }
+            }]
+        });
+        event.stopEvent();
+        contextMenu.showAt(event.xy);
     });
 });
 </script>

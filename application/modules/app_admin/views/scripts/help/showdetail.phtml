@@ -18,7 +18,14 @@ print $CAMEMIS_PAGE->showCamemisHeader();
 $HELP_ACCESS = new AdminHelpDBAccess();
 $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);
 
-if(!$HELP_OBJECT) {header("Location: /main/permission/");exit;}
+if($HELP_OBJECT){
+    $parentId = $HELP_OBJECT->PARENT;
+}else{
+    $parentId = isset($_GET["parentId"])? addText($_GET["parentId"]):"0";
+}
+
+$parentObject = $HELP_ACCESS->findHelp($parentId);
+$reloadId = $parentObject?$parentObject->PARENT:0;
 
 switch($type){
     case 1:
@@ -134,7 +141,7 @@ switch($type){
     }
     ////////////////////////////////////////////////////////////////////////////
     Ext.onReady(function() {
-        
+        var myTree;
         Ext.form.Field.prototype.msgTarget = 'side';
         
         <?
@@ -146,11 +153,18 @@ switch($type){
         
         switch($type){
             case 1:
-                $ITEMS = "[
-                    {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
-                    ,{".AdminField::Textfield("TEXT_KEY", "TEXT_KEY", 'Text Key', true, false)."}
-                    ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
-                ]";
+                if($this->objectId !="new"){
+                    $ITEMS = "[
+                        {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                        ,{".AdminField::Textfield("TEXT_KEY", "TEXT_KEY", 'Text Key', true, false)."}
+                        ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
+                    ]";
+                }else{
+                    $ITEMS = "[
+                        {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                    ]";
+                }
+                
             break;
             default:
                 $ITEMS = "[
@@ -160,39 +174,58 @@ switch($type){
             break;
         }
         
-        $FORM_ITEMS = "
-        {
-            title: 'Detail'
-            ,autoHeight: true
-            ,collapsible: true
-            ,collapsed: false
-            ,style: 'padding-bottom:5px'
-            ,width: 650
-            ,tbar:['->',{
-                text: 'Play Video'
-                ,iconCls: 'icon-control_play'
-                ,handler: function() {getWinVideo();}
-            }]
-            ,items:[{
-                layout: 'form'
-                ,border: false
-                ,autoHeight:true
-                ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
-                ,items:".$ITEMS."
-            }]
-        },{
-            title: ''
-            ,width: 650
-            ,height:percentHeight(69)
-            ,layout:'fit'
-            ,tbar:['->',{
-                text:'Content'
-                ,iconCls: 'icon-add'
-                ,handler: function() {getWinContent();}
-            }]
-            ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
+        if($HELP_OBJECT){
+            $FORM_ITEMS = "
+            {
+                title: 'Detail'
+                ,autoHeight: true
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom:5px'
+                ,width: 650
+                ,tbar:['->',{
+                    text: 'Play Video'
+                    ,iconCls: 'icon-control_play'
+                    ,handler: function() {getWinVideo();}
+                }]
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                    ,items:".$ITEMS."
+                }]
+            },{
+                title: ''
+                ,width: 650
+                ,height:percentHeight(69)
+                ,layout:'fit'
+                ,tbar:['->',{
+                    text:'Content'
+                    ,iconCls: 'icon-add'
+                    ,handler: function() {getWinContent();}
+                }]
+                ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
+            }
+            ";
+        }else{
+            $FORM_ITEMS = "
+            {
+                title: 'Detail'
+                ,autoHeight: true
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom:5px'
+                ,width: 650
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                    ,items:".$ITEMS."
+                }]
+            }";
         }
-        ";
         
         $items = "
             border: false
@@ -205,6 +238,7 @@ switch($type){
         $OBJECT_FORM->setSaveParams("
             cmd: 'jsonSaveHelp'
             ,objectId: '".$this->objectId."'
+            ,parentId: '".$parentId."'
         ");
         
         $OBJECT_FORM->setRemoveParams("
@@ -212,10 +246,27 @@ switch($type){
             ,objectId: '".$this->objectId."'
         ");
         
-        $OBJECT_FORM->setonEmbeddedEvents("
-            window.parent.parent.Ext.getCmp('TREE.HELP_LIST_ID').root.reload();
-            window.location='" . $_SERVER["REQUEST_URI"] . "';
-        ");
+        if($reloadId == 0){
+            $OBJECT_FORM->setonEmbeddedEvents("
+                myTree = window.parent.parent.Ext.getCmp('TREE.HELP_LIST_ID');
+                myTree.root.reload();
+                myNode.expand(true, false); 
+                ".$CAMEMIS_PAGE::setRequestURI()."
+            ");
+        }else{
+            $OBJECT_FORM->setonEmbeddedEvents("
+                myTree = window.parent.parent.Ext.getCmp('TREE.HELP_LIST_ID');
+                if(myTree){
+                    myNode = myTree.getNodeById('".$reloadId."');
+                    if(myNode){
+                        myNode.reload();
+                        myNode.expand(true, false); 
+                        var result = Ext.util.JSON.decode(action.response.responseText);
+                        window.parent.location='/help/showmain/?objectId='+result.objectId;
+                    }
+                }
+            ");
+        }
         
         $OBJECT_FORM->setOnEmbeddedRemoveEvents("
             window.parent.parent.Ext.getCmp('TREE.HELP_LIST_ID').root.reload();

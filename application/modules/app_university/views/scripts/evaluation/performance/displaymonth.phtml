@@ -42,7 +42,7 @@ Ext.onReady(function() {
     Ext.Ajax.timeout = 600000;
     
     function cssStatus(v, p, record){
-        return String.format('<div style=\"font-weight:normal;padding:4px;background:{1};color:{2};\">{0}</div>'
+        return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
             ,v
             ,record.data['BG_COLOR']
             ,record.data['BG_COLOR_FONT']
