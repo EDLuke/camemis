@@ -404,7 +404,11 @@ Ext.onReady(function() {
         $html .= ",viewConfig: {";
             $html .= "forceFit: false";
         $html .= "}";
-        $html .= ",plugins: group";
+        
+        if(!$academicObject->EVALUATION_OPTION){
+            $html .= ",plugins: group";
+        }
+        
         $html .= ",listeners: {";
             $html .= "afteredit: function (e){";
                 $html .= "Ext.Ajax.request({";

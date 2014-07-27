@@ -969,6 +969,8 @@ class AcademicDBAccess {
 
         if (isset($schoolyearObject->ID))
         {
+            $FIRST_SQL = self::dbAccess()->select();
+            $FIRST_SQL->from("t_grade", array("*"));
 
             if ($schoolyearObject->EDUCATION_SYSTEM)
             {
@@ -2516,9 +2518,10 @@ class AcademicDBAccess {
                 if (in_array($value->ACADEMIC_ID, $data))
                 {
                     $dateObject = self::getDateBySchoolTerm($value->ACADEMIC_ID, $value->TERM);
-                    $data = array('START_DATE' => "'" . $dateObject->START_DATE . "'",
-                        'END_DATE' => "'" . $dateObject->END_DATE . "'");
-                    self::dbAccess()->update("t_schedule", $data, "ID='" . $id . "'");
+                    $data = array();
+                    $data['START_DATE'] = "'" . $dateObject->START_DATE . "'";
+                    $data['END_DATE'] = "'" . $dateObject->END_DATE . "'";
+                    self::dbAccess()->update("t_schedule", $data, "ACADEMIC_ID='" . $value->ACADEMIC_ID . "'");
                 }
             }
         }

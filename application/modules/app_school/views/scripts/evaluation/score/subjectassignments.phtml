@@ -596,7 +596,8 @@ Ext.onReady(function() {
     }else{
         if($academicObject->DISPLAY_MONTH_RESULT){
             $VIEWPORT_ITEMS[] = "{
-                title: '".MONTHLY_RESULT."'
+                title: ''
+                ,border:false
                 ,layout: 'fit'
                 ,items:[new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url: '/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
             }";
@@ -761,7 +762,7 @@ Ext.onReady(function() {
                     text: '<?=TEACHER_ENTER_SCORE?> &raquo; ' + node.text
                     ,iconCls: 'icon-table_edit'
                     ,handler: function(){
-                        clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date + '&objectId=' + node.attributes.setId);
+                        clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date + '&objectId=' + node.attributes.setId);
                     }
                 }]
             });
@@ -771,7 +772,7 @@ Ext.onReady(function() {
         }else{
             var dateMenu = new Ext.menu.DateMenu({
                 handler: function(dp, date){
-                    clickOpenPage('center',node.text, '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
+                    clickOpenPage('center','', '/evaluation/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                 }
             });
             event.stopEvent();

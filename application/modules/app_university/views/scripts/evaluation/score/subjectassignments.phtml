@@ -596,7 +596,8 @@ Ext.onReady(function() {
     }else{
         if($academicObject->DISPLAY_MONTH_RESULT){
             $VIEWPORT_ITEMS[] = "{
-                title: '".MONTHLY_RESULT."'
+                title: ''
+                ,border:false
                 ,layout: 'fit'
                 ,items:[new Ext.ux.IFrameComponent({ id: 'MONTHLY_RESULT', url: '/evaluation/subjectresultmonthmain/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
             }";
