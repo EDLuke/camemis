@@ -231,23 +231,23 @@ if(!$academicObject->EVALUATION_OPTION){
     }
 }
 
-$COLUMS = "";
-$COLUMS .= "new Ext.grid.RowNumberer()";
-$COLUMS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:90, renderer:cssStatus, align:'center',sortable: true}";
-$COLUMS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,sortable: true, renderer:cssDefault}";
-$COLUMS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortable: true,align:'center',renderer:cssDefault}";
+$COLUMNS = "";
+$COLUMNS .= "new Ext.grid.RowNumberer()";
+$COLUMNS .= ",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:90, renderer:cssStatus, align:'center',sortable: true}";
+$COLUMNS .= ",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:130,sortable: true, renderer:cssDefault}";
+$COLUMNS .= ",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width:80,sortable: true,align:'center',renderer:cssDefault}";
 
 switch($subjectObject->SCORE_TYPE){
     case 1:
-        $COLUMS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
-        $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
+        $COLUMNS .= ",{dataIndex: 'RANK', header: '<b>".RANK."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
+        $COLUMNS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
         , align: 'center'
         , sortable: true
         , dataIndex: 'ASSESSMENT'
         , renderer:cssAssessment
         , editor: ".$comboAssessment."}";
-        $COLUMS .= ",{
+        $COLUMNS .= ",{
             dataIndex:'DISPLAY_TOTAL'
             ,header: '<b>".$TOTAL_AVG_RESULT."</b>'
             ,width:70
@@ -259,7 +259,7 @@ switch($subjectObject->SCORE_TYPE){
                 ,name: 'DISPLAY_TOTAL'   
             })
         }";
-        $COLUMS .= ",{
+        $COLUMNS .= ",{
             dataIndex:'DISPLAY_REPEAT'
             ,header: '<b>".$TOTAL_AVG_RESULT_REPEAT."</b>'
             ,width:70
@@ -269,7 +269,7 @@ switch($subjectObject->SCORE_TYPE){
         }";
         break;
     default:
-        $COLUMS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
+        $COLUMNS .= ",{header: '<b>".constant($GRADING_TYPE)."</b>'
         , width: 100
         , align: 'center'
         , sortable: true
@@ -306,7 +306,7 @@ if(!$academicObject->EVALUATION_OPTION){
     if($listAssignments){
         foreach($listAssignments as $value){
 
-            $COLUMS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
+            $COLUMNS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
             $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
         }
     }
@@ -373,7 +373,7 @@ Ext.onReady(function() {
     $html .= "var groupRow = [".$GROUP_ROW."];";
     $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({rows: [categoryGroupRow,groupRow]});";
     $html .= "var fields =  [".$FIELDS."];";
-    $html .= "var columns = [".$COLUMS."];";
+    $html .= "var columns = [".$COLUMNS."];";
     
     $html .= "var myStore = new Ext.data.Store({";
         $html .= "proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})";

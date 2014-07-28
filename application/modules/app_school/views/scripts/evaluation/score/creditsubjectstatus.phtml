@@ -168,61 +168,82 @@ $FIELDS .="]";
 
 <script>
 Ext.onReady(function() {
-    var fields = [],
-    columns = [],
-    categoryGroupRow = [];
-
-    // assignmentGroupRow at this point is:
-    var categoryGroupRow = <?=$CATEGORY_GROUP_ROW;?>;
-
-    var group = new Ext.ux.grid.ColumnHeaderGroup({
-        rows: [categoryGroupRow]
-    });
-
-    //fields at this point is:
-    var fields = <?=$FIELDS;?>;
-    // columns at this point is:
-    var columns = <?=$COLUMNS;?>;
     
-    var grid = new Ext.grid.GridPanel({
-        border:false
-        ,store: new Ext.data.Store({
-            proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})
-            ,baseParams:{academicId:'123'}
-            ,reader:new Ext.data.JsonReader({
-                id:'NAME'
-                ,totalProperty:'totalCount'
-                ,root:'rows'
-                ,fields:[
-                    {name: 'ID'}
-                    ,fields
-                ]
-            })
-        }),
-//        store: new Ext.data.ArrayStore({
-//            fields: fields,
-//            data: data
-//        }),
-        columns: columns,
-        viewConfig: {
-            forceFit: false
-        },
-        plugins: group
-        ,tbar:[{
-            text:'<?=REFRESH?>'
-            ,iconCls:'icon-reload'
-        }]
-    });
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#333; padding:4px;height:18px;">' + value + '</div>';
+    }
     
-    viewport = new Ext.Viewport({
-        layout: 'fit'
-        ,border: false
-        ,items:[{
-            layout:'fit'
-            ,border: false
-            ,items:[grid]
-        }]
-    });
+    function cssNumber(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#333; padding:4px;height:18px;">' + value + '</div>';
+    }
+    
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+    }
+    
+    <?
+    
+    $html = "";
+    $html .= "var fields = [],";
+    $html .= "columns = [],";
+    $html .= "categoryGroupRow = [];";
+
+    //$html .= "assignmentGroupRow at this point is:";
+    $html .= "var categoryGroupRow = ".$CATEGORY_GROUP_ROW.";";
+
+    $html .= "var group = new Ext.ux.grid.ColumnHeaderGroup({";
+        $html .= "rows: [categoryGroupRow]";
+    $html .= "});";
+
+    //$html .= "fields at this point is:";
+    $html .= "var fields = ".$FIELDS.";";
+    //$html .= "columns at this point is:";
+    $html .= "var columns = ".$COLUMNS.";";
+    
+    $html .= "var grid = new Ext.grid.GridPanel({";
+        $html .= "border:false";
+        $html .= ",store: new Ext.data.Store({";
+            $html .= "proxy: new Ext.data.HttpProxy({url:'/evaluation/jsonload/', method: 'POST'})";
+            $html .= ",baseParams:{academicId:'123'}";
+            $html .= ",reader:new Ext.data.JsonReader({";
+                $html .= "id:'NAME'";
+                $html .= ",totalProperty:'totalCount'";
+                $html .= ",root:'rows'";
+                $html .= ",fields:[";
+                    $html .= "{name: 'ID'}";
+                    $html .= ",fields";
+                $html .= "]";
+            $html .= "})";
+        $html .= "})";
+        $html .= ",columns: columns";
+        $html .= ",viewConfig: {";
+            $html .= "forceFit: false";
+        $html .= "}";
+        $html .= ",plugins: group";
+        $html .= ",tbar:[{";
+            $html .= "text:'".REFRESH."'";
+            $html .= ",iconCls:'icon-reload'";
+        $html .= "}]";
+    $html .= "});";
+    
+    $html .= "viewport = new Ext.Viewport({";
+        $html .= "layout: 'fit'";
+        $html .= ",border: false";
+        $html .= ",items:[{";
+            $html .= "layout:'fit'";
+            $html .= ",border: false";
+            $html .= ",items:[grid]";
+        $html .= "}]";
+    $html .= "});";
+    
+    echo $html;
+    ?>
 });
 </script>
 
