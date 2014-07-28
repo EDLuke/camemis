@@ -209,7 +209,7 @@ class FilterData extends FilterProperties {
         return count($result)?count($result):0;    
     }
     
-    public function getCountStudentAbsence(){
+    public function getCountDailyStudentAbsence(){
         $stdClass = (object) array(
                 "schoolyearId" => $this->schoolyearId
                 , "campusId" => $this->campusId
@@ -217,9 +217,26 @@ class FilterData extends FilterProperties {
                 , "classId" => $this->classId
                 , "absentType"  => $this->absentType
         );
-        $result = SQLStudentFilterReport::countStudentAttendanceType($stdClass);  
+        $result = SQLStudentFilterReport::getStudentAttendanceType($stdClass);
+        return count($result)?count($result):0;
     }
     
+    public function getCountBlockStudentAbsence(){
+        $count=0;
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "absentType"  => $this->absentType
+        );
+        $result = SQLStudentFilterReport::getStudentAttendanceType($stdClass);
+        foreach($result as $value){
+            $numDays= explode(",",$value->CAL_DATE);
+            $count += count($numDays);        
+        }
+        return $count;
+    }
     //////////////////////
     ///Staff Data
     /////////////////////

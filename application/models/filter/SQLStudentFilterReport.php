@@ -21,10 +21,10 @@ class SQLStudentFilterReport {
         return self::dbAccess()->select();
     }
 
-    public static function countStudentAttendanceType($stdClass) {
+    public static function getStudentAttendanceType($stdClass) {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student_attendance'), array("C" => "COUNT(*)"));
+        $SQL->from(array('A' => 't_student_attendance'), array("*"));
         $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS_ID=B.ID', array());
         
         if (isset($stdClass->campusId)) {
@@ -48,8 +48,8 @@ class SQLStudentFilterReport {
             $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
         //error_log($SQL);
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
     }
 
     public static function countStudentDisciplineType($stdClass) {
