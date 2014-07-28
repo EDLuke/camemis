@@ -474,9 +474,9 @@ abstract class AssessmentProperties {
                 if (strpos(trim($value->MARK), "<") !== false)
                 {
                     $data = array();
-                    $data['SCORE_MIN'] = 0, 
-                    $data['SCORE_MAX'] = "'". substr(trim($value->MARK), 1) ."'";
-                    self::dbAccess()->update("t_gradingsystem", $data, "ID='". $value->ID ."'");
+                    $data['SCORE_MIN'] = 0;
+                    $data['SCORE_MAX'] = "'" . substr(trim($value->MARK), 1) . "'";
+                    self::dbAccess()->update("t_gradingsystem", $data, "ID='" . $value->ID . "'");
                 }
                 else
                 {
@@ -484,9 +484,9 @@ abstract class AssessmentProperties {
                     $MIN = isset($explode[0]) ? $explode[0] : 0;
                     $MAX = isset($explode[1]) ? $explode[1] : 0;
                     $data = array();
-                    $data['SCORE_MIN'] = "'". $MIN ."'";
-                    $data['SCORE_MAX'] = "'". $MAX ."'";
-                    self::dbAccess()->update("t_gradingsystem", $data, "ID='". $value->ID ."'");
+                    $data['SCORE_MIN'] = "'" . $MIN . "'";
+                    $data['SCORE_MAX'] = "'" . $MAX . "'";
+                    self::dbAccess()->update("t_gradingsystem", $data, "ID='" . $value->ID . "'");
                 }
             }
         }
