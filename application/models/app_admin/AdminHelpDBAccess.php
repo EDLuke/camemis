@@ -195,7 +195,7 @@ class AdminHelpDBAccess {
 
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
-                    $data[$i]['iconCls'] = "icon-cubes_green";
+                    $data[$i]['iconCls'] = "icon-book_add";
                     $data[$i]['cls'] = "nodeTextBold";
                     $data[$i]['leaf'] = false;
                 }
@@ -210,7 +210,7 @@ class AdminHelpDBAccess {
 
                 if ($parentId == 0)
                 {
-                    $data[$i]['iconCls'] = "icon-bricks";
+                    $data[$i]['iconCls'] = "icon-book_open";
                     $data[$i]['cls'] = "nodeTextBold";
                 }
 
