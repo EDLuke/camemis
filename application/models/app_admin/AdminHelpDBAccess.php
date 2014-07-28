@@ -190,12 +190,15 @@ class AdminHelpDBAccess {
         if ($result)
             foreach ($result as $value)
             {
-
+                if ($value->PARENT == 0)
+                {
+                    $data[$i]['iconCls'] = "icon-bricks";
+                }
                 if (self::checkChild($value->ID))
                 {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
-                    $data[$i]['iconCls'] = "icon-folder_magnify";
+                    $data[$i]['iconCls'] = "icon-brick_add";
                     $data[$i]['cls'] = "nodeTextBold";
                     $data[$i]['leaf'] = false;
                 }
@@ -203,6 +206,7 @@ class AdminHelpDBAccess {
                 {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
+                    $data[$i]['iconCls'] = "icon-brick_magnify";
                     $data[$i]['cls'] = "nodeTextBlue";
                     $data[$i]['leaf'] = true;
                 }

@@ -26,23 +26,23 @@ $CATEGORY_GROUP_ROW ="[";
     
     switch($TERM_NUMBER){
         case 1:
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_TERM."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_TERM."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".THIRD_TERM."</b>', colspan: 3, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_TERM."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_TERM."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".THIRD_TERM."</b>', colspan: 2, align: 'center'}";
             break;
         case 2:
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_QUARTER."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_QUARTER."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".THIRD_QUARTER."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".FOURTH_QUARTER."</b>', colspan: 3, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_QUARTER."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_QUARTER."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".THIRD_QUARTER."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".FOURTH_QUARTER."</b>', colspan: 2, align: 'center'}";
             break;
         default:
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_SEMESTER."</b>', colspan: 3, align: 'center'}";
-            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_SEMESTER."</b>', colspan: 3, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".FIRST_SEMESTER."</b>', colspan: 2, align: 'center'}";
+            $CATEGORY_GROUP_ROW .=",{header: '<b>".SECOND_SEMESTER."</b>', colspan: 2, align: 'center'}";
             break;
     }
     
-    $CATEGORY_GROUP_ROW .=",{header: '<b>".YEAR."</b>', colspan: 3, align: 'center'}";
+    $CATEGORY_GROUP_ROW .=",{header: '<b>".YEAR."</b>', colspan: 2, align: 'center'}";
     
 $CATEGORY_GROUP_ROW .="]";
 
@@ -52,57 +52,45 @@ $COLUMNS ="[";
     $COLUMNS .=",{dataIndex: 'STATUS_KEY', header: '<b>".STATUS."</b>', width:90, renderer:cssStatus, align:'center',sortable: true}";
     $COLUMNS .=",{dataIndex: 'STUDENT', header: '<b>".FULL_NAME."</b>', width:140}";
     $COLUMNS .=",{dataIndex: 'GENDER', header: '<b>".GENDER."</b>', width: 80 ,align: 'center'}";
-    $COLUMNS .=",{dataIndex: 'DATE_BIRTH', header: '<b>".DATE_BIRTH."', width: 110 ,align: 'center'}";
+    $COLUMNS .=",{dataIndex: 'NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
     
     switch($TERM_NUMBER){
         case 1:
-            $COLUMNS .=",{dataIndex: 'FIRST_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'THIRD_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'YEAR_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
         case 2:
-            $COLUMNS .=",{dataIndex: 'FIRST_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'THIRD_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'FOURTH_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FOURTH_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FOURTH_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'YEAR_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
         default:
-            $COLUMNS .=",{dataIndex: 'FIRST_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'YEAR_NUMBER_CREDIT', header: '<b>".NUMBER_CREDIT."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
@@ -118,47 +106,35 @@ $FIELDS ="[";
     $FIELDS .= ",{name: 'STATUS_KEY'}";
     $FIELDS .=",{name: 'STUDENT'}";
     $FIELDS .=",{name: 'GENDER'}";
-    $FIELDS .=",{name: 'DATE_BIRTH'}";
+    $FIELDS .=",{name: 'NUMBER_CREDIT'}";
     switch($TERM_NUMBER){
         case 1:
-            $FIELDS .=",{name: 'FIRST_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'THIRD_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'THIRD_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'THIRD_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
         case 2:
-            $FIELDS .=",{name: 'FIRST_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'THIRD_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'THIRD_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'THIRD_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'FOURTH_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'FOURTH_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'FOURTH_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
         default:
-            $FIELDS .=",{name: 'FIRST_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_NUMBER_CREDIT'}";
             $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
@@ -166,8 +142,8 @@ $FIELDS ="[";
 $FIELDS .="]";
 
 $setParams = "";
-$setParams .="&subjectId=".$this->subjectId."";
-$setParams .="&academicId=".$this->academicId."";
+$setParams .="&subjectId=".$academicObject->SUBJECT_ID."";
+$setParams .="&academicId=".$academicObject->ID."";
 
 ?>
 <style>
@@ -262,7 +238,7 @@ Ext.onReady(function() {
             $html .= ",pageSize:100";
         $html .= "})";
     $html .= "});";
-    
+    $html .= "grid.store.reload();";
     $html .= "viewport = new Ext.Viewport({";
         $html .= "layout: 'fit'";
         $html .= ",border: false";
