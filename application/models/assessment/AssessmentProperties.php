@@ -473,16 +473,20 @@ abstract class AssessmentProperties {
             {
                 if (strpos(trim($value->MARK), "<") !== false)
                 {
-                    $UPDATE = "UPDATE t_gradingsystem SET SCORE_MIN=0, SCORE_MAX='" . substr(trim($value->MARK), 1) . "' WHERE ID='" . $value->ID . "'";
-                    self::dbAccess()->query($UPDATE);
+                    $data = array();
+                    $data['SCORE_MIN'] = 0, 
+                    $data['SCORE_MAX'] = "'". substr(trim($value->MARK), 1) ."'";
+                    self::dbAccess()->update("t_gradingsystem", $data, "ID='". $value->ID ."'");
                 }
                 else
                 {
                     $explode = explode("-", trim($value->MARK));
                     $MIN = isset($explode[0]) ? $explode[0] : 0;
                     $MAX = isset($explode[1]) ? $explode[1] : 0;
-                    $UPDATE = "UPDATE t_gradingsystem SET SCORE_MIN='" . $MIN . "', SCORE_MAX='" . $MAX . "' WHERE ID='" . $value->ID . "'";
-                    self::dbAccess()->query($UPDATE);
+                    $data = array();
+                    $data['SCORE_MIN'] = "'". $MIN ."'";
+                    $data['SCORE_MAX'] = "'". $MAX ."'";
+                    self::dbAccess()->update("t_gradingsystem", $data, "ID='". $value->ID ."'");
                 }
             }
         }

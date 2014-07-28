@@ -430,29 +430,28 @@ class SQLEvaluationStudentAssignment {
         if (!$CHECK_ERROR && $olddate) {
             $ACTION_ERROR = false;
             $date = new DateTime($stdClass->modify_date);
-            $FIRST = "UPDATE t_student_assignment";
-            $FIRST .= " SET";
-            $FIRST .= " TERM='" . $TERM_NAME . "'";
-            $FIRST .= " ,SCORE_DATE='" . setDate2DB($stdClass->modify_date) . "'";
-            $FIRST .= " ,MONTH='" . $date->format('m') . "'";
-            $FIRST .= " ,YEAR='" . $date->format('Y') . "'";
-            $FIRST .= " WHERE";
-            $FIRST .= " ASSIGNMENT_ID = '" . $assignmentId . "'";
-            $FIRST .= " AND SUBJECT_ID = '" . $stdClass->subjectId . "'";
-            $FIRST .= " AND CLASS_ID = '" . $stdClass->academicId . "'";
-            $FIRST .= " AND SCORE_DATE = '" . $olddate . "'";
-            self::dbAccess()->query($FIRST);
+            $data  = array();
+            $where = array();
+            $data['TERM']      = "'". $TERM_NAME ."'";
+            $data['SCORE_DATE']= "'". setDate2DB($stdClass->modify_date) ."'";
+            $data['MONTH']     = "'". $date->format('m') ."'";
+            $data['YEAR']      = "'". $date->format('Y') ."'";
+            
+            $where[] = "ASSIGNMENT_ID = '". $assignmentId ."'";
+            $where[] = "SUBJECT_ID = '". $stdClass->subjectId ."'";
+            $where[] = "CLASS_ID = '". $stdClass->academicId ."'";
+            $where[] = "SCORE_DATE = '". $olddate ."'";
+            self::dbAccess()->update("t_student_assignment", $data, $where);
 
-            $SECOND = "UPDATE t_student_score_date";
-            $SECOND .= " SET";
-            $SECOND .= " TERM='" . $TERM_NAME . "'";
-            $SECOND .= " ,SCORE_INPUT_DATE='" . setDate2DB($stdClass->modify_date) . "'";
-            $SECOND .= " WHERE";
-            $SECOND .= " ASSIGNMENT_ID = '" . $assignmentId . "'";
-            $SECOND .= " AND SUBJECT_ID = '" . $stdClass->subjectId . "'";
-            $SECOND .= " AND CLASS_ID = '" . $stdClass->academicId . "'";
-            $SECOND .= " AND SCORE_INPUT_DATE = '" . $olddate . "'";
-            self::dbAccess()->query($SECOND);
+            $data  = array();
+            $where = array();
+            $data['TERM']            = "'". $TERM_NAME ."'";
+            $data['SCORE_INPUT_DATE']= "'". setDate2DB($stdClass->modify_date) ."'";
+            $where[] = "ASSIGNMENT_ID = '". $assignmentId ."'";
+            $where[] = "SUBJECT_ID = '". $stdClass->subjectId ."'";
+            $where[] = "CLASS_ID = '". $stdClass->academicId ."'";
+            $where[] = "SCORE_INPUT_DATE = '". $olddate ."'";
+            self::dbAccess()->update("t_student_score_date", $data, $where);
         }
     }
 

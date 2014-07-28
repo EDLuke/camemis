@@ -191,30 +191,27 @@ class DisciplineDBAccess extends StudentDBAccess {
 
         if ($objectId != "new") {
 
-            $SQL = "UPDATE t_discipline SET";
-
+            $data = array();
             if ($studentId)
-                $SQL .= " {$chooseId} = '" . addText($studentId) . "',";
+                $data["'". $chooseId ."'"] = "'". addText($studentId) ."'";
 
             if ($comment)
-                $SQL .= " COMMENT = '" . addText($comment) . "',";
+                $data['COMMENT']           = "'". addText($comment) ."'";
 
             if ($disciplineType)
-                $SQL .= " DISCIPLINE_TYPE = '" . addText($disciplineType) . "',";
+                $data['DISCIPLINE_TYPE']   = "'". addText($disciplineType) ."'";
 
             if ($punishmentType)
-                $SQL .= " PUNISHMENT_TYPE = '" . addText($punishmentType) . "',";
+                $data['PUNISHMENT_TYPE']   = "'". addText($punishmentType) ."'";
 
             if ($infractionDate)
-                $SQL .= " INFRACTION_DATE = '" . $infractionDate . "',";
+                $data['INFRACTION_DATE']   = "'". $infractionDate ."'";
 
-            $SQL .= " MODIFY_DATE = '" . getCurrentDBDateTime() . "',";
-            $SQL .= " MODIFY_BY = '" . Zend_Registry::get('USER')->CODE . "'";
-            $SQL .= " WHERE";
-            $SQL .= " ID = '" . $objectId . "'";
+            $data['MODIFY_DATE'] = "'". getCurrentDBDateTime() ."'";
+            $data['MODIFY_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
 
             if (!$CHECK_FUTUR_DATE)
-                self::dbAccess()->query($SQL);
+                self::dbAccess()->update("t_discipline", $data, "ID='". $objectId ."'");
         } else {
             $SAVEDATA[$chooseId] = addText($studentId);
 
@@ -500,29 +497,22 @@ class DisciplineDBAccess extends StudentDBAccess {
 
         $status = $facette->STATUS;
 
-        $SQL = "";
-        $SQL .= "UPDATE ";
-        $SQL .= " t_discipline";
-        $SQL .= " SET";
-
+        $data = array();
         switch ($status) {
             case 0:
                 $newStatus = 1;
-                $SQL .= " STATUS=1";
-                $SQL .= " ,ENABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,ENABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $data['STATUS']      = 1;
+                $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
             case 1:
                 $newStatus = 0;
-                $SQL .= " STATUS=0";
-                $SQL .= " ,DISABLED_DATE='" . getCurrentDBDateTime() . "'";
-                $SQL .= " ,DISABLED_BY='" . Zend_Registry::get('USER')->CODE . "'";
+                $data['STATUS']       = 0;
+                $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
-
-        $SQL .= " WHERE";
-        $SQL .= " ID='" . $Id . "'";
-        self::dbAccess()->query($SQL);
+        self::dbAccess()->update("t_discipline", $data, "ID='". $Id ."'");
 
         return array("success" => true, "status" => $newStatus);
     }

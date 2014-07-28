@@ -636,11 +636,7 @@ class TrainingDBAccess {
     {
 
         $facette = self::findTrainingFromId($Id);
-
-        $UPDATE_PARENT = "UPDATE t_training SET";
-        $UPDATE_PARENT .= " LEVEL='" . $facette->PARENT . "'";
-        $UPDATE_PARENT .= " WHERE ID ='" . $facette->ID . "'";
-        self::dbAccess()->query($UPDATE_PARENT);
+        self::dbAccess()->update("t_training", array('LEVEL' => "'". $facette->PARENT ."'"), "ID ='". $facette->ID ."'");
 
         $facette = self::findTrainingFromId($Id);
 
@@ -725,22 +721,20 @@ class TrainingDBAccess {
             switch ($facette->OBJECT_TYPE)
             {
                 case "TERM":
-                    $SQL = "UPDATE t_training_subject SET";
-                    $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
-                    $SQL .= " ,TERM='" . $facette->ID . "'";
-                    $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
-                    $SQL .= " ,EVALUATION_TYPE='" . $facette->EVALUATION_TYPE . "'";
-                    $SQL .= " WHERE TERM ='" . $facette->ID . "'";
-                    self::dbAccess()->query($SQL);
+                    $data = array();
+                    $data['PROGRAM']        = "'". $facette->PROGRAM ."'";
+                    $data['TERM']           = "'". $facette->ID ."'";
+                    $data['LEVEL']          = "'". $facette->LEVEL ."'";
+                    $data['EVALUATION_TYPE']= "'". $facette->EVALUATION_TYPE ."'";
+                    self::dbAccess()->update("t_training_subject", $data, "TERM ='". $facette->ID ."'");
                     break;
                 case "CLASS":
-                    $SQL = "UPDATE t_training_subject SET";
-                    $SQL .= " PROGRAM='" . $facette->PROGRAM . "'";
-                    $SQL .= " ,TERM='" . $facette->TERM . "'";
-                    $SQL .= " ,LEVEL='" . $facette->LEVEL . "'";
-                    $SQL .= " ,EVALUATION_TYPE='" . $parentObject->EVALUATION_TYPE . "'";
-                    $SQL .= " WHERE TRAINING ='" . $facette->ID . "'";
-                    self::dbAccess()->query($SQL);
+                    $data = array();
+                    $data['PROGRAM']        = "'". $facette->PROGRAM ."'";
+                    $data['TERM']           = "'". $facette->TERM ."'";
+                    $data['LEVEL']          = "'". $facette->LEVEL ."'";
+                    $data['EVALUATION_TYPE']= "'". $parentObject->EVALUATION_TYPE ."'";
+                    self::dbAccess()->update("t_training_subject", $data, "TRAINING ='". $facette->ID ."'");
                     break;
             }
         }
