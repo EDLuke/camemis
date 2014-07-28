@@ -38,7 +38,15 @@ class FilterDataSet extends FilterData{
                 $DATASET .= "'label':'" . $value->NAME . "'";
                 switch(strtoupper($this->personType)){
                     case 'STUDENT':
-                        $DATASET .= ",'value':'" . $this->getCountStudentAbsence() . "'";
+                        switch(strtoupper($this->type)){
+                            case 'DAILY':
+                                 $DATASET .= ",'value':'" . $this->getCountDailyStudentAbsence() . "'";
+                                break;
+                            case 'BLOCK':
+                                $DATASET .= ",'value':'" . $this->getCountBlockStudentAbsence() . "'";
+                                break;       
+                        }
+                       
                         break;
                     case 'STAFF':
                         $DATASET .= ",'value':''";

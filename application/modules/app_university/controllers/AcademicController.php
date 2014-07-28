@@ -607,8 +607,8 @@ class AcademicController extends Zend_Controller_Action {
     }
 
     public function studentattendancefilterAction() {
-        $this->_helper->viewRenderer("filter/studentfilterviewport");
-        $this->view->gridType = "STUDENT_ATTENDANCE_FILTER";
+        $this->_helper->viewRenderer("filter/absencestatistic");
+        $this->view->personType = "STUDENT";
     }
 
     public function studentdisciplinefilterAction() {
