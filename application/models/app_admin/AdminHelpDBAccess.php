@@ -190,10 +190,6 @@ class AdminHelpDBAccess {
         if ($result)
             foreach ($result as $value)
             {
-                if ($value->PARENT == 0)
-                {
-                    $data[$i]['iconCls'] = "icon-bricks";
-                }
                 if (self::checkChild($value->ID))
                 {
                     $data[$i]['id'] = "" . $value->ID . "";
@@ -204,10 +200,18 @@ class AdminHelpDBAccess {
                 }
                 else
                 {
+                    if ($value->PARENT == 0)
+                    {
+                        $data[$i]['iconCls'] = "icon-bricks";
+                        $data[$i]['cls'] = "nodeTextBold";
+                    }
+                    else
+                    {
+                        $data[$i]['iconCls'] = "icon-brick_magnify";
+                        $data[$i]['cls'] = "nodeTextBlue";
+                    }
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
-                    $data[$i]['iconCls'] = "icon-brick_magnify";
-                    $data[$i]['cls'] = "nodeTextBlue";
                     $data[$i]['leaf'] = true;
                 }
                 $i++;
