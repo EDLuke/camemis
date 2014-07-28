@@ -9,7 +9,7 @@ class AdminForm {
 
     public $objectTitle = "";
     //public $tbarAlign = "'->',";
-    protected $baseURL =  "/";
+    protected $baseURL = "/";
     public $tbarAlign = "";
     public $objectBoder = 'false';
     public $objectFrame = 'false';
@@ -45,119 +45,153 @@ class AdminForm {
     public $isEmbeddedGrid = false;
     protected $embeddedGridId = null;
 
-    public function __construct($modul, $submodul = false) {
+    public function __construct($modul, $submodul = false)
+    {
         $this->modul = $modul;
         $this->submodul = $submodul;
     }
 
-    public function getObjectName() {
-        if ($this->submodul) {
+    public function getObjectName()
+    {
+        if ($this->submodul)
+        {
             return strtoupper("FORM." . strtoupper($this->modul) . "_" . $this->submodul);
-        } else {
+        }
+        else
+        {
             return strtoupper("FORM." . strtoupper($this->modul));
         }
     }
 
-    public function getObjectId() {
-        if ($this->submodul) {
+    public function getObjectId()
+    {
+        if ($this->submodul)
+        {
             return strtoupper($this->modul . "_ID" . "_" . $this->submodul);
-        } else {
+        }
+        else
+        {
             return strtoupper($this->modul . "_ID");
         }
     }
 
-    public function getObjectXType() {
-        if ($this->submodul) {
+    public function getObjectXType()
+    {
+        if ($this->submodul)
+        {
             return strtoupper($this->modul . "_XTYPE" . "_" . $this->submodul);
-        } else {
+        }
+        else
+        {
             return strtoupper($this->modul . "_XTYPE");
         }
     }
 
-    public function addObjectItems($value) {
+    public function addObjectItems($value)
+    {
         $this->items[] = "{" . $value . "}";
         return $this->items;
     }
 
-    public function addTbarItems($value) {
-        $this->tbaritems[] = "{" . $value . "}";
+    public function addTbarItems($value)
+    {
+        $this->tbaritems[] = "'-',{" . $value . "}";
         return $this->tbaritems;
     }
 
-    protected function setObjectItems() {
+    protected function setObjectItems()
+    {
         return implode(",", $this->items);
     }
 
-    protected function setTBarItems() {
+    protected function setTBarItems()
+    {
         return implode(",", $this->tbaritems);
     }
 
-    public function setSaveParams($value) {
+    public function setSaveParams($value)
+    {
         return $this->saveparams = $value;
     }
 
-    public function setCallback($value) {
+    public function setCallback($value)
+    {
         return $this->callback = $value;
     }
 
-    public function setLoadParams($value) {
+    public function setLoadParams($value)
+    {
         return $this->loadparams = $value;
     }
 
-    public function setReleaseParams($value) {
+    public function setReleaseParams($value)
+    {
         return $this->releaseparams = $value;
     }
 
-    public function setSendParams($value) {
+    public function setSendParams($value)
+    {
         return $this->sendparams = $value;
     }
 
-    public function setReplyParams($value) {
+    public function setReplyParams($value)
+    {
         return $this->Replyparams = $value;
     }
 
-    public function setRemoveParams($value) {
+    public function setRemoveParams($value)
+    {
         return $this->removeparams = $value;
     }
 
-    public function setOnEmbeddedEvents($value) {
+    public function setOnEmbeddedEvents($value)
+    {
         return $this->onEmbeddedEvents = $value;
     }
 
-    public function setOnEmbeddedReleaseEvents($value) {
+    public function setOnEmbeddedReleaseEvents($value)
+    {
         return $this->onEmbeddedReleaseEvents = $value;
     }
 
-    public function setOnEmbeddedSendEvents($value) {
+    public function setOnEmbeddedSendEvents($value)
+    {
         return $this->onEmbeddedSendEvents = $value;
     }
 
-    public function setOnEmbeddedReplyEvents($value) {
+    public function setOnEmbeddedReplyEvents($value)
+    {
         return $this->onEmbeddedReplyEvents = $value;
     }
 
-    public function setOnEmbeddedRemoveEvents($value) {
+    public function setOnEmbeddedRemoveEvents($value)
+    {
         return $this->onEmbeddedRemoveEvents = $value;
     }
 
-    public function setBodyStyle($value) {
+    public function setBodyStyle($value)
+    {
         return $this->bodyStyle = $value;
     }
 
-    public function setSearchGridParams($value) {
+    public function setSearchGridParams($value)
+    {
         return $this->searchGridParams = $value;
     }
 
-    public function setEmbeddedGridId($value) {
+    public function setEmbeddedGridId($value)
+    {
         return $this->embeddedGridId = $value;
     }
 
-    public function setURL($value) {
+    public function setURL($value)
+    {
 
         return $this->baseURL = $value;
     }
-    
-    public function renderJS() {
+
+    public function renderJS()
+    {
         $js = "";
         $js .= "Ext.namespace('FORM');";
         $js .= "" . $this->getObjectName() . " = Ext.extend(Ext.form.FormPanel, {";
@@ -178,13 +212,18 @@ class AdminForm {
         $js .= "," . $this->showError() . "";
         $js .= "," . $this->onEmbeddedEvents() . "";
 
-        if ($this->isObjectSend) {
+        if ($this->isObjectSend)
+        {
             $js .= "," . $this->onSetObjectSend() . "";
             $js .= "," . $this->onActionSetSend() . "";
-        } elseif ($this->isObjectReply) {
+        }
+        elseif ($this->isObjectReply)
+        {
             $js .= "," . $this->onSetObjectReply() . "";
             $js .= "," . $this->onActionSetReply() . "";
-        } else {
+        }
+        else
+        {
             $js .= "," . $this->onSetObjectReleaseOn() . "";
             $js .= "," . $this->onSetObjectReleaseOff() . "";
             $js .= "," . $this->onActionSetRelease() . "";
@@ -200,7 +239,8 @@ class AdminForm {
         return print$js;
     }
 
-    protected function initComponent() {
+    protected function initComponent()
+    {
         $js = "";
         $js .= "initComponent: function(){";
         $js .= "Ext.apply(this, {";
@@ -214,7 +254,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onRender() {
+    protected function onRender()
+    {
         $js = "";
         $js .= "onRender:function() {";
         $js .= "" . $this->getObjectName() . ".superclass.onRender.apply(this, arguments);";
@@ -225,11 +266,12 @@ class AdminForm {
         return $js;
     }
 
-    protected function onLoad() {
+    protected function onLoad()
+    {
         $js = "";
         $js .= "onLoad:function(){";
         $js .= "this.load({";
-        $js .= "url: '".$this->baseURL."jsonload/'";
+        $js .= "url: '" . $this->baseURL . "jsonload/'";
         $js .= ",waitMsg:'Loading...'";
         $js .= ",params:{" . $this->loadparams . "}";
         $js .= ",success: function(form, action) {";
@@ -243,7 +285,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onReset() {
+    protected function onReset()
+    {
         $js = "";
         $js .= "onReset:function(){";
         $js .= "this.getForm().reset();";
@@ -251,14 +294,16 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSubmit() {
+    protected function onSubmit()
+    {
         $js = "";
         $js .= "onSubmit:function(){";
 
         $js .="var selids = '';";
         $js .= "var isValid = this.getForm().isValid();";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
                 var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
                 for( var i = 0; i < sels.length; i++ ) {
@@ -273,7 +318,9 @@ class AdminForm {
                     " . $this->getFormSubmit() . "
                 }
                 ";
-        } else {
+        }
+        else
+        {
             $js .="
                 if (isValid == false){
                     " . $this->msgSubmitError() . "
@@ -287,17 +334,22 @@ class AdminForm {
         return $js;
     }
 
-    protected function setKeys() {
+    protected function setKeys()
+    {
         $js = "";
-        if ($this->onEmbeddedEvents != "") {
+        if ($this->onEmbeddedEvents != "")
+        {
             $js .= "this.onEmbeddedEvents";
-        } else {
+        }
+        else
+        {
             $js .= "this.onSubmit";
         }
         return $js;
     }
 
-    protected function onSuccess() {
+    protected function onSuccess()
+    {
         $js = "";
         $js .= "onSuccess:function(form, action) {";
         $js .= "" . $this->onEmbeddedEvents . "";
@@ -306,7 +358,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onFailure() {
+    protected function onFailure()
+    {
         $js = "";
         $js .= "onFailure:function(form, action) {";
         //$js .= "this.showError(action.result.error || action.response.responseText);";
@@ -314,7 +367,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function showError() {
+    protected function showError()
+    {
         $js = "";
         $js .= "showError:function(msg, title) {";
         $js .= "title = title || 'Error';";
@@ -330,7 +384,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onEmbeddedEvents() {
+    protected function onEmbeddedEvents()
+    {
         $js = "";
         $js .= "onEmbeddedEvents: function() {";
         $js .= "" . $this->onEmbeddedEvents . "";
@@ -338,7 +393,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSetObjectReleaseOn() {
+    protected function onSetObjectReleaseOn()
+    {
         $js = "";
         $js .= "onSetObjectReleaseOn: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -358,7 +414,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSetObjectReleaseOff() {
+    protected function onSetObjectReleaseOff()
+    {
         $js = "";
         $js .= "onSetObjectReleaseOff: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -378,13 +435,15 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSetObjectSend() {
+    protected function onSetObjectSend()
+    {
         $js = "";
         $js .= "onSetObjectSend: function () {";
         $js .="var selids = '';";
         $js .= "var isValid = this.getForm().isValid();";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
                 var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
                 for( var i = 0; i < sels.length; i++ ) {
@@ -399,7 +458,9 @@ class AdminForm {
                     Ext.MessageBox.confirm('<b>Confirmation!</b>', 'Do you really want to send this message ?', this.onActionSetSend);
                 }
                 ";
-        } else {
+        }
+        else
+        {
             $js .="
                 if (isValid == false){
                     " . $this->msgSubmitError() . "
@@ -413,7 +474,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSetObjectReply() {
+    protected function onSetObjectReply()
+    {
         $js = "";
         $js .= "onSetObjectReply: function () {";
         $js .= "var isValid = this.getForm().isValid();";
@@ -433,7 +495,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function onSetObjectRemove() {
+    protected function onSetObjectRemove()
+    {
         $js = "";
         $js .= "onSetObjectRemove: function () {";
         $js .= "Ext.MessageBox.confirm('<b>Confirmation!</b>', 'Do you really want to delete this item ?', this.onActionSetRemove);";
@@ -442,31 +505,35 @@ class AdminForm {
         return $js;
     }
 
-    protected function onActionSetRelease() {
+    protected function onActionSetRelease()
+    {
         $js = "";
         $js .= "onActionSetRelease: function (btn) {";
         $js .= "if (btn == 'yes'){";
         $js .= "Ext.getCmp('" . $this->getObjectId() . "').getForm().submit({";
-        $js .= "url: '".$this->baseURL."jsonsave/'";
+        $js .= "url: '" . $this->baseURL . "jsonsave/'";
         $js .= ",scope:this";
         $js .= ",params:{" . $this->saveparams . "}";
         $js .= "});";
         $js .= "var connection = new Ext.data.Connection();";
         $js .= "connection.request({";
-        $js .= "url: '".$this->baseURL."jsonsave/'";
+        $js .= "url: '" . $this->baseURL . "jsonsave/'";
         $js .= ",scope:this";
         $js .= ",params:{" . $this->releaseparams . "}";
         $js .= ",method: 'POST'";
         $js .= ",success: function (result) {";
         $js .= "jsonData = Ext.util.JSON.decode(result.responseText);";
         $js .= "if (jsonData) {";
-        if ($this->releaseError) {
+        if ($this->releaseError)
+        {
             $js .= "if (jsonData.error == true){";
             $js .= "" . $this->msgShowError() . "";
             $js .= "}else{";
             $js .= "" . $this->onEmbeddedReleaseEvents . "";
             $js .= "}";
-        } else {
+        }
+        else
+        {
             $js .= "" . $this->onEmbeddedReleaseEvents . "";
         }
         $js .= "}";
@@ -478,12 +545,14 @@ class AdminForm {
         return $js;
     }
 
-    protected function onActionSetSend() {
+    protected function onActionSetSend()
+    {
         $js = "";
         $js .= "onActionSetSend: function (btn) {";
         $js .= "if (btn == 'yes'){";
         $js .="var selids = '';";
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .="
                 var sels = Ext.getCmp('" . $this->embeddedGridId . "').getSelectionModel().getSelections();
 
@@ -495,12 +564,15 @@ class AdminForm {
         }
 
         $js .= "Ext.getCmp('" . $this->getObjectId() . "').getForm().submit({";
-        $js .= "url: '".$this->baseURL."'jsonsave/";
+        $js .= "url: '" . $this->baseURL . "'jsonsave/";
         $js .= ",scope:this";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .= ",params:{" . $this->sendparams . ", selids: selids}";
-        } else {
+        }
+        else
+        {
             $js .= ",params:{" . $this->sendparams . "}";
         }
 
@@ -512,12 +584,13 @@ class AdminForm {
         return $js;
     }
 
-    protected function onActionSetReply() {
+    protected function onActionSetReply()
+    {
         $js = "";
         $js .= "onActionSetReply: function (btn) {";
         $js .= "if (btn == 'yes'){";
         $js .= "Ext.getCmp('" . $this->getObjectId() . "').getForm().submit({";
-        $js .= "url: '".$this->baseURL."jsonsave/'";
+        $js .= "url: '" . $this->baseURL . "jsonsave/'";
         $js .= ",scope:this";
         $js .= ",params:{" . $this->Replyparams . "}";
         $js .= "});";
@@ -528,13 +601,14 @@ class AdminForm {
         return $js;
     }
 
-    protected function onActionSetRemove() {
+    protected function onActionSetRemove()
+    {
         $js = "";
         $js .= "onActionSetRemove: function (btn) {";
         $js .= "if (btn == 'yes'){";
         $js .= "var connection = new Ext.data.Connection();";
         $js .= "connection.request({";
-        $js .= "url: '".$this->baseURL."jsonsave/'";
+        $js .= "url: '" . $this->baseURL . "jsonsave/'";
         $js .= ",scope:this";
         $js .= ",params:{" . $this->removeparams . "}";
         $js .= ",method: 'POST'";
@@ -551,11 +625,12 @@ class AdminForm {
         return $js;
     }
 
-    protected function setObjectDefaultOnLoad() {
+    protected function setObjectDefaultOnLoad()
+    {
 
         $js = "
         this.load({
-            url: '".$this->baseURL."jsonload/'
+            url: '" . $this->baseURL . "jsonload/'
             //,waitMsg:'Loading...'
             ,params:{" . $this->loadparams . "}
             ,success: function(form, action) {
@@ -567,7 +642,8 @@ class AdminForm {
         return $this->isObjectDefaultOnLoad ? $js : "";
     }
 
-    protected function onKeys() {
+    protected function onKeys()
+    {
         $js = "";
         $js .= "
         key: [13]
@@ -578,41 +654,49 @@ class AdminForm {
         return $this->isKeys ? $js : "";
     }
 
-    public function ExtgetCmp() {
+    public function ExtgetCmp()
+    {
         return "Ext.getCmp('" . $this->getObjectId() . "')";
     }
 
-    protected function releaseButtonHide() {
+    protected function releaseButtonHide()
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').hide():'';";
         return $js;
     }
 
-    protected function releaseButtonShow() {
+    protected function releaseButtonShow()
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').show():'';";
         return $js;
     }
 
-    protected function saveButtonHide() {
+    protected function saveButtonHide()
+    {
         $js = "Ext.getCmp('SAVE_ID')?Ext.getCmp('SAVE_ID').hide():'';";
         return $js;
     }
 
-    protected function saveButtonShow() {
+    protected function saveButtonShow()
+    {
         $js = "Ext.getCmp('SAVE_ID')?Ext.getCmp('SAVE_ID').show():'';";
         return $js;
     }
 
-    protected function releaseSetText($text) {
+    protected function releaseSetText($text)
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').setText('" . $text . "'):'';";
         return $js;
     }
 
-    protected function releaseSetIcon($icon) {
+    protected function releaseSetIcon($icon)
+    {
         $js = "Ext.getCmp('RELEASE_ID')?Ext.getCmp('RELEASE_ID').setIconClass('" . $icon . "'):'';";
         return $js;
     }
 
-    protected function buttonsReleaseStatus() {
+    protected function buttonsReleaseStatus()
+    {
         $js = "
         if (action.result.data.STATUS == 1){
             " . $this->saveButtonHide() . "
@@ -629,7 +713,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function msgShowError() {
+    protected function msgShowError()
+    {
         $js = "";
         $js .= "Ext.Msg.show({";
         $js .= "title:'Warning'";
@@ -642,7 +727,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function msgSubmitError() {
+    protected function msgSubmitError()
+    {
 
         $js = "Ext.Msg.show({";
         $js .= "title:'<b>The data cannot be saved!</b>'";
@@ -656,7 +742,8 @@ class AdminForm {
         return $js;
     }
 
-    protected function msgSubmitGridSeletionError() {
+    protected function msgSubmitGridSeletionError()
+    {
 
         $js = "Ext.Msg.show({";
         $js .= "title:'<b>The data cannot be saved!</b>'";
@@ -670,18 +757,22 @@ class AdminForm {
         return $js;
     }
 
-    protected function getFormSubmit() {
+    protected function getFormSubmit()
+    {
 
         $js = "this.getForm().submit({";
-        $js .= "url: '".$this->baseURL."jsonsave/'";
+        $js .= "url: '" . $this->baseURL . "jsonsave/'";
         $js .= ",scope:this";
         $js .= ",success:this.onSuccess";
         $js .= ",failure:this.onFailure";
         $js .= ",waitMsg:'Saving...'";
 
-        if ($this->isEmbeddedGrid) {
+        if ($this->isEmbeddedGrid)
+        {
             $js .= ",params:{" . $this->saveparams . ", selids: selids}";
-        } else {
+        }
+        else
+        {
             $js .= ",params:{" . $this->saveparams . "}";
         }
         $js .= "});";
