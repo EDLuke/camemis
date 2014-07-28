@@ -88,64 +88,57 @@ class SubjectHomeworkDBAccess {
     }
 
     public static function getAllSubjectHomeworks($subjectId, $globalSearch = false, $academicId, $teacherId) {
-
-        $SELECTION_A = array(   
-            "NAME AS SUBJECT_NAME"
+        $SELECTION_A = array(
+            "ID AS SUBJECT_ID"
+            , "NAME AS SUBJECT_NAME"
         );
 
         $SELECTION_B = array(
             "ID AS CONTENT_ID"
             , "SUBJECT AS SUBJECT"
             , "CLASS_ID AS CLASS_ID"
-            , "TEACHER AS TEACHER"
-            , "CONTENT AS CONTENT"
+            , "TEACHER AS TEACHER" 
+            , "CONTENT AS CONTENT" 
             , "START_DATE AS START_DATE"
             , "END_DATE AS END_DATE"
             , "NAME AS NAME"
             , "STATUS AS STATUS"
-            , "DISABLED_BY AS DISABLED_BY"
+            , "DISABLED_BY AS DISABLED_BY"  
         );
 
         $SELECTION_C = array(
             "FIRSTNAME AS FIRSTNAME"
-            , "LASTNAME AS LASTNAME"
+            , "LASTNAME AS LASTNAME"                       
         );
-
-        $SELECTION_D = array(
+                    
+        $SELECTION_D = array( 
             "STUDENT_ID AS STUDENT_ID"
             , "TITLE_NAME AS TITLE_NAME"
             , "CONTENT AS CONTENT_STUDENT"
             , "CREATED_DATE AS CREATED_DATE"
-            , "HOMEWORK_ID AS HOMEWORK_ID"
-        );
-        
-        $SELECTION_E = array(  
-            "GRADINGTERM AS TERM "
-            , "GRADE AS GRADE "
-            , "SCHOOLYEAR AS SCHOOLYEAR "
-        );
+            , "HOMEWORK_ID AS HOMEWORK_ID"                       
+        );         
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_subject'), $SELECTION_A);
         $SQL->joinLeft(array('B' => 't_subject_homework'), 'A.ID=B.SUBJECT', $SELECTION_B);
-        $SQL->joinLeft(array('C' => 't_staff'), 'C.ID = B.TEACHER', $SELECTION_C);  //@soda
-        $SQL->joinLeft(array('D' => 't_student_homework'), 'B.ID = D.HOMEWORK_ID', $SELECTION_D); 
-        
+        $SQL->joinLeft(array('C' => 't_staff'), 'C.ID = B.TEACHER', $SELECTION_C);
+        $SQL->joinLeft(array('D' => 't_student_homework'), 'B.ID = D.HOMEWORK_ID', $SELECTION_D);
         if($subjectId)
             $SQL->where('B.SUBJECT = ?', $subjectId);
-        if($academicId)
-            $SQL->where('B.CLASS_ID = ?', $academicId);
-            
+        if($classId)    
+            $SQL->where('B.CLASS_ID = ?', $classId); 
+        
         switch (UserAuth::getUserType()) {
-            case "INSTRUCTOR":
             case "TEACHER":
+            case "INSTRUCTOR":
                 $SQL->where('B.TEACHER = ?', $teacherId);
-                break;
+                break;   
             case "STUDENT":
                 $SQL->where('B.STATUS = ?', 1);
-                break;
+                break;  
         }
-                    
+        
         if ($globalSearch) {
             $SEARCH = " ((A.NAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (B.NAME LIKE '" . $globalSearch . "%')";
@@ -154,10 +147,10 @@ class SubjectHomeworkDBAccess {
             $SEARCH .= " ) ";
             $SQL->where($SEARCH);
         }
-
+        
         $SQL->order('B.START_DATE DESC');
-        //error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);
+        //error_log($SQL);  
+        return self::dbAccess()->fetchAll($SQL);    
     }
 
     public static function getClassStudentHomework($academicId){
@@ -249,7 +242,7 @@ class SubjectHomeworkDBAccess {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
-        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : ""; //@soda $classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
