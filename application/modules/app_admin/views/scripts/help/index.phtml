@@ -26,7 +26,11 @@ Ext.onReady(function() {
     <?
     
     $OBJECT_TREE->setURL('/help/jsontree/');
-    $OBJECT_TREE->addTBarItems(AdminBar::tbarTreeRefresh(false));
+    
+    $OBJECT_TREE->addTBarItems(AdminBar::tbarTreeRefresh());
+    $OBJECT_TREE->addTBarItems(AdminBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(AdminBar::tbarTreeCollapse());
+    
     $OBJECT_TREE->isAsyncTreeNode = false;
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->setBaseParams("

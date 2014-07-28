@@ -210,7 +210,7 @@ class AdminHelpDBAccess {
 
                 if ($parentId == 0)
                 {
-                    $data[$i]['iconCls'] = "icon-books";
+                    $data[$i]['iconCls'] = "icon-box";
                     $data[$i]['cls'] = "nodeTextBold";
                 }
 

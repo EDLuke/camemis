@@ -30,121 +30,154 @@ class AdminTree {
     protected $windowlocation = null;
     protected $onEmbeddedEvents = null;
 
-    public function __construct($object, $modul) {
+    public function __construct($object, $modul)
+    {
 
         $this->object = $object;
 
         $this->modul = $modul;
     }
-    
-    public function getObjectName() {
 
-        if ($this->modul) {
+    public function getObjectName()
+    {
+
+        if ($this->modul)
+        {
             return "TREE." . strtoupper($this->object) . "_" . strtoupper($this->modul);
-        } else {
+        }
+        else
+        {
             return "TREE." . strtoupper($this->object);
         }
     }
 
-    public function getObjectId() {
+    public function getObjectId()
+    {
 
         return strtoupper($this->getObjectName()) . "_ID";
     }
 
-    public function getObjectXType() {
+    public function getObjectXType()
+    {
         return "XTYPE_" . strtoupper($this->getObjectName()) . "_TREE";
     }
 
-    protected function setTreeNode() {
+    protected function setTreeNode()
+    {
         return $this->isAsyncTreeNode ? $this->getAsyncTreeNode() : $this->getTreeLoader();
     }
 
-    public function setAsyncTreeNode($value) {
+    public function setAsyncTreeNode($value)
+    {
         return $this->asyncTreeNodeData = $value;
     }
 
-    public function addMenuItems($value) {
+    public function addMenuItems($value)
+    {
         $this->items[] = "{" . $value . "}";
 
         return $this->items;
     }
 
-    public function addTBarItems($value) {
-        $this->tbarItems[] = "{" . $value . "}";
+    public function addTBarItems($value)
+    {
+
+        $this->tbarItems[] = "'-',{" . $value . "}";
         return $this->tbarItems;
     }
 
-    protected function setMenuItems() {
+    protected function setMenuItems()
+    {
         return implode(",", $this->items);
     }
 
-    protected function setTBarItems() {
+    protected function setTBarItems()
+    {
 
-        if ($this->tbarItems) {
+        if ($this->tbarItems)
+        {
             return implode(",", $this->tbarItems);
         }
     }
 
-    protected function setTreeExpand() {
+    protected function setTreeExpand()
+    {
 
-        if ($this->isAsyncTreeNode) {
+        if ($this->isAsyncTreeNode)
+        {
 
             $this->isTreeExpand = false;
             $this->isOnClickContextMenu = false;
         }
-        if ($this->isTreeExpand) {
+        if ($this->isTreeExpand)
+        {
             return $this->getTreeExpand();
         }
     }
 
-    public function setBaseParams($value) {
+    public function setBaseParams($value)
+    {
 
         if ($value != "")
             return $this->baseParams = $value;
     }
 
-    public function setSaveParams($value) {
+    public function setSaveParams($value)
+    {
 
         return $this->saveParams = "," . $value;
     }
 
-    public function setAyncTreeNodeData($value) {
+    public function setAyncTreeNodeData($value)
+    {
 
         return $this->asyncTreeNodeData = $value;
     }
 
-    public function setWindowLocation($value) {
+    public function setWindowLocation($value)
+    {
 
-        if ($value) {
+        if ($value)
+        {
             return $this->windowlocation = "window.location='" . $value . "'";
-        } else {
+        }
+        else
+        {
             return $this->windowlocation = "";
         }
     }
 
-    public function setURL($value) {
+    public function setURL($value)
+    {
 
         return $this->URL = $value;
     }
 
-    public function setSaveUrl($value) {
+    public function setSaveUrl($value)
+    {
         return $this->saveUrl = $value;
     }
 
-    protected function saveURL() {
+    protected function saveURL()
+    {
 
-        if ($this->saveUrl) {
+        if ($this->saveUrl)
+        {
             return "'" . $this->saveUrl . "'";
-        } else {
+        }
+        else
+        {
             return "URL_JSONSAVE_" . strtoupper($this->object);
         }
     }
 
-    public function setOnEmbeddedEvents($value) {
+    public function setOnEmbeddedEvents($value)
+    {
         return $this->onEmbeddedEvents = $value;
     }
 
-    public function renderJS() {
+    public function renderJS()
+    {
 
         $js = "";
         $js .= "Ext.namespace('TREE');";
@@ -185,7 +218,8 @@ class AdminTree {
         return print$js;
     }
 
-    protected function onRender() {
+    protected function onRender()
+    {
 
         $js = "";
         $js .= "onRender:function() {";
@@ -198,7 +232,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onTBarRefresh() {
+    protected function onTBarRefresh()
+    {
 
         $js = "";
         $js .= "onTBarRefresh: function(){";
@@ -208,7 +243,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onMenushow() {
+    protected function onMenushow()
+    {
 
         $js = "";
         $js .= "onMenushow: function(node,e){";
@@ -219,7 +255,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onAddFolder() {
+    protected function onAddFolder()
+    {
 
         $js = "";
         $js .= "onAddFolder: function(){";
@@ -255,7 +292,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function setOnTBarAddParentItem() {
+    protected function setOnTBarAddParentItem()
+    {
 
         $js = "";
         $js .= "onTBarAddParentItem: function(){";
@@ -289,7 +327,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getTreeLoader() {
+    protected function getTreeLoader()
+    {
 
         $js = "";
         $js .= "this.loader = new Ext.tree.TreeLoader({";
@@ -305,7 +344,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getAsyncTreeNode() {
+    protected function getAsyncTreeNode()
+    {
 
         $js = "";
         $js .= "this.root = new Ext.tree.AsyncTreeNode({";
@@ -315,9 +355,11 @@ class AdminTree {
         return $js;
     }
 
-    protected function onRightClickContextMenu() {
+    protected function onRightClickContextMenu()
+    {
 
-        if ($this->isAsyncTreeNode) {
+        if ($this->isAsyncTreeNode)
+        {
 
             $this->isOnClickContextMenu = false;
         }
@@ -325,7 +367,8 @@ class AdminTree {
         return $this->isOnClickContextMenu ? "this.on('contextmenu', this.onMenushow, this);" : "";
     }
 
-    protected function getExtMenu() {
+    protected function getExtMenu()
+    {
 
         if ($this->isMenuOnAddFolder)
             $this->addMenuItems($this->getMenuOnAddFolder());
@@ -356,7 +399,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getMenuOnAddFolder() {
+    protected function getMenuOnAddFolder()
+    {
 
         $js = "";
         $js .= "id:'ADDFOLDER'";
@@ -368,7 +412,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getMenuOnAddItem() {
+    protected function getMenuOnAddItem()
+    {
 
         $js = "";
         $js .= "id:'ADDITEM'";
@@ -380,7 +425,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getMenuOnExpand() {
+    protected function getMenuOnExpand()
+    {
 
         $js = "";
         $js .= "id:'EXPAND'";
@@ -392,7 +438,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getMenuOnCollapse() {
+    protected function getMenuOnCollapse()
+    {
 
         $js = "";
         $js .= "id:'COLLAPSE'";
@@ -404,7 +451,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function getMenuOnRemove() {
+    protected function getMenuOnRemove()
+    {
 
         $js = "";
         $js .= "id:'REMOVE'";
@@ -416,42 +464,48 @@ class AdminTree {
         return $js;
     }
 
-    protected function removeMenuItemsGet() {
+    protected function removeMenuItemsGet()
+    {
 
         $js = "this.menu.items.get('remove')[node.attributes.allowDelete ? 'enable' : 'disable']();";
 
         return $this->isMenuOnRemove ? $js : "";
     }
 
-    protected function addFolderMenuItemsGet() {
+    protected function addFolderMenuItemsGet()
+    {
 
         $js = "this.menu.items.get('addfolder')[(node.attributes.type == 0) ? 'enable' : 'disable']();";
 
         return $this->isMenuOnAddFolder ? $js : "";
     }
 
-    protected function addItemMenuItemsGet() {
+    protected function addItemMenuItemsGet()
+    {
 
         $js = "this.menu.items.get('additem')[(node.attributes.type == 0) ? 'enable' : 'disable']();";
 
         return $this->isMenuOnAddItem ? $js : "";
     }
 
-    protected function expandMenuItemsGet() {
+    protected function expandMenuItemsGet()
+    {
 
         $js = "this.menu.items.get('expand')[(node.attributes.type == 0) ? 'enable' : 'disable']();";
 
         return $this->isMenuOnExpand ? $js : "";
     }
 
-    protected function collapseMenuItemsGet() {
+    protected function collapseMenuItemsGet()
+    {
 
         $js = "this.menu.items.get('collapse')[(node.attributes.type == 0) ? 'enable' : 'disable']();";
 
         return $this->isMenuOnCollapse ? $js : "";
     }
 
-    protected function setListenersCheckchange() {
+    protected function setListenersCheckchange()
+    {
         $js = "";
         $js .= "listeners: {";
         $js .= "'checkchange': function(node, checked){";
@@ -466,16 +520,19 @@ class AdminTree {
         return $js;
     }
 
-    protected function getTreeExpand() {
+    protected function getTreeExpand()
+    {
 
         return "this.getRootNode().expand(true, false);";
     }
 
-    public function ExtgetCmp() {
+    public function ExtgetCmp()
+    {
         return "Ext.getCmp('" . $this->getObjectId() . "')";
     }
 
-    protected function onTBarAddParentItem() {
+    protected function onTBarAddParentItem()
+    {
         $js = "";
         $js .= "onTBarAddParentItem: function(){";
         $js .= "parent.Ext.MessageBox.prompt('Add a new Item', 'Please enter new Name:', showResultText);";
@@ -509,7 +566,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onExpand() {
+    protected function onExpand()
+    {
 
         $js = "";
         $js .= "onExpand: function(){";
@@ -519,7 +577,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onCollapse() {
+    protected function onCollapse()
+    {
 
         $js = "";
         $js .= "onCollapse: function(){";
@@ -529,7 +588,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onSaveCheckItems() {
+    protected function onSaveCheckItems()
+    {
 
         $js = "";
         $js .= "onSaveCheckItems: function(){";
@@ -578,7 +638,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onRemoveNode() {
+    protected function onRemoveNode()
+    {
 
         $js = "";
         $js .= "onRemoveNode: function(){";
@@ -609,7 +670,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function onAddItem() {
+    protected function onAddItem()
+    {
 
         $js = "";
         $js .= "onAddItem: function(){";
@@ -645,7 +707,8 @@ class AdminTree {
         return $js;
     }
 
-    protected function createOnlyItem() {
+    protected function createOnlyItem()
+    {
 
         $js = "";
         $js .= "createOnlyItem: function(){";
