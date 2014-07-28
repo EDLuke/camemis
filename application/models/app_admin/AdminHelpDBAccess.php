@@ -204,13 +204,13 @@ class AdminHelpDBAccess {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['leaf'] = true;
-                    $data[$i]['iconCls'] = "icon-brick_magnify";
+                    $data[$i]['iconCls'] = "icon-book_open";
                     $data[$i]['cls'] = "nodeTextBlue";
                 }
 
                 if ($parentId == 0)
                 {
-                    $data[$i]['iconCls'] = "icon-book_open";
+                    $data[$i]['iconCls'] = "icon-books";
                     $data[$i]['cls'] = "nodeTextBold";
                 }
 
