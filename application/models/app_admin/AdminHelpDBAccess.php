@@ -192,6 +192,7 @@ class AdminHelpDBAccess {
             {
                 if (self::checkChild($value->ID))
                 {
+
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['iconCls'] = "icon-brick_add";
@@ -200,20 +201,19 @@ class AdminHelpDBAccess {
                 }
                 else
                 {
-                    if ($value->PARENT == 0)
-                    {
-                        $data[$i]['iconCls'] = "icon-bricks";
-                        $data[$i]['cls'] = "nodeTextBold";
-                    }
-                    else
-                    {
-                        $data[$i]['iconCls'] = "icon-brick_magnify";
-                        $data[$i]['cls'] = "nodeTextBlue";
-                    }
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['leaf'] = true;
+                    $data[$i]['iconCls'] = "icon-brick_magnify";
+                    $data[$i]['cls'] = "nodeTextBlue";
                 }
+
+                if ($parentId == 0)
+                {
+                    $data[$i]['iconCls'] = "icon-bricks";
+                    $data[$i]['cls'] = "nodeTextBold";
+                }
+
                 $i++;
             }
 
