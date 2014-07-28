@@ -26,7 +26,7 @@ class SQLStudentFilterReport {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_attendance'), array("C" => "COUNT(*)"));
         $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS_ID=B.ID', array());
-
+        
         if (isset($stdClass->campusId)) {
             $SQL->where("B.CAMPUS_ID = '" . $stdClass->campusId . "'");
         }
@@ -111,11 +111,6 @@ class SQLStudentFilterReport {
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
-    }
-
-    public static function getAttendanceType($stdClass) {
-        $data = AbsentTypeDBAccess::getAllAbsentType(array('objectType' => $stdClass->personType, 'status' => $stdClass->status));
-        return $data;
     }
 
     public static function getCountStudent($stdClass){

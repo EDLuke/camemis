@@ -614,7 +614,7 @@ class AcademicController extends Zend_Controller_Action {
 
     public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/absencestatistic");
-        $this->view->persontype = "STUDENT";
+        $this->view->personType = "STUDENT";
     }
 
     public function studentdisciplinefilterAction() {

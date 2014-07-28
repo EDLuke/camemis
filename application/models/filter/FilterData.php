@@ -19,6 +19,12 @@ class FilterData extends FilterProperties {
             return setShowText($firstname) . " " . setShowText($lastname);
         }
     }
+    
+    public function getAttendanceType($personType,$type) {
+        $data = AbsentTypeDBAccess::getAllAbsentType(array('objectType' => $personType, 'status' => 1,'type' => $type));
+        return $data;
+    }
+    
     ///////////////////
     //Student Data
     ///////////////////
@@ -203,6 +209,17 @@ class FilterData extends FilterProperties {
         return count($result)?count($result):0;    
     }
     
+    public function getCountStudentAbsence(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "absentType"  => $this->absentType
+        );
+        $result = SQLStudentFilterReport::countStudentAttendanceType($stdClass);  
+    }
+    
     //////////////////////
     ///Staff Data
     /////////////////////
@@ -287,6 +304,17 @@ class FilterData extends FilterProperties {
         $stdClass = (object) $params;   
         $result = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
         return $result?count($result):0;    
+    }
+    
+    public function getCountStaffAbsence(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "absentType"  => $this->absentType
+        );
+        $result = SQLStudentFilterReport::countStudentAttendanceType($stdClass);  
     }
    
 }

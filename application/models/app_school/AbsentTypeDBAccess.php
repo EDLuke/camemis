@@ -173,6 +173,7 @@ class AbsentTypeDBAccess {
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
         $status = isset($params["status"]) ? addText($params["status"]) : "";
+        $type = isset($params["type"]) ? addText($params["type"]) : "";
 
         $SQL = "";
         $SQL .= " SELECT *";
@@ -186,6 +187,18 @@ class AbsentTypeDBAccess {
         if ($status) {
             $SQL .= " AND STATUS = '1'";
         }
+        
+        if($type){
+            switch(strtoupper($type)){
+                case 'DAILY':
+                    $SQL .= " AND TYPE = 1";
+                    break;
+                case 'BLOCK':
+                    $SQL .= " AND TYPE = 2";
+                    break;     
+            }
+        }
+            
         switch ($objectType) {
             case "STUDENT":
                 $SQL .= " AND OBJECT_TYPE = 'STUDENT'";

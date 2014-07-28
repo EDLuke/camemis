@@ -13,9 +13,51 @@ class FilterDataSet extends FilterData{
         parent::__construct();
     }
     
-    ////////////////////
+    public function getDataSetAbsenceType(){
+        
+        $entries = $this->getAttendanceType($this->personType,$this->type);
+        $DATASET = "[{";
+        switch(strtoupper($this->type)){
+            case 'DAILY':
+                $DATASET .= "key: 'daily',";
+                break;
+            case 'BLOCK':
+                $DATASET .= "key: 'block',";
+                break;       
+        }
+        
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->absentType=$value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                switch(strtoupper($this->personType)){
+                    case 'STUDENT':
+                        $DATASET .= ",'value':'" . $this->getCountStudentAbsence() . "'";
+                        break;
+                    case 'STAFF':
+                        $DATASET .= ",'value':''";
+                        break;       
+                }
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    /////////////////////////////
     //Student data set
-    ///////////////////
+    ////////////////////////////
     public function getDataSetStudentMaleFemale(){
         $entries = array('1' => MALE, '2' => FEMALE);
         $DATASET = "[";
@@ -328,9 +370,9 @@ class FilterDataSet extends FilterData{
         return $DATASET;      
     }
     
-    //////////////////
+    /////////////////////////////////
     ///Staff Data set
-    //////////////////
+    /////////////////////////////////
     
     //@Visal
     public function getDataSetStaffActiveAndDeactive(){
