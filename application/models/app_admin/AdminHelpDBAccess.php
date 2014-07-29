@@ -239,6 +239,7 @@ class AdminHelpDBAccess {
             'ID = ? ' => $Id
         );
         self::dbAccess()->delete('t_help', $condition);
+        AdminUploadDBAccess::deleteAllFiles($Id);
 
         return array(
             "success" => true

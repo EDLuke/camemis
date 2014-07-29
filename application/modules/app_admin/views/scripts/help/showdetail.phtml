@@ -317,8 +317,8 @@ switch($type){
             $OBJECT_FORM->setOnEmbeddedRemoveEvents("
                 myTree = window.parent.parent.Ext.getCmp('TREE.HELP_LIST_ID');
                 myTree.root.reload();
-                myNode.expand(true, false); 
-                ".$CAMEMIS_PAGE::setRequestURI()."
+                myTree.expand(true, false); 
+                window.parent.parent.Ext.getCmp('VIEWPORT_CENTER').getLayout().setActiveItem(0);
             ");
         }else{
             
