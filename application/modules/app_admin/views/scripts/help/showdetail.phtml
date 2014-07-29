@@ -178,18 +178,11 @@ switch($type){
         switch($type){
             case 1:
                 if($this->objectId !="new"){
-                    if (!AdminHelpDBAccess::checkChild($this->objectId)){
-                        $ITEMS = "[
-                            {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
-                            ,{".AdminField::Textfield("TEXT_KEY", "TEXT_KEY", 'Text Key', true, false)."}
-                            ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
-                        ]";
-                    }else{
-                        $ITEMS = "[
-                            {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
-                        ]";
-                    }
-                    
+                    $ITEMS = "[
+                        {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                        ,{".AdminField::Textfield("TEXT_KEY", "TEXT_KEY", 'Text Key', true, false)."}
+                        ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
+                    ]";
                 }else{
                     $ITEMS = "[
                         {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
@@ -206,67 +199,48 @@ switch($type){
         }
         
         if($HELP_OBJECT){
-            if (!AdminHelpDBAccess::checkChild($this->objectId)){
-                $FORM_ITEMS = "
-                {
-                    title: 'Detail'
+            $FORM_ITEMS = "
+            {
+                title: 'Detail'
+                ,autoHeight: true
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom:5px'
+                ,width: 650
+                ,tbar:['->',{
+                    text: 'Play Video'
+                    ,iconCls: 'icon-control_play'
+                    ,handler: function() {getWinVideo();}
+                }]
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
                     ,autoHeight: true
-                    ,collapsible: true
-                    ,collapsed: false
-                    ,style: 'padding-bottom:5px'
-                    ,width: 650
-                    ,tbar:['->',{
-                        text: 'Play Video'
-                        ,iconCls: 'icon-control_play'
-                        ,handler: function() {getWinVideo();}
-                    }]
-                    ,items:[{
-                        layout: 'form'
-                        ,border: false
-                        ,autoHeight: true
-                        ,collapsible: true
-                        ,collapsed: false
-                        ,style: 'padding-bottom: 5px'
-                        ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
-                        ,items:".$ITEMS."
-                    }]
-                },{
-                    title: ''
-                    ,width: 650
-                    ,height:percentHeight(70)
                     ,collapsible: true
                     ,collapsed: false
                     ,style: 'padding-bottom: 5px'
-                    ,layout:'fit'
-                    ,tbar:['->',{
-                        text:'Content'
-                        ,iconCls: 'icon-add'
-                        ,handler: function() {getWinContent();}
-                    },'-',{
-                        text:'Image'
-                        ,iconCls: 'icon-image_add'
-                        ,handler: function() {getWinImage();}
-                    }]
-                    ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
-                }";
-            }else{
-                $FORM_ITEMS = "
-                {
-                    title: 'Detail'
-                    ,autoHeight: true
-                    ,collapsible: true
-                    ,collapsed: false
-                    ,style: 'padding-bottom:5px'
-                    ,width: 650
-                    ,items:[{
-                        layout: 'form'
-                        ,border: false
-                        ,autoHeight:true
-                        ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
-                        ,items:".$ITEMS."
-                    }]
-                }";
-            }
+                    ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
+                    ,items:".$ITEMS."
+                }]
+            },{
+                title: ''
+                ,width: 650
+                ,height:percentHeight(70)
+                ,collapsible: true
+                ,collapsed: false
+                ,style: 'padding-bottom: 5px'
+                ,layout:'fit'
+                ,tbar:['->',{
+                    text:'Content'
+                    ,iconCls: 'icon-add'
+                    ,handler: function() {getWinContent();}
+                },'-',{
+                    text:'Image'
+                    ,iconCls: 'icon-image_add'
+                    ,handler: function() {getWinImage();}
+                }]
+                ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
+            }";
             
         }else{
             $FORM_ITEMS = "
