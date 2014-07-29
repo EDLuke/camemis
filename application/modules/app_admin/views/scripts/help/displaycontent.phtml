@@ -12,7 +12,7 @@ if(!$HELP_OBJECT) {header("Location: /main/permission/");exit;}
 
 switch($field){
     case "CONTENT_ENGLISH":
-        $content = $HELP_OBJECT->CONTENT_ENGLISH;
+        $content = setShowText($HELP_OBJECT->CONTENT_ENGLISH);
         break;
     case "CONTENT_KHMER":
         $content = $HELP_OBJECT->CONTENT_KHMER;
@@ -46,5 +46,15 @@ switch($field){
         }
     </script>
     <?=html_entity_decode($content);?>
+    <?
+    $entries = AdminUploadDBAccess::getFilesFromObjectId($this->objectId, false, $field);
+    if($entries){
+        foreach($entries as $value){
+            ?>
+            <div style="margin-bottom:10px;"><img src="/public/users/admin/images/<?=$value->FILE_SHOW;?>" width="600" alt="<?=$value->FILE_NAME;?>"></div>
+            <?
+        }
+    }
+?>
 </body>
 </html>

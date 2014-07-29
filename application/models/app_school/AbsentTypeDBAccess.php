@@ -16,33 +16,40 @@ class AbsentTypeDBAccess {
     public $data = array();
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         
     }
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public static function allAbsentType($objectType, $actionType = false) {
+    public static function allAbsentType($objectType, $actionType = false)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_absent_type", array("*"));
         $SQL->where("STATUS = 1");
         $SQL->where("OBJECT_TYPE = '" . $objectType . "'");
-        if ($actionType) {
+        if ($actionType)
+        {
             $SQL->where("TYPE IN (0,$actionType)");
         }
         $SQL->order("SORTKEY ASC");
@@ -50,12 +57,14 @@ class AbsentTypeDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getObjectDataFromId($Id) {
+    public static function getObjectDataFromId($Id)
+    {
 
         $result = self::findObjectFromId($Id);
 
         $data = array();
-        if ($result) {
+        if ($result)
+        {
 
             $data["ID"] = $result->ID;
             $data["CODE"] = setShowText($result->CODE);
@@ -66,9 +75,12 @@ class AbsentTypeDBAccess {
             $data["ABSENT_NAME"] = setShowText($result->NAME);
             $data["STATUS"] = setShowText($result->STATUS);
 
-            if ($result->DESCRIPTION) {
+            if ($result->DESCRIPTION)
+            {
                 $data["DESCRIPTION"] = setShowText($result->DESCRIPTION);
-            } else {
+            }
+            else
+            {
                 $data["DESCRIPTION"] = "---";
             }
         }
@@ -76,7 +88,8 @@ class AbsentTypeDBAccess {
         return $data;
     }
 
-    public static function findObjectFromId($Id) {
+    public static function findObjectFromId($Id)
+    {
 
         $SQL = "SELECT DISTINCT *";
         $SQL .= " FROM t_absent_type";
@@ -85,42 +98,48 @@ class AbsentTypeDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function jsonReleaseAbsentType($params) {
+    public static function jsonReleaseAbsentType($params)
+    {
 
         $objectId = $params["objectId"] ? addText($params["objectId"]) : "0";
         $facette = self::findObjectFromId($objectId);
         $status = $facette->STATUS;
 
         $data = array();
-        switch ($status) {
+        switch ($status)
+        {
             case 0:
                 $newStatus = 1;
-                $data["STATUS"]       = 1;
-                $data["ENABLED_DATE"] = "'". getCurrentDBDateTime() ."'";
-                $data["ENABLED_BY"]   = "'". Zend_Registry::get('USER')->CODE ."'";
+                $data["STATUS"] = 1;
+                $data["ENABLED_DATE"] = "'" . getCurrentDBDateTime() . "'";
+                $data["ENABLED_BY"] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
             case 1:
                 $newStatus = 0;
-                $data["STATUS"]       = 0;
-                $data["DISABLED_DATE"]= "'". getCurrentDBDateTime() . "'";
-                $data["DISABLED_BY"]  = "'". Zend_Registry::get('USER')->CODE ."'";
+                $data["STATUS"] = 0;
+                $data["DISABLED_DATE"] = "'" . getCurrentDBDateTime() . "'";
+                $data["DISABLED_BY"] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
         }
 
-        self::dbAccess()->update("t_absent_type", $data, "ID='". $objectId ."'");
+        self::dbAccess()->update("t_absent_type", $data, "ID='" . $objectId . "'");
         return array("success" => true, "status" => $newStatus);
     }
 
-    public static function loadObject($Id) {
+    public static function loadObject($Id)
+    {
 
         $result = self::findObjectFromId($Id);
 
-        if ($result) {
+        if ($result)
+        {
             $o = array(
                 "success" => true
                 , "data" => self::getObjectDataFromId($Id)
             );
-        } else {
+        }
+        else
+        {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -130,7 +149,8 @@ class AbsentTypeDBAccess {
         return $o;
     }
 
-    public static function createOnlyItem($params) {
+    public static function createOnlyItem($params)
+    {
 
         $name = isset($params["name"]) ? addText($params["name"]) : "";
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
@@ -147,14 +167,17 @@ class AbsentTypeDBAccess {
         return array("success" => true);
     }
 
-    public static function jsonTreeAllAbsentType($params) {
+    public static function jsonTreeAllAbsentType($params)
+    {
 
         $data = array();
         $result = self::getAllAbsentType($params);
 
         $i = 0;
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
 
                 $data[$i]['id'] = "" . $value->ID . "";
                 $data[$i]['text'] = "(" . setShowText($value->CODE) . ") " . setShowText($value->NAME);
@@ -168,7 +191,8 @@ class AbsentTypeDBAccess {
         return $data;
     }
 
-    public static function getAllAbsentType($params) {
+    public static function getAllAbsentType($params)
+    {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";
@@ -180,26 +204,31 @@ class AbsentTypeDBAccess {
         $SQL .= " FROM t_absent_type";
         $SQL .= " WHERE 1=1";
 
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SQL .= " AND ((NAME like '" . $globalSearch . "%') ";
             $SQL .= " ) ";
         }
-        if ($status) {
+        if ($status)
+        {
             $SQL .= " AND STATUS = '1'";
         }
-        
-        if($type){
-            switch(strtoupper($type)){
+
+        if ($type)
+        {
+            switch (strtoupper($type))
+            {
                 case 'DAILY':
                     $SQL .= " AND TYPE = 1";
                     break;
                 case 'BLOCK':
                     $SQL .= " AND TYPE = 2";
-                    break;     
+                    break;
             }
         }
-            
-        switch ($objectType) {
+
+        switch ($objectType)
+        {
             case "STUDENT":
                 $SQL .= " AND OBJECT_TYPE = 'STUDENT'";
                 break;
@@ -211,7 +240,8 @@ class AbsentTypeDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonSaveAbsentType($params) {
+    public static function jsonSaveAbsentType($params)
+    {
 
         $SAVEDATA = array();
         $WHERE = array();
@@ -220,7 +250,8 @@ class AbsentTypeDBAccess {
 
         $facette = self::findObjectFromId($objectId);
 
-        if (isset($params["ABSENT_NAME"])) {
+        if (isset($params["ABSENT_NAME"]))
+        {
             $SAVEDATA['NAME'] = addText($params["ABSENT_NAME"]);
         }
 
@@ -242,12 +273,15 @@ class AbsentTypeDBAccess {
         if (isset($params["CODE"]))
             $SAVEDATA['CODE'] = addText($params["CODE"]);
 
-        if ($facette) {
+        if ($facette)
+        {
             $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE[] = "ID = '" . $objectId . "'";
             self::dbAccess()->update('t_absent_type', $SAVEDATA, $WHERE);
-        } else {
+        }
+        else
+        {
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
 
@@ -257,7 +291,8 @@ class AbsentTypeDBAccess {
         return array("success" => true, "objectId" => $objectId);
     }
 
-    public static function jsonRemoveAbsentType($Id) {
+    public static function jsonRemoveAbsentType($Id)
+    {
         self::dbAccess()->delete('t_absent_type', array("ID='" . $Id . "'"));
         return array(
             "success" => true

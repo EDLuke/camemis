@@ -58,6 +58,74 @@ class AdminPage {
         return $js;
     }
 
+    public static function showBlob()
+    {
+        $js = "";
+        $js .= "function showBlob(showFile){";
+        $js .= "window.location='/help/showblob/?blobId=' + showFile;";
+        $js .= "}";
+
+        print $js;
+    }
+
+    public static function deleteBlob()
+    {
+        $js = "";
+        $js .= "function deleteBlob(blobId){";
+        $js .= "Ext.Ajax.request({";
+        $js .= "url: '/help/jsonsave/'";
+        $js .= ",method: 'POST'";
+        $js .= ",params:{";
+        $js .= "cmd: 'actionDeleteFile'";
+        $js .= ",blobId: blobId";
+        $js .= "}";
+        $js .= ",success: function(response, options) {";
+        $js .= "" . self::setRequestURI() . "";
+        $js .= "}";
+        $js .= "})";
+        $js .= "}";
+        print $js;
+    }
+
+    public static function uploadBlob()
+    {
+        $js = "";
+        $js .= "function uploadBlob(uploadform, showfilemessage, id, area, academic){";
+        $js .= "if(Ext.getCmp(uploadform).getForm().isValid()){ Ext.Msg.progress('Upload...', 'waiting...', 'progressing');";
+        $js .= "var count = 0;";
+        $js .= "var interval = window.setInterval(function() {";
+        $js .= "count = count + 0.04;";
+        $js .= "Ext.Msg.updateProgress(count);";
+        $js .= "if(count >= 1) {";
+        $js .= "window.clearInterval(interval);";
+        $js .= "Ext.Msg.hide();";
+        $js .= "}";
+        $js .= "}, 100);";
+        $js .= "}";
+
+        $js .= "if(Ext.getCmp(uploadform).getForm().isValid()){Ext.Ajax.request({";
+        $js .= "url: '/help/jsonsave/'";
+        $js .= ",isUpload: true";
+        $js .= ",headers: {'Content-type':'multipart/form-data'}";
+        $js .= ",method: 'POST'";
+        $js .= ",params:{";
+        $js .= "cmd: 'jsonUploadFile'";
+        $js .= ",objectId: id";
+        $js .= ",area: area";
+        $js .= ",class: academic";
+        $js .= "}";
+        $js .= ",form: Ext.getCmp(uploadform).getForm().getEl().dom";
+        $js .= ",success: function(response, options) {";
+
+        $js .= "Ext.getCmp('myWin').close();";
+        $js .= "" . self::setRequestURI() . "";
+        $js .= "}";
+        $js .= "})";
+        $js .= "}";
+        $js .= "}";
+        print $js;
+    }
+
     static function setRequestURI($params = false)
     {
         if ($params)

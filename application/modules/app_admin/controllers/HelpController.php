@@ -2,13 +2,16 @@
 
 require_once 'Zend/Acl.php';
 require_once 'models/app_admin/AdminHelpDBAccess.php';
+require_once 'models/app_admin/AdminUploadDBAccess.php';
 require_once 'models/app_admin/AdminUserAuth.php';
 
 class HelpController extends Zend_Controller_Action {
 
-    public function init() {
+    public function init()
+    {
 
-        if (!AdminUserAuth::identify()) {
+        if (!AdminUserAuth::identify())
+        {
 
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
@@ -25,40 +28,57 @@ class HelpController extends Zend_Controller_Action {
 
         $this->HELP_ACCESS = new AdminHelpDBAccess();
         $this->HELP_ACCESS->objectId = $this->objectId;
+        
+        $this->HELP_ACCESS = new AdminHelpDBAccess();
+        $this->UPLOAD_ACCESS = new AdminUploadDBAccess();
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
     }
 
-    public function showmainAction() {
-
-        AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
-        $this->view->objectId = $this->objectId;
-    }
-
-    public function showdetailAction() {
-
-        AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
-        $this->view->objectId = $this->objectId;
-    }
-
-    public function displaycontentAction() {
+    public function showmainAction()
+    {
 
         AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
         $this->view->objectId = $this->objectId;
     }
 
-    public function editcontentAction() {
+    public function imageAction()
+    {
 
         AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
         $this->view->objectId = $this->objectId;
     }
 
-    public function jsonloadAction() {
+    public function showdetailAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
+        $this->view->objectId = $this->objectId;
+    }
+
+    public function displaycontentAction()
+    {
+
+        AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
+        $this->view->objectId = $this->objectId;
+    }
+
+    public function editcontentAction()
+    {
+
+        AdminUserAuth::actionPermint($this->REQUEST, "CAMEMIS_HELP");
+        $this->view->objectId = $this->objectId;
+    }
+
+    public function jsonloadAction()
+    {
+
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonAllHelps":
                 $jsondata = $this->HELP_ACCESS->jsonAllHelps($this->REQUEST->getPost());
@@ -73,9 +93,11 @@ class HelpController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonSaveHelp":
                 $jsondata = $this->HELP_ACCESS->jsonSaveHelp($this->REQUEST->getPost());
@@ -84,15 +106,25 @@ class HelpController extends Zend_Controller_Action {
             case "jsonRemoveHelp":
                 $jsondata = $this->HELP_ACCESS->jsonRemoveHelp($this->REQUEST->getPost('objectId'));
                 break;
+
+            case "jsonUploadFile":
+                $jsondata = $this->UPLOAD_ACCESS->jsonUploadFile($this->REQUEST->getPost());
+                break;
+
+            case "actionDeleteFile":
+                $jsondata = $this->UPLOAD_ACCESS->deleteFile($this->REQUEST->getPost('blobId'));
+                break;
         }
 
         if (isset($jsondata))
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonTreeHelps":
                 $jsondata = $this->HELP_ACCESS->jsonTreeHelps($this->REQUEST->getPost());
@@ -109,7 +141,8 @@ class HelpController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
 

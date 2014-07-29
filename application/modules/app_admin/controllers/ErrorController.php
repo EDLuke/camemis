@@ -8,14 +8,16 @@
 
 class ErrorController extends Zend_Controller_Action {
 
-    public function errorAction() {
+    public function errorAction()
+    {
 
         $this->exception = $this->_getParam('error_handler');
 
         //echo get_class($this->exception->exception);
-        //print_r($this->exception);
-        //exit;
-        switch ($this->exception->type) {
+        #print_r($this->exception);
+        #exit;
+        switch ($this->exception->type)
+        {
 
             // EXCEPTION_NO_CONTROLLER
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -44,7 +46,8 @@ class ErrorController extends Zend_Controller_Action {
 
                 //echo get_class($this->exception->exception);
 
-                switch (get_class($this->exception->exception)) {
+                switch (get_class($this->exception->exception))
+                {
 
                     case 'Zend_Viewexception' :
                         $this->_request->setActionName('expired');
@@ -88,19 +91,23 @@ class ErrorController extends Zend_Controller_Action {
         }
     }
 
-    public function expiredAction() {
+    public function expiredAction()
+    {
         
     }
 
-    public function noactionAction() {
+    public function noactionAction()
+    {
         
     }
 
-    public function nocontrollerAction() {
+    public function nocontrollerAction()
+    {
         
     }
 
-    public function dbstatementAction() {
+    public function dbstatementAction()
+    {
         
     }
 

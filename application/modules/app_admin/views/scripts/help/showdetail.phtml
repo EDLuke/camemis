@@ -16,6 +16,7 @@ $type = isset($_GET["type"])? addText($_GET["type"]):"0";
 print $CAMEMIS_PAGE->showCamemisHeader();
 
 $HELP_ACCESS = new AdminHelpDBAccess();
+
 $HELP_OBJECT = $HELP_ACCESS->findHelp($this->objectId);
 
 if($HELP_OBJECT){
@@ -115,6 +116,29 @@ switch($type){
         winVideo.show();
     }
     ////////////////////////////////////////////////////////////////////////////
+    function getWinImage(){
+        winImage = new Ext.Window({
+            title: 'Image'
+            ,layout:'fit'
+            ,maximizable: false
+            ,id: 'winImageId'
+            ,height:565
+            ,width:550
+            ,resizable: false
+            ,closable: false
+            ,modal: true
+            ,items: [new Ext.ux.IFrameComponent({ id:'FIMAGE_ID', url:'/help/image/?objectId=<?=$this->objectId?>&field=<?=$FIELD_CONTENT?>'})]
+            ,tbar: ['->',{
+                text: 'Close'
+                ,iconCls: 'icon-cancel'
+                ,handler: function (){
+                    Ext.getCmp('winImageId').close();
+                    window.location='<?=$_SERVER["REQUEST_URI"]?>';
+                }
+            }]
+        });
+        winImage.show();
+    }
     
     function getWinContent(){
         winContent = new Ext.Window({
@@ -199,19 +223,29 @@ switch($type){
                     ,items:[{
                         layout: 'form'
                         ,border: false
-                        ,autoHeight:true
+                        ,autoHeight: true
+                        ,collapsible: true
+                        ,collapsed: false
+                        ,style: 'padding-bottom: 5px'
                         ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
                         ,items:".$ITEMS."
                     }]
                 },{
                     title: ''
                     ,width: 650
-                    ,height:percentHeight(69)
+                    ,height:percentHeight(70)
+                    ,collapsible: true
+                    ,collapsed: false
+                    ,style: 'padding-bottom: 5px'
                     ,layout:'fit'
                     ,tbar:['->',{
                         text:'Content'
                         ,iconCls: 'icon-add'
                         ,handler: function() {getWinContent();}
+                    },'-',{
+                        text:'Image'
+                        ,iconCls: 'icon-image_add'
+                        ,handler: function() {getWinImage();}
                     }]
                     ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
                 }";

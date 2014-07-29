@@ -9,7 +9,7 @@ require_once("Zend/Loader.php");
 require_once 'include/Common.inc.php';
 require_once 'models/CAMEMISResizeImage.php';
 
-class CAMEMISUploadDBAccess {
+class AdminUploadDBAccess {
 
     public $GuId = null;
     public $fileName = null;
@@ -47,8 +47,9 @@ class CAMEMISUploadDBAccess {
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         $SQL->where("FILE_SHOW = ?", $Id);
+        //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -56,61 +57,17 @@ class CAMEMISUploadDBAccess {
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         $SQL->where("ID = ?", $Id);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->GUID : 0;
-    }
-
-    //@THORN Visal
-    public static function getCountFileFromAcademicId($academicId)
-    {
-        $SQL = self::dbAccess()->select();
-        $SQL->from('t_school_upload', 'COUNT(*) AS C');
-        if ($academicId)
-            $SQL->where("ACADEMIC_ID = ?", $academicId);
-        $result = self::dbAccess()->fetchRow($SQL);
-        //error_log($SQL);
-        return $result ? $result->C : 0;
-    }
-
-    //
-    public static function getAllFileFromObjectId($objectId, $objectType, $academicId = false)
-    {
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
-        if ($objectId)
-            $SQL->where("OBJECT_ID = ?", $objectId);
-
-        if ($objectType)
-            $SQL->where("FILE_AREA = '" . $objectType . "'");
-        //@THORN Visal
-        switch ($objectType)
-        {
-            case "ACADEMIC_SUBJECT":
-                if ($academicId)
-                {
-                    $SQL->where("ACADEMIC_ID = ?", $academicId);
-                }
-                else
-                {
-                    $SQL->where("ACADEMIC_ID = 0");
-                }
-                break;
-            default:
-                if ($academicId)
-                    $SQL->where("ACADEMIC_ID = ?", $academicId);
-                break;
-        }
-        //error_log($SQL);
-        return self::dbAccess()->fetchAll($SQL);
     }
 
     public static function getFileFromObjectId($objectId, $fileIndex = false, $fileArea = false)
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         if ($objectId)
             $SQL->where("OBJECT_ID = ?", $objectId);
         if ($fileIndex)
@@ -126,13 +83,15 @@ class CAMEMISUploadDBAccess {
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         if ($objectId)
             $SQL->where("OBJECT_ID = ?", $objectId);
         if ($fileIndex)
             $SQL->where("FILE_INDEX = '" . $fileIndex . "'");
         if ($fileArea)
             $SQL->where("FILE_AREA = '" . $fileArea . "'");
+
+        //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -143,12 +102,9 @@ class CAMEMISUploadDBAccess {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $fileArea = isset($params["area"]) ? addText($params["area"]) : "";
-        $academicId = isset($params["class"]) ? addText($params["class"]) : ""; //@THORN Visal
-
 
         $this->fileArea = strtoupper($fileArea);
         $this->objectId = $objectId;
-        $this->academicId = $academicId; //@THORN Visal
 
         $file_extension = "";
 
@@ -162,8 +118,7 @@ class CAMEMISUploadDBAccess {
             $path_info = pathinfo($_FILES["uploaded_file_1"]['name']);
             $file_extension = isset($path_info["extension"]) ? $path_info["extension"] : "";
         }
-
-        if (isset($_FILES["uploaded_file_2"]["name"]))
+        elseif (isset($_FILES["uploaded_file_2"]["name"]))
         {
             $fileIndex = 2;
             $fileName = $_FILES["uploaded_file_2"]["name"];
@@ -172,9 +127,9 @@ class CAMEMISUploadDBAccess {
             $fileData = $_FILES["uploaded_file_2"]["tmp_name"];
             $path_info = pathinfo($_FILES["uploaded_file_2"]['name']);
             $file_extension = isset($path_info["extension"]) ? $path_info["extension"] : "";
+            $oldObject = self::getFileFromObjectId($objectId, $fileArea, 2);
         }
-
-        if (isset($_FILES["uploaded_file_3"]["name"]))
+        elseif (isset($_FILES["uploaded_file_3"]["name"]))
         {
             $fileIndex = 3;
             $fileName = $_FILES["uploaded_file_3"]["name"];
@@ -205,7 +160,7 @@ class CAMEMISUploadDBAccess {
             }
             else
             {
-                $responseText = FILE_TYPE_NOT_PERMITTED;
+                $responseText = "File type not permitted";
             }
         }
         else
@@ -224,7 +179,7 @@ class CAMEMISUploadDBAccess {
         }
         else
         {
-            $responseText = FILE_SIZE_MAX_PERMITTED;
+            $responseText = "File type not permitted";
         }
 
         if (!$errorFileType && !$errorFileSize)
@@ -253,99 +208,20 @@ class CAMEMISUploadDBAccess {
             $this->fileSize = $fileSize;
             $this->fileData = $fileData;
 
-            //@THORN Visal
-            switch ($this->fileArea)
+            if (file_exists($this->fileData))
             {
-                case "SCHOOL_DOCUMENT":
-                    $ext = getFileExtension($this->fileName);
-                    $newFileName = camemisId();
+                $ext = getFileExtension($this->fileName);
+                $newfileName = camemisId();
+                $SAVEDATA["FILE_NAME"] = addText($this->fileName);
+                $SAVEDATA["FILE_SIZE"] = addText($this->fileSize);
+                $SAVEDATA["FILE_TYPE"] = addText($this->fileType);
+                $SAVEDATA["FILE_SHOW"] = addText($newfileName . "." . $ext);
+                $SAVEDATA["FILE_INDEX"] = addText($this->fileIndex);
+                $SAVEDATA["FILE_AREA"] = $this->fileArea;
+                $SAVEDATA["OBJECT_ID"] = $this->objectId;
+                self::dbAccess()->insert('t_help_image', $SAVEDATA);
 
-                    $SAVEDATA["FILE_NAME"] = addText($this->fileName);
-                    $SAVEDATA["FILE_SIZE"] = addText($this->fileSize);
-                    $SAVEDATA["FILE_TYPE"] = addText($this->fileType);
-                    $SAVEDATA["FILE_SHOW"] = addText($newFileName . "." . $ext);
-                    $SAVEDATA["FILE_INDEX"] = addText($this->fileIndex);
-                    $SAVEDATA["FILE_AREA"] = $this->fileArea;
-                    $SAVEDATA["OBJECT_ID"] = $this->objectId;
-                    $SAVEDATA["ACADEMIC_ID"] = $this->academicId; // Visal THORN
-                    $SAVEDATA["SCHOOL_URL"] = Zend_Registry::get('SERVER_NAME');
-                    $SAVEDATA["POST_DATE"] = date("Y-m-d");
-                    $SAVEDATA["USER_ID"] = Zend_Registry::get('USER')->ID;
-
-                    self::dbAccess()->insert('t_school_upload', $SAVEDATA);
-                    break;
-                case "ACADEMIC_SUBJECT":
-                    $ext = getFileExtension($this->fileName);
-                    $newFileName = camemisId();
-
-                    $SAVEDATA["FILE_NAME"] = addText($this->fileName);
-                    $SAVEDATA["FILE_SIZE"] = addText($this->fileSize);
-                    $SAVEDATA["FILE_TYPE"] = addText($this->fileType);
-                    $SAVEDATA["FILE_SHOW"] = addText($newFileName . "." . $ext);
-                    $SAVEDATA["FILE_INDEX"] = addText($this->fileIndex);
-                    $SAVEDATA["FILE_AREA"] = $this->fileArea;
-                    $SAVEDATA["OBJECT_ID"] = $this->objectId;
-                    $SAVEDATA["ACADEMIC_ID"] = $this->academicId; // Visal THORN
-                    $SAVEDATA["SCHOOL_URL"] = Zend_Registry::get('SERVER_NAME');
-                    $SAVEDATA["POST_DATE"] = date("Y-m-d");
-                    $SAVEDATA["USER_ID"] = Zend_Registry::get('USER')->ID;
-
-                    self::dbAccess()->insert('t_school_upload', $SAVEDATA);
-                    break;
-                default:
-                    //@Sea Peng 10.07.2013
-                    self::deleteFileFromObjectId(
-                            $this->objectId
-                            , $this->fileIndex
-                            , $this->fileArea);
-                    //
-
-                    $ext = getFileExtension($this->fileName);
-                    $newFileName = camemisId();
-
-                    $SAVEDATA["FILE_NAME"] = addText($this->fileName);
-                    $SAVEDATA["FILE_SIZE"] = addText($this->fileSize);
-                    $SAVEDATA["FILE_TYPE"] = addText($this->fileType);
-                    $SAVEDATA["FILE_SHOW"] = addText($newFileName . "." . $ext);
-                    $SAVEDATA["FILE_INDEX"] = addText($this->fileIndex);
-                    $SAVEDATA["FILE_AREA"] = $this->fileArea;
-                    $SAVEDATA["OBJECT_ID"] = $this->objectId;
-                    $SAVEDATA["ACADEMIC_ID"] = $this->academicId; // Visal THORN
-                    $SAVEDATA["SCHOOL_URL"] = Zend_Registry::get('SERVER_NAME');
-                    $SAVEDATA["POST_DATE"] = date("Y-m-d");
-                    $SAVEDATA["USER_ID"] = Zend_Registry::get('USER')->ID;
-
-                    self::dbAccess()->insert('t_school_upload', $SAVEDATA);
-                    break;
-            }
-
-            switch ($this->fileArea)
-            {
-                case "SCHOOL_LOGO":
-                    try {
-                        $image = new CAMEMISResizeImage($this->fileData);
-                        $image->resize(array("width" => 150))->saveToFile(self::getMyFolder() . $newFileName . "");
-                    } catch (NotAnImageException $e) {
-                        printf("FILE PROVIDED IS NOT AN IMAGE, FILE PATH: %s", $this->fileData);
-                    }
-
-                    break;
-                case "PERSONAL_IMAGE":
-                    try {
-                        $image = new CAMEMISResizeImage($this->fileData);
-                        $image->resize(array("width" => 150))->saveToFile(self::getMyFolder() . $newFileName . "");
-                    } catch (NotAnImageException $e) {
-                        printf("FILE PROVIDED IS NOT AN IMAGE, FILE PATH: %s", $this->fileData);
-                    }
-
-                    break;
-                default:
-                    if (file_exists($this->fileData))
-                    {
-                        move_uploaded_file($this->fileData, self::getMyFolder() . $newFileName . "." . $ext);
-                    }
-
-                    break;
+                move_uploaded_file($this->fileData, self::getMyFolder() . $newfileName . "." . $ext);
             }
         }
     }
@@ -366,7 +242,7 @@ class CAMEMISUploadDBAccess {
             foreach ($FILE_OBJECT as $OBJECT)
             {
                 self::setUnlink($OBJECT->FILE_SHOW);
-                self::dbAccess()->delete('t_school_upload', array(
+                self::dbAccess()->delete('t_help_image', array(
                     "OBJECT_ID='" . $OBJECT->OBJECT_ID . "'"
                     , "FILE_SHOW='" . $OBJECT->FILE_SHOW . "'"));
             }
@@ -380,9 +256,8 @@ class CAMEMISUploadDBAccess {
 
         if ($BLOB_OBJECT)
         {
-
             self::setUnlink($blobId);
-            self::dbAccess()->delete('t_school_upload', array("FILE_SHOW='" . $blobId . "'"));
+            self::dbAccess()->delete('t_help_image', array("FILE_SHOW='" . $blobId . "'"));
         }
     }
 
@@ -398,7 +273,7 @@ class CAMEMISUploadDBAccess {
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         $SQL->where("OBJECT_ID = ?", $objectId);
         $result = self::dbAccess()->fetchAll($SQL);
 
@@ -415,7 +290,7 @@ class CAMEMISUploadDBAccess {
     public static function findLastId()
     {
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         $SQL->order('ID DESC');
         $SQL->limitPage(0, 1);
         //error_log($SQL);
@@ -429,7 +304,7 @@ class CAMEMISUploadDBAccess {
         $explode = explode(".", $_SERVER['SERVER_NAME']);
         if (is_array($explode))
         {
-            $folder = "users/" . $explode[0] . "/attachment/";
+            $folder = "users/admin/images/";
         }
 
         return $folder;
@@ -445,7 +320,7 @@ class CAMEMISUploadDBAccess {
         $object = isset($params["object"]) ? addText($params["object"]) : "";
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_school_upload", array('*'));
+        $SQL->from("t_help_image", array('*'));
         $SQL->where("OBJECT_ID = ?", $objectId);
         $SQL->where("FILE_AREA = '" . strtoupper($object) . "'");
         $result = self::dbAccess()->fetchAll($SQL);
