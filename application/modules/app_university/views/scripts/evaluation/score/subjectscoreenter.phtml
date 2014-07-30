@@ -19,6 +19,7 @@ $OBJECT_GRID->setSaveUrl("/evaluation/jsonsave/");
 $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
 $objectId = isset($_GET["objectId"])? addText($_GET["objectId"]):"";
+$setId = isset($_GET["setId"])? addText($_GET["setId"]):"";
 
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 $assignmentObject = AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
@@ -40,9 +41,9 @@ if($academicObject->EDUCATION_SYSTEM){
 if(!$subjectObject) {header("Location: /main/permission/");exit;}
 
 ////////////////////////////////////////////////////////////////////////////////
-$TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date,$academicObject->ID);
-$SEMESTER_NAME = $TERM_NAME;
-$CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
+//$TERM_NAME = AcademicDBAccess::getNameOfSchoolTermByDate($this->date,$academicObject->ID);
+//$SEMESTER_NAME = $TERM_NAME;
+//$CHECK_STATUS = ($TERM_NAME == "TERM_ERROR")?false:true;
 
 $setParams = "";
 $setParams .= "&subjectId=".$this->subjectId."";
@@ -50,16 +51,18 @@ $setParams .= "&academicId=".$academicObject->ID."";
 $setParams .= "&assignmentId=".$assignmentObject->ID."";
 $setParams .= "&date=".$this->date."";
 
-if($CHECK_STATUS){
-    $SQL = UserAuth::dbAccess()->select();
-    $SQL->from("t_schedule", array("C" => "COUNT(*)"));
-    $SQL->where("ACADEMIC_ID = ?",$academicObject->PARENT);
-    $SQL->where("SUBJECT_ID = ?",$this->subjectId);
-    $SQL->where("TERM = '" . $TERM_NAME . "'");
-    //error_log($SQL);
-    $result = UserAuth::dbAccess()->fetchRow($SQL);
-    $CHECK_STATUS = $result ? $result->C : 0;
-}
+//if($CHECK_STATUS){
+//    $SQL = UserAuth::dbAccess()->select();
+//    $SQL->from("t_schedule", array("C" => "COUNT(*)"));
+//    $SQL->where("ACADEMIC_ID = ?",$academicObject->PARENT);
+//    $SQL->where("SUBJECT_ID = ?",$this->subjectId);
+//    $SQL->where("TERM = '" . $TERM_NAME . "'");
+//    //error_log($SQL);
+//    $result = UserAuth::dbAccess()->fetchRow($SQL);
+//    $CHECK_STATUS = $result ? $result->C : 0;
+//}
+
+$CHECK_STATUS = 1;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

@@ -13,53 +13,66 @@ class CAMEMISHelpDBAccess {
     public $GuId = null;
     public $DB_DATABASE;
 
-    function __construct($objectId = false) {
+    function __construct($objectId = false)
+    {
 
         $this->objectId = $objectId;
-        $this->DB_ACCESS = Zend_Registry::get('ADMIN_DB_ACCESS');
     }
 
-    public function findHelp() {
-
-        $SQL = "SELECT DISTINCT *";
-        $SQL .= " FROM t_help";
-        $SQL .= " WHERE";
-        $SQL .= " ID = '" . $this->objectId . "'";
-        //echo $SQL;
-        $result = $this->DB_ACCESS->fetchRow($SQL);
-
-        return $result;
+    public static function dbAminAccess()
+    {
+        return Zend_Registry::get('ADMIN_DB_ACCESS');
     }
 
-    public function findBlockIdByName($block) {
+    public static function findHelp($Id)
+    {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_help", array("*"));
+
+        if (is_numeric($Id))
+        {
+            $SQL->where("ID = ?", $Id);
+        }
+        else
+        {
+            $SQL->where("TEXT_KEY = '" . $Id . "'");
+        }
+        return self::dbAminAccess()->fetchRow($SQL);
+    }
+
+    public function findBlockIdByName($block)
+    {
 
         $SQL = "SELECT ID";
         $SQL .= " FROM t_help";
         $SQL .= " WHERE";
         $SQL .= " NAME_EN = '" . $block . "'";
         //echo $SQL;
-        $result = $this->DB_ACCESS->fetchRow($SQL);
+        $result = self::dbAminAccess()->fetchRow($SQL);
         return $result ? $result->ID : null;
     }
 
-    public function checkChildren($parentId) {
+    public function checkChildren($parentId)
+    {
 
         $SQL = "SELECT COUNT(*) AS C";
         $SQL .= " FROM t_help";
         $SQL .= " WHERE";
         $SQL .= " PARENT = '" . $parentId . "'";
         //echo $SQL;
-        $result = $this->DB_ACCESS->fetchRow($SQL);
+        $result = self::dbAminAccess()->fetchRow($SQL);
 
         return $result ? $result->C : 0;
     }
 
-    public function jsonLoadHelp($Id) {
+    public function jsonLoadHelp($Id)
+    {
 
-        $this->objectId = $Id;
-        $facette = $this->findHelp();
+        $facette = self::findHelp($Id);
 
-        if ($facette) {
+        if ($facette)
+        {
 
             $DATA["NAME_EN"] = $facette->NAME_EN;
             $DATA["NAME_VN"] = $facette->NAME_VN;
@@ -80,57 +93,54 @@ class CAMEMISHelpDBAccess {
         return $o;
     }
 
-    public function jsonTreeHelps($params) {
+    public static function treeUserHelps($params)
+    {
+        $node = isset($params["node"]) ? $params["node"] : "0";
+        $key = isset($params["key"]) ? $params["key"] : "";
 
-        $node = $params["node"];
-        $block = $params["block"];
+        $facette = self::findHelp($Id);
+
         $data = array();
-
-        $SQL = "SELECT * FROM t_help";
-        if ($node == 0) {
-            $SQL .= " WHERE PARENT= " . $this->findBlockIdByName($block) . "";
-        } else {
-            $SQL .= " WHERE PARENT='" . $node . "'";
-        }
-
-        $SQL .= " ORDER BY NAME_EN";
-        $result = $this->DB_ACCESS->fetchAll($SQL);
-
-        $i = 0;
-        foreach ($result as $value) {
-
-//            switch($chooseLanguage){
-//                case "EN":
-//                    $data[$i]['text'] = $value->NAME_EN;
+//        $node = $params["node"];
+//        $block = $params["block"];
+//        $data = array();
+//
+//        $SQL = "SELECT * FROM t_help";
+//        if ($node == 0)
+//        {
+//            $SQL .= " WHERE PARENT= " . $this->findBlockIdByName($block) . "";
+//        }
+//        else
+//        {
+//            $SQL .= " WHERE PARENT='" . $node . "'";
+//        }
+//
+//        $SQL .= " ORDER BY NAME_EN";
+//        $result = self::dbAminAccess()->fetchAll($SQL);
+//
+//        $i = 0;
+//        foreach ($result as $value)
+//        {
+//
+//            $data[$i]['text'] = $value->NAME_VN;
+//            $data[$i]['id'] = "" . $value->ID . "";
+//            $data[$i]['cls'] = "nodeFolderBold";
+//            $data[$i]['treeType'] = $value->TREE_TYPE;
+//
+//            switch ($value->TREE_TYPE)
+//            {
+//                case "FOLDER":
+//                    $data[$i]['leaf'] = false;
+//                    $data[$i]['iconCls'] = "icon-folder_page";
 //                    break;
-//                case "KH":
-//                    $data[$i]['text'] = $value->NAME_KH;
-//                    break;
-//                case "VN":
-//                    $data[$i]['text'] = $value->NAME_VN;
-//                    break;
-//                default:
-//                    $data[$i]['text'] = $value->NAME_VN;
+//                case "ITEM":
+//                    $data[$i]['leaf'] = true;
+//                    $data[$i]['iconCls'] = "icon-page";
 //                    break;
 //            }
-            $data[$i]['text'] = $value->NAME_VN;
-            $data[$i]['id'] = "" . $value->ID . "";
-            $data[$i]['cls'] = "nodeFolderBold";
-            $data[$i]['treeType'] = $value->TREE_TYPE;
-
-            switch ($value->TREE_TYPE) {
-                case "FOLDER":
-                    $data[$i]['leaf'] = false;
-                    $data[$i]['iconCls'] = "icon-folder_page";
-                    break;
-                case "ITEM":
-                    $data[$i]['leaf'] = true;
-                    $data[$i]['iconCls'] = "icon-page";
-                    break;
-            }
-
-            $i++;
-        }
+//
+//            $i++;
+//        }
 
         return $data;
     }

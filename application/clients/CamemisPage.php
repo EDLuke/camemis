@@ -1213,6 +1213,11 @@ class CamemisPage {
         return $lang;
     }
 
+    public static function setEmbeddedHelp($key)
+    {
+        return "openWinIFrame('" . CAMEMIS_HELP . "', '/help/?key=" . $key . "',percentWidth(75), percentHeight(85));";
+    }
+
 }
 
 ?>

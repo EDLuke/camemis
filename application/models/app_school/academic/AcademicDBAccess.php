@@ -2247,6 +2247,7 @@ class AcademicDBAccess {
                 break;
         }
 
+        error_log($flage);
         return $flage;
     }
 

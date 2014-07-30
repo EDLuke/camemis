@@ -18,9 +18,11 @@ require_once setUserLoacalization();
 
 class CommunicationController extends Zend_Controller_Action {
 
-    public function init() {
+    public function init()
+    {
 
-        if (!UserAuth::identify()) {
+        if (!UserAuth::identify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -45,21 +47,24 @@ class CommunicationController extends Zend_Controller_Action {
 
         $this->communicationObject = null;
 
-        if ($this->_getParam('objectId')) {
+        if ($this->_getParam('objectId'))
+        {
 
             $this->objectId = $this->_getParam('objectId');
             $this->objectData = $this->DB_COMMUNICATION->getCommunicationtDataFromId($this->objectId);
             $this->communicationObject = $this->DB_COMMUNICATION->findCommunicationFromId($this->objectId);
         }
 
-        if ($this->_getParam('academicId')) {
+        if ($this->_getParam('academicId'))
+        {
             $this->academicId = $this->_getParam('academicId');
             $this->classObject = AcademicDBAccess::findGradeFromId($this->academicId);
             $this->schoolyearId = $this->classObject->SCHOOL_YEAR;
         }
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         $this->view->academicId = $this->academicId;
 
@@ -84,7 +89,8 @@ class CommunicationController extends Zend_Controller_Action {
         );
     }
 
-    public function inboxAction() {
+    public function inboxAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -98,7 +104,8 @@ class CommunicationController extends Zend_Controller_Action {
         );
     }
 
-    public function maininboxAction() {
+    public function maininboxAction()
+    {
 
         $this->view->schoolyearId = $this->schoolyearId;
 
@@ -112,7 +119,8 @@ class CommunicationController extends Zend_Controller_Action {
         );
     }
 
-    public function mainsendAction() {
+    public function mainsendAction()
+    {
 
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->objectId = $this->objectId;
@@ -125,7 +133,8 @@ class CommunicationController extends Zend_Controller_Action {
         );
     }
 
-    public function maindraftsAction() {
+    public function maindraftsAction()
+    {
 
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->objectId = $this->objectId;
@@ -156,7 +165,8 @@ class CommunicationController extends Zend_Controller_Action {
         );
     }
 
-    public function addreplyAction() {
+    public function addreplyAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -165,7 +175,8 @@ class CommunicationController extends Zend_Controller_Action {
         $this->view->senderData = $this->DB_COMMUNICATION->getSenderData($this->objectId);
     }
 
-    public function replyAction() {
+    public function replyAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -174,7 +185,8 @@ class CommunicationController extends Zend_Controller_Action {
         $this->view->senderData = $this->DB_COMMUNICATION->getSenderData($this->objectId);
     }
 
-    public function toteacherAction() {
+    public function toteacherAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -182,7 +194,8 @@ class CommunicationController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
     }
 
-    public function tostudentsAction() {
+    public function tostudentsAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -190,7 +203,8 @@ class CommunicationController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
     }
 
-    public function tostaffAction() {
+    public function tostaffAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -198,7 +212,8 @@ class CommunicationController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
     }
 
-    public function sendAction() {
+    public function sendAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -207,7 +222,8 @@ class CommunicationController extends Zend_Controller_Action {
     }
 
     //@sea peng 02.05.2013
-    public function tostudentAction() {
+    public function tostudentAction()
+    {
 
         $this->view->objectData = $this->objectData;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -217,9 +233,11 @@ class CommunicationController extends Zend_Controller_Action {
 
     //@end sea peng 02.05.2013
 
-    public function jsonloadAction() {
+    public function jsonloadAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonLoadCommunication":
                 $jsondata = $this->DB_COMMUNICATION->jsonLoadCommunication($this->REQUEST->getPost('objectId'));
@@ -246,9 +264,11 @@ class CommunicationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonSaveCommunication":
                 $jsondata = $this->DB_COMMUNICATION->jsonSaveCommunication($this->REQUEST->getPost());
@@ -269,7 +289,7 @@ class CommunicationController extends Zend_Controller_Action {
             case "jsonRemoveRecipientCommunication":
                 $jsondata = $this->DB_COMMUNICATION->jsonRemoveRecipientCommunication($this->REQUEST->getPost());
                 break;
-            
+
             case "jsonSaveAlertFeeCommunication":
                 $jsondata = StudentPaymentSettingDBAccess::jsonSaveAlertFeeCommunication($this->REQUEST->getPost());
                 break;
@@ -285,9 +305,11 @@ class CommunicationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonTreeAllDrafsCommunication":
                 $jsondata = $this->DB_COMMUNICATION->jsonTreeAllDrafsCommunication($this->REQUEST->getPost());
@@ -311,7 +333,8 @@ class CommunicationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
 
