@@ -333,18 +333,18 @@ class AssignmentDBAccess {
         {
             case 0:
                 $newStatus = 1;
-                $data['STATUS']      = 1;
-                $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
-                $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
+                $data['STATUS'] = 1;
+                $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
+                $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
             case 1:
                 $newStatus = 0;
-                $data['STATUS']       = 0;
-                $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
-                $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
+                $data['STATUS'] = 0;
+                $data['DISABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
+                $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
         }
-        self::dbAccess()->update("t_assignment", $data, "ID='". $objectId ."'");
+        self::dbAccess()->update("t_assignment", $data, "ID='" . $objectId . "'");
         return Array("success" => true, "status" => $newStatus);
     }
 
@@ -692,8 +692,9 @@ class AssignmentDBAccess {
                     $data[$i]['isClick'] = true;
                     $data[$i]['setId'] = $value->ID;
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "_" . $value->SCORE_INPUT_DATE;
-                    $data[$i]['text'] = "" . $facette->NAME;
-                    $data[$i]['text'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
+                    $data[$i]['display'] = "" . $facette->NAME;
+                    $data[$i]['display'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
+                    $data[$i]['text'] = getShowDate($value->SCORE_INPUT_DATE) . "";
                     $data[$i]['iconCls'] = "icon-date_edit";
                 }
                 $i++;
