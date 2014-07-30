@@ -14,8 +14,8 @@ class ErrorController extends Zend_Controller_Action {
 
         $this->exception = $this->_getParam('error_handler');
         //echo get_class($this->exception->exception);
-        print_r($this->exception);
-        exit;
+        #print_r($this->exception);
+        #exit;
         switch ($this->exception->type)
         {
 
