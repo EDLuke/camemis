@@ -116,38 +116,14 @@ switch($type){
         winVideo.show();
     }
     ////////////////////////////////////////////////////////////////////////////
-    function getWinImage(){
-        winImage = new Ext.Window({
-            title: 'Image'
-            ,layout:'fit'
-            ,maximizable: false
-            ,id: 'winImageId'
-            ,height:600
-            ,width:600
-            ,resizable: false
-            ,closable: false
-            ,modal: true
-            ,items: [new Ext.ux.IFrameComponent({ id:'FIMAGE_ID', url:'/help/image/?objectId=<?=$this->objectId?>&field=<?=$FIELD_CONTENT?>'})]
-            ,tbar: ['->',{
-                text: 'Close'
-                ,iconCls: 'icon-cancel'
-                ,handler: function (){
-                    Ext.getCmp('winImageId').close();
-                    window.location='<?=$_SERVER["REQUEST_URI"]?>';
-                }
-            }]
-        });
-        winImage.show();
-    }
-    
     function getWinContent(){
         winContent = new Ext.Window({
             title: 'Content'
             ,layout:'fit'
             ,maximizable: false
             ,id: 'winContentId'
-            ,height:percentHeight(80)
-            ,width:670
+            ,height:percentHeight(85)
+            ,width:650
             ,resizable: false
             ,closable: false
             ,modal: true
@@ -237,10 +213,6 @@ switch($type){
                     text:'Content'
                     ,iconCls: 'icon-add'
                     ,handler: function() {getWinContent();}
-                },'-',{
-                    text:'Image'
-                    ,iconCls: 'icon-image_add'
-                    ,handler: function() {getWinImage();}
                 }]
                 ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
             }";
