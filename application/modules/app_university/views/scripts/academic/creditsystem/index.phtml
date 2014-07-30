@@ -116,7 +116,7 @@ if($entries){
             ,tooltip:'".CAMEMIS_HELP."'
             ,iconCls: 'icon-help'
             ,handler:function(){
-                openWinIFrame('".CAMEMIS_HELP."', '/help/?key=GENERAL_EDUCATION',700, percentHeight(85));
+                ".CamemisPage::setEmbeddedHelp("GENERAL_EDUCATION")."
             }
         ");
 

@@ -115,6 +115,15 @@ if($entries){
             }]
         ");
         
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("E560-002E")."
+            }
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'getTreeTraditionalEducationSystem'
             ,SCHOOLYEAR:'".$currentSchoolyearId."'

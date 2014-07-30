@@ -47,7 +47,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,tooltip:'".CAMEMIS_HELP."'
             ,iconCls: 'icon-help'
             ,handler:function(){
-                openWinIFrame('".CAMEMIS_HELP."', '/help/?key=ACADEMIC_SETTING_SCHOOLYEAR',700, percentHeight(85));
+                ".CamemisPage::setEmbeddedHelp("GENERAL_EDUCATION")."
             }
         ");
         
