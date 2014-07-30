@@ -10,13 +10,9 @@ require_once 'include/Common.inc.php';
 
 class CAMEMISHelpDBAccess {
 
-    public $GuId = null;
-    public $DB_DATABASE;
-
-    function __construct($objectId = false)
+    function __construct()
     {
-
-        $this->objectId = $objectId;
+        
     }
 
     public static function dbAminAccess()
@@ -27,7 +23,7 @@ class CAMEMISHelpDBAccess {
     public static function findHelp($Id)
     {
 
-        $SQL = self::dbAccess()->select();
+        $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("*"));
 
         if (is_numeric($Id))
@@ -39,6 +35,16 @@ class CAMEMISHelpDBAccess {
             $SQL->where("TEXT_KEY = '" . $Id . "'");
         }
         return self::dbAminAccess()->fetchRow($SQL);
+    }
+
+    public static function getSQLHelp($params)
+    {
+        $parent = isset($params["parent"]) ? $params["parent"] : "";
+        $SQL = self::dbAminAccess()->select();
+        $SQL->from("t_help", array("*"));
+        $SQL->where("PARENT = ?", $parent);
+        $SQL->order("NAME_ENGLISH");
+        return self::dbAminAccess()->fetchAll($SQL);
     }
 
     public function findBlockIdByName($block)
@@ -53,16 +59,15 @@ class CAMEMISHelpDBAccess {
         return $result ? $result->ID : null;
     }
 
-    public function checkChildren($parentId)
+    public static function checkChild($Id)
     {
 
-        $SQL = "SELECT COUNT(*) AS C";
-        $SQL .= " FROM t_help";
-        $SQL .= " WHERE";
-        $SQL .= " PARENT = '" . $parentId . "'";
-        //echo $SQL;
+        $SQL = self::dbAminAccess()->select();
+        $SQL->from("t_help", array("C" => "COUNT(*)"));
+        if ($Id)
+            $SQL->where("PARENT = ?", $Id);
+        //error_log($SQL);
         $result = self::dbAminAccess()->fetchRow($SQL);
-
         return $result ? $result->C : 0;
     }
 
@@ -98,49 +103,47 @@ class CAMEMISHelpDBAccess {
         $node = isset($params["node"]) ? $params["node"] : "0";
         $key = isset($params["key"]) ? $params["key"] : "";
 
-        $facette = self::findHelp($Id);
+        if ($node == 0)
+        {
+            $facette = self::findHelp($key);
+            if ($facette)
+            {
+                $searchParams["parent"] = $facette->PARENT;
+                $entries = self::getSQLHelp($searchParams);
+            }
+        }
+        else
+        {
+            $searchParams["parent"] = $node;
+            $entries = self::getSQLHelp($searchParams);
+        }
 
         $data = array();
-//        $node = $params["node"];
-//        $block = $params["block"];
-//        $data = array();
-//
-//        $SQL = "SELECT * FROM t_help";
-//        if ($node == 0)
-//        {
-//            $SQL .= " WHERE PARENT= " . $this->findBlockIdByName($block) . "";
-//        }
-//        else
-//        {
-//            $SQL .= " WHERE PARENT='" . $node . "'";
-//        }
-//
-//        $SQL .= " ORDER BY NAME_EN";
-//        $result = self::dbAminAccess()->fetchAll($SQL);
-//
-//        $i = 0;
-//        foreach ($result as $value)
-//        {
-//
-//            $data[$i]['text'] = $value->NAME_VN;
-//            $data[$i]['id'] = "" . $value->ID . "";
-//            $data[$i]['cls'] = "nodeFolderBold";
-//            $data[$i]['treeType'] = $value->TREE_TYPE;
-//
-//            switch ($value->TREE_TYPE)
-//            {
-//                case "FOLDER":
-//                    $data[$i]['leaf'] = false;
-//                    $data[$i]['iconCls'] = "icon-folder_page";
-//                    break;
-//                case "ITEM":
-//                    $data[$i]['leaf'] = true;
-//                    $data[$i]['iconCls'] = "icon-page";
-//                    break;
-//            }
-//
-//            $i++;
-//        }
+
+        $i = 0;
+        if ($entries)
+            foreach ($entries as $value)
+            {
+                if (self::checkChild($value->ID))
+                {
+
+                    $data[$i]['id'] = "" . $value->ID . "";
+                    $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
+                    $data[$i]['iconCls'] = "icon-book";
+                    $data[$i]['cls'] = "nodeTextBold";
+                    $data[$i]['leaf'] = false;
+                }
+                else
+                {
+                    $data[$i]['id'] = "" . $value->ID . "";
+                    $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
+                    $data[$i]['leaf'] = true;
+                    $data[$i]['iconCls'] = "icon-book_open";
+                    $data[$i]['cls'] = "nodeTextBlue";
+                }
+
+                $i++;
+            }
 
         return $data;
     }

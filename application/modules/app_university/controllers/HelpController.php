@@ -1,10 +1,5 @@
 <?php
 
-///////////////////////////////////////////////////////////
-// @Kaom Vibolrith Senior Software Developer
-// Date: 06.08.2011
-// Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once 'models/UserAuth.php';
@@ -28,12 +23,12 @@ class HelpController extends Zend_Controller_Action {
 
     public function indexAction()
     {
-        $this->key = $this->_getParam('key');
+        $this->view->key = $this->_getParam('key');
     }
 
     public function showitemAction()
     {
-        $this->objectId = $this->_getParam('objectId');
+        $this->view->key = $this->_getParam('objectId');
     }
 
     public function jsontreeAction()
