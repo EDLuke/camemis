@@ -180,12 +180,14 @@ switch($type){
                 if($this->objectId !="new"){
                     $ITEMS = "[
                         {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                        ,{" . AdminField::Numberfield("SORTKEY", "SORTKEY", "Sortkey", false, false, false) . "}
                         ,{".AdminField::Textfield("TEXT_KEY", "TEXT_KEY", 'Text Key', true, false)."}
                         ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
                     ]";
                 }else{
                     $ITEMS = "[
                         {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                        ,{" . AdminField::Numberfield("SORTKEY", "SORTKEY", "Sortkey", false, false, false) . "}
                     ]";
                 }
                 
@@ -193,6 +195,7 @@ switch($type){
             default:
                 $ITEMS = "[
                     {".AdminField::Textfield($FIELD_NAME,$FIELD_NAME, 'Name', true, false)."}
+                    ,{" . AdminField::Numberfield("SORTKEY", "SORTKEY", "Sortkey", false, false, false) . "}
                     ,{".AdminField::Textfield($FIELD_YOUTUBE_KEY,$FIELD_YOUTUBE_KEY, 'Youtube-Key', false, false)."}
                 ]";
             break;

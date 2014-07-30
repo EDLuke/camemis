@@ -84,7 +84,7 @@ class AdminHelpDBAccess {
             $DATA["YOUTUBE_KEY_ENGLISH"] = $facette->YOUTUBE_KEY_ENGLISH;
             $DATA["YOUTUBE_KEY_KHMER"] = $facette->YOUTUBE_KEY_KHMER ? $facette->YOUTUBE_KEY_KHMER : $facette->YOUTUBE_KEY_ENGLISH;
             $DATA["YOUTUBE_KEY_VIETNAMESE"] = $facette->YOUTUBE_KEY_VIETNAMESE ? $facette->YOUTUBE_KEY_VIETNAMESE : $facette->YOUTUBE_KEY_ENGLISH;
-
+            $DATA["SORTKEY"] = $facette->SORTKEY;
             $DATA["TEXT_KEY"] = $facette->TEXT_KEY;
             $DATA["CONTENT_ENGLISH"] = $facette->CONTENT_ENGLISH;
             $DATA["CONTENT_KHMER"] = $facette->CONTENT_KHMER;
@@ -113,6 +113,9 @@ class AdminHelpDBAccess {
     {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        
+        if (isset($params["SORTKEY"]))
+            $SAVE_DATA["SORTKEY"] = addText($params["SORTKEY"]);
 
         if (isset($params["NAME_ENGLISH"]))
             $SAVE_DATA["NAME_ENGLISH"] = addText($params["NAME_ENGLISH"]);
