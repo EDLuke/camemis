@@ -1392,12 +1392,79 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         if ($this->listClassStudents())
         {
 
+            $stdClass = (object) array(
+                        "academicId" => $this->academicId
+                        , "subjectId" => $this->subjectId
+                        , "schoolyearId" => $this->getSchoolyearId()
+            );
+
             $data = $this->listStudentsData();
 
             $i = 0;
             foreach ($this->listClassStudents() as $value)
             {
+                $stdClass->studentId = $value->ID;
+
                 $data[$i]["NUMBER_CREDIT"] = $this->getSubjectCreditHours();
+
+                switch ($this->getTermNumber())
+                {
+                    case 1:
+                        $stdClass->section = "TERM";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "FIRST_TERM");
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
+                        $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
+                        $data[$i]["FIRST_CREDIT_STATUS"] = "---";
+
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
+                        $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
+                        $data[$i]["SECOND_CREDIT_STATUS"] = "---";
+
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : "---";
+                        $data[$i]["THIRD_LEARNING_RESULT"] = $THIRD_VALUE;
+                        $data[$i]["THIRD_CREDIT_STATUS"] = "---";
+                        break;
+                    case 1:
+                        $stdClass->section = "QUARTER";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "FIRST_QUARTER");
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
+                        $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
+                        $data[$i]["FIRST_CREDIT_STATUS"] = "---";
+
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "SECOND_QUARTER");
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
+                        $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
+                        $data[$i]["SECOND_CREDIT_STATUS"] = "---";
+
+                        $THIRD = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "THIRD_QUARTER");
+                        $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : "---";
+                        $data[$i]["THIRD_LEARNING_RESULT"] = $THIRD_VALUE;
+                        $data[$i]["THIRD_CREDIT_STATUS"] = "---";
+
+                        $FOURTH = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "FOURTH_QUARTER");
+                        $FOURTH_VALUE = is_numeric($FOURTH->SUBJECT_VALUE) ? $FOURTH->SUBJECT_VALUE : "---";
+                        $data[$i]["FOURTH_LEARNING_RESULT"] = $FOURTH_VALUE;
+                        $data[$i]["FOURTH_CREDIT_STATUS"] = "---";
+                        break;
+                    default:
+                        $stdClass->section = "SEMESTER";
+                        $FIRST = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "FIRST_SEMESTER");
+                        $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
+                        $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
+                        $data[$i]["FIRST_CREDIT_STATUS"] = "---";
+
+                        $SECOND = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, "SECOND_SEMESTER");
+                        $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
+                        $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
+                        $data[$i]["SECOND_CREDIT_STATUS"] = "---";
+                        break;
+                }
+
+                $data[$i]["YEAR_LEARNING_RESULT"] = "---";
+                $data[$i]["YEAR_CREDIT_STATUS"] = "---";
+
                 $i++;
             }
         }

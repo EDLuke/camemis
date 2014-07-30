@@ -56,42 +56,42 @@ $COLUMNS ="[";
     
     switch($TERM_NUMBER){
         case 1:
-            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
         case 2:
-            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'THIRD_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'THIRD_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'FOURTH_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'FOURTH_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FOURTH_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             
-            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
         default:
-            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'FIRST_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'FIRST_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'SECOND_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'SECOND_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
 
-            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_OUTCOMES', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
+            $COLUMNS .=",{dataIndex: 'YEAR_LEARNING_RESULT', header: '<b>".LEARNING_OUTCOMES."</b>' , width: 110 ,align: 'center'}";
             $COLUMNS .=",{dataIndex: 'YEAR_CREDIT_STATUS', header: '<b>".STATUS."</b>' , width: 110 ,align: 'center'}";
             break;
     }
@@ -109,33 +109,33 @@ $FIELDS ="[";
     $FIELDS .=",{name: 'NUMBER_CREDIT'}";
     switch($TERM_NUMBER){
         case 1:
-            $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'FIRST_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'SECOND_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'THIRD_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'THIRD_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'THIRD_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'YEAR_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
         case 2:
-            $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'FIRST_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'SECOND_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'THIRD_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'THIRD_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'THIRD_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'FOURTH_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'FOURTH_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'FOURTH_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'YEAR_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
         default:
-            $FIELDS .=",{name: 'FIRST_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'FIRST_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'FIRST_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'SECOND_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'SECOND_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'SECOND_CREDIT_STATUS'}";
-            $FIELDS .=",{name: 'YEAR_LEARNING_OUTCOMES'}";
+            $FIELDS .=",{name: 'YEAR_LEARNING_RESULT'}";
             $FIELDS .=",{name: 'YEAR_CREDIT_STATUS'}";
             break;
     }
