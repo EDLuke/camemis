@@ -66,7 +66,7 @@ class jsonAcademicPerformances extends AcademicPerformances {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplayListAcademicPerformanceFromMonth();
+        $data = $this->getDisplayListAcademicPerformanceByMonth();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -85,7 +85,7 @@ class jsonAcademicPerformances extends AcademicPerformances {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplayListAcademicPerformanceFromTerm();
+        $data = $this->getDisplayListAcademicPerformanceByTerm();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {
@@ -105,7 +105,7 @@ class jsonAcademicPerformances extends AcademicPerformances {
         $params = Utiles::setPostDecrypteParams($encrypParams);
         $this->setParams($params);
 
-        $data = $this->getDisplayListAcademicPerformanceFromYear();
+        $data = $this->getDisplayListAcademicPerformanceByYear();
 
         $a = array();
         for ($i = $this->start; $i < $this->start + $this->limit; $i++) {

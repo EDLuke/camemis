@@ -13,17 +13,21 @@ class SQLAcademicPerformances {
     const TRADITIONAL_SYSTEM = 0;
     const CREDIT_SYSTEM = 1;
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return false::dbAccess()->select();
     }
 
-    public static function getSQLStudentGPA($stdClass, $term = false) {
+    public static function getSQLStudentGPA($stdClass, $term = false)
+    {
 
-        switch ($stdClass->educationSystem) {
+        switch ($stdClass->educationSystem)
+        {
             case self::TRADITIONAL_SYSTEM:
                 $SELECTION = array(
                     "SUM(GRADE_POINTS) AS SUM_FIRST"
@@ -41,17 +45,22 @@ class SQLAcademicPerformances {
         $SQL->where('CLASS_ID = ?', $stdClass->academicId);
         $SQL->where('STUDENT_ID = ?', $stdClass->studentId);
         $SQL->where('SCORE_TYPE = ?', 1);
-        if (isset($stdClass->month) && isset($stdClass->year)) {
+        if (isset($stdClass->month) && isset($stdClass->year))
+        {
             if ($stdClass->month)
                 $SQL->where("MONTH = '" . $stdClass->month . "'");
             if ($stdClass->year)
                 $SQL->where("YEAR = '" . $stdClass->year . "'");
         }
 
-        if ($term) {
+        if ($term)
+        {
             $SQL->where("TERM = '" . $term . "'");
-        } else {
-            if (!isset($stdClass->month) && !isset($stdClass->year)) {
+        }
+        else
+        {
+            if (!isset($stdClass->month) && !isset($stdClass->year))
+            {
                 if (isset($stdClass->term))
                     $SQL->where("TERM = '" . $stdClass->term . "'");
             }
@@ -63,7 +72,8 @@ class SQLAcademicPerformances {
 
         $OUTPUT = "";
 
-        if ($result) {
+        if ($result)
+        {
             if ($result->SUM_SECOND)
                 $OUTPUT = displayRound($result->SUM_FIRST / $result->SUM_SECOND);
         }
@@ -71,7 +81,8 @@ class SQLAcademicPerformances {
         return $OUTPUT;
     }
 
-    public static function getSQLAverageStudentAcademicPerformance($stdClass, $term = false) {
+    public static function getSQLAverageStudentAcademicPerformance($stdClass, $term = false)
+    {
 
         $SELECTION = array(
             "SUM(SUBJECT_VALUE*COEFF_VALUE) AS SUM_VALUE"
@@ -83,17 +94,22 @@ class SQLAcademicPerformances {
         $SQL->where('CLASS_ID = ?', $stdClass->academicId);
         $SQL->where('STUDENT_ID = ?', $stdClass->studentId);
         $SQL->where('SCORE_TYPE = ?', 1);
-        if (isset($stdClass->month) && isset($stdClass->year)) {
+        if (isset($stdClass->month) && isset($stdClass->year))
+        {
             if ($stdClass->month)
                 $SQL->where("MONTH = '" . $stdClass->month . "'");
             if ($stdClass->year)
                 $SQL->where("YEAR = '" . $stdClass->year . "'");
         }
 
-        if ($term) {
+        if ($term)
+        {
             $SQL->where("TERM = '" . $term . "'");
-        } else {
-            if (!isset($stdClass->month) && !isset($stdClass->year)) {
+        }
+        else
+        {
+            if (!isset($stdClass->month) && !isset($stdClass->year))
+            {
                 if (isset($stdClass->term))
                     $SQL->where("TERM = '" . $stdClass->term . "'");
             }
@@ -105,7 +121,8 @@ class SQLAcademicPerformances {
 
         $OUTPUT = "";
 
-        if ($result) {
+        if ($result)
+        {
             if ($result->SUM_COEFF)
                 $OUTPUT = displayRound($result->SUM_VALUE / $result->SUM_COEFF);
         }
@@ -113,7 +130,8 @@ class SQLAcademicPerformances {
         return $OUTPUT;
     }
 
-    public static function getCallStudentAcademicPerformance($stdClass) {
+    public static function getCallStudentAcademicPerformance($stdClass)
+    {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
@@ -123,7 +141,7 @@ class SQLAcademicPerformances {
         $data["GRADE_POINTS"] = "---";
         $data["IS_FAIL"] = "";
         $data["GPA"] = "---";
-        $data["DISPLAY_TOTAL"] = "---";
+        $data["TOTAL_RESULT"] = "---";
         $data["FIRST_RESULT"] = "---";
         $data["SECOND_RESULT"] = "---";
         $data["THIRD_RESULT"] = "---";
@@ -131,8 +149,10 @@ class SQLAcademicPerformances {
         $data["ASSESSMENT_ID"] = "---";
         $data["TEACHER_COMMENT"] = "---";
 
-        if (isset($stdClass->studentId)) {
-            if ($stdClass->studentId) {
+        if (isset($stdClass->studentId))
+        {
+            if ($stdClass->studentId)
+            {
                 $SELECTION_A = array(
                     'RANK'
                     , 'ASSESSMENT_ID'
@@ -155,8 +175,10 @@ class SQLAcademicPerformances {
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                if (isset($stdClass->section)) {
-                    switch ($stdClass->section) {
+                if (isset($stdClass->section))
+                {
+                    switch ($stdClass->section)
+                    {
                         case "MONTH":
                             if ($stdClass->month)
                                 $SQL->where("A.MONTH = '" . $stdClass->month . "'");
@@ -179,13 +201,14 @@ class SQLAcademicPerformances {
 
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
-                if ($result) {
+                if ($result)
+                {
                     $data["GRADING"] = $result->$GRADING_TYPE ? $result->$GRADING_TYPE : "---";
                     $data["RANK"] = $result->RANK ? $result->RANK : "---";
                     $data["IS_FAIL"] = $result->IS_FAIL;
                     $data["GPA"] = $result->GPA ? $result->GPA : "---";
                     $data["GRADE_POINTS"] = $result->GRADE_POINTS ? $result->GRADE_POINTS : "---";
-                    $data["DISPLAY_TOTAL"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
+                    $data["TOTAL_RESULT"] = $result->TOTAL_RESULT ? $result->TOTAL_RESULT : "---";
                     $data["FIRST_RESULT"] = $result->FIRST_RESULT ? $result->FIRST_RESULT : "---";
                     $data["SECOND_RESULT"] = $result->SECOND_RESULT ? $result->SECOND_RESULT : "---";
                     $data["THIRD_RESULT"] = $result->THIRD_RESULT ? $result->THIRD_RESULT : "---";
@@ -199,7 +222,8 @@ class SQLAcademicPerformances {
         return (object) $data;
     }
 
-    public static function checkStudentAcademicPerformance($stdClass) {
+    public static function checkStudentAcademicPerformance($stdClass)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_learning_performance", array("C" => "COUNT(*)"));
@@ -207,12 +231,14 @@ class SQLAcademicPerformances {
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-        switch ($stdClass->section) {
+        switch ($stdClass->section)
+        {
             case "MONTH":
                 if ($stdClass->month)
                     $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if ($stdClass->year) {
+                if ($stdClass->year)
+                {
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
@@ -231,10 +257,13 @@ class SQLAcademicPerformances {
         return $result ? $result->C : 0;
     }
 
-    public static function scoreListAcademicPerformance($listStudents, $stdClass) {
+    public static function scoreListAcademicPerformance($listStudents, $stdClass)
+    {
         $data = array();
-        if ($listStudents) {
-            foreach ($listStudents as $value) {
+        if ($listStudents)
+        {
+            foreach ($listStudents as $value)
+            {
                 $stdClass->studentId = $value->ID;
                 $data[] = self::getSQLAverageStudentAcademicPerformance($stdClass, false, false);
             }
@@ -242,49 +271,61 @@ class SQLAcademicPerformances {
         return $data;
     }
 
-    public static function getActionStudentAcademicPerformance($stdClass) {
+    public static function getActionStudentAcademicPerformance($stdClass)
+    {
 
-        if (isset($stdClass->average)) {
-            $SAVE_DATA["DISPLAY_TOTAL"] = $stdClass->average;
+        if (isset($stdClass->average))
+        {
+            $SAVE_DATA["TOTAL_RESULT"] = $stdClass->average;
         }
 
-        if (isset($stdClass->rank)) {
-            if (is_numeric($stdClass->average)) {
+        if (isset($stdClass->rank))
+        {
+            if (is_numeric($stdClass->average))
+            {
                 $SAVE_DATA["RANK"] = $stdClass->rank;
             }
         }
 
-        if (isset($stdClass->assessmentId)) {
+        if (isset($stdClass->assessmentId))
+        {
             $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
         }
 
-        if (isset($stdClass->firstResult)) {
+        if (isset($stdClass->firstResult))
+        {
             $SAVE_DATA["FIRST_RESULT"] = $stdClass->firstResult;
         }
 
-        if (isset($stdClass->secondResult)) {
+        if (isset($stdClass->secondResult))
+        {
             $SAVE_DATA["SECOND_RESULT"] = $stdClass->secondResult;
         }
 
-        if (isset($stdClass->thirdResult)) {
+        if (isset($stdClass->thirdResult))
+        {
             $SAVE_DATA["THIRD_RESULT"] = $stdClass->thirdResult;
         }
 
-        if (isset($stdClass->fourthResult)) {
+        if (isset($stdClass->fourthResult))
+        {
             $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
         }
-        
-        if (isset($stdClass->gpaValue)) {
+
+        if (isset($stdClass->gpaValue))
+        {
             $SAVE_DATA["GPA"] = $stdClass->gpaValue;
         }
 
-        if (self::checkStudentAcademicPerformance($stdClass)) {
+        if (self::checkStudentAcademicPerformance($stdClass))
+        {
 
             $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
             $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
             $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
 
-            switch ($stdClass->section) {
+            switch ($stdClass->section)
+            {
                 case "MONTH":
                     $WHERE[] = "MONTH = '" . $stdClass->month . "'";
                     $WHERE[] = "YEAR = '" . $stdClass->year . "'";
@@ -304,7 +345,9 @@ class SQLAcademicPerformances {
             $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
             $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
             self::dbAccess()->update('t_student_learning_performance', $SAVE_DATA, $WHERE);
-        } else {
+        }
+        else
+        {
 
             $SAVE_DATA["STUDENT_ID"] = $stdClass->studentId;
             $SAVE_DATA["CLASS_ID"] = $stdClass->academicId;

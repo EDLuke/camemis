@@ -1,0 +1,31 @@
+<?
+
+$HELP_ACCESS = new AdminHelpDBAccess();
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>CAMEMIS</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<script type="text/javascript" src="/public/ckeditor/ckeditor.js"></script>
+<link href="/public/ckeditor/samples/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body style='background:#FFF;'>
+    <script type="text/javascript">
+        var editor;
+        CKEDITOR.on( 'instanceReady', function( ev ) {
+            editor = ev.editor;
+            document.getElementById( 'readOnlyOn' ).style.display = '';
+            editor.on( 'readOnly', function() {
+                document.getElementById( 'readOnlyOn' ).style.display = this.readOnly ? 'none' : '';
+                document.getElementById( 'readOnlyOff' ).style.display = this.readOnly ? '' : 'none';
+            });
+        });
+        function toggleReadOnly( isReadOnly ) {
+            editor.setReadOnly( isReadOnly );
+        }
+    </script>
+    <?=html_entity_decode($content);?>
+</body>
+</html>
