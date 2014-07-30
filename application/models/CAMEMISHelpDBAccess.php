@@ -43,7 +43,7 @@ class CAMEMISHelpDBAccess {
         $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("*"));
         $SQL->where("PARENT = ?", $parent);
-        $SQL->order("NAME_ENGLISH");
+        $SQL->order("SORTKEY ASC");
         return self::dbAminAccess()->fetchAll($SQL);
     }
 
