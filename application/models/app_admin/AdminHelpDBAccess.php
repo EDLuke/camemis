@@ -113,7 +113,7 @@ class AdminHelpDBAccess {
     {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        
+
         if (isset($params["SORTKEY"]))
             $SAVE_DATA["SORTKEY"] = addText($params["SORTKEY"]);
 
@@ -184,7 +184,7 @@ class AdminHelpDBAccess {
 
         $SQL = "SELECT * FROM t_help";
         $SQL .= " WHERE PARENT='" . $parentId . "'";
-        $SQL .= " ORDER BY NAME_ENGLISH";
+        $SQL .= " ORDER BY SORTKEY ASC";
 
         $result = self::dbAccess()->fetchAll($SQL);
 
