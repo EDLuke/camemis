@@ -108,7 +108,7 @@ class CAMEMISHelpDBAccess {
             $facette = self::findHelp($key);
             if ($facette)
             {
-                $searchParams["parent"] = $facette->PARENT;
+                $searchParams["parent"] = $facette->ID;
                 $entries = self::getSQLHelp($searchParams);
             }
         }
