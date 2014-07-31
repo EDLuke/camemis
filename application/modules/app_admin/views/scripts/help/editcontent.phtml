@@ -52,7 +52,7 @@ switch($field){
             //<![CDATA[ 
             CKEDITOR.on('instanceReady',function( evt ){
                 var editor = evt.editor;
-                //editor.execCommand('maximize');
+                editor.execCommand('maximize');
             });
             CKEDITOR.replace( 'content',{
                 language:'".$lang."'
