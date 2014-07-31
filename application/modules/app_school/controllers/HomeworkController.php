@@ -198,11 +198,8 @@ class HomeworkController extends Zend_Controller_Action {
         $this->view->homeworkId = $this->homeworkId;
         $this->facette = SubjectHomeworkDBAccess::findSubjectHomeworkFromId($this->objectId);
         $this->view->facette = $this->facette;
-        $this->view->teacherId = $this->teacherId;
-        ///@Sor Veasna
-        $this->view->academicObject = AcademicDBAccess::findGradeFromId($this->classId);
-
-        ///
+        $this->view->teacherId = $this->teacherId;        
+        $this->view->academicObject = AcademicDBAccess::findGradeFromId($this->classId);//@Sor Veasna
 
         switch (UserAuth::getUserType())
         {
@@ -233,6 +230,11 @@ class HomeworkController extends Zend_Controller_Action {
                 break;
         }
     }
+    
+     public function studentsubmithomeworkAction(){
+        $this->view->homeworkId = $this->homeworkId;
+        $this->_helper->viewRenderer("studentsubmithomework");    
+     } 
 
     public function showitemwithoutteacherAction()
     {
@@ -304,7 +306,7 @@ class HomeworkController extends Zend_Controller_Action {
                 break;
 
             case "jsonLoadStudentHomework":
-                $jsondata = SubjectHomeworkDBAccess::jsonLoadStudentHomework($this->REQUEST->getPost('objectId'), $this->REQUEST->getPost('studentId'));
+                $jsondata = SubjectHomeworkDBAccess::jsonLoadStudentHomework($this->REQUEST->getPost('homeworkId'), $this->REQUEST->getPost('studentId'));
                 break;
 
             case "jsonLoadStudentSubjectHomework":
