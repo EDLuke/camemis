@@ -15,12 +15,11 @@ require_once 'utiles/Utiles.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance(); 
-$OBJECT_FORM = new CamemisForm("HOMEWORK","LIST");
+$OBJECT_FORM = new CamemisForm("HOMEWORK");
 $OBJECT_FORM->setLoadUrl('/homework/jsonload/');
 $OBJECT_FORM->setSaveUrl('/homework/jsonsave/'); 
 
 if(!$this->facette) {header("Location: /main/permission/");exit;}
-
 $teacher_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->TEACHER.$this->objectId;
 $homework_id = $this->facette->HOMEWORK_ID;
 
@@ -95,22 +94,25 @@ Ext.onReady(function() {
         }]
     }
     ";
-   
-    $ATTACHMENTS = "
+    
+    $TITLE = "
     {
-        title: '".ATTACHMENTS."'
-        ,height: 570
+        title: '".TITLE."'
+        ,autoHeight: true
         ,collapsible: true
         ,collapsed: false
-        ,width: 550
         ,style: 'padding-bottom: 5px'
-        ,layout: 'fit'
-        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("template=homework&count=3&objectId=".$teacher_id."")."'})]
-         
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; padding:10px'
+            ,items: [{".CamemisField::Textfield("NAME","NAME",HOMEWORK_NAME,false,false,false)."}]
+        }]
     }
     ";
     
-    $CONTENT = "
+    $DESCRIPTION = "
     {
         title: '".DESCRIPTION."'
         ,collapsible: true
@@ -126,9 +128,22 @@ Ext.onReady(function() {
     }
     ";
     
+    $ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,height: 560
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet("template=homework&count=3&objectId=".$teacher_id."")."'})]
+         
+    }
+    ";
+    
     //@veasna
-    /*
-    if($this->academicObject->EDUCATION_SYSTEM){
+    /*if($this->academicObject->EDUCATION_SYSTEM){
         $creditClasss = AcademicDBAccess::getChildGradeSchoolyear($this->academicObject->ID);
         $STORE_CREDIT_CLASS = "[";
         if($creditClasss){
@@ -170,10 +185,8 @@ Ext.onReady(function() {
                 }]
             }]
         }";*/
-        
-        /////////////////
          
-        if($this->academicObject->EDUCATION_SYSTEM){
+    if($this->academicObject->EDUCATION_SYSTEM){
         $item = array();    
         $creditClasss = AcademicDBAccess::getChildGradeSchoolyear($this->academicObject->ID);
         if($creditClasss){
@@ -198,26 +211,7 @@ Ext.onReady(function() {
                 ,items: [".$checkItem."]
             }]
         }";
-    }
-        
-        
-    //} 
-    //
-    
-    $TITLE = "{
-        title: '".TITLE."'
-        ,autoHeight: true
-        ,collapsible: true
-        ,collapsed: false
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,bodyStyle: 'background:#FFF; padding:10px'
-            ,items: [{".CamemisField::Textfield("NAME","NAME",HOMEWORK_NAME,false,false,false)."}]
-        }]
-    }"; 
+    } 
         
     $ITEMS = "[";
         $ITEMS .= $PUBLISH_INFORMATION;
@@ -225,7 +219,7 @@ Ext.onReady(function() {
         if($this->academicObject->EDUCATION_SYSTEM){
             $ITEMS .= "," .$GROUP;
         }
-        $ITEMS .= ",".$CONTENT;
+        $ITEMS .= ",".$DESCRIPTION;
         if($this->facette){
           switch(UserAuth::getUserType()){
                 case 'INSTRUCTOR':
@@ -277,9 +271,17 @@ Ext.onReady(function() {
                     ,objectId: '".$this->objectId."'
                 ");
                 
-                $OBJECT_FORM->setSaveParams("cmd: 'jsonAddSubjectHomework',objectId: '".$this->objectId."',classId: '".$this->classId."'");
+                $OBJECT_FORM->setSaveParams("
+                    cmd: 'jsonAddSubjectHomework'
+                    ,objectId: '".$this->objectId."'
+                    ,classId: '".$this->classId."'
+                ");
                                     
-                $OBJECT_FORM->setReleaseParams("cmd: 'jsonReleaseSubjectHomework',objectId: '".$this->objectId."'");
+                $OBJECT_FORM->setReleaseParams("
+                    cmd: 'jsonReleaseSubjectHomework'
+                    ,objectId: '".$this->objectId."'
+                ");
+                
                 $OBJECT_FORM->setOnEmbeddedReleaseEvents(" 
                     XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
                     if(window.parent.Ext.getCmp('HOMEWORK'))
@@ -287,7 +289,11 @@ Ext.onReady(function() {
                     window.location='" . $_SERVER["REQUEST_URI"] . "';
                 "); 
 
-                $OBJECT_FORM->setRemoveParams("cmd: 'jsonDeleteSubjectHomework',objectId: '".$this->objectId."'");
+                $OBJECT_FORM->setRemoveParams("
+                    cmd: 'jsonDeleteSubjectHomework'
+                    ,objectId: '".$this->objectId."'
+                ");
+                
                 $OBJECT_FORM->setOnEmbeddedRemoveEvents(" 
                     window.parent.parent.Ext.getCmp('HOMEWORK_LIST_ID').store.reload();
                     window.parent.parent.Ext.getCmp('content').getLayout().setActiveItem(0);                         

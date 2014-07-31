@@ -22,7 +22,6 @@ $OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
 if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
-$student_id = $this->facette->SUBJECT.$this->facette->CLASS_ID.$this->facette->STUDENT_ID;
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -73,14 +72,13 @@ Ext.onReady(function() {
                 layout: 'form'
                 ,border: false
                 ,bodyStyle: 'background:#FFF' 
-                //,items: [{".CamemisField::Box("CREATED_DATE", CREATED_DATE, $this->facette->CREATED_DATE)."}]
                 ,items: [{".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."}]
             }]
         }]
     }
     ";
     
-    $TITLE_STUDENT = "{
+    $STUDENT_TITLE = "{
         title: '".TITLE."'
         ,autoHeight: true
         ,collapsible: true
@@ -91,13 +89,12 @@ Ext.onReady(function() {
             layout: 'form'
             ,border: false
             ,bodyStyle: 'background:#FFF; padding:10px' 
-            //,items: [{".CamemisField::Box("TITLE_NAME", HOMEWORK_NAME, $this->facette->TITLE_NAME)."}]
             ,items: [{".CamemisField::Displayfield("TITLE_NAME",HOMEWORK_NAME,false)."}]    
         }]
 
     }";
     
-    $CONTENT_STUDENT = "
+    $STUDENT_CONTENT = "
     {
         title: '".DESCRIPTION."'
         ,collapsible: true
@@ -108,10 +105,7 @@ Ext.onReady(function() {
             layout: 'fit'
             ,border: false 
             ,bodyStyle: 'padding:10px; background:#FFF; padding-bottom:40px;'
-            //First Option  == static in HTML
-            //,items: [{".CamemisField::Box("CONTENT_STUDENT", CONTENT, setShowText($this->facette->CONTENT))."}]
-            //Second Option == dynamic from json
-            ,items: [{".CamemisField::Displayfield("CONTENT_STUDENT",CONTENT,false)."}] 
+            ,items: [{".CamemisField::Displayfield("STUDENT_CONTENT",CONTENT,false)."}] 
         }]
     }
     ";
@@ -126,24 +120,24 @@ Ext.onReady(function() {
         break;
     }
     
-    $ATTACHMENTS = "
+    $STUDENT_ATTACHMENTS = "
     {
         title: '".ATTACHMENTS."'
+        ,height: 480
         ,collapsible: true
         ,collapsed: false
         ,width: 550
-        ,height:167
         ,style: 'padding-bottom: 5px'
-        ,layout:'fit'
-        ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENTS', url: '/dataset/attachment/?objectId=".$student_id."&template=homework&display=1&attachment=download'})]
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({id: 'STUDENT_ATTACHMENTS', url: '/dataset/attachment/?isUpload=0&objectId=".$studentId."&template=homework&display=1&attachment=download'})]
     }
     "; 
         
     $ITEMS = "[";
         $ITEMS .= $PUBLISH_INFORMATION;
-        $ITEMS .= ",".$TITLE_STUDENT;
-        $ITEMS .= ",".$CONTENT_STUDENT;
-        $ITEMS .= ",".$ATTACHMENTS;           
+        $ITEMS .= ",".$STUDENT_TITLE;
+        $ITEMS .= ",".$STUDENT_CONTENT;
+        $ITEMS .= ",".$STUDENT_ATTACHMENTS;           
     $ITEMS .= "]";
 
     $formItems = "

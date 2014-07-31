@@ -1,0 +1,163 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sea Peng
+// Date: 30.07.2014   
+///////////////////////////////////////////////////////////
+require_once 'models/UserAuth.php';
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance(); 
+$OBJECT_FORM = new CamemisForm("STUDENT_HOMEWORK");
+$OBJECT_FORM->setLoadUrl('/homework/jsonload/');
+$OBJECT_FORM->setSaveUrl('/homework/jsonsave/');
+
+$studentId = Zend_Registry::get('USER')->ID;
+$checkStudentSubmit = SubjectHomeworkDBAccess::findStudentHomeworkFromId($this->homeworkId,$studentId);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+
+<script>
+Ext.onReady(function() {
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    
+    $STUDENT_TITLE = "{
+        title: '".TITLE."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".CamemisField::Textfield("TITLE_NAME","TITLE_NAME",HOMEWORK_NAME,false,false,false)."}]
+        }]
+    }";
+    
+    $STUDENT_CONTENT = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'padding:5px'
+            ,items:[{".CamemisField::HTML("STUDENT_CONTENT",false,false)."}]
+        }]
+    }
+    ";
+    
+    $STUDENT_ATTACHMENTS = "
+    {
+        title: '".ATTACHMENTS."'
+        ,height: 560
+        ,collapsible: true
+        ,collapsed: false
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,layout: 'fit'
+        ,items: [new Ext.ux.IFrameComponent({id: 'STUDENT_ATTACHMENTS', url: '/dataset/attachment/?objectId=".$studentId."&template=homework&display=1&attachment=upload'})]    
+    }
+    ";
+    
+    $PUBLISH_INFORMATION = "
+    {
+        title: '".PUBLISH."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,bodyStyle: 'padding:10px'
+            ,items: [{             
+                layout: 'form'
+                ,border: false
+                ,bodyStyle: 'background:#FFF' 
+                ,items: [{".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,false)."}]
+            }]
+        }]
+    }
+    ";
+    
+    $ITEMS = "["; 
+        $ITEMS .= $STUDENT_TITLE;
+        $ITEMS .= ",".$STUDENT_CONTENT;
+        if($checkStudentSubmit){
+            $ITEMS .= ",".$STUDENT_ATTACHMENTS;
+            $ITEMS .= ",".$PUBLISH_INFORMATION;   
+        }
+    $ITEMS .= "]";
+
+    $formItems = "
+        border: false
+        ,layout: 'form'
+        ,items:".$ITEMS 
+    ;
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'jsonAddStudentHomework'
+        ,studentId: '".$studentId."'
+        ,homeworkId: '".$this->homeworkId."'  
+    ");
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'jsonLoadStudentHomework'
+        ,homeworkId: '".$this->homeworkId."'
+        ,studentId: '".$studentId."'
+    ");
+    
+    $OBJECT_FORM->addObjectItems($formItems);
+    
+    if($checkStudentSubmit){
+        $OBJECT_FORM->isObjectDefaultOnLoad = true;   
+    }else{
+        $OBJECT_FORM->isObjectDefaultOnLoad = false;    
+    }
+        
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 150;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items: [{xtype: '<?=$OBJECT_FORM->getObjectXType();?>'}]
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
