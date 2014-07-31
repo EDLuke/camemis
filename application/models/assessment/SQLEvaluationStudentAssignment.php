@@ -447,9 +447,9 @@ class SQLEvaluationStudentAssignment {
             $where = array();
             $data['TERM']            = "'". $TERM_NAME ."'";
             $data['SCORE_INPUT_DATE']= "'". setDate2DB($stdClass->modify_date) ."'";
-            $where[] = "ASSIGNMENT_ID = '". $assignmentId ."'";
-            $where[] = "SUBJECT_ID = '". $stdClass->subjectId ."'";
-            $where[] = "CLASS_ID = '". $stdClass->academicId ."'";
+            $where[] = "ASSIGNMENT_ID =". $assignmentId;
+            $where[] = "SUBJECT_ID =". $stdClass->subjectId;
+            $where[] = "CLASS_ID =". $stdClass->academicId;
             $where[] = "SCORE_INPUT_DATE = '". $olddate ."'";
             self::dbAccess()->update("t_student_score_date", $data, $where);
         }

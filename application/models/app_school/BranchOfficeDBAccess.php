@@ -127,9 +127,9 @@ class BranchOfficeDBAccess {
             $data['EMAIL']   = "'" . addText($email) . "'";
             $data['PHONE']   = "'" . addText($phone) . "'";
             $data['SHORT']   = "'" . addText($short) . "'";
-            $data['SORTKEY'] = "'" . addText($sortkey) . "'";
+            $data['SORTKEY'] = addText($sortkey);
             $data['CONTACT_PERSON']= "'" . addText($contact_person) . "'";
-            self::dbAccess()->update("t_branch_office", $data, "ID='". $objectId ."'");
+            self::dbAccess()->update("t_branch_office", $data, "ID=". $objectId);
         }
 
         return array("success" => true, 'objectId' => $objectId);

@@ -236,7 +236,7 @@ class DescriptionDBAccess {
 
        if ($result) {
             foreach ($result as $value) {
-                self::dbAccess()->update("t_personal_description", array( 'CHOOSE_TYPE' => $facette->CHOOSE_TYPE ), "ID='". $value->ID ."'");
+                self::dbAccess()->update("t_personal_description", array('CHOOSE_TYPE' => $facette->CHOOSE_TYPE), "ID=". $value->ID);
             }
         }
     }

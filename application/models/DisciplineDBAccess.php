@@ -211,7 +211,7 @@ class DisciplineDBAccess extends StudentDBAccess {
             $data['MODIFY_BY']   = "'". Zend_Registry::get('USER')->CODE ."'";
 
             if (!$CHECK_FUTUR_DATE)
-                self::dbAccess()->update("t_discipline", $data, "ID='". $objectId ."'");
+                self::dbAccess()->update("t_discipline", $data, "ID=". $objectId);
         } else {
             $SAVEDATA[$chooseId] = addText($studentId);
 
@@ -512,7 +512,7 @@ class DisciplineDBAccess extends StudentDBAccess {
                 $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
-        self::dbAccess()->update("t_discipline", $data, "ID='". $Id ."'");
+        self::dbAccess()->update("t_discipline", $data, "ID=". $Id);
 
         return array("success" => true, "status" => $newStatus);
     }

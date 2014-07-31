@@ -346,8 +346,7 @@ class AssignmentDBAccess {
                 $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
         }
-
-        self::dbAccess()->update("t_assignment", $data, "ID='" . $objectId . "'");
+        self::dbAccess()->update("t_assignment", $data, "ID=". $objectId);
         return array("success" => true, "status" => $newStatus);
     }
 

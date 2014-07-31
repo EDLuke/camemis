@@ -853,7 +853,7 @@ class AcademicDBAccess {
                     $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                     break;
             }
-            self::dbAccess()->update("t_grade", $data, "ID='" . $facette->ID . "'");
+            self::dbAccess()->update("t_grade", $data, "ID=". $facette->ID );
         }
         return array("success" => true, "status" => $newStatus);
     }
@@ -1472,7 +1472,7 @@ class AcademicDBAccess {
         {
             foreach ($result1 as $value)
             {
-                self::dbAccess()->update("t_grade", array('GUID' => "'" . generateGuid() . "'"), "ID='" . $value->ID . "'");
+                self::dbAccess()->update("t_grade", array('GUID' => "'". generateGuid() ."'"), "ID=". $value->ID);
             }
         }
 
@@ -1481,7 +1481,7 @@ class AcademicDBAccess {
         {
             foreach ($result2 as $value)
             {
-                self::dbAccess()->update("t_subject", array('GUID' => "'" . generateGuid() . "'"), "ID='" . $value->ID . "'");
+                self::dbAccess()->update("t_subject", array('GUID' => "'". generateGuid() ."'"), "ID=". $value->ID);
             }
         }
     }
@@ -1944,7 +1944,7 @@ class AcademicDBAccess {
                     {
                         foreach ($entries as $value)
                         {
-                            self::dbAccess()->update("t_grade", array('STAFF_SCORE_PERMISSION' => "'" . addText($selecteds) . "'"), "ID='" . $value->ID . "'");
+                            self::dbAccess()->update("t_grade", array('STAFF_SCORE_PERMISSION' => "'". addText($selecteds) ."'"), "ID=". $value->ID);
                         }
                     }
                     break;
@@ -1992,7 +1992,7 @@ class AcademicDBAccess {
             $Id = isset($params["id"]) ? addText($params["id"]) : "";
             if ($name && $facette)
             {
-                self::dbAccess()->update("t_grade", array('NAME' => "'" . addText($name) . "'"), "ID='" . $id . "'");
+                self::dbAccess()->update("t_grade", array('NAME' => "'". addText($name) ."'"), "ID=". $id);
             }
         }
         else
@@ -2520,9 +2520,9 @@ class AcademicDBAccess {
                 {
                     $dateObject = self::getDateBySchoolTerm($value->ACADEMIC_ID, $value->TERM);
                     $data = array();
-                    $data['START_DATE'] = "'" . $dateObject->START_DATE . "'";
-                    $data['END_DATE'] = "'" . $dateObject->END_DATE . "'";
-                    self::dbAccess()->update("t_schedule", $data, "ACADEMIC_ID='" . $value->ACADEMIC_ID . "'");
+                    $data['START_DATE'] = "'". $dateObject->START_DATE ."'";
+                    $data['END_DATE']   = "'". $dateObject->END_DATE ."'";
+                    self::dbAccess()->update("t_schedule", $data, "ACADEMIC_ID=". $value->ACADEMIC_ID);
                 }
             }
         }
@@ -2552,7 +2552,7 @@ class AcademicDBAccess {
         if ($academicObject)
         {
             $campusObject = self::findGradeFromId($academicObject->CAMPUS_ID);
-            self::dbAccess()->update("t_grade", array("EDUCATION_SYSTEM" => $campusObject->EDUCATION_SYSTEM), "CAMPUS_ID='" . $campusObject->ID . "'");
+            self::dbAccess()->update("t_grade", array("EDUCATION_SYSTEM" => $campusObject->EDUCATION_SYSTEM), "CAMPUS_ID=". $campusObject->ID);
         }
     }
 
