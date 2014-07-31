@@ -331,7 +331,9 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,disabled:true
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/firstsemesterchart');
+                    }
                 }]
             }";
             
@@ -493,7 +495,9 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,disabled:true
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/firstsemesterchart');
+                    }
                 }]
             }";
             if($academicObject->DISPLAY_FIRST_RESULT)
