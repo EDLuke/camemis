@@ -116,30 +116,6 @@ switch($type){
         winVideo.show();
     }
     ////////////////////////////////////////////////////////////////////////////
-    function getWinContent(){
-        winContent = new Ext.Window({
-            title: 'Content'
-            ,layout:'fit'
-            ,maximizable: false
-            ,id: 'winContentId'
-            ,height:percentHeight(85)
-            ,width:650
-            ,resizable: true
-            ,closable: false
-            ,modal: true
-            ,items: [new Ext.ux.IFrameComponent({ id:'CONTENT_ID', url:'/help/editcontent/?objectId=<?=$this->objectId?>&field=<?=$FIELD_CONTENT?>'})]
-            ,tbar: ['->',{
-                text: 'Close'
-                ,iconCls: 'icon-cancel'
-                ,handler: function (){
-                    Ext.getCmp('winContentId').close();
-                    window.location='<?=$_SERVER["REQUEST_URI"]?>';
-                }
-            }]
-        });
-        winContent.show();
-    }
-    ////////////////////////////////////////////////////////////////////////////
     Ext.onReady(function() {
         var myTree;
         Ext.form.Field.prototype.msgTarget = 'side';
@@ -182,39 +158,32 @@ switch($type){
             {
                 title: 'Detail'
                 ,autoHeight: true
-                ,collapsible: true
-                ,collapsed: false
                 ,style: 'padding-bottom:5px'
-                ,width: 650
-                ,tbar:['->',{
-                    text: 'Play Video'
-                    ,iconCls: 'icon-control_play'
-                    ,handler: function() {getWinVideo();}
-                }]
+                ,width: percentWidth(96)
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight: true
                     ,collapsible: true
-                    ,collapsed: false
+                    ,collapsed: true
                     ,style: 'padding-bottom: 5px'
                     ,bodyStyle: 'background:#FFFFFF;padding:10px; color:#000000;font-weight: bold;'
                     ,items:".$ITEMS."
                 }]
             },{
                 title: ''
-                ,width: 650
-                ,height:percentHeight(70)
+                ,tbar:['->',{
+                    text: 'Play Video'
+                    ,iconCls: 'icon-control_play'
+                    ,handler: function() {getWinVideo();}
+                }]
+                ,width: percentWidth(96)
+                ,height:percentHeight(95)
                 ,collapsible: true
                 ,collapsed: false
                 ,style: 'padding-bottom: 5px'
                 ,layout:'fit'
-                ,tbar:['->',{
-                    text:'Content'
-                    ,iconCls: 'icon-add'
-                    ,handler: function() {getWinContent();}
-                }]
-                ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
+                ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/editcontent/?objectId=".$this->objectId."&field=".$FIELD_CONTENT."'})]
             }";
             
         }else{
@@ -225,7 +194,7 @@ switch($type){
                 ,collapsible: true
                 ,collapsed: false
                 ,style: 'padding-bottom:5px'
-                ,width: 650
+                ,width: percentWidth(96)
                 ,items:[{
                     layout: 'form'
                     ,border: false

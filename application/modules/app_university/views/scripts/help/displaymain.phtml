@@ -1,0 +1,110 @@
+<?
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisTree.php';
+require_once 'clients/CamemisBar.php';
+require_once 'include/Common.inc.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+require_once 'models/CAMEMISHelpDBAccess.php';
+
+$facette = CAMEMISHelpDBAccess::findHelp($this->objectId);
+$content = $facette?setShowText($facette->CONTENT_ENGLISH):"---";
+$ID_YOUTUBE_KEY = isset($facette->YOUTUBE_KEY_ENGLISH)?$facette->YOUTUBE_KEY_ENGLISH:"";
+
+?>
+<script>
+
+Ext.onReady(function() {
+    //Load player api asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    var done = false;
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '390'
+            ,width: '640'
+            ,videoId:'<?=$ID_YOUTUBE_KEY?>'
+        });
+    }
+
+    function onPlayerReady(evt) {
+        evt.target.playVideo();
+    }
+
+    function onPlayerStateChange(evt) {
+        if (evt.data == YT.PlayerState.PLAYING && !done) {
+            setTimeout(stopVideo, 6000);
+            done = true;
+        }
+    }
+    function stopVideo() {
+        player.stopVideo();
+    }
+        
+    function getWinVideo(){
+        winVideo = new Ext.Window({
+            title: 'Play Video'
+            ,maximizable: false
+            ,id: 'winVideoId'
+            ,autoHeight: true
+            ,width:670
+            ,resizable: false
+            ,closable: false
+            ,modal: true
+            ,contentEl: 'divWindowId'
+            ,tbar: ['->',{
+                text: 'Close'
+                ,iconCls: 'icon-cancel'
+                ,handler: function (){
+                    Ext.getCmp('winVideoId').close();
+                    if (player) player.stopVideo();
+                }
+            },'-',{
+                text: 'Play'
+                ,iconCls: 'icon-control_play'
+                ,handler: function (){
+                    if (player) player.playVideo();
+                }
+            },'-',{
+                text: 'Stop'
+                ,iconCls: 'icon-control_stop'
+                ,handler: function (){
+                    if (player) player.stopVideo();
+                }
+            }]
+        });
+        winVideo.show();
+    }
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,tbar:['->',{
+                text: 'Play Video'
+                ,iconCls: 'icon-control_play'
+                ,handler: function() {getWinVideo();}
+            }]
+            ,items: [new Ext.ux.IFrameComponent({ id: 'IFRAME_CONTENT', url:'/help/displaycontent/?objectId=<?=$this->objectId?>'})]
+        }]
+    });
+});
+</script>
+<div id="divWindowId" class="x-hidden" style="border:0px silver solid;padding:8px;height:400px; width:600px;">
+    <div id="player"></div>
+</div>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

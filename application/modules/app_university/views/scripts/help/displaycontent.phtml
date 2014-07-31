@@ -2,6 +2,7 @@
 require_once 'models/CAMEMISHelpDBAccess.php';
 
 $facette = CAMEMISHelpDBAccess::findHelp($this->objectId);
+
 $content = $facette?setShowText($facette->CONTENT_ENGLISH):"---";
 
 ?>
