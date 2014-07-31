@@ -52,7 +52,7 @@ switch($field){
             //<![CDATA[ 
             CKEDITOR.on('instanceReady',function( evt ){
                 var editor = evt.editor;
-                editor.execCommand('maximize');
+                //editor.execCommand('maximize');
             });
             CKEDITOR.replace( 'content',{
                 language:'".$lang."'
@@ -61,7 +61,7 @@ switch($field){
                 ,toolbar :
                 [
                     { name: 'document', items : [ 'Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
-                    { name: 'basicstyles', items : [ 'Bold','Italic' ] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyFull' ] },
                     { name: 'paragraph', items : [ 'NumberedList','BulletedList' ] },
                     { name: 'insert', items: [ 'Image','Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] },
                     { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
