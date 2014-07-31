@@ -151,8 +151,6 @@ class SubjectHomeworkDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
     
-    /* --- Soda --- */
-        
     public static function getClassStudentHomework($classId){
         $SQL = "";
         $SQL .= " SELECT COUNT(*) AS TOTAL";
@@ -391,31 +389,45 @@ class SubjectHomeworkDBAccess {
     /* Soda */
         
     public static function jsonAddStudentHomework($params) {
-                                                                   
+                                                                 
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $title_name = isset($params["TITLE_NAME"]) ? addText($params["TITLE_NAME"]) : "";
-        $content = isset($params["CONTENT_STUDENT"]) ? addText($params["CONTENT_STUDENT"]) : ""; 
-        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : "";
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";  
-                
-        $SAVEDATA['STUDENT_ID'] = $studentId;   
-        $SAVEDATA['HOMEWORK_ID'] = $homeworkId;
-        $SAVEDATA['TITLE_NAME'] = $title_name;
-        $SAVEDATA['CONTENT'] = addText($content);
+        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : ""; 
+        
+        $checkStudentSubmit = self::findStudentHomeworkFromId($homeworkId,$studentId);
+
+        if ($studentId)
+            $SAVEDATA['STUDENT_ID'] = $studentId;
+        
+        if ($homeworkId)
+            $SAVEDATA['HOMEWORK_ID'] = $homeworkId;
+        
+        if (isset($params["TITLE_NAME"]))
+            $SAVEDATA['TITLE_NAME'] = addText($params["TITLE_NAME"]);
+            
+        if (isset($params["STUDENT_CONTENT"]))
+            $SAVEDATA['CONTENT'] = addText($params["STUDENT_CONTENT"]);
+            
         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-        self::dbAccess()->insert('t_student_homework', $SAVEDATA); 
+        
+        if($checkStudentSubmit){
+            $WHERE = self::dbAccess()->quoteInto("HOMEWORK_ID = ".$homeworkId." AND STUDENT_ID = '".$studentId."'");
+            self::dbAccess()->update('t_student_homework', $SAVEDATA, $WHERE);    
+        }else{    
+            self::dbAccess()->insert('t_student_homework', $SAVEDATA);
+        }
         
         return array(
             "success" => true
-            , "objectId" => $objectId
         );
     }
     
     public static function findStudentHomeworkFromId($Id,$stuId) {
         $SQL = self::dbAccess()->select()
                 ->from("t_student_homework", array('*')) 
-                ->where("ID = " . $Id )
-                ->where("STUDENT_ID ='".$stuId."'"); 
+                ->where("HOMEWORK_ID = " . $Id )
+                ->where("STUDENT_ID ='".$stuId."'");
+                
+        //error_log($SQL);                             
         return self::dbAccess()->fetchRow($SQL);
     }
     
@@ -423,7 +435,8 @@ class SubjectHomeworkDBAccess {
         $facette = self::findStudentHomeworkFromId($Id,$stuId);
         if ($facette) {
             $data['TITLE_NAME'] = setShowText($facette->TITLE_NAME);
-            $data['CONTENT_STUDENT'] = setShowText($facette->CONTENT);
+            $data['STUDENT_CONTENT'] = setShowText($facette->CONTENT);
+            $data['CREATED_DATE'] = getShowDateTime($facette->CREATED_DATE);
             $o = array(
                 "success" => true
                 , "data" => $data
@@ -560,10 +573,10 @@ class SubjectHomeworkDBAccess {
         $facette = self::findStudentInfoSubjectHomeworkFromId($stuId);
         if ($facette) {
             $data['TITLE_NAME'] = setShowText($facette->TITLE_NAME);
-            $data['CONTENT_STUDENT'] = setShowText($facette->CONTENT);
+            $data['STUDENT_CONTENT'] = setShowText($facette->CONTENT);
             $data['SUBJECT'] = setShowText($facette->SUBJECT);
             $data['CLASS_ID'] = setShowText($facette->CLASS_ID);
-            $data['CREATED_DATE'] = setShowText($facette->CREATED_DATE); 
+            $data['CREATED_DATE'] = getShowDateTime($facette->CREATED_DATE); 
 
             $o = array(
                 "success" => true
