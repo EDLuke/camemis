@@ -21,6 +21,9 @@ $academicId = isset($_GET["academicId"])? (int) $_GET["academicId"]:"";
 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");}
+
+AssessmentConfig::setGradingScale($academicObject);
+
 if(!UserAuth::staffPermissionScroe($academicObject)){header("Location: /main/permission/");}
 
 $ENTRIES = GradeSubjectDBAccess::getListSubjectsFromAcademic($academicId,false);

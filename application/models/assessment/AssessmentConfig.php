@@ -399,7 +399,46 @@ class AssessmentConfig {
         return $result ? $result->C : 0;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    public static function setGradingScale($academicObject)
+    {
+
+        $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_gradingsystem", array("*"));
+        $SQL->where("EDUCATION_TYPE = '" . $EDUCATION_TYPE . "'");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
+                if (strpos(trim($value->MARK), "<") !== false)
+                {
+                    $data = array();
+                    $data['SCORE_MIN'] = 0;
+                    $data['SCORE_MAX'] = "'" . substr(trim($value->MARK), 1) . "'";
+                    self::dbAccess()->update("t_gradingsystem", $data, "ID='" . $value->ID . "'");
+                }
+                else
+                {
+                    $explode = explode("-", trim($value->MARK));
+                    $MIN = isset($explode[0]) ? $explode[0] : 0;
+                    $MAX = isset($explode[1]) ? $explode[1] : 0;
+
+                    $SQL = "";
+                    $SQL .= "UPDATE t_gradingsystem";
+                    $SQL .= " SET ";
+                    $SQL .= " SCORE_MIN='" . $MIN . "'";
+                    $SQL .= " ,SCORE_MAX='" . $MAX . "' ";
+                    $SQL .= " WHERE ID='" . $value->ID . "' ";
+                    self::dbAccess()->query($SQL);
+                }
+            }
+        }
+    }
+
 }
 
 ?>
