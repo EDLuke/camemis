@@ -143,7 +143,15 @@ class DescriptionDBAccess {
 
         return array("success" => true);
     }
+    public static function sqlPersonalDescription($personType) {
 
+        $SQL = self::dbAccess()->select();
+        $SQL->from('t_personal_description', array('*'));
+        $SQL->where("OBJECT_TYPE='ITEM'");
+        $SQL->where("PERSON = '" . $personType . "'"); 
+        //error_log($SQL);
+        return self::dbAccess()->fetchAll($SQL);
+    }
     public static function sqlDescription($node, $personType, $type = false) {
 
         $SQL = "SELECT * FROM t_personal_description";
@@ -220,15 +228,15 @@ class DescriptionDBAccess {
     public static function updateChildren($parentId) {
 
         $facette = self::findObjectFromId($parentId);
-
+        
         $SQL = "SELECT * FROM t_personal_description";
         $SQL .= " WHERE 1=1";
         $SQL .= " AND PARENT='" . $parentId . "'";
         $result = self::dbAccess()->fetchAll($SQL);
 
-        if ($result) {
+       if ($result) {
             foreach ($result as $value) {
-                self::dbAccess()->update("t_personal_description", array( 'CHOOSE_TYPE' => "'". $facette->CHOOSE_TYPE ."'" ), "ID='". $value->ID ."'");
+                self::dbAccess()->update("t_personal_description", array('CHOOSE_TYPE' => $facette->CHOOSE_TYPE), "ID=". $value->ID);
             }
         }
     }

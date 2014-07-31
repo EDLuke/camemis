@@ -722,19 +722,19 @@ class TrainingDBAccess {
             {
                 case "TERM":
                     $data = array();
-                    $data['PROGRAM']        = "'". $facette->PROGRAM ."'";
-                    $data['TERM']           = "'". $facette->ID ."'";
-                    $data['LEVEL']          = "'". $facette->LEVEL ."'";
-                    $data['EVALUATION_TYPE']= "'". $facette->EVALUATION_TYPE ."'";
-                    self::dbAccess()->update("t_training_subject", $data, "TERM ='". $facette->ID ."'");
+                    $data['PROGRAM']        = $facette->PROGRAM;
+                    $data['TERM']           = $facette->ID;
+                    $data['LEVEL']          = $facette->LEVEL;
+                    $data['EVALUATION_TYPE']= $facette->EVALUATION_TYPE;
+                    self::dbAccess()->update("t_training_subject", $data, "TERM =". $facette->ID);
                     break;
                 case "CLASS":
                     $data = array();
-                    $data['PROGRAM']        = "'". $facette->PROGRAM ."'";
-                    $data['TERM']           = "'". $facette->TERM ."'";
-                    $data['LEVEL']          = "'". $facette->LEVEL ."'";
-                    $data['EVALUATION_TYPE']= "'". $parentObject->EVALUATION_TYPE ."'";
-                    self::dbAccess()->update("t_training_subject", $data, "TRAINING ='". $facette->ID ."'");
+                    $data['PROGRAM']        = $facette->PROGRAM;
+                    $data['TERM']           = $facette->TERM;
+                    $data['LEVEL']          = $facette->LEVEL;
+                    $data['EVALUATION_TYPE']= $parentObject->EVALUATION_TYPE;
+                    self::dbAccess()->update("t_training_subject", $data, "TRAINING =". $facette->ID);
                     break;
             }
         }

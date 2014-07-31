@@ -124,7 +124,7 @@ switch($type){
             ,id: 'winContentId'
             ,height:percentHeight(85)
             ,width:650
-            ,resizable: false
+            ,resizable: true
             ,closable: false
             ,modal: true
             ,items: [new Ext.ux.IFrameComponent({ id:'CONTENT_ID', url:'/help/editcontent/?objectId=<?=$this->objectId?>&field=<?=$FIELD_CONTENT?>'})]

@@ -24,7 +24,7 @@ $GENERAL_EDUCATION = UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION")?"false"
 $entries = UserAuth::dbAccess()->fetchAll("SELECT * FROM t_grade WHERE PARENT=0 AND EDUCATION_SYSTEM=1");
 if($entries){
     foreach($entries as $value){
-        UserAuth::dbAccess()->update("t_grade", array('EDUCATION_SYSTEM' => "'". $value->EDUCATION_SYSTEM ."'"), "CAMPUS_ID='". $value->ID ."'");
+        UserAuth::dbAccess()->update("t_grade", array('EDUCATION_SYSTEM' => $value->EDUCATION_SYSTEM), "CAMPUS_ID=". $value->ID);
     }
 }
 

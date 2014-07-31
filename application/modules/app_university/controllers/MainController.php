@@ -856,8 +856,8 @@ class MainController extends Zend_Controller_Action {
         $nextObject = self::getNextObject($newposition);
         if ($currentObject && $nextObject) {
             
-            self::dbAccess()->update("t_user_dashboard", array('POSITION' => "'". $currentObject->POSITION ."'"), "ID='". $nextObject->ID ."'");
-            self::dbAccess()->update("t_user_dashboard", array('POSITION' => "'". $newposition ."'"), "ID='". $currentObject->ID ."'");
+            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $currentObject->POSITION), "ID=". $nextObject->ID);
+            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $newposition), "ID=". $currentObject->ID);
         }
 
         return array("success" => true);
