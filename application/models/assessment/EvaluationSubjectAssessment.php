@@ -261,7 +261,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         $data[$i]["TOTAL_MONTH_RESULT"] = $this->getTotalSubjectResultsByMonth($stdClass, self::WITH_FORMAT);
                         $data[$i]["TOTAL_TERM_RESULT"] = $this->getSubjectResultsByTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
-
+                        
                         switch ($this->getSettingEvaluationType())
                         {
                             case self::EVALUATION_TYPE_COEFF:
@@ -271,7 +271,6 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                                 $PERCENTAGE_VALUE = $TOTAL_RESULT;
                                 break;
                         }
-
                         $data[$i]["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
 
                         break;

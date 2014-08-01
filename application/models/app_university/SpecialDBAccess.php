@@ -5,15 +5,18 @@ require_once setUserLoacalization();
 
 Class SpecialDBAccess {
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return self::dbAccess()->select();
     }
 
-    public static function findGradingSystemFromId($Id) {
+    public static function findGradingSystemFromId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array('*'));
@@ -25,7 +28,8 @@ Class SpecialDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Gradingsystem...
     ////////////////////////////////////////////////////////////////////////////
-    public static function jsonListGradingSystems($params) {
+    public static function jsonListGradingSystems($params)
+    {
 
         $data = array();
 
@@ -44,7 +48,8 @@ Class SpecialDBAccess {
 
         $i = 0;
         if ($resultRows)
-            foreach ($resultRows as $value) {
+            foreach ($resultRows as $value)
+            {
 
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["LETTER_GRADE"] = $value->LETTER_GRADE ? setShowText($value->LETTER_GRADE) : "---";
@@ -53,7 +58,8 @@ Class SpecialDBAccess {
                 $data[$i]["ENGLISH"] = $value->ENGLISH ? setShowText($value->ENGLISH) : "---";
                 $data[$i]["DESCRIPTION"] = $value->DESCRIPTION ? setShowText($value->DESCRIPTION) : "---";
 
-                switch ($value->SCORE_TYPE) {
+                switch ($value->SCORE_TYPE)
+                {
                     case 1:
                         $data[$i]["SCORE_TYPE"] = SCORE_ON_NUMBER;
                         break;
@@ -66,7 +72,8 @@ Class SpecialDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -78,15 +85,18 @@ Class SpecialDBAccess {
         );
     }
 
-    public static function jsonGrading($edutype) {
+    public static function jsonGrading($edutype)
+    {
         $SQL = "SELECT * FROM t_gradingsystem";
         $SQL .= " WHERE EDUCATION_TYPE=" . $edutype;
         $SQL .= " ORDER BY SORTKEY ASC";
         $result = self::dbAccess()->fetchAll($SQL);
         $data = array();
-        if ($result) {
+        if ($result)
+        {
             $i = 0;
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["NAME"] = $value->DESCRIPTION;
                 $i++;
@@ -100,12 +110,14 @@ Class SpecialDBAccess {
         );
     }
 
-    public static function jsonActonRemove($Id) {
+    public static function jsonActonRemove($Id)
+    {
         self::dbAccess()->delete('t_gradingsystem', array("ID='" . $Id . "'"));
         return array("success" => true);
     }
 
-    public static function jsonActionGradingSystem($params) {
+    public static function jsonActionGradingSystem($params)
+    {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $eduSystem = isset($params["eduSystem"]) ? $params["eduSystem"] : "";
@@ -114,7 +126,7 @@ Class SpecialDBAccess {
         $SAVEDATA["ENGLISH"] = isset($params["ENGLISH"]) ? addText($params["ENGLISH"]) : "---";
         $SAVEDATA["LETTER_GRADE"] = isset($params["LETTER_GRADE"]) ? addText($params["LETTER_GRADE"]) : "---";
         $SAVEDATA["MARK"] = isset($params["MARK"]) ? addText($params["MARK"]) : "---";
-        
+
         if (isset($params["GRADE_POINTS"]))
             $SAVEDATA["GRADE_POINTS"] = addText($params["GRADE_POINTS"]);
 
@@ -128,11 +140,14 @@ Class SpecialDBAccess {
             $SAVEDATA["SORTKEY"] = addText($params["SORTKEY"]);
 
         $facette = self::findGradingSystemFromId($objectId);
-        if ($facette) {
+        if ($facette)
+        {
             $WHERE = array();
             $WHERE[] = "ID = '" . $objectId . "'";
             self::dbAccess()->update('t_gradingsystem', $SAVEDATA, $WHERE);
-        } else {
+        }
+        else
+        {
             $SAVEDATA["EDUCATION_TYPE"] = addText($eduSystem);
             if ($eduSystem)
                 self::dbAccess()->insert('t_gradingsystem', $SAVEDATA);
@@ -145,7 +160,8 @@ Class SpecialDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Log Academic...
     ////////////////////////////////////////////////////////////////////////////
-    public static function jsonActionLogAcademic($objctId, $const) {
+    public static function jsonActionLogAcademic($objctId, $const)
+    {
 
         $SAVE_DATA = array();
         $SAVE_DATA["ACADEMIC_ID"] = $objctId;
@@ -157,7 +173,8 @@ Class SpecialDBAccess {
             self::dbAccess()->insert('t_logacademic', $SAVE_DATA);
     }
 
-    public static function jsonLoadLogAcademic($params) {
+    public static function jsonLoadLogAcademic($params)
+    {
 
         $data = array();
 
@@ -178,7 +195,8 @@ Class SpecialDBAccess {
 
         $i = 0;
         if ($resultRows)
-            foreach ($resultRows as $value) {
+            foreach ($resultRows as $value)
+            {
 
                 $data[$i]["ACTION_CONST"] = $value->ACTION_CONST;
                 $data[$i]["ACTION_USER"] = $value->ACTION_USER;
@@ -188,7 +206,8 @@ Class SpecialDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -200,12 +219,14 @@ Class SpecialDBAccess {
         );
     }
 
-    public static function jsonLoadGradingSystem($Id) {
+    public static function jsonLoadGradingSystem($Id)
+    {
 
         $facette = self::findGradingSystemFromId($Id);
 
         $data = Array();
-        if ($facette) {
+        if ($facette)
+        {
             $data['ENGLISH'] = $facette->ENGLISH ? $facette->ENGLISH : "---";
             $data['LETTER_GRADE'] = $facette->LETTER_GRADE ? setShowText($facette->LETTER_GRADE) : "---";
             $data['SCORE_TYPE'] = $facette->SCORE_TYPE ? $facette->SCORE_TYPE : "---";

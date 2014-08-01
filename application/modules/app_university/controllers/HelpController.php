@@ -26,9 +26,14 @@ class HelpController extends Zend_Controller_Action {
         $this->view->key = $this->_getParam('key');
     }
 
-    public function showitemAction()
+    public function displaymainAction()
     {
-        $this->view->key = $this->_getParam('objectId');
+        $this->view->objectId = $this->_getParam('objectId');
+    }
+
+    public function displaycontentAction()
+    {
+        $this->view->objectId = $this->_getParam('objectId');
     }
 
     public function jsontreeAction()

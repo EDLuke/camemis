@@ -75,6 +75,11 @@ Ext.onReady(function() {
             }]
         }]
     });
+    
+    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+    myTree.on('click', function(node, event){
+        clickOpenPage('center','','/help/displaymain/?objectId=' + node.id);
+    });
 });
 </script>
 <?
