@@ -185,6 +185,11 @@ class HomeworkController extends Zend_Controller_Action {
                 break;
            }
     }
+    
+    public function studentsubmithomeworkAction(){
+        $this->view->homeworkId = $this->homeworkId;
+        $this->_helper->viewRenderer("studentsubmithomework");    
+     }
 
     public function teachershowitemAction() {
         $this->view->academicId = $this->academicId;
@@ -236,7 +241,7 @@ class HomeworkController extends Zend_Controller_Action {
                 $jsondata = SubjectHomeworkDBAccess::jsonLoadSubjectHomework($this->REQUEST->getPost('objectId'));
                 break;
             case "jsonLoadStudentHomework":
-                $jsondata = SubjectHomeworkDBAccess::jsonLoadStudentHomework($this->REQUEST->getPost('studentId'));
+                $jsondata = SubjectHomeworkDBAccess::jsonLoadStudentHomework($this->REQUEST->getPost('homeworkId'), $this->REQUEST->getPost('studentId'));
                 break;
 
             case "jsonLoadStudentSubjectHomework":
