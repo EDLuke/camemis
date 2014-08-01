@@ -126,8 +126,8 @@ class SubjectHomeworkDBAccess {
         $SQL->joinLeft(array('D' => 't_student_homework'), 'B.ID = D.HOMEWORK_ID', $SELECTION_D);
         if($subjectId)
             $SQL->where('B.SUBJECT = ?', $subjectId);
-        if($classId)    
-            $SQL->where('B.CLASS_ID = ?', $classId); 
+        if($academicId)    
+            $SQL->where('B.CLASS_ID = ?', $academicId); 
         
         switch (UserAuth::getUserType()) {
             case "TEACHER":
@@ -192,18 +192,22 @@ class SubjectHomeworkDBAccess {
         return $result?$result->STUDENT_COUNT:'';
     }
 
-    public static function findStudentHomeworkFromId($stuId) {
+    public static function findStudentHomeworkFromId($Id,$stuId) {
         $SQL = self::dbAccess()->select()
-                ->from("t_student_homework", array('*'))
+                ->from("t_student_homework", array('*')) 
+                ->where("HOMEWORK_ID = " . $Id )
                 ->where("STUDENT_ID ='".$stuId."'");
+                
+        //error_log($SQL);                             
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function jsonLoadStudentHomework($stuId) {
-        $facette = self::findStudentHomeworkFromId($stuId);
+    public static function jsonLoadStudentHomework($Id,$stuId) {
+        $facette = self::findStudentHomeworkFromId($Id,$stuId);
         if ($facette) {
             $data['TITLE_NAME'] = setShowText($facette->TITLE_NAME);
-            $data['CONTENT_STUDENT'] = setShowText($facette->CONTENT);
+            $data['STUDENT_CONTENT'] = setShowText($facette->CONTENT);
+            $data['CREATED_DATE'] = getShowDateTime($facette->CREATED_DATE);
             $o = array(
                 "success" => true
                 , "data" => $data
@@ -220,20 +224,33 @@ class SubjectHomeworkDBAccess {
     public static function jsonAddStudentHomework($params) {
 
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-        $title_name = isset($params["TITLE_NAME"]) ? addText($params["TITLE_NAME"]) : "";
-        $content = isset($params["CONTENT_STUDENT"]) ? addText($params["CONTENT_STUDENT"]) : "";
-        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : "";
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $homeworkId = isset($params["homeworkId"]) ? addText($params["homeworkId"]) : ""; 
+        
+        $checkStudentSubmit = self::findStudentHomeworkFromId($homeworkId,$studentId);
 
-        $SAVEDATA['STUDENT_ID'] = $studentId;
-        $SAVEDATA['HOMEWORK_ID'] = $homeworkId;
-        $SAVEDATA['TITLE_NAME'] = $title_name;
-        $SAVEDATA['CONTENT'] = addText($content);
+        if ($studentId)
+            $SAVEDATA['STUDENT_ID'] = $studentId;
+        
+        if ($homeworkId)
+            $SAVEDATA['HOMEWORK_ID'] = $homeworkId;
+        
+        if (isset($params["TITLE_NAME"]))
+            $SAVEDATA['TITLE_NAME'] = addText($params["TITLE_NAME"]);
+            
+        if (isset($params["STUDENT_CONTENT"]))
+            $SAVEDATA['CONTENT'] = addText($params["STUDENT_CONTENT"]);
+            
         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
-        self::dbAccess()->insert('t_student_homework', $SAVEDATA);
+        
+        if($checkStudentSubmit){
+            $WHERE = self::dbAccess()->quoteInto("HOMEWORK_ID = ".$homeworkId." AND STUDENT_ID = '".$studentId."'");
+            self::dbAccess()->update('t_student_homework', $SAVEDATA, $WHERE);    
+        }else{    
+            self::dbAccess()->insert('t_student_homework', $SAVEDATA);
+        }
+        
         return array(
             "success" => true
-            , "objectId" => $objectId
         );
     }
 
@@ -351,34 +368,40 @@ class SubjectHomeworkDBAccess {
             "ID AS ID"
             , "SUBJECT AS SUBJECT"
             , "CLASS_ID AS CLASS_ID"
-            , "TEACHER AS TEACHER"
-            , "CONTENT AS CONTENT"
+            , "TEACHER AS TEACHER" 
+            , "CONTENT AS CONTENT" 
             , "START_DATE AS START_DATE"
             , "END_DATE AS END_DATE"
             , "NAME AS NAME"
             , "STATUS AS STATUS"
-            , "DISABLED_BY AS DISABLED_BY"
+            , "DISABLED_BY AS DISABLED_BY"  
         );
 
-        $SELECTION_B = array(
+        $SELECTION_B = array( 
             "STUDENT_ID AS STUDENT_ID"
             , "TITLE_NAME AS TITLE_NAME"
             , "CONTENT AS CONTENT_STUDENT"
             , "CREATED_DATE AS CREATED_DATE"
-            , "HOMEWORK_ID AS HOMEWORK_ID"
+            , "HOMEWORK_ID AS HOMEWORK_ID"                       
+        );
+        
+        $SELECTION_C = array(
+            "ID AS SUBJECT_ID"
+            , "NAME AS SUBJECT_NAME"
         );
 
-        $SQL = self::dbAccess()->select();
+        $SQL = self::dbAccess()->select(); 
         $SQL->from(array('A' => 't_subject_homework'), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_student_homework'), 'A.ID = B.HOMEWORK_ID', $SELECTION_B);
-        $SQL->where('A.ID = ?', $Id);
+        $SQL->joinLeft(array('B' => 't_student_homework'), 'A.ID = B.HOMEWORK_ID', $SELECTION_B); 
+        $SQL->joinLeft(array('C' => 't_subject'), 'A.SUBJECT = C.ID', $SELECTION_C);
+        $SQL->where('A.ID = ?', $Id); 
+        
+        //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
 
     public static function jsonLoadSubjectHomework($Id) {
-
-        $facette = self::findSubjectHomeworkFromId($Id);
-
+        $facette = self::findSubjectHomeworkFromId($Id); 
         if ($facette) {
             $data['STATUS'] = setShowText($facette->STATUS);
             $data['CONTENT'] = setShowText($facette->CONTENT);
@@ -386,7 +409,7 @@ class SubjectHomeworkDBAccess {
             $data['END_DATE'] = getShowDate($facette->END_DATE);
             $data['NAME'] = setShowText($facette->NAME);
             $data['HOMEWORK_ID'] = setShowText($facette->HOMEWORK_ID);
-
+            $data['SUBJECT_NAME'] = setShowText($facette->SUBJECT_NAME);
             $o = array(
                 "success" => true
                 , "data" => $data
@@ -539,7 +562,7 @@ class SubjectHomeworkDBAccess {
         $facette = self::findStudentInfoSubjectHomeworkFromId($stuId);
         if ($facette) {
             $data['TITLE_NAME'] = setShowText($facette->TITLE_NAME);
-            $data['CONTENT_STUDENT'] = setShowText($facette->CONTENT);
+            $data['STUDENT_CONTENT'] = setShowText($facette->CONTENT);
             $data['SUBJECT'] = setShowText($facette->SUBJECT);
             $data['CLASS_ID'] = setShowText($facette->CLASS_ID);
             $data['CREATED_DATE'] = setShowText($facette->CREATED_DATE);
