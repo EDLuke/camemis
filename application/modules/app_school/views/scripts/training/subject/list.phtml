@@ -1,9 +1,9 @@
 <?
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
 // Date: 07.03.2012
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 require_once 'models/UserAuth.php';
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisForm.php';
@@ -23,11 +23,9 @@ $OBJECT_TREE->setSaveUrl('/training/jsonsave/');
 $ADD_SUBJECT_GRID = new CamemisGrid("TRAINING", "LIST_OF_SUBJECTS");
 $ADD_SUBJECT_GRID->setLoadUrl('/training/jsonload/');
 $ADD_SUBJECT_GRID->setSaveUrl('/training/jsonsave/');
-$columndataAddSubject = Utiles::getGridColumnData("TRAINING_LIST_OF_SUBJECTS_ID");
 
-$ADD_ASSIGNMENT_GRID = new CamemisGrid("TRAINING", "LIST_OF_ASSIGNMENTS");
-$ADD_ASSIGNMENT_GRID->setLoadUrl('/training/jsonload/');
-$ADD_ASSIGNMENT_GRID->setSaveUrl('/training/jsonsave/');
+$ASSIGNMENT_TEMP_TREE = new CamemisTree("ASSIGNMENT", "ASSIGNMENT");
+$ASSIGNMENT_TEMP_TREE->setURL("/assignment/jsontree/");
 
 $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT")?"false":"true";
 $EDIT_RIGHT=UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT")?"false":"true";
@@ -78,44 +76,18 @@ Ext.onReady(function() {
     
     $ADD_SUBJECT_GRID->renderJS();
     
-    //
-    $ADD_ASSIGNMENT_GRID->addCellRenderer("
-        function renderText(v, p, record, rowIndex){
-        var str = '<span class=spanText>' + v + '</span>';
-        return str;
-    }
+    $ASSIGNMENT_TEMP_TREE->isAsyncTreeNode = false;
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeRefresh());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $ASSIGNMENT_TEMP_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+    $ASSIGNMENT_TEMP_TREE->isTreeExpand = false;
+    $ASSIGNMENT_TEMP_TREE->backgroundColor = "#F9F9F9";
+    $ASSIGNMENT_TEMP_TREE->setBaseParams("
+    	cmd: 'jsonTreeAllAssignmentTemp'
+        ,target:'TRAINING'
     ");
-    $ADD_ASSIGNMENT_GRID->addReadField("name: 'ASSIGNMENT_NAME'");
-    $ADD_ASSIGNMENT_GRID->addReadField("name: 'WEIGHTING'");
+    $ASSIGNMENT_TEMP_TREE->renderJS();
     
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".NAME."', width: 200, renderer: renderText, sortable: true, dataIndex: 'ASSIGNMENT_NAME'");
-    $ADD_ASSIGNMENT_GRID->addColumn("header: '".WEIGHTING."', align: 'center', width: 80, renderer: renderText, sortable: true, dataIndex: 'WEIGHTING'");
-    
-    $ADD_ASSIGNMENT_GRID->isGroupingView = false;
-    $ADD_ASSIGNMENT_GRID->isQuickySearch = true;
-    $ADD_ASSIGNMENT_GRID->isCheckboxSelect = true;
-    $ADD_ASSIGNMENT_GRID->forceFit = "false";
-    $ADD_ASSIGNMENT_GRID->addTBarItems(CamemisBar::tbarGridSelection());
-
-    $ADD_ASSIGNMENT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,trainingId: '".$this->objectId."'
-        ,subjectId: subjectId
-        ,cmd: 'jsonSubjectAssignmentTraining'
-    ";
-    $ADD_ASSIGNMENT_GRID->setSelectionParams("
-        cmd: 'jsonAddAssignmentToTraining'
-        ,subjectId: subjectId
-        ,parentId: parentId
-        ,trainingId: '".$this->objectId."'
-    ");
-    $ADD_ASSIGNMENT_GRID->setSelectionEmbeddedEvents("
-        Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();
-    ");
-    
-    $ADD_ASSIGNMENT_GRID->renderJS();
-    //
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->isAsyncTreeNode = false;
@@ -205,74 +177,97 @@ Ext.onReady(function() {
         }]
     });
     
-    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-    var check ='<?=$this->facette->OBJECT_TYPE;?>';
-        myTree.on('click', function(node, e){
-            if(!node.isLeaf()){
-                subjectId = node.attributes.subjectId;
-                parentId = node.id;
-                if(check=='TERM'){
-                    var contextMenu = new Ext.menu.Menu({
-                        items: [{
-                            text: '<?=ADD_ASSIGNMENT;?>'
-                            ,hidden: <?= $EXECUTE_RIGHT;?>
-                            ,iconCls:'icon-application_form_add'
-                            ,handler:function(){
-                                Ext.getCmp('center').getLayout().setActiveItem(0);
-                                openWinXType('WinXType','<?=ADD_ASSIGNMENT?>', '<?=$ADD_ASSIGNMENT_GRID->getObjectXType()?>', 500, percentHeight(85));
-                            }
-                        },{
-                            text: '<?=SUBJECT;?>'
-                            ,hidden: <?= $EDIT_RIGHT;?>
-                            ,iconCls:'icon-application_form_magnify'
-                            ,handler:function(){
-                                Ext.getCmp('center').getLayout().setActiveItem(0);
-                                clickOpenPage('center','', '/training/showallsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);  
-                            }
-                        },{
-                            text: '<?=REMOVE;?>'
-                            ,iconCls:'icon-delete'
-                            ,hidden: <?=$REMOVE_RIGHT;?>
-                            ,handler: function(){
-                                var id = node.id;
-                                Ext.MessageBox.show({
-                                    title:'<?=CONFIRMATION?>'
-                                    ,width: 350
-                                    ,msg: '<?=DELETE_THIS_ITEM?>'
-                                    ,buttons: Ext.MessageBox.YESNO
-                                    ,icon: Ext.MessageBox.WARNING
-                                    ,fn: function(btn){
-                                        if(btn == "yes"){
-                                            Ext.Ajax.request({
-                                                url: '/training/jsonsave/'
-                                                ,method: 'POST'
-                                                ,params: {cmd: 'jsonRemoveSubjectFromTraining', objectId: id}
-                                                ,success: function(response, options) {
-                                                    Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();
-                                                    <?
-                                                    echo camemisPage::setRequestURI();
-                                                    ?>
-                                                }
-                                                ,failure: function(response, options) {}
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        }]
-                    });
-                    e.stopEvent();
-                    contextMenu.showAt(e.xy);
-                }else{
-                    Ext.getCmp('center').getLayout().setActiveItem(0);
-                    clickOpenPage('center','', '/training/showallsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);     
+    <?
+    
+    $js = "";
+    $js .= "var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+    $js .= "var check ='".$this->facette->OBJECT_TYPE."';";
+        $js .= "myTree.on('click', function(node, e){";
+            $js .= "if(!node.isLeaf()){";
+                $js .= "subjectId = node.attributes.subjectId;";
+                $js .= "parentId = node.id;";
+                $js .= "if(check=='TERM'){";
+                    $js .= "var contextMenu = new Ext.menu.Menu({";
+                        $js .= "items: [{";
+                            $js .= "text: '".ADD_ASSIGNMENT."'";
+                            $js .= ",hidden: ".$EXECUTE_RIGHT."";
+                            $js .= ",iconCls:'icon-application_form_add'";
+                            $js .= ",handler:function(){";
+                                $js .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
+                                $js .= "openWinXType('WinXType','".ADD_ASSIGNMENT."', '".$ASSIGNMENT_TEMP_TREE->getObjectXType()."', 500,600);";
+                                $js .= "var tempTree = ".$ASSIGNMENT_TEMP_TREE->ExtgetCmp().";";
+                                $js .= "if (tempTree) tempTree.on('click', function(node, event){";
+                                    $js .= "if(node.isLeaf()){";
+                                        $js .= "Ext.Ajax.request({";
+                                            $js .= "url: '/training/jsonsave/'";
+                                            $js .= ",method: 'POST'";
+                                            $js .= ",params: {cmd: 'jsonAddAssignmentToTraining',subjectId:subjectId,trainingId:'".$this->objectId."',assignmentId:node.attributes.assignmentId}";
+                                            $js .= ",success: function(response, options) {";
+                                                $js .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
+                                                $js .= "myTree = window.Ext.getCmp('".$OBJECT_TREE->getObjectId()."');";
+                                                $js .= "myTree.root.reload();";
+                                                $js .= "myTree.expand(true, false);";
+                                                $js .= "node.remove(node.id);";
+                                            $js .= "}";
+                                            $js .= ",failure: function(response, options) {}";
+                                        $js .= "});";
+                                    $js .= "}";
+                                $js .= "});";
+                            $js .= "}";
+                        $js .= "},{";
+                            $js .= "text: '".SUBJECT."'";
+                            $js .= ",hidden: ".$EDIT_RIGHT."";
+                            $js .= ",iconCls:'icon-application_form_magnify'";
+                            $js .= ",handler:function(){";
+                                $js .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
+                                $js .= "clickOpenPage('center','', '/training/showallsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);";
+                            $js .= "}";
+                        $js .= "},{";
+                            $js .= "text: '".REMOVE."'";
+                            $js .= ",iconCls:'icon-delete'";
+                            $js .= ",hidden: ".$REMOVE_RIGHT."";
+                            $js .= ",handler: function(){";
+                                $js .= "var id = node.id;";
+                                $js .= "Ext.MessageBox.show({";
+                                    $js .= "title:'".CONFIRMATION."'";
+                                    $js .= ",width: 350";
+                                    $js .= ",msg: '".DELETE_THIS_ITEM."'";
+                                    $js .= ",buttons: Ext.MessageBox.YESNO";
+                                    $js .= ",icon: Ext.MessageBox.WARNING";
+                                    $js .= ",fn: function(btn){";
+                                        $js .= "if(btn == 'yes'){";
+                                            $js .= "Ext.Ajax.request({";
+                                                $js .= "url: '/training/jsonsave/'";
+                                                $js .= ",method: 'POST'";
+                                                $js .= ",params: {cmd: 'jsonRemoveSubjectFromTraining', objectId: id}";
+                                                $js .= ",success: function(response, options) {";
+                                                    $js .= "Ext.getCmp('TREE.TRAINING_LIST_ID').root.reload();";
+                                                    $js .= "".camemisPage::setRequestURI()."";
+                                                $js .= "}";
+                                                $js .= ",failure: function(response, options) {}";
+                                            $js .= "});";
+                                        $js .= "}";
+                                    $js .= "}";
+                                $js .= "});";
+                            $js .= "}";
+                        $js .= "}]";
+                    $js .= "});";
+                    $js .= "e.stopEvent();";
+                    $js .= "contextMenu.showAt(e.xy);";
+                $js .= "}else{";
+                    $js .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
+                    $js .= "clickOpenPage('center','".SUBJECT."', '/training/showallsubject/?objectId=' + node.id + '&subjectId=' +  node.attributes.subjectId);";
+                $js .= "}";
+            $js .= "}else{";
+                if($this->facette->OBJECT_TYPE == "TERM"){
+                    $js .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
+                    $js .= "clickOpenPage('center','".ASSIGNMENT.": '+node.text, '/training/showsubject/?objectId=' + node.id);";
                 }
-            }else{
-                Ext.getCmp('center').getLayout().setActiveItem(0);
-                clickOpenPage('center','<?=DETAIL_INFORMATION;?>: '+node.text, '/training/showsubject/?objectId=' + node.id);
-            }
-        });
-        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
+            $js .= "}";
+        $js .= "});";
+        
+        echo $js;
+    ?>
     });
 </script>
 <?

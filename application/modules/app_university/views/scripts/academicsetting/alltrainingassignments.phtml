@@ -32,9 +32,10 @@ Ext.onReady(function() {
     
     $OBJECT_TREE->setBaseParams("
         cmd: 'jsonTreeAllAssignmentTemp'
-        ,target:'general'
+        ,target:'TRAINING'
         ,type:'1'
     ");
+    $OBJECT_TREE->isTreeExpand = false;
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();
