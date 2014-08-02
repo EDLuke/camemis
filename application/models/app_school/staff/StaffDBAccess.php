@@ -223,7 +223,20 @@ class StaffDBAccess {
         $major = isset($params["MAJOR"]) ? addText($params["MAJOR"]) : "";
         $qualification_degree = isset($params["QUALIFICATION_DEGREE"]) ? addText($params["QUALIFICATION_DEGREE"]) : "";
         $facette = AcademicDBAccess::findGradeFromId($choosegrade);
-
+        //
+        $major = isset($params["MAJOR"]) ? addText($params["MAJOR"]) : "";
+        $qualification_degree = isset($params["QUALIFICATION_DEGREE"]) ? addText($params["QUALIFICATION_DEGREE"]) : "";
+        $companyName = isset($params["COMPANY_NAME"]) ? addText($params["COMPANY_NAME"]) : "";
+        $position = isset($params["POSITION"]) ? addText($params["POSITION"]) : "";
+        $startSalary = isset($params["START_SALARY"]) ? addText($params["START_SALARY"]) : "";
+        $endSalary = isset($params["END_SALARY"]) ? addText($params["END_SALARY"]) : "";
+        $course = isset($params["COURSE"]) ? addText($params["COURSE"]) : "";
+        $institutionName = isset($params["INSTITUTION_NAME"]) ? addText($params["INSTITUTION_NAME"]) : "";
+        $name= isset($params["NAME"]) ? addText($params["NAME"]) : "";
+        $academicYear = isset($params["ACADEMIC_YEAR"]) ? addText($params["ACADEMIC_YEAR"]) : "";
+        $publicationTitle = isset($params["PUBLICATION_TITLE"]) ? addText($params["PUBLICATION_TITLE"]) : "";
+        $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
+        //
         if ($facette)
         {
 
@@ -278,9 +291,12 @@ class StaffDBAccess {
         ////////////////////////////////////////////////////////////////////////
         //PERSON DESCRIPTION...
         ////////////////////////////////////////////////////////////////////////
-        $person_description_entries = DescriptionDBAccess::sqlDescription("ALL", "STAFF", false);
+        //$person_description_entries = DescriptionDBAccess::sqlDescription("ALL", "STAFF", false);
+        
+        $person_description_entries = DescriptionDBAccess::sqlPersonalDescription("STAFF");
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
+        $INPUTFIELD_DATA = array();
         if ($person_description_entries)
         {
             foreach ($person_description_entries as $value)
@@ -288,15 +304,21 @@ class StaffDBAccess {
                 if (isset($params["CHECKBOX_" . $value->ID . ""]))
                 {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
+                  
                 }
 
                 if (isset($params["RADIOBOX_" . $value->ID . ""]))
                 {
                     $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
+                }  
+                
+                if (isset($params["INPUTFIELD_" . $value->ID . ""]))
+                {
+                    $INPUTFIELD_DATA[] = addText($params["INPUTFIELD_" . $value->ID . ""]);
                 }
             }
         }
-        $PERSON_DES_DATA = $CHECKBOX_DATA + $RADIOBOX_DATA;
+        $PERSON_DES_DATA = $CHECKBOX_DATA + $RADIOBOX_DATA + $INPUTFIELD_DATA;
         $PERSON_DES_IDS = $PERSON_DES_DATA ? implode(",", $PERSON_DES_DATA) : array();
         ////////////////////////////////////////////////////////////////////////
 
@@ -513,13 +535,43 @@ class StaffDBAccess {
 
         if ($nationality)
             $SQL .= " AND A.NATIONALITY='" . $nationality . "' ";
-
+        //
         if ($major)
             $SQL .= " AND Z.MAJOR='" . $major . "' ";
 
         if ($qualification_degree)
             $SQL .= " AND Z.QUALIFICATION_DEGREE='" . $qualification_degree . "' ";
+            
+        if ($companyName)
+            $SQL .= " AND Z.COMPANY_NAME='" . $companyName . "' ";
 
+        if ($position)
+            $SQL .= " AND Z.POSITION='" . $position . "' ";
+        
+        if ($startSalary)
+            $SQL .= " AND Z.START_SALARY='" . $startSalary . "' ";
+
+        if ($endSalary)
+            $SQL .= " AND Z.END_SALARY='" . $endSalary . "' ";
+            
+        if ($course)
+            $SQL .= " AND Z.COURSE='" . $course . "' ";
+
+        if ($institutionName)
+            $SQL .= " AND Z.INSTITUTION_NAME='" . $institutionName . "' ";
+            
+        if ($name)
+            $SQL .= " AND Z.NAME='" . $name . "' ";
+
+        if ($academicYear)
+            $SQL .= " AND Z.ACADEMIC_YEAR='" . $academicYear . "' ";
+            
+        if ($publicationTitle)
+            $SQL .= " AND Z.PUBLICATION_TITLE='" . $publicationTitle . "' ";
+
+        if ($description)
+            $SQL .= " AND Z.DESCRIPTION='" . $description . "' ";
+        //
         if ($searchReligion)
             $SQL .= " AND A.RELIGION='" . $searchReligion . "' ";
 

@@ -446,8 +446,8 @@ class TrainingDBAccess {
                     if ($PROGRAM_OBJECT)
                         $SAVEDATA['PROGRAM'] = $PROGRAM_OBJECT->ID;
                     //@veasna
-                    if (isset($params["SCHEDULE_SETTING"]))  
-                    $SAVEDATA['SCHEDULE_SETTING'] =addText($params["SCHEDULE_SETTING"]);    
+                    if (isset($params["SCHEDULE_SETTING"]))
+                        $SAVEDATA['SCHEDULE_SETTING'] = addText($params["SCHEDULE_SETTING"]);
                     break;
 
                 case "CLASS":
@@ -470,19 +470,21 @@ class TrainingDBAccess {
                     $SAVEDATA['SA'] = $TERM_OBJECT->SA;
                     $SAVEDATA['SU'] = $TERM_OBJECT->SU;
                     //@veasna
-                    if($TERM_OBJECT->SCHEDULE_SETTING)
-                    $SAVEDATA['SCHEDULE_SETTING'] = $TERM_OBJECT->SCHEDULE_SETTING;
+                    if ($TERM_OBJECT->SCHEDULE_SETTING)
+                        $SAVEDATA['SCHEDULE_SETTING'] = $TERM_OBJECT->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
             $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
-            
+
             self::dbAccess()->update('t_training', $SAVEDATA, $WHERE);
-            if($facette->OBJECT_TYPE==TERM){//@veasna
-                self::updateChildTerm($objectId);    
+            if ($facette->OBJECT_TYPE == TERM)
+            {//@veasna
+                self::updateChildTerm($objectId);
             }
-        } else
+        }
+        else
         {
 
             $parentObject = self::findTrainingFromId($parent);
@@ -501,8 +503,8 @@ class TrainingDBAccess {
                     $SAVEDATA['PROGRAM'] = $parentObject->PROGRAM;
                     $SAVEDATA['LEVEL'] = $parentObject->ID;
                     //@veasna
-                    if (isset($params["SCHEDULE_SETTING"]))  
-                    $SAVEDATA['SCHEDULE_SETTING'] =addText($params["SCHEDULE_SETTING"]); 
+                    if (isset($params["SCHEDULE_SETTING"]))
+                        $SAVEDATA['SCHEDULE_SETTING'] = addText($params["SCHEDULE_SETTING"]);
                     break;
 
                 case "CLASS":
@@ -514,8 +516,8 @@ class TrainingDBAccess {
                     $SAVEDATA['START_DATE'] = $parentObject->START_DATE;
                     $SAVEDATA['END_DATE'] = $parentObject->END_DATE;
                     //@veasna
-                    if($parentObject->SCHEDULE_SETTING)
-                    $SAVEDATA['SCHEDULE_SETTING'] = $parentObject->SCHEDULE_SETTING;
+                    if ($parentObject->SCHEDULE_SETTING)
+                        $SAVEDATA['SCHEDULE_SETTING'] = $parentObject->SCHEDULE_SETTING;
                     break;
             }
             $SAVEDATA["PARENT"] = $parent;
@@ -636,7 +638,7 @@ class TrainingDBAccess {
     {
 
         $facette = self::findTrainingFromId($Id);
-        self::dbAccess()->update("t_training", array('LEVEL' => "'". $facette->PARENT ."'"), "ID ='". $facette->ID ."'");
+        self::dbAccess()->update("t_training", array('LEVEL' => "'" . $facette->PARENT . "'"), "ID ='" . $facette->ID . "'");
 
         $facette = self::findTrainingFromId($Id);
 
@@ -685,16 +687,17 @@ class TrainingDBAccess {
         //error_log($SQL);
         return self::dbAccess()->fetchRow($SQL);
     }
-    
+
     /////@veasna
-    public static function checkTrainingStartDateEnddate($startDate,$endDate,$trainingId){
+    public static function checkTrainingStartDateEnddate($startDate, $endDate, $trainingId)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array("C" => "COUNT(*)"));
         $SQL->where("ID = " . $trainingId . "");
         $SQL->where("START_DATE <='" . setDate2DB($startDate) . "' AND END_DATE >='" . setDate2DB($endDate) . "'");
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;    
+        return $result ? $result->C : 0;
     }
 
     //////////////////////////////////////////////////////////////
@@ -722,63 +725,66 @@ class TrainingDBAccess {
             {
                 case "TERM":
                     $data = array();
-                    $data['PROGRAM']        = $facette->PROGRAM;
-                    $data['TERM']           = $facette->ID;
-                    $data['LEVEL']          = $facette->LEVEL;
-                    $data['EVALUATION_TYPE']= $facette->EVALUATION_TYPE;
-                    self::dbAccess()->update("t_training_subject", $data, "TERM =". $facette->ID);
+                    $data['PROGRAM'] = $facette->PROGRAM;
+                    $data['TERM'] = $facette->ID;
+                    $data['LEVEL'] = $facette->LEVEL;
+                    $data['EVALUATION_TYPE'] = $facette->EVALUATION_TYPE;
+                    self::dbAccess()->update("t_training_subject", $data, "TERM =" . $facette->ID);
                     break;
                 case "CLASS":
                     $data = array();
-                    $data['PROGRAM']        = $facette->PROGRAM;
-                    $data['TERM']           = $facette->TERM;
-                    $data['LEVEL']          = $facette->LEVEL;
-                    $data['EVALUATION_TYPE']= $parentObject->EVALUATION_TYPE;
-                    self::dbAccess()->update("t_training_subject", $data, "TRAINING =". $facette->ID);
+                    $data['PROGRAM'] = $facette->PROGRAM;
+                    $data['TERM'] = $facette->TERM;
+                    $data['LEVEL'] = $facette->LEVEL;
+                    $data['EVALUATION_TYPE'] = $parentObject->EVALUATION_TYPE;
+                    self::dbAccess()->update("t_training_subject", $data, "TRAINING =" . $facette->ID);
                     break;
             }
         }
     }
-    
-    public function selectTraining($params){
-        
-        $program = isset($params['program'])?addText($params['program']):'';
-        $level = isset($params['level'])?addText($params['level']):'';
-        $term = isset($params['term'])?addText($params['term']):'';
-        $type = isset($params['type'])?addText($params['type']):'';
+
+    public function selectTraining($params)
+    {
+
+        $program = isset($params['program']) ? addText($params['program']) : '';
+        $level = isset($params['level']) ? addText($params['level']) : '';
+        $term = isset($params['term']) ? addText($params['term']) : '';
+        $type = isset($params['type']) ? addText($params['type']) : '';
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training", array("*"));
-        if($type){
-            switch(strtoupper($type)){
+        if ($type)
+        {
+            switch (strtoupper($type))
+            {
                 case 'LEVEL':
-                    $SQL->where("OBJECT_TYPE=?",'LEVEL');
-                    if($program)
-                    $SQL->where("PARENT=?",$program);
+                    $SQL->where("OBJECT_TYPE=?", 'LEVEL');
+                    if ($program)
+                        $SQL->where("PARENT=?", $program);
                     break;
                 case 'TERM':
-                    $SQL->where("OBJECT_TYPE=?",'TERM');
-                    if($level)
-                    $SQL->where("LEVEL=?",$level);
+                    $SQL->where("OBJECT_TYPE=?", 'TERM');
+                    if ($level)
+                        $SQL->where("LEVEL=?", $level);
                     $SQL->where("START_DATE<NOW() AND NOW()<END_DATE");
                     $SQL->Orwhere("START_DATE>NOW() AND NOW()<END_DATE");
                     $SQL->group("START_DATE");
                     $SQL->group("END_DATE");
                     break;
                 case 'CLASS':
-                    $SQL->where("OBJECT_TYPE=?",'CLASS');
-                    if($term)
-                    $SQL->where("TERM=?",$term);
-                    break;     
+                    $SQL->where("OBJECT_TYPE=?", 'CLASS');
+                    if ($term)
+                        $SQL->where("TERM=?", $term);
+                    break;
             }
         }
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
-        return $result;   
+        return $result;
     }
-    
+
     public function selectComboLevelTraining($params)
     {
-        $params['type']='LEVEL';
+        $params['type'] = 'LEVEL';
         $result = $this->selectTraining($params);
         $data = array();
         $i = 0;
@@ -800,10 +806,10 @@ class TrainingDBAccess {
             , "rows" => $data
         );
     }
-    
+
     public function selectComboTermTraining($params)
     {
-        $params['type']='TERM';
+        $params['type'] = 'TERM';
         $result = $this->selectTraining($params);
         $data = array();
         $i = 0;
@@ -825,10 +831,10 @@ class TrainingDBAccess {
             , "rows" => $data
         );
     }
-    
+
     public function selectComboClassTraining($params)
     {
-        $params['type']='CLASS';
+        $params['type'] = 'CLASS';
         $result = $this->selectTraining($params);
         $data = array();
         $i = 0;
