@@ -70,6 +70,7 @@ function columnProperties($header, $dataindex, $width){
                     $OBJECT_GRID->addReadField("name: 'ETHNICITY'");
                     $OBJECT_GRID->addReadField("name: 'NATIONALITY'");
                     $OBJECT_GRID->addReadField("name: 'DELETE'");
+                    $OBJECT_GRID->addReadField("name: 'EMERGENCY_CONTACT'");
                     
                     $OBJECT_GRID->addColumn(columnProperties(NAME,"NAME",150,checkColHidden(1,$columndata)));
                     $OBJECT_GRID->addColumn(columnProperties(PHONE,"PHONE",150,checkColHidden(2,$columndata)));

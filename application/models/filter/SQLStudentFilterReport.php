@@ -145,7 +145,7 @@ class SQLStudentFilterReport {
         return $result?$result->C:0;    
     }
     
-    public static function getStudentInfo($stdClass){
+    /*public static function getStudentInfo($stdClass){
         
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_person_infos'), array("*"));
@@ -184,7 +184,52 @@ class SQLStudentFilterReport {
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;    
+    }*/
+    
+    ////test new
+    public static function getStudentInfo($stdClass){
+        
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_person_infos'), array("*"));
+        $SQL->joinLeft(array('B' => 't_student_schoolyear'), 'A.USER_ID=B.STUDENT', array());
+        
+        $SQL->where("A.USER_TYPE = ?","STUDENT");    
+        if ($stdClass->campusId)
+            $SQL->where("B.CAMPUS = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("B.GRADE = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("B.CLASS = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("B.SCHOOL_YEAR = ?",$stdClass->schoolyearId);
+        if($stdClass->objecttype)
+            $SQL->where("A.OBJECT_TYPE = ?",strtoupper($stdClass->objecttype));   
+        if($stdClass->type){
+            switch(strtoupper($stdClass->type)){
+                case'QUALIFICATION_DEGREE_TYPE':
+                    $SQL->where("A.QUALIFICATION_DEGREE = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.QUALIFICATION_DEGREE");
+                    break;
+                case'MAJOR_TYPE':
+                    $SQL->where("A.MAJOR = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.MAJOR");
+                    break;
+                case'RELATIONSHIP_TYPE':
+                    $SQL->where("A.RELATIONSHIP = ?",$stdClass->camemisType);
+                    break;
+                case'EMERGENCY_CONTACT_TYPE':
+                    $SQL->where("A.EMERGENCY_CONTACT = ?",$stdClass->camemisType);
+                    break;
+                        
+            }
+        }  
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;    
     }
+    //
     
     //@Visal
     public static function getCountStudentAdditional($stdClass){

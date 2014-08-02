@@ -3092,9 +3092,24 @@ class StaffDBAccess {
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
-        $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
         $object = isset($params["object"]) ? addText($params["object"]) : "";
+        
+        switch ($field) {
+            case "CITY_PROVINCE":
+            case "RELATIONSHIP":
+            case "ETHNICITY":
+            case "NATIONALITY":
+            case "EMERGENCY_CONTACT":
+            case "MAJOR":
+            case "QUALIFICATION_DEGREE":
+            case "ORGANIZATION_TYPE":
+                $newValue = isset($params["comboValue"]) ? addText($params["comboValue"]) : "";
+                break;
+            default:
+                $newValue = isset($params["newValue"]) ? addText($params["newValue"]) : "";
+                break;
+        }
 
         $SAVEDATA = array();
         if ($objectId)
@@ -3149,10 +3164,13 @@ class StaffDBAccess {
     {
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";//@veasna
 
         $SQL = self::dbAccess()->select()
                 ->from("t_person_infos", array('*'))
                 ->where("USER_ID = '" . $staffId . "'");
+        if($objectType)
+        $SQL->where("OBJECT_TYPE =?",strtoupper($objectType));
         $result = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;

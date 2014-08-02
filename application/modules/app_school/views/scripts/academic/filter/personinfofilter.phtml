@@ -1,0 +1,198 @@
+<?
+///////////////////////////////////////////////////////////
+// @Sor Veasna
+// Date: 24.07.2014
+///////////////////////////////////////////////////////////
+
+require_once 'clients/CamemisChart.php';
+require_once 'clients/CamemisPage.php';
+require_once 'models/filter/FilterData.php';
+require_once 'models/filter/FilterDataSet.php';
+require_once setUserLoacalization();
+$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+$gradeId = "";
+$campusId = "";
+$schoolyearId = "";
+$classId = "";
+
+if (strpos($objectId, "CAMPUS_") !== false) {
+    $Ids = explode("_",substr($objectId, 7));
+    $campusId = isset($Ids[0])?$Ids[0]:"";
+    $schoolyearId = isset($Ids[1])?$Ids[1]:"";
+    $objectType = "CAMPUS";
+} elseif (strpos($objectId, "GRADE_") !== false) {
+    $objectType = "GRADE";
+    $Ids = explode("_",substr($objectId, 6));
+    $gradeId = isset($Ids[0])?$Ids[0]:"";
+    $campusId = isset($Ids[1])?$Ids[1]:"";
+    $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+} else{
+    $objectType = "CLASS";
+    $classId = $objectId;
+}
+$setParams="";
+
+$objectDataSet = new FilterDataSet();
+if($campusId){
+    $objectDataSet->campusId = $campusId;
+    $setParams .= "&campusId=".$campusId.""; 
+}
+if($gradeId){
+    $objectDataSet->gradeId = $gradeId;
+    $setParams .= "&gradeId=".$gradeId.""; 
+}
+if($schoolyearId){
+    $objectDataSet->schoolyearId = $schoolyearId;
+    $setParams .= "&schoolyearId=".$schoolyearId.""; 
+}
+if($classId){
+    $objectDataSet->classId = $classId;
+    $setParams .= "&classId=".$classId.""; 
+}
+
+if($this->personType){
+    $objectDataSet->personType=$this->personType;    
+}
+
+$dataObject = array();
+if($this->objectType){
+    $objectDataSet->objectType=$this->objectType;
+    if($this->personType=='STUDENT'){
+        switch(strtoupper($this->objectType)){
+            case 'EDUBACK':
+                $type =array("QUALIFICATION_DEGREE_TYPE","MAJOR_TYPE");
+                foreach($type as $value){
+                    $objectDataSet->type=$value;
+                    $dataSet = $objectDataSet->getDataPersonInfo();
+                    $dataObject[$value]= new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value, $dataSet);
+                    $dataObject[$value]->chartSVG = "display".$value;
+                    $dataObject[$value]->showLegend='true';
+                    $dataObject[$value]->tooltips = 'true';
+                    $dataObject[$value]->showValues ='true';
+                    $dataObject[$value]->height = 280; 
+                }
+                break;
+            case 'PARINFO':
+                $type =array("RELATIONSHIP_TYPE","EMERGENCY_CONTACT_TYPE");
+                foreach($type as $value){
+                    $objectDataSet->type=$value;
+                    $dataSet = $objectDataSet->getDataPersonInfo();
+                    $dataObject[$value]= new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value, $dataSet);
+                    $dataObject[$value]->chartSVG = "display".$value;
+                    $dataObject[$value]->showLegend='true';
+                    $dataObject[$value]->tooltips = 'true';
+                    $dataObject[$value]->showValues ='true';
+                    $dataObject[$value]->height = 280; 
+                }
+                break;
+                   
+        }
+    }
+    if($this->personType=='STAFF'){
+        switch(strtoupper($this->objectType)){
+            case 'WORK_EXPERIENCE':
+                $type =array("ORGANIZATION_TYPE");
+                foreach($type as $value){
+                    $objectDataSet->type=$value;
+                    $dataSet = $objectDataSet->getDataPersonInfo();
+                    $dataObject[$value]= new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value, $dataSet);
+                    $dataObject[$value]->chartSVG = "display".$value;
+                    $dataObject[$value]->showLegend='true';
+                    $dataObject[$value]->tooltips = 'true';
+                    $dataObject[$value]->showValues ='true';
+                    $dataObject[$value]->height = 280; 
+                }
+                break;
+            case 'EDUBACK':
+                $type =array("QUALIFICATION_DEGREE_TYPE","MAJOR_TYPE");
+                foreach($type as $value){
+                    $objectDataSet->type=$value;
+                    $dataSet = $objectDataSet->getDataPersonInfo();
+                    $dataObject[$value]= new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value, $dataSet);
+                    $dataObject[$value]->chartSVG = "display".$value;
+                    $dataObject[$value]->showLegend='true';
+                    $dataObject[$value]->tooltips = 'true';
+                    $dataObject[$value]->showValues ='true';
+                    $dataObject[$value]->height = 280; 
+                }
+                break;
+            case 'EMERCP':
+                $type =array("RELATIONSHIP_TYPE","EMERGENCY_CONTACT_TYPE");
+                foreach($type as $value){
+                    $objectDataSet->type=$value;
+                    $dataSet = $objectDataSet->getDataPersonInfo();
+                    $dataObject[$value]= new CamemisChart("DISCRETE_BAR_CHART", 'chart'.$value, $dataSet);
+                    $dataObject[$value]->chartSVG = "display".$value;
+                    $dataObject[$value]->showLegend='true';
+                    $dataObject[$value]->tooltips = 'true';
+                    $dataObject[$value]->showValues ='true';
+                    $dataObject[$value]->height = 280; 
+                }
+                break;
+                   
+        }
+    }  
+}
+
+?>
+
+<link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
+<link href="/public/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/public/bootstrap/css/custom.css" rel="stylesheet">
+<script src="/public/nvd3/nvd3-camemis.php"></script>
+    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
+        <?
+        foreach($dataObject as $key => $value){
+        $DISPLAY_NAME = defined($key) ? constant($key) : $key;    
+        ?>
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-heading"><h5><b><?=$DISPLAY_NAME;?></b></h5></div>
+                    
+                    <div class="panel-body">
+                        <button type="button" id="btn<?=$key;?>" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
+                        <?$value->setChartDisplay();?>
+                        <script><?$value->setChartScript();?></script> 
+                    </div>    
+                </div> 
+            </div>
+        <?}?>    
+    </div>
+    <script>
+        Ext.onReady(function() {
+            
+            /*viewport = new Ext.Viewport({
+            layout: 'fit'
+            ,border: false
+            ,items: [{
+                title: ''
+                ,id:'westcenter'
+                ,collapsible: false
+                ,region:'center'
+                ,layout: 'fit'
+                ,margins: '0 3 3 3'
+                ,border:false
+                ,bodyStyle: 'background:#dee7f6;'
+                ,items: [{
+                    border: false
+                    ,bodyStyle: 'background:#dee7f6;'
+                    ,autoScroll:true
+                    ,contentEl: 'initStatistic'
+                }]
+            }]
+        });*/
+        
+           /*Ext.get('btnStudentEDMajor').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });
+           Ext.get('btnStudentCityProvince').on('click', function(){
+               window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+           });*/
+           
+        });
+    </script>
+</body>
+</html>

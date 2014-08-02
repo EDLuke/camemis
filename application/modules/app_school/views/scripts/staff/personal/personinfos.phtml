@@ -49,7 +49,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
     }
 </style>
 <script>
-   
+    var comboValue;
     Ext.onReady(function() {
 
         Ext.QuickTips.init();
@@ -456,6 +456,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
             cmd: 'actionPersonInfos'
             ,object: '".$this->target."'
             ,objectId: '".$this->objectId."'
+            ,comboValue:comboValue
         ");
 
         $OBJECT_GRID->baseParams = "
@@ -463,6 +464,7 @@ function columnProperties($header, $dataindex, $width, $hidden=false){
             ,limit:100
             ,cmd: 'jsonListPersonInfos'
             ,objectId: '".$this->objectId."'
+            ,objectType: '".$target."'
         ";
         $OBJECT_GRID->setAftereditCallback("
             if(jsonData.DELETE || jsonData.CITY_PROVINCE){
