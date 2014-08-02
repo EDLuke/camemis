@@ -1860,7 +1860,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return $this->getstudentsSubjectResultTraining();
     }
 
-    public function jsonListStudentsClassPerformanceTraining($encrypParams)
+    public function jsonListStudentsClassPerformanceTraining($encrypParams, $isJson = true)
     {
 
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -1868,6 +1868,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $this->section = isset($params["section"]) ? addText($params["section"]) : "";
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
+        $this->isJson = $isJson;
         $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $this->trainingObject = $this->getTrainingObject();
@@ -1936,12 +1937,18 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
+        if ($this->isJson)
+        {
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        }
+        else
+        {
+            return $data;
+        }
     }
 
     protected function getAvgClassPerformanceTraining($studentId)

@@ -410,7 +410,7 @@ class Utiles {
                 {
                     foreach ($entries as $value)
                     {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
+                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
@@ -440,7 +440,7 @@ class Utiles {
 
                 if (DescriptionDBAccess::checkChild($value->ID))
                 {
-                    $fieldObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                    $fieldObject = DescriptionDBAccess::findObjectFromId($value->ID);  
                     if ($fieldObject)
                     {
 
@@ -457,6 +457,7 @@ class Utiles {
                         switch ($fieldObject->CHOOSE_TYPE)
                         {
                             case 1:
+                                $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 1);
                                 $ITEMS .= ",items:[{";
                                 $ITEMS .= "xtype: 'checkboxgroup'";
                                 $ITEMS .= ",fieldLabel: ''";
@@ -466,9 +467,17 @@ class Utiles {
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
+                                if ($entries)
+                                {
+                                    foreach ($entries as $value)      
+                                    {  
+                                       $ITEMS .= ",name:'CHECKBOX_" . $value->ID . "'"; 
+                                    }
+                                } 
                                 $ITEMS .= "}]";
                                 break;
                             case 2:
+                                $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 2);
                                 $ITEMS .= ",items:[{";
                                 $ITEMS .= "xtype: 'radiogroup'";
                                 $ITEMS .= ",fieldLabel: ''";
@@ -478,15 +487,30 @@ class Utiles {
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
+                                if ($entries)
+                                {
+                                    foreach ($entries as $value)      
+                                    {  
+                                       $ITEMS .= ",name:'RADIOBOX_" . $value->ID . "'"; 
+                                    }
+                                }  
                                 $ITEMS .= "}]";
                                 break;
                             case 3:
+                                $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 3);
                                 $ITEMS .= ",items:[{";
                                 $ITEMS .= "layout: 'form'";
                                 $ITEMS .= ",border: false";
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",bodyStyle: 'padding:10px'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
+                                if ($entries)
+                                {
+                                    foreach ($entries as $value)      
+                                    {  
+                                       $ITEMS .= ",name:'INPUTFIELD_" . $value->ID . "'"; 
+                                    }
+                                } 
                                 $ITEMS .= "}]";
                                 break;
                         }

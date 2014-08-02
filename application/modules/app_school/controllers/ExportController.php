@@ -17,6 +17,7 @@ require_once 'models/export/StudentStatusExportDBAccess.php';//@Visal
 require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
 require_once 'models/export/TraditionalFilterExportDBAccess.php';//@Visal
 require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
+require_once 'models/export/TrainingAssessmentExportDBAccess.php';//@CHHE Vathana
 
 class ExportController extends Zend_Controller_Action {
 
@@ -35,6 +36,7 @@ class ExportController extends Zend_Controller_Action {
         $this->STUDENT_DISCIPLINE_EXCEL = new StudentDisciplineExportDBAccess($this->_getParam('objectId'));//@veasna
         $this->TRADITION_FILTER_EXCEL = new TraditionalFilterExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
+        $this->STUDENT_TRAINING_ASSESSMENT_EXCEL = new TrainingAssessmentExportDBAccess($this->_getParam('objectId'));//@veasna
         
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
@@ -125,11 +127,15 @@ class ExportController extends Zend_Controller_Action {
     {
         
     }
-     //@veasna
-     public function openstudentdisciplinelistAction()
-     {
-         
-     }
+    //@veasna
+    public function openstudentdisciplinelistAction()
+    {
+     
+    }
+    public function openstudentrainingassessmentlistAction()
+    {
+     
+    }
     //@Visal
     public function openstudentstatuslistAction()
     {
@@ -197,6 +203,10 @@ class ExportController extends Zend_Controller_Action {
             //@veasna    
             case "jsonSearchStudentDiscipline":
                 $jsondata = $this->STUDENT_DISCIPLINE_EXCEL->jsonSearchStudentDiscipline($this->REQUEST->getPost());
+                break;
+            
+            case "jsonListStudentsClassPerformanceTraining":
+                $jsondata = $this->STUDENT_TRAINING_ASSESSMENT_EXCEL->listStudentsClassPerformanceTraining($this->REQUEST->getPost());
                 break;
             //@Visal
             case "getStudentAttendanceData":

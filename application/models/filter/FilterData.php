@@ -177,7 +177,7 @@ class FilterData extends FilterProperties {
         return $result?count($result):0;    
     }
     
-    public function getcountStudentEDBackgroundDegreeOrMajor(){
+    /*public function getcountStudentEDBackgroundDegreeOrMajor(){
         
         $stdClass = (object) array(
                 "schoolyearId" => $this->schoolyearId
@@ -207,7 +207,7 @@ class FilterData extends FilterProperties {
         $result = SQLStudentFilterReport::getStudentInfo($stdClass);
         
         return count($result)?count($result):0;    
-    }
+    }*/
     
     public function getCountDailyStudentAbsence(){
         $stdClass = (object) array(
@@ -232,14 +232,52 @@ class FilterData extends FilterProperties {
         );
         $result = SQLStudentFilterReport::getStudentAttendanceType($stdClass);
         foreach($result as $value){
-            $numDays= explode(",",$value->CAL_DATE);
-            $count += count($numDays);        
+            $count += $value->COUNT_DATE;        
         }
         return $count;
     }
     //////////////////////
     ///Staff Data
     /////////////////////
+    
+    public function getCountDailyTeacherAbsence(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+        );
+        $result=0;
+        $teachers = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
+        if($teachers){
+            foreach ($teachers as $value){
+                $result += count(SQLTeacherFilterReport::sqlTeacherAttendance($value->TEACHER_ID,$value->SCHOOLYEAR_START,$value->SCHOOLYEAR_END,$this->absentType));    
+            }
+        }
+        return $result;
+    }
+    
+    public function getCountBlockTeacherAbsence(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+        );
+        $result=0;
+        $teachers = SQLTeacherFilterReport::getAssignedTeacher($stdClass);
+        if($teachers){
+            foreach($teachers as $value){
+                $attendance=SQLTeacherFilterReport::sqlTeacherAttendance($value->TEACHER_ID,$value->SCHOOLYEAR_START,$value->SCHOOLYEAR_END,$this->absentType);
+                if($attendance){
+                    foreach($attendance as $valueattendance){
+                        $result+=$valueattendance->COUNT_DATE;      
+                    }
+                }           
+            }
+        }
+        return $result;
+    }
     
     //@Visal
     public function getCountStaffActive(){
@@ -333,6 +371,32 @@ class FilterData extends FilterProperties {
         );
         $result = SQLStudentFilterReport::countStudentAttendanceType($stdClass);  
     }
+    
+    
+    ///test new
+    public function getcountPersonInfo(){
+        
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "type"  => $this->type
+                , "objecttype"  => $this->objectType
+                , "camemisType"  => $this->camemisType
+        );
+        switch(strtoupper($this->personType)){
+            case'STUDENT':
+                $result = SQLStudentFilterReport::getStudentInfo($stdClass);
+                break;
+            case'STAFF':
+                $result = SQLTeacherFilterReport::getTeacherInfo($stdClass);
+                break;   
+        }
+        
+        return count($result)?count($result):0;    
+    }
+    ///
    
 }
 

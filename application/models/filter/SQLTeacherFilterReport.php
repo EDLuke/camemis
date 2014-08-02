@@ -25,7 +25,7 @@ class SQLTeacherFilterReport {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' =>'t_schedule'), array('TEACHER_ID AS TEACHER_ID'));
         $SQL->joinLeft(array('B' => 't_staff'), 'B.ID=A.TEACHER_ID', array());
-        $SQL->joinLeft(array('C' => 't_grade'), 'C.ID=A.ACADEMIC_ID', array());
+        $SQL->joinLeft(array('C' => 't_grade'), 'C.ID=A.ACADEMIC_ID', array('SCHOOLYEAR_START','SCHOOLYEAR_END'));
         
         if(isset($stdClass->campusId))
         {
@@ -101,14 +101,6 @@ class SQLTeacherFilterReport {
            
     }
     
-    public static function countTeacherAttendanceTypeByTeacherId($Id){
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' =>'t_staff_attendance'), array("C" => "COUNT(*)"));
-        $SQL->where("A.STAFF_ID=?",$Id);
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;   
-    }
-    
     
     public static function findObjectTgrade($Id)
     {
@@ -116,15 +108,15 @@ class SQLTeacherFilterReport {
         
     }
     
-    public static function sqlTeacherAttendance($teacherId,$objectTgrade,$absenceType){
+    public static function sqlTeacherAttendance($teacherId,$schoolyearStart,$schoolyearEnd,$absenceType){
         
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' =>'t_staff_attendance'), array("*"));
         $SQL->where("A.STAFF_ID = ?",$teacherId);
         $SQL->where("A.ABSENT_TYPE = ?",$absenceType);
-        if($objectTgrade){
-            $SQL->where("A.START_DATE >= ?",$objectTgrade->SCHOOLYEAR_START);   
-            $SQL->where("A.END_DATE <= ?",$objectTgrade->SCHOOLYEAR_END);  
+        if($schoolyearStart && $schoolyearEnd){
+            $SQL->where("A.START_DATE >= ?",$schoolyearStart);   
+            $SQL->where("A.END_DATE <= ?",$schoolyearEnd);  
         }
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
@@ -187,88 +179,6 @@ class SQLTeacherFilterReport {
         return $result;    
     }
     
-    public static function countTeacherAttendanceType($stdClass){
-        
-        $count=0;
-        switch ($stdClass->objectType) {
-            case 'CAMPUS':
-                $objectTgrade = self::findObjectTgrade($stdClass->gradeId);
-                break;
-            case 'GRADE':
-                $objectTgrade = self::findObjectTgrade($stdClass->classId);
-                break;
-        }
-        
-        if(isset($stdClass->personId))
-        {
-            
-            $count=$count+self::countTeacherAttendanceTypeByTeacherId($stdClass->teacherId);       
-        }else{//
-            $teacherObject = self::SQLAssignedTeacher($stdClass);
-            if($teacherObject)
-            {
-                foreach($teacherObject as $value){
-                    $TeacherAttendance = self::sqlTeacherAttendance($value->ID,$objectTgrade,$stdClass->absentType);
-                    if($TeacherAttendance) {
-                        foreach($TeacherAttendance as $attendanceObject){
-                            $stdClass->teacherId = $value->ID;
-                            if($attendanceObject->ACTION_TYPE==2){
-                                $days = explode(",",$attendanceObject->CAL_DATE);
-                                foreach($days as $day){
-                                    $stdClass->day=$day;
-                                    $check = self::checkTeacherAttendanceInLevelGrade($stdClass);
-                                    if($check)
-                                        $count = $count+1;  
-                                    //error_log($count);       
-                                }
-                                             
-                            }else{////check more...............
-                                $stdClass->day="";
-                                $stdClass->start_time=$attendanceObject->START_TIME;
-                                $stdClass->end_time=$attendanceObject->END_TIME;
-                                $check = self::checkTeacherAttendanceInLevelGrade($stdClass);
-                                if($check)
-                                    $count = $count+1;  
-                                //error_log("daily:".$count);   
-                            }       
-                        }    
-                    }                 
-                }
-            }    
-        }
-        
-        /*$SQL = self::dbAccess()->select();
-        $SQL->from(array('A' =>'t_staff_attendance'), array("C" => "COUNT(*)"));
-        $SQL->joinLeft(array('B' => 't_schedule'), 'A.STAFF_ID=B.TEACHER_ID', array());
-        $SQL->joinLeft(array('C' => 't_grade'), 'C.ID=B.ACADEMIC_ID', array());
-        
-        if(isset($stdClass->campusId)){
-            $SQL->where("C.CAMPUS_ID = ?",$stdClass->campusId);    
-        }
-        
-        if(isset($stdClass->gradeId)){
-            $SQL->where("C.GRADE_ID = ?",$stdClass->gradeId);   
-        }
-        
-        if(isset($stdClass->teacherId))
-            $SQL->where("A.STAFF_ID = ?",$stdClass->teacherId);
-
-        if (isset($stdClass->classId))
-            $SQL->where("B.ACADEMIC_ID = ?",$stdClass->classId);
-        
-        if(isset($stdClass->absentType))
-            $SQL->where("A.ABSENT_TYPE = ?",$stdClass->absentType);
-        
-        if(isset($stdClass->schoolyearId))
-            $SQL->where("B.SCHOOLYEAR_ID = ?",$stdClass->schoolyearId);
-        
-        
-        $SQL->group("A.ID");
-        //error_log($SQL);
-        $result = self::dbAccess()->fetchRow($SQL);*/
-        return $count;   
-    }
-    
     public static function countTeacherDisciplineType($stdClass){//check
         
         $SQL = self::dbAccess()->select();
@@ -299,20 +209,54 @@ class SQLTeacherFilterReport {
         return $result ? $result->C : 0;   
     }
     
-    public static function getAttendanceType($stdClass){
-        $data = AbsentTypeDBAccess::getAllAbsentType(array('objectType'=>$stdClass->personType,'status'=>$stdClass->status)); 
-        return $data;       
-    }
-    
-    public static function getDisciplineType(){
+    public static function getTeacherInfo($stdClass){
+        
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_camemis_type", array('*'));
-        $SQL->where("OBJECT_TYPE =?","DISCIPLINE_TYPE_STAFF");
-        $SQL->where("PARENT <> 0");
-        $SQL->order("ID ASC");
+        $SQL->from(array('A' => 't_person_infos'), array("*"));
+        $SQL->joinRight(array('B' => 't_schedule'), 'A.USER_ID=B.TEACHER_ID', array());
+        $SQL->joinLeft(array('C' => 't_grade'), 'C.ID=B.ACADEMIC_ID', array());
+        
+        $SQL->where("A.USER_TYPE = ?","STAFF");    
+        if ($stdClass->campusId)
+            $SQL->where("C.CAMPUS_ID = ?",$stdClass->campusId);     
+        if (isset($stdClass->gradeId)) 
+            $SQL->where("B.GRADE_ID = ?",$stdClass->gradeId);
+        if (isset($stdClass->classId))
+            $SQL->where("B.ACADEMIC_ID = ?",$stdClass->classId);
+        if (isset($stdClass->schoolyearId))
+            $SQL->where("B.SCHOOLYEAR_ID = ?",$stdClass->schoolyearId);
+        if($stdClass->objecttype)
+            $SQL->where("A.OBJECT_TYPE = ?",strtoupper($stdClass->objecttype));   
+        if($stdClass->type){
+            switch(strtoupper($stdClass->type)){
+                case'QUALIFICATION_DEGREE_TYPE':
+                    $SQL->where("A.QUALIFICATION_DEGREE = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.QUALIFICATION_DEGREE");
+                    break;
+                case'MAJOR_TYPE':
+                    $SQL->where("A.MAJOR = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.MAJOR");
+                    break;
+                case'RELATIONSHIP_TYPE':
+                    $SQL->where("A.RELATIONSHIP = ?",$stdClass->camemisType);
+                    $SQL->group("B.TEACHER_ID");
+                    break;
+                case'ORGANIZATION_TYPE':
+                    $SQL->where("A.ORGANIZATION_TYPE = ?",$stdClass->camemisType);
+                    $SQL->group("A.USER_ID");
+                    $SQL->group("A.ORGANIZATION_TYPE");
+                    break;
+                case'EMERGENCY_CONTACT_TYPE':
+                    $SQL->where("A.EMERGENCY_CONTACT = ?",$stdClass->camemisType);
+                    $SQL->group("B.TEACHER_ID");
+                    break;        
+            }
+        }  
         //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);   
-        return $result;     
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;    
     }
     
 }

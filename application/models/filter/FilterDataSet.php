@@ -49,7 +49,14 @@ class FilterDataSet extends FilterData{
                        
                         break;
                     case 'STAFF':
-                        $DATASET .= ",'value':''";
+                        switch(strtoupper($this->type)){
+                            case 'DAILY':
+                                 $DATASET .= ",'value':'" . $this->getCountDailyTeacherAbsence() . "'";
+                                break;
+                            case 'BLOCK':
+                                $DATASET .= ",'value':'" . $this->getCountBlockTeacherAbsence() . "'";
+                                break;       
+                        }
                         break;       
                 }
                 
@@ -62,6 +69,35 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
+    ///new test
+    public function getDataPersonInfo(){
+        
+        $entries = FilterProperties::getCamemisType($this->type);
+        $DATASET = "[{";
+        $DATASET .= "key: '".$this->type."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->camemisType=$value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= ",'value':'" . $this->getcountPersonInfo() . "'";
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    ///
+    
     
     /////////////////////////////
     //Student data set
@@ -269,7 +305,7 @@ class FilterDataSet extends FilterData{
         return $DATASET;      
     }
     
-    public function getDataSetStudentEDMajor(){
+    /*public function getDataSetStudentEDMajor(){
         
         $entries = FilterProperties::getCamemisType('MAJOR_TYPE');
         $this->type="MAJOR";
@@ -321,7 +357,7 @@ class FilterDataSet extends FilterData{
         $DATASET .= "}]";
         
         return $DATASET;      
-    }
+    }*/
     
     public function getDataSetStudentEDDegree(){
         

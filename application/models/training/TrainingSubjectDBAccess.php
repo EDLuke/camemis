@@ -389,7 +389,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SAVEDATA['LEVEL'] = $facette->LEVEL;
             $SAVEDATA['TRAINING'] = $trainingId;
             $SAVEDATA['SUBJECT'] = $subjectId;
-            $SAVEDATA['INCLUDE_IN_EVALUATION']=1;//default
+            $SAVEDATA['INCLUDE_IN_EVALUATION'] = 1; //default
             $SAVEDATA['OBJECT_TYPE'] = "FOLDER";
             self::dbAccess()->insert('t_training_subject', $SAVEDATA);
         }
@@ -403,7 +403,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         if ($trainingId && $subjectId)
         {
-            $whereSQL  = " 1=1 AND TRAINING = '" . $trainingId . "'";
+            $whereSQL = " 1=1 AND TRAINING = '" . $trainingId . "'";
             $whereSQL .= " AND SUBJECT = '" . $subjectId . "'";
             self::dbAccess()->delete("t_grade_subject", $whereSQL);
         }
@@ -501,6 +501,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SQL .= " A.ID AS ASSIGNMENT_ID
                     , A.NAME AS NAME
                     , A.SHORT AS SHORT
+                    , B.EVALUATION_TYPE AS EVALUATION_TYPE
                     , B.SUBJECT AS SUBJECT
                     , B.OBJECT_TYPE AS OBJECT_TYPE
                     , B.COEFF_VALUE AS COEFF_VALUE
@@ -550,7 +551,16 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
                         break;
                     case'ITEM':
                         $data[$i]['id'] = $value->RUL_ID;
-                        $data[$i]['text'] = "(" . setShowText($value->SHORT) . ") " . setShowText($value->NAME) . " (" . $value->COEFF_VALUE . ")";
+
+                        if ($value->EVALUATION_TYPE)
+                        {
+                            $data[$i]['text'] = "(" . setShowText($value->SHORT) . ") " . setShowText($value->NAME) . " (" . $value->COEFF_VALUE . "%)";
+                        }
+                        else
+                        {
+                            $data[$i]['text'] = "(" . setShowText($value->SHORT) . ") " . setShowText($value->NAME) . " (" . $value->COEFF_VALUE . ")";
+                        }
+
                         $data[$i]['leaf'] = true;
                         $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-flag_blue";
@@ -979,66 +989,29 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         $SAVEDATA = array();
 
-        $selectionIds = $params["selectionIds"];
-        $trainingId = $params["trainingId"];
-        $subjectId = $params["subjectId"];
-        $parentId = addText($params["parentId"]);
+        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
+        $trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
+        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
-        $facette = TrainingDBAccess::findTrainingFromId($trainingId);
+        $CHECK = self::checkTrainingSubjectAssignment($trainingId, $subjectId, $assignmentId);
 
-        self::deleteSubjectAssignment($subjectId, $trainingId);
-
-        if ($selectionIds != "")
+        if (!$CHECK)
         {
-            $assignmentIds = explode(",", $selectionIds);
-
-            $selectedCount = 0;
-            if ($assignmentIds)
-                foreach ($assignmentIds as $assignmentId)
-                {
-
-                    switch ($facette->OBJECT_TYPE)
-                    {
-                        case "TERM":
-                            $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
-                            $SAVEDATA["TERM"] = $trainingId;
-                            $SAVEDATA["LEVEL"] = $facette->LEVEL;
-                            break;
-                        case "CLASS":
-                            $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
-                            $SAVEDATA["TERM"] = $facette->TERM;
-                            $SAVEDATA["LEVEL"] = $facette->LEVEL;
-                            $SAVEDATA["TRAINING"] = $trainingId;
-                            break;
-                    }
-                    $subjectObject = self::findSubjectFromId($subjectId);
-
-                    if ($subjectObject->SCORE_TYPE)
-                        $SAVEDATA['SCORE_TYPE'] = $subjectObject->SCORE_TYPE;
-                    if ($subjectObject->COEFF_VALUE)
-                    {
-                        $SAVEDATA['COEFF_VALUE'] = $subjectObject->COEFF_VALUE;
-                    }
-                    else
-                    {
-                        $SAVEDATA['COEFF_VALUE'] = 1;
-                    }
-
-                    $SAVEDATA["SUBJECT"] = $subjectId;
-                    $SAVEDATA["PARENT"] = $parentId;
-                    $SAVEDATA["ASSIGNMENT"] = $assignmentId;
-                    $SAVEDATA["OBJECT_TYPE"] = "ITEM";
-                    self::dbAccess()->insert('t_training_subject', $SAVEDATA);
-
-                    $selectedCount++;
-                }
-        }
-        else
-        {
-            $selectedCount = 0;
+            $facette = TrainingDBAccess::findTrainingFromId($trainingId);
+            $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
+            $SAVEDATA["TERM"] = $facette->ID;
+            $SAVEDATA["LEVEL"] = $facette->LEVEL;
+            $SAVEDATA["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
+            $SAVEDATA["TRAINING"] = $trainingId;
+            $SAVEDATA["SUBJECT"] = $subjectId;
+            $trainingSubject = self::getTrainingSubject($trainingId, $subjectId);
+            $SAVEDATA["PARENT"] = $trainingSubject ? $trainingSubject->ID : "";
+            $SAVEDATA["ASSIGNMENT"] = $assignmentId;
+            $SAVEDATA["OBJECT_TYPE"] = "ITEM";
+            self::dbAccess()->insert('t_training_subject', $SAVEDATA);
         }
 
-        return array("success" => true, 'selectedCount' => $selectedCount);
+        return array("success" => true);
     }
 
     public function jsonSubjectAssignmentTraining($params)
@@ -1261,7 +1234,6 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SQL->from('t_training_subject', array("*"));
             $SQL->where("SUBJECT = '" . $facette->ID . "'");
             $SQL->where("TRAINING = '" . $trainingObject->ID . "'");
-
 
             $result = self::dbAccess()->fetchRow($SQL);
         }

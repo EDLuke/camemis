@@ -606,17 +606,23 @@ class AcademicController extends Zend_Controller_Action {
     }
     
     public function studenteducationbackgroundfilterAction() {
-        $this->_helper->viewRenderer("filter/studenteducationbackgroundfilter"); 
+        //$this->_helper->viewRenderer("filter/studenteducationbackgroundfilter"); 
+        $this->_helper->viewRenderer("filter/personinfofilter");
+        $this->view->personType = "STUDENT";
+        $this->view->objectType = "EDUBACK"; 
     }
     public function studentparentguardianfilterAction() {
-        $this->_helper->viewRenderer("filter/studentparentguardianfilter"); 
+        //$this->_helper->viewRenderer("filter/studentparentguardianfilter"); 
+        $this->_helper->viewRenderer("filter/personinfofilter");
+        $this->view->personType = "STUDENT";
+        $this->view->objectType = "PARINFO"; 
     }
 
     public function studentattendancefilterAction() {
         $this->_helper->viewRenderer("filter/absencestatistic");
         $this->view->personType = "STUDENT";
     }
-
+    
     public function studentdisciplinefilterAction() {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_DISCIPLINE_FILTER";
@@ -631,10 +637,28 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/teacherfilter");
         $this->view->gridType = "TEACHER_FILTER";
     }
+    
+    public function teacherworkexperiencefilterAction() {
+        $this->_helper->viewRenderer("filter/personinfofilter");
+        $this->view->personType = "STAFF";
+        $this->view->objectType = "WORK_EXPERIENCE";    
+    }
+    
+    public function teacherrelationshipfilterAction() {
+        $this->_helper->viewRenderer("filter/personinfofilter");
+        $this->view->personType = "STAFF";
+        $this->view->objectType = "EMERCP";     
+    }
+    
+    public function teacheredbackgroundfilterAction(){
+        $this->_helper->viewRenderer("filter/personinfofilter");
+        $this->view->personType = "STAFF";
+        $this->view->objectType = "EDUBACK";    
+    }
 
     public function teacherattendancefilterAction() {
-        $this->_helper->viewRenderer("filter/teacherfilterviewport");
-        $this->view->gridType = "TEACHER_ATTENDANCE_FILTER";
+        $this->_helper->viewRenderer("filter/absencestatistic");
+        $this->view->personType = "STAFF";
     }
 
     ////////////////////////////////////////////////////////////////////////////

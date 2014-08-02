@@ -37,6 +37,31 @@ $OBJECT_FORM->setSaveUrl('/student/jsonsave/');
 $OBJECT_GRID = new CamemisGrid("STUDENT", "SEARCH");
 $OBJECT_GRID->setLoadUrl("/student/jsonload/");
 $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+function searchPersonalDescription(){
+    $js='false';
+    $entries = DescriptionDBAccess::sqlPersonalDescription("STUDENT");
+    if ($entries)
+    {
+        foreach ($entries as $value)      
+        {   
+            switch($value->CHOOSE_TYPE){
+                case 1:
+                    $js .= " || obj.CHECKBOX_".$value->ID . "!=''";    
+                    break;
+                     
+                case 2:
+                    $js .= " || obj.RADIOBOX_".$value->ID . '!=null';  
+                    break; 
+                 
+                case 3:
+                    $js .= " || obj.INPUTFIELD_".$value->ID . "!=''" ; 
+                    break;                        
+            }
+      
+        }
+    } 
+    return $js ;
+}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -119,15 +144,19 @@ Ext.onReady(function() {
 
     function plsEnterKey(obj){
         var s;
-        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER
-            || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.RELIGION
-            || obj.ETHNIC || obj.NATIONALITY || obj.START_DATE
-        ){
+       
+        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.RELIGION
+            || obj.ETHNIC || obj.NATIONALITY || obj.START_DATE || obj.END_DATE || obj.INSTITUTION_NAME || obj.ACADEMIC_YEAR
+            || obj.MAJOR || obj.QUALIFICATION_DEGREE || obj.NAME || obj.DESCRIPTION || <?= searchPersonalDescription() ?>
+        ) {
             s = 0;
-        }else{
+            
+        } else{     
             s = 1;
         }
+      
         return s;
+        
     }
 
     function keyEnter(){
@@ -275,7 +304,35 @@ Ext.onReady(function() {
             ,{xtype: '".$OBJECT_LOCATION_CHILD->getObjectXType()."'}
         ]
     }";
-
+    //
+    $PRE_REQUIREMENTS ="{
+        xtype:'fieldset'                        
+        ,checkboxToggle:true
+        ,collapsed: true
+        ,title: '".PRE_REQUIREMENTS."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+        ,width: 310
+        ,items:[ 
+             {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, 150)."}     
+            ,{".CamemisField::Textfield("DESCRIPTION", "DESCRIPTION", DESCRIPTION, false, false, false, 150)."} 
+        ]
+    }";
+    
+    $EDUCATION_BACKGROUND ="{                      
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed: true
+        ,title: '".EDUCATION_BACKGROUND."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+        ,width: 310
+        ,items:[ 
+            {".CamemisField::Textfield("ACADEMIC_YEAR", "ACADEMIC_YEAR", ACADEMIC_YEAR, false, false, false, 150)."}     
+            ,{".CamemisField::Textfield("INSTITUTION_NAME", "INSTITUTION_NAME", INSTITUTION_NAME, false, false, false, 150)."}
+            ,{".CamemisField::comboMajor(false,false, 150)."}  
+            ,{".CamemisField::comboQualitycationDegree(false,false, 150)."}
+        ]
+    }";
+    //
     $OBJECT_FORM->addTBarItems("
         text: '".RESET."'
         ,iconCls:'icon-arrow_undo'
@@ -299,6 +356,8 @@ Ext.onReady(function() {
 
     $FORM_ITEMS = "[";
     $FORM_ITEMS .= "".$PERSONAL_INFORMATION;
+    $FORM_ITEMS .= ",".$PRE_REQUIREMENTS;
+    $FORM_ITEMS .= ",".$EDUCATION_BACKGROUND;
     $FORM_ITEMS .= ",".$REGISTRATION;
     $FORM_ITEMS .= ",".$ADDRESS;
     $FORM_ITEMS .= ",".Utiles::personalDescriptionDisplayFields("STUDENT",310);

@@ -91,6 +91,9 @@ abstract class CamemisExportDBAccess {
     public function getFileStudentDiscipline() {
         return self::getUserPhath("_studentdisciplinelist.xls");
     }
+    public function getAssessmentStudentTrainingOnClass() {
+        return self::getUserPhath("_assessmnetstudentstraningonclasslist.xls");
+    }
     //@CHHE Vathana
     public function getFileEnrolledStudentYearList() {
         return self::getUserPhath("_enrolledstudentbyyearlist.xls");
