@@ -127,15 +127,15 @@ class ExportController extends Zend_Controller_Action {
     {
         
     }
-     //@veasna
-     public function openstudentdisciplinelistAction()
-     {
-         
-     }
-     public function openstudentrainingassessmentlistAction()
-     {
-         
-     }
+    //@veasna
+    public function openstudentdisciplinelistAction()
+    {
+     
+    }
+    public function openstudentrainingassessmentlistAction()
+    {
+     
+    }
     //@Visal
     public function openstudentstatuslistAction()
     {
