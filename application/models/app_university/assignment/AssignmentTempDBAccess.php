@@ -733,8 +733,9 @@ class AssignmentTempDBAccess {
                     $data[$i]['isClick'] = true;
                     $data[$i]['setId'] = $value->ASSIGNMENT_ID;
                     $data[$i]['id'] = "" . $value->ASSIGNMENT_ID . "_" . $value->SCORE_INPUT_DATE;
-                    $data[$i]['text'] = "" . $facette->NAME;
-                    $data[$i]['text'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
+                    $data[$i]['display'] = "" . $facette->NAME;
+                    $data[$i]['display'] .= ": " . getShowDate($value->SCORE_INPUT_DATE) . "";
+                    $data[$i]['text'] = "" . getShowDate($value->SCORE_INPUT_DATE) . "";
                     $data[$i]['iconCls'] = "icon-date_edit";
                 }
                 $i++;
@@ -813,21 +814,7 @@ class AssignmentTempDBAccess {
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
-
-    public function getListAssignmentsForAssessmentTraining($trainingId, $subjectId)
-    {
-
-        $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
-        $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
-
-        if ($trainingObject && $subjectObject)
-        {
-            $searchParams["trainingId"] = $trainingObject->ID;
-            $searchParams["subjectId"] = $subjectObject->ID;
-            return $this->getAllAssignmentQuery($searchParams);
-        }
-    }
-
+    
     /**
      * 
      * @param type $eduType
