@@ -504,7 +504,6 @@ class Utiles {
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",bodyStyle: 'padding:10px'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
-                                $parentObject = self::findObjectFromIdss($value->ID);
                                 if ($entries)
                                 {
                                     foreach ($entries as $value)      
