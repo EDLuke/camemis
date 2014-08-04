@@ -410,7 +410,7 @@ class Utiles {
                 {
                     foreach ($entries as $value)
                     {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
@@ -504,6 +504,7 @@ class Utiles {
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",bodyStyle: 'padding:10px'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
+                                $parentObject = self::findObjectFromIdss($value->ID);
                                 if ($entries)
                                 {
                                     foreach ($entries as $value)      
