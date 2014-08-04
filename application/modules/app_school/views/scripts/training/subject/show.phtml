@@ -173,25 +173,26 @@ Ext.onReady(function() {
     
     
     $EVALUATION_SETTINGS_ITEMS = "[";
-    
-    $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
-    $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE, false, false, false, false)."}";
+        $EVALUATION_SETTINGS_ITEMS .= "{".CamemisField::Combo('EVALUATION_TYPE', EVALUATION_TYPE, $EVALUATION_TYPE_STORE, true, false, false, false,false)."}";
+        $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE, false, false, false, false)."}";
+        $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("COEFF_VALUE", "COEFF_VALUE", VALUE." / ".COEFFICIENT, false, false, false, false)."}";
+        $EVALUATION_SETTINGS_ITEMS .= ",{".CamemisField::Numberfield("MAX_POSSIBLE_SCORE", "MAX_POSSIBLE_SCORE", POINTS_POSSIBLE, false, false, false, false)."}";
     $EVALUATION_SETTINGS_ITEMS .= "]";
     
     $EVALUATION_SETTINGS = "
     {
-    title: '".EVALUATION_SETTINGS."'
-    ,autoHeight: true
-    ,style: 'padding-bottom: 5px'
-    ,width: 550
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,bodyStyle: 'padding:10px'
-            ,items: ".$EVALUATION_SETTINGS_ITEMS."
-        }]
-    }
+        title: '".EVALUATION_SETTINGS."'
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+            ,items:[{
+                layout: 'form'
+                ,border: false
+                ,autoHeight:true
+                ,bodyStyle: 'padding:10px'
+                ,items: ".$EVALUATION_SETTINGS_ITEMS."
+            }]
+        }
     ";
     $FORM_ITEMS = "[";
     if($this->facette){
