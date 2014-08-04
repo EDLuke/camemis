@@ -73,16 +73,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TREE->addTBarItems("
             xtype: 'buttongroup'
             ,items:[{
-                xtype:'datefield'
-                ,format: '" . setExtDatafieldFormat() . "'
+                xtype:'textfield'
                 ,width:120
-                ,name:'choosedate'
-                ,value:'".getShowDate(date('d-m-Y'))."'
+                ,value:'".getShowDate(date('d.m.Y'))."'
+                ,emptyText:'".getSystemDateFormat()."'
                 ,listeners: {
-                    'select' : function(dp, date) {
-                        myTree = ".$OBJECT_TREE->ExtgetCmp().";
-                        myTree.loader.baseParams.choosedate = date.format('Y-m-j');
-                        myTree.root.reload();
+                    specialkey: function(f,e){
+                        if (e.getKey() == e.ENTER) {
+                            myTree = ".$OBJECT_TREE->ExtgetCmp().";
+                            myTree.loader.baseParams.choosedate = this.getValue();
+                            myTree.root.reload();
+                        }
                     }
                 }
             }]

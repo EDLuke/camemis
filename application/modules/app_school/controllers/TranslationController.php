@@ -14,8 +14,10 @@ require_once 'models/TextDBAccess.php';
 
 class TranslationController extends Zend_Controller_Action {
 
-    public function init() {
-        if (!UserAuth::identify()) {
+    public function init()
+    {
+        if (!UserAuth::identify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -31,26 +33,31 @@ class TranslationController extends Zend_Controller_Action {
 
         $this->objectData = array();
 
-        if ($this->_getParam('objectId')) {
+        if ($this->_getParam('objectId'))
+        {
             $this->objectId = $this->_getParam('objectId');
             $this->objectData = $this->DB_TRANSLATION->getTranslationDataFromId($this->objectId);
         }
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         $this->view->URL_SHOWITEM = $this->UTILES->buildURL('translation/showitem', array());
     }
 
-    public function showitemAction() {
+    public function showitemAction()
+    {
 
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
     }
 
-    public function jsonloadAction() {
+    public function jsonloadAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "loadObject":
                 $jsondata = $this->DB_TRANSLATION->loadTranslationFromId($this->REQUEST->getPost('objectId'));
@@ -65,9 +72,11 @@ class TranslationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "updateObject":
                 $jsondata = $this->DB_TRANSLATION->updateTranslation($this->REQUEST->getPost());
@@ -78,9 +87,11 @@ class TranslationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonTreeAllTranslations":
                 $jsondata = $this->DB_TRANSLATION->jsonTreeAllTranslations($this->REQUEST->getPost());
@@ -90,7 +101,8 @@ class TranslationController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

@@ -410,7 +410,7 @@ class Utiles {
                 {
                     foreach ($entries as $value)
                     {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;

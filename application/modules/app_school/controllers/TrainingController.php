@@ -18,15 +18,18 @@ require_once 'models/UserAuth.php';
 
 class TrainingController extends Zend_Controller_Action {
 
-    public function init() {
-        if (!UserAuth::identify()) {
+    public function init()
+    {
+        if (!UserAuth::identify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
         }
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds')) {
+        if ($this->_getParam('camIds'))
+        {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
         $this->REQUEST = $this->getRequest();
@@ -56,7 +59,8 @@ class TrainingController extends Zend_Controller_Action {
         if ($this->_getParam('date'))
             $this->date = $this->_getParam('date');
 
-        if ($this->_getParam('trainingId')) {
+        if ($this->_getParam('trainingId'))
+        {
 
             $this->trainingId = $this->_getParam('trainingId');
             $this->objectData = $this->DB_TRAINING->getTrainingDataFromId($this->objectId);
@@ -67,7 +71,8 @@ class TrainingController extends Zend_Controller_Action {
 
         $this->studentId = $this->_getParam('studentId');
 
-        if ($this->_getParam('objectId')) {
+        if ($this->_getParam('objectId'))
+        {
 
             $this->objectId = $this->_getParam('objectId');
             $this->objectData = $this->DB_TRAINING->getTrainingDataFromId($this->objectId);
@@ -77,7 +82,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->target = $this->_getParam('target');
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
         $this->view->URL_PROGRAM = $this->UTILES->buildURL('training/program', array());
@@ -86,7 +92,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->URL_CLASS = $this->UTILES->buildURL('training/class', array());
     }
 
-    public function subjectresulttrainingAction() {
+    public function subjectresulttrainingAction()
+    {
 
         $this->view->objectId = $this->objectId;
         $this->view->trainingId = $this->trainingId;
@@ -96,7 +103,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/evaluation/subjectresulttraining');
     }
 
-    public function programAction() {
+    public function programAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -104,12 +112,14 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->objectData = $this->objectData;
     }
 
-    public function subjectAction() {
+    public function subjectAction()
+    {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function teacherselectionAction() {
+    public function teacherselectionAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -119,13 +129,15 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/teacher/selection');
     }
 
-    public function addprogramAction() {
+    public function addprogramAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
         $this->view->objectId = $this->objectId;
     }
 
-    public function levelAction() {
+    public function levelAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -134,7 +146,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->facette = $this->facette;
     }
 
-    public function studentlistAction() {
+    public function studentlistAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -150,7 +163,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/student/list');
     }
 
-    public function termAction() {
+    public function termAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -171,7 +185,8 @@ class TrainingController extends Zend_Controller_Action {
         );
     }
 
-    public function classAction() {
+    public function classAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -200,7 +215,8 @@ class TrainingController extends Zend_Controller_Action {
         );
     }
 
-    public function trainingassessmentAction() {
+    public function trainingassessmentAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
         $this->view->objectId = $this->objectId;
@@ -217,7 +233,8 @@ class TrainingController extends Zend_Controller_Action {
     }
 
     //@veasna
-    public function evaluationstudenttrainingAction() {
+    public function evaluationstudenttrainingAction()
+    {
 
         $this->view->trainingId = $this->trainingId;
         $this->view->objectId = $this->objectId;
@@ -231,14 +248,16 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/evaluation/list');
     }
 
-    public function setUrlSubjectScoresEnter() {
+    public function setUrlSubjectScoresEnter()
+    {
 
         return UTILES::createUrl('training/subjectscoreenter', array(
                     "trainingId" => $this->trainingId, "subjectId" => $this->subjectId)
         );
     }
 
-    public function subjectscoreenterAction() {
+    public function subjectscoreenterAction()
+    {
 
         $data = explode("_", $this->setId);
         $this->assignmentId = isset($data[0]) ? $data[0] : "";
@@ -250,9 +269,11 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->subjectId = $this->subjectId;
     }
 
-    public function trainingtranscriptAction() {
+    public function trainingtranscriptAction()
+    {
         //error_log("subjectId=".$this->subjectId);
-        switch (UserAuth::getUserType()) {
+        switch (UserAuth::getUserType())
+        {
             case "SUPERADMIN":
             case "ADMIN":
             case 'INSTRUCTOR':
@@ -265,24 +286,28 @@ class TrainingController extends Zend_Controller_Action {
         }
     }
 
-    public function scoremonitortrainingAction() {
+    public function scoremonitortrainingAction()
+    {
         $this->view->subjectId = $this->subjectId;
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("evaluation/scoremonitor");
     }
 
-    public function trainingtranscriptshowitemAction() {
+    public function trainingtranscriptshowitemAction()
+    {
         $this->_helper->viewRenderer('/evaluation/trainingtranscript');
     }
 
-    public function trainingtranscriptassignmentAction() {
+    public function trainingtranscriptassignmentAction()
+    {
         $this->_helper->viewRenderer('/evaluation/trainingtranscriptassignment');
         $this->view->objectId = $this->objectId;
         $this->view->studentId = $this->studentId;
     }
 
     //
-    public function teacherlismaintAction() {
+    public function teacherlismaintAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -291,7 +316,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/teacher/main');
     }
 
-    public function teacherlistAction() {
+    public function teacherlistAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -305,7 +331,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/teacher/list');
     }
 
-    public function subjectlistAction() {
+    public function subjectlistAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -319,7 +346,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/subject/list');
     }
 
-    public function showallsubjectAction() {
+    public function showallsubjectAction()
+    {
 
         $this->view->objectId = $this->objectId;
         $this->view->subjectId = $this->subjectId;
@@ -327,7 +355,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/subject/main');
     }
 
-    public function showsubjectAction() {
+    public function showsubjectAction()
+    {
 
         $this->view->objectId = $this->objectId;
         $this->view->subjectId = $this->subjectId;
@@ -335,7 +364,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/subject/show');
     }
 
-    public function showitemAction() {
+    public function showitemAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
 
@@ -343,7 +373,8 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->objectData = $this->objectData;
     }
 
-    public function teachertrainingsAction() {
+    public function teachertrainingsAction()
+    {
 
         $this->view->URL_STUDENT_SUBJECT_ASSIGNMENT = $this->UTILES->buildURL('training/studentsubjectassignment', array());
 
@@ -354,11 +385,13 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/teacher/trainings');
     }
 
-    public function classtransferAction() {
+    public function classtransferAction()
+    {
         
     }
 
-    public function studenttrainingsAction() {
+    public function studenttrainingsAction()
+    {
 
         $this->view->URL_STUDENT_TRAINING = $this->UTILES->buildURL('training/studenttraining'
                 , array()
@@ -367,12 +400,14 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/student/trainings');
     }
 
-    public function assessmentbystudentAction() {
+    public function assessmentbystudentAction()
+    {
         $this->view->studentId = $this->studentId;
         $this->view->objectId = $this->objectId;
     }
 
-    public function studenttrainingAction() {
+    public function studenttrainingAction()
+    {
 
         $this->studentId = $this->_getParam('studentId');
         $this->objectId = $this->_getParam('objectId');
@@ -404,37 +439,44 @@ class TrainingController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('/student/training');
     }
 
-    public function studenttraininginfoAction() {
+    public function studenttraininginfoAction()
+    {
 
         $this->view->studentId = $this->studentId;
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer('/student/traininginfo');
     }
 
-    public function descriptionAction() {
+    public function descriptionAction()
+    {
 
         $this->view->studentId = $this->studentId;
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer('/student/description');
     }
 
-    public function studentsubjectassignmentAction() {
+    public function studentsubjectassignmentAction()
+    {
 
         $this->_helper->viewRenderer('/student/subjectassignment');
     }
 
-    public function scoremanagementAction() {
+    public function scoremanagementAction()
+    {
         
     }
 
-    public function scoremonitorAction() {
+    public function scoremonitorAction()
+    {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function jsonloadAction() {
+    public function jsonloadAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonLoadObject":
                 //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
@@ -524,13 +566,13 @@ class TrainingController extends Zend_Controller_Action {
             case "jsonListStudentsClassPerformanceTraining":
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonListStudentsClassPerformanceTraining($this->REQUEST->getPost());
                 break;
-            
+
             case "selectComboLevelTraining":
                 $jsondata = $this->DB_TRAINING->selectComboLevelTraining($this->REQUEST->getPost());
-                break;    
+                break;
             case "selectComboTermTraining":
                 $jsondata = $this->DB_TRAINING->selectComboTermTraining($this->REQUEST->getPost());
-                break;    
+                break;
             case "selectComboClassTraining":
                 $jsondata = $this->DB_TRAINING->selectComboClassTraining($this->REQUEST->getPost());
                 break;
@@ -540,9 +582,11 @@ class TrainingController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonActionAddTraining":
             case "jsonSaveObject":
@@ -590,7 +634,7 @@ class TrainingController extends Zend_Controller_Action {
             case "actionTrainingStudentAssignment":
                 $jsondata = $this->DB_STUDENT_TRAINING->actionTrainingStudentAssignment($this->REQUEST->getPost());
                 break;
-            
+
             case "actionStudentTrainingTransfer":
                 $jsondata = StudentTrainingDBAccess::actionStudentTrainingTransfer($this->REQUEST->getPost());
                 break;
@@ -630,16 +674,17 @@ class TrainingController extends Zend_Controller_Action {
             case "jsonActionDeleteAllScoresSubjectTraining":
                 $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteAllScoresSubjectTraining($this->REQUEST->getPost());
                 break;
-            
         }
 
         if (isset($jsondata))
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonTreeAllTrainings":
                 //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
@@ -667,7 +712,8 @@ class TrainingController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

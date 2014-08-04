@@ -305,9 +305,9 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         if (isset($params["SCORE_MAX"]))
             $SAVEDATA["SCORE_MAX"] = addText($params["SCORE_MAX"]);
 
-        if (isset($params["SCORE_MAX"]))
+        if (isset($params["MAX_POSSIBLE_SCORE"]))
         {
-            $SAVEDATA["MAX_POSSIBLE_SCORE"] = addText($params["SCORE_MAX"]);
+            $SAVEDATA["MAX_POSSIBLE_SCORE"] = addText($params["MAX_POSSIBLE_SCORE"]);
         }
 
         if (isset($params["DESCRIPTION"]))

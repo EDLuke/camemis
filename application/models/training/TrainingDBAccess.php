@@ -199,7 +199,7 @@ class TrainingDBAccess {
         $objectTypeLevel = isset($params["objectTypeLevel"]) ? $params["objectTypeLevel"] : false;
         $children = isset($params["children"]) ? $params["children"] : false;
         $node = isset($params["node"]) ? addText($params["node"]) : 0;
-        $choosedate = isset($params["choosedate"]) ? addText($params["choosedate"]) : "";
+        $choosedate = isset($params["choosedate"]) ? setDate2DB($params["choosedate"]) : "";
 
         if ($node == 0)
         {
@@ -855,6 +855,27 @@ class TrainingDBAccess {
             , "totalCount" => sizeof($data)
             , "rows" => $data
         );
+    }
+
+    public static function updateCurrentTraining($Id)
+    {
+
+        $facette = self::findTrainingFromId($Id);
+
+        if ($facette)
+        {
+            $parentObject = self::findTrainingFromId($facette->PARENT);
+            if ($parentObject)
+            {
+                $data = array(
+                    'PROGRAM' => $parentObject->PROGRAM,
+                    'TERM' => $parentObject->ID,
+                    'LEVEL' => $parentObject->LEVEL,
+                    'EVALUATION_TYPE' => $parentObject->EVALUATION_TYPE
+                );
+                self::dbAccess()->update('t_training', $data, "ID = " . $facette->ID . "");
+            }
+        }
     }
 
 }

@@ -274,7 +274,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function sqlStudentTraining($globalSearch, $trainingId, $studentId, $isTransfer=false)
+    public static function sqlStudentTraining($globalSearch, $trainingId, $studentId, $isTransfer = false)
     {
 
         $TRAINING_OBJECT = self::findTrainingFromId($trainingId);
@@ -338,14 +338,17 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                     $SQL->where('B.TRAINING = ?', $trainingId);
                     break;
             }
-            
-            if($isTransfer){
-                 $SQL->where('B.IS_TRANSFER = ?', 1);    
-            }else{
-                $SQL->where('B.IS_TRANSFER = ?', 0);    
+
+            if ($isTransfer)
+            {
+                $SQL->where('B.IS_TRANSFER = ?', 1);
+            }
+            else
+            {
+                $SQL->where('B.IS_TRANSFER = ?', 0);
             }
         }
-        
+
 
         if ($globalSearch)
         {
@@ -1240,7 +1243,21 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $this->trainingObject = $this->getTrainingObject();
         $this->trainingSubject = $this->getTrainingSubject();
+        $this->assignmentObject = self::getTrainingSubjectAssignment(
+                        $this->trainingObject->PARENT
+                        , $this->subjectId
+                        , $this->assignmentId);
         $this->scoreType = $this->trainingSubject ? $this->trainingSubject->SCORE_TYPE : "";
+
+        switch ($this->trainingObject->EVALUATION_TYPE)
+        {
+            case 1:
+                $this->scoreMaxe = $this->assignmentObject->MAX_POSSIBLE_SCORE;
+                break;
+            default:
+                $this->scoreMaxe = $this->trainingSubject->SCORE_MAX;
+                break;
+        }
 
         $data = Array();
 
@@ -1267,6 +1284,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
                 $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
                 $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
                 $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+                $data[$i]["POINTS_POSSIBLE"] = $this->scoreMaxe ? $this->scoreMaxe : "---";
 
                 if (!SchoolDBAccess::displayPersonNameInGrid())
                 {
@@ -1703,56 +1721,71 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         }
     }
 
+    public function listStudentsData()
+    {
+
+        $data = array();
+        $entries = $this->listStudentsByTraining();
+
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $studentId = $value->ID;
+
+                $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($studentId);
+                $data[$i]["ID"] = $studentId;
+                $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
+                $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
+                $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+                $data[$i]["CODE"] = $value->CODE;
+                $data[$i]["GENDER"] = getGenderName($value->GENDER);
+                $data[$i]["STUDENT"] = getFullName($value->FIRSTNAME, $value->LASTNAME);
+                $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
+                $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
+                $data[$i]["LASTNAME_LATIN"] = $value->LASTNAME_LATIN;
+
+                $i++;
+            }
+        }
+
+        return $data;
+    }
+
     public function getstudentsSubjectResultTraining()
     {
 
         ini_set('memory_limit', '50M');
 
         $data = Array();
-
-        $entries = $this->listStudentsByTraining();
+        $listAssignments = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId);
         $scoreList = $this->scoreListSubjectByTraining();
-        if ($entries)
+
+        if ($this->listStudentsByTraining())
         {
             $i = 0;
-            foreach ($entries as $value)
+
+            $data = $this->listStudentsData();
+
+            foreach ($this->listStudentsByTraining() as $value)
             {
 
                 $this->studentId = $value->STUDENT_ID;
-                $data[$i]["ID"] = $value->STUDENT_ID;
-                $data[$i]["CODE"] = setShowText($value->STUDENT_CODE);
-
-                $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->STUDENT_ID);
-                $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
-                $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
-                $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
-
-                if (!SchoolDBAccess::displayPersonNameInGrid())
-                {
-                    $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-                }
-                else
-                {
-                    $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
-                }
-
                 //Show Average...
                 $AVERAGE = $this->studentAvgSubjectTraining($value->STUDENT_ID, $this->subjectId);
-                $data[$i]["AVERAGE"] = $AVERAGE;
+                $data[$i]["AVG"] = $AVERAGE;
                 // Show Rank
                 $data[$i]["RANK"] = AssessmentConfig::findRank($scoreList, $AVERAGE);
-                //Show assignment score implode..
-                if ($this->listAssignmentsByTraining())
+
+                if ($listAssignments)
                 {
-                    foreach ($this->listAssignmentsByTraining() as $assignment)
+                    foreach ($listAssignments as $v)
                     {
-                        $data[$i][$assignment->ASSIGNMENT_ID] = $this->getImplodeStudentAssignmentTraining(
-                                $value->STUDENT_ID
-                                , $this->subjectId
-                                , $assignment->ASSIGNMENT_ID
-                        );
+                        $data[$i]["A_" . $v->OBJECT_ID . ""] = self::loadScoreStudentTraining($value->STUDENT_ID, $this->trainingId, $this->subjectId, $v->ID);
                     }
                 }
+
                 $i++;
             }
         }
@@ -1770,25 +1803,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
             , "totalCount" => sizeof($data)
             , "rows" => $a
         );
-    }
-
-    public function getImplodeStudentAssignmentTraining($studentId, $subjectId, $assignmentId)
-    {
-
-        $data = Array();
-        $entries = $this->getSQLStudentAssignmentTraining(
-                $studentId
-                , $subjectId
-                , $assignmentId
-                , false);
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
-                $data[] = $value->SCORE;
-            }
-        }
-        return $data ? implode('|', $data) : "---";
     }
 
     public function getSQLStudentAssignmentTraining($studentId, $subjectId, $assignmentId, $setIncludeInValuation = false)
@@ -1882,32 +1896,17 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
 
         $data = array();
 
-        $entries = $this->listStudentsByTraining();
         $scoreList = $this->scoreListClassPerformanceTraining();
-        if ($entries)
+
+        if ($this->listStudentsByTraining())
         {
 
+            $data = $this->listStudentsData();
+
             $i = 0;
-            foreach ($entries as $value)
+            foreach ($this->listStudentsByTraining() as $value)
             {
                 $this->studentId = $value->STUDENT_ID;
-                $data[$i]["ID"] = $value->STUDENT_ID;
-                $data[$i]["CODE"] = setShowText($value->STUDENT_CODE);
-
-                $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->STUDENT_ID);
-                $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
-                $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
-                $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
-
-                if (!SchoolDBAccess::displayPersonNameInGrid())
-                {
-                    $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-                }
-                else
-                {
-                    $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
-                }
-
                 $AVERAGE_TOTAL = $this->getAvgClassPerformanceTraining(
                         $value->STUDENT_ID
                 );
@@ -2163,92 +2162,92 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
     protected function studentAvgAllAssignmentsBySubjectTraining($studentId, $subjectId, $assignmentId, $setInclude = false)
     {
 
-        $result = "";
-        $SUM_COUNT = "";
-        $SUM_CALCULATED = "";
-
-        $entries = $this->getAllAssignmentsInScoreInputDateTraining(
-                $subjectId
-                , $assignmentId
-                , $setInclude);
-
-        if ($this->trainingObject->EVALUATION_TYPE == 0)
-        {
-            if ($entries)
-            {
-                foreach ($entries as $value)
-                {
-                    if ($value->COEFF_VALUE)
-                    {
-
-                        $AVG = $this->getSQLAvgStudentAssignmentTraining(
-                                $studentId
-                                , $subjectId
-                                , $value->ASSIGNMENT_ID);
-                        if (is_numeric($AVG))
-                        {
-                            $SUM_CALCULATED += $AVG * $value->COEFF_VALUE;
-                            $SUM_COUNT += $value->COEFF_VALUE;
-                        }
-                    }
-                }
-                if ($SUM_COUNT)
-                    $result = $SUM_CALCULATED / $SUM_COUNT;
-            }
-        } elseif ($this->trainingObject->EVALUATION_TYPE == 1)
-        {
-            if ($this->check100Percent(
-                            $studentId
-                            , $subjectId
-                            , $assignmentId)
-            )
-            {
-
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
-                        if ($value->COEFF_VALUE)
-                        {
-                            $AVG = $this->getSQLAvgStudentAssignmentTraining(
-                                    $studentId
-                                    , $subjectId
-                                    , $value->ASSIGNMENT_ID);
-                            if (is_numeric($AVG))
-                            {
-                                $SUM_CALCULATED += ($AVG * $value->COEFF_VALUE) / 100;
-                            }
-                        }
-                    }
-
-                    $result = $SUM_CALCULATED;
-                }
-            }
-            else
-            {
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
-                        if ($value->COEFF_VALUE)
-                        {
-                            $AVG = $this->getSQLAvgStudentAssignmentTraining(
-                                    $studentId
-                                    , $subjectId
-                                    , $value->ASSIGNMENT_ID);
-                            if (is_numeric($AVG))
-                            {
-                                $SUM_CALCULATED += $AVG * $value->COEFF_VALUE;
-                                $SUM_COUNT += $value->COEFF_VALUE;
-                            }
-                        }
-                    }
-                    $result = $SUM_CALCULATED / $SUM_COUNT;
-                }
-            }
-        }
-
-        return displayRound($result);
+//        $result = "";
+//        $SUM_COUNT = "";
+//        $SUM_CALCULATED = "";
+//
+//        $entries = $this->getAllAssignmentsInScoreInputDateTraining(
+//                $subjectId
+//                , $assignmentId
+//                , $setInclude);
+//
+//        if ($this->trainingObject->EVALUATION_TYPE == 0)
+//        {
+//            if ($entries)
+//            {
+//                foreach ($entries as $value)
+//                {
+//                    if ($value->COEFF_VALUE)
+//                    {
+//
+//                        $AVG = $this->getSQLAvgStudentAssignmentTraining(
+//                                $studentId
+//                                , $subjectId
+//                                , $value->ASSIGNMENT_ID);
+//                        if (is_numeric($AVG))
+//                        {
+//                            $SUM_CALCULATED += $AVG * $value->COEFF_VALUE;
+//                            $SUM_COUNT += $value->COEFF_VALUE;
+//                        }
+//                    }
+//                }
+//                if ($SUM_COUNT)
+//                    $result = $SUM_CALCULATED / $SUM_COUNT;
+//            }
+//        } elseif ($this->trainingObject->EVALUATION_TYPE == 1)
+//        {
+//            if ($this->check100Percent(
+//                            $studentId
+//                            , $subjectId
+//                            , $assignmentId)
+//            )
+//            {
+//
+//                if ($entries)
+//                {
+//                    foreach ($entries as $value)
+//                    {
+//                        if ($value->COEFF_VALUE)
+//                        {
+//                            $AVG = $this->getSQLAvgStudentAssignmentTraining(
+//                                    $studentId
+//                                    , $subjectId
+//                                    , $value->ASSIGNMENT_ID);
+//                            if (is_numeric($AVG))
+//                            {
+//                                $SUM_CALCULATED += ($AVG * $value->COEFF_VALUE) / 100;
+//                            }
+//                        }
+//                    }
+//
+//                    $result = $SUM_CALCULATED;
+//                }
+//            }
+//            else
+//            {
+//                if ($entries)
+//                {
+//                    foreach ($entries as $value)
+//                    {
+//                        if ($value->COEFF_VALUE)
+//                        {
+//                            $AVG = $this->getSQLAvgStudentAssignmentTraining(
+//                                    $studentId
+//                                    , $subjectId
+//                                    , $value->ASSIGNMENT_ID);
+//                            if (is_numeric($AVG))
+//                            {
+//                                $SUM_CALCULATED += $AVG * $value->COEFF_VALUE;
+//                                $SUM_COUNT += $value->COEFF_VALUE;
+//                            }
+//                        }
+//                    }
+//                    $result = $SUM_CALCULATED / $SUM_COUNT;
+//                }
+//            }
+//        }
+//
+//        return displayRound($result);
     }
 
     public static function jsonStudentTrainingAssessment($params)
@@ -2353,12 +2352,6 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return TrainingSubjectDBAccess::getListSubjectsForAssessmentTraining($this->trainingId);
     }
 
-    public function listAssignmentsByTraining()
-    {
-
-        return $this->DB_ASSIGNMENT->getListAssignmentsForAssessmentTraining($this->trainingId, $this->subjectId);
-    }
-
     public function actionTrainingStudentAssignment($params)
     {
 
@@ -2373,8 +2366,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $this->date = isset($params["date"]) ? addText($params["date"]) : "";
 
         $this->trainingObject = $this->getTrainingObject();
-        $this->assignmenObject = self::getTrainingSubjectAssignment(
-                        $this->trainingObject->TERM
+        $this->assignmentObject = self::getTrainingSubjectAssignment(
+                        $this->trainingObject->PARENT
                         , $this->subjectId
                         , $this->assignmentId
         );
@@ -2392,7 +2385,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         $ERROR = 0;
         $SCHORE_DATE = 0;
 
-        if ($this->assignmenObject)
+        if ($this->assignmentObject)
         {
 
             if ($this->scoreType == 1)
@@ -2456,8 +2449,8 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         else
         {
 
-            $SAVEDATA["COEFF_VALUE"] = $this->assignmenObject->COEFF_VALUE;
-            $SAVEDATA["EVALUATION_TYPE"] = $this->assignmenObject->EVALUATION_TYPE;
+            $SAVEDATA["COEFF_VALUE"] = $this->assignmentObject->COEFF_VALUE;
+            $SAVEDATA["EVALUATION_TYPE"] = $this->assignmentObject->EVALUATION_TYPE;
             $SAVEDATA["ASSIGNMENT"] = $this->assignmentId;
             $SAVEDATA["STUDENT"] = $this->studentId;
             $SAVEDATA["SUBJECT"] = $this->subjectId;
@@ -2526,7 +2519,7 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         //error_log($SQL->__toString());
         $stmt = self::dbAccess()->query($SQL);
         $result = $stmt->fetch();
-        return $result ? $result->SCORE : "";
+        return $result ? $result->SCORE : "---";
     }
 
     ///////////////
@@ -2850,17 +2843,40 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getTrainingSubjectAssignment($term, $subjectId, $assignmentId)
+    public static function getTrainingSubjectAssignment($trainingId, $subjectId, $assignmentId)
     {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training_subject", array('*'));
-        $SQL->where("OBJECT_TYPE = ?", 'ITEM');
-        $SQL->where("TERM = ?", $term);
+        $SQL->where("TRAINING = ?", $trainingId);
         $SQL->where("SUBJECT = ?", $subjectId);
         $SQL->where("ASSIGNMENT = ?", $assignmentId);
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
+    }
+
+    public static function getTrainingListAssignmentScoreDate($trainingId, $subjectId)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment_temp'), array("ID", "SHORT", "COEFF_VALUE"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.TRAINING_ID = ?", $trainingId);
+        $SQL->order('A.SORTKEY ASC');
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchAll($SQL);
+    }
+
+    public static function getAssignmentCountScoreDate($assignmentId, $trainingId, $subjectId)
+    {
+        $SQL = UserAuth::dbAccess()->select();
+        $SQL->from(Array('A' => 't_assignment_temp'), Array("C" => "COUNT(*)"));
+        $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array());
+        $SQL->where("B.SUBJECT_ID = ?", $subjectId);
+        $SQL->where("B.TRAINING_ID = ?", $trainingId);
+        $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
+        $result = UserAuth::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
     }
 
 }

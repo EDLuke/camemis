@@ -1,9 +1,10 @@
 <?
-///////////////////////////////////////////////////////////
-// @veasna
-// Date: 09.03.2013
-// 
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 01.05.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+////////////////////////////////////////////////////////////////////////////////
+
 require_once 'models/UserAuth.php';
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisForm.php';
@@ -80,14 +81,34 @@ Ext.onReady(function() {
             layout:'fit'
             ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
             ,border: false
+            ,tbar:[{
+                text:'<?=TEACHER_ENTER_SCORE?>'
+                ,iconCls: 'icon-brick_magnify'
+                ,handler:function(){
+                    Ext.getCmp('CONTENT').getLayout().setActiveItem(0);
+                }
+            },'-',{
+                text:'<?=SUBJECT_ASSESSMENT?>'
+                ,iconCls: 'icon-brick_magnify'
+                ,menu:[{
+                    text:'<?=SUBJECT_ASSESSMENT?>'
+                    ,iconCls: 'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('CONTENT','', '/training/subjectresulttraining/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>');
+                    }
+                },{
+                    text:'<?=CHARTS?>'
+                    ,disabled:true
+                    ,iconCls: 'icon-chart_bar'
+                }]
+            }]
             ,items:[{
-                xtype: 'tabpanel'
-                ,tabPosition: 'top'
-                ,plain:true
-                ,activeTab: 0
-                ,enableTabScroll:true
+                border:false
+                ,id:'CONTENT'
+                ,layout: 'card'
+                ,activeItem: 0   
                 ,items:[{
-                    title: '<?=TEACHER_ENTER_SCORE?>'
+                    title: ''
                     ,layout:'fit'
                     ,items:[{
                         layout:'border'
@@ -98,12 +119,13 @@ Ext.onReady(function() {
                         }
                         ,items: [{
                             region:'west'
+                            ,title: '<?=TEACHER_ENTER_SCORE?>'
                             ,id: 'WEST_ID'
                             ,margins: '3 0 3 3'
                             ,cmargins: '3 3 3 3'
-                            ,width: 280
-                            ,minSize: 280
-                            ,maxSize: 280
+                            ,width: 250
+                            ,minSize: 250
+                            ,maxSize: 250
                             ,layout: 'fit'
                             ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
                         },{
@@ -127,10 +149,6 @@ Ext.onReady(function() {
                             }]
                         }]
                     }]
-                },{
-                    title: '<?=SUBJECT_ASSESSMENT?>'
-                    ,layout:'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ASSESSMENT', url: '/training/subjectresulttraining/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>'})] 
                 }]
             }]
         }]
@@ -139,7 +157,7 @@ Ext.onReady(function() {
     var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
         myTree.on('click', function(node, event){  
             if(node.isLeaf()){
-               clickOpenPage('center','', '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id);
+               clickOpenPage('center',node.attributes.display, '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id);
       
             }else{
                 Ext.getCmp('center').getLayout().setActiveItem(0);
@@ -147,7 +165,7 @@ Ext.onReady(function() {
                     minValue:'<?=getShowDate($facette->START_DATE);?>'
                     ,maxValue:'<?=getShowDate($facette->END_DATE);?>'
                     ,handler: function(dp, date){
-                         clickOpenPage('center','', '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
+                         clickOpenPage('center',node.attributes.display, '/training/subjectscoreenter/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>&setId=' + node.id + '&date=' + date.format('Y-m-j'));
                     }
                 });
                 event.stopEvent();

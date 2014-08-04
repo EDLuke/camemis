@@ -265,8 +265,8 @@ class StudentSearchDBAccess {
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
-
-     public static function searchDescriptionItems($params) {
+     
+    public static function searchDescriptionItems($params) {
         //$entries = DescriptionDBAccess::sqlDescription("ALL", "STUDENT", false);
         $entries = DescriptionDBAccess::sqlPersonalDescription("STUDENT"); 
         $CHECKBOX_DATA = array();
@@ -279,8 +279,14 @@ class StudentSearchDBAccess {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
                 }
 
-                if (isset($params["RADIOBOX_" . $value->ID . ""])) {
-                    $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
+//                if (isset($params["RADIOBOX_" . $value->ID . ""])) {
+//                    $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
+//                }
+                $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                if ($parentObject->PARENT) {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
+                        $RADIOBOX_DATA[$value->ID] = $value->ID;
+                    }
                 }
                 if (isset($params["INPUTFIELD_" . $value->ID . ""])) {
                     $INPUTFIELD_DATA[] = addText($params["INPUTFIELD_" . $value->ID . ""]);

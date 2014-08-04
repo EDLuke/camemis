@@ -21,9 +21,29 @@ $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 
 $VIEWPORT = new CamemisViewport();
 
+TrainingDBAccess::updateCurrentTraining($this->trainingId);
 $CHECK = TrainingDBAccess::checkTrainingClass($this->date, $this->trainingId);
-$academicObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
-$subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $academicObject);
+
+$trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
+
+$subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $trainingObject);
+
+$assignmentObject = StudentTrainingDBAccess::getTrainingSubjectAssignment(
+                        $trainingObject->PARENT
+                        , $this->subjectId
+                        , $this->assignmentId);
+
+if(!$trainingObject) {header("Location: /main/permission/");exit;}
+
+switch($trainingObject->EVALUATION_TYPE){
+
+    case 1:
+        $scoreMax = $assignmentObject->MAX_POSSIBLE_SCORE;
+        break;
+    default:
+        $scoreMax = $trainingObject->SCORE_MAX;
+        break;
+}
 
 $ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(
     $this->subjectId
@@ -47,7 +67,7 @@ var comment;
 Ext.onReady(function() {
     
     function cssStatus(v, p, record){
-        return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
+        return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
             ,v
             ,record.data['BG_COLOR']
             ,record.data['BG_COLOR_FONT']
@@ -57,14 +77,15 @@ Ext.onReady(function() {
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#333; padding: 5px; height: 15px; background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#333; padding: 4px; height: 18px; background:#FFF;">' + value + '</div>';
     }
     
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color:#333; background:#FFF;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
+    
     <?
     
      $js = "";
@@ -122,6 +143,7 @@ Ext.onReady(function() {
     
     echo $js;
     
+    
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
@@ -139,6 +161,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'AVERAGE'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
     $OBJECT_GRID->addReadField("name: 'SCORE'");
+    $OBJECT_GRID->addReadField("name: 'POINTS_POSSIBLE'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
     $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
@@ -154,25 +177,27 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_".$value->ID."'");
         }
     }
+    
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     $OBJECT_GRID->addColumn("header: '<b>".CODE_ID."</b>', width: 80, renderer: cssDefault, dataIndex: 'CODE'");   
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 200, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 100, renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
-   
+    $OBJECT_GRID->addColumn("header: '<b>".POINTS_POSSIBLE."</b>', width: 100,align:'center', renderer:cssDefault, sortable: true, dataIndex: 'POINTS_POSSIBLE'");
+    
     switch($subjectObject->SCORE_TYPE){         
        case 1:      
            $OBJECT_GRID->addColumn("
                header: '<b>".SCORE."</b>'
                , width: 100
                , sortable: true       
-               , align:'right'
+               , align:'center'
                , renderer:cssNumber
                , dataIndex: 'SCORE'
                , editor: new Ext.form.NumberField({
-                   allowBlank: false
-                   ,minValue: 0
-                   //,maxValue: $subjectObject->SCORE_MAX
-                   ,name: 'SCORE'   
+                    allowBlank: false
+                    ,minValue: 0
+                    ,maxValue: ".$scoreMax."
+                    ,name: 'SCORE'   
                })      
 
            ");  
@@ -211,7 +236,16 @@ Ext.onReady(function() {
            break;
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>".TEACHER_COMMENTS."</b>', width: 200, sortable: false, align:'center', dataIndex: 'TEACHER_COMMENTS'");
+    $OBJECT_GRID->addColumn("
+        header: '<b>".TEACHER_COMMENTS."</b>'
+        , width: 200
+        , sortable: false
+        , align:'center'
+        , dataIndex: 'TEACHER_COMMENTS'
+        , editor: new Ext.form.TextArea({
+            
+        })
+    ");
                      
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->baseParams = "
@@ -307,25 +341,9 @@ Ext.onReady(function() {
         }else{
             var status = true;
         }
-        if(columnIndex==6){  
+        if(columnIndex==3){  
             <?
             $CONTEXTMENU_ITEMS = Array();
-            $TEACHER_COMMENT ="{";
-            $TEACHER_COMMENT .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
-            $TEACHER_COMMENT .=",iconCls: 'icon-comment_edit'";
-            $TEACHER_COMMENT .=",disabled:status";
-            $TEACHER_COMMENT .=",handler: function(){"; 
-                $TEACHER_COMMENT .= "Ext.MessageBox.show({";
-                    $TEACHER_COMMENT .= "title:chooseStudent,";
-                    $TEACHER_COMMENT .= "msg: '".TEACHER_COMMENTS.":',";
-                    $TEACHER_COMMENT .= "width:350,value:grid.store.getAt(rowIndex).data.TEACHER_COMMENTS,";
-                    $TEACHER_COMMENT .= "buttons: Ext.MessageBox.OKCANCEL,";
-                    $TEACHER_COMMENT .= "multiline: true,";
-                    $TEACHER_COMMENT .= "fn: actionTeacherComments,";
-                $TEACHER_COMMENT .= "});";
-            $TEACHER_COMMENT .="}";
-            $TEACHER_COMMENT .="}";     
-            $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENT;
 
             $DELETE_SCORE ="{";
             $DELETE_SCORE .="text: '".SCORE." &raquo; ' + record.data.STUDENT";
@@ -340,14 +358,14 @@ Ext.onReady(function() {
             $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
             $html ="";
             $html ."if (columnIndex ==6){";
-                $html .="var contextMenu = new Ext.menu.Menu({";
-                    $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
-                $html .="});";
-                $html .="event.stopEvent();";
-                $html .="contextMenu.showAt(event.xy);";
+            $html .="var contextMenu = new Ext.menu.Menu({";
+            $html .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+            $html .="});";
+            $html .="event.stopEvent();";
+            $html .="contextMenu.showAt(event.xy);";
             $html ."}";
             echo $html;
-        ?>
+            ?>
         }
     });
 });
