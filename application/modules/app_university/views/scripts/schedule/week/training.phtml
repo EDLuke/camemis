@@ -689,7 +689,7 @@ $setParams .= "&teacherId=".$this->teacherId."";
             ,items: [{
                 xtype: 'panel'
                 ,id: 'content'
-                ,border: true
+                ,border: false
                 ,layout: 'card'
                 ,activeItem: 0
                 ,items: [{
@@ -702,9 +702,9 @@ $setParams .= "&teacherId=".$this->teacherId."";
         var myGrid = <?=$OBJECT_GRID->ExtgetCmp();?>;
         <?
         if($trainingObject->SCHEDULE_SETTING){//@veasna
-        echo "var startIndex=3;";
+            echo "var startIndex=3;";
         }else{
-        echo "var startIndex=2;";  
+            echo "var startIndex=2;";  
         }
         if (!$trainingObject->MO) echo "myGrid.getColumnModel().setHidden(startIndex, true);";
         if (!$trainingObject->TU) echo "myGrid.getColumnModel().setHidden(startIndex+1, true);";
