@@ -152,6 +152,18 @@ Ext.onReady(function() {
                             $js .= "clickOpenPage('center','".PARENT_INFORMATION." &raquo; ' + node.text,'/academic/studentparentguardianfilter/?objectId=' + node.attributes.id);";    
                         $js .= "}";
                     $js .= "},{";
+                        $js .= "text: '".REGISTRATION."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                        $js .= ",handler: function(){";
+                            $js .= "clickOpenPage('center','".REGISTRATION." &raquo; ' + node.text,'');";    
+                        $js .= "}";
+                     $js .= "},{";
+                        $js .= "text: '".STATUS."'";
+                        $js .= ",iconCls: 'icon-chart_bar'";
+                        $js .= ",handler: function(){";
+                            $js .= "clickOpenPage('center','".STATUS." &raquo; ' + node.text,'');";    
+                        $js .= "}";
+                    $js .= "},{";
                         $js .= "text: '".ATTENDANCE."'";
                         $js .= ",iconCls: 'icon-chart_bar'";
                             $js .= ",handler: function(){";
