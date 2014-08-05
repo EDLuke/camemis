@@ -499,7 +499,8 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
                                 $value->STUDENT_ID
                                 , $this->subjectId
                                 , $this->trainingId);
-                $data[$i]["ASSESSMENT"] = self::displayAssessment($STUDENT_ASSESSMENT);
+
+                $data[$i]["ASSESSMENT"] = self::displayAssessment($STUDENT_ASSESSMENT, $AVERAGE);
 
                 if ($listAssignmentsScoreDate)
                 {
@@ -1113,12 +1114,15 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function displayAssessment($object)
+    protected static function displayAssessment($object, $average)
     {
-        $result = "---";
         if ($object)
         {
             $result = AssessmentConfig::makeGrade($object->ASSESSMENT_ID, false);
+        }
+        else
+        {
+            $result = AssessmentConfig::calculateGradingScale($average, "training");
         }
 
         return $result;
