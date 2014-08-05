@@ -262,7 +262,7 @@ class StudentSearchDBAccess {
         }
 
         $SQL->group('STUDENT.ID');
-        //error_log($SQL->__toString());
+        error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
      
@@ -288,9 +288,12 @@ class StudentSearchDBAccess {
                         $RADIOBOX_DATA[$value->ID] = $value->ID;
                     }
                 }
-                if (isset($params["INPUTFIELD_" . $value->ID . ""])) {
-                    $INPUTFIELD_DATA[] = addText($params["INPUTFIELD_" . $value->ID . ""]);
-                }                                  
+                $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                if ($parentObject->PARENT) {
+                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT])) {
+                        $INPUTFIELD_DATA[$value->ID] = $value->ID;
+                    }
+                }                                
             } 
         }                          
         $PERSON_DES_DATA = $CHECKBOX_DATA + $RADIOBOX_DATA + $INPUTFIELD_DATA;
