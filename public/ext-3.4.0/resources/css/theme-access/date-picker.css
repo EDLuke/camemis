@@ -35,7 +35,7 @@
     background-color:#363d4a;
     background-image:url(../images/access/toolbar/bg.gif);
 	border-bottom-color:#535b5c;
-    font:normal 13px arial, helvetica,tahoma,sans-serif;
+    font:normal 13px arial, Tahoma,tahoma,sans-serif;
 	color:#fff;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .x-date-inner a {
-    font:normal 14px arial, helvetica,tahoma,sans-serif;
+    font:normal 14px arial, Tahoma,tahoma,sans-serif;
     color:#fff;
     padding:2px 7px 1px 3px; /* Structure to account for larger, bolder fonts in Access theme. */
 }
@@ -102,14 +102,14 @@
 }
 
 .x-date-mp td {
-	font:normal 14px arial, helvetica,tahoma,sans-serif;
+	font:normal 14px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns button {
 	background-color:#083772;
 	color:#fff;
 	border-color: #3366cc #000055 #000055 #3366cc;
-	font:normal 14px arial, helvetica,tahoma,sans-serif;
+	font:normal 14px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns {

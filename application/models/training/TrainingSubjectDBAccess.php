@@ -59,59 +59,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             return TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($params);
         }
     }
-
-    //$veasna
-    public static function findTrainingAssignmentStudent($trainingSubjectId, $studentId)
-    {
-        $facette = self::findTrainingSubject($trainingSubjectId);
-        $SELECT_A = array(
-            'SHORT AS SHORT'
-            , 'NAME AS NAME'
-        );
-        $SELECT_B = array(
-            'SCORE AS SCORE'
-        );
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_assignment_temp'), $SELECT_A);
-        $SQL->joinLeft(array('B' => 't_student_training_assignment'), 'A.ID=B.ASSIGNMENT', $SELECT_B);
-        $SQL->where("B.STUDENT = '" . $studentId . "'");
-        $SQL->where("B.SUBJECT = '" . $facette->SUBJECT . "'");
-        $SQL->where("B.ASSIGNMENT = '" . $facette->ASSIGNMENT . "'");
-        $results = self::dbAccess()->fetchAll($SQL);
-        //return $results;
-        $data = array();
-
-        if ($results)
-        {
-            $data["NAME"] = $results[0]->NAME;
-            $data["SHORT"] = $results[0]->SHORT;
-            $data["SCORE"] = displayNumberFormat($results[0]->SCORE);
-            $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN) ? $facette->SCORE_MIN : 0;
-            $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX) ? $facette->SCORE_MAX : 0;
-            $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
-            $data["GOALS"] = setShowText($facette->GOALS);
-            $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
-            $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
-        }
-        else
-        {
-            $data["NAME"] = $facette->ASSIGNMENTNAME;
-            $data["SCORE"] = "---";
-            $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN) ? $facette->SCORE_MIN : 0;
-            $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX) ? $facette->SCORE_MAX : 0;
-            $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
-            $data["GOALS"] = setShowText($facette->GOALS);
-            $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
-            $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
-        }
-        return array(
-            "success" => true
-            , "data" => $data
-        );
-    }
-
+    
     public static function loadTrainingSubject($trainingId)
     {
 

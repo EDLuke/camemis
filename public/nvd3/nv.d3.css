@@ -35,7 +35,7 @@
     border: 1px solid rgba(0,0,0,.2);
     z-index: 10000;
 
-    font-family: Helvetica,verdana,arial,sans-serif,Hanuman;
+    font-family: tahoma,verdana,arial,sans-serif,Hanuman;
     font-size: 11px;
     text-align: left;
     pointer-events: none;
@@ -159,11 +159,11 @@ svg {
 
 
 svg text {
-    font: normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font: normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
 }
 
 svg .title {
-    font: bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font: bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
 }
 
 .nvd3 .nv-background {

@@ -1201,7 +1201,7 @@ h5, .h5 {
     -webkit-margin-end: 0px;
 }
 .x-panel-header-text, .panel-heading {
-    font: 11px Helvetica,verdana,arial,sans-serif;
+    font: 11px tahoma,verdana,arial,sans-serif;
 }
 .btn{
     font-size:11px;
@@ -1236,7 +1236,7 @@ h5{
     background-color: #CEDFF5;
     border-color: #CEDFF5;
     color: #15428B;
-    font: 11px Helvetica,verdana,arial,sans-serif;
+    font: 11px tahoma,verdana,arial,sans-serif;
     text-decoration: none;
 }
 

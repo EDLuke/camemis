@@ -504,7 +504,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 /* Left Panel background */
 .x-vr-tab-panel {
     background: #CEDFF5;
-    font: 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 /* Left Panel */
@@ -564,23 +564,23 @@ Kaom
 */
 
 .x-tab-strip span.x-tab-strip-text {
-    font: bold 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: bold 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-form-field {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-form-grow-sizer {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-form-item {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-form-invalid-msg {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-small-editor .x-form-field {
@@ -623,7 +623,7 @@ Kaom
     font:bold 11px 'Helvetica','verdana','arial','sans-serif','Hanuman', serif;
 }
 .x-grid-empty {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-dd-drag-ghost{
@@ -654,15 +654,15 @@ Kaom
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: normal 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: bold 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: normal 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-menu-list-item{
@@ -671,34 +671,34 @@ Kaom
 
 .x-box-mc {
 
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-combo-list {
 
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-combo-list-hd {
-    font:bold 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 
 .x-combo-list-small {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif,'Hanuman', serif;
 }
 .x-panel-header {
 
     font-weight:bold; 
     font-size: 11px;
-    font-family: Helvetica,arial,verdana,sans-serif,'Hanuman', serif;
+    font-family: Tahoma,arial,verdana,sans-serif,'Hanuman', serif;
 }
 
 .x-panel-tl .x-panel-header {
-    font:bold 11px Helvetica,arial,verdana,sans-serif,'Hanuman', serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif,'Hanuman', serif;
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: normal 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
@@ -707,12 +707,12 @@ Kaom
 
 .x-window-tl .x-window-header {
 
-    font:bold 11px Helvetica,arial,verdana,sans-serif,'Hanuman', serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif,'Hanuman', serif;
 }
 
 .x-window-mc {
 
-    font: normal 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font: normal 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-list-header-inner div em {
@@ -724,7 +724,7 @@ Kaom
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 11px Helvetica,arial,sans-serif,'Hanuman', serif;
+    font:normal 11px Tahoma,arial,sans-serif,'Hanuman', serif;
 }
 
 .x-tree {

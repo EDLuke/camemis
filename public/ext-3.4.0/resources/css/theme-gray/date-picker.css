@@ -35,7 +35,7 @@
     background-color:#D8D8D8;
     background-image: url(../images/gray/panel/white-top-bottom.gif);
 	border-bottom-color:#AFAFAF;
-    font:normal 10px arial, helvetica,tahoma,sans-serif;
+    font:normal 10px arial, Tahoma,tahoma,sans-serif;
 	color:#595959;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .x-date-inner a {
-    font:normal 11px arial, helvetica,tahoma,sans-serif;
+    font:normal 11px arial, Tahoma,tahoma,sans-serif;
     color:#000;
 }
 
@@ -100,14 +100,14 @@
 }
 
 .x-date-mp td {
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns button {
 	background-color:#4E565F;
 	color:#fff;
 	border-color:#C0C0C0 #434343 #434343 #C0C0C0;
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns {

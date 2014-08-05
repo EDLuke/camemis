@@ -3231,7 +3231,7 @@ table.x-date-inner {
 
 .x-date-mp td {
     padding:2px;
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 td.x-date-mp-month,td.x-date-mp-year,td.x-date-mp-ybtn {

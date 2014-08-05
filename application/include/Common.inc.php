@@ -1457,7 +1457,7 @@ function writeTempFile($source, $data, $id, $path = 'temp/')
 function setViewColor($color, $value)
 {
 
-    return "<span style=\"font:bold 11px Helvetica, helvetica, sans-serif;color:" . $color . ";\">" . $value . "</span>";
+    return "<span style=\"font:bold 11px Tahoma, Tahoma, sans-serif;color:" . $color . ";\">" . $value . "</span>";
 }
 
 function calculatedPercent($value, $total, $sign = true)

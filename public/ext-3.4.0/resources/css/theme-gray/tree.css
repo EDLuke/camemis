@@ -96,7 +96,7 @@
 
 .x-tree-node{
 	color:#000;
-	font: normal 11px arial, tahoma, helvetica, sans-serif;
+	font: normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-tree-node a, .x-dd-drag-ghost a{

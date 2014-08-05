@@ -35,7 +35,7 @@
     background-color:#dfecfb;
     background-image:url(../images/default/shared/glass-bg.gif);
 	border-bottom-color:#a3bad9;
-    font:normal 10px arial, helvetica,tahoma,sans-serif;
+    font:normal 10px arial, Tahoma,tahoma,sans-serif;
 	color:#233d6d;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .x-date-inner a {
-    font:normal 11px arial, helvetica,tahoma,sans-serif;
+    font:normal 11px arial, Tahoma,tahoma,sans-serif;
     color:#000;
 }
 
@@ -100,14 +100,14 @@
 }
 
 .x-date-mp td {
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns button {
 	background-color:#083772;
 	color:#fff;
 	border-color: #3366cc #000055 #000055 #3366cc;
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns {

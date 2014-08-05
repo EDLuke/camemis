@@ -6,6 +6,7 @@
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
+require_once 'models/assessment/AssessmentConfig.php';
 require_once 'models/assessment/AssessmentProperties.php';
 require_once 'models/assessment/SQLEvaluationStudentAssignment.php';
 require_once 'models/assessment/SQLEvaluationStudentSubject.php';
@@ -261,7 +262,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         $data[$i]["TOTAL_MONTH_RESULT"] = $this->getTotalSubjectResultsByMonth($stdClass, self::WITH_FORMAT);
                         $data[$i]["TOTAL_TERM_RESULT"] = $this->getSubjectResultsByTerm($stdClass, self::INCLUDE_IN_TERM, self::WITH_FORMAT);
-                        
+
                         switch ($this->getSettingEvaluationType())
                         {
                             case self::EVALUATION_TYPE_COEFF:

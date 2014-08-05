@@ -6,7 +6,7 @@
  */
 .x-dd-drag-ghost{
 	color:#000;
-	font: normal 14px arial, helvetica, sans-serif;
+	font: normal 14px arial, Tahoma, sans-serif;
     border-color: #ddd #bbb #bbb #ddd;
 	background-color:#fff;
 }

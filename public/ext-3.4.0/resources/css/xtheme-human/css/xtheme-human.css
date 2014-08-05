@@ -17,7 +17,7 @@
     background-color: #eee;
     border-color:#a3bad9;
     color:#222;
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-mask-loading div {
@@ -107,7 +107,7 @@ ul.x-tab-strip-bottom
 }
 
 .x-tab-strip span.x-tab-strip-text {
-	font:normal 11px Helvetica,arial,helvetica;
+	font:normal 11px Tahoma,arial,helvetica;
 	color:#333;
 }
 
@@ -197,7 +197,7 @@ ul.x-tab-strip-bottom
 .x-tab-panel-bbar .x-toolbar, .x-tab-panel-tbar .x-toolbar {
     border-color:#a29587;
 }.x-form-field{
-    font:normal 12px helvetica, tahoma, arial, sans-serif;
+    font:normal 12px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-text, textarea.x-form-field
@@ -273,16 +273,16 @@ ul.x-tab-strip-bottom
 }
 
 .x-form-grow-sizer {
-	font:normal 12px helvetica, tahoma, arial, sans-serif;
+	font:normal 12px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-item {
-    font:normal 12px helvetica, tahoma, arial, sans-serif;
+    font:normal 12px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-invalid-msg {
     color:#c0272b;
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
     background-image:url(../images/human/shared/warning.gif);
 }
 
@@ -291,11 +291,11 @@ ul.x-tab-strip-bottom
 }
 
 .x-small-editor .x-form-field {
-    font:normal 11px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .ext-safari .x-small-editor .x-form-field {
-    font:normal 12px arial, tahoma, helvetica, sans-serif;
+    font:normal 12px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-form-invalid-icon {
@@ -307,11 +307,11 @@ ul.x-tab-strip-bottom
 }
 
 .x-fieldset legend {
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
     color:#000;
 }
 .x-btn{
-	font:normal 11px Helvetica, verdana, helvetica;
+	font:normal 11px Tahoma, verdana, helvetica;
 }
 
 .x-btn button{
@@ -406,7 +406,7 @@ ul.x-tab-strip-bottom
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px arial,tahoma, helvetica, sans-serif;
+    font:normal 11px arial,tahoma, Tahoma, sans-serif;
 }
 
 .x-toolbar .x-item-disabled {
@@ -543,7 +543,7 @@ ul.x-tab-strip-bottom
 }
 
 .x-grid3-hd-row td, .x-grid3-row td, .x-grid3-summary-row td{
-	font:normal 11px arial, tahoma, helvetica, sans-serif;
+	font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-grid3-hd-row td {
@@ -682,7 +682,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
-	font:normal 11px arial, tahoma, helvetica, sans-serif;
+	font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-grid3-bottombar .x-toolbar{
@@ -773,7 +773,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 .x-grid-group-hd div.x-grid-group-title {
     background-image:url(../images/human/grid/group-collapse.gif);
     color:#333;
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-grid-group-collapsed .x-grid-group-hd div.x-grid-group-title {
@@ -794,7 +794,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-grid-empty {
     color:gray;
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-grid-with-col-lines .x-grid3-row td.x-grid3-cell {
@@ -810,7 +810,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }.x-dd-drag-ghost
 {
 	color: #333;
-	font: normal 11px arial, helvetica, sans-serif;
+	font: normal 11px arial, Tahoma, sans-serif;
 	border-color: #BABA45;
 	background-color: #F7F7C0;
 }
@@ -923,7 +923,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-tree-node{
 	color:#000;
-	font: normal 11px arial, tahoma, helvetica, sans-serif;
+	font: normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-tree-node a, .x-dd-drag-ghost a{
@@ -1014,7 +1014,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
     background-color:#dfecfb;
     background-image:url(../images/human/shared/glass-bg.gif);
 	border-bottom-color:#a3bad9;
-    font:normal 10px arial, helvetica,tahoma,sans-serif;
+    font:normal 10px arial, Tahoma,tahoma,sans-serif;
 	color:#233d6d;
 }
 
@@ -1023,7 +1023,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-date-inner a {
-    font:normal 11px arial, helvetica,tahoma,sans-serif;
+    font:normal 11px arial, Tahoma,tahoma,sans-serif;
     color:#000;
 }
 
@@ -1079,7 +1079,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-date-mp td {
-	font:normal 11px arial, helvetica,tahoma,sans-serif;
+	font:normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns button
@@ -1087,7 +1087,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 	background-color: #F4C99C;
 	color: #4D341A;
 	border-color: #4D341A;
-	font: normal 11px arial, helvetica,tahoma,sans-serif;
+	font: normal 11px arial, Tahoma,tahoma,sans-serif;
 }
 
 .x-date-mp-btns {
@@ -1130,19 +1130,19 @@ td.x-date-mp-sep {
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 .x-tip .x-tip-ml {
 	background-color: #fff;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,sans-serif;
+    font: bold 11px Tahoma,arial,sans-serif;
     color:#333;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
     color:#444;
 }
 
@@ -1324,7 +1324,7 @@ a.x-menu-item {
 {
 	border-color: #7a7060;
 	background-color: #f3e7d3;
-	font: normal 12px helvetica, tahoma, arial, sans-serif;
+	font: normal 12px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-combo-list-inner {
@@ -1332,7 +1332,7 @@ a.x-menu-item {
 }
 
 .x-combo-list-hd {
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
     color:#15428b;
     background-image: url(../images/human/layout/panel-title-light-bg.gif);
     border-bottom-color:#98c0f4;
@@ -1357,7 +1357,7 @@ a.x-menu-item {
 }
 
 .x-combo-list-small {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }.x-panel {
     border-color: #a29587;
 }
@@ -1367,7 +1367,7 @@ a.x-menu-item {
 	color: #fff;
 	font-weight: bold;
 	font-size: 11px;
-	font-family: Helvetica,arial,verdana,sans-serif;
+	font-family: Tahoma,arial,verdana,sans-serif;
 	border-color: #7A7065;
 	background-image: url(../images/human/panel/white-top-bottom.gif);
 }
@@ -1396,7 +1396,7 @@ a.x-menu-item {
 
 .x-panel-tl .x-panel-header {
     color:#fff;
-	font:bold 11px Helvetica,arial,verdana,sans-serif;
+	font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-tc {
@@ -1414,7 +1414,7 @@ a.x-menu-item {
 
 .x-panel-mc
 {
-	font: normal 11px Helvetica,arial,sans-serif;
+	font: normal 11px Tahoma,arial,sans-serif;
 	background-color: #efebe7;
 }
 
@@ -1444,7 +1444,7 @@ a.x-menu-item {
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
-    font:normal 11px arial,tahoma, helvetica, sans-serif;
+    font:normal 11px arial,tahoma, Tahoma, sans-serif;
 }
 .x-window-proxy
 {
@@ -1455,7 +1455,7 @@ a.x-menu-item {
 .x-window-tl .x-window-header
 {
 	color: #fff;
-	font: bold 11px Helvetica,arial,verdana,sans-serif;
+	font: bold 11px Tahoma,arial,verdana,sans-serif;
 	margin-bottom: 5px;
 }
 
@@ -1486,7 +1486,7 @@ a.x-menu-item {
 .x-window-mc
 {
 	border-color: #C3B7AC;
-	font: normal 11px Helvetica,arial,sans-serif;
+	font: normal 11px Tahoma,arial,sans-serif;
 	background-color: #EFEBE7;
 }
 
@@ -1644,11 +1644,11 @@ body.x-body-masked .x-window-plain .x-window-mc
 
 .x-list-header-inner div em {
     border-left-color:#ddd;
-    font:normal 11px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-list-body dt em {
-    font:normal 11px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-list-over {
@@ -1687,7 +1687,7 @@ body.x-body-masked .x-window-plain .x-window-mc
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 12px Helvetica,arial,sans-serif;
+    font:normal 12px Tahoma,arial,sans-serif;
     background-color: #fff;
 	background-image:url(../images/human/form/text-bg.gif);
 	border: 1px solid #7a7065;

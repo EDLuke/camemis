@@ -737,7 +737,7 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 		// Start styles
 		if ($generateSurroundingHTML) {
 			// html { }
-			$css['html']['font-family']	  = 'Calibri, Arial, Helvetica, sans-serif';
+			$css['html']['font-family']	  = 'Calibri, Arial, Tahoma, sans-serif';
 			$css['html']['font-size']		= '11pt';
 			$css['html']['background-color'] = 'white';
 		}

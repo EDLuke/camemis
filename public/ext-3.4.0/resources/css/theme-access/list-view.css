@@ -12,7 +12,7 @@
 
 .x-list-header-inner div em {
     border-left-color:#667;
-    font:normal 14px arial, tahoma, helvetica, sans-serif;
+    font:normal 14px arial, tahoma, Tahoma, sans-serif;
     line-height: 14px;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .x-list-body dt em {
-    font:normal 14px arial, tahoma, helvetica, sans-serif;
+    font:normal 14px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-list-over {

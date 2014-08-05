@@ -493,7 +493,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 /* Left Panel background */
 .x-vr-tab-panel {
     background: #CEDFF5;
-    font: 11px Helvetica,arial,sans-serif;
+    font: 11px Tahoma,arial,sans-serif;
 }
 
 /* Left Panel */
@@ -553,23 +553,23 @@ Kaom
 */
 
 .x-tab-strip span.x-tab-strip-text {
-    font: bold 11px Helvetica,arial,sans-serif;
+    font: bold 11px Tahoma,arial,sans-serif;
 }
 
 .x-form-field {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-grow-sizer {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-item {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-invalid-msg {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-small-editor .x-form-field {
@@ -611,7 +611,7 @@ Kaom
     font:bold 11px 'Helvetica','verdana','arial','sans-serif','KoPub Batang';
 }
 .x-grid-empty {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-dd-drag-ghost{
@@ -642,15 +642,15 @@ Kaom
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,sans-serif;
+    font: bold 11px Tahoma,arial,sans-serif;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-menu-list-item{
@@ -658,34 +658,34 @@ Kaom
 }
 
 .x-box-mc {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list {
 
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list-hd {
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list-small {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 .x-panel-header {
 
     font-weight:bold; 
     font-size: 11px;
-    font-family: Helvetica,arial,verdana,sans-serif;
+    font-family: Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-tl .x-panel-header {
-    font:bold 11px Helvetica,arial,verdana,sans-serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
@@ -694,12 +694,12 @@ Kaom
 
 .x-window-tl .x-window-header {
 
-    font:bold 11px Helvetica,arial,verdana,sans-serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-window-mc {
 
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-list-header-inner div em {
@@ -711,7 +711,7 @@ Kaom
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 11px Helvetica,arial,sans-serif;
+    font:normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-tree {

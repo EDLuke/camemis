@@ -58,7 +58,7 @@ td.ux-grid-hd-group-cell {
     text-overflow: ellipsis;
     padding:3px 3px 3px 5px;
     white-space: nowrap;
-    font:normal 11px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-tree-headers {
@@ -437,7 +437,7 @@ li.x-menu-list-item div {
     overflow:auto;	
 }
 .ux-mselect-item{
-    font:normal 12px helvetica, tahoma, arial, sans-serif;
+    font:normal 12px Tahoma, tahoma, arial, sans-serif;
     padding:2px;
     border:1px solid #fff;
     white-space: nowrap;
@@ -657,7 +657,7 @@ li.x-menu-list-item div {
     background: transparent no-repeat 3px 2px;
 }
 .x-status-error-list {
-    font: 11px Helvetica,arial,verdana,sans-serif;
+    font: 11px Tahoma,arial,verdana,sans-serif;
     position: absolute;
     z-index: 9999;
     border-top: 1px solid;

@@ -13,11 +13,11 @@
 }
 
 .x-grid3-row td, .x-grid3-summary-row td{
-    font:normal 11px/13px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px/13px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-grid3-hd-row td {
-    font:normal 11px/15px arial, tahoma, helvetica, sans-serif;
+    font:normal 11px/15px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-grid3-hd-row td {
@@ -148,7 +148,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
-	font:normal 11px arial, tahoma, helvetica, sans-serif;
+	font:normal 11px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-grid3-bottombar .x-toolbar{
@@ -239,7 +239,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 .x-grid-group-hd div.x-grid-group-title {
     background-image:url(../images/gray/grid/group-collapse.gif);
     color:#5F5F5F;
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-grid-group-collapsed .x-grid-group-hd div.x-grid-group-title {
@@ -260,7 +260,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-grid-empty {
     color:gray;
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-grid-with-col-lines .x-grid3-row td.x-grid3-cell {

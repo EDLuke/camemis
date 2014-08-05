@@ -12,7 +12,7 @@
     color:#333;
 	font-weight:bold; 
     font-size: 11px;
-    font-family: Helvetica,arial,verdana,sans-serif;
+    font-family: Tahoma,arial,verdana,sans-serif;
     border-color:#d0d0d0;
     background-image: url(../images/gray/panel/white-top-bottom.gif);
 }
@@ -36,7 +36,7 @@
 
 .x-panel-tl .x-panel-header {
     color:#333;
-	font:bold 11px Helvetica,arial,verdana,sans-serif;
+	font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-tc {
@@ -53,7 +53,7 @@
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
     background-color:#f1f1f1;
 }
 
@@ -83,5 +83,5 @@
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
-    font:normal 11px arial,tahoma, helvetica, sans-serif;
+    font:normal 11px arial,tahoma, Tahoma, sans-serif;
 }

@@ -11,7 +11,7 @@
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px arial,tahoma, helvetica, sans-serif;
+    font:normal 11px arial,tahoma, Tahoma, sans-serif;
 }
 
 .x-toolbar .x-item-disabled {

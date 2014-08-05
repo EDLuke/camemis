@@ -1,7 +1,7 @@
 html, body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
     margin: 0;
     padding: 0;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 #app-header {
@@ -23,68 +23,68 @@ html, body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input,
 }
 
 span.textBold{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 span.textBoldBlue{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
     color:#061f83;
 }
 span.textBoldBlue14{
-    font:bold 14px Helvetica,verdana,arial,sans-serif;
+    font:bold 14px tahoma,verdana,arial,sans-serif;
     color:#061f83;
 }
 
 h1.header{
-    font:bold 15px Helvetica,verdana,arial,sans-serif;
+    font:bold 15px tahoma,verdana,arial,sans-serif;
     color:#555;
 }
 h1.installHeader{
-    font:bold 18px Helvetica,verdana,arial,sans-serif;
+    font:bold 18px tahoma,verdana,arial,sans-serif;
 
 }
 h2.installSubHeader{
-    font:bold 14px Helvetica,verdana,arial,sans-serif;
+    font:bold 14px tahoma,verdana,arial,sans-serif;
 
 }
 h1.headerError{
-    font:bold 16px Helvetica,verdana,arial,sans-serif;
+    font:bold 16px tahoma,verdana,arial,sans-serif;
     color:#CC0000;
 }
 h1.modulName{
-    font:bold 9px  Helvetica,verdana,arial,sans-serif;
+    font:bold 9px  tahoma,verdana,arial,sans-serif;
     color:#FFFFFF;
     text-align: right;
 }
 
 h1.headerInfo{
-    font:bold 12px Helvetica,verdana,arial,sans-serif;
+    font:bold 12px tahoma,verdana,arial,sans-serif;
     color:#061f83;
 }
 
 h1.schoolName{
-    font:bold 14px  Helvetica,verdana,arial,sans-serif;
+    font:bold 14px  tahoma,verdana,arial,sans-serif;
     color:#FFFFFF;
     text-align: right;
 }
 h1.reportHeader{
-    font:bold 14px  Helvetica,verdana,arial,sans-serif;
+    font:bold 14px  tahoma,verdana,arial,sans-serif;
     color:#555555;
 }
 h1.camemis{
-    font:bold 15px Helvetica,verdana,arial,sans-serif;
+    font:bold 15px tahoma,verdana,arial,sans-serif;
     color:#FFFFFF;
     text-align: left;
 }
 p.header{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 
 }
 h1.content{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 
 }
 textarea{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     border: 1px solid #D0D0BF;
 }
 table.show{
@@ -97,26 +97,26 @@ table.show{
     */
 }
 th.header{
-    font:bold 12px Helvetica,verdana,arial,sans-serif;
+    font:bold 12px tahoma,verdana,arial,sans-serif;
     color: #555;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
 }
 
 th.show{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
     color: #555;
     border-bottom: 1px solid #AAAAAA;
     padding: 5px;
 }
 td.show{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     color: #555;
     padding: 5px;
 }
 
 th.showReportItemNumber{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     font-weight: bold;
     color: #555;
     padding: 5px;
@@ -125,7 +125,7 @@ th.showReportItemNumber{
 }
 
 th.showReportItem{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     font-weight: bold;
     color: #555;
     padding: 5px;
@@ -134,7 +134,7 @@ th.showReportItem{
 }
 
 td.showReportItemNumber{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     font-weight: normal;
     color: #555;
     padding: 5px;
@@ -143,7 +143,7 @@ td.showReportItemNumber{
 }
 
 td.showReportItem{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     font-weight: normal;
     color: #555;
     padding: 5px;
@@ -152,29 +152,29 @@ td.showReportItem{
 }
 
 td.fieldBold{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     font-weight: bold;
     color: #555;
     padding: 5px;
 }
 td.fieldNormal{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     color: #555;
     padding: 5px;
 }
 
 td.tdBold{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
     color: #555;
     padding: 5px;
 }
 td.tdNormal{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     color: #555;
     padding: 5px;
 }
 .textNormal {
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  tahoma,verdana,arial,sans-serif;
 
 }
 ul.list{
@@ -187,11 +187,11 @@ ul.list{
     list-style:square;
 }
 input.show-btn{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  tahoma,verdana,arial,sans-serif;
     padding: 5px;
 }
 .header .x-panel-body{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  tahoma,verdana,arial,sans-serif;
 }
 
 .disabled2{
@@ -206,17 +206,17 @@ label.x-form-item-label{
     font-weight:normal;
 }
 .x-form-item label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     text-decoration:none;
 }
 .x-grid3-row td,.x-grid3-summary-row td{
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  tahoma,verdana,arial,sans-serif;
 }
 .x-tree-node{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .x-grid3-hd-row td{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .ux-grid3-dirty-row {
     background:#ffffa8;
@@ -226,11 +226,11 @@ label.x-form-item-label{
 }
 .x-panel-header-text {
     text-decoration:none;
-    font:normal 11px  Helvetica,verdana,arial,sans-serif;
+    font:normal 11px  tahoma,verdana,arial,sans-serif;
 }
 .details-panel .x-panel-body{
     padding: 11px;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 h1.details {padding: 11px;color: #555;font-size: 16px;font-weight:bold;}
@@ -242,7 +242,7 @@ p.details {padding: 11px;}
     color: #CC0000;
     padding: 11px;
     height: 40px;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .line {
@@ -289,29 +289,29 @@ p.details {padding: 11px;}
 /*
 .x-panel-body {background-color:#FFFFFF;}
 */
-.x-panel-header-text {font:bold 11px Helvetica,verdana,arial,sans-serif;}
+.x-panel-header-text {font:bold 11px tahoma,verdana,arial,sans-serif;}
 .x-btn-text{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .x-grid3-header {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .x-grid3-cell-inner{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .x-tree-node {
-    font:Helvetica,verdana,arial,sans-serif;
+    font:tahoma,verdana,arial,sans-serif;
 }
 .x-tab-strip span.x-tab-strip-text {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-toolbar .x-btn button{
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .combo-result-item {
     padding :  2px;
@@ -320,88 +320,88 @@ p.details {padding: 11px;}
 
 .nodeTextBold .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeTextThrough .x-tree-node-anchor SPAN {
     color : #555 !important;
     text-decoration: line-through;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeText .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeTextUnderline .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
     text-decoration:line-through
 }
 
 .nodeTextRed .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeTextRedBold .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeTextBlue .x-tree-node-anchor SPAN {
     color : #061f83 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeTextBoldBlue .x-tree-node-anchor SPAN {
     color : #061f83 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeFolderBold .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .nodeFolder .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .nodeCampus .x-tree-node-anchor SPAN {
     color : #31005A !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .nodeGrade .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .nodeSchoolyear .x-tree-node-anchor SPAN {
     color : #31005A !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .nodeClass .x-tree-node-anchor SPAN {
     color : #1861A5 !important;
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 
 .disabled .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .enabled .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .disabled .x-tree-node-anchor SPAN {
     color : #CC0000 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 .enabled .x-tree-node-anchor SPAN {
     color : #555 !important;
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .upload-icon {
@@ -433,11 +433,11 @@ p.details {padding: 11px;}
 }
 
 .x-grid3-td-topic b {
-    font:normal 16px Helvetica,verdana,arial,sans-serif;
+    font:normal 16px tahoma,verdana,arial,sans-serif;
     display:block;
 }
 .x-grid3-td-topic b i {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
     color:#000;
 }
 .x-grid3-td-topic .x-grid3-cell-inner {
@@ -505,7 +505,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 /* Left Panel background */
 .x-vr-tab-panel {
     background: #CEDFF5;
-    font: 11px Helvetica,arial,sans-serif;
+    font: 11px Tahoma,arial,sans-serif;
 }
 
 /* Left Panel */
@@ -565,165 +565,165 @@ Kaom
 */
 
 .x-tab-strip span.x-tab-strip-text {
-    font: bold 11px Helvetica,arial,sans-serif;
+    font: bold 11px Tahoma,arial,sans-serif;
 }
 
 .x-form-field {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-grow-sizer {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-item {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-form-invalid-msg {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-small-editor .x-form-field {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .ext-webkit .x-small-editor .x-form-field {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-fieldset legend {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .x-btn{
-    font:normal 11px tHelvetica,verdana,arial,sans-serif;
+    font:normal 11px ttahoma,verdana,arial,sans-serif;
 }
 
 .x-btn button{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-grid3-row td, .x-grid3-summary-row td{
-    font:normal 11px/13px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px/13px tahoma,verdana,arial,sans-serif;
 }
 
 .x-grid3-hd-row td {
-    font:normal 11px/15px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px/15px tahoma,verdana,arial,sans-serif;
 }
 
 .x-grid3-topbar, .x-grid3-bottombar{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-grid-group-hd div.x-grid-group-title {
-    font:bold 11px Helvetica,verdana,arial,sans-serif;
+    font:bold 11px tahoma,verdana,arial,sans-serif;
 }
 .x-grid-empty {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-dd-drag-ghost{
 
-    font: normal 11px Helvetica,verdana,arial,sans-serif;
+    font: normal 11px tahoma,verdana,arial,sans-serif;
 
 }
 
 .x-tree-node{
-    font: normal 11px Helvetica,verdana,arial,sans-serif;
+    font: normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-date-inner th {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 
 }
 .x-date-inner a {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-date-mp td {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-date-mp-btns button {
 
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-tip .x-tip-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-tip .x-tip-header-text {
-    font: bold 11px Helvetica,arial,sans-serif;
+    font: bold 11px Tahoma,arial,sans-serif;
 }
 
 .x-tip .x-tip-body {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-menu-list-item{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-box-mc {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list {
 
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list-hd {
-    font:bold 11px Helvetica, arial, helvetica, sans-serif;
+    font:bold 11px Tahoma, arial, Tahoma, sans-serif;
 }
 
 .x-combo-list-small {
-    font:normal 11px Helvetica, arial, helvetica, sans-serif;
+    font:normal 11px Tahoma, arial, Tahoma, sans-serif;
 }
 .x-panel-header {
 
     font-weight:bold; 
     font-size: 11px;
-    font-family: Helvetica,arial,verdana,sans-serif;
+    font-family: Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-tl .x-panel-header {
-    font:bold 11px Helvetica,arial,verdana,sans-serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-panel-mc {
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-panel-fbar td,.x-panel-fbar span,.x-panel-fbar input,.x-panel-fbar div,.x-panel-fbar select,.x-panel-fbar label{
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-window-tl .x-window-header {
 
-    font:bold 11px Helvetica,arial,verdana,sans-serif;
+    font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-window-mc {
 
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-list-header-inner div em {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-list-body dt em {
-    font:normal 11px Helvetica,verdana,arial,sans-serif;
+    font:normal 11px tahoma,verdana,arial,sans-serif;
 }
 
 .x-window-dlg .ext-mb-textarea {
-    font:normal 11px Helvetica,arial,sans-serif;
+    font:normal 11px Tahoma,arial,sans-serif;
 }
 
 .x-tree {
@@ -748,7 +748,7 @@ Kaom
 Input number with 80
 */
 input.numberEdit80[type=number] {
-    font:bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
     margin-bottom: 5px;
     display: block;
     padding: 4px;
@@ -774,7 +774,7 @@ select.editStyle {
     overflow:hidden;
     width:100px;
     text-overflow: ellipsis;
-    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
     color:#333;
 }
 
@@ -786,12 +786,12 @@ select.alphabetEdit80 {
     overflow:hidden;
     width:80px;
     text-overflow: ellipsis;
-    font:bold 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:bold 11px tahoma,verdana,arial,sans-serif,Hanuman;
     color:#333;
 }
 
 input.editStyle[type=text] {
-    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
     margin-bottom: 5px;
     display: block;
     padding: 4px;
@@ -811,7 +811,7 @@ input.editStyle[type=text]:focus {
 textarea.editStyle {
     border: solid 1px #D6D1D1;
     padding: 3px;
-    font:normal 11px Helvetica,verdana,arial,sans-serif,Hanuman;
+    font:normal 11px tahoma,verdana,arial,sans-serif,Hanuman;
     color: #2a2e2c;
     background-color: #fff;
 }
@@ -824,7 +824,7 @@ textarea.editStyle:focus {
 }
 
 table.EventCalendar {
-    font-family: Helvetica,verdana,arial,sans-serif,Hanuman;
+    font-family: tahoma,verdana,arial,sans-serif,Hanuman;
     border-collapse: collapse; }
 table.EventCalendar th {
     background: #efefef;

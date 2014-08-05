@@ -5,7 +5,7 @@
  * http://www.sencha.com/license
  */
 .x-form-field {
-    font:normal 15px helvetica, tahoma, arial, sans-serif;
+    font:normal 15px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-text, textarea.x-form-field{
@@ -130,16 +130,16 @@
 }
 
 .x-form-grow-sizer {
-	font:normal 15px helvetica, tahoma, arial, sans-serif;
+	font:normal 15px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-item {
-    font:normal 15px helvetica, tahoma, arial, sans-serif;
+    font:normal 15px Tahoma, tahoma, arial, sans-serif;
 }
 
 .x-form-invalid-msg {
     color:#c0272b;
-    font:normal 14px helvetica, tahoma, arial, sans-serif;
+    font:normal 14px Tahoma, tahoma, arial, sans-serif;
     background-image:url(../images/default/shared/warning.gif);
 }
 
@@ -152,11 +152,11 @@
 }
 
 .x-small-editor .x-form-field {
-    font:normal 14px arial, tahoma, helvetica, sans-serif;
+    font:normal 14px arial, tahoma, Tahoma, sans-serif;
 }
 
 .ext-safari .x-small-editor .x-form-field {
-    font:normal 15px arial, tahoma, helvetica, sans-serif;
+    font:normal 15px arial, tahoma, Tahoma, sans-serif;
 }
 
 .x-form-invalid-icon {
@@ -171,6 +171,6 @@
 }
 
 .x-fieldset legend {
-    font:bold 14px helvetica, tahoma, arial, sans-serif;
+    font:bold 14px Tahoma, tahoma, arial, sans-serif;
     color:#fff;
 }

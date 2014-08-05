@@ -11,7 +11,7 @@
 
 .x-window-tl .x-window-header {
     color:#15428b;
-	font:bold 11px Helvetica,arial,verdana,sans-serif;
+	font:bold 11px Tahoma,arial,verdana,sans-serif;
 }
 
 .x-window-tc {
@@ -40,7 +40,7 @@
 
 .x-window-mc {
     border-color:#99bbe8;
-    font: normal 11px Helvetica,arial,sans-serif;
+    font: normal 11px Tahoma,arial,sans-serif;
     background-color:#dfe8f6;
 }
 

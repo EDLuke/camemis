@@ -28,7 +28,7 @@
 
 .ext-cal-ct {
     position: relative;
-    font-family: helvetica, arial, sans-serif;
+    font-family: Tahoma, arial, sans-serif;
     border-bottom:1px solid #ddd;
     border-right:1px solid #ddd;
 }
@@ -327,7 +327,7 @@
 
 /* Event title cell (includes today, prev & next month) */
 td.ext-cal-dtitle {
-    font-family: helvetica, arial, sans-serif;
+    font-family: Tahoma, arial, sans-serif;
     border-top:1px solid #ddd;
     color: #666;
     line-height:14px;
@@ -811,7 +811,7 @@ td.ext-cal-dtitle-today div {
 /* StatusProxy override styles */
 .ext-dd-ghost-ct {
 	color:#000;
-	font: normal 11px arial, helvetica, sans-serif;
+	font: normal 11px arial, Tahoma, sans-serif;
 	border: 1px solid;
     border-color: #ddd #bbb #bbb #ddd;
 	background-color:#fff;
@@ -890,7 +890,7 @@ td.ext-cal-dtitle-today div {
     background: transparent url(../images/ext-cal-edit-hd.png) repeat-x;
     padding: 9px 0 4px !important;
     font-size: 13px !important;
-    font-family: helvetica, arial, sans-serif;
+    font-family: Tahoma, arial, sans-serif;
     border-top: 0;
     border-bottom: 1px solid #BBCCFF;
 }

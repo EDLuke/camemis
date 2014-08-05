@@ -8,12 +8,13 @@
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
-require_once 'models/app_school/DescriptionDBAccess.php';
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/DescriptionDBAccess.php";
 require_once 'models/training/TrainingSubjectDBAccess.php';
 require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/training/TeacherTrainingDBAccess.php';
 require_once 'models/training/StudentTrainingDBAccess.php';
-require_once 'models/app_school/assignment/AssignmentTempDBAccess.php';
+require_once 'models/training/TrainingAssessmentDBAccess.php';
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/assignment/AssignmentTempDBAccess.php";
 require_once 'models/UserAuth.php';
 
 class TrainingController extends Zend_Controller_Action {
@@ -524,8 +525,9 @@ class TrainingController extends Zend_Controller_Action {
                 $jsondata = StudentTrainingDBAccess::jsonListStudentInSchool($this->REQUEST->getPost());
                 break;
 
-            case "jsonStudentSubjectAssignment":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonStudentSubjectAssignment($this->REQUEST->getPost());
+            case "jsonStudentTrainingSubjectAssignment":
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonStudentTrainingSubjectAssignment($this->REQUEST->getPost());
                 break;
 
             case "jsonStudentSubjectTraining":
@@ -533,11 +535,11 @@ class TrainingController extends Zend_Controller_Action {
                 break;
 
             case "jsonStudentTrainingAssessment";
-                $jsondata = StudentTrainingDBAccess::jsonStudentTrainingAssessment($this->REQUEST->getPost());
+                $jsondata = TrainingAssessmentDBAccess::jsonStudentTrainingAssessment($this->REQUEST->getPost());
                 break;
 
             case "jsonAssessemntByTrainingSubjects";
-                $jsondata = StudentTrainingDBAccess::jsonAssessemntByTrainingSubjects($this->REQUEST->getPost());
+                $jsondata = TrainingAssessmentDBAccess::jsonAssessemntByTrainingSubjects($this->REQUEST->getPost());
                 break;
 
             case "listStudentTrainings";
@@ -553,18 +555,20 @@ class TrainingController extends Zend_Controller_Action {
                 break;
             //@veasna                                                                            
             case "loadTrainingAssignement";
-                $jsondata = TrainingSubjectDBAccess::findTrainingAssignmentStudent($this->REQUEST->getPost('objectId'), $this->REQUEST->getPost('studentId'));
+                $jsondata = TrainingAssessmentDBAccess::findTrainingAssignmentStudent($this->REQUEST->getPost('objectId'), $this->REQUEST->getPost('studentId'));
                 break;
             case "jsonTeacherByStudentTraining":
                 $jsondata = $this->DB_TRAINING_SUBJECT->jsonTeacherByStudentTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonSubjectResultTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonSubjectResultTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonSubjectResultTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonListStudentsClassPerformanceTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonListStudentsClassPerformanceTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonListStudentsClassPerformanceTraining($this->REQUEST->getPost());
                 break;
 
             case "selectComboLevelTraining":
@@ -632,7 +636,8 @@ class TrainingController extends Zend_Controller_Action {
                 break;
 
             case "actionTrainingStudentAssignment":
-                $jsondata = $this->DB_STUDENT_TRAINING->actionTrainingStudentAssignment($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->actionTrainingStudentAssignment($this->REQUEST->getPost());
                 break;
 
             case "actionStudentTrainingTransfer":
@@ -652,27 +657,33 @@ class TrainingController extends Zend_Controller_Action {
                 break;
 
             case "jsonActionStudentSubjectAssessmentTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionStudentSubjectAssessmentTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionStudentSubjectAssessmentTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteAllScoresAssignmentTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteAllScoresAssignmentTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionDeleteAllScoresAssignmentTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonActionContentTeacherScoreInputDateTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionContentTeacherScoreInputDateTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionContentTeacherScoreInputDateTraining($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteSingleScoreTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteSingleScoreTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionDeleteSingleScoreTraining($this->REQUEST->getPost());
                 break;
 
-            case "jsonActionCalculationAssessmentTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionCalculationAssessmentTraining($this->REQUEST->getPost());
+            case "jsonActionPublishTrainingSubjectAssessment":
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionPublishTrainingSubjectAssessment($this->REQUEST->getPost());
                 break;
 
             case "jsonActionDeleteAllScoresSubjectTraining":
-                $jsondata = $this->DB_STUDENT_TRAINING->jsonActionDeleteAllScoresSubjectTraining($this->REQUEST->getPost());
+                $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
+                $jsondata = $STUDENT_ASSESSMENT->jsonActionDeleteAllScoresSubjectTraining($this->REQUEST->getPost());
                 break;
         }
 

@@ -198,15 +198,24 @@ class AssessmentConfig {
         return implode(",", $data);
     }
 
-    public static function comboGradingSystem($scoreType, $academicObject)
+    public static function comboGradingSystem($scoreType, $academicObject = false)
     {
-
-        $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("SCORE_TYPE = '" . $scoreType . "'");
-        $SQL->where("EDUCATION_TYPE = '" . $academicObject->QUALIFICATION_TYPE . "'");
+
+        if ($academicObject)
+        {
+            $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
+            $SQL->where("EDUCATION_TYPE = '" . $academicObject->QUALIFICATION_TYPE . "'");
+        }
+        else
+        {
+            $GRADING_TYPE = "DESCRIPTION";
+            $SQL->where("EDUCATION_TYPE = 'training'");
+        }
+
         $SQL->order("SORTKEY ASC");
         #error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
@@ -399,10 +408,16 @@ class AssessmentConfig {
         return $result ? $result->C : 0;
     }
 
-    public static function setGradingScale($academicObject)
+    public static function setGradingScale($academicObject = false)
     {
-
-        $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;
+        if ($academicObject)
+        {
+            $EDUCATION_TYPE = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID)->QUALIFICATION_TYPE;
+        }
+        else
+        {
+            $EDUCATION_TYPE = "training";
+        }
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));

@@ -23,6 +23,9 @@ $OBJECT_TREE->setURL("/assignment/jsontree/");
 $OBJECT_TREE->setSaveUrl("/assignment/jsonsave/");
 
 $facette = TrainingDBAccess::findTrainingFromId($this->trainingId);
+
+if(!$facette) {header("Location: /main/permission/");exit;}
+AssessmentConfig::setGradingScale();
   
 $setParams = "";
 $setParams .= "&trainingId=".$this->trainingId."";
