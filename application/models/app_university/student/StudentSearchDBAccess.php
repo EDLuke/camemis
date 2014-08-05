@@ -87,8 +87,19 @@ class StudentSearchDBAccess {
         $this->trainingId = isset($params["trainingId"]) ? addText($params["trainingId"]) : "";
         $this->filter = isset($params["filter"]) ? addText($params["filter"]) : "";
         $this->isJson = $isJson;
+        $this->institutionName = isset($params["INSTITUTION_NAME"]) ? addText($params["INSTITUTION_NAME"]) : "";
+        $this->academicYear = isset($params["ACADEMIC_YEAR"]) ? addText($params["ACADEMIC_YEAR"]) : "";
+        $this->major = isset($params["MAJOR"]) ? addText($params["MAJOR"]) : "";
+        $this->qualificationDegree = isset($params["QUALIFICATION_DEGREE"]) ? addText($params["QUALIFICATION_DEGREE"]) : "";
+        $this->name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
+        $this->description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
+       
+        $this->islimit=false;
+        $allStudent =count($this->queryAllStudents());
+        $this->islimit=true;
+        $result=$this->queryAllStudents();
 
-        return $this->getGridData($this->queryAllStudents());
+        return $this->getGridData($result,$allStudent);
     }
 
     public function getSearchIn()
@@ -181,11 +192,35 @@ class StudentSearchDBAccess {
             }
         }
 
-//        if ($this->searchDescription) {
-//            $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
-//            $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
-//        }
+        if ($this->searchDescription) {
+            $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
+            $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
+        }
 
+        //
+        $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
+        $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
+        
+        if ($this->institutionName) {
+            $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%"); 
+        }
+        if ($this->academicYear) {
+            $SQL->where('PERSON_INFOS.ACADEMIC_YEAR LIKE ?', "" . $this->academicYear . "%"); 
+        }                 
+        if ($this->major) {
+            $SQL->where('PERSON_INFOS.MAJOR LIKE ?', "" . $this->major . "%"); 
+        } 
+        if ($this->qualificationDegree) {
+            $SQL->where('PERSON_INFOS.QUALIFICATION_DEGREE LIKE ?', "" . $this->qualificationDegree . "%"); 
+        } 
+         if ($this->name) {
+            $SQL->where('STUDENT_PREREQUIRMENT.NAME LIKE ?', "" . $this->name . "%"); 
+        } 
+        if ($this->description) {
+            $SQL->where('STUDENT_PREREQUIRMENT.DESCRIPTION LIKE ?', "" . $this->description . "%"); 
+        } 
+        //
+        
         if ($this->firstname)
             $SQL->where('STUDENT.FIRSTNAME LIKE ?', "" . $this->firstname . "%");
 
@@ -231,7 +266,9 @@ class StudentSearchDBAccess {
             $SQL->orWhere('STUDENT.CODE LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
             $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
         }
-
+        if($this->islimit){
+            $SQL->limit($this->limit, $this->start); 
+        }
         $SQL->group('STUDENT.ID');
 
         //error_log($SQL->__toString());
@@ -240,9 +277,10 @@ class StudentSearchDBAccess {
 
     public static function searchDescriptionItems($params)
     {
-        $entries = DescriptionDBAccess::sqlDescription("ALL", "STUDENT", false);
+        $entries = DescriptionDBAccess::sqlPersonalDescription("STUDENT");
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
+        $INPUTFIELD_DATA = array();
         if ($entries)
         {
             foreach ($entries as $value)
@@ -252,14 +290,23 @@ class StudentSearchDBAccess {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
                 }
 
-                if (isset($params["RADIOBOX_" . $value->ID . ""]))
-                {
-                    $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
+                $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                if ($parentObject->PARENT) {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
+                        $RADIOBOX_DATA[$value->ID] = $value->ID;
+                    }
+                }
+                
+                $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                if ($parentObject->PARENT) {
+                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT])) {
+                        $INPUTFIELD_DATA[$value->ID] = $value->ID;
+                    }
                 }
             }
         }
 
-        $PERSON_DES_DATA = $CHECKBOX_DATA + $RADIOBOX_DATA;
+        $PERSON_DES_DATA = $CHECKBOX_DATA + $RADIOBOX_DATA + $INPUTFIELD_DATA;
         return $PERSON_DES_DATA ? implode(",", $PERSON_DES_DATA) : array();
     }
 
@@ -275,7 +322,7 @@ class StudentSearchDBAccess {
         }
     }
 
-    public function getGridData($entries)
+    public function getGridData($entries,$totalRecord)
     {
         $data = array();
 
@@ -327,19 +374,12 @@ class StudentSearchDBAccess {
             }
         }
 
-        $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
-        {
-            if (isset($data[$i]))
-                $a[] = $data[$i];
-        }
-
         if ($this->isJson)
         {
             return array(
                 "success" => true
-                , "totalCount" => sizeof($data)
-                , "rows" => $a
+                , "totalCount" => $totalRecord
+                , "rows" => $data
             );
         }
         else
