@@ -19,9 +19,7 @@ $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 
-$searchParams["trainingId"] = $this->objectId;
-$searchParams["include_in_evaluation"] = 1;
-$listSubjects = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($searchParams);
+$listSubjects = TrainingAssessmentDBAccess::getListTrainingSubjects($this->objectId);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 

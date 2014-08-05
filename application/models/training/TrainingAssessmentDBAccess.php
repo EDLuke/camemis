@@ -43,6 +43,12 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $this->assignmentId = $assignmentId;
     }
 
+    public static function getListTrainingSubjects($trainingId)
+    {
+        $searchParams["trainingId"] = $trainingId;
+        return TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($searchParams);
+    }
+
     public function getTrainingSubject()
     {
 
@@ -110,7 +116,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => "t_student_training_assignment"), array("*"));
         $SQL->joinLeft(array('B' => 't_training_subject'), 'A.ASSIGNMENT=B.ASSIGNMENT', array("MAX_POSSIBLE_SCORE"));
-
+        $SQL->where("B.OBJECT_TYPE = 'ITEM'");
         if ($assignmentId)
             $SQL->where("A.ASSIGNMENT = '" . $assignmentId . "'");
         if ($subjectId)
@@ -121,6 +127,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             $SQL->where("A.STUDENT = '" . $studentId . "'");
         if ($date)
             $SQL->where("A.SCORE_DATE = '" . $date . "'");
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
@@ -213,33 +220,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         //error_log($SQL->__toString());
         return $result ? $result->C : 0;
     }
-
-//    public function jsonActionContentTeacherScoreInputDateTraining($encrypParams)
-//    {
-//
-//        $params = Utiles::setPostDecrypteParams($encrypParams);
-//
-//        $comment = isset($params["name"]) ? addText($params["name"]) : "";
-//        $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : "";
-//        $date = isset($params["date"]) ? addText($params["date"]) : "";
-//        $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-//        $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-//        $assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
-//
-//        $SAVEDATA['TEACHER_COMMENTS'] = addText($comment);
-//
-//        $WHERE = array();
-//        $WHERE[] = "STUDENT = '" . $studentId . "'";
-//        $WHERE[] = "TRAINING = '" . $trainingId . "'";
-//        $WHERE[] = "SUBJECT = '" . $subjectId . "'";
-//        $WHERE[] = "ASSIGNMENT = '" . $assignmentId . "'";
-//        $WHERE[] = "SCORE_DATE = '" . $date . "'";
-//        self::dbAccess()->update('t_student_training_assignment', $SAVEDATA, $WHERE);
-//
-//        return array(
-//            "success" => true
-//        );
-//    }
 
     public function jsonActionDeleteSingleScoreTraining($encrypParams)
     {
@@ -481,6 +461,9 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
     public function getListTrainingPerformance($isJson = false)
     {
         $data = array();
+
+        $listSubjects = self::getListTrainingSubjects($this->trainingId);
+
         if ($this->listStudentsByTraining())
         {
             $i = 0;
@@ -491,6 +474,28 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             {
 
                 $this->studentId = $value->STUDENT_ID;
+
+                $AVERAGE = self::getStudentAVGAllSubjects($value->STUDENT_ID, $this->trainingId);
+                $assessmentObject = self::getAssessment(false, $AVERAGE);
+                $data[$i]["AVERAGE"] = $AVERAGE;
+
+                $data[$i]["ASSESSMENT"] = $assessmentObject->GRADING;
+                $data[$i]["ASSESSMENT_ID"] = $assessmentObject->ASSESSMENT_ID;
+                
+                $data[$i]["RANK"] = "---";
+
+                if ($listSubjects)
+                {
+                    foreach ($listSubjects as $v)
+                    {
+                        $STUDENT_ASSESSMENT = self::getStudentTrainingSubjectAssessment(
+                                        $value->STUDENT_ID
+                                        , $v->SUBJECT_ID
+                                        , $this->trainingId);
+
+                        $data[$i]["SUB_" . $v->SUBJECT_ID . ""] = $STUDENT_ASSESSMENT ? $STUDENT_ASSESSMENT->SUBJECT_VALUE : "---";
+                    }
+                }
                 $i++;
             }
         }
@@ -538,6 +543,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             {
 
                 $this->studentId = $value->STUDENT_ID;
+                $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                 $AVERAGE = $this->getStudentTrainingSubjectAverage(
                         $value->STUDENT_ID
                         , $this->trainingSubject
@@ -605,51 +611,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
     }
 
-    public function getSQLStudentAssignmentTraining($studentId, $subjectId, $assignmentId)
-    {
-
-        $SELECTION_A = array(
-            "SCORE"
-            , "TEACHER_COMMENTS"
-        );
-
-        $SELECTION_B = array(
-            "COEFF_VALUE"
-            , "NAME AS ASSIGNMENT_NAME"
-            , "EVALUATION_TYPE"
-        );
-        $SELECTION_C = array(
-            "INCLUDE_IN_EVALUATION"
-        );
-        $SQL = self::dbAccess()->select();
-        $SQL->distinct();
-        $SQL->from(array('A' => "t_student_training_assignment"), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_assignment_temp'), 'A.ASSIGNMENT=B.ID', $SELECTION_B);
-        $SQL->joinLeft(array('C' => 't_training_subject'), 'B.ID=C.ASSIGNMENT', $SELECTION_C);
-
-        if ($assignmentId)
-        {
-            $SQL->where("A.ASSIGNMENT = '" . $assignmentId . "'");
-        }
-
-        if ($subjectId)
-        {
-            $SQL->where("A.SUBJECT= '" . $subjectId . "'");
-        }
-
-        if ($studentId)
-        {
-            $SQL->where("A.STUDENT = '" . $studentId . "'");
-        }
-        if ($this->trainingId)
-        {
-            $SQL->where("A.TRAINING = '" . $this->trainingId . "'");
-        }
-
-        //error_log($SQL->__toString());
-        return self::dbAccess()->fetchAll($SQL);
-    }
-
     public function jsonTrainingPerformance($encrypParams)
     {
         $params = Utiles::setPostDecrypteParams($encrypParams);
@@ -679,7 +640,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         return $this->getListStudentsSubjectResultTraining();
     }
 
-    public function checkStudentAssignmentTraining($studentId, $subjectId, $setInclude)
+    public function checkStudentAssignmentTraining($studentId, $subjectId)
     {
 
         $SQL = self::dbAccess()->select();
@@ -700,11 +661,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         {
             $SQL->where("A.TRAINING = '" . $this->trainingId . "'");
         }
-
-        if ($setInclude)
-        {
-            $SQL->where("B.INCLUDE_IN_EVALUATION IN (0,2)");
-        }
         $SQL->group("A.STUDENT");
         $result = self::dbAccess()->fetchRow($SQL);
         //error_log($SQL->__toString());
@@ -718,7 +674,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL->distinct();
         $SQL->from(array('A' => "t_student_training_assignment"), array('AVG(SCORE) AS AVG_SCORE'));
         $SQL->joinLeft(array('B' => 't_training_subject'), 'A.ASSIGNMENT=B.ASSIGNMENT', array('AVG(MAX_POSSIBLE_SCORE) AS AVG_MAX_POSSIBLE_SCORE'));
-
+        $SQL->where("B.OBJECT_TYPE = 'ITEM'");
         if ($assignmentId)
         {
             $SQL->where("A.ASSIGNMENT = '" . $assignmentId . "'");
@@ -735,7 +691,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
     protected function getStudentTrainingSubjectAverage($studentId, $subjectId, $trainingObject, $listAssignments)
     {
         $result = "";
-        $CHECK = $this->checkStudentAssignmentTraining($studentId, $subjectId, false);
+        $CHECK = $this->checkStudentAssignmentTraining($studentId, $subjectId);
         if ($CHECK)
         {
             if ($listAssignments)
@@ -913,6 +869,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL->from(array('A' => 't_assignment_temp'), array("ID", "SHORT"));
         $SQL->joinLeft(array('B' => 't_training_subject'), 'A.ID=B.ASSIGNMENT', array("COEFF_VALUE"));
         $SQL->joinLeft(array('C' => 't_student_score_date'), 'A.ID=C.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
+        $SQL->where("B.OBJECT_TYPE = 'ITEM'");
         $SQL->where("C.SUBJECT_ID = ?", $subjectId);
         $SQL->where("C.TRAINING_ID = ?", $trainingId);
         $SQL->order('A.SORTKEY ASC');
@@ -975,6 +932,34 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL->where("TRAINING_ID = '" . $trainingId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
+    }
+
+    protected static function getStudentAVGAllSubjects($studentId, $trainingId)
+    {
+
+        $SELECTION = array(
+            "AVG(SUBJECT_VALUE) AS AVG_SUBJECT_VALUE");
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_subject_training_assessment", $SELECTION);
+        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("TRAINING_ID = '" . $trainingId . "'");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+
+        $AVG_SUBJECT_VALUE = "";
+        $output = "---";
+
+        if ($result)
+        {
+            $AVG_SUBJECT_VALUE = $result->AVG_SUBJECT_VALUE ? $result->AVG_SUBJECT_VALUE : "";
+
+            if ($AVG_SUBJECT_VALUE)
+            {
+                $output = displayRound($AVG_SUBJECT_VALUE);
+            }
+        }
+
+        return $output;
     }
 
     protected static function getAssessment($object, $average)

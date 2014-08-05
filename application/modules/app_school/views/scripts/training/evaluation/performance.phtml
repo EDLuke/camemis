@@ -19,9 +19,7 @@ $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 
-$searchParams["trainingId"] = $this->objectId;
-$searchParams["include_in_evaluation"] = 1;
-$listSubjects = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($searchParams);
+$listSubjects = TrainingAssessmentDBAccess::getListTrainingSubjects($this->objectId);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -79,6 +77,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, renderer: cssDefault, dataIndex: 'STUDENT'");
     $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80,align:'center', renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>" . RANK . "</b>', align:'center', renderer: cssDefault, width: 100, dataIndex: 'RANK'");
     $OBJECT_GRID->addColumn("header: '<b>" . ASSESSMENT . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'ASSESSMENT'");
     $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 100, dataIndex: 'AVERAGE'");
     
