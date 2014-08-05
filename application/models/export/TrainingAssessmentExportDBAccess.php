@@ -10,6 +10,7 @@ require_once 'models/export/CamemisExportDBAccess.php';
 
 class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
     
+    
     function __construct($objectId) {
 
         $this->objectId = $objectId;
@@ -31,10 +32,30 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
         }
         return $entries;
     }
+    
+    public function dispayHeader(){
+        
+        $schoolName = (Zend_Registry::get('SCHOOL')->NAME)?Zend_Registry::get('SCHOOL')->NAME:"";
+        $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
+        $training = $trainingObject->NAME;
+        $program = TrainingDBAccess::findTrainingFromId($trainingObject->PROGRAM)->NAME;
+        $level = TrainingDBAccess::findTrainingFromId($trainingObject->LEVEL)->NAME;
+        $term = getShowDate($trainingObject->START_DATE)."-".getShowDate($trainingObject->END_DATE);
+        $this->setCellMergeContent(0, $this->startHeader, $schoolName."\n".$program, A1, J1);
+        $this->setFontStyle(0,$this->startHeader, true, 12, "000000");
+        $this->setFullStyle(0, $this->startHeader, "DDDDDD");
+        $this->setCellStyle(0, $this->startHeader,100, 40);
+        
+        $this->setCellMergeContent(0, $this->startHeader+1, LEVEL.": ".$level, A2, B2);
+        $this->setCellMergeContent(0, $this->startHeader+2, TERM.": ".$term, A3, B3);
+        $this->setCellMergeContent(0, $this->startHeader+3, CLASS_NAME.": ".$training, A4, B4);
+                   
+    }
 
     public function setContentHeader() {
         
         $i = 0;
+        $this->startHeader=6;
         $subjects = $this->getSubjectTraining();
         foreach ($this->getUserSelectedColumns() as $value) {
             switch ($value) {
@@ -82,7 +103,7 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
         
         $entries = $this->DB_STUDENT_TRAINING->jsonListStudentsClassPerformanceTraining($searchParams,false);
         if ($entries) {
-            for ($i = 0; $i <= count($entries); $i++) {
+            for ($i = 0; $i < count($entries); $i++) {
                 $colIndex = 0;
                 $rowIndex = $i + $this->startContent();
                 foreach ($this->getUserSelectedColumns() as $colName) {
@@ -118,6 +139,7 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
         set_time_limit(35000);
         $this->trainingId = isset($searchParams['trainingId'])?addText($searchParams['trainingId']):'';
         $this->EXCEL->setActiveSheetIndex(0);
+        //$this->dispayHeader();
         $this->setContentHeader();
         $this->setContent($searchParams); 
         $this->EXCEL->getActiveSheet()->setTitle("" . ASSESSMENT . "");

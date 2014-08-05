@@ -94,7 +94,13 @@ class StudentSearchDBAccess {
         $this->name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $this->description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
 
-        return $this->getGridData($this->queryAllStudents());
+        //@veasna
+        $this->islimit=false;
+        $allStudent =count($this->queryAllStudents());
+        $this->islimit=true;
+        $result=$this->queryAllStudents();
+
+        return $this->getGridData($result,$allStudent);
     }
 
     public function getSearchIn()
@@ -260,7 +266,10 @@ class StudentSearchDBAccess {
             $SQL->orWhere('STUDENT.CODE LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
             $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
         }
-
+        //@veasna
+        if($this->islimit){
+            $SQL->limit($this->limit, $this->start); 
+        }
         $SQL->group('STUDENT.ID');
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
@@ -309,7 +318,7 @@ class StudentSearchDBAccess {
         }
     }
 
-    public function getGridData($entries)
+    public function getGridData($entries,$totalRecord)
     {
         $data = array();
 
@@ -364,7 +373,7 @@ class StudentSearchDBAccess {
         }
 
         $a = array();
-        for ($i = $this->start; $i < $this->start + $this->limit; $i++)
+        for ($i = 0; $i < $this->limit; $i++)
         {
             if (isset($data[$i]))
                 $a[] = $data[$i];
@@ -374,7 +383,7 @@ class StudentSearchDBAccess {
         {
             return array(
                 "success" => true
-                , "totalCount" => sizeof($data)
+                , "totalCount" => $totalRecord
                 , "rows" => $a
             );
         }

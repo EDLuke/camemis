@@ -125,14 +125,30 @@ Ext.onReady(function() {
             Ext.Ajax.request({
                 url: '/student/jsonload'
                 ,method: 'POST'
-                ,params:{cmd:'searchStudent'}
+                ,params:{start:0,limit:100,cmd:'searchStudent'}
                 ,form: formObject.getForm().getEl().dom
                 ,success: function(response, options) {
                     jsonData = Ext.util.JSON.decode(response.responseText);
                     var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
                     for(var i=0;i<myform.getForm().getEl().dom.length;i++){
                         if(myform.getForm().getEl().dom[i].value){
-                            Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                            switch(myform.getForm().getEl().dom[i].type) {
+                                case 'checkbox':
+                                    if(myform.getForm().getEl().dom[i].checked){
+                                        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    }
+                                    break;
+                                case 'radio':
+                                    if(myform.getForm().getEl().dom[i].checked){
+                                        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    }
+                                    break;
+                                default:
+                                    Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    break;
+                                
+                            } 
+                            
                         }
                     }
                     gridObject.getStore().loadData(jsonData);
