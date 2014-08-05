@@ -81,7 +81,7 @@ switch($type){
 </script>
 <script>
     
-    function getWinVideo(){
+    //function getWinVideo(){
         winVideo = new Ext.Window({
             title: 'Play Video'
             ,maximizable: false
@@ -96,7 +96,7 @@ switch($type){
                 text: 'Close'
                 ,iconCls: 'icon-cancel'
                 ,handler: function (){
-                    Ext.getCmp('winVideoId').close();
+                    Ext.getCmp('winVideoId').hide();
                     if (player) player.stopVideo();
                 }
             },'-',{
@@ -113,8 +113,8 @@ switch($type){
                 }
             }]
         });
-        winVideo.show();
-    }
+        
+    //}
     ////////////////////////////////////////////////////////////////////////////
     Ext.onReady(function() {
         var myTree;
@@ -175,7 +175,7 @@ switch($type){
                 ,tbar:['->',{
                     text: 'Play Video'
                     ,iconCls: 'icon-control_play'
-                    ,handler: function() {getWinVideo();}
+                    ,handler: function() {winVideo.show();}
                 }]
                 ,width: percentWidth(96)
                 ,height:percentHeight(95)
