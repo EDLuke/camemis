@@ -38,10 +38,10 @@ if(!$trainingObject) {header("Location: /main/permission/");exit;}
 switch($trainingObject->EVALUATION_TYPE){
 
     case 1:
-        $scoreMax = $assignmentObject->MAX_POSSIBLE_SCORE;
+        $scoreMax = $assignmentObject?$assignmentObject->MAX_POSSIBLE_SCORE:"";
         break;
     default:
-        $scoreMax = $trainingObject->SCORE_MAX;
+        $scoreMax = $subjectObject->SCORE_MAX?$subjectObject:"";
         break;
 }
 
@@ -196,7 +196,7 @@ Ext.onReady(function() {
                , editor: new Ext.form.NumberField({
                     allowBlank: false
                     ,minValue: 0
-                    ,maxValue: ".$scoreMax."
+                    ,maxValue: '".$scoreMax."'
                     ,name: 'SCORE'   
                })      
 

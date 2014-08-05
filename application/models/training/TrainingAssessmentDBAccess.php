@@ -374,10 +374,10 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         switch ($this->trainingObject->EVALUATION_TYPE)
         {
             case 1:
-                $this->scoreMaxe = $this->assignmentObject->MAX_POSSIBLE_SCORE;
+                $this->scoreMaxe = $this->assignmentObject ? $this->assignmentObject->MAX_POSSIBLE_SCORE : "";
                 break;
             default:
-                $this->scoreMaxe = $this->trainingSubject->SCORE_MAX;
+                $this->scoreMaxe = $this->trainingSubject ? $this->trainingSubject->SCORE_MAX : "";
                 break;
         }
 
@@ -481,7 +481,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
                 $data[$i]["ASSESSMENT"] = $assessmentObject->GRADING;
                 $data[$i]["ASSESSMENT_ID"] = $assessmentObject->ASSESSMENT_ID;
-                
+
                 $data[$i]["RANK"] = "---";
 
                 if ($listSubjects)
