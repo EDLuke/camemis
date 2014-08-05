@@ -27,7 +27,31 @@ $OBJECT_GRID->setLoadUrl('/staff/jsonload/');
 $OBJECT_GRID->setSaveUrl('/staff/jsonsave/');
 
 $personType = isset($_GET["personType"])? addText($_GET["personType"]):"STAFF";
-
+function searchPersonalDescription(){
+    $js='false';
+    $entries = DescriptionDBAccess::sqlPersonalDescription("STAFF");
+    if ($entries)
+    {
+        foreach ($entries as $value)      
+        {   
+            switch($value->CHOOSE_TYPE){
+                case 1:
+                    $js .= " || obj.CHECKBOX_".$value->ID . "!=''";    
+                    break; 
+                    
+                case 2:
+                    $js .= " || obj.RADIOBOX_".$value->ID . '!=null';  
+                    break; 
+                 
+                case 3:
+                    $js .= " || obj.INPUTFIELD_".$value->ID . "!=''" ; 
+                    break;                        
+            }
+      
+        }
+    } 
+    return $js ;
+}
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $columndata = Utiles::getGridColumnData("STAFF_SEARCH_ID")
@@ -106,9 +130,10 @@ Ext.onReady(function() {
 
     function plsEnterKey(obj){
         var s;
-        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER
-            || obj.CODE || obj.STAFF_SCHOOL_ID || obj.RELIGION
-            || obj.ETHNIC || obj.NATIONALITY || obj.START_DATE
+        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER || obj.CODE || obj.STAFF_SCHOOL_ID || obj.RELIGION || obj.ETHNIC
+            || obj.NATIONALITY || obj.START_DATE || obj.END_DATE  ||  obj.COURSE || obj.INSTITUTION_NAME || obj.END_SALARY
+            || obj.NAME || obj.ACADEMIC_YEAR || obj.MAJOR || obj. QUALIFICATION_DEGREE || obj.PUBLICATION_TITLE
+            || obj.DESCRIPTION || obj.POSITION || obj.COMPANY_NAME || obj.START_SALARY ||<?=searchPersonalDescription();?> 
         ){
             s = 0;
         }else{
@@ -185,6 +210,45 @@ Ext.onReady(function() {
         ]
     }";
     
+    //        
+    $WORK_EXPERIENCE = "{
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed:true
+        ,title: '".WORK_EXPERIENCE."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310                                                    
+        ,items:[                                          
+            {".CamemisField::Textfield("COMPANY_NAME", "COMPANY_NAME", COMPANY_NAME, false, false, false, 150)."}
+            ,{".CamemisField::Textfield("POSITION", "POSITION", POSITION, false, false, false, 150)."}
+            ,{".CamemisField::Textfield("START_SALARY", "START_SALARY", START_SALARY, false, false, false, 150)."}
+            ,{".CamemisField::Textfield("END_SALARY", "END_SALARY", END_SALARY, false, false, false, 150)."}
+        ]
+    }";
+    
+    $SKILL = "{
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed:true
+        ,title: '".SKILL."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310
+        ,items:[
+            {".CamemisField::Textfield("COURSE", "COURSE", COURSE, false, false, false, 150)."} 
+            ,{".CamemisField::Textfield("INSTITUTION_NAME", "INSTITUTION_NAME", INSTITUTION_NAME, false, false, false, 150)."}            
+        ]
+    }";
+    $RELATIVE_INFORMATION = "{                
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed:true
+        ,title: '".RELATIVE_INFORMATION."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310
+        ,items:[
+            {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, 150)."} 
+        ]
+    }";              
     $EDUCATION_BACKGROUND = "{
         xtype:'fieldset'
         ,checkboxToggle:true
@@ -193,10 +257,24 @@ Ext.onReady(function() {
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
         ,items:[
-            {".CamemisField::comboMajor(false,false, 150)."}
-            , {".CamemisField::comboQualitycationDegree(false,false, 150)."}
+            {".CamemisField::Textfield("ACADEMIC_YEAR", "ACADEMIC_YEAR", ACADEMIC_YEAR, false, false, false, 150)."}     
+            ,{".CamemisField::comboMajor(false,false, 150)."}
+            ,{".CamemisField::comboQualitycationDegree(false,false, 150)."}
         ]
     }";
+    $PUBLICATION = "{
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed:true
+        ,title: '".PUBLICATION."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
+        ,width: 310
+        ,items:[
+            {".CamemisField::Textfield("PUBLICATION_TITLE", "PUBLICATION_TITLE", TITLE, false, false, false, 150)."} 
+            ,{".CamemisField::Textfield("DESCRIPTION", "DESCRIPTION",DESCRIPTION, false, false, false, 150)."}  
+        ]
+    }";
+    //  
     $REGISTRATION = "{
         xtype:'fieldset'
         ,checkboxToggle:true
@@ -269,7 +347,11 @@ Ext.onReady(function() {
 
     $FORM_ITEMS = "[";
     $FORM_ITEMS .= "".$PERSONAL_INFORMATION;
-    $FORM_ITEMS .= ",".$EDUCATION_BACKGROUND;
+    $FORM_ITEMS .= ",".$WORK_EXPERIENCE;
+    $FORM_ITEMS .= ",".$SKILL;
+    $FORM_ITEMS .= ",".$RELATIVE_INFORMATION;
+    $FORM_ITEMS .= ",".$EDUCATION_BACKGROUND;    
+    $FORM_ITEMS .= ",".$PUBLICATION;
     $FORM_ITEMS .= ",".$REGISTRATION;
     $FORM_ITEMS .= ",".$ADDRESS;
     $FORM_ITEMS .= ",".Utiles::personalDescriptionDisplayFields("STAFF",310);
