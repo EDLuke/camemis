@@ -143,7 +143,14 @@ class DescriptionDBAccess {
 
         return array("success" => true);
     }
+    public static function sqlPersonalDescription($personType) {
 
+        $SQL = self::dbAccess()->select();
+        $SQL->from('t_personal_description', array('*'));
+        $SQL->where("OBJECT_TYPE='ITEM'");
+        $SQL->where("PERSON = '" . $personType . "'"); 
+        return self::dbAccess()->fetchAll($SQL);
+    }
     public static function sqlDescription($node, $personType, $type = false) {
 
         $SQL = "SELECT * FROM t_personal_description";
