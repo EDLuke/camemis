@@ -24,36 +24,35 @@ $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 $VIEWPORT = new CamemisViewport();
 
 $subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
-$trainingId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$trainingId = isset($_GET["trainingId"])?addText($_GET["trainingId"]):"";
 $studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
 $teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
 
-$ENTRIES_ASSIGNMENT = TrainingSubjectDBAccess::getTrainingAssignments(
-    $subjectId
-    , $trainingId
-);
+$firstParams["trainingId"] = $trainingId;
+$firstParams["include_in_evaluation"] = 1;
+$ENTRIES = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($firstParams);
 
 /* @soda */ 
-$params["objectId"] = $trainingId;
-$params["subjectId"] = $subjectId;
-$params["studentId"] = $studentId;
+//$params["objectId"] = $trainingId;
+//$params["subjectId"] = $subjectId;
+//$params["studentId"] = $studentId;
 
-$score = StudentTrainingDBAccess::jsonStudentSubjectAssignment($params, false);
-$option = "false";
-$sum = 0;
-if($score){
-    foreach($score as $value){  
-        foreach ($ENTRIES_ASSIGNMENT as $key => $assignment) {
-            $sum+= $value['ASSIGNMENT_'.$assignment->ID];
-        } 
-    }
-    if($sum == 0){
-         $option = "false";
-    }else{
-         $option = "true";
-    }
-}
-/* --- */
+//$score = StudentTrainingDBAccess::jsonStudentSubjectAssignment($params, false);
+//$option = "false";
+//$sum = 0;
+//if($score){
+//    foreach($score as $value){  
+//        foreach ($ENTRIES_ASSIGNMENT as $key => $assignment) {
+//            $sum+= $value['ASSIGNMENT_'.$assignment->ID];
+//        } 
+//    }
+//    if($sum == 0){
+//         $option = "false";
+//    }else{
+//         $option = "true";
+//    }
+//}
+///* --- */
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
@@ -105,27 +104,27 @@ Ext.onReady(function() {
     
     $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 200, dataIndex: 'STUDENT'");
        
-    if($ENTRIES_ASSIGNMENT){
-    
-        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-            if(($key % 2) == 1){
-                $RENDERER = "cssFirst";
-            }else{
-                $RENDERER = "cssSecond";
-            }
-            switch(UserAuth::getUserType()){
-                case "SUPERADMIN":
-                case "ADMIN":
-                case 'INSTRUCTOR':
-                case 'TEACHER':
-                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-                    break;
-                case 'STUDENT':
-                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>',align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-                    break;
-            }
-        }
-    }
+//    if($ENTRIES_ASSIGNMENT){
+//    
+//        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
+//            if(($key % 2) == 1){
+//                $RENDERER = "cssFirst";
+//            }else{
+//                $RENDERER = "cssSecond";
+//            }
+//            switch(UserAuth::getUserType()){
+//                case "SUPERADMIN":
+//                case "ADMIN":
+//                case 'INSTRUCTOR':
+//                case 'TEACHER':
+//                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
+//                    break;
+//                case 'STUDENT':
+//                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>',align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
+//                    break;
+//            }
+//        }
+//    }
     
     $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'AVERAGE'");
     $OBJECT_GRID->addColumn("header: '<b>" . ASSESSMENT . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'ASSESSMENT'");
@@ -145,16 +144,16 @@ Ext.onReady(function() {
         ,subjectId:'".$subjectId."'
     ");
 
-    $CALLBACK_DATA = "";
-    if($ENTRIES_ASSIGNMENT){
-        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-            $CALLBACK_DATA .= "if (jsonData.data.ASSIGNMENT_".$value->ID.") e.record.set('ASSIGNMENT_".$value->ID."',jsonData.data.ASSIGNMENT_".$value->ID.");";
-        }
-    }
+//    $CALLBACK_DATA = "";
+//    if($ENTRIES_ASSIGNMENT){
+//        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
+//            $CALLBACK_DATA .= "if (jsonData.data.ASSIGNMENT_".$value->ID.") e.record.set('ASSIGNMENT_".$value->ID."',jsonData.data.ASSIGNMENT_".$value->ID.");";
+//        }
+//    }
+//    
+//    $CALLBACK_DATA .= "if (jsonData.data.AVERAGE) e.record.set('AVERAGE',jsonData.data.AVERAGE);";
     
-    $CALLBACK_DATA .= "if (jsonData.data.AVERAGE) e.record.set('AVERAGE',jsonData.data.AVERAGE);";
-    
-    $OBJECT_GRID->setAftereditCallback($CALLBACK_DATA);
+//    $OBJECT_GRID->setAftereditCallback($CALLBACK_DATA);
         
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->forceFit = "false";

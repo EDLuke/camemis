@@ -1,0 +1,191 @@
+<?
+///////////////////////////////////////////////////////////
+// @sor veasna 
+// Date: 10.03.2013
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
+$OBJECT_GRID->setLoadUrl('/training/jsonload/');
+$OBJECT_GRID->setSaveUrl('/training/jsonsave/');
+
+$searchParams["trainingId"] = $this->objectId;
+$searchParams["include_in_evaluation"] = 1;
+$listSubjects = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($searchParams);
+
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$setParams = "";
+$setParams .="&trainingId=".$this->objectId."";
+?>
+
+<script>
+Ext.onReady(function() {
+    
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
+    }
+    
+    function cssDefault(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000;background:#FFF;padding:4px;height:18px;">' + value + '</div>';
+    }
+    
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
+    $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'GENDER'");  
+    $OBJECT_GRID->addReadField("name: 'RANK'");
+    $OBJECT_GRID->addReadField("name: 'AVERAGE'");
+    $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
+    
+    if($listSubjects){
+        foreach($listSubjects as $value){
+            $OBJECT_GRID->addReadField("name: 'SUB_" . $value->SUBJECT_ID . "'");
+        }
+    }
+    
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 100;break;
+        default: $width = 85;break;
+    }
+    
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, renderer: cssDefault, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80,align:'center', renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>" . ASSESSMENT . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'ASSESSMENT'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 100, dataIndex: 'AVERAGE'");
+    
+    if($listSubjects){
+        foreach($listSubjects as $value){
+            $OBJECT_GRID->addColumn("header: '<b>" . $value->SUBJECT_SHORT . "</b>', align:'center', renderer: cssDefault, width: 100, dataIndex: 'SUB_" . $value->SUBJECT_ID . "'");
+        }
+    }
+    
+    $OBJECT_GRID->isObjectDefaultOnLoad = true;
+    $OBJECT_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'jsonTrainingPerformance'
+    ";
+        
+    $OBJECT_GRID->setSaveParams("
+        cmd: 'jsonActionTrainingPerformance'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('TRAINING_ID').expand();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . REFRESH . "</b>'
+            ,iconCls:'icon-reload'
+            ,handler: function(){
+                ".CamemisPage::setRequestURI(false)."
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: '<b>" . PUBLISH_SCORE . "</b>'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url: '/evaluation/jsonsave/'
+                    ,method: 'POST'
+                    ,params:{
+                        cmd: 'jsonActionPublishTrainingPerformance'
+                        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+                    }
+                    ,success: function() {
+                        Ext.MessageBox.hide();
+                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+                    }
+                });
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . EXPORT_TO_EXCEL . "</b>'
+            ,disabled:true
+            ,iconCls:'icon-page_excel'
+            ,handler: function(){
+                
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->forceFit = "false";
+    $OBJECT_GRID->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id:'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+    var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
+    grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
+        //
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

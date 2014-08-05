@@ -22,7 +22,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 
 <script>
-    var choosedate = '<?=date('Y-m-d');?>';
+    var choosedate = '<?=date('m-d-Y');?>';
     Ext.onReady(function() {
 
         <?
@@ -63,52 +63,88 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TREE->isTreeExpand = false;
         $OBJECT_TREE->renderJS();
 
-        ?>
-        viewport = new Ext.Viewport({
-            layout: 'fit'
-            ,border: false
-            ,items:[{
-                layout:'border'
-                ,border: false
-                ,defaults: {
-                    collapsible: true
-                    ,split: true
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'border'";
+                $js .= ",border: false";
+                $js .= ",defaults: {";
+                    $js .= "collapsible: true";
+                    $js .= ",split: true";
+                $js .= "}";
+                $js .= ",items: [{";
+                    $js .= "region:'west'";
+                    $js .= ",id: 'TRAINING_ID'";
+                    $js .= ",title: '&nbsp;'";
+                    $js .= ",autoScroll: true";
+                    $js .= ",margins: '3 0 3 3'";
+                    $js .= ",cmargins: '3 3 3 3'";
+                    $js .= ",width:280";
+                    $js .= ",minSize:280";
+                    $js .= ",maxSize:280";
+                    $js .= ",layout: 'fit'";
+                    $js .= ",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
+                $js .= "},{";
+                    $js .= "collapsible: false";
+                    $js .= ",id: 'center'";
+                    $js .= ",region:'center'";
+                    $js .= ",margins: '3 3 3 0'";
+                    $js .= ",layout: 'card'";
+                    $js .= ",activeItem: 0";
+                    $js .= ",bodyStyle: 'padding:1px'";
+                    $js .= ",items: [{";
+                        $js .= "layout: 'fit'";
+                        $js .= ",border: false";
+                        $js .= ",contentEl: 'initCenter'";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+        $js .= "var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+        $js .= "myTree.on('click', function(node, event){";
+            $js .= "if(node.isLeaf()){";
+                
+                $CONTEXTMENU_ITEMS = array();
+                
+                $MENU1 ="{";
+                    $MENU1 .="text: '".TEACHER_ENTER_SCORE."'";
+                    $MENU1 .=",iconCls: 'icon-application_form_magnify'";
+                    $MENU1 .=",disabled:false";
+                    $MENU1 .=",handler: function(){";
+                        $MENU1 .= "clickOpenPage('center','', '/training/scoremonitortraining/?trainingId=' + node.id);";
+                        $MENU1 .= "Ext.getCmp('TRAINING_ID').collapse();";
+                    $MENU1 .="}";
+                $MENU1 .="}";
+                $CONTEXTMENU_ITEMS[] = $MENU1;
+                
+                $MENU2 ="{";
+                    $MENU2 .="text: '".ACADEMIC_PERFORMANCES."'";
+                    $MENU2 .=",iconCls: 'icon-application_form_magnify'";
+                    $MENU2 .=",disabled:false";
+                    $MENU2 .=",handler: function(){";
+                        $MENU2 .= "clickOpenPage('center','".ACADEMIC_PERFORMANCES." &raquo; ' + node.text, '/training/trainingperformance/?objectId=' + node.id);";
+                        $MENU2 .= "Ext.getCmp('TRAINING_ID').collapse();";
+                    $MENU2 .="}";
+                $MENU2 .="}";
+                $CONTEXTMENU_ITEMS[] = $MENU2;
+                
+                $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
+                
+                if($CONTEXTMENU_ITEMS){
+                    $js .="var contextMenu = new Ext.menu.Menu({";
+                        $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                    $js .="});";
+                    $js .="event.stopEvent();";
+                    $js .="contextMenu.showAt(event.xy);"; 
                 }
-                ,items: [{
-                    region:'west'
-                    ,id: 'TRAINING_ID'
-                    ,title: '&nbsp;'
-                    ,autoScroll: true
-                    ,margins: '3 0 3 3'
-                    ,cmargins: '3 3 3 3'
-                    ,width:280
-                    ,minSize:280
-                    ,maxSize:280
-                    ,layout: 'fit'
-                    ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
-                },{
-                    collapsible: false
-                    ,id: 'center'
-                    ,region:'center'
-                    ,margins: '3 3 3 0'
-                    ,layout: 'card'
-                    ,activeItem: 0
-                    ,bodyStyle: 'padding:1px'
-                    ,items: [{
-                        layout: 'fit'
-                        ,border: false
-                        ,contentEl: 'initCenter'
-                    }]
-                }]
-            }]
-        });
-        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-        myTree.on('click', function(node){
-            if(node.isLeaf()){
-                clickOpenPage('center','', '/training/scoremonitortraining/?classId=' + node.id);
-                Ext.getCmp('TRAINING_ID').collapse();
-            }
-        }); 
+                
+            $js .= "}";
+        $js .= "});"; 
+        
+        echo $js;
+        ?>
     });
 </script>
 <div id="initCenter" class="x-hidden" style="border:0px silver solid;margin:30px;padding:8px;height:140px">

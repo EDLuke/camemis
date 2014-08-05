@@ -473,6 +473,13 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->objectId = $this->objectId;
     }
 
+    public function trainingperformanceAction()
+    {
+
+        $this->view->objectId = $this->objectId;
+        $this->_helper->viewRenderer("evaluation/performance");
+    }
+
     public function jsonloadAction()
     {
 
@@ -566,17 +573,19 @@ class TrainingController extends Zend_Controller_Action {
                 $jsondata = $STUDENT_ASSESSMENT->jsonSubjectResultTraining($this->REQUEST->getPost());
                 break;
 
-            case "jsonListStudentsClassPerformanceTraining":
+            case "jsonTrainingPerformance":
                 $STUDENT_ASSESSMENT = TrainingAssessmentDBAccess::getInstance();
-                $jsondata = $STUDENT_ASSESSMENT->jsonListStudentsClassPerformanceTraining($this->REQUEST->getPost());
+                $jsondata = $STUDENT_ASSESSMENT->jsonTrainingPerformance($this->REQUEST->getPost());
                 break;
 
             case "selectComboLevelTraining":
                 $jsondata = $this->DB_TRAINING->selectComboLevelTraining($this->REQUEST->getPost());
                 break;
+
             case "selectComboTermTraining":
                 $jsondata = $this->DB_TRAINING->selectComboTermTraining($this->REQUEST->getPost());
                 break;
+
             case "selectComboClassTraining":
                 $jsondata = $this->DB_TRAINING->selectComboClassTraining($this->REQUEST->getPost());
                 break;
