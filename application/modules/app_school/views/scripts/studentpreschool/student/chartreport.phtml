@@ -45,7 +45,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:280
+                            ,height:350
                             ,items: [new Ext.ux.IFrameComponent({ id: 'APPLICATION_TYPE', url:'/chart/studentpreschool/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=APPLICATION_TYPE")?>'})]
                         }]    
                     },{
@@ -57,7 +57,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:280
+                            ,height:350
                             ,items: [new Ext.ux.IFrameComponent({ id: 'TESTING_TYPE', url:'/chart/studentpreschool/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=TESTING_TYPE")?>'})]
                         }]    
                     }]///////////////////be continune

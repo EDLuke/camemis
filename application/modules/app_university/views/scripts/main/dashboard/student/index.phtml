@@ -34,7 +34,7 @@ if(Utiles::getUserDashboardItems()){
                 $item .= ",id:'".$value->CONST."'";
                 $item .= ",layout:'fit'";
                 $item .= ",tools: tools";
-                $item .= ",height:280";
+                $item .= ",height:350";
                 $item .= ",items: [new Ext.ux.IFrameComponent({ id: '".$value->CONST."', url:'".$value->URL."'})]";
             $item .= "}]";
         $item .= "}";

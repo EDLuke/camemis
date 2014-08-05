@@ -48,7 +48,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:280
+                            ,height:350
                             ,items: [new Ext.ux.IFrameComponent({ id: 'WEEKLY', url:'/chart/facility/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY")?>'})]
                         }]
                     },{
@@ -60,7 +60,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:280
+                            ,height:350
                             ,items: [new Ext.ux.IFrameComponent({ id: 'WEEKLY', url:'/chart/facility/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTH")?>'})]
                         }]    
                     },{
@@ -72,7 +72,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:280
+                            ,height:350
                             ,items: [new Ext.ux.IFrameComponent({ id: 'WEEKLY', url:'/chart/facility/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEAR")?>'})]
                         }]    
                     }]///////////////////be continune

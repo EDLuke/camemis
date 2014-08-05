@@ -39,7 +39,7 @@ if(Utiles::getUserDashboardItems()){
                         $item .= ",height:450";
                         break;
                     default:
-                        $item .= ",height:280";
+                        $item .= ",height:350";
                         break;
                 }
                 $item .= ",items: [new Ext.ux.IFrameComponent({ id: '".$value->CONST."', url:'".$value->URL."'})]";
