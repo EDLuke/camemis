@@ -307,10 +307,12 @@ class StaffDBAccess {
                   
                 }
 
-                if (isset($params["RADIOBOX_" . $value->ID . ""]))
-                {
-                    $RADIOBOX_DATA[] = addText($params["RADIOBOX_" . $value->ID . ""]);
-                }  
+                $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
+                if ($parentObject->PARENT) {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
+                        $RADIOBOX_DATA[$value->ID] = $value->ID;
+                    }
+                }
                 
                 if (isset($params["INPUTFIELD_" . $value->ID . ""]))
                 {
