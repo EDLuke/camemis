@@ -31,6 +31,31 @@ $OBJECT_GRID = new CamemisGrid("STUDENT", "SEARCH");
 $OBJECT_GRID->setLoadUrl("/student/jsonload/");
 $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
 
+function searchPersonalDescription(){
+    $js='false';
+    $entries = DescriptionDBAccess::sqlPersonalDescription("STUDENT");
+    if ($entries)
+    {
+        foreach ($entries as $value)      
+        {   
+            switch($value->CHOOSE_TYPE){
+                case 1:
+                    $js .= " || obj.CHECKBOX_".$value->ID . "!=''";    
+                    break;
+                     
+                case 2:
+                    $js .= " || obj.RADIOBOX_".$value->ID . '!=null';  
+                    break; 
+                 
+                case 3:
+                    $js .= " || obj.INPUTFIELD_".$value->ID . "!=''" ; 
+                    break;                        
+            }
+      
+        }
+    } 
+    return $js ;
+}
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $CHOOSE_SEARCH_ITEMS ="";
@@ -83,7 +108,7 @@ Ext.onReady(function() {
 
     Ext.Ajax.timeout = 600000;
 
-    function myAjaxRequest(formObject, gridObject){
+     function myAjaxRequest(formObject, gridObject){
         var fieldValue = formObject.getForm().getFieldValues();
         if(plsEnterKey(fieldValue)){
             <?=CamemisPage::alertPleaseSelect(NOTES,PLS_ENTER_KEYWORD)?>
@@ -93,14 +118,30 @@ Ext.onReady(function() {
             Ext.Ajax.request({
                 url: '/student/jsonload'
                 ,method: 'POST'
-                ,params:{cmd:'searchStudent'}
+                ,params:{start:0,limit:100,cmd:'searchStudent'}
                 ,form: formObject.getForm().getEl().dom
                 ,success: function(response, options) {
                     jsonData = Ext.util.JSON.decode(response.responseText);
                     var myform=<?=$OBJECT_FORM->ExtgetCmp();?>;
                     for(var i=0;i<myform.getForm().getEl().dom.length;i++){
                         if(myform.getForm().getEl().dom[i].value){
-                            Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                            switch(myform.getForm().getEl().dom[i].type) {
+                                case 'checkbox':
+                                    if(myform.getForm().getEl().dom[i].checked){
+                                        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    }
+                                    break;
+                                case 'radio':
+                                    if(myform.getForm().getEl().dom[i].checked){
+                                        Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    }
+                                    break;
+                                default:
+                                    Ext.getCmp('<?=$OBJECT_GRID->getObjectId();?>').getStore().setBaseParam(myform.getForm().getEl().dom[i].name,myform.getForm().getEl().dom[i].value);
+                                    break;
+                                
+                            } 
+                            
                         }
                     }
                     gridObject.getStore().loadData(jsonData);
@@ -112,10 +153,10 @@ Ext.onReady(function() {
 
     function plsEnterKey(obj){
         var s;
-        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER
-            || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.RELIGION
-            || obj.ETHNIC || obj.NATIONALITY || obj.START_DATE
-        ){
+        if(obj.LASTNAME || obj.FIRSTNAME || obj.GENDER || obj.CODE || obj.STUDENT_SCHOOL_ID || obj.RELIGION
+            || obj.ETHNIC || obj.NATIONALITY || obj.START_DATE || obj.END_DATE || obj.INSTITUTION_NAME || obj.ACADEMIC_YEAR
+            || obj.MAJOR || obj.QUALIFICATION_DEGREE || obj.NAME || obj.DESCRIPTION || <?=searchPersonalDescription() ?>
+        ) {
             s = 0;
         }else{
             s = 1;
@@ -269,7 +310,35 @@ Ext.onReady(function() {
             ,{xtype: '".$OBJECT_LOCATION_CHILD->getObjectXType()."'}
         ]
     }";
-
+    //
+    $PRE_REQUIREMENTS ="{
+        xtype:'fieldset'                        
+        ,checkboxToggle:true
+        ,collapsed: true
+        ,title: '".PRE_REQUIREMENTS."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+        ,width: 310
+        ,items:[ 
+             {".CamemisField::Textfield("NAME", "NAME", NAME, false, false, false, 150)."}     
+            ,{".CamemisField::Textfield("DESCRIPTION", "DESCRIPTION", DESCRIPTION, false, false, false, 150)."} 
+        ]
+    }";
+    
+    $EDUCATION_BACKGROUND ="{                      
+        xtype:'fieldset'
+        ,checkboxToggle:true
+        ,collapsed: true
+        ,title: '".EDUCATION_BACKGROUND."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+        ,width: 310
+        ,items:[ 
+            {".CamemisField::Textfield("ACADEMIC_YEAR", "ACADEMIC_YEAR", ACADEMIC_YEAR, false, false, false, 150)."}     
+            ,{".CamemisField::Textfield("INSTITUTION_NAME", "INSTITUTION_NAME", INSTITUTION_NAME, false, false, false, 150)."}
+            ,{".CamemisField::comboMajor(false,false, 150)."}  
+            ,{".CamemisField::comboQualitycationDegree(false,false, 150)."}
+        ]
+    }";
+    //
     $OBJECT_FORM->addTBarItems("
         text: '".RESET."'
         ,iconCls:'icon-arrow_undo'
@@ -295,6 +364,8 @@ Ext.onReady(function() {
 
     $FORM_ITEMS = "[";
     $FORM_ITEMS .= "".$PERSONAL_INFORMATION;
+    $FORM_ITEMS .= ",".$PRE_REQUIREMENTS;
+    $FORM_ITEMS .= ",".$EDUCATION_BACKGROUND;
     $FORM_ITEMS .= ",".$REGISTRATION;
     $FORM_ITEMS .= ",".$ADDRESS;
     $FORM_ITEMS .= ",".Utiles::personalDescriptionDisplayFields("STUDENT",310);
