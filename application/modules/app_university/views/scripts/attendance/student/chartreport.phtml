@@ -51,7 +51,7 @@ if($this->target) $params .= "&target=".$this->target."";
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STUDENT_ATTENDANCE_WEEKLY', url:'/chart/studentattendance/?camIds=<?=$this->urlEncryp->encryptedGet("".$params."&objectType=WEEKLY")?>'})]
                         }]
                     },{
@@ -63,7 +63,7 @@ if($this->target) $params .= "&target=".$this->target."";
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STUDENT_ATTENDANCE_MONTHLY', url:'/chart/studentattendance/?camIds=<?=$this->urlEncryp->encryptedGet("".$params."&objectType=MONTHLY")?>'})]
                         }]    
                     },{
@@ -75,7 +75,7 @@ if($this->target) $params .= "&target=".$this->target."";
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STUDENT_ATTENDANCE_YEARLY', url:'/chart/studentattendance/?camIds=<?=$this->urlEncryp->encryptedGet("".$params."&objectType=YEARLY")?>'})]
                         }]    
                     }]///////////////////be continune

@@ -25,7 +25,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,layout: 'fit'
             ,collapsible: true
             ,collapsed: false
-            ,height:350
+            ,height:280
             ,items: [new Ext.ux.IFrameComponent({ id: 'TRADITIONAL_EDUCATION_SYSTEM', url:'/chart/studentacademictraditional/?camIds=".$this->urlEncryp->encryptedGet("objectType=CAMPUS")."'})]
         }]
     }";
@@ -42,7 +42,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,layout: 'fit'
             ,collapsible: true
             ,collapsed: false
-            ,height:350
+            ,height:280
             ,items: [new Ext.ux.IFrameComponent({ id: 'CREDIT_EDUCATION_SYSTEM', url:'/chart/studentacademiccredit/?camIds=".$this->urlEncryp->encryptedGet("objectType=CAMPUS")."'})]
         }]
     }";
@@ -59,7 +59,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,layout: 'fit'
             ,collapsible: true
             ,collapsed: false
-            ,height:350
+            ,height:280
             ,items: [new Ext.ux.IFrameComponent({ id: 'TRAINING_PROGRAMS', url:'/chart/studentacademictraining/?camIds=".$this->urlEncryp->encryptedGet("objectType=PROGRAM")."'})]
         }]
     }";

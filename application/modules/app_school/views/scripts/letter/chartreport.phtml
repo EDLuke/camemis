@@ -43,7 +43,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 							,layout: 'fit'
 							,collapsible: true
 							,collapsed: false
-							,height:350
+							,height:280
 							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_WEEKLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY")?>'})]
 						}]
 					},{
@@ -55,7 +55,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 							,layout: 'fit'
 							,collapsible: true
 							,collapsed: false
-							,height:350
+							,height:280
 							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_MONTHLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY")?>'})]
 						}]
 					},{
@@ -67,7 +67,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 							,layout: 'fit'
 							,collapsible: true
 							,collapsed: false
-							,height:350
+							,height:280
 							,items: [new Ext.ux.IFrameComponent({ id: 'LETTER_YEARLY', url:'/chart/letterdashboard/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
 						}]
 					}]

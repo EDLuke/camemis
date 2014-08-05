@@ -49,7 +49,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $GENERAL_GRID->addReadField("name: 'TEACHING_INFORMATION'");
         
         $GENERAL_GRID->addColumn("header: '".DAY."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'DAY'");
-        $GENERAL_GRID->addColumn("header: '".TIME."', align:'center', width:170, renderer: showText, sortable: true, dataIndex: 'TIME'");
+        $GENERAL_GRID->addColumn("header: '".TIME."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'TIME'");
         $GENERAL_GRID->addColumn("header: '".TEACHING_INFORMATION."', align:'left', width: 210, renderer: showText, sortable: false, dataIndex: 'TEACHING_INFORMATION'");
 
         $GENERAL_GRID->baseParams = "
@@ -69,7 +69,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $TRAINING_GRID->addReadField("name: 'TEACHING_INFORMATION'");
         
         $TRAINING_GRID->addColumn("header: '".DAY."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'DAY'");
-        $TRAINING_GRID->addColumn("header: '".TIME."', align:'center', width:170, renderer: showText, sortable: true, dataIndex: 'TIME'");
+        $TRAINING_GRID->addColumn("header: '".TIME."', align:'center', width:120, renderer: showText, sortable: true, dataIndex: 'TIME'");
         $TRAINING_GRID->addColumn("header: '".TEACHING_INFORMATION."', align:'left', width: 210, renderer: showText, sortable: false, dataIndex: 'TEACHING_INFORMATION'");
 
         $TRAINING_GRID->baseParams = "

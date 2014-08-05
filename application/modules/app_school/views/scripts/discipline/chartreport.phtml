@@ -47,7 +47,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPINE_WEEKLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY&personType=$personType")?>'})]
                         }]
                     },{
@@ -59,7 +59,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_MONTHLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY&personType=$personType")?>'})]
                         }]    
                     },{
@@ -71,7 +71,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_YEARLY', url:'/chart/discipline/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY&personType=$personType")?>'})]
                         }]    
                     }]///////////////////be continune

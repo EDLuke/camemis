@@ -45,7 +45,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STAFF_ATTENDANCE_WEEKLY', url:'/chart/staffattendance/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=WEEKLY")?>'})]
                         }]
                     },{
@@ -57,7 +57,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STAFF_ATTENDANCE_MONTHLY', url:'/chart/staffattendance/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY")?>'})]
                         }]    
                     },{
@@ -69,7 +69,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'STAFF_ATTENDANCE_YEARLY', url:'/chart/staffattendance/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
                         }]    
                     }]///////////////////be continune

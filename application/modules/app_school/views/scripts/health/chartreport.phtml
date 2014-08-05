@@ -47,7 +47,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items:[{
                                 xtype: 'tabpanel'
                                 ,tabPosition: 'top'
@@ -105,7 +105,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'VACCINATION', url:'/chart/studenthealth/?camIds=<?=$this->urlEncryp->encryptedGet("target=VACCINATION")?>'})]
                         }]   
                     }]

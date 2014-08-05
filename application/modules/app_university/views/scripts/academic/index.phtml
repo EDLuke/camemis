@@ -99,7 +99,7 @@ if($entries){
             ,items:[{
                 xtype:'combo'
                 ,id:'COMO_SCHOOLYEAR_ID'
-                ,width:170
+                ,width:120
                 ,fieldLabel:'IconCombo'
                 ,store: new Ext.data.SimpleStore({
                     fields: ['comboCode', 'comboName', 'comboIcon'],
@@ -151,9 +151,9 @@ if($entries){
                     $viewport .= ",autoScroll: true";
                     $viewport .= ",margins: '3 0 3 3'";
                     $viewport .= ",cmargins: '3 3 3 3'";
-                    $viewport .= ",width:350";
-                    $viewport .= ",minSize:350";
-                    $viewport .= ",maxSize:350";
+                    $viewport .= ",width:300";
+                    $viewport .= ",minSize:300";
+                    $viewport .= ",maxSize:300";
                     $viewport .= ",layout: 'fit'";
                     $viewport .= ",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
                 $viewport .= "},{";

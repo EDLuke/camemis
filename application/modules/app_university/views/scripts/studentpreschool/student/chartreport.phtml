@@ -45,7 +45,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'APPLICATION_TYPE', url:'/chart/staffcontract/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=MONTHLY")?>'})]
                         }]    
                     },{
@@ -57,7 +57,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             ,layout: 'fit'
                             ,collapsible: true
                             ,collapsed: false
-                            ,height:350
+                            ,height:280
                             ,items: [new Ext.ux.IFrameComponent({ id: 'TESTING_TYPE', url:'/chart/staffcontract/?camIds=<?=$this->urlEncryp->encryptedGet("objectType=YEARLY")?>'})]
                         }]    
                     }]///////////////////be continune
