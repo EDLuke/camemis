@@ -284,7 +284,7 @@ class StudentImportDBAccess {
         $xls->setOutputEncoding('UTF-8');
         $xls->read($_FILES["xlsfile"]['tmp_name']);
 
-        for ($iCol = 1; $iCol < $xls->sheets[0]['numCols']; $iCol++) {
+        for ($iCol = 1; $iCol <= $xls->sheets[0]['numCols']; $iCol++) {
             $field = $xls->sheets[0]['cells'][1][$iCol];
             switch ($field) {
                 case "STUDENT_SCHOOL_ID":

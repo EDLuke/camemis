@@ -283,12 +283,12 @@ class StudentImportDBAccess {
         $xls->setOutputEncoding('UTF-8');
         $xls->read($_FILES["xlsfile"]['tmp_name']);
 
-        for ($iCol = 1; $iCol < $xls->sheets[0]['numCols']; $iCol++) {
+        for ($iCol = 1; $iCol <= $xls->sheets[0]['numCols']; $iCol++) {
             $field = $xls->sheets[0]['cells'][1][$iCol];
             switch ($field) {
                 case "STUDENT_SCHOOL_ID":
                     $Col_STUDENT_SCHOOL_ID = $iCol;
-                    break;
+                    break; 
                 case "FIRSTNAME":
                     $Col_FIRSTNAME = $iCol;
                     break;
@@ -330,7 +330,7 @@ class StudentImportDBAccess {
                     break;
                 case "TOWN_CITY":
                     $Col_TOWN_CITY = $iCol;
-                    break;
+                    break; 
                 case "POSTCODE_ZIPCODE":
                     $Col_POSTCODE_ZIPCODE = $iCol;
                     break;
@@ -385,7 +385,7 @@ class StudentImportDBAccess {
             $TOWN_CITY = isset($xls->sheets[0]['cells'][$i + 2][$Col_TOWN_CITY]) ? $xls->sheets[0]['cells'][$i + 2][$Col_TOWN_CITY] : "";
             //POSTCODE_ZIPCODE
 
-            $POSTCODE_ZIPCODE = isset($xls->sheets[0]['cells'][$i + 2][$Col_POSTCODE_ZIPCODE]) ? $xls->sheets[0]['cells'][$i + 2][$Col_POSTCODE_ZIPCODE] : "";
+            $POSTCODE_ZIPCODE = isset($xls->sheets[0]['cells'][$i + 2][$Col_POSTCODE_ZIPCODE]) ? $xls->sheets[0]['cells'][$i + 2][$Col_POSTCODE_ZIPCODE] : ""; 
             //error_log($STUDENT_SCHOOL_ID." ### LASTNAME: ".$LASTNAME." FIRSTNAME:".$FIRSTNAME);
 
             $IMPORT_DATA['ID'] = generateGuid();
