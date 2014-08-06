@@ -580,7 +580,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                 if (isset($params["LEVEL"]))
                     $SAVEDATA['LEVEL'] = addText($params["LEVEL"]);
 
-                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
                 $SAVEDATA['CAMPUS_ID'] = $OBJECT_PARENT->ID;
@@ -621,7 +620,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
 
                 if ($OBJECT_SCHOOL_YEAR)
                 {
-                    $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
                     $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                     $SAVEDATA['NAME'] = $OBJECT_SCHOOL_YEAR->NAME;
                     $SAVEDATA['TITLE'] = $OBJECT_PARENT->TITLE . " &raquo; " . $OBJECT_SCHOOL_YEAR->NAME . " (" . getTermNumberShort($OBJECT_PARENT->TERM_NUMBER) . ")";
@@ -692,7 +690,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['TREE_TYPE'] = 1;
                 }
 
-                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
+                $SAVEDATA['ENROLLMENT_TYPE'] = $OBJECT_PARENT->ENROLLMENT_TYPE;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['LEVEL'] = $OBJECT_PARENT->LEVEL;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;
@@ -793,7 +791,7 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                     $SAVEDATA['TREE_TYPE'] = 1;
                 }
 
-                $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = $OBJECT_PARENT->YEAR_MULTI_ENROLLMENT;
+                $SAVEDATA['ENROLLMENT_TYPE'] = $OBJECT_PARENT->ENROLLMENT_TYPE;
                 $SAVEDATA['SHORT'] = $OBJECT_PARENT->SHORT;
                 $SAVEDATA['LEVEL'] = $OBJECT_PARENT->LEVEL;
                 $SAVEDATA['TERM_NUMBER'] = $OBJECT_PARENT->TERM_NUMBER;

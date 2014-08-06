@@ -216,7 +216,7 @@ class AcademicDBAccess {
             $data["DISPLAY_YEAR_RESULT"] = $facette->DISPLAY_YEAR_RESULT ? true : false;
             $data["DISPLAY_GPA"] = $facette->DISPLAY_GPA ? true : false;
             $data["DISPLAY_GRADE_POINTS"] = $facette->DISPLAY_GRADE_POINTS ? true : false;
-            $data["YEAR_MULTI_ENROLLMENT"] = $facette->YEAR_MULTI_ENROLLMENT ? true : false;
+            $data["ENROLLMENT_TYPE"] = $facette->ENROLLMENT_TYPE;
             $data["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
             $data["EVALUATION_OPTION"] = $facette->EVALUATION_OPTION;
             $data["GRADING_TYPE"] = $facette->GRADING_TYPE;
@@ -542,8 +542,10 @@ class AcademicDBAccess {
         $SAVEDATA['DISPLAY_YEAR_RESULT'] = isset($params["DISPLAY_YEAR_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_GPA'] = isset($params["DISPLAY_GPA"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_GRADE_POINTS'] = isset($params["DISPLAY_GRADE_POINTS"]) ? 1 : 0;
-        $SAVEDATA['YEAR_MULTI_ENROLLMENT'] = isset($params["YEAR_MULTI_ENROLLMENT"]) ? 1 : 0;
-
+        
+        if (isset($params["ENROLLMENT_TYPE"]))
+            $SAVEDATA['ENROLLMENT_TYPE'] = addText($params["ENROLLMENT_TYPE"]);
+        
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
 
@@ -922,7 +924,6 @@ class AcademicDBAccess {
         if ($ENTRIES)
             foreach ($ENTRIES as $value)
             {
-                $SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $campusObject->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA["EDUCATION_TYPE"] = $campusObject->EDUCATION_TYPE;
                 $SAVEDATA["QUALIFICATION_TYPE"] = $campusObject->QUALIFICATION_TYPE;
                 $SAVEDATA["SCHOOL_TYPE"] = $campusObject->SCHOOL_TYPE;
@@ -951,7 +952,6 @@ class AcademicDBAccess {
                 $SAVEDATA["END_OF_GRADE"] = $gradeObject->END_OF_GRADE;
                 $SAVEDATA["NUMBER_CREDIT"] = $gradeObject->NUMBER_CREDIT;
                 $SAVEDATA["LEVEL"] = $gradeObject->LEVEL;
-                $SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $gradeObject->YEAR_MULTI_ENROLLMENT;
                 $SAVEDATA["SEMESTER1_WEIGHTING"] = $gradeObject->SEMESTER1_WEIGHTING;
                 $SAVEDATA["SEMESTER2_WEIGHTING"] = $gradeObject->SEMESTER2_WEIGHTING;
                 $SAVEDATA["EDUCATION_TYPE"] = $gradeObject->EDUCATION_TYPE;
@@ -991,7 +991,7 @@ class AcademicDBAccess {
                 {
 
                     $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
-                    $FIRST_SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $schoolyearObject->YEAR_MULTI_ENROLLMENT;
+                    $FIRST_SAVEDATA["ENROLLMENT_TYPE"] = $schoolyearObject->ENROLLMENT_TYPE;
                     $FIRST_SAVEDATA["END_OF_GRADE"] = $schoolyearObject->END_OF_GRADE;
                     $FIRST_SAVEDATA["NUMBER_CREDIT"] = $schoolyearObject->NUMBER_CREDIT;
                     $FIRST_SAVEDATA["EDUCATION_TYPE"] = $schoolyearObject->EDUCATION_TYPE;
@@ -999,9 +999,6 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["YEAR_RESULT"] = $schoolyearObject->YEAR_RESULT;
                     $FIRST_SAVEDATA["DISPLAY_GPA"] = $schoolyearObject->DISPLAY_GPA;
                     $FIRST_SAVEDATA["DISPLAY_GRADE_POINTS"] = $schoolyearObject->DISPLAY_GRADE_POINTS;
-                    $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
-
-                    $FIRST_SAVEDATA["EVALUATION_TYPE"] = $schoolyearObject->EVALUATION_TYPE;
                     $FIRST_SAVEDATA['DISPLAY_MONTH_RESULT'] = $schoolyearObject->DISPLAY_MONTH_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_FIRST_RESULT'] = $schoolyearObject->DISPLAY_FIRST_RESULT;
                     $FIRST_SAVEDATA['DISPLAY_SECOND_RESULT'] = $schoolyearObject->DISPLAY_SECOND_RESULT;
@@ -1095,7 +1092,7 @@ class AcademicDBAccess {
             {
                 foreach ($entries as $value)
                 {
-                    $SAVEDATA["YEAR_MULTI_ENROLLMENT"] = $schoolyearsubjectObject->YEAR_MULTI_ENROLLMENT;
+                    $SAVEDATA["ENROLLMENT_TYPE"] = $schoolyearsubjectObject->ENROLLMENT_TYPE;
                     $SAVEDATA["NUMBER_CREDIT"] = $schoolyearsubjectObject->NUMBER_CREDIT;
                     $SAVEDATA["EDUCATION_TYPE"] = $schoolyearsubjectObject->EDUCATION_TYPE;
                     $SAVEDATA["QUALIFICATION_TYPE"] = $schoolyearsubjectObject->QUALIFICATION_TYPE;
