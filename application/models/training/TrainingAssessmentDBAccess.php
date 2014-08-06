@@ -45,8 +45,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
     public static function getListTrainingSubjects($trainingId)
     {
-        $searchParams["trainingId"] = $trainingId;
-        return TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($searchParams);
+        return TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining(array("trainingId" => $trainingId));
     }
 
     public function getTrainingSubject()
@@ -58,55 +57,12 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
     }
 
-    //$veasna
-    public static function findTrainingAssignmentStudent($trainingSubjectId, $studentId)
+    public function getTrainingAssignment()
     {
-        $facette = self::findTrainingSubject($trainingSubjectId);
-        $SELECT_A = array(
-            'SHORT AS SHORT'
-            , 'NAME AS NAME'
-        );
-        $SELECT_B = array(
-            'SCORE AS SCORE'
-        );
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_assignment_temp'), $SELECT_A);
-        $SQL->joinLeft(array('B' => 't_student_training_assignment'), 'A.ID=B.ASSIGNMENT', $SELECT_B);
-        $SQL->where("B.STUDENT = '" . $studentId . "'");
-        $SQL->where("B.SUBJECT = '" . $facette->SUBJECT . "'");
-        $SQL->where("B.ASSIGNMENT = '" . $facette->ASSIGNMENT . "'");
-        $results = self::dbAccess()->fetchAll($SQL);
-        //return $results;
-        $data = array();
-
-        if ($results)
-        {
-            $data["NAME"] = $results[0]->NAME;
-            $data["SHORT"] = $results[0]->SHORT;
-            $data["SCORE"] = displayNumberFormat($results[0]->SCORE);
-            $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN) ? $facette->SCORE_MIN : 0;
-            $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX) ? $facette->SCORE_MAX : 0;
-            $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
-            $data["GOALS"] = setShowText($facette->GOALS);
-            $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
-            $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
-        }
-        else
-        {
-            $data["NAME"] = $facette->ASSIGNMENTNAME;
-            $data["SCORE"] = "---";
-            $data["SCORE_MIN"] = displayNumberFormat($facette->SCORE_MIN) ? $facette->SCORE_MIN : 0;
-            $data["SCORE_MAX"] = displayNumberFormat($facette->SCORE_MAX) ? $facette->SCORE_MAX : 0;
-            $data["DESCRIPTION"] = setShowText($facette->DESCRIPTION);
-            $data["GOALS"] = setShowText($facette->GOALS);
-            $data["MATERIALS"] = setShowText($facette->MATERIALS);
-            $data["EVALUATION_TYPE"] = setShowText($facette->EVALUATION_TYPE);
-            $data["OBJECTIVES"] = setShowText($facette->OBJECTIVES);
-        }
-        return array(
-            "success" => true
-            , "data" => $data
+        return self::getTrainingSubjectAssignment(
+                        $this->trainingObject->PARENT
+                        , $this->subjectId
+                        , $this->assignmentId
         );
     }
 
@@ -168,7 +124,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         );
     }
 
-    protected function scoreListSubjectByTraining($subjectId, $trainingObject, $listAssignments)
+    protected function getScoreListTrainingSubject($subjectId, $trainingObject, $listAssignments)
     {
 
         $data = array();
@@ -186,39 +142,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             }
         }
         return $data;
-    }
-
-    public function getCountScoreEnterByStudentTraining($studentId, $subjectId, $setIncludeInValuation)
-    {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->distinct();
-        $SQL->from(array('A' => "t_student_training_assignment"), array("COUNT(*) AS C"));
-        $SQL->joinLeft(array('B' => 't_assignment_temp'), 'A.ASSIGNMENT_ID=B.ID', array());
-
-        if ($subjectId)
-        {
-            $SQL->where("A.SUBJECT = ?", $subjectId);
-        }
-
-        if ($studentId)
-        {
-            $SQL->where("A.STUDENT = '" . $studentId . "'");
-        }
-        if ($this->trainingId)
-        {
-            $SQL->where("A.TRAINING = '" . $this->trainingId . "'");
-        }
-
-        if ($setIncludeInValuation)
-        {
-
-            $SQL->where("B.INCLUDE_IN_EVALUATION IN (1)");
-        }
-
-        $result = self::dbAccess()->fetchRow($SQL);
-        //error_log($SQL->__toString());
-        return $result ? $result->C : 0;
     }
 
     public function jsonActionDeleteSingleScoreTraining($encrypParams)
@@ -295,32 +218,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         );
     }
 
-    public function getStudentSubjectAssessmentTraining($studentId, $subjectId, $actionType = false)
-    {
-
-        $SELECTION_A = array('SUBJECT_VALUE', 'RANK', 'TEACHER_COMMENT');
-        $SELECTION_B = array('DESCRIPTION', 'LETTER_GRADE');
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => "t_student_subject_training_assessment"), $SELECTION_A);
-        $SQL->joinLeft(array('B' => 't_gradingsystem'), 'A.ASSESSMENT_ID=B.ID', $SELECTION_B);
-        $SQL->where("A.STUDENT_ID = ?", $studentId);
-        $SQL->where("A.SUBJECT_ID = '" . $subjectId . "'");
-        $SQL->where("A.TRAINING_ID = '" . $this->trainingId . "'");
-
-        if (!$actionType)
-        {
-            $SQL->where("A.ACTION_TYPE = 'ASSESSMENT'");
-        }
-        else
-        {
-            $SQL->where("A.ACTION_TYPE = '" . $actionType . "'");
-        }
-
-        //error_log($SQL->__toString());
-        return self::dbAccess()->fetchRow($SQL);
-    }
-
     public function jsonActionStudentSubjectAssessmentTraining($encrypParams, $noJson = false)
     {
 
@@ -363,21 +260,17 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
         $this->trainingObject = $this->getTrainingObject();
         $this->trainingSubject = $this->getTrainingSubject();
-
-        $this->assignmentObject = self::getTrainingSubjectAssignment(
-                        $this->trainingObject->PARENT
-                        , $this->subjectId
-                        , $this->assignmentId);
+        $this->assignmentObject = $this->getTrainingAssignment();
 
         $this->scoreType = $this->trainingSubject ? $this->trainingSubject->SCORE_TYPE : "";
 
         switch ($this->trainingObject->EVALUATION_TYPE)
         {
             case 1:
-                $this->scoreMaxe = $this->assignmentObject ? $this->assignmentObject->MAX_POSSIBLE_SCORE : "";
+                $this->scoreMaxe = $this->assignmentObject ? $this->assignmentObject->MAX_POSSIBLE_SCORE : "0";
                 break;
             default:
-                $this->scoreMaxe = $this->trainingSubject ? $this->trainingSubject->SCORE_MAX : "";
+                $this->scoreMaxe = $this->trainingSubject ? $this->trainingSubject->SCORE_MAX : "0";
                 break;
         }
 
@@ -528,7 +421,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $listAssignments = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, true);
         $listAssignmentsScoreDate = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, false);
 
-        $scoreList = $this->scoreListSubjectByTraining(
+        $scoreList = $this->getScoreListTrainingSubject(
                 $this->subjectId
                 , $this->trainingObject
                 , $listAssignments);
@@ -747,14 +640,9 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $this->date = isset($params["date"]) ? addText($params["date"]) : "";
 
         $this->trainingObject = $this->getTrainingObject();
-
-        $this->assignmentObject = self::getTrainingSubjectAssignment(
-                        $this->trainingObject->PARENT
-                        , $this->subjectId
-                        , $this->assignmentId
-        );
-
+        $this->assignmentObject = $this->getTrainingAssignment();
         $this->trainingSubject = $this->getTrainingSubject();
+
         $this->maxScore = $this->trainingSubject ? $this->trainingSubject->SCORE_MAX : "";
         $this->scoreType = $this->trainingSubject ? $this->trainingSubject->SCORE_TYPE : "";
         $this->teacherId = Zend_Registry::get('USER')->ID;
@@ -841,26 +729,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             $SAVEDATA["SCORE_INPUT_DATE"] = $this->date;
             self::dbAccess()->insert("t_student_score_date", $SAVEDATA);
         }
-    }
-
-    public static function loadScoreStudentTraining($studentId, $training, $subjectId, $asssignmentId)
-    {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_training_assignment");
-        $SQL->where("STUDENT = ?", $studentId);
-        $SQL->where("TRAINING = '" . $training . "'");
-        $SQL->where("SUBJECT = ?", $subjectId);
-        $SQL->where("ASSIGNMENT = '" . $asssignmentId . "'");
-        //error_log($SQL->__toString());
-        $stmt = self::dbAccess()->query($SQL);
-        $result = $stmt->fetch();
-        return $result ? $result->SCORE : "---";
-    }
-
-    public static function jsonAssessemntByTrainingSubjects($params)
-    {
-        //
     }
 
     public static function getTrainingListAssignmentScoreDate($trainingId, $subjectId, $setGroup = false)

@@ -21,9 +21,6 @@ $OBJECT_FORM = new CamemisForm("TRAINING");
 $OBJECT_FORM->setLoadUrl('/training/jsonload/');
 $OBJECT_FORM ->setSaveUrl("/training/jsonsave/");
 
-$ASSESSMENT_GRID = new CamemisGrid("TRAINING", "ASSESSMENT");
-$ASSESSMENT_GRID->setLoadUrl("/training/jsonload/");
-
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 ?>
 
@@ -223,27 +220,6 @@ Ext.onReady(function() {
     $OBJECT_FORM->labelWidth = 120;
     $OBJECT_FORM->renderJS();
     
-    ////////////////////////////////////////////////////////////////////////////
-    $ASSESSMENT_GRID->addCellRenderer("
-        function renderText(v, p, record, rowIndex){
-            return '<span class=spanText>' + v + '</span>';
-        }
-    ");
-
-    $ASSESSMENT_GRID->addReadField("name: 'SUBJECT'");
-    $ASSESSMENT_GRID->addReadField("name: 'AVERAGE'");
-    $ASSESSMENT_GRID->addColumn("header: '<b>".SUBJECT."</b>', width: 150, renderer:renderText, sortable: true, dataIndex: 'SUBJECT'");
-    $ASSESSMENT_GRID->addColumn("header: '<b>".AVERAGE."</b>', width: 150, renderer:renderText, sortable: true, dataIndex: 'AVERAGE'");
-
-    $ASSESSMENT_GRID->baseParams = "
-        start:0
-        ,limit:100
-        ,objectId: '".$this->studentId."'
-        ,trainingId: '".$this->objectId."'
-        ,cmd: 'jsonAssessemntByTrainingSubjects'
-    ";
-    $ASSESSMENT_GRID->forceFit = "false";
-    $ASSESSMENT_GRID->renderJS();
     ?>
     
     viewport = new Ext.Viewport({

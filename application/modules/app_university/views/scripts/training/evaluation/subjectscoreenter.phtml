@@ -36,12 +36,11 @@ $assignmentObject = StudentTrainingDBAccess::getTrainingSubjectAssignment(
 if(!$trainingObject) {header("Location: /main/permission/");exit;}
 
 switch($trainingObject->EVALUATION_TYPE){
-
     case 1:
-        $scoreMax = $assignmentObject?$assignmentObject->MAX_POSSIBLE_SCORE:"";
+        $scoreMax = $assignmentObject?$assignmentObject->MAX_POSSIBLE_SCORE:"0";
         break;
     default:
-        $scoreMax = $subjectObject->SCORE_MAX?$subjectObject:"";
+        $scoreMax = $subjectObject?$subjectObject->SCORE_MAX:"0";
         break;
 }
 

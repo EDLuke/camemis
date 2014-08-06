@@ -545,10 +545,6 @@ class TrainingController extends Zend_Controller_Action {
                 $jsondata = TrainingAssessmentDBAccess::jsonStudentTrainingAssessment($this->REQUEST->getPost());
                 break;
 
-            case "jsonAssessemntByTrainingSubjects";
-                $jsondata = TrainingAssessmentDBAccess::jsonAssessemntByTrainingSubjects($this->REQUEST->getPost());
-                break;
-
             case "listStudentTrainings";
                 $jsondata = StudentTrainingDBAccess::listStudentTrainings($this->REQUEST->getPost());
                 break;
@@ -560,10 +556,7 @@ class TrainingController extends Zend_Controller_Action {
             case "loadTrainingSubject";
                 $jsondata = TrainingSubjectDBAccess::loadTrainingSubject($this->REQUEST->getPost('objectId'));
                 break;
-            //@veasna                                                                            
-            case "loadTrainingAssignement";
-                $jsondata = TrainingAssessmentDBAccess::findTrainingAssignmentStudent($this->REQUEST->getPost('objectId'), $this->REQUEST->getPost('studentId'));
-                break;
+
             case "jsonTeacherByStudentTraining":
                 $jsondata = $this->DB_TRAINING_SUBJECT->jsonTeacherByStudentTraining($this->REQUEST->getPost());
                 break;
