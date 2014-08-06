@@ -144,6 +144,22 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         return $data;
     }
 
+    protected function getScoreListTrainingPerformance()
+    {
+
+        $data = array();
+        $entries = $this->listStudentsByTraining();
+
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
+                $data[] = self::getStudentAVGAllSubjects($value->STUDENT_ID, $this->trainingId);
+            }
+        }
+        return $data;
+    }
+
     public function jsonActionDeleteSingleScoreTraining($encrypParams)
     {
 
@@ -356,6 +372,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $data = array();
 
         $listSubjects = self::getListTrainingSubjects($this->trainingId);
+        $scoreList = $this->getScoreListTrainingPerformance();
 
         if ($this->listStudentsByTraining())
         {
@@ -374,8 +391,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
                 $data[$i]["ASSESSMENT"] = $assessmentObject->GRADING;
                 $data[$i]["ASSESSMENT_ID"] = $assessmentObject->ASSESSMENT_ID;
-
-                $data[$i]["RANK"] = "---";
+                $data[$i]["RANK"] = AssessmentConfig::findRank($scoreList, $AVERAGE);
 
                 if ($listSubjects)
                 {
