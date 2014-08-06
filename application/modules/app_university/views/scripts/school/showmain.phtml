@@ -43,7 +43,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'/school/showitem/?camIds=".$this->urlEncryp->encryptedGet("target=main_content")."'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component'
         }";
         $TREE_ITEMS[] = $MAIN_CONTENT;
         $SETTINGS = "{
@@ -51,7 +51,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'/school/showitem/?camIds=".$this->urlEncryp->encryptedGet("target=settings")."'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component_yellow'
         }";
         $TREE_ITEMS[] = $SETTINGS;
         $SECURITY_SETTINGS = "{
@@ -59,7 +59,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'/school/showitem/?camIds=".$this->urlEncryp->encryptedGet("target=security")."'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component_red'
         }";
         $TREE_ITEMS[] = $SECURITY_SETTINGS;
         $BACK_UP = "{
@@ -67,7 +67,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'/school/showitem/?camIds=".$this->urlEncryp->encryptedGet("target=back_up")."'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component_red'
         }";
         $TREE_ITEMS[] = $BACK_UP;
         $PRIVACY = "{
@@ -75,7 +75,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'http://camemis.com.kh/privacy'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component_yellow'
         }";
         $TREE_ITEMS[] = $PRIVACY;
         $TERM_OF_SERVICES = "{
@@ -83,7 +83,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,leaf:true
             ,url:'http://camemis.com.kh/terms-of-services?limitstart=0'
             ,cls:'nodeTextBold'
-            ,iconCls: 'icon-date_magnify'
+            ,iconCls: 'icon-component_yellow'
         }";
         $TREE_ITEMS[] = $TERM_OF_SERVICES;
         
