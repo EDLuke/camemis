@@ -206,37 +206,37 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
                         $TERM_STORE .= ",{chooseValue: 'SECOND_SEMESTER', chooseDisplay: '".SECOND_SEMESTER."'}";
                     break;
                 }
+                
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".$TERM_NAME."</b>'
+                    , width: 100
+                    , sortable: true
+                    , align:'center'
+                    , renderer:cssText
+                    , dataIndex: 'ENROLLMENT_TYPE'
+                    , hidden:".checkColHidden(10, $columndata)."
+                    , editor: new Ext.form.ComboBox({
+                        triggerAction:'all'
+                        ,mode:'local'
+                        ,store: new Ext.data.JsonStore({
+                            autoDestroy: true
+                            ,fields: ['chooseValue', 'chooseDisplay']
+                            ,data:[".$TERM_STORE."]
+                        })
+                        ,valueField: 'chooseValue'
+                        ,displayField: 'chooseDisplay'
+                        ,editable: false
+                        ,listeners: {
+                            select: function(combo, record, index) {
+                                var newDisplay = record.get('chooseDisplay');
+                                combo.setValue(newDisplay);
+                                comboValue = record.get('chooseValue');;
+                            }
+                        }
+                    })
+                ");
             break;
         }
-        
-         $ASSIGNED_STUDENTS_GRID->addColumn("
-            header: '<b>".$TERM_NAME."</b>'
-            , width: 100
-            , sortable: true
-            , align:'center'
-            , renderer:cssText
-            , dataIndex: 'ENROLLMENT_TYPE'
-            , hidden:".checkColHidden(10, $columndata)."
-            , editor: new Ext.form.ComboBox({
-                triggerAction:'all'
-                ,mode:'local'
-                ,store: new Ext.data.JsonStore({
-                    autoDestroy: true
-                    ,fields: ['chooseValue', 'chooseDisplay']
-                    ,data:[".$TERM_STORE."]
-                })
-                ,valueField: 'chooseValue'
-                ,displayField: 'chooseDisplay'
-                ,editable: false
-                ,listeners: {
-                    select: function(combo, record, index) {
-                        var newDisplay = record.get('chooseDisplay');
-                        combo.setValue(newDisplay);
-                        comboValue = record.get('chooseValue');;
-                    }
-                }
-            })
-        ");
         
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
