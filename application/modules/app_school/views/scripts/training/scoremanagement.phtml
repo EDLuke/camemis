@@ -94,11 +94,20 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     $js .= ",layout: 'card'";
                     $js .= ",activeItem: 0";
                     $js .= ",bodyStyle: 'padding:1px'";
+                    
                     $js .= ",items: [{";
-                        $js .= "layout: 'fit'";
-                        $js .= ",border: false";
-                        $js .= ",contentEl: 'initCenter'";
+                        $js .= "border: false";
+                        $js .= ",layout: 'anchor'";
+                        $js .= ",bodyStyle: 'background:#FFFFFF; padding:25px;'";
+                        $js .= ",items: [{";
+                            $js .= "title: ''";
+                            $js .= ",height:60";
+                            $js .= ",width:500";
+                            $js .= ",bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'";
+                            $js .= ",html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'";
+                        $js .= "}]";
                     $js .= "}]";
+                    
                 $js .= "}]";
             $js .= "}]";
         $js .= "});";

@@ -2,9 +2,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
-// Date: 28.03.2012
+// Date: 01.08.2014
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
+
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once 'models/UserAuth.php';
@@ -88,42 +89,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function jsonActionPublishTrainingSubjectAssessment($encrypParams)
-    {
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-
-        $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
-        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
-
-        $this->trainingObject = $this->getTrainingObject();
-        $this->trainingSubjectObject = $this->getTrainingSubject();
-        $this->trainingSubject = $this->trainingSubjectObject->SUBJECT;
-        $this->scoreType = $this->trainingSubjectObject ? $this->trainingSubjectObject->SCORE_TYPE : "";
-
-        $entries = $this->getListStudentsSubjectResultTraining(true);
-
-        $stdClass = (object) array(
-                    "trainingId" => $this->trainingId
-                    , "subjectId" => $this->subjectId
-        );
-
-        if ($entries)
-        {
-            for ($i = 0; $i < count($entries); $i++)
-            {
-                $stdClass->studentId = isset($entries[$i]["STUDENT_ID"]) ? $entries[$i]["STUDENT_ID"] : "";
-                $stdClass->subjectAssessment = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
-                $stdClass->subjectValue = isset($entries[$i]["AVG"]) ? $entries[$i]["AVG"] : "";
-                $stdClass->subjectRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
-                self::setStudentTrainingSubjectAssessment($stdClass);
-            }
-        }
-
-        return array(
-            "success" => true
-        );
-    }
-
     protected function getScoreListTrainingSubject($subjectId, $trainingObject, $listAssignments)
     {
 
@@ -159,6 +124,10 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
         return $data;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //ACTION...
+    ////////////////////////////////////////////////////////////////////////////
 
     public function jsonActionDeleteSingleScoreTraining($encrypParams)
     {
@@ -232,6 +201,69 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         return array(
             "success" => true
         );
+    }
+
+    public function jsonActionPublishTrainingSubjectAssessment($encrypParams)
+    {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+
+        $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
+        $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
+
+        $this->trainingObject = $this->getTrainingObject();
+        $this->trainingSubjectObject = $this->getTrainingSubject();
+        $this->trainingSubject = $this->trainingSubjectObject->SUBJECT;
+        $this->scoreType = $this->trainingSubjectObject ? $this->trainingSubjectObject->SCORE_TYPE : "";
+
+        $entries = $this->getListStudentsSubjectResultTraining(true);
+
+        $stdClass = (object) array(
+                    "trainingId" => $this->trainingId
+                    , "subjectId" => $this->subjectId
+        );
+
+        if ($entries)
+        {
+            for ($i = 0; $i < count($entries); $i++)
+            {
+                $stdClass->studentId = isset($entries[$i]["STUDENT_ID"]) ? $entries[$i]["STUDENT_ID"] : "";
+                $stdClass->subjectAssessment = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
+                $stdClass->subjectValue = isset($entries[$i]["AVG"]) ? $entries[$i]["AVG"] : "";
+                $stdClass->subjectRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
+                self::setStudentTrainingSubjectAssessment($stdClass);
+            }
+        }
+
+        return array(
+            "success" => true
+        );
+    }
+
+    public function jsonActionPublishTrainingPerformance($encrypParams)
+    {
+        $params = Utiles::setPostDecrypteParams($encrypParams);
+        $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
+
+        $this->trainingObject = $this->getTrainingObject();
+        $entries = $this->getListTrainingPerformance(true);
+
+        $stdClass = (object) array(
+                    "trainingId" => $this->trainingId
+        );
+
+        if ($entries)
+        {
+            for ($i = 0; $i < count($entries); $i++)
+            {
+                $stdClass->studentId = isset($entries[$i]["STUDENT_ID"]) ? $entries[$i]["STUDENT_ID"] : "";
+                $stdClass->performanceAssessment = isset($entries[$i]["ASSESSMENT_ID"]) ? $entries[$i]["ASSESSMENT_ID"] : "";
+                $stdClass->performanceValue = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
+                $stdClass->performanceRank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
+                self::setStudentTrainingPerformance($stdClass);
+            }
+        }
+
+        return array("success" => true);
     }
 
     public function jsonActionStudentSubjectAssessmentTraining($encrypParams, $noJson = false)
@@ -384,7 +416,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
             {
 
                 $this->studentId = $value->STUDENT_ID;
-
+                $data[$i]["STUDENT_ID"] = $value->STUDENT_ID;
                 $AVERAGE = self::getStudentAVGAllSubjects($value->STUDENT_ID, $this->trainingId);
                 $assessmentObject = self::getAssessment(false, $AVERAGE);
                 $data[$i]["AVERAGE"] = $AVERAGE;
@@ -703,6 +735,39 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
     }
 
+    protected function setStudentTrainingPerformance($stdClass)
+    {
+        $SAVEDATA = array();
+
+        if (isset($stdClass->performanceValue))
+            $SAVEDATA["PERFORMANCE_VALUE"] = $stdClass->performanceValue;
+        if (isset($stdClass->performanceRank))
+            $SAVEDATA["RANK"] = $stdClass->performanceRank;
+        if (isset($stdClass->performanceAssessment))
+            $SAVEDATA["ASSESSMENT_ID"] = $stdClass->performanceAssessment;
+        if (isset($stdClass->teacherComment))
+            $SAVEDATA["TEACHER_COMMENT"] = $stdClass->teacherComment;
+
+        $SAVEDATA["PUBLISHED_DATE"] = getCurrentDBDateTime();
+        $SAVEDATA["PUBLISHED_BY"] = Zend_Registry::get('USER')->CODE;
+
+        if (self::getStudentTrainingPerformance($stdClass->studentId, $stdClass->trainingId))
+        {
+            $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
+            $WHERE[] = "TRAINING_ID = '" . $stdClass->trainingId . "'";
+            self::dbAccess()->update('t_student_training_performance', $SAVEDATA, $WHERE);
+        }
+        else
+        {
+            if ($stdClass->studentId && $stdClass->trainingId)
+            {
+                $SAVEDATA["STUDENT_ID"] = $stdClass->studentId;
+                $SAVEDATA["TRAINING_ID"] = $stdClass->trainingId;
+                self::dbAccess()->insert("t_student_training_performance", $SAVEDATA);
+            }
+        }
+    }
+
     protected function checkStudentScoreSubjectAssignment()
     {
 
@@ -800,11 +865,24 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
         else
         {
-            $SAVEDATA["STUDENT_ID"] = $stdClass->studentId;
-            $SAVEDATA["SUBJECT_ID"] = $stdClass->subjectId;
-            $SAVEDATA["TRAINING_ID"] = $stdClass->trainingId;
-            self::dbAccess()->insert("t_student_subject_training_assessment", $SAVEDATA);
+            if ($stdClass->studentId && $stdClass->subjectId && $stdClass->trainingId)
+            {
+                $SAVEDATA["STUDENT_ID"] = $stdClass->studentId;
+                $SAVEDATA["SUBJECT_ID"] = $stdClass->subjectId;
+                $SAVEDATA["TRAINING_ID"] = $stdClass->trainingId;
+                self::dbAccess()->insert("t_student_subject_training_assessment", $SAVEDATA);
+            }
         }
+    }
+
+    protected static function getStudentTrainingPerformance($studentId, $trainingId)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_training_performance", array("*"));
+        $SQL->where("STUDENT_ID = '" . $studentId . "'");
+        $SQL->where("TRAINING_ID = '" . $trainingId . "'");
+        //error_log($SQL->__toString());
+        return self::dbAccess()->fetchRow($SQL);
     }
 
     protected static function getStudentTrainingSubjectAssessment($studentId, $subjectId, $trainingId)
