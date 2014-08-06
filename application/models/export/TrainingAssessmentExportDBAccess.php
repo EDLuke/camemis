@@ -6,10 +6,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 require_once("Zend/Loader.php");
 require_once 'models/export/CamemisExportDBAccess.php';
-
+require_once 'models/training/TrainingAssessmentDBAccess.php';
 
 class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
-    
     
     function __construct($objectId) {
 
@@ -27,35 +26,16 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
         $entries = array();
         if($subjects){
             foreach($subjects as $subject){
-                $entries[$subject->SUBJECT_ID] = $subject;      
+                $entries["SUB_".$subject->SUBJECT_ID] = $subject;      
             }
         }
         return $entries;
-    }
-    
-    public function dispayHeader(){
-        
-        $schoolName = (Zend_Registry::get('SCHOOL')->NAME)?Zend_Registry::get('SCHOOL')->NAME:"";
-        $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
-        $training = $trainingObject->NAME;
-        $program = TrainingDBAccess::findTrainingFromId($trainingObject->PROGRAM)->NAME;
-        $level = TrainingDBAccess::findTrainingFromId($trainingObject->LEVEL)->NAME;
-        $term = getShowDate($trainingObject->START_DATE)."-".getShowDate($trainingObject->END_DATE);
-        $this->setCellMergeContent(0, $this->startHeader, $schoolName."\n".$program, A1, J1);
-        $this->setFontStyle(0,$this->startHeader, true, 12, "000000");
-        $this->setFullStyle(0, $this->startHeader, "DDDDDD");
-        $this->setCellStyle(0, $this->startHeader,100, 40);
-        
-        $this->setCellMergeContent(0, $this->startHeader+1, LEVEL.": ".$level, A2, B2);
-        $this->setCellMergeContent(0, $this->startHeader+2, TERM.": ".$term, A3, B3);
-        $this->setCellMergeContent(0, $this->startHeader+3, CLASS_NAME.": ".$training, A4, B4);
-                   
     }
 
     public function setContentHeader() {
         
         $i = 0;
-        $this->startHeader=6;
+       
         $subjects = $this->getSubjectTraining();
         foreach ($this->getUserSelectedColumns() as $value) {
             switch ($value) {
@@ -69,7 +49,7 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
                     break;
                 case "STUDENT":
                     $CONST_NAME = "FULL_NAME";
-                    $colWidth = 20;
+                    $colWidth = 30;
                     break;
                 case "RANK":
                     $CONST_NAME = "RANK";
@@ -79,13 +59,21 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
                     $CONST_NAME = "AVERAGE";
                     $colWidth = 20;
                     break;
-                case $subjects[$value]->SUBJECT_ID:
-                    $CONST_NAME = $subjects[$value]->NAME;
-                    $colWidth = 50;
+                case "GENDER":
+                    $CONST_NAME = "GENDER";
+                    $colWidth = 10;
+                    break;
+                case "ASSESSMENT":
+                    $CONST_NAME = "ASSESSMENT";
+                    $colWidth = 20;
+                    break;
+                case "SUB_".$subjects[$value]->SUBJECT_ID:
+                    $CONST_NAME = htmlspecialchars_decode($subjects[$value]->SUBJECT_SHORT);
+                    $colWidth = 15;
                     break;
                 default:
                     $CONST_NAME = defined($value) ? constant($value) : $value;
-                    $colWidth = 30;
+                    $colWidth = 20;
                     break;
             }
             
@@ -99,9 +87,11 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
         }
     }
 
-    public function setContent($searchParams) {
+    public function setContent() {
         
-        $entries = $this->DB_STUDENT_TRAINING->jsonListStudentsClassPerformanceTraining($searchParams,false);
+        $traininAssessment = new TrainingAssessmentDBAccess();
+        $traininAssessment->trainingId = $this->trainingId;
+        $entries = $traininAssessment->getListTrainingPerformance(true);
         if ($entries) {
             for ($i = 0; $i < count($entries); $i++) {
                 $colIndex = 0;
@@ -135,13 +125,13 @@ class TrainingAssessmentExportDBAccess extends CamemisExportDBAccess {
     }
 
     public function listStudentsClassPerformanceTraining($searchParams) {
+        $params = Utiles::setPostDecrypteParams($searchParams);
         ini_set('max_execution_time', 600000);
         set_time_limit(35000);
-        $this->trainingId = isset($searchParams['trainingId'])?addText($searchParams['trainingId']):'';
+        $this->trainingId = isset($params['trainingId'])?addText($params['trainingId']):'';
         $this->EXCEL->setActiveSheetIndex(0);
-        //$this->dispayHeader();
         $this->setContentHeader();
-        $this->setContent($searchParams); 
+        $this->setContent(); 
         $this->EXCEL->getActiveSheet()->setTitle("" . ASSESSMENT . "");
         $this->WRITER->save($this->getAssessmentStudentTrainingOnClass());
 

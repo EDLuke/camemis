@@ -465,7 +465,21 @@ Ext.onReady(function() {
         ,cmd: 'searchStudent'
         ".$gridParam." 
     ";
-
+    if($gridParam){
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-',[{
+                text: '".CANCEL."'
+                ,id: 'CANCEL_ID'
+                ,formBind:true
+                ,iconCls:'icon-cancel'
+                ,scope:this
+                ,handler: function(){
+                    window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);  
+                }
+            }]);
+        ");
+            
+    }
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         
         $OBJECT_GRID->addTBarItems("
@@ -540,6 +554,23 @@ Ext.onReady(function() {
     $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->renderJS();
     ?>
+    <?
+    if($gridParam){
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout: 'card'
+            ,id:'content'
+            ,activeItem: 0
+            ,border: false
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
+    <?
+    }else{
+    ?>
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
@@ -600,7 +631,7 @@ Ext.onReady(function() {
             }]
         }]
     });
-
+    <?}?>
     var comboParent = Ext.getCmp('PROVINCE_ID');
     var comboChild = Ext.getCmp('TWON_ID');
     if(comboParent){

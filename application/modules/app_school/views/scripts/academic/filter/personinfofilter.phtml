@@ -164,6 +164,22 @@ if($this->objectType){
     <script>
         Ext.onReady(function() {
             
+            viewport = new Ext.Viewport({
+                layout: 'fit'
+                ,border: false
+                ,items:[{
+                    layout: 'card'
+                    ,id:'content'
+                    ,activeItem: 0
+                    ,border: false
+                    ,items:[{
+                        border: false
+                        ,bodyStyle: 'background:#dee7f6;'
+                        ,autoScroll:true
+                        ,contentEl: 'initStatistic'
+                    }]
+                }]
+            });
             /*viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false

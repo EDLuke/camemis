@@ -205,7 +205,7 @@ class ExportController extends Zend_Controller_Action {
                 $jsondata = $this->STUDENT_DISCIPLINE_EXCEL->jsonSearchStudentDiscipline($this->REQUEST->getPost());
                 break;
             
-            case "jsonListStudentsClassPerformanceTraining":
+            case "jsonTrainingPerformance":
                 $jsondata = $this->STUDENT_TRAINING_ASSESSMENT_EXCEL->listStudentsClassPerformanceTraining($this->REQUEST->getPost());
                 break;
             //@Visal
