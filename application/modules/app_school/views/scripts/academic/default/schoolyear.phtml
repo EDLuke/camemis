@@ -104,19 +104,15 @@ $viewportItem = new ViewportItem(
         if($this->facette->EDUCATION_SYSTEM){
             $DETAIL_INFORMATION_ITEMS = "[
                 {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
-                ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
-                ,{".CamemisField::Textfield("PHONE_ID","PHONE",PHONE)."}
-                ,{".CamemisField::Textfield("EMAIL_ID","EMAIL",EMAIL)."}
                 ,{".CamemisField::Numberfield("NUMBER_CREDIT", "NUMBER_CREDIT", NUMBER_CREDIT, false, false, false)."}
+                ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }else{
             $DETAIL_INFORMATION_ITEMS = "[
                 {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
-                ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
                 ,{".CamemisField::Checkbox("USE_OF_GROUPS","USE_OF_GROUPS",USE_OF_GROUPS, 1, false, false,true)."}    
-                ,{".CamemisField::Textfield("PHONE_ID","PHONE",PHONE)."}
-                ,{".CamemisField::Textfield("EMAIL_ID","EMAIL",EMAIL)."}
                 ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, false, false, false, false,false)."}
+                ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }
 
