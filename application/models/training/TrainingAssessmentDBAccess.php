@@ -679,13 +679,25 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
         $params = Utiles::setPostDecrypteParams($params);
 
-        $this->scoreInput = isset($params["newValue"]) ? addText($params["newValue"]) : "";
         $this->studentId = isset($params["id"]) ? addText($params["id"]) : "";
         $this->trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : "";
         $this->assignmentId = isset($params["assignmentId"]) ? addText($params["assignmentId"]) : "";
+        $this->field = isset($params["field"]) ? addText($params["field"]) : "";
 
         $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $this->date = isset($params["date"]) ? addText($params["date"]) : "";
+
+        switch ($this->field)
+        {
+            case "TEACHER_COMMENTS":
+                $this->teacherComment = isset($params["newValue"]) ? addText($params["newValue"]) : "";
+                $this->scoreInput = "";
+                break;
+            default:
+                $this->teacherComment = "";
+                $this->scoreInput = isset($params["newValue"]) ? addText($params["newValue"]) : "";
+                break;
+        }
 
         $this->trainingObject = $this->getTrainingObject();
         $this->assignmentObject = $this->getTrainingAssignment();
@@ -708,7 +720,11 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
         $SAVEDATA = array();
 
-        $SAVEDATA["SCORE"] = $this->scoreInput;
+        if ($this->teacherComment)
+            $SAVEDATA["TEACHER_COMMENTS"] = $this->teacherComment;
+
+        if ($this->scoreInput)
+            $SAVEDATA["SCORE"] = $this->scoreInput;
 
         if ($this->checkStudentScoreSubjectAssignment())
         {

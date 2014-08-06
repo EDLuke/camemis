@@ -230,7 +230,8 @@ Ext.onReady(function() {
                 , editor: ".$comboAssessment."}
             ";
 
-            $COLUMNS .= ",{dataIndex: 'AVG', header: '<b>AVG</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
+            $AVG_TITLE = $trainingObject->EVALUATION_TYPE?"AVG%":"AVG";
+            $COLUMNS .= ",{dataIndex: 'AVG', header: '<b>".$AVG_TITLE."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
             break;
         default:
             $COLUMNS .= ",{dataIndex: 'ASSESSMENT', header: '<b>".ASSESSMENT."</b>', width: 100 ,align: 'center',sortable: true,renderer:cssAssessment}";

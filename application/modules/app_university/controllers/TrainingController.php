@@ -216,23 +216,6 @@ class TrainingController extends Zend_Controller_Action {
         );
     }
 
-    public function trainingassessmentAction()
-    {
-
-        //UserAuth::actionPermint($this->_request, "TRAINING_PROGRAMS");
-        $this->view->objectId = $this->objectId;
-        $this->view->trainingId = $this->trainingId;
-        $this->view->TEACHER_SELECTION = $this->UTILES->buildURL(
-                'training/teacherselection'
-                , array("objectId" => $this->objectId));
-        //@veasna
-        $this->view->URL_SHOW_TRANSCRIPT_TRAINING = $this->UTILES->buildURL(
-                'training/evaluationstudenttraining'
-                , array("objectId" => $this->objectId)
-        );
-        //
-    }
-
     //@veasna
     public function evaluationstudenttrainingAction()
     {
