@@ -25,6 +25,7 @@ $ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
 
 ?>
@@ -141,17 +142,9 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_TERM'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_NAME'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME_LATIN'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'PHONE'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'EMAIL'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STREET'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TOWN_CITY'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'POSTCODE_ZIPCODE'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'COUNTRY'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_MOTHER'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_FATHER'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CREATED_DATE'");
@@ -159,7 +152,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS_KEY'");
         $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS'");
-        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_TERM'");
+        $ASSIGNED_STUDENTS_GRID->addReadField("name: 'ENROLLMENT_TYPE'");
         
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
             case "VIETNAMESE": $width = 100;break;
@@ -186,14 +179,67 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         }
 
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: true, dataIndex: 'PHONE'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'EMAIL'");
-
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(11, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150, hidden:".checkColHidden(13, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_TERM'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150, hidden:".checkColHidden(14, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_NAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(15, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+        
+        switch($this->facette->ENROLLMENT_TYPE){
+            case 1:
+                switch ($TERM_NUMBER) {
+                    case 1:
+                        $TERM_NAME = TERM;
+                        $TERM_STORE = "{chooseValue: '0', chooseDisplay: '---'}";
+                        $TERM_STORE .= ",{chooseValue: 'FIRST_TERM', chooseDisplay: '".FIRST_TERM."'}";
+                        $TERM_STORE .= ",{chooseValue: 'SECOND_TERM', chooseDisplay: '".SECOND_TERM."'}";
+                        $TERM_STORE .= ",{chooseValue: 'THIRD_TERM', chooseDisplay: '".THIRD_TERM."'}";
+                    break;
+                    case 2:
+                        $TERM_NAME = QUARTER;
+                        $TERM_STORE = "{chooseValue: '0', chooseDisplay: '---'}";
+                        $TERM_STORE .= ",{chooseValue: 'FIRST_QUARTER', chooseDisplay: '".FIRST_QUARTER."'}";
+                        $TERM_STORE .= ",{chooseValue: 'SECOND_QUARTER', chooseDisplay: '".SECOND_QUARTER."'}";
+                        $TERM_STORE .= ",{chooseValue: 'THIRD_QUARTER', chooseDisplay: '".THIRD_QUARTER."'}";
+                        $TERM_STORE .= ",{chooseValue: 'FOURTH_QUARTER', chooseDisplay: '".FOURTH_QUARTER."'}";
+                    break;
+                    default:
+                        $TERM_NAME = SEMESTER;
+                        $TERM_STORE = "{chooseValue: '0', chooseDisplay: '---'}";
+                        $TERM_STORE .= ",{chooseValue: 'FIRST_SEMESTER', chooseDisplay: '".FIRST_SEMESTER."'}";
+                        $TERM_STORE .= ",{chooseValue: 'SECOND_SEMESTER', chooseDisplay: '".SECOND_SEMESTER."'}";
+                    break;
+                }
+            break;
+        }
+        
+         $ASSIGNED_STUDENTS_GRID->addColumn("
+            header: '<b>".$TERM_NAME."</b>'
+            , width: 100
+            , sortable: true
+            , align:'center'
+            , renderer:cssText
+            , dataIndex: 'ENROLLMENT_TYPE'
+            , hidden:".checkColHidden(10, $columndata)."
+            , editor: new Ext.form.ComboBox({
+                triggerAction:'all'
+                ,mode:'local'
+                ,store: new Ext.data.JsonStore({
+                    autoDestroy: true
+                    ,fields: ['chooseValue', 'chooseDisplay']
+                    ,data:[".$TERM_STORE."]
+                })
+                ,valueField: 'chooseValue'
+                ,displayField: 'chooseDisplay'
+                ,editable: false
+                ,listeners: {
+                    select: function(combo, record, index) {
+                        var newDisplay = record.get('chooseDisplay');
+                        combo.setValue(newDisplay);
+                        comboValue = record.get('chooseValue');;
+                    }
+                }
+            })
+        ");
+        
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
         
         $ASSIGNED_STUDENTS_GRID->isQuickySearch = true;
         $ASSIGNED_STUDENTS_GRID->isCheckboxSelect = false;
