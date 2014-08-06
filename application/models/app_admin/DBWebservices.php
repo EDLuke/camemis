@@ -217,7 +217,7 @@ class DBWebservices {
                     {
                         if (self::checkUseConst($DB_NAME, $CONST))
                         {
-                            self::dbAccess()->delete($DB_NAME.t_localization, "CONST='" . $CONST . "'");
+                            self::dbAccess()->delete($DB_NAME . t_localization, "CONST='" . $CONST . "'");
                         }
                     }
                 }
@@ -231,12 +231,12 @@ class DBWebservices {
     {
 
         $CONST = isset($params["CONST"]) ? trim($params["CONST"]) : "";
-        $LANGUAGE = isset($params["language"]) ? trim($params["language"]) : "";
+        $LANGUAGE = isset($params["language"]) ? trim($params["language"]) : "ENGLISH";
         $POST_CONTENT = isset($params["CHOOSE_LANGUAGE"]) ? trim($params["CHOOSE_LANGUAGE"]) : "";
 
         if (self::checkUseConst('t_localization', $CONST, true))
         {
-            self::dbAccess()->update("t_localization", array( 'LANGUAGE' => "'". addslashes(stripslashes($POST_CONTENT)) ."'" ), "CONST='". $CONST ."'");
+            self::dbAccess()->update("t_localization", array($LANGUAGE => addslashes(stripslashes($POST_CONTENT))), "CONST='" . $CONST . "'");
         }
         else
         {
@@ -256,7 +256,7 @@ class DBWebservices {
                 {
                     if (self::checkUseConst($DB_NAME, $CONST))
                     {
-                        self::dbAccess()->update($DB_NAME.t_localization, array( 'LANGUAGE'=> "'". addslashes(stripslashes($POST_CONTENT)) ."'"), "CONST='". $CONST ."'");
+                        self::dbAccess()->update($DB_NAME . ".t_localization", array($LANGUAGE => addslashes(stripslashes($POST_CONTENT))), "CONST='" . $CONST . "'");
                     }
                     else
                     {
@@ -268,6 +268,7 @@ class DBWebservices {
                 }
             }
         }
+
         return array("success" => true);
     }
 
@@ -352,7 +353,7 @@ class DBWebservices {
         {
             foreach ($result as $value)
             {
-                self::dbAccess()->update("t_localization", array('language' => "'". addslashes(stripslashes($value->$language)) ."'"), "CONST='". $value->CONST ."'");
+                self::dbAccess()->update("t_localization", array('language' => "'" . addslashes(stripslashes($value->$language)) . "'"), "CONST='" . $value->CONST . "'");
             }
         }
     }
@@ -396,9 +397,9 @@ class DBWebservices {
 
     public static function actionOptimizeTable()
     {
-        
+
         error_log("Ja, ich bin hier.");
-        
+
         $entries = self::getCAMEMISDatabases();
         $CHECK_DATA = self::exceptionDB();
         if ($entries)
@@ -415,7 +416,6 @@ class DBWebservices {
                             $name = "Tables_in_" . $DB_NAME;
                             $SQL = "OPTIMIZE TABLE " . $value->$name . "";
                             self::dbAccess()->query($SQL);
-                            
                         }
                     }
                 }
