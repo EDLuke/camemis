@@ -147,7 +147,7 @@ class StudentDBAccess {
     {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from(array('A' => 't_student'));
+        $SQL->from(array('A' => 't_student'), array('*'));
         $SQL->joinLeft(array('B' => 't_student_status'), 'A.ID=B.STUDENT', array('B.STATUS_ID'));
 
         $SQL->where("A.ID = ?", $Id);
