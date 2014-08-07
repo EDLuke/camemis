@@ -38,7 +38,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_CLASS_ID");
                 title:'<?=WARNING?>'
                 ,width: 350
                 ,msg:'<?=DELETE_THIS_ITEM?>'
-                ,buttons: Ext.MessageBox.YESNOCANCEL
+                ,buttons: Ext.MessageBox.YESNO
                 ,icon: Ext.MessageBox.QUESTION
                 ,fn: function(btn){
                     if (btn === 'yes'){
