@@ -29,7 +29,7 @@ function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
     $js .= "title:'" . STATUS . "'";
     $js .= ",width: 350";
     $js .= ",msg: '" . DELETE_THIS_ITEM . "'";
-    $js .= ",buttons: Ext.MessageBox.YESNOCANCEL";
+    $js .= ",buttons: Ext.MessageBox.YESNO";
     $js .= ",icon: Ext.MessageBox.WARNING";
     $js .= ",fn: function(btn, text){
         if (btn == 'yes'){
