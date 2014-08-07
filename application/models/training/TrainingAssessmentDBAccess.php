@@ -466,8 +466,8 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
     {
 
         $data = array();
-        $listAssignments = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, true);
-        $listAssignmentsScoreDate = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, false);
+        $listAssignments = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, "ASSIGNMENT");
+        $listAssignmentsScoreDate = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, "DATE");
 
         $scoreList = $this->getScoreListTrainingSubject(
                 $this->subjectId
@@ -632,6 +632,10 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
     protected function getStudentTrainingSubjectAverage($studentId, $subjectId, $trainingObject, $listAssignments)
     {
         $result = "";
+        $COEFF_VALUE = "";
+        $SUM_AVG = "";
+        $SUM_COEFF_VALUE = "";
+
         $CHECK = $this->checkStudentAssignmentTraining($studentId, $subjectId);
         if ($CHECK)
         {
@@ -828,7 +832,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
     }
 
-    public static function getTrainingListAssignmentScoreDate($trainingId, $subjectId, $setGroup = false)
+    public static function getTrainingListAssignmentScoreDate($trainingId, $subjectId, $setGroup)
     {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_assignment_temp'), array("ID", "SHORT"));
@@ -838,8 +842,16 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL->where("C.SUBJECT_ID = ?", $subjectId);
         $SQL->where("C.TRAINING_ID = ?", $trainingId);
         $SQL->order('A.SORTKEY ASC');
-        if ($setGroup)
-            $SQL->group("C.ASSIGNMENT_ID");
+
+        switch ($setGroup)
+        {
+            case "ASSIGNMENT":
+                $SQL->group("C.ASSIGNMENT_ID");
+                break;
+            case "DATE":
+                $SQL->group("C.SCORE_INPUT_DATE");
+                break;
+        }
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }

@@ -22,15 +22,16 @@ $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, 
 if(!$trainingObject) {header("Location: /main/permission/");exit;}
 
 AssessmentConfig::setGradingScale();
+
 $listGroups = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
         $this->trainingId
         , $this->subjectId
-        , true);
+        , "ASSIGNMENT");
 
 $listAssignments = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
         $this->trainingId
         , $this->subjectId
-        , false);
+        , "DATE");
 
 $setParams = "";
 $setParams .="&trainingId=".$this->trainingId."";
@@ -179,6 +180,8 @@ Ext.onReady(function() {
             $assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment($trainingObject->PARENT, $this->subjectId, $value->ID);
             if($assignmentObject){
                 $COEFF_VALUE = $assignmentObject->COEFF_VALUE?$assignmentObject->COEFF_VALUE:1;
+            }else{
+                $COEFF_VALUE = 1;
             }
             $DISPLAY = $trainingObject->EVALUATION_TYPE?"$value->SHORT (".$COEFF_VALUE."%)":"$value->SHORT (".$COEFF_VALUE.")";
             $colspan =  TrainingAssessmentDBAccess::getAssignmentCountScoreDate($value->ID, $this->trainingId, $this->subjectId);
