@@ -93,13 +93,13 @@ class StudentSearchDBAccess {
         $this->qualificationDegree = isset($params["QUALIFICATION_DEGREE"]) ? addText($params["QUALIFICATION_DEGREE"]) : "";
         $this->name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $this->description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
-       
-        $this->islimit=false;
-        $allStudent =count($this->queryAllStudents());
-        $this->islimit=true;
-        $result=$this->queryAllStudents();
 
-        return $this->getGridData($result,$allStudent);
+        $this->islimit = false;
+        $allStudent = count($this->queryAllStudents());
+        $this->islimit = true;
+        $result = $this->queryAllStudents();
+
+        return $this->getGridData($result, $allStudent);
     }
 
     public function getSearchIn()
@@ -132,7 +132,7 @@ class StudentSearchDBAccess {
             switch ($this->getSearchIn())
             {
                 case "TRADITIONAL":
-                    $SQL->joinLeft(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array());
+                    $SQL->joinLeft(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array("ACADEMIC_TERM"));
                     $SQL->joinLeft(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=TRADITIONAL.CAMPUS', array("NAME AS CAMPUS_NAME"));
                     $SQL->joinLeft(array('GRADE' => 't_grade'), 'GRADE.ID=TRADITIONAL.GRADE', array("ID AS GRADE_ID", "NAME AS GRADE_NAME"));
                     $SQL->joinLeft(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=TRADITIONAL.SCHOOL_YEAR', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
@@ -165,7 +165,7 @@ class StudentSearchDBAccess {
 
                     if ($this->creditSchoolyearId)
                         $SQL->where("CREDIT.SCHOOLYEAR_ID = '" . $this->creditSchoolyearId . "'");
-                    
+
                     if ($this->creditClassId)
                         $SQL->where("CREDIT.CLASS_ID = '" . $this->creditClassId . "'");
 
@@ -192,7 +192,8 @@ class StudentSearchDBAccess {
             }
         }
 
-        if ($this->searchDescription) {
+        if ($this->searchDescription)
+        {
             $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
             $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
         }
@@ -200,27 +201,33 @@ class StudentSearchDBAccess {
         //
         $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
         $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
-        
-        if ($this->institutionName) {
-            $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%"); 
+
+        if ($this->institutionName)
+        {
+            $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%");
         }
-        if ($this->academicYear) {
-            $SQL->where('PERSON_INFOS.ACADEMIC_YEAR LIKE ?', "" . $this->academicYear . "%"); 
-        }                 
-        if ($this->major) {
-            $SQL->where('PERSON_INFOS.MAJOR LIKE ?', "" . $this->major . "%"); 
-        } 
-        if ($this->qualificationDegree) {
-            $SQL->where('PERSON_INFOS.QUALIFICATION_DEGREE LIKE ?', "" . $this->qualificationDegree . "%"); 
-        } 
-         if ($this->name) {
-            $SQL->where('STUDENT_PREREQUIRMENT.NAME LIKE ?', "" . $this->name . "%"); 
-        } 
-        if ($this->description) {
-            $SQL->where('STUDENT_PREREQUIRMENT.DESCRIPTION LIKE ?', "" . $this->description . "%"); 
-        } 
+        if ($this->academicYear)
+        {
+            $SQL->where('PERSON_INFOS.ACADEMIC_YEAR LIKE ?', "" . $this->academicYear . "%");
+        }
+        if ($this->major)
+        {
+            $SQL->where('PERSON_INFOS.MAJOR LIKE ?', "" . $this->major . "%");
+        }
+        if ($this->qualificationDegree)
+        {
+            $SQL->where('PERSON_INFOS.QUALIFICATION_DEGREE LIKE ?', "" . $this->qualificationDegree . "%");
+        }
+        if ($this->name)
+        {
+            $SQL->where('STUDENT_PREREQUIRMENT.NAME LIKE ?', "" . $this->name . "%");
+        }
+        if ($this->description)
+        {
+            $SQL->where('STUDENT_PREREQUIRMENT.DESCRIPTION LIKE ?', "" . $this->description . "%");
+        }
         //
-        
+
         if ($this->firstname)
             $SQL->where('STUDENT.FIRSTNAME LIKE ?', "" . $this->firstname . "%");
 
@@ -266,8 +273,9 @@ class StudentSearchDBAccess {
             $SQL->orWhere('STUDENT.CODE LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
             $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
         }
-        if($this->islimit){
-            $SQL->limit($this->limit, $this->start); 
+        if ($this->islimit)
+        {
+            $SQL->limit($this->limit, $this->start);
         }
         $SQL->group('STUDENT.ID');
 
@@ -291,15 +299,19 @@ class StudentSearchDBAccess {
                 }
 
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT) {
-                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
+                if ($parentObject->PARENT)
+                {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT]))
+                    {
                         $RADIOBOX_DATA[$value->ID] = $value->ID;
                     }
                 }
-                
+
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT) {
-                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT])) {
+                if ($parentObject->PARENT)
+                {
+                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT]))
+                    {
                         $INPUTFIELD_DATA[$value->ID] = $value->ID;
                     }
                 }
@@ -322,7 +334,7 @@ class StudentSearchDBAccess {
         }
     }
 
-    public function getGridData($entries,$totalRecord)
+    public function getGridData($entries, $totalRecord)
     {
         $data = array();
 
@@ -360,6 +372,41 @@ class StudentSearchDBAccess {
                         $data[$i]["CURRENT_SCHOOLYEAR"] = $value->CURRENT_SCHOOLYEAR;
                         $data[$i]["CURRENT_ACADEMIC"] = $value->CURRENT_ACADEMIC;
                         $data[$i]["CURRENT_COURSE"] = $value->CURRENT_COURSE;
+
+                        if ($value->ACADEMIC_TERM)
+                        {
+                            switch ($value->ACADEMIC_TERM)
+                            {
+                                case "FIRST_SEMESTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_SEMESTER;
+                                    break;
+                                case "FIRST_TERM":
+                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_TERM;
+                                    break;
+                                case "FIRST_QUARTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_QUARTER;
+                                    break;
+                                case "SECOND_SEMESTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_SEMESTER;
+                                    break;
+                                case "SECOND_TERM":
+                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_TERM;
+                                    break;
+                                case "SECOND_QUARTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_QUARTER;
+                                    break;
+                                case "THIRD_TERM":
+                                    $data[$i]["ENROLLMENT_TYPE"] = THIRD_TERM;
+                                    break;
+                                case "THIRD_QUARTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = THIRD_QUARTER;
+                                    break;
+                                case "FOURTH_QUARTER":
+                                    $data[$i]["ENROLLMENT_TYPE"] = FOURTH_QUARTER;
+                                    break;
+                            }
+                        }
+
                         break;
                     case 2:
                         $data[$i]["CURRENT_CAMPUS"] = $value->CAMPUS_NAME ? $value->CAMPUS_NAME : "---";

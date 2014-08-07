@@ -43,7 +43,7 @@ switch($this->facette->ENROLLMENT_TYPE){
 
 <script>
     
-    var studentId;
+    var studentId,academicTerm;
     Ext.onReady(function() {
         
         Ext.Ajax.timeout = 600000;
@@ -263,9 +263,10 @@ switch($this->facette->ENROLLMENT_TYPE){
                         ,editable: false
                         ,listeners: {
                             select: function(combo, record, index) {
+                                replaceValue = combo.getValue();
                                 var newDisplay = record.get('chooseDisplay');
                                 combo.setValue(newDisplay);
-                                comboValue = record.get('chooseValue');;
+                                academicTerm = replaceValue;
                             }
                         }
                     })
@@ -378,6 +379,7 @@ switch($this->facette->ENROLLMENT_TYPE){
                 $ASSIGNED_STUDENTS_GRID->setSaveParams("
                     cmd: 'actionStudentSchoolYear'
                     ,academicId: '".$this->facette->GUID."'
+                    ,academicTerm:academicTerm
                 ");
                 $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
                     XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
@@ -397,9 +399,8 @@ switch($this->facette->ENROLLMENT_TYPE){
             ,border: false
             ,items:[{
                 border: false
-                ,xtype: 'panel'
                 ,layout: 'card'
-                ,id: 'panel'
+                ,id: 'center'
                 ,activeItem: 0
                 ,items:[{
                     border: false
@@ -409,29 +410,36 @@ switch($this->facette->ENROLLMENT_TYPE){
             }]
         });
 
-        if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').disable();
-
-        var grid = Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>');
-        grid.on('rowclick', function(grid, rowIndex, e){
-            var rec = grid.store.getAt(rowIndex);
-            var academic_activity = rec.data.ACADEMIC_ACTIVITY;
-            studentId = rec.data.ID;
-            if (academic_activity === true){
-                if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').disable();
-            }else{
-                if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').enable();
-            }
-            if (Ext.getCmp('STUDENT_SUBJECT')) Ext.getCmp('STUDENT_SUBJECT').enable();
-        });
-
-        var grid = Ext.getCmp('<?=$ASSIGNED_STUDENTS_GRID->getObjectId()?>');
-        grid.on('rowdblclick', function(grid, rowIndex, e){
-            var rec = grid.store.getAt(rowIndex);
-            var clickId = rec.data.ID;
-            var clickName = rec.data.STUDENT;
-            var openUrl = '<?=$this->URL_SHOWITEM_STUDENT?>' + 'objectId=' + clickId;
-            window.parent.parent.openWinMax(clickName,openUrl);
-        });
+        <?php
+        
+        $SHOW_DETAIL ="{";
+        $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.STUDENT";
+        $SHOW_DETAIL .=",iconCls: 'icon-user'";
+        $SHOW_DETAIL .=",handler: function(){";
+        $SHOW_DETAIL .="contextMenu.hide();clickOpenPage('center','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID + '&noSudentComboLsit=true');";
+        $SHOW_DETAIL .="}";
+        $SHOW_DETAIL .="}";
+        $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
+        
+        $CHOOSE_CONTEXTMENU_ITEMS = implode(",", $CONTEXTMENU_ITEMS);
+        
+        if($CONTEXTMENU_ITEMS){
+            $js = "";
+            $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
+            $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+                $js .="if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').enable();";
+                $js .="var record = grid.store.getAt(rowIndex);";
+                $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3){ ";
+                    $js .="var contextMenu = new Ext.menu.Menu({";
+                        $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                    $js .="});";
+                    $js .="contextMenu.showAt(event.xy);";
+                    $js .="event.stopEvent();";
+                $js .="}";
+            $js .="});";
+            echo $js;
+        }
+        ?>
         
         Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
         

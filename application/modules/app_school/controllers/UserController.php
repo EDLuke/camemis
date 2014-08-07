@@ -16,8 +16,10 @@ require_once setUserLoacalization();
 
 class UserController extends Zend_Controller_Action {
 
-    public function init() {
-        if (!UserAuth::identify()) {
+    public function init()
+    {
+        if (!UserAuth::identify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -34,7 +36,8 @@ class UserController extends Zend_Controller_Action {
         $this->objectData = array();
         $this->roll = null;
 
-        if ($this->_getParam('objectId')) {
+        if ($this->_getParam('objectId'))
+        {
             $this->objectId = $this->_getParam('objectId');
             $this->objectData = $this->DB_USER->getUserDataFromId($this->objectId);
         }
@@ -42,13 +45,15 @@ class UserController extends Zend_Controller_Action {
         $this->roleId = $this->_getParam('roleId');
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "SYSTEM_USER");
         $this->view->URL_ITEM = $this->UTILES->buildURL("user/showitem", array());
     }
 
-    public function showitemAction() {
+    public function showitemAction()
+    {
 
         //UserAuth::actionPermint($this->_request, "SYSTEM_USER");
 
@@ -57,8 +62,8 @@ class UserController extends Zend_Controller_Action {
         $this->view->roleId = $memberObject ? $memberObject->ROLE : null;
         $this->view->objectData = $this->objectData;
 
-        if (isset($this->objectData["IS_PASSWORD"])) {
-
+        if (isset($this->objectData["IS_PASSWORD"]))
+        {
             $this->view->status_password_icon = $this->objectData["IS_PASSWORD"] ? "icon-accept" : "icon-error";
         }
 
@@ -70,15 +75,23 @@ class UserController extends Zend_Controller_Action {
 
         $this->view->edit_status = true;
 
-        if ($superuser) {
+        if ($superuser)
+        {
             $this->view->remove_status = false;
             $this->view->edit_status = false;
-        } elseif ($status) {
+        }
+        elseif ($status)
+        {
             $this->view->remove_status = false;
-        } else {
-            if ($remove_status) {
+        }
+        else
+        {
+            if ($remove_status)
+            {
                 $this->view->remove_status = false;
-            } else {
+            }
+            else
+            {
                 $this->view->remove_status = true;
             }
         }
@@ -87,17 +100,21 @@ class UserController extends Zend_Controller_Action {
         $this->view->SHOWITEM_STAFF = $this->UTILES->buildURL("staff/showitem", array());
     }
 
-    public function useractivityAction() {
+    public function useractivityAction()
+    {
         
     }
 
-    public function useronlineAction() {
+    public function useronlineAction()
+    {
         
     }
 
-    public function jsonloadAction() {
+    public function jsonloadAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "loadObject":
                 $jsondata = $this->DB_USER->loadUserFromId($this->REQUEST->getPost('objectId'));
@@ -128,10 +145,11 @@ class UserController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
-
+        switch ($this->REQUEST->getPost('cmd'))
+        {
             case "updateObject":
                 $jsondata = $this->DB_USER->updateUser($this->REQUEST->getPost());
                 break;
@@ -152,8 +170,9 @@ class UserController extends Zend_Controller_Action {
         if (isset($jsondata))
             $this->setJSON($jsondata);
     }
-    
-    public function setJSON($jsondata) {
+
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

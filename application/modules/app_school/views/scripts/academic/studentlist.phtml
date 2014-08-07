@@ -240,36 +240,6 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
             ");
         }
         
-//        //@soda                            
-//        if(UserAuth::getUserType() == "SUPERADMIN" || UserAuth::getUserType() == "ADMIN"){
-//            if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
-//                $ENROLLED_STUDENTS->addTBarItems("
-//                    tbar.add(['->',{
-//                        text: '" . EXPORT_TO_EXCEL . "'
-//                        ,id: 'EXPORT_TO_EXCEL'
-//                        ,iconCls:'icon-page_excel'
-//                        ,handler: function(){
-//                            openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/showcolumn/?classId=$this->objectId&type=export_student&target=general',550,percentHeight(85));
-//                        }
-//                    }]);
-//                ");
-//            }
-//        }
-//        
-//        if(UserAuth::getUserType() == "INSTRUCTOR" || UserAuth::getUserType() == "TEACHER"){
-//            $ENROLLED_STUDENTS->addTBarItems("
-//                tbar.add(['->',{
-//                    text: '" . EXPORT_TO_EXCEL . "'
-//                    ,id: 'EXPORT_TO_EXCEL'
-//                    ,iconCls:'icon-page_excel'
-//                    ,handler: function(){ 
-//                        openWinIFrame('" . EXPORT_TO_EXCEL . "','/export/showcolumn/?classId=$this->objectId&type=export_student&target=general',550,percentHeight(85));
-//                    }
-//                }]);
-//            ");
-//        }
-//        /////////////////////////////////////////
-        
         if(UserAuth::getUserType() == "INSTRUCTOR"){
             $ENROLLED_STUDENTS->isGridEditing = true;
             $ENROLLED_STUDENTS->setSaveParams("
