@@ -66,7 +66,7 @@ Ext.onReady(function() {
     $ASSESSMENT = "{
         title: '".ASSESSMENT."'
         ,layout:'fit'
-        ,items: [new Ext.ux.IFrameComponent({ id: 'SUBJECT', url: '/training/scoremonitortraining/?classId=".$this->trainingId."'})]
+        ,items: [new Ext.ux.IFrameComponent({ id: 'SUBJECT', url: '/training/scoremonitortraining/?trainingId=".$this->trainingId."'})]
     }";
     $PANEL_ITEMS[] = "" . $ASSESSMENT . "";
     
