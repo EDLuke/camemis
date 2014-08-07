@@ -639,7 +639,7 @@ class AssignmentDBAccess {
                 $newSubjectId = $academicObject->SUBJECT_ID;
                 break;
             default:
-                $nweAcademicId = $academicObject->ID;
+                $newAcademicId = $academicObject->ID;
                 $newSubjectId = $subjectObject->ID;
                 break;
         }
