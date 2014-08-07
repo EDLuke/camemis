@@ -230,19 +230,9 @@ Ext.onReady(function() {
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_TERM'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_NAME'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME_LATIN'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'PHONE'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'EMAIL'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STREET'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TOWN_CITY'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'POSTCODE_ZIPCODE'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'COUNTRY'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_MOTHER'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULLNAME_FATHER'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CREATED_DATE'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
@@ -274,14 +264,9 @@ Ext.onReady(function() {
     }
     
     $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".PHONE."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, sortable: true, dataIndex: 'PHONE'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".EMAIL."</b>', width: 150, hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'EMAIL'");
-    
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(11, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_TERM."</b>', width: 150, hidden:".checkColHidden(13, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_TERM'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".COURSE."</b>', width: 150, hidden:".checkColHidden(14, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'TRAINING_NAME'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(15, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(12, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
     
     $ASSIGNED_STUDENTS_GRID->baseParams = "
         start:0

@@ -346,7 +346,7 @@ class AssignmentDBAccess {
                 $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                 break;
         }
-        self::dbAccess()->update("t_assignment", $data, "ID=". $objectId);
+        self::dbAccess()->update("t_assignment", $data, "ID=" . $objectId);
         return array("success" => true, "status" => $newStatus);
     }
 
@@ -629,33 +629,34 @@ class AssignmentDBAccess {
         $subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
 
-        $classObject = AcademicDBAccess::findGradeFromId($academicId);
+        $academicObject = AcademicDBAccess::findGradeFromId($academicId);
         $subjectObject = SubjectDBAccess::findSubjectFromId($subjectId);
 
-        if ($classObject->EDUCATION_SYSTEM)
+        switch ($academicObject->EDUCATION_SYSTEM)
         {
-            $academicId = $classObject->PARENT;
-            $subjectId = $classObject->SUBJECT_ID;
-        }
-        else
-        {
-            $academicId = $classObject->ID;
-            $subjectId = $subjectObject->ID;
+            case 1:
+                $newAcademicId = $academicObject->PARENT;
+                $newSubjectId = $academicObject->SUBJECT_ID;
+                break;
+            default:
+                $nweAcademicId = $academicObject->ID;
+                $newSubjectId = $subjectObject->ID;
+                break;
         }
 
         $facette = self::findAssignmentFromId($node);
 
         if ($facette)
         {
-            $entries = $this->getAllScoreDate($node, $academicId, $subjectId);
+            $entries = $this->getAllScoreDate($node, $academicId, $newSubjectId);
         }
         else
         {
 
-            $searchParams["subjectId"] = $subjectId;
-            $searchParams["academicId"] = $academicId;
-            $searchParams["gradeId"] = $classObject->GRADE_ID;
-            $searchParams["schoolyearId"] = $classObject->SCHOOL_YEAR;
+            $searchParams["subjectId"] = $newSubjectId;
+            $searchParams["academicId"] = $newAcademicId;
+            $searchParams["gradeId"] = $academicObject->GRADE_ID;
+            $searchParams["schoolyearId"] = $academicObject->SCHOOL_YEAR;
             $searchParams["term"] = $node;
             $entries = self::getAllAssignmentQuery($searchParams);
         }
