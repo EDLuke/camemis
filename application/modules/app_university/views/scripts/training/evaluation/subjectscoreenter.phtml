@@ -30,10 +30,11 @@ $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
 
 $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $trainingObject);
 
-$assignmentObject = StudentTrainingDBAccess::getTrainingSubjectAssignment(
-                        $trainingObject->PARENT
-                        , $this->subjectId
-                        , $this->assignmentId);
+$assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment(
+                    $trainingObject->EVALUATION_TYPE
+                    ,$trainingObject->PARENT
+                    , $this->subjectId
+                    , $this->assignmentId);
 
 if(!$trainingObject) {header("Location: /main/permission/");exit;}
 

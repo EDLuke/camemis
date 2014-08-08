@@ -1461,12 +1461,21 @@ class StudentTrainingDBAccess extends TrainingDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getTrainingSubjectAssignment($trainingId, $subjectId, $assignmentId)
+    public static function getTrainingSubjectAssignment($evaluationType, $trainingId, $subjectId, $assignmentId)
     {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_training_subject", array('*'));
-        $SQL->where("TRAINING = ?", $trainingId);
+        
+        if ($evaluationType)
+        {
+            $SQL->where("TERM = ?", $trainingId);
+        }
+        else
+        {
+            $SQL->where("TRAINING = ?", $trainingId);
+        }
+        $SQL->where("TERM = ?", $trainingId);
         $SQL->where("SUBJECT = ?", $subjectId);
         $SQL->where("ASSIGNMENT = ?", $assignmentId);
         //error_log($SQL->__toString());

@@ -61,7 +61,8 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
     public function getTrainingAssignment()
     {
         return self::getTrainingSubjectAssignment(
-                        $this->trainingObject->PARENT
+                        $this->trainingObject->EVALUATION_TYPE
+                        , $this->trainingObject->PARENT
                         , $this->subjectId
                         , $this->assignmentId
         );
@@ -307,12 +308,12 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $this->subjectId = isset($params["subjectId"]) ? addText($params["subjectId"]) : "";
 
         $this->trainingObject = $this->getTrainingObject();
+        $this->evaluationType = $this->trainingObject->EVALUATION_TYPE;
         $this->trainingSubject = $this->getTrainingSubject();
         $this->assignmentObject = $this->getTrainingAssignment();
-
         $this->scoreType = $this->trainingSubject ? $this->trainingSubject->SCORE_TYPE : "";
 
-        switch ($this->trainingObject->EVALUATION_TYPE)
+        switch ($this->evaluationType)
         {
             case 1:
                 $this->scoreMaxe = $this->assignmentObject ? $this->assignmentObject->MAX_POSSIBLE_SCORE : "0";

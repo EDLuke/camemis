@@ -177,7 +177,13 @@ Ext.onReady(function() {
     $COEFF_VALUE = "";
     if($listGroups){
         foreach($listGroups as $value){
-            $assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment($trainingObject->PARENT, $this->subjectId, $value->ID);
+            
+            $assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment(
+                    $trainingObject->EVALUATION_TYPE
+                    ,$trainingObject->PARENT
+                    , $this->subjectId
+                    , $value->ID);
+            
             if($assignmentObject){
                 $COEFF_VALUE = $assignmentObject->COEFF_VALUE?$assignmentObject->COEFF_VALUE:1;
             }else{
