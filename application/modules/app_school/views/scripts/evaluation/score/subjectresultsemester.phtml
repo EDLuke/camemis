@@ -172,7 +172,8 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 $listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
-        $academicObject
+        $academicObject->ID
+        ,$academicObject->FORMULA_TERM
         , $subjectId
         , $term
         , false);
@@ -211,7 +212,13 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listGroupAssignments = AssessmentConfig::getListAssignmentScoreDate($academicObject, $subjectId, $term, false, true);
+    $listGroupAssignments = AssessmentConfig::getListAssignmentScoreDate(
+            $academicObject->ID
+            , $academicObject->FORMULA_TERM
+            , $subjectId
+            , $term
+            , false
+            , true);
     if($listGroupAssignments){
         foreach($listGroupAssignments as $value){
 
@@ -302,7 +309,13 @@ switch($subjectObject->SCORE_TYPE){
 }
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicObject, $subjectId, $term, false, false);
+    $listAssignments = AssessmentConfig::getListAssignmentScoreDate(
+            $academicObject->ID
+            , $academicObject->FORMULA_TERM
+            , $subjectId
+            , $term
+            , false
+            , false);
     if($listAssignments){
         foreach($listAssignments as $value){
 

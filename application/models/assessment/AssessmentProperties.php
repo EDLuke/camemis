@@ -421,7 +421,7 @@ abstract class AssessmentProperties {
     {
         return $this->getCurrentClass()->PERFORMANCE_FOURTH_DIVISION_VALUE;
     }
-    
+
     public function getAcademicTerm()
     {
 

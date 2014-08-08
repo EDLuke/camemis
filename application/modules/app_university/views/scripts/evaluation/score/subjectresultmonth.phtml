@@ -134,7 +134,8 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 $listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
-        $academicObject
+        $academicObject->ID
+        ,$academicObject->FORMULA_TERM
         , $subjectId
         , false
         , $monthyear);
@@ -166,7 +167,8 @@ $GROUP_ROW .= ",{header: '&nbsp;', colspan: 1, align: 'center'}";
 
 if(!$academicObject->EVALUATION_OPTION){
     $listGroupAssignments = AssessmentConfig::getListAssignmentScoreDate(
-            $academicId
+            $academicObject->ID
+            , $academicObject->FORMULA_TERM
             , $subjectId
             , false
             , $monthyear
@@ -247,7 +249,13 @@ switch($subjectObject->SCORE_TYPE){
 }
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicObject, $subjectId, false, $monthyear, false);
+    $listAssignments = AssessmentConfig::getListAssignmentScoreDate(
+            $academicObject->ID
+            , $academicObject->FORMULA_TERM
+            , $subjectId
+            , false
+            , $monthyear
+            , false);
     if($listAssignments){
         foreach($listAssignments as $value){
 
@@ -404,9 +412,11 @@ Ext.onReady(function() {
         $html .= ",viewConfig: {";
             $html .= "forceFit: false";
         $html .= "}";
+        
         if(!$academicObject->EVALUATION_OPTION){
             $html .= ",plugins: group";
         }
+        
         $html .= ",listeners: {";
             $html .= "afteredit: function (e){";
                 $html .= "Ext.Ajax.request({";
