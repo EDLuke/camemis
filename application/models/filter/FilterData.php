@@ -25,9 +25,29 @@ class FilterData extends FilterProperties {
         return $data;
     }
     
+    public function getPersonStatus($personType){
+        $data = PersonStatusDBAccess::getAllPersonStatus($personType, false);
+        return $data;
+    }
+    
     ///////////////////
     //Student Data
     ///////////////////
+    
+    public function getCountStudentStatus(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "statusType" => $this->statusType
+                , "objectGrade"=> $this->getObjectGradeData()
+        );
+        $result = SQLStudentFilterReport::getStudentStatus($stdClass);
+        
+        return count($result);    
+    }
+    
     public function getCountStudentFemale(){
         
         $stdClass = (object) array(

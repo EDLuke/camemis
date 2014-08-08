@@ -69,7 +69,43 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
-    ///new test
+    
+    //Status
+    public function getDataSetStatus(){
+        
+        $entries = $this->getPersonStatus($this->personType);
+        $DATASET = "[{";
+        $DATASET .= "key: '".STATUS."',";
+        $DATASET .= "values: [";
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $this->statusType=$value->ID;
+                $DATASET .= $i ? "," : "";
+                $DATASET .= "{";
+                $DATASET .= "'label':'" . $value->NAME . "'";
+                switch(strtoupper($this->personType)){
+                    case 'STUDENT':
+                        $DATASET .= ",'value':'" . $this->getCountStudentStatus() . "'";
+                        break;
+                    case 'STAFF':
+                        $DATASET .= ",'value':'" . $this->getCountTeacherStatus() . "'";
+                        break;       
+                }
+                
+                $DATASET .= "}";
+                $i++;
+            }
+        }
+        $DATASET .= "]";
+        $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    //
+    
     public function getDataPersonInfo(){
         
         $entries = FilterProperties::getCamemisType($this->type);
@@ -95,9 +131,6 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
-    
-    ///
-    
     
     /////////////////////////////
     //Student data set
@@ -304,60 +337,6 @@ class FilterDataSet extends FilterData{
         
         return $DATASET;      
     }
-    
-    /*public function getDataSetStudentEDMajor(){
-        
-        $entries = FilterProperties::getCamemisType('MAJOR_TYPE');
-        $this->type="MAJOR";
-        $DATASET = "[{";
-        $DATASET .= "key: '".MAJOR_TYPE."',";
-        $DATASET .= "values: [";
-        if ($entries)
-        {
-            $i = 0;
-            foreach ($entries as $value)
-            {
-                $this->camemisType=$value->ID;
-                $DATASET .= $i ? "," : "";
-                $DATASET .= "{";
-                $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getcountStudentEDBackgroundDegreeOrMajor() . "'";
-                $DATASET .= "}";
-                $i++;
-            }
-        }
-        $DATASET .= "]";
-        $DATASET .= "}]";
-        
-        return $DATASET;      
-    }
-    
-    public function getDataSetStudentRelationship(){
-        
-        $entries = FilterProperties::getCamemisType('RELATIONSHIP_TYPE');
-        $this->type="RELATIONSHIP";
-        $DATASET = "[{";
-        $DATASET .= "key: '".PARENT_GUARDIAN_RELATIONSHIP."',";
-        $DATASET .= "values: [";
-        if ($entries)
-        {
-            $i = 0;
-            foreach ($entries as $value)
-            {
-                $this->camemisType=$value->ID;
-                $DATASET .= $i ? "," : "";
-                $DATASET .= "{";
-                $DATASET .= "'label':'" . $value->NAME . "'";
-                $DATASET .= ",'value':'" . $this->getcountRelationshipStudent() . "'";
-                $DATASET .= "}";
-                $i++;
-            }
-        }
-        $DATASET .= "]";
-        $DATASET .= "}]";
-        
-        return $DATASET;      
-    }*/
     
     public function getDataSetStudentEDDegree(){
         

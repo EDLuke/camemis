@@ -79,6 +79,24 @@ abstract class FilterProperties {
         return $data;
     }
     
+    public function getObjectGradeData(){
+        $data = '';
+        if ($this->objectType) {
+            switch ($this->objectType) {
+                case 'CAMPUS':
+                    $data = AcademicDBAccess::findCampusSchoolyear($this->campusId, $this->schoolyearId);
+                    break;
+                case 'GRADE':
+                    $data = AcademicDBAccess::findGradeSchoolyear($this->gradeId, $this->schoolyearId);
+                    break;
+                case 'CLASS':
+                    $data = AcademicDBAccess::sqlGradeFromId($this->classId);
+                    break;
+            }
+        }
+        return $data;    
+    }
+    
     
 
 }

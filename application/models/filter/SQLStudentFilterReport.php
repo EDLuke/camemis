@@ -307,6 +307,36 @@ class SQLStudentFilterReport {
         //error_log($SQL);
         return $result;
     }
+    
+    public static function getStudentStatus($stdClass) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_student_status'), array("*"));
+        $SQL->join(array('B' => 't_student_schoolyear'), 'A.STUDENT=B.STUDENT', array());
+        if (isset($stdClass->objectGrade))
+        {
+            $SQL->where("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE <= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
+            $SQL->Orwhere("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
+            
+        }
+        if (isset($stdClass->campusId)) {
+            $SQL->where("B.CAMPUS = '" . $stdClass->campusId . "'");
+        }
+
+        if (isset($stdClass->gradeId)) {
+            $SQL->where("B.GRADE = '" . $stdClass->gradeId . "'");
+        }
+        
+        if (isset($stdClass->classId))
+            $SQL->where("B.CLASS = '" . $stdClass->classId . "'");
+
+        if (isset($stdClass->statusType))
+            $SQL->where("A.STATUS_ID = '" . $stdClass->statusType . "'");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
+    }
+    
 }
 
 ?>

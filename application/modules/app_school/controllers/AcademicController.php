@@ -623,6 +623,11 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->personType = "STUDENT";
     }
     
+    public function studentstatusfilterAction(){
+        $this->_helper->viewRenderer("filter/statusstatistic");
+        $this->view->personType = "STUDENT";    
+    }
+    
     public function studentdisciplinefilterAction() {
         $this->_helper->viewRenderer("filter/studentfilterviewport");
         $this->view->gridType = "STUDENT_DISCIPLINE_FILTER";

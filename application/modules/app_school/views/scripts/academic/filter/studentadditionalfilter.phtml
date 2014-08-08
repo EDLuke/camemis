@@ -73,8 +73,6 @@ if($entries){
         
 }
 
-
-
 ?>
 
 <link href="http://fonts.googleapis.com/css?family=Hanuman:regular,bold&subset=khmer" rel="stylesheet" type="text/css">
@@ -82,7 +80,7 @@ if($entries){
 <link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="/public/bootstrap/css/custom.css" rel="stylesheet">
 <script src="/public/nvd3/nvd3-camemis.php"></script>
-    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
+    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;height:100%">
     
          <?php 
             if($entries){
@@ -110,33 +108,31 @@ if($entries){
     <script>
         Ext.onReady(function() {
             
-            /*viewport = new Ext.Viewport({
-            layout: 'fit'
-            ,border: false
-            ,items: [{
-                title: ''
-                ,id:'westcenter'
-                ,collapsible: false
-                ,region:'center'
-                ,layout: 'fit'
-                ,margins: '0 3 3 3'
-                ,border:false
-                ,bodyStyle: 'background:#dee7f6;'
-                ,items: [{
-                    border: false
-                    ,bodyStyle: 'background:#dee7f6;'
-                    ,autoScroll:true
-                    ,contentEl: 'initStatistic'
+            viewport = new Ext.Viewport({
+                layout: 'fit'
+                ,border: false
+                ,items:[{
+                    layout: 'card'
+                    ,id:'content'
+                    ,activeItem: 0
+                    ,border: false
+                    ,items:[{
+                        border: false
+                        ,bodyStyle: 'background:#dee7f6;'
+                        ,autoScroll:true
+                        ,contentEl: 'initStatistic'
+                    }]
                 }]
-            }]
-        });*/
+            });
+            
             <?php 
                 if($entries){
                 $i = 0;
                 foreach($entries as $value){
             ?>
                     Ext.get('<?=$value->ID;?>').on('click', function(){
-                       window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+                       //window.parent.openWinMax('', '/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
+                       clickOpenPage('content','','/student/search/?camIds=<?=$this->urlEncryp->encryptedGet($setParams);?>');
                     });
             <?php
                 $i++;
