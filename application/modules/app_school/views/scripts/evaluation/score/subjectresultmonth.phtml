@@ -134,7 +134,7 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 $listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
-        $academicId
+        $academicObject
         , $subjectId
         , false
         , $monthyear);
@@ -247,7 +247,7 @@ switch($subjectObject->SCORE_TYPE){
 }
 
 if(!$academicObject->EVALUATION_OPTION){
-    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicId, $subjectId, false, $monthyear, false);
+    $listAssignments = AssessmentConfig::getListAssignmentScoreDate($academicObject, $subjectId, false, $monthyear, false);
     if($listAssignments){
         foreach($listAssignments as $value){
 

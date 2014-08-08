@@ -28,6 +28,8 @@ $CHECK = TrainingDBAccess::checkTrainingClass($this->date, $this->trainingId);
 
 $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
 
+if(!$trainingObject) {header("Location: /main/permission/");exit;}
+
 $subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $trainingObject);
 
 $assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment(
@@ -35,8 +37,6 @@ $assignmentObject = TrainingAssessmentDBAccess::getTrainingSubjectAssignment(
                     ,$trainingObject->PARENT
                     , $this->subjectId
                     , $this->assignmentId);
-
-if(!$trainingObject) {header("Location: /main/permission/");exit;}
 
 switch($trainingObject->EVALUATION_TYPE){
 

@@ -96,6 +96,11 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         return $this->date = $value;
     }
 
+    public static function setIncludeMonthTermValue()
+    {
+        return $this->getCurrentClass()->FORMULAR_TERM ? "2,3" : "1,2,3";
+    }
+
     public function listStudentsData()
     {
 
@@ -388,7 +393,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
-        $listAssignments = AssessmentConfig::getListAssignmentScoreDate($this->academicId, $this->subjectId, false, $this->monthyear, false);
+        $listAssignments = AssessmentConfig::getListAssignmentScoreDate($this->academicObject, $this->subjectId, false, $this->monthyear, false);
 
         if ($this->listClassStudents())
         {
@@ -451,7 +456,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     , "evaluationType" => $this->getSettingEvaluationType()
         );
 
-        $listAssignments = AssessmentConfig::getListAssignmentScoreDate($this->academicId, $this->subjectId, $this->term, false, false);
+        $listAssignments = AssessmentConfig::getListAssignmentScoreDate($this->academicObject, $this->subjectId, $this->term, false, false);
 
         if ($this->listClassStudents())
         {
@@ -588,7 +593,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     {
 
         $result = 0;
-        $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, self::INCLUDE_IN_MONTH_TERM);
+        $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults($stdClass, self::setIncludeMonthTermValue());
 
         if ($withFormat)
         {

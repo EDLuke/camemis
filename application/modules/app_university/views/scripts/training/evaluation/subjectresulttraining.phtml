@@ -17,9 +17,10 @@ require_once setUserLoacalization();
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 $trainingObject = TrainingDBAccess::findTrainingFromId($this->trainingId);
-$subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $trainingObject);
 
 if(!$trainingObject) {header("Location: /main/permission/");exit;}
+
+$subjectObject = TrainingSubjectDBAccess::findSubjectTraining($this->subjectId, $trainingObject);
 
 AssessmentConfig::setGradingScale();
 

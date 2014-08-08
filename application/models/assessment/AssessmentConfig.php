@@ -283,16 +283,24 @@ class AssessmentConfig {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public static function getListAssignmentScoreDate($academicId, $subjectId, $term, $monthyear, $isGroupBy)
+    public static function getListAssignmentScoreDate($academicObject, $subjectId, $term, $monthyear, $isGroupBy)
     {
         $SQL = self::dbAccess()->select();
         $SQL->from(Array('A' => 't_assignment'), array("ID", "SHORT", "COEFF_VALUE"));
         $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
         $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-        $SQL->where("B.CLASS_ID = ?", $academicId);
-        if ($term)
+        $SQL->where("B.CLASS_ID = ?", $academicObject->ID);
+
+        if ($term && !$monthyear)
+        {
+            if ($academicObject->FORMULAR_TERM)
+            {
+                $SQL->where("A.INCLUDE_IN_EVALUATION = 2");
+            }
             $SQL->where("B.TERM = ?", $term);
-        if ($monthyear)
+        }
+
+        if (!$term && $monthyear)
         {
             $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
             $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
@@ -305,16 +313,22 @@ class AssessmentConfig {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getListAssignmentCategoryScoreDate($academicId, $subjectId, $term, $monthyear)
+    public static function getListAssignmentCategoryScoreDate($academicObject, $subjectId, $term, $monthyear)
     {
         $SQL = self::dbAccess()->select();
         $SQL->from(Array('A' => 't_assignment'), array("INCLUDE_IN_EVALUATION"));
         $SQL->joinLeft(Array('B' => 't_student_score_date'), 'A.ID=B.ASSIGNMENT_ID', array("ID AS OBJECT_ID", "SCORE_INPUT_DATE"));
         $SQL->where("B.SUBJECT_ID = ?", $subjectId);
-        $SQL->where("B.CLASS_ID = ?", $academicId);
-        if ($term)
+        $SQL->where("B.CLASS_ID = ?", $academicObject->ID);
+        if ($term && !$monthyear)
+        {
+            if ($academicObject->FORMULAR_TERM)
+            {
+                $SQL->where("A.INCLUDE_IN_EVALUATION = 2");
+            }
             $SQL->where("B.TERM = ?", $term);
-        if ($monthyear)
+        }
+        if (!$term && $monthyear)
         {
             $SQL->where("A.INCLUDE_IN_EVALUATION = 1");
             $SQL->where("MONTH(B.SCORE_INPUT_DATE) = ?", getMonthNumberFromMonthYear($monthyear) * 1);
