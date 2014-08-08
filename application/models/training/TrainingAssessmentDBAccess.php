@@ -707,6 +707,9 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $this->assignmentObject = $this->getTrainingAssignment();
         $this->trainingSubject = $this->getTrainingSubject();
 
+        $this->assignmentCoeff = $this->assignmentObject->COEFF_VALUE ? $this->assignmentObject->COEFF_VALUE : 1;
+        $this->evaluationType = $this->assignmentObject->COEFF_VALUE ? $this->assignmentObject->COEFF_VALUE : 0;
+
         $this->maxScore = $this->trainingSubject ? $this->trainingSubject->SCORE_MAX : "";
         $this->scoreType = $this->trainingSubject ? $this->trainingSubject->SCORE_TYPE : "";
         $this->teacherId = Zend_Registry::get('USER')->ID;
@@ -741,8 +744,8 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         }
         else
         {
-            $SAVEDATA["COEFF_VALUE"] = $this->assignmentObject->COEFF_VALUE;
-            $SAVEDATA["EVALUATION_TYPE"] = $this->assignmentObject->EVALUATION_TYPE;
+            $SAVEDATA["COEFF_VALUE"] = $this->assignmentCoeff;
+            $SAVEDATA["EVALUATION_TYPE"] = $this->evaluationType;
             $SAVEDATA["ASSIGNMENT"] = $this->assignmentId;
             $SAVEDATA["STUDENT"] = $this->studentId;
             $SAVEDATA["SUBJECT"] = $this->subjectId;
