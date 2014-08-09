@@ -99,7 +99,10 @@ class SubjectDBAccess {
             $SQL->where("ID = ?", $Id);
         }
         else
-        {
+        {   
+            if(empty($Id)){
+                $Id=0;
+            }
             $SQL->where("GUID = ?", $Id);
         }
         //error_log($SQL);
