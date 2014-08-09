@@ -100,9 +100,12 @@ class SubjectDBAccess {
         }
         else
         {
-            $SQL->where("GUID = ?", $Id);
+            if(empty($Id)){
+              $Id=0;  
+            }          
+            $SQL->where("GUID = ?", $Id);        
         }
-        //error_log($SQL);
+        //error_log($Id);
         return self::dbAccess()->fetchRow($SQL);
     }
 
