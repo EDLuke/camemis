@@ -96,14 +96,11 @@ class SubjectDBAccess {
         $SQL->from("t_subject", array('*'));
         if (is_numeric($Id))
         {
-            $SQL->where("ID = ?", $Id);
+            $SQL->where("ID = ?", "" . $Id . "");
         }
         else
         {
-            if(empty($Id)){
-              $Id=0;  
-            }          
-            $SQL->where("GUID = ?", $Id);        
+            $SQL->where("GUID = ?", "" . $Id . "");
         }
         //error_log($Id);
         return self::dbAccess()->fetchRow($SQL);
@@ -420,7 +417,7 @@ class SubjectDBAccess {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-        $a=$data;
+        $a = $data;
         return array(
             "success" => true
             , "totalCount" => sizeof($data)
@@ -803,19 +800,19 @@ class SubjectDBAccess {
             {
                 case 0:
                     $newStatus = 1;
-                    $data['STATUS']      = 1;
-                    $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
-                    $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
+                    $data['STATUS'] = 1;
+                    $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
+                    $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                     break;
                 case 1:
                     $newStatus = 0;
-                    $data['STATUS']       = 0;
-                    $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
-                    $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
+                    $data['STATUS'] = 0;
+                    $data['DISABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
+                    $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
                     break;
             }
         }
-        self::dbAccess()->update("t_subject", $data, "ID='". $objectId ."'");
+        self::dbAccess()->update("t_subject", $data, "ID='" . $objectId . "'");
 
         return array("success" => true, "status" => $newStatus);
     }
@@ -1234,7 +1231,7 @@ class SubjectDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade_subject', '*');
         $SQL->where("SUBJECT = '" . $subjectId . "'");
-        
+
         switch ($academicObject->EDUCATION_SYSTEM)
         {
             case 1:
@@ -1247,7 +1244,7 @@ class SubjectDBAccess {
                 $SQL->where("CLASS = ?", $academicId);
                 break;
         }
-        
+
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
         $facette = self::findSubjectFromId($subjectId);

@@ -58,7 +58,7 @@ abstract class AssessmentProperties {
     {
         $studentsearch = new StudentSearchDBAccess();
         $studentsearch->globalSearch = $this->globalSearch;
-
+        
         switch ($this->getEducationSystem())
         {
             case 1:
@@ -68,6 +68,11 @@ abstract class AssessmentProperties {
                 break;
             default:
                 $studentsearch->classId = $this->academicId;
+                if ($this->getCurrentClass()->ENROLLMENT_TYPE == 1)
+                {
+                    $studentsearch->term = $this->term;
+                }
+
                 $studentsearch->schoolyearId = $this->getSchoolyearId();
                 break;
         }

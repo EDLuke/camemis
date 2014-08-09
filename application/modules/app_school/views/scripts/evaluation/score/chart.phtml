@@ -7,23 +7,19 @@ require_once 'clients/CamemisHighChart.php';
 require_once 'clients/CamemisPage.php';
 require_once 'models/filter/FilterData.php';
 require_once 'models/filter/FilterDataSet.php';
-require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 require_once setUserLoacalization();
-$objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
+$objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 //$params = Utiles::setPostDecrypteParams($this->urlEncryp->encryptedGet($setParams));
 //$this->setParams($params);
-
-        
 //$objectDataSet = new FilterChartDataSet();
-
 //$dataSetGradingScale = $objectDataSet->getDatasetGradingScale();
 $chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'allGradingScale', 'All Grading Scale of Students', false);
 $chartAllGradingScale->text = "Student Grading Scale";
-$chartAllGradingScale->allowPointSelect='true';
-$chartAllGradingScale->pointColor='black';
+$chartAllGradingScale->allowPointSelect = 'true';
+$chartAllGradingScale->pointColor = 'black';
 $chartAllGradingScale->minWidth = 310;
 $chartAllGradingScale->height = 400;
 
@@ -54,23 +50,22 @@ $chartAreaStacked->text = "Billions";
 $chartAreaStacked->tooltipsValueSuffix = "millions";
 $chartAreaStacked->minWidth = 310;
 $chartAreaStacked->height = 400;
-
 ?>
 
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script src="/public/js/highcharts.js"></script>
-        <script src="/public/js/modules/exporting.js"></script>
-        <?= $chartAllGradingScale->setChartDisplay(); ?>
-        <script type="text/javascript"><?= $chartAllGradingScale->setChartScript(); ?></script>
-        <?= $chartGradingScaleGender->setChartDisplay(); ?>
-        <script type="text/javascript"><?= $chartGradingScaleGender->setChartScript(); ?></script>
-        <?= $chartAVGStudent->setChartDisplay(); ?>
-        <script type="text/javascript"><?= $chartAVGStudent->setChartScript(); ?></script>
-        <?= $chartAreaSpline->setChartDisplay(); ?>
-        <script type="text/javascript"><?= $chartAreaSpline->setChartScript(); ?></script>
-        <?= $chartAreaStacked->setChartDisplay(); ?>
-        <script type="text/javascript"><?= $chartAreaStacked->setChartScript(); ?></script>
-    
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="/public/js/highcharts.js"></script>
+<script src="/public/js/modules/exporting.js"></script>
+<?= $chartAllGradingScale->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartAllGradingScale->setChartScript(); ?></script>
+<?= $chartGradingScaleGender->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartGradingScaleGender->setChartScript(); ?></script>
+<?= $chartAVGStudent->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartAVGStudent->setChartScript(); ?></script>
+<?= $chartAreaSpline->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartAreaSpline->setChartScript(); ?></script>
+<?= $chartAreaStacked->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartAreaStacked->setChartScript(); ?></script>
+
 </body>
 </html>

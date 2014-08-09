@@ -114,12 +114,6 @@ class CamemisFilter {
                     , "EXTJS" => "{" . CamemisControl::getCombo("CAMPUS", "CAMPUS_ID", CAMPUS, BuildData::comboCampus()) . "}"
                     , "PARAM" => "'&campusId=' + form.findField('CAMPUS_ID').getValue()");
 
-        $this->filterFields["FIELD_CLASS_REPRESENTATIVE"] =
-                array("LABEL" => "CLASS_REPRESENTATIVE"
-                    , "NAME" => "CLASS_REPRESENTATIVE"
-                    , "EXTJS" => "{" . CamemisControl::getCombo("CLASSREPRESENTATIVE", "CLASSREPRESENTATIVE_ID", CLASS_REPRESENTATIVE) . "}"
-                    , "PARAM" => "'&classRep=' + form.findField('CLASSREPRESENTATIVE_ID').getValue()");
-
         $this->filterFields["FIELD_DATE_STARTEND_T"] =
                 array("LABEL" => "DATE"
                     , "NAME" => "DATE_STARTEND_T_FILTER"
@@ -408,7 +402,6 @@ class CamemisFilter {
                 , $this->filterFields["FIELD_STUDENT_ATTENDANCE_A"]
                 , $this->filterFields["FIELD_STUDENT_DISCIPLINE_A"]
                 , $this->filterFields["FIELD_STUDENT_TRANSFER"]
-                , $this->filterFields["FIELD_CLASS_REPRESENTATIVE"]
             )
         );
 

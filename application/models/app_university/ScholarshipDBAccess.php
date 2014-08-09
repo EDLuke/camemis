@@ -161,7 +161,6 @@ class ScholarshipDBAccess {
             , "CLASS AS CLASS"
             , "GRADE AS GRADE"
             , "STATUS AS SCHOOLYEAR_STATUS"
-            , "PRESENTATIVE AS PRESENTATIVE"
             , "TRANSFER AS TRANSFER"
         );
         

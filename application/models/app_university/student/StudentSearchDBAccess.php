@@ -150,6 +150,9 @@ class StudentSearchDBAccess {
                     if ($this->classId)
                         $SQL->where("TRADITIONAL.CLASS = '" . $this->classId . "'");
 
+                    if ($this->term)
+                        $SQL->where("TRADITIONAL.ACADEMIC_TERM = '" . $this->term . "'");
+
                     break;
                 case "CREDIT":
                     $SQL->joinLeft(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
@@ -373,7 +376,7 @@ class StudentSearchDBAccess {
                         $data[$i]["CURRENT_ACADEMIC"] = $value->CURRENT_ACADEMIC;
                         $data[$i]["CURRENT_COURSE"] = $value->CURRENT_COURSE;
 
-                        if ($value->ACADEMIC_TERM)
+                        if (isset($value->ACADEMIC_TERM))
                         {
                             switch ($value->ACADEMIC_TERM)
                             {

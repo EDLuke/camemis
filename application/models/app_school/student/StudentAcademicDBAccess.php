@@ -202,7 +202,6 @@ class StudentAcademicDBAccess extends StudentDBAccess {
                         , "CLASS AS CLASS"
                         , "GRADE AS GRADE"
                         , "STATUS AS SCHOOLYEAR_STATUS"
-                        , "PRESENTATIVE AS PRESENTATIVE"
                         , "TRANSFER AS TRANSFER"
                     );
                     break;
@@ -656,26 +655,6 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         return $o;
     }
 
-    public function actionStudentRepresentation($params) {
-
-        $studentId = isset($params["objectId"]) ? addText($params["objectId"]) : 0;
-        $classId = isset($params["classId"]) ? (int) $params["classId"] : 0;
-        $representative = isset($params["CLASS_REPRESENTATIVE"]) ? $params["CLASS_REPRESENTATIVE"] : 0;
-
-        $SQL = "UPDATE";
-        $SQL .= " t_student_schoolyear";
-        $SQL .= " SET PRESENTATIVE = '" . $representative . "'";
-        $SQL .= " WHERE";
-        $SQL .= " STUDENT = '" . $studentId . "'";
-        $SQL .= " AND CLASS = '" . $classId . "'";
-
-        self::dbAccess()->query($SQL);
-
-        return array(
-            "success" => true
-        );
-    }
-
     public static function getCurrentStudentAcademic($studentId) {
 
         $output["SCHOOLYEAR"] = "";
@@ -921,8 +900,6 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         } else {
             $data["SCHOLARSHIP_NAME"] = "---";
         }
-
-        $data["CLASS_REPRESENTATIVE"] = "---";
 
         //@Sea Peng
         $facette = self::findStudentSchoolyear($studentId, $classObject->ID);

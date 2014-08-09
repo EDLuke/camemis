@@ -522,26 +522,29 @@ Ext.onReady(function() {
         break;
     }
     
-    if($academicObject->DISPLAY_YEAR_RESULT){
-        $setParamsYear = $setParams;
-        $YEAR_RESULT = "{
-            text: '".YEAR_RESULT."'
-            ,id:'YEAR_RESULT'
-            ,iconCls: 'icon-brick_magnify'
-            ,menu:[{
-                text:'".YEAR_RESULT."'
-                ,iconCls:'icon-application_view_detail'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."');
-                }
-            },{
-                text:'".CHARTS."'
-                ,iconCls:'icon-chart_bar'
-                ,disabled:true
-            }]
-        }";
-        $BAR_ITEMS[] = $YEAR_RESULT;
+    if($academicObject->ENROLLMENT_TYPE !=1){
+        if($academicObject->DISPLAY_YEAR_RESULT){
+            $setParamsYear = $setParams;
+            $YEAR_RESULT = "{
+                text: '".YEAR_RESULT."'
+                ,id:'YEAR_RESULT'
+                ,iconCls: 'icon-brick_magnify'
+                ,menu:[{
+                    text:'".YEAR_RESULT."'
+                    ,iconCls:'icon-application_view_detail'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/subjectresultyear/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."');
+                    }
+                },{
+                    text:'".CHARTS."'
+                    ,iconCls:'icon-chart_bar'
+                    ,disabled:true
+                }]
+            }";
+            $BAR_ITEMS[] = $YEAR_RESULT;
+        }
     }
+    
     ////////////////////////////////////////////////////////////////////////////
     $DISPLAY_BAR_ITEMS = "'-',".implode(",'-',",$BAR_ITEMS);
     ////////////////////////////////////////////////////////////////////////////

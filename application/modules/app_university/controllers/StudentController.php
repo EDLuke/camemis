@@ -160,12 +160,7 @@ class StudentController extends Zend_Controller_Action {
 
         $this->_helper->viewRenderer("person/longtext");
     }
-
-    public function presentativeAction() {
-        UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
-        $this->_helper->viewRenderer("person/presentative");
-    }
-
+    
     public function deletestudentAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
     }

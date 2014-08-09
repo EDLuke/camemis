@@ -51,6 +51,10 @@ $setParams .= "&academicId=".$academicObject->ID."";
 $setParams .= "&assignmentId=".$assignmentObject->ID."";
 $setParams .= "&date=".$this->date."";
 
+if($academicObject->ENROLLMENT_TYPE == 1){
+    $setParams .= "&term=".$TERM_NAME."";
+}
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>
