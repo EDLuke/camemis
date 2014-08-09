@@ -156,7 +156,9 @@ class EvaluationController extends Zend_Controller_Action {
     }
     
     //@Visal
-    public function firstsemesterchartAction(){ 
+    public function firstsemesterchartAction(){
+        $this->view->academicId = $this->academicId;
+        $this->view->studentId = $this->studentId; 
         $this->_helper->viewRenderer('score/chart');
     }
 
