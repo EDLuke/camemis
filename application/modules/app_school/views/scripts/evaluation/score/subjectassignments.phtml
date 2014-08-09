@@ -496,7 +496,7 @@ Ext.onReady(function() {
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
                     ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/firstsemesterchart');
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/firstsemesterchart/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
                     }
                 }]
             }";

@@ -1,232 +1,76 @@
 <?
 ///////////////////////////////////////////////////////////
-// @Sor Veasna
-// Date: 17.05.2014
+// @THORN Visal
+// Date: 01.08.2014
 ///////////////////////////////////////////////////////////
-require_once 'clients/CamemisChart.php';
+require_once 'clients/CamemisHighChart.php';
 require_once 'clients/CamemisPage.php';
 require_once 'models/filter/FilterData.php';
 require_once 'models/filter/FilterDataSet.php';
+require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 require_once setUserLoacalization();
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+//$params = Utiles::setPostDecrypteParams($this->urlEncryp->encryptedGet($setParams));
+//$this->setParams($params);
+
+        
+//$objectDataSet = new FilterChartDataSet();
+
+//$dataSetGradingScale = $objectDataSet->getDatasetGradingScale();
+$chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'allGradingScale', 'All Grading Scale of Students', false);
+$chartAllGradingScale->text = "Student Grading Scale";
+$chartAllGradingScale->allowPointSelect='true';
+$chartAllGradingScale->pointColor='black';
+$chartAllGradingScale->minWidth = 310;
+$chartAllGradingScale->height = 400;
+
+$chartGradingScaleGender = new CamemisHighChart("COLUMN_COMPARE_CHART", 'gradingScaleGender', 'Grading Scale Male and Female of Students', false);
+$chartGradingScaleGender->xAxis = false;
+$chartGradingScaleGender->text = "Students";
+$chartGradingScaleGender->headerFontsize = 15;
+$chartGradingScaleGender->minWidth = 310;
+$chartGradingScaleGender->height = 400;
+
+$chartAVGStudent = new CamemisHighChart("COLUMN_CHART", 'studentAVG', 'Average of Students', false);
+$chartAVGStudent->seriesName = "Average";
+$chartAVGStudent->text = "Students Average";
+$chartAVGStudent->dataLabelsRotation = -60;
+$chartAVGStudent->minWidth = 310;
+$chartAVGStudent->height = 400;
+
+$chartAreaSpline = new CamemisHighChart("AREA_SPLINE_CHART", 'areaSplineChart', 'Average Fruit Consumption during one Week', false);
+$chartAreaSpline->xAxis = false;
+$chartAreaSpline->text = "Fruit Units";
+$chartAreaSpline->tooltipsValueSuffix = "units";
+$chartAreaSpline->minWidth = 310;
+$chartAreaSpline->height = 400;
+
+$chartAreaStacked = new CamemisHighChart("AREA_STACKED_CHART", 'areaStackedChart', 'Historic and Estimated Worldwide Population Growth by Region', false);
+$chartAreaStacked->xAxis = false;
+$chartAreaStacked->text = "Billions";
+$chartAreaStacked->tooltipsValueSuffix = "millions";
+$chartAreaStacked->minWidth = 310;
+$chartAreaStacked->height = 400;
+
 ?>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script type="text/javascript">
-            $(function () {
-                $('#allGradingScale').highcharts({
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: 1,//null,
-                        plotShadow: false
-                    },
-                    title: {
-                        text: 'All Grading Scale of Students'
-                    },
-                    tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: true,
-                                format: '{point.name}: {point.percentage:.1f} %',
-                                style: {
-                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                }
-                            }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'Student Grading Scale',
-                        data: [
-                            ['ល្អណាស់',   26.8],
-                            ['ល្អ',       10.0],
-                            {
-                                name: 'ល្អបង្គួរ',
-                                y: 12.8,
-                                sliced: true,
-                                selected: true
-                            },
-                            ['មធ្យម',     6.2],
-                            ['ធ្លាក់',   10.7],
-                            ['មធ្យម',     6.2],
-                            ['ធ្លាក់',   2.7],
-                            ['មធ្យម',     6.2],
-                            ['ធ្លាក់',   1.7],
-                            ['មធ្យម',     6.2],
-                            ['ធ្លាក់',   20.7]
-                        ]
-                    }]
-                });
-                   
-                $('#gradingScaleMaleFemale').highcharts({
-                    chart: {
-                        type: 'column'
-                    },
-                    title: {
-                        text: 'Grading Scale Male and Female of Students'
-                    },
-                    xAxis: {
-                        categories: [
-                            'ធ្លាក់',
-                            'មធ្យម',
-                            'ល្អ',
-                            'ល្អបង្គួរ',
-                            'ល្អណាស់',
-                            'ធ្លាក់',
-                            'មធ្យម',
-                            'ល្អ',
-                            'ល្អបង្គួរ',
-                            'ល្អណាស់'
-                        ]
-                    },
-                    yAxis: {
-                        min: 0,                  
-                        title: {
-                            text: 'Students'
-                        }
-                    },
-                    tooltip: {
-                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                            '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                        footerFormat: '</table>',
-                        shared: true,
-                        useHTML: true
-                    },
-                    plotOptions: {
-                        column: {
-                            pointPadding: 0.2,
-                            borderWidth: 0
-                        }
-                    },
-                    series: [{
-                        name: 'Mail',
-                        data: [0,5,10,15,3,5,5,5,5,4]
-            
-                    }, {
-                        name: 'Femail',
-                        data: [2,5,15,16,5,5,5,5,5,4]
-            
-                    }]
-                });
-                
-                $('#allStudentAVG').highcharts({
-                    chart: {
-                        type: 'column'
-                    },
-                    title: {
-                        text: 'Average of Students'
-                    },
-                    xAxis: {
-                        type: 'category',
-                        labels: {
-                            rotation: -45,
-                            style: {
-                                fontSize: '13px',
-                                fontFamily: 'Verdana, sans-serif'
-                            }
-                        }
-                    },
-                    yAxis: {
-                        min: 0,
-                        title: {
-                            text: 'AVG (first semester)'
-                        }
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    tooltip: {
-                        pointFormat: 'AVG of First Semester: <b>{point.y:.1f}</b>',
-                    },
-                    series: [{
-                        name: 'AVG',
-                        data: [
-                            ['វិសាល', 23.7],
-                            ['Peng', 16,1],
-                            ['Veng', 14.2],
-                            ['Veasna', 14.0],
-                            ['Kanha', 12.5],
-                            ['Srey Tey', 12.1],
-                            ['Srey Neang', 11.8],
-                            ['Bopha', 11.7],
-                            ['Chomno', 11.1],
-                            ['Raksmey', 11.1],
-                            ['Channy', 10.5],
-                            ['Channeth', 10.4],
-                            ['Lyhong', 10.0],
-                            ['Dany', 9.3],
-                            ['Vichheka', 9.3],
-                            ['Chaiya', 9.0],
-                            ['Chanthorn', 8.9],
-                            ['Rith', 8.9],
-                            ['Vathana', 8.9],
-                            ['Ratha', 8.9],
-                            ['Visal', 23.7],
-                            ['Peng', 16,1],
-                            ['Veng', 14.2],
-                            ['Veasna', 14.0],
-                            ['Kanha', 12.5],
-                            ['Srey Tey', 12.1],
-                            ['Srey Neang', 11.8],
-                            ['Bopha', 11.7],
-                            ['Chomno', 11.1],
-                            ['Raksmey', 11.1],
-                            ['Channy', 10.5],
-                            ['Channeth', 10.4],
-                            ['Lyhong', 10.0],
-                            ['Dany', 9.3],
-                            ['Vichheka', 9.3],
-                            ['Chaiya', 9.0],
-                            ['Chanthorn', 8.9],
-                            ['Rith', 8.9],
-                            ['Vathana', 8.9],
-                            ['Ratha', 8.9],
-                            ['Chanthorn', 8.9],
-                            ['Rith', 8.9],
-                            ['Vathana', 8.9],
-                            ['Ratha', 8.9],
-                            ['Visal', 23.7],
-                            ['Peng', 16,1],
-                            ['Veng', 14.2],
-                            ['Veasna', 14.0],
-                            ['Kanha', 12.5],
-                            ['Srey Tey', 12.1],
-                            ['Srey Neang', 11.8]
-                        ],
-                        dataLabels: {
-                            enabled: true,
-                            rotation: -90,
-                            color: '#FFFFFF',
-                            align: 'right',
-                            x: 4,
-                            y: 10,
-                            style: {
-                                fontSize: '13px',
-                                fontFamily: 'Verdana, sans-serif',
-                                textShadow: '0 0 3px black'
-                            }
-                        }
-                    }]
-                });
-            });
-            
-            
-        </script>
         <script src="/public/js/highcharts.js"></script>
         <script src="/public/js/modules/exporting.js"></script>
-        <div id="allGradingScale" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        <div id="gradingScaleMaleFemale" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        <div id="allStudentAVG" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        <?= $chartAllGradingScale->setChartDisplay(); ?>
+        <script type="text/javascript"><?= $chartAllGradingScale->setChartScript(); ?></script>
+        <?= $chartGradingScaleGender->setChartDisplay(); ?>
+        <script type="text/javascript"><?= $chartGradingScaleGender->setChartScript(); ?></script>
+        <?= $chartAVGStudent->setChartDisplay(); ?>
+        <script type="text/javascript"><?= $chartAVGStudent->setChartScript(); ?></script>
+        <?= $chartAreaSpline->setChartDisplay(); ?>
+        <script type="text/javascript"><?= $chartAreaSpline->setChartScript(); ?></script>
+        <?= $chartAreaStacked->setChartDisplay(); ?>
+        <script type="text/javascript"><?= $chartAreaStacked->setChartScript(); ?></script>
     
 </body>
 </html>
