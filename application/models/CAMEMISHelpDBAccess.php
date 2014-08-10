@@ -28,7 +28,7 @@ class CAMEMISHelpDBAccess {
 
         if (is_numeric($Id))
         {
-            $SQL->where("ID = ?", $Id);
+            $SQL->where("ID = ?", "" . $Id . "");
         }
         else
         {
@@ -65,7 +65,7 @@ class CAMEMISHelpDBAccess {
         $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("C" => "COUNT(*)"));
         if ($Id)
-            $SQL->where("PARENT = ?", $Id);
+            $SQL->where("PARENT = ?", "" . $Id . "");
         //error_log($SQL);
         $result = self::dbAminAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
@@ -102,7 +102,7 @@ class CAMEMISHelpDBAccess {
     {
         $node = isset($params["node"]) ? $params["node"] : "0";
         $key = isset($params["key"]) ? $params["key"] : "";
-
+        $entries = "";
         if ($node == 0)
         {
             $facette = self::findHelp($key);

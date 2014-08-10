@@ -19,7 +19,7 @@ Class CamemisHighChart {
     public $plotShadow = "false";
     public $dataLabels = "true";
     public $height = null;
-    public $minWidth = null;
+
     public $plotBackgroundColor = "null";
     public $plotBorderWidth = "null";
     public $pointColor = "#FFFFFF";
@@ -188,7 +188,7 @@ Class CamemisHighChart {
             case self::COLUMN_CHART:
             case self::AREA_SPLINE_CHART:
             case self::AREA_STACKED_CHART:
-                $js = "<div id='" . $this->id . "' style='min-width: " . $this->minWidth . "px; height: " . $this->height . "px; max-width:" . $this->maxwidth . "px; margin: 0 auto'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:85%; margin: 0 auto'></div>";
                 break;
         }
 

@@ -5,67 +5,93 @@
 ///////////////////////////////////////////////////////////
 require_once 'clients/CamemisHighChart.php';
 require_once 'clients/CamemisPage.php';
-require_once 'models/filter/FilterData.php';
-require_once 'models/filter/FilterDataSet.php';
 require_once setUserLoacalization();
-$objectId = isset($_GET["objectId"]) ? addText($_GET["objectId"]) : "";
+
+use ASSESSMENT\AssessmentChart;
+
+$academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
+$subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
+$term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
+
+$ASSESSMENT_CHART = new AssessmentChart();
+$ASSESSMENT_CHART->setAcademicId($academicId);
+$ASSESSMENT_CHART->setSubjectId($subjectId);
+$ASSESSMENT_CHART->setTerm($term);
+
+print_r($_GET);
+
+exit;
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 //$params = Utiles::setPostDecrypteParams($this->urlEncryp->encryptedGet($setParams));
 //$this->setParams($params);
 //$objectDataSet = new FilterChartDataSet();
 //$dataSetGradingScale = $objectDataSet->getDatasetGradingScale();
-$chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'allGradingScale', 'All Grading Scale of Students', false);
+
+$chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'PIC_CHART', 'All Grading Scale of Students', false);
 $chartAllGradingScale->text = "Student Grading Scale";
 $chartAllGradingScale->allowPointSelect = 'true';
 $chartAllGradingScale->pointColor = 'black';
 $chartAllGradingScale->minWidth = 310;
 $chartAllGradingScale->height = 400;
 
-$chartGradingScaleGender = new CamemisHighChart("COLUMN_COMPARE_CHART", 'gradingScaleGender', 'Grading Scale Male and Female of Students', false);
+$chartAllGradingScale1 = new CamemisHighChart("PIC_CHART", 'PIC_CHART1', 'All Grading Scale of Students', false);
+$chartAllGradingScale1->text = "Student Grading Scale";
+$chartAllGradingScale1->allowPointSelect = 'true';
+$chartAllGradingScale1->pointColor = 'black';
+$chartAllGradingScale1->height = 400;
+
+$chartGradingScaleGender = new CamemisHighChart("COLUMN_COMPARE_CHART", 'COLUMN_COMPARE_CHART', 'Grading Scale Male and Female of Students', false);
 $chartGradingScaleGender->xAxis = false;
 $chartGradingScaleGender->text = "Students";
 $chartGradingScaleGender->headerFontsize = 15;
-$chartGradingScaleGender->minWidth = 310;
 $chartGradingScaleGender->height = 400;
 
-$chartAVGStudent = new CamemisHighChart("COLUMN_CHART", 'studentAVG', 'Average of Students', false);
+$chartAVGStudent = new CamemisHighChart("COLUMN_CHART", 'COLUMN_CHART', 'Average of Students', false);
 $chartAVGStudent->seriesName = "Average";
 $chartAVGStudent->text = "Students Average";
 $chartAVGStudent->dataLabelsRotation = -60;
-$chartAVGStudent->minWidth = 310;
 $chartAVGStudent->height = 400;
 
-$chartAreaSpline = new CamemisHighChart("AREA_SPLINE_CHART", 'areaSplineChart', 'Average Fruit Consumption during one Week', false);
+$chartAreaSpline = new CamemisHighChart("AREA_SPLINE_CHART", 'AREA_SPLINE_CHART', 'Average Fruit Consumption during one Week', false);
 $chartAreaSpline->xAxis = false;
 $chartAreaSpline->text = "Fruit Units";
 $chartAreaSpline->tooltipsValueSuffix = "units";
-$chartAreaSpline->minWidth = 310;
 $chartAreaSpline->height = 400;
 
-$chartAreaStacked = new CamemisHighChart("AREA_STACKED_CHART", 'areaStackedChart', 'Historic and Estimated Worldwide Population Growth by Region', false);
+$chartAreaStacked = new CamemisHighChart("AREA_STACKED_CHART", 'AREA_STACKED_CHART', 'Historic and Estimated Worldwide Population Growth by Region', false);
 $chartAreaStacked->xAxis = false;
 $chartAreaStacked->text = "Billions";
 $chartAreaStacked->tooltipsValueSuffix = "millions";
-$chartAreaStacked->minWidth = 310;
 $chartAreaStacked->height = 400;
+
 ?>
 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="/public/js/highcharts.js"></script>
 <script src="/public/js/modules/exporting.js"></script>
+
 <?= $chartAllGradingScale->setChartDisplay(); ?>
 <script type="text/javascript"><?= $chartAllGradingScale->setChartScript(); ?></script>
+
+<?= $chartAllGradingScale1->setChartDisplay(); ?>
+<script type="text/javascript"><?= $chartAllGradingScale1->setChartScript(); ?></script>
+
 <?= $chartGradingScaleGender->setChartDisplay(); ?>
 <script type="text/javascript"><?= $chartGradingScaleGender->setChartScript(); ?></script>
+
 <?= $chartAVGStudent->setChartDisplay(); ?>
 <script type="text/javascript"><?= $chartAVGStudent->setChartScript(); ?></script>
+
 <?= $chartAreaSpline->setChartDisplay(); ?>
 <script type="text/javascript"><?= $chartAreaSpline->setChartScript(); ?></script>
+
 <?= $chartAreaStacked->setChartDisplay(); ?>
 <script type="text/javascript"><?= $chartAreaStacked->setChartScript(); ?></script>
 
-</body>
-</html>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
