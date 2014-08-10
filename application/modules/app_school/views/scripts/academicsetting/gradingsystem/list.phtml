@@ -128,7 +128,18 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    
+
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-', {
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("7FB3-3AC3")."
+            }
+        }]);    
+      ");
+
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     //if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))

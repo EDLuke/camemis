@@ -37,6 +37,16 @@ Ext.onReady(function() {
     
     $OBJECT_TREE->isAsyncTreeNode = false;
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("F97C-C729")."
+            }
+        ");
+    
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAllCamemisType'
         ,objectType:'QUALIFICATION_TYPE'
