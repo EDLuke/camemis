@@ -149,7 +149,7 @@ class StudentSearchDBAccess {
 
                     if ($this->classId)
                         $SQL->where("TRADITIONAL.CLASS = '" . $this->classId . "'");
-                    
+
                     break;
                 case "CREDIT":
                     $SQL->joinInner(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
@@ -406,6 +406,50 @@ class StudentSearchDBAccess {
         {
             return $data;
         }
+    }
+
+    public function enrollStudentsSubjectTerm($params, $isJson = true)
+    {
+        $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
+        $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
+        $this->classId = isset($params["classId"]) ? (int) $params["classId"] : "";
+
+        $this->islimit = false;
+        $allStudent = count($this->queryAllStudents());
+        $this->islimit = true;
+        $result = $this->queryAllStudents();
+
+        $data = array();
+
+        if ($result)
+        {
+            $i = 0;
+            foreach ($result as $value)
+            {
+                $data[$i]["ID"] = $value->ID;
+                $data[$i]["CODE"] = setShowText($value->CODE);
+                $data[$i]["FULL_NAME"] = self::getFullName($value->FIRSTNAME, $value->LASTNAME);
+                $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
+                $data[$i]["BG_COLOR"] = $value->STATUS_COLOR;
+                $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
+                $data[$i]["GENDER"] = getGenderName($value->GENDER);
+
+                $i++;
+            }
+        }
+
+        $a = array();
+        for ($i = 0; $i < $this->limit; $i++)
+        {
+            if (isset($data[$i]))
+                $a[] = $data[$i];
+        }
+
+        return array(
+                "success" => true
+                , "totalCount" => count($data)
+                , "rows" => $a
+            );
     }
 
     public static function getCurrentTraining($studentId)
