@@ -54,6 +54,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 <script>
 Ext.onReady(function() {
     
+    Ext.QuickTips.init();
+    
     function cssStatus(v, p, record){
         return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
             ,v

@@ -1139,9 +1139,6 @@ class StudentDBAccess {
                     $callData["CURRENT_LEVEL"] = 0;
                 }
 
-                if ($academicTerm)
-                    $data['ACADEMIC_TERM'] = $academicTerm;
-
                 $where[] = "STUDENT = '" . $studentId . "'";
                 $where[] = "GRADE = '" . $academicObject->GRADE_ID . "'";
                 $where[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";

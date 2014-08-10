@@ -132,7 +132,7 @@ class StudentSearchDBAccess {
             switch ($this->getSearchIn())
             {
                 case "TRADITIONAL":
-                    $SQL->joinInner(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array("ACADEMIC_TERM"));
+                    $SQL->joinInner(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array());
                     $SQL->joinInner(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=TRADITIONAL.CAMPUS', array("NAME AS CAMPUS_NAME"));
                     $SQL->joinInner(array('GRADE' => 't_grade'), 'GRADE.ID=TRADITIONAL.GRADE', array("ID AS GRADE_ID", "NAME AS GRADE_NAME"));
                     $SQL->joinInner(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=TRADITIONAL.SCHOOL_YEAR', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
@@ -149,10 +149,7 @@ class StudentSearchDBAccess {
 
                     if ($this->classId)
                         $SQL->where("TRADITIONAL.CLASS = '" . $this->classId . "'");
-
-                    if ($this->term)
-                        $SQL->where("TRADITIONAL.ACADEMIC_TERM = '" . $this->term . "'");
-
+                    
                     break;
                 case "CREDIT":
                     $SQL->joinInner(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
@@ -375,40 +372,6 @@ class StudentSearchDBAccess {
                         $data[$i]["CURRENT_SCHOOLYEAR"] = $value->CURRENT_SCHOOLYEAR;
                         $data[$i]["CURRENT_ACADEMIC"] = $value->CURRENT_ACADEMIC;
                         $data[$i]["CURRENT_COURSE"] = $value->CURRENT_COURSE;
-
-                        if (isset($value->ACADEMIC_TERM))
-                        {
-                            switch ($value->ACADEMIC_TERM)
-                            {
-                                case "FIRST_SEMESTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_SEMESTER;
-                                    break;
-                                case "FIRST_TERM":
-                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_TERM;
-                                    break;
-                                case "FIRST_QUARTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = FIRST_QUARTER;
-                                    break;
-                                case "SECOND_SEMESTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_SEMESTER;
-                                    break;
-                                case "SECOND_TERM":
-                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_TERM;
-                                    break;
-                                case "SECOND_QUARTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = SECOND_QUARTER;
-                                    break;
-                                case "THIRD_TERM":
-                                    $data[$i]["ENROLLMENT_TYPE"] = THIRD_TERM;
-                                    break;
-                                case "THIRD_QUARTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = THIRD_QUARTER;
-                                    break;
-                                case "FOURTH_QUARTER":
-                                    $data[$i]["ENROLLMENT_TYPE"] = FOURTH_QUARTER;
-                                    break;
-                            }
-                        }
 
                         break;
                     case 2:

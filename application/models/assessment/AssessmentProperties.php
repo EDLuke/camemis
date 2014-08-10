@@ -58,7 +58,7 @@ abstract class AssessmentProperties {
     {
         $studentsearch = new StudentSearchDBAccess();
         $studentsearch->globalSearch = $this->globalSearch;
-        
+
         switch ($this->getEducationSystem())
         {
             case 1:

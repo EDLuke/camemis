@@ -440,7 +440,7 @@ class Utiles {
 
                 if (DescriptionDBAccess::checkChild($value->ID))
                 {
-                    $fieldObject = DescriptionDBAccess::findObjectFromId($value->ID);  
+                    $fieldObject = DescriptionDBAccess::findObjectFromId($value->ID);
                     if ($fieldObject)
                     {
 
@@ -469,11 +469,11 @@ class Utiles {
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 if ($entries)
                                 {
-                                    foreach ($entries as $value)      
-                                    {  
-                                       $ITEMS .= ",name:'CHECKBOX_" . $value->ID . "'"; 
+                                    foreach ($entries as $value)
+                                    {
+                                        $ITEMS .= ",name:'CHECKBOX_" . $value->ID . "'";
                                     }
-                                } 
+                                }
                                 $ITEMS .= "}]";
                                 break;
                             case 2:
@@ -489,11 +489,11 @@ class Utiles {
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 if ($entries)
                                 {
-                                    foreach ($entries as $value)      
-                                    {  
-                                       $ITEMS .= ",name:'RADIOBOX_" . $value->ID . "'"; 
+                                    foreach ($entries as $value)
+                                    {
+                                        $ITEMS .= ",name:'RADIOBOX_" . $value->ID . "'";
                                     }
-                                }  
+                                }
                                 $ITEMS .= "}]";
                                 break;
                             case 3:
@@ -506,11 +506,11 @@ class Utiles {
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
                                 if ($entries)
                                 {
-                                    foreach ($entries as $value)      
-                                    {  
-                                       $ITEMS .= ",name:'INPUTFIELD_" . $value->ID . "'"; 
+                                    foreach ($entries as $value)
+                                    {
+                                        $ITEMS .= ",name:'INPUTFIELD_" . $value->ID . "'";
                                     }
-                                } 
+                                }
                                 $ITEMS .= "}]";
                                 break;
                         }
