@@ -6,9 +6,7 @@
 // Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace ASSESSMENT;
-
-use models\assessment\AssessmentProperties;
+require_once 'models/assessment/AssessmentProperties.php';
 
 class AssessmentChart extends AssessmentProperties {
 

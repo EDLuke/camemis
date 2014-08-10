@@ -5,22 +5,18 @@
 ///////////////////////////////////////////////////////////
 require_once 'clients/CamemisHighChart.php';
 require_once 'clients/CamemisPage.php';
+require_once 'models/assessment/AssessmentChart.php';
 require_once setUserLoacalization();
-
-use ASSESSMENT\AssessmentChart;
 
 $academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
 $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 
 $ASSESSMENT_CHART = new AssessmentChart();
+
 $ASSESSMENT_CHART->setAcademicId($academicId);
 $ASSESSMENT_CHART->setSubjectId($subjectId);
 $ASSESSMENT_CHART->setTerm($term);
-
-print_r($_GET);
-
-exit;
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
