@@ -364,18 +364,54 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_CLASS_ID");
         $ENROLLED_STUDENTS->removeNAME = "STUDENT_NAME";
         $ENROLLED_STUDENTS->renderJS();
 
+        $PENEL_ITEMS = Array();
+        $FIRST = "{
+            title: '".LIST_OF_STUDENTS."'
+            ,layout: 'fit'
+            ,items:[{xtype: '".$ENROLLED_STUDENTS->getObjectXtype()."'}]
+        }";
+        $PENEL_ITEMS[] = $FIRST;
+        $SECOND = "{
+            title: '".SUBJECT_ENROLLMENT."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: '/academic/enrollmentbysubject/?objectId=".$this->facette->ID."'})]
+        }";
+        if ($this->facette->ENROLLMENT_TYPE == 1) $PENEL_ITEMS[] = $SECOND;
+
+        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
+    
         ?>
+                
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
             ,items:[{
-                border: false
-                ,id:'content'
-                ,layout: 'card'
-                ,activeItem: 0
-                ,items: [{xtype: '<?= $ENROLLED_STUDENTS->getObjectXType(); ?>'}]
+                layout:'fit'
+                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                ,border: false
+                ,items:[{
+                    xtype: 'tabpanel'
+                    ,tabPosition: 'top'
+                    ,plain:true
+                    ,activeTab: 0
+                    ,enableTabScroll:true
+                    ,items:<?=$CHOOSE_ITEMS?>
+                }]
             }]
         });
+        
+//        viewport = new Ext.Viewport({
+//            layout: 'fit'
+//            ,border: false
+//            ,items:[{
+//                border: false
+//                ,id:'content'
+//                ,layout: 'card'
+//                ,activeItem: 0
+//                ,items: [{xtype: '<?= $ENROLLED_STUDENTS->getObjectXType(); ?>'}]
+//            }]
+//        });
+        
         <?
 
         $CONTEXT_ITEMS = array();
@@ -403,8 +439,6 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_CLASS_ID");
             }
         }
         ";
-        if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
-        //$CONTEXT_ITEMS[] = $TEACHER_COMMENTS;
 
         $CLASS_TRANSFER = "
         {
@@ -430,7 +464,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_CLASS_ID");
 
         if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
         $CONTEXT_ITEMS[] = $STUDENT_REMOVE_FROM_CLASS;
-        //@sea peng 02.05.2013
+        
         $SEND_MESSAGE ="
         {
             text: '".SEND." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME

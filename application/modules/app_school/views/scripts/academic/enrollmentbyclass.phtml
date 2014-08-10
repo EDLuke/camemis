@@ -316,10 +316,11 @@ Ext.onReady(function() {
         ,layout: 'fit'
         ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: '/academic/enrollmentbysubject/?objectId=".$this->facette->ID."'})]
     }";
-    $PENEL_ITEMS[] = $SECOND;
+    if ($this->facette->ENROLLMENT_TYPE == 1) $PENEL_ITEMS[] = $SECOND;
     
     $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
     ?>
+            
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
