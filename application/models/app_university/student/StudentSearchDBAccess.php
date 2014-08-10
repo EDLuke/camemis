@@ -440,7 +440,7 @@ class StudentSearchDBAccess {
 
         return array(
             "success" => true
-            , "totalCount" => count($data)
+            , "totalCount" => $allStudent
             , "rows" => $a
         );
     }

@@ -31,6 +31,7 @@ $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->objectI
 </style>
 
 <script>
+var comboValue;
 Ext.onReady(function() {
     
     Ext.QuickTips.init();
@@ -52,13 +53,13 @@ Ext.onReady(function() {
     function cssFirst(value, metadata, record){
         var name = record.data.FULL_NAME;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+        return '<div style="font-weight:bold; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
     
     function cssSecond(value, metadata, record){
         var name = record.data.FULL_NAME;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#fff">' + value + '</div>';
+        return '<div style="font-weight:bold; color:#000; padding:4px;height:18px;background:#fff">' + value + '</div>';
     }
     
     <?
@@ -89,8 +90,8 @@ Ext.onReady(function() {
 
     if($listSubjects){
         foreach($listSubjects as $value){
-            $FIELDS .= ",{name: 'FIRST_SEMESTER_".$value->SUBJECT_ID."'}";
-            $FIELDS .= ",{name: 'SECOND_SEMESTER_".$value->SUBJECT_ID."'}";
+            $FIELDS .= ",{name: 'FIRST_SEMESTER__".$value->SUBJECT_ID."'}";
+            $FIELDS .= ",{name: 'SECOND_SEMESTER__".$value->SUBJECT_ID."'}";
         }
     }
     
@@ -102,17 +103,18 @@ Ext.onReady(function() {
     
     if($listSubjects){
         foreach($listSubjects as $value){
+            
              $COLUMNS .= ",{
                 header: '<b>1S</b>'
-                ,dataIndex: 'FIRST_SEMESTER_".$value->SUBJECT_ID."'
-                ,width: 50,align: 'center',renderer:cssFirst
+                ,dataIndex: 'FIRST_SEMESTER__".$value->SUBJECT_ID."'
+                ,width:60,align: 'center',renderer:cssFirst
                 ,editor: new Ext.form.ComboBox({
                     triggerAction:'all'
                     ,mode:'local'
                     ,store: new Ext.data.JsonStore({
                         autoDestroy: true
                         ,fields: ['chooseValue', 'chooseDisplay']
-                        ,data:[{chooseValue: '0', chooseDisplay: '".NO."'},{chooseValue: '1', chooseDisplay: '".YES."'}]
+                        ,data:[{chooseValue: '0', chooseDisplay: '---'},{chooseValue: '1', chooseDisplay: 'X'}]
                     })
                     ,valueField: 'chooseValue'
                     ,displayField: 'chooseDisplay'
@@ -122,33 +124,36 @@ Ext.onReady(function() {
                             replaceValue = combo.getValue();
                             var newDisplay = record.get('chooseDisplay');
                             combo.setValue(newDisplay);
+                            comboValue = record.get('chooseValue');
                         }
                     }
                 })
             }";
+             
             $COLUMNS .= ",{
-               header: '<b>2S</b>'
-               ,dataIndex: 'SECOND_SEMESTER_".$value->SUBJECT_ID."'
-               ,width: 50,align: 'center',renderer:cssFirst
-               ,editor: new Ext.form.ComboBox({
-                   triggerAction:'all'
-                   ,mode:'local'
-                   ,store: new Ext.data.JsonStore({
-                       autoDestroy: true
-                       ,fields: ['chooseValue', 'chooseDisplay']
-                       ,data:[{chooseValue: '0', chooseDisplay: '".NO."'},{chooseValue: '1', chooseDisplay: '".YES."'}]
-                   })
-                   ,valueField: 'chooseValue'
-                   ,displayField: 'chooseDisplay'
-                   ,editable: false
-                   ,listeners: {
-                       select: function(combo, record, index) {
-                           replaceValue = combo.getValue();
-                           var newDisplay = record.get('chooseDisplay');
-                           combo.setValue(newDisplay);
-                       }
-                   }
-               })
+                header: '<b>2S</b>'
+                ,dataIndex: 'SECOND_SEMESTER__".$value->SUBJECT_ID."'
+                ,width:60,align: 'center',renderer:cssFirst
+                ,editor: new Ext.form.ComboBox({
+                    triggerAction:'all'
+                    ,mode:'local'
+                    ,store: new Ext.data.JsonStore({
+                        autoDestroy: true
+                        ,fields: ['chooseValue', 'chooseDisplay']
+                        ,data:[{chooseValue: '0', chooseDisplay: '---'},{chooseValue: '1', chooseDisplay: 'X'}]
+                    })
+                    ,valueField: 'chooseValue'
+                    ,displayField: 'chooseDisplay'
+                    ,editable: false
+                    ,listeners: {
+                        select: function(combo, record, index) {
+                            replaceValue = combo.getValue();
+                            var newDisplay = record.get('chooseDisplay');
+                            combo.setValue(newDisplay);
+                            comboValue = record.get('chooseValue');
+                        }
+                    }
+                })
            }";
         }
     }
@@ -169,8 +174,6 @@ Ext.onReady(function() {
             $html .= ",limit:100";
             $html .= ",cmd:'enrollStudentsSubjectTerm'";
             $html .= ",classId: '".$this->facette->ID."'";
-            $html .= ",gradeId: '".$this->facette->GRADE_ID."'";
-            $html .= ",schoolyearId: '".$this->facette->SCHOOL_YEAR."'";
         $html .= "}";
         $html .= ",reader:new Ext.data.JsonReader({";
             $html .= "id:'NAME'";
@@ -200,6 +203,29 @@ Ext.onReady(function() {
         $html .= "}";
         
         $html .= ",plugins: group";
+        
+        $html .= ",listeners: {";
+            $html .= "afteredit: function (e){";
+                $html .= "Ext.Ajax.request({";
+                    $html .= "url: '/student/jsonsave/'";
+                    $html .= ",method: 'POST'";
+                    $html .= ",params: {";
+                        $html .= "cmd:'jsonActionEnrollStudentSubjectTerm'";
+                        $html .= ",academicId: '".$this->facette->ID."'";
+                        $html .= ",id:e.record.get('ID')";
+                        $html .= ",field: e.field";
+                        $html .= ",newValue: e.value";
+                        $html .= ",comboValue:comboValue";
+                    $html .= "}";
+                    $html .= ",success: function (result, request ) {";
+                        $html .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');";
+                        $html .= "jsonData = Ext.util.JSON.decode(result.responseText);";
+                        $html .= "grid.getStore().commitChanges();";
+                    $html .= "}";
+                $html .= "});";
+            $html .= "}";
+        $html .= "}";
+        
         $html .= ",bbar:new Ext.PagingToolbar({";
             $html .= "store:myStore";
             $html .= ",displayInfo:true";

@@ -545,7 +545,7 @@ class StudentController extends Zend_Controller_Action {
             case "enrollStudentsSubjectTerm":
                 $jsondata = $this->DB_STUDENT_SEARCH->enrollStudentsSubjectTerm($this->REQUEST->getPost());
                 break;
-            
+
             case "searchStudent":
             case "allStudentsByGrade":
                 $jsondata = $this->DB_STUDENT_SEARCH->searchStudents($this->REQUEST->getPost());
@@ -777,6 +777,10 @@ class StudentController extends Zend_Controller_Action {
 
             case "jsonSetCurrentStudentAcademic":
                 $jsondata = StudentDBAccess::setCurrentStudentAcademic(false, true);
+                break;
+
+            case "jsonActionEnrollStudentSubjectTerm":
+                $jsondata = StudentAcademicDBAccess::jsonActionEnrollStudentSubjectTerm($this->REQUEST->getPost());
                 break;
         }
 

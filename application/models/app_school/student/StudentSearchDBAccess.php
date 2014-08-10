@@ -421,6 +421,8 @@ class StudentSearchDBAccess {
 
         $data = array();
 
+        $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->classId, false);
+
         if ($result)
         {
             $i = 0;
@@ -434,6 +436,27 @@ class StudentSearchDBAccess {
                 $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
 
+                if ($listSubjects)
+                {
+                    foreach ($listSubjects as $subject)
+                    {
+                        $CHECK_FIRST = StudentAcademicDBAccess::checkStudentSchoolyearSubjectTerm(
+                                        $value->ID
+                                        , $this->classId
+                                        , "FIRST_SEMESTER"
+                                        , $subject->SUBJECT_ID);
+
+                        $CHECK_SECOND = StudentAcademicDBAccess::checkStudentSchoolyearSubjectTerm(
+                                        $value->ID
+                                        , $this->classId
+                                        , "SECOND_SEMESTER"
+                                        , $subject->SUBJECT_ID);
+
+                        $data[$i]["FIRST_SEMESTER__" . $subject->SUBJECT_ID . ""] = $CHECK_FIRST ? "X" : "---";
+                        $data[$i]["SECOND_SEMESTER__" . $subject->SUBJECT_ID . ""] = $CHECK_SECOND ? "X" : "---";
+                    }
+                }
+
                 $i++;
             }
         }
@@ -446,10 +469,10 @@ class StudentSearchDBAccess {
         }
 
         return array(
-                "success" => true
-                , "totalCount" => count($data)
-                , "rows" => $a
-            );
+            "success" => true
+            , "totalCount" => $allStudent
+            , "rows" => $a
+        );
     }
 
     public static function getCurrentTraining($studentId)

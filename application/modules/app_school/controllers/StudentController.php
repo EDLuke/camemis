@@ -939,6 +939,10 @@ class StudentController extends Zend_Controller_Action {
             case "jsonSetCurrentStudentAcademic":
                 $jsondata = StudentDBAccess::setCurrentStudentAcademic(false, true);
                 break;
+
+            case "jsonActionEnrollStudentSubjectTerm":
+                $jsondata = StudentAcademicDBAccess::jsonActionEnrollStudentSubjectTerm($this->REQUEST->getPost());
+                break;
         }
 
         if (isset($jsondata))
