@@ -43,6 +43,16 @@ Ext.onReady(function() {
             clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_ASSIGNMENT_TEMP."&objectId=new&target=training');
         }
     ");
+    
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("9C1B-B3AA")."
+            }
+        ");
+    
     $OBJECT_TREE->isTreeExpand = false;
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->setBaseParams("

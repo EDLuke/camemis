@@ -37,6 +37,15 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
     
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("FE05-5554")."
+            }
+        ");
+    
     $OBJECT_TREE->setSaveParams("
     	cmd: 'addObject'
         ,educationType: educationType
