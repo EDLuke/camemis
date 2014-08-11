@@ -22,6 +22,8 @@ $ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
 
 if(!$this->facette) {header("Location: /main/permission/");exit;}
 
+$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
+
 function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
     
     $js = "";
@@ -51,8 +53,6 @@ function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
 }
          
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
-
-$columndata = Utiles::getGridColumnData("STUDENT_LIST_CLASS_ID");
 
 ?>
 <script>
@@ -93,9 +93,8 @@ Ext.onReady(function() {
     }
     
     $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    
     $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 80,dataIndex: 'CODE'");
-    $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 100,dataIndex: 'STUDENT_SCHOOL_ID'");
+    
     if(!SchoolDBAccess::displayPersonNameInGrid()){
         $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".LASTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
         $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
@@ -228,45 +227,104 @@ Ext.onReady(function() {
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'GENDER'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_SCHOOLYEAR'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CURRENT_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME_LATIN'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME_LATIN'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CREATED_DATE'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS_KEY'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'TRAINING_TERM'");
+    
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
         case "VIETNAMESE": $width = 100;break;
         default: $width = 85;break;
     }
     
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, hidden:".checkColHidden(2, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CODE'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'center', hidden:".checkColHidden(3, $columndata).", width: 80, renderer: cssText, sortable: true, dataIndex: 'STUDENT_SCHOOL_ID'");
-
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
+    
     if(!SchoolDBAccess::displayPersonNameInGrid()){
 
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
-
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
     }else{
 
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
     }
     
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_CLASS."</b>', width: 150, hidden:".checkColHidden(9, $columndata).", renderer: cssText, align: 'center', sortable: true, dataIndex: 'CURRENT_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CURRENT_SCHOOL_YEAR."</b>', align:'center', width: 120, hidden:".checkColHidden(10, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CURRENT_SCHOOLYEAR'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CREATED_DATE."</b>', width: 150, hidden:".checkColHidden(11, $columndata).", renderer: cssText, sortable: true, dataIndex: 'CREATED_DATE'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+    $ASSIGNED_STUDENTS_GRID->addColumn("
+        header: '<b>".DATE_BIRTH."</b>'
+        , width: 110
+        , sortable: true
+        , dataIndex: 'DATE_BIRTH'
+        , editor: new Ext.form.TextField({
+            allowBlank: false
+            ,name: 'DATE_BIRTH'
+        })
+    ");
+    
+    switch($TERM_NUMBER){
+        case 1:
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FIRST_TERM."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FIRST_TERM'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".SECOND_TERM."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'SECOND_TERM'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".THIRD_TERM."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'THIRD_TERM'
+            ");
+            break;
+        case 2:
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FIRST_QUARTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FIRST_QUARTER'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".SECOND_QUARTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'SECOND_QUARTER'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".THIRD_QUARTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'THIRD_QUARTER'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FOURTH_QUARTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FOURTH_QUARTER'
+            ");
+            break;
+        default:
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FIRST_SEMESTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FIRST_SEMESTER'
+            ");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".SECOND_SEMESTER."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'SECOND_SEMESTER'
+            ");
+            break;
+    }
     
     $ASSIGNED_STUDENTS_GRID->baseParams = "
         start:0
@@ -311,12 +369,6 @@ Ext.onReady(function() {
         ,items:[{xtype: '".$ASSIGNED_STUDENTS_GRID->getObjectXtype()."'}]
     }";
     $PENEL_ITEMS[] = $FIRST;
-    $SECOND = "{
-        title: '".SUBJECT_ENROLLMENT."'
-        ,layout: 'fit'
-        ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: '/academic/enrollmentbysubject/?objectId=".$this->facette->ID."'})]
-    }";
-    if ($this->facette->ENROLLMENT_TYPE == 1) $PENEL_ITEMS[] = $SECOND;
     
     $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
     ?>
@@ -366,23 +418,22 @@ Ext.onReady(function() {
         $CONTEXT_ITEMS[] = $STUDENT_REMOVE_FROM_CLASS;
         $CHOOSE_CONTEXT_ITEMS = implode(',', $CONTEXT_ITEMS);
         
-        $js = "";
-        $js .= "var myGrid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
-        $js .= "if (myGrid) myGrid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
-            $js .= "var record = grid.store.getAt(rowIndex);";
-            $js .= "var chooseId = record.data.ID;";
-            $js .= "var contextMenu = new Ext.menu.Menu({";
-                $js .= "items: [".$CHOOSE_CONTEXT_ITEMS."]";
-            $js .= "});";
-            $js .= "event.stopEvent();";
-            $js .= "if (columnIndex <=3) contextMenu.showAt(event.xy);";
-            $js .= "contextMenu.showAt(event.xy);";
-        $js .= "});";
-        if ($CONTEXT_ITEMS) echo $js;   
+        if($CONTEXTMENU_ITEMS){
+            $js = "";
+            $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
+            $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+                $js .="var record = grid.store.getAt(rowIndex);";
+                $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
+                    $js .="var contextMenu = new Ext.menu.Menu({";
+                        $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                    $js .="});";
+                    $js .="contextMenu.showAt(event.xy);";
+                    $js .="event.stopEvent();";
+                $js .="}";
+            $js .="});";
+            echo $js;
+        } 
     ?>
-    
-    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
-    
 });
 </script>
 <?
