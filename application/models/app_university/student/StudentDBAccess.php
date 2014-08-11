@@ -413,9 +413,7 @@ class StudentDBAccess {
 
                         $CHECK_IN_SCHOOLYEAR = self::checkStudentINGradeSchoolyear(
                                         $row->STUDENT_ID
-                                        , false
-                                        , $gradeId
-                                        , $academicObject->SCHOOL_YEAR);
+                                        , $academicObject);
 
                         if (!$CHECK_IN_SCHOOLYEAR) {
 
@@ -679,9 +677,7 @@ class StudentDBAccess {
 
         $CHECK_STUDENT_SCHOOLYEAR = self::checkStudentINGradeSchoolyear(
                         $studentId
-                        , false
-                        , $gradeId
-                        , $schoolyearId
+                        , $schoolyearObject
         );
 
 
@@ -706,13 +702,13 @@ class StudentDBAccess {
         }
     }
 
-    protected function addStudentInClass($studentId, $academicId, $gradeId, $schoolyearId) {
+    protected function addStudentInClass($studentId, $academicObject) {
 
-        if (!self::checkStudentINGradeSchoolyear($studentId, $academicId, $gradeId, $schoolyearId)) {
-            $WHERE[] = "GRADE = '" . $gradeId . "'";
-            $WHERE[] = "SCHOOL_YEAR = '" . $schoolyearId . "'";
+        if (!self::checkStudentINGradeSchoolyear($studentId, $academicObject)) {
+            $WHERE[] = "GRADE = '" . $academicObject->GRADE_ID . "'";
+            $WHERE[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
             $WHERE[] = "STUDENT = '" . $studentId . "'";
-            $SAVEDATA['CLASS'] = $academicId;
+            $SAVEDATA['CLASS'] = $academicObject->ID;
             self::dbAccess()->update('t_student_schoolyear', $SAVEDATA, $WHERE);
 
             self::setCurrentStudentAcademic($studentId);
@@ -898,11 +894,16 @@ class StudentDBAccess {
             $selectedCount = 0;
             if ($selectedStudents)
                 foreach ($selectedStudents as $studentId) {
-                    $this->addStudentInClass(
-                            $studentId
-                            , $academicObject->ID
-                            , $academicObject->GRADE_ID
-                            , $academicObject->SCHOOL_YEAR);
+
+                    if (!self::checkStudentINGradeSchoolyear($studentId, $academicObject)) {
+                        $this->addStudentInClass(
+                                $studentId
+                                , $academicObject);
+
+                        $selectedCount++;
+                    } else {
+                        $selectedCount = 0;
+                    }
 
                     $selectedCount++;
                 }
@@ -1388,7 +1389,7 @@ class StudentDBAccess {
             if ($selectedStudents)
                 foreach ($selectedStudents as $studentId) {
 
-                    if (!self::checkStudentINGradeSchoolyear($studentId, $academicId, $classObject->GRADE_ID, $classObject->SCHOOL_YEAR)) {
+                    if (!self::checkStudentINGradeSchoolyear($studentId, $classObject)) {
 
                         $STUDENT_DATA['STUDENT'] = $studentId;
                         $STUDENT_DATA['CAMPUS'] = $classObject->CAMPUS_ID;
@@ -1507,11 +1508,11 @@ class StudentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkStudentINGradeSchoolyear($Id, $academicId, $gradeId, $schoolyearId) {
+    public static function checkStudentINGradeSchoolyear($Id, $academicObject) {
 
         $CHECK_SQL = self::dbAccess()->select();
         $CHECK_SQL->from("t_student_schoolyear_subject", array("C" => "COUNT(*)"));
-        $CHECK_SQL->where("SCHOOLYEAR_ID='" . $schoolyearId . "'");
+        $CHECK_SQL->where("SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'");
         $CHECK_SQL->where("STUDENT_ID='" . $Id . "'");
         $CHECK_SQL->group("STUDENT_ID");
         $checkResult = self::dbAccess()->fetchRow($CHECK_SQL);
@@ -1525,14 +1526,18 @@ class StudentDBAccess {
             $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
             $SQL->where("STUDENT = '" . $Id . "'");
 
-            if ($academicId)
-                $SQL->where("CLASS = '" . $academicId . "'");
+            if ($academicObject->OBJECT_TYPE == "CLASS") {
+                $SQL->where("CLASS = '" . $academicObject->ID . "'");
+            }
 
-            if ($gradeId)
-                $SQL->where("GRADE = ?", $gradeId);
-
-            if ($schoolyearId)
-                $SQL->where("SCHOOL_YEAR = ?", $schoolyearId);
+            $SQL->where("GRADE = ?", $academicObject->GRADE_ID);
+            if ($academicObject->ENROLLMENT_TYPE == 1) {
+                $SQL->orWhere("FIRST_ACADEMIC = '1'");
+                $SQL->orWhere("SECOND_ACADEMIC = '1'");
+                $SQL->orWhere("THIRD_ACADEMIC = '1'");
+                $SQL->orWhere("FOURTH_ACADEMIC = '1'");
+            }
+            $SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
