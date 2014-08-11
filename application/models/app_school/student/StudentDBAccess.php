@@ -859,27 +859,30 @@ class StudentDBAccess {
             foreach ($result as $value) {
 
                 if ($academicObject->ENROLLMENT_TYPE == 1) {
-                    $data[$i]["ID"] = $value->ID;
-                    $data[$i]["CODE"] = $value->CODE;
-                    $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
-                    $data[$i]["LASTNAME"] = $value->LASTNAME;
-                    $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
-                    $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
-                    $data[$i]["LASTNAME_LATIN"] = $value->LASTNAME_LATIN;
-                    $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
-                    $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
-                    $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
-                    $data[$i]["GENDER"] = getGenderName($value->GENDER);
 
-                    ////////////////////////////////////////////////////////////
-                    //Status of student...
-                    ////////////////////////////////////////////////////////////
-                    $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->ID);
-                    $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
-                    $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
-                    $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+                    if ($value->CLASS != $academicObject->ID) {
+                        $data[$i]["ID"] = $value->ID;
+                        $data[$i]["CODE"] = $value->CODE;
+                        $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
+                        $data[$i]["LASTNAME"] = $value->LASTNAME;
+                        $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
+                        $data[$i]["FIRSTNAME_LATIN"] = $value->FIRSTNAME_LATIN;
+                        $data[$i]["LASTNAME_LATIN"] = $value->LASTNAME_LATIN;
+                        $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
+                        $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
+                        $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                        $data[$i]["GENDER"] = getGenderName($value->GENDER);
 
-                    $i++;
+                        ////////////////////////////////////////////////////////
+                        //Status of student...
+                        ////////////////////////////////////////////////////////
+                        $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->ID);
+                        $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
+                        $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
+                        $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+
+                        $i++;
+                    }
                 } else {
                     if (!$value->CLASS_ID) {
 
