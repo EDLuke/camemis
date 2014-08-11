@@ -164,18 +164,51 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STUDENT_SCHOOL_ID."</b>', align:'center', hidden:".checkColHidden(3, $columndata).", width: 80, renderer: cssText, sortable: true, dataIndex: 'STUDENT_SCHOOL_ID'");
 
         if(!SchoolDBAccess::displayPersonNameInGrid()){
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".LASTNAME."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'LASTNAME'
+                , editor: new Ext.form.TextField({
+                    allowBlank: false
+                    ,name: 'LASTNAME'
+                })
+            ");
 
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FIRSTNAME."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FIRSTNAME'
+                , editor: new Ext.form.TextField({
+                    allowBlank: false
+                    ,name: 'FIRSTNAME'
+                })
+            ");
 
         }else{
 
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, hidden:".checkColHidden(4, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, hidden:".checkColHidden(5, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(6, $columndata).", renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME_LATIN'");
-            $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME_LATIN."</b>', width: 120, hidden:".checkColHidden(7, $columndata).", renderer: cssText, sortable: true, dataIndex: 'LASTNAME_LATIN'");
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".FIRSTNAME."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'FIRSTNAME'
+                , editor: new Ext.form.TextField({
+                    allowBlank: false
+                    ,name: 'FIRSTNAME'
+                })
+            ");
+
+            $ASSIGNED_STUDENTS_GRID->addColumn("
+                header: '<b>".LASTNAME."</b>'
+                , width: 110
+                , sortable: true
+                , dataIndex: 'LASTNAME'
+                , editor: new Ext.form.TextField({
+                    allowBlank: false
+                    ,name: 'LASTNAME'
+                })
+            ");
         }
 
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, hidden:".checkColHidden(8, $columndata).", renderer: cssText, sortable: true, dataIndex: 'GENDER'");
@@ -315,7 +348,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
         $SHOW_DETAIL .="text: '".SHOW_DETAIL." &raquo; ' + record.data.FULL_NAME";
         $SHOW_DETAIL .=",iconCls: 'icon-user'";
         $SHOW_DETAIL .=",handler: function(){";
-        $SHOW_DETAIL .="contextMenu.hide();clickOpenPage('center','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID + '&noSudentComboLsit=true');";
+        $SHOW_DETAIL .="contextMenu.hide();clickOpenPage('center','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID);";
         $SHOW_DETAIL .="}";
         $SHOW_DETAIL .="}";
         $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
@@ -328,7 +361,7 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_GRADE_YEAR_ID");
             $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                 $js .="if (Ext.getCmp('REMOVE_ID')) Ext.getCmp('REMOVE_ID').enable();";
                 $js .="var record = grid.store.getAt(rowIndex);";
-                $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
+                $js .= "if(columnIndex==1 || columnIndex==2){ ";
                     $js .="var contextMenu = new Ext.menu.Menu({";
                         $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
                     $js .="});";
