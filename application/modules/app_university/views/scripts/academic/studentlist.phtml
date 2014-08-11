@@ -285,67 +285,69 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
             })
         ");
 
-        switch($TERM_NUMBER){
-            case 1:
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".FIRST_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_TERM'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".SECOND_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_TERM'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".THIRD_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'THIRD_TERM'
-                ");
-                break;
-            case 2:
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".FIRST_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_QUARTER'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".SECOND_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_QUARTER'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".THIRD_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'THIRD_QUARTER'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".FOURTH_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FOURTH_QUARTER'
-                ");
-                break;
-            default:
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".FIRST_SEMESTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_SEMESTER'
-                ");
-                $ENROLLED_STUDENTS->addColumn("
-                    header: '<b>".SECOND_SEMESTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_SEMESTER'
-                ");
-                break;
+        if($this->facette->ENROLLMENT_TYPE == 1){
+            switch($TERM_NUMBER){
+                case 1:
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".FIRST_TERM."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'FIRST_TERM'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".SECOND_TERM."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'SECOND_TERM'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".THIRD_TERM."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'THIRD_TERM'
+                    ");
+                    break;
+                case 2:
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".FIRST_QUARTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'FIRST_QUARTER'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".SECOND_QUARTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'SECOND_QUARTER'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".THIRD_QUARTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'THIRD_QUARTER'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".FOURTH_QUARTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'FOURTH_QUARTER'
+                    ");
+                    break;
+                default:
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".FIRST_SEMESTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'FIRST_SEMESTER'
+                    ");
+                    $ENROLLED_STUDENTS->addColumn("
+                        header: '<b>".SECOND_SEMESTER."</b>'
+                        , width: 110
+                        , sortable: true
+                        , dataIndex: 'SECOND_SEMESTER'
+                    ");
+                    break;
+            }
         }
 
         $ENROLLED_STUDENTS->baseParams = "

@@ -263,67 +263,69 @@ Ext.onReady(function() {
         })
     ");
     
-    switch($TERM_NUMBER){
-        case 1:
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".FIRST_TERM."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'FIRST_TERM'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".SECOND_TERM."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'SECOND_TERM'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".THIRD_TERM."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'THIRD_TERM'
-            ");
-            break;
-        case 2:
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".FIRST_QUARTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'FIRST_QUARTER'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".SECOND_QUARTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'SECOND_QUARTER'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".THIRD_QUARTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'THIRD_QUARTER'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".FOURTH_QUARTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'FOURTH_QUARTER'
-            ");
-            break;
-        default:
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".FIRST_SEMESTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'FIRST_SEMESTER'
-            ");
-            $ASSIGNED_STUDENTS_GRID->addColumn("
-                header: '<b>".SECOND_SEMESTER."</b>'
-                , width: 110
-                , sortable: true
-                , dataIndex: 'SECOND_SEMESTER'
-            ");
-            break;
+    if($this->facette->ENROLLMENT_TYPE == 1){
+        switch($TERM_NUMBER){
+            case 1:
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".FIRST_TERM."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'FIRST_TERM'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".SECOND_TERM."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'SECOND_TERM'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".THIRD_TERM."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'THIRD_TERM'
+                ");
+                break;
+            case 2:
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".FIRST_QUARTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'FIRST_QUARTER'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".SECOND_QUARTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'SECOND_QUARTER'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".THIRD_QUARTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'THIRD_QUARTER'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".FOURTH_QUARTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'FOURTH_QUARTER'
+                ");
+                break;
+            default:
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".FIRST_SEMESTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'FIRST_SEMESTER'
+                ");
+                $ASSIGNED_STUDENTS_GRID->addColumn("
+                    header: '<b>".SECOND_SEMESTER."</b>'
+                    , width: 110
+                    , sortable: true
+                    , dataIndex: 'SECOND_SEMESTER'
+                ");
+                break;
+        }
     }
     
     $ASSIGNED_STUDENTS_GRID->baseParams = "
