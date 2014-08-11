@@ -19,8 +19,7 @@ class CamemisPage {
     public $setLoadingMask = false;
     public $bgColor = "";
 
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->utiles = Utiles::getInstance();
 
@@ -28,8 +27,7 @@ class CamemisPage {
 
         //$registry = Zend_Registry::getInstance();
         //print_r($registry);
-        switch (Zend_Registry::get('SKIN'))
-        {
+        switch (Zend_Registry::get('SKIN')) {
             case "GRAY":
                 $this->stylename = "xtheme-gray";
                 break;
@@ -46,23 +44,19 @@ class CamemisPage {
         //exit;
     }
 
-    public function setExtJsVersion()
-    {
+    public function setExtJsVersion() {
         return $this->ext_version = "" . Zend_Registry::get('CAMEMIS_URL') . "/public/" . Zend_Registry::get('EXTJS_VERSION') . "";
     }
 
-    static function getInstance()
-    {
+    static function getInstance() {
         static $me;
-        if ($me == null)
-        {
+        if ($me == null) {
             $me = new CamemisPage();
         }
         return $me;
     }
 
-    public function showCamemisHeader()
-    {
+    public function showCamemisHeader() {
 
         $js = "";
         $js .= $this->pageHeader();
@@ -92,8 +86,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function setJavaScript()
-    {
+    protected function setJavaScript() {
 
         $js = "";
         $js .= "<script>";
@@ -121,16 +114,14 @@ class CamemisPage {
         return trim(preg_replace(array('/\r/', '/\n/'), '', $js));
     }
 
-    protected function pageHeader()
-    {
+    protected function pageHeader() {
 
         $js = "";
         $js .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
         $js .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
         $js .= "<head>";
 
-        switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
-        {
+        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
 
             case "KHMER":
                 $js .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>";
@@ -163,11 +154,9 @@ class CamemisPage {
         return trim(preg_replace(array('/\r/', '/\n/'), '', $js));
     }
 
-    public static function userBgColor()
-    {
+    public static function userBgColor() {
         $bgColor = "";
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "STUDENT":
             case "GUARDIAN":
                 //$bgColor = "#e6e6e6";
@@ -189,11 +178,9 @@ class CamemisPage {
         return $bgColor;
     }
 
-    public static function userFormBgColor()
-    {
+    public static function userFormBgColor() {
         $bgColor = "";
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "STUDENT":
             case "GUARDIAN":
                 //$bgColor = "#e6e6e6";
@@ -212,16 +199,14 @@ class CamemisPage {
         return $bgColor;
     }
 
-    protected function loadCSS()
-    {
+    protected function loadCSS() {
 
         $keyAPI = Zend_Registry::get('MODUL_API');
 
         $js = "";
         $js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $this->setExtJsVersion() . "/resources/css/ext-all-css-camemis.php?key=" . $keyAPI . "\" />";
 
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "STUDENT":
             case "GUARDIAN":
                 //$js .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $this->setExtJsVersion() . "/resources/css/xtheme-gray.css\" />";
@@ -256,8 +241,7 @@ class CamemisPage {
         return trim(preg_replace(array('/\r/', '/\n/'), '', $js));
     }
 
-    protected function loadExtjs()
-    {
+    protected function loadExtjs() {
 
         $keyAPI = Zend_Registry::get('MODUL_API');
 
@@ -275,8 +259,7 @@ class CamemisPage {
         return trim(preg_replace(array('/\r/', '/\n/'), '', $js));
     }
 
-    public static function loadExtLocalization()
-    {
+    public static function loadExtLocalization() {
 
         $js = "<script>";
         $js .= ExtjsLocalization::render();
@@ -285,8 +268,7 @@ class CamemisPage {
         return trim(preg_replace(array('/\r/', '/\n/'), '', $js));
     }
 
-    public function setExtDefaultGif()
-    {
+    public function setExtDefaultGif() {
 
         $js = "";
         $js .= "Ext.QuickTips.init();";
@@ -294,8 +276,7 @@ class CamemisPage {
         return print$js;
     }
 
-    protected function loadPluginJS()
-    {
+    protected function loadPluginJS() {
 
         $keyAPI = Zend_Registry::get('MODUL_API');
 
@@ -309,32 +290,25 @@ class CamemisPage {
         return $js;
     }
 
-    protected function loadCamemisExtendJS()
-    {
+    protected function loadCamemisExtendJS() {
 
         //
     }
 
-    protected function openPageBody()
-    {
+    protected function openPageBody() {
 
-        if ($this->bgColor)
-        {
+        if ($this->bgColor) {
             return "<body bgcolor='" . $this->bgColor . "'>";
-        }
-        else
-        {
+        } else {
             return "<body>";
         }
     }
 
-    protected function closeHead()
-    {
+    protected function closeHead() {
         return "</head>";
     }
 
-    protected function percentWidth()
-    {
+    protected function percentWidth() {
 
         $js = "";
         $js .= "function percentWidth(value){";
@@ -345,8 +319,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function percentHeight()
-    {
+    protected function percentHeight() {
 
         $js = "";
         $js .= "function percentHeight(value){";
@@ -357,8 +330,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function showCamemisFooter()
-    {
+    public function showCamemisFooter() {
 
         $js = "";
         $js .= $this->loadingIndicators();
@@ -368,8 +340,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function openWinIFrame()
-    {
+    public function openWinIFrame() {
 
         $js = "";
         $js .= "<script>";
@@ -402,8 +373,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function openFixeIFrame()
-    {
+    public function openFixeIFrame() {
 
         $js = "";
         $js .= "<script>";
@@ -427,8 +397,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function openEasyWindow()
-    {
+    public function openEasyWindow() {
 
         $js = "";
         $js .= "<script>";
@@ -450,8 +419,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function openWinXType()
-    {
+    public function openWinXType() {
 
         $js = "";
         $js .= "<script>";
@@ -482,8 +450,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function clickOpenIFrame()
-    {
+    public function clickOpenIFrame() {
 
         $js = "";
         $js .= "<script>";
@@ -510,8 +477,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function gotoIFrameURL()
-    {
+    public function gotoIFrameURL() {
 
         $js = "";
         $js .= "<script>";
@@ -536,8 +502,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function gotoExtype()
-    {
+    public function gotoExtype() {
 
         $js = "";
         $js .= "<script>";
@@ -559,8 +524,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function setActivePanel()
-    {
+    public function setActivePanel() {
 
         $js = "";
         $js .= "<script>";
@@ -585,8 +549,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function openWinMax()
-    {
+    protected function openWinMax() {
         $js = "";
         $js .= "<script>";
         $js .= "function openWinMax(winTitle,winURL){";
@@ -621,8 +584,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function openWinMaxXType()
-    {
+    protected function openWinMaxXType() {
         $js = "";
         $js .= "<script>";
         $js .= "function openWinMaxXType(winTitle,xtype){";
@@ -642,8 +604,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function getAddTab()
-    {
+    protected function getAddTab() {
         $js = "";
         $js .= "function addTab(ID,TITLE,URL){";
         $js .= "if (Ext.getCmp('ACTIVED_' + ID)) tabs.remove(Ext.getCmp('ACTIVED_' + ID));var title = TITLE;";
@@ -665,8 +626,7 @@ class CamemisPage {
         return $js;
     }
 
-    protected function getTabId()
-    {
+    protected function getTabId() {
         $js = "";
         $js .= "function tabId(panel, title){";
         $js .= "for(var i = 0; i<panel.items.length; i++){";
@@ -680,8 +640,7 @@ class CamemisPage {
         return $js;
     }
 
-    public function setAddTab()
-    {
+    public function setAddTab() {
 
         $js = "";
         $js .= $this->getAddTab();
@@ -690,8 +649,7 @@ class CamemisPage {
         return print$js;
     }
 
-    protected function loadingMask()
-    {
+    protected function loadingMask() {
         $js = "";
         $js .= "<style>";
         $js .= "#loading-mask{";
@@ -745,22 +703,19 @@ class CamemisPage {
         return $js;
     }
 
-    public function setCostumerCSS()
-    {
+    public function setCostumerCSS() {
         print"
       Ext.util.CSS.swapStyleSheet('style','" . $this->ext_version . "/resources/css/" . $this->stylename . ".css');
       ";
     }
 
-    public function setdefaultHeaders()
-    {
+    public function setdefaultHeaders() {
         print"
       Ext.Ajax.defaultHeaders = ({'Content-Type': 'application/json; charset=TIS-620;'});
       ";
     }
 
-    protected function loadingIndicators()
-    {
+    protected function loadingIndicators() {
         $js = "";
         $js .= "
       <script type=\"text/javascript\">";
@@ -774,8 +729,7 @@ class CamemisPage {
         return $js;
     }
 
-    public static function setExternalUrl($value)
-    {
+    public static function setExternalUrl($value) {
         $js = "";
         $js .= "
       <script type=\"text/javascript\">";
@@ -784,25 +738,18 @@ class CamemisPage {
         return $js;
     }
 
-    static public function alertPleaseSelect($title = false, $msg = false)
-    {
+    static public function alertPleaseSelect($title = false, $msg = false) {
 
         $js = "";
         $js .= "Ext.MessageBox.show({";
-        if ($title)
-        {
+        if ($title) {
             $js .= "title:'" . $title . "',";
-        }
-        else
-        {
+        } else {
             $js .= "title:'" . WARNING . "',";
         }
-        if ($msg)
-        {
+        if ($msg) {
             $js .= "msg:'" . $msg . "',";
-        }
-        else
-        {
+        } else {
             $js .= "msg:'" . PLEASE_SELECT . "',";
         }
         $js .= "buttons: Ext.MessageBox.OK,";
@@ -812,15 +759,13 @@ class CamemisPage {
         return $js;
     }
 
-    static public function alertMSG($title, $msg_text, $icon = false)
-    {
+    static public function alertMSG($title, $msg_text, $icon = false) {
 
         $js = "";
         $js .= "Ext.MessageBox.show({";
         $js .= "title:'" . $title . "',";
         $js .= "msg: '" . $msg_text . "',";
-        switch ($icon)
-        {
+        switch ($icon) {
             case 1:
                 $js .= "icon: Ext.MessageBox.ERROR";
                 break;
@@ -840,11 +785,9 @@ class CamemisPage {
         return $js;
     }
 
-    static public function chartStyle()
-    {
+    static public function chartStyle() {
 
-        switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
-        {
+        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
             case "KHMER":
                 $size = 11;
                 break;
@@ -897,11 +840,9 @@ class CamemisPage {
         return $js;
     }
 
-    protected function mainCSS()
-    {
+    protected function mainCSS() {
 
-        switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
-        {
+        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
             case "KHMER":
                 $mainCSS = "main-khmer";
                 break;
@@ -918,8 +859,7 @@ class CamemisPage {
         return $mainCSS;
     }
 
-    static public function setMainquoteRefresh($jsEvent, $timeSecond)
-    {
+    static public function setMainquoteRefresh($jsEvent, $timeSecond) {
 
         $js = "
         var mainquoterefresh = {
@@ -935,15 +875,12 @@ class CamemisPage {
     }
 
     //
-    static public function setNoLogoutMessage()
-    {
+    static public function setNoLogoutMessage() {
 
         $js = "";
-        if (!Zend_Registry::get('APPLICATION_DEMO'))
-        {
+        if (!Zend_Registry::get('APPLICATION_DEMO')) {
 
-            if (Zend_Registry::get('LESSON_COUNT') > 1)
-            {
+            if (Zend_Registry::get('LESSON_COUNT') > 1) {
                 $js .= "window.parent.Ext.MessageBox.show({";
                 $js .= "title:'" . WARNING . "'";
                 $js .= ",width: 350";
@@ -968,8 +905,7 @@ class CamemisPage {
         echo $js;
     }
 
-    static function ExtformVTypes()
-    {
+    static function ExtformVTypes() {
 
         $js = "
       Ext.apply(Ext.form.VTypes, {
@@ -1013,32 +949,23 @@ class CamemisPage {
         echo $js;
     }
 
-    static function setRequestURI($params = false)
-    {
-        if ($params)
-        {
+    static function setRequestURI($params = false) {
+        if ($params) {
             return "window.location='" . $_SERVER["REQUEST_URI"] . "&" . $params . "';";
-        }
-        else
-        {
+        } else {
             return "window.location='" . $_SERVER["REQUEST_URI"] . "';";
         }
     }
 
-    static function isSSL()
-    {
-        if ($_SERVER['HTTPS'] != "on")
-        {
+    static function isSSL() {
+        if ($_SERVER['HTTPS'] != "on") {
             return "https";
-        }
-        else
-        {
+        } else {
             return "http";
         }
     }
 
-    public function getShowLog($data = array())
-    {
+    public function getShowLog($data = array()) {
 
         $extjs = "
         [
@@ -1117,8 +1044,7 @@ class CamemisPage {
         return $extjs;
     }
 
-    public static function showBlob()
-    {
+    public static function showBlob() {
         $js = "";
         $js .= "function showBlob(showFile){";
         $js .= "window.location='/dataset/showblob/?blobId=' + showFile;";
@@ -1127,8 +1053,7 @@ class CamemisPage {
         print $js;
     }
 
-    public static function deleteBlob()
-    {
+    public static function deleteBlob() {
         $js = "";
         $js .= "function deleteBlob(blobId){";
         $js .= "Ext.Ajax.request({";
@@ -1146,8 +1071,7 @@ class CamemisPage {
         print $js;
     }
 
-    public static function uploadBlob()
-    {
+    public static function uploadBlob() {
         $js = "";
         $js .= "function uploadBlob(uploadform, showfilemessage, id, area, academic){";
         $js .= "if(Ext.getCmp(uploadform).getForm().isValid()){ Ext.Msg.progress('Upload...', 'waiting...', 'progressing');";
@@ -1185,10 +1109,8 @@ class CamemisPage {
         print $js;
     }
 
-    public static function ckeditorLanguage()
-    {
-        switch (Zend_Registry::get('SYSTEM_LANGUAGE'))
-        {
+    public static function ckeditorLanguage() {
+        switch (Zend_Registry::get('SYSTEM_LANGUAGE')) {
 
             case "KHMER":
                 $lang = 'km';
@@ -1213,9 +1135,8 @@ class CamemisPage {
         return $lang;
     }
 
-    public static function setEmbeddedHelp($key)
-    {
-        return "openWinIFrame('" . CAMEMIS_HELP . "', '/help/?key=" . $key . "',percentWidth(75), percentHeight(85));";
+    public static function setEmbeddedHelp($key, $isParent = false) {
+        return "openWinIFrame('" . CAMEMIS_HELP . "', '/help/?key=" . $key . "&isParent=" . $isParent . "',percentWidth(75), percentHeight(85));";
     }
 
 }
