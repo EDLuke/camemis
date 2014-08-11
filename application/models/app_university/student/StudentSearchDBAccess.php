@@ -179,9 +179,9 @@ class StudentSearchDBAccess {
             $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
         }
 
-        //
-        $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
-        $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
+        //What is this? 11.08.2014 Bong
+//        $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
+//        $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
 
         if ($this->institutionName) {
             $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%");

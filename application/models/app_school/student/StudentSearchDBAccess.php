@@ -114,11 +114,11 @@ class StudentSearchDBAccess {
         if ($this->getSearchIn()) {
             switch ($this->getSearchIn()) {
                 case "TRADITIONAL":
-                    $SQL->joinInner(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array());
-                    $SQL->joinInner(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=TRADITIONAL.CAMPUS', array("NAME AS CAMPUS_NAME"));
-                    $SQL->joinInner(array('GRADE' => 't_grade'), 'GRADE.ID=TRADITIONAL.GRADE', array("ID AS GRADE_ID", "NAME AS GRADE_NAME"));
-                    $SQL->joinInner(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=TRADITIONAL.SCHOOL_YEAR', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
-                    $SQL->joinInner(array('CLASS' => 't_grade'), 'CLASS.ID=TRADITIONAL.CLASS', array("NAME AS CLASS_NAME"));
+                    $SQL->joinLeft(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array());
+                    $SQL->joinLeft(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=TRADITIONAL.CAMPUS', array("NAME AS CAMPUS_NAME"));
+                    $SQL->joinLeft(array('GRADE' => 't_grade'), 'GRADE.ID=TRADITIONAL.GRADE', array("ID AS GRADE_ID", "NAME AS GRADE_NAME"));
+                    $SQL->joinLeft(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=TRADITIONAL.SCHOOL_YEAR', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
+                    $SQL->joinLeft(array('CLASS' => 't_grade'), 'CLASS.ID=TRADITIONAL.CLASS', array("NAME AS CLASS_NAME"));
 
                     if ($this->campusId)
                         $SQL->where("TRADITIONAL.CAMPUS = '" . $this->campusId . "'");
@@ -134,10 +134,10 @@ class StudentSearchDBAccess {
 
                     break;
                 case "CREDIT":
-                    $SQL->joinInner(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
-                    $SQL->joinInner(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
-                    $SQL->joinInner(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=CREDIT.SCHOOLYEAR_ID', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
-                    $SQL->joinInner(array('SUBJECT' => 't_subject'), 'SUBJECT.ID=CREDIT.SUBJECT_ID', array("NAME AS SUBJECT_NAME"));
+                    $SQL->joinLeft(array('CREDIT' => 't_student_schoolyear_subject'), 'CREDIT.STUDENT_ID=STUDENT.ID', array());
+                    $SQL->joinLeft(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=CREDIT.CAMPUS_ID', array("NAME AS CAMPUS_NAME"));
+                    $SQL->joinLeft(array('SCHOOLYEAR' => 't_academicdate'), 'SCHOOLYEAR.ID=CREDIT.SCHOOLYEAR_ID', array("ID AS SCHOOLYEAR_ID", "NAME AS SCHOOLYEAR_NAME"));
+                    $SQL->joinLeft(array('SUBJECT' => 't_subject'), 'SUBJECT.ID=CREDIT.SUBJECT_ID', array("NAME AS SUBJECT_NAME"));
 
                     if ($this->creditCampusId)
                         $SQL->where("CREDIT.CAMPUS_ID = '" . $this->creditCampusId . "'");
@@ -153,11 +153,11 @@ class StudentSearchDBAccess {
 
                     break;
                 case "COURSE":
-                    $SQL->joinInner(array('COURSE' => 't_student_training'), array());
-                    $SQL->joinInner(array('TRAINING' => 't_training'), 'COURSE.TRAINING=TRAINING.ID', array("ID AS TRAINING_ID", "NAME AS TRAINING_NAME"));
-                    $SQL->joinInner(array('TERM' => 't_training'), 'TERM.ID=COURSE.TERM', array("START_DATE", "END_DATE"));
-                    $SQL->joinInner(array('LEVEL' => 't_training'), 'LEVEL.ID=COURSE.LEVEL', array("ID AS LEVEL_ID", "NAME AS LEVEL_NAME"));
-                    $SQL->joinInner(array('PROGRAM' => 't_training'), 'PROGRAM.ID=COURSE.PROGRAM', array("ID AS PROGRAM_ID", "NAME AS PROGRAM_NAME"));
+                    $SQL->joinLeft(array('COURSE' => 't_student_training'), array());
+                    $SQL->joinLeft(array('TRAINING' => 't_training'), 'COURSE.TRAINING=TRAINING.ID', array("ID AS TRAINING_ID", "NAME AS TRAINING_NAME"));
+                    $SQL->joinLeft(array('TERM' => 't_training'), 'TERM.ID=COURSE.TERM', array("START_DATE", "END_DATE"));
+                    $SQL->joinLeft(array('LEVEL' => 't_training'), 'LEVEL.ID=COURSE.LEVEL', array("ID AS LEVEL_ID", "NAME AS LEVEL_NAME"));
+                    $SQL->joinLeft(array('PROGRAM' => 't_training'), 'PROGRAM.ID=COURSE.PROGRAM', array("ID AS PROGRAM_ID", "NAME AS PROGRAM_NAME"));
 
                     if ($this->programId)
                         $SQL->where("COURSE.PROGRAM = '" . $this->programId . "'");
@@ -178,9 +178,9 @@ class StudentSearchDBAccess {
             $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
             $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
         }
-        //
-        $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
-        $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
+        //What is this? 11.08.2014 Bong
+//        $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
+//        $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
 
         if ($this->institutionName) {
             $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%");
@@ -249,6 +249,7 @@ class StudentSearchDBAccess {
             $SQL->limit($this->limit, $this->start);
         }
         $SQL->group('STUDENT.ID');
+
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }

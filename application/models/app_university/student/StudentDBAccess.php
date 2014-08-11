@@ -502,8 +502,7 @@ class StudentDBAccess {
             foreach ($result as $value) {
                 self::addStudentSchoolYear(
                         $value->STUDENT_ID
-                        , $value->CAMPUS_ID
-                        , $value->SCHOOLYEAR_ID
+                        , $academicObject
                 );
             }
         }
@@ -590,9 +589,7 @@ class StudentDBAccess {
                 foreach ($selectedStudents as $studentId) {
                     self::addStudentSchoolYear(
                             $studentId
-                            , $academicObject->CAMPUS_ID
-                            , $academicObject->GRADE_ID
-                            , $academicObject->SCHOOL_YEAR
+                            , $academicObject
                     );
 
                     //@veasna 
@@ -670,20 +667,16 @@ class StudentDBAccess {
         );
     }
 
-    public static function addStudentSchoolYear($studentId, $campusId, $gradeId, $schoolyearId) {
-
-        $gradeObject = AcademicDBAccess::findGradeFromId($gradeId);
-        $schoolyearObject = AcademicDateDBAccess::findAcademicDateFromId($schoolyearId);
+    public static function addStudentSchoolYear($studentId, $academicObject) {
 
         $CHECK_STUDENT_SCHOOLYEAR = self::checkStudentINGradeSchoolyear(
                         $studentId
-                        , $schoolyearObject
+                        , $academicObject
         );
-
 
         $SAVEDATA = array();
 
-        if ($schoolyearObject && $gradeObject) {
+        if ($academicObject) {
 
             ////////////////////////////////////////////////////////////////////
             if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
@@ -691,11 +684,19 @@ class StudentDBAccess {
             }
             if (!$CHECK_STUDENT_SCHOOLYEAR) {
                 $SAVEDATA['STUDENT'] = $studentId;
-                $SAVEDATA['CAMPUS'] = $campusId;
-                $SAVEDATA['GRADE'] = $gradeObject->ID;
-                $SAVEDATA['SCHOOL_YEAR'] = $schoolyearObject->ID;
+                $SAVEDATA['CAMPUS'] = $academicObject->CAMPUS_ID;
+                $SAVEDATA['GRADE'] = $academicObject->GRADE_ID;
+                $SAVEDATA['SCHOOL_YEAR'] = $academicObject->SCHOOL_YEAR;
                 $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
                 $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+
+                if ($academicObject->ENROLLMENT_TYPE == 1) {
+                    $SAVEDATA['FIRST_ACADEMIC'] = 1;
+                    $SAVEDATA['SECOND_ACADEMIC'] = 1;
+                    $SAVEDATA['THIRD_ACADEMIC'] = 1;
+                    $SAVEDATA['FOURTH_ACADEMIC'] = 1;
+                }
+
                 self::dbAccess()->insert('t_student_schoolyear', $SAVEDATA);
             }
             ////////////////////////////////////////////////////////////////////
@@ -816,14 +817,18 @@ class StudentDBAccess {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
+        $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "0";
+
         $result = $this->queryAssignedStudentSchoolYear($params, false);
+        $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
         $data = array();
 
         $i = 0;
         if ($result)
             foreach ($result as $value) {
 
-                if (!$value->CLASS) {
+                if ($academicObject->ENROLLMENT_TYPE == 1) {
                     $data[$i]["ID"] = $value->ID;
                     $data[$i]["CODE"] = $value->CODE;
                     $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
@@ -843,6 +848,28 @@ class StudentDBAccess {
                     $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
 
                     $i++;
+                } else {
+                    if (!$value->CLASS) {
+                        $data[$i]["ID"] = $value->ID;
+                        $data[$i]["CODE"] = $value->CODE;
+                        $data[$i]["STUDENT_SCHOOL_ID"] = $value->STUDENT_SCHOOL_ID;
+                        $data[$i]["LASTNAME"] = $value->LASTNAME;
+                        $data[$i]["FIRSTNAME"] = $value->FIRSTNAME;
+                        $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
+                        $data[$i]["ENROLLMENT_ID"] = $value->ENROLLMENT_ID;
+                        $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
+                        $data[$i]["GENDER"] = getGenderName($value->GENDER);
+
+                        ////////////////////////////////////////////////////////
+                        //Status of student...
+                        ////////////////////////////////////////////////////////
+                        $STATUS_DATA = StudentStatusDBAccess::getCurrentStudentStatus($value->ID);
+                        $data[$i]["STATUS_KEY"] = isset($STATUS_DATA["SHORT"]) ? $STATUS_DATA["SHORT"] : "";
+                        $data[$i]["BG_COLOR"] = isset($STATUS_DATA["COLOR"]) ? $STATUS_DATA["COLOR"] : "";
+                        $data[$i]["BG_COLOR_FONT"] = isset($STATUS_DATA["COLOR_FONT"]) ? $STATUS_DATA["COLOR_FONT"] : "";
+
+                        $i++;
+                    }
                 }
             }
 
@@ -993,54 +1020,30 @@ class StudentDBAccess {
             case "TRANSFER":
             case "STATUS":
                 $data = array();
-                $data["'" . $field . "'"] = "'" . $newValue . "'";
+                $data["'" . $field . "'"] = $newValue;
                 if ($newValue == 1) {
-                    $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                    $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['ENABLED_DATE'] = getCurrentDBDateTime();
+                    $data['ENABLED_BY'] = Zend_Registry::get('USER')->CODE;
                 } elseif ($params["newValue"] == 0) {
-                    $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                    $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['ENABLED_DATE'] = getCurrentDBDateTime();
+                    $data['ENABLED_BY'] = Zend_Registry::get('USER')->CODE;
                 }
 
-                $data['MODIFY_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                $data['MODIFY_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
-                self::dbAccess()->update("t_student_schoolyear", $data, "ID='" . $studentId . "'");
+                $data['MODIFY_DATE'] = getCurrentDBDateTime();
+                $data['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
+                self::dbAccess()->update("t_student_schoolyear", $data, "ID ='" . $studentId . "'");
                 break;
             case "GENDER":
-                self::dbAccess()->update("t_student", array('GENDER' => "'" . $newValue . "'"), "ID='" . $studentId . "'");
+                self::dbAccess()->update("t_student", array('GENDER' => $newValue), "ID ='" . $studentId . "'");
                 break;
             case "DATE_BIRTH":
-                self::dbAccess()->update("t_student", array('DATE_BIRTH' => "'" . setDate2DB($newValue) . "'"), "ID='" . $studentId . "'");
+                self::dbAccess()->update("t_student", array('DATE_BIRTH' => setDate2DB($newValue)), "ID ='" . $studentId . "'");
                 break;
             case "FIRSTNAME":
-                self::dbAccess()->update("t_student", array('FIRSTNAME' => "'" . $newValue . "'"), "ID='" . $studentId . "'");
+                self::dbAccess()->update("t_student", array('FIRSTNAME' => $newValue), "ID ='" . $studentId . "'");
                 break;
             case "LASTNAME":
-                self::dbAccess()->update("t_student", array('LASTNAME' => "'" . $newValue . "'"), "ID='" . $studentId . "'");
-                break;
-            case "CURRENT_LEVEL":
-            case "ENROLLMENT_TYPE":
-
-                $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                $CHECK = self::checkStudentCurrentLevel($studentId, $academicObject->SCHOOL_YEAR);
-
-                $data = array();
-                $where = array();
-                if ($newValue && $CHECK) {
-                    $data['CURRENT_LEVEL'] = '0';
-                    $callData["CURRENT_LEVEL"] = 0;
-                } elseif ($newValue && !$CHECK) {
-                    $data['CURRENT_LEVEL'] = '1';
-                    $callData["CURRENT_LEVEL"] = 1;
-                } else {
-                    $data['CURRENT_LEVEL'] = '0';
-                    $callData["CURRENT_LEVEL"] = 0;
-                }
-
-                $where[] = "STUDENT = '" . $studentId . "'";
-                $where[] = "GRADE = '" . $academicObject->GRADE_ID . "'";
-                $where[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
-                self::dbAccess()->update("t_student_schoolyear", $data, $where);
+                self::dbAccess()->update("t_student", array('LASTNAME' => $newValue), "ID ='" . $studentId . "'");
                 break;
             case "FIRST_ACADEMIC":
             case "SECOND_ACADEMIC":
@@ -1379,7 +1382,7 @@ class StudentDBAccess {
         $SQLIds = $params["selectionIds"];
         $academicId = $params["chooseacademicId"];
 
-        $classObject = AcademicDBAccess::findGradeFromId($academicId);
+        $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($SQLIds != "" && $classObject) {
 
@@ -1389,13 +1392,13 @@ class StudentDBAccess {
             if ($selectedStudents)
                 foreach ($selectedStudents as $studentId) {
 
-                    if (!self::checkStudentINGradeSchoolyear($studentId, $classObject)) {
+                    if (!self::checkStudentINGradeSchoolyear($studentId, $academicObject)) {
 
                         $STUDENT_DATA['STUDENT'] = $studentId;
-                        $STUDENT_DATA['CAMPUS'] = $classObject->CAMPUS_ID;
-                        $STUDENT_DATA['GRADE'] = $classObject->GRADE_ID;
-                        $STUDENT_DATA['CLASS'] = $classObject->ID;
-                        $STUDENT_DATA['SCHOOL_YEAR'] = $classObject->SCHOOL_YEAR;
+                        $STUDENT_DATA['CAMPUS'] = $academicObject->CAMPUS_ID;
+                        $STUDENT_DATA['GRADE'] = $academicObject->GRADE_ID;
+                        $STUDENT_DATA['CLASS'] = $academicObject->ID;
+                        $STUDENT_DATA['SCHOOL_YEAR'] = $academicObject->SCHOOL_YEAR;
 
                         if (Zend_Registry::get('SCHOOL')->ENABLE_ITEMS_BY_DEFAULT) {
                             $STUDENT_DATA['STATUS'] = 1;
@@ -1531,12 +1534,6 @@ class StudentDBAccess {
             }
 
             $SQL->where("GRADE = ?", $academicObject->GRADE_ID);
-            if ($academicObject->ENROLLMENT_TYPE == 1) {
-                $SQL->orWhere("FIRST_ACADEMIC = '1'");
-                $SQL->orWhere("SECOND_ACADEMIC = '1'");
-                $SQL->orWhere("THIRD_ACADEMIC = '1'");
-                $SQL->orWhere("FOURTH_ACADEMIC = '1'");
-            }
             $SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
             //error_log($SQL->__toString());
             $result = self::dbAccess()->fetchRow($SQL);
