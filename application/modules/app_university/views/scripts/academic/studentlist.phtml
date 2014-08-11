@@ -161,6 +161,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         ///////////////////////////////////////////////////////
 
         $ENROLLED_STUDENTS->addReadField("name: 'CODE'");
+        $ENROLLED_STUDENTS->addReadField("name: 'FULL_NAME'");
         $ENROLLED_STUDENTS->addReadField("name: 'STUDENT_SCHOOL_ID'");
         $ENROLLED_STUDENTS->addReadField("name: 'FIRSTNAME'");
         $ENROLLED_STUDENTS->addReadField("name: 'LASTNAME'");
@@ -172,6 +173,11 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         $ENROLLED_STUDENTS->addReadField("name: 'BG_COLOR'");
         $ENROLLED_STUDENTS->addReadField("name: 'BG_COLOR_FONT'");
         $ENROLLED_STUDENTS->addReadField("name: 'STATUS_KEY'");
+        
+        $ENROLLED_STUDENTS->addReadField("name: 'FIRST_ACADEMIC'");
+        $ENROLLED_STUDENTS->addReadField("name: 'SECOND_ACADEMIC'");
+        $ENROLLED_STUDENTS->addReadField("name: 'THIRD_ACADEMIC'");
+        $ENROLLED_STUDENTS->addReadField("name: 'FOURTH_ACADEMIC'");
 
         switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
             case "VIETNAMESE": $width = 100;break;
@@ -289,62 +295,98 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
             switch($TERM_NUMBER){
                 case 1:
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".FIRST_TERM."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'FIRST_TERM'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".FIRST_TERM."</b>'
+                        ,dataIndex: 'FIRST_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".SECOND_TERM."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'SECOND_TERM'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".SECOND_TERM."</b>'
+                        ,dataIndex: 'SECOND_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".THIRD_TERM."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'THIRD_TERM'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".THIRD_TERM."</b>'
+                        ,dataIndex: 'THIRD_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     break;
                 case 2:
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".FIRST_QUARTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'FIRST_QUARTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".FIRST_QUARTER."</b>'
+                        ,dataIndex: 'FIRST_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".SECOND_QUARTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'SECOND_QUARTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".SECOND_QUARTER."</b>'
+                        ,dataIndex: 'SECOND_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".THIRD_QUARTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'THIRD_QUARTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".THIRD_QUARTER."</b>'
+                        ,dataIndex: 'THIRD_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".FOURTH_QUARTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'FOURTH_QUARTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".FOURTH_QUARTER."</b>'
+                        ,dataIndex: 'FOURTH_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     break;
                 default:
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".FIRST_SEMESTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'FIRST_SEMESTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".FIRST_SEMESTER."</b>'
+                        ,dataIndex: 'FIRST_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     $ENROLLED_STUDENTS->addColumn("
-                        header: '<b>".SECOND_SEMESTER."</b>'
-                        , width: 110
-                        , sortable: true
-                        , dataIndex: 'SECOND_SEMESTER'
+                        xtype: 'checkboxcolumn'
+                        ,align: 'center'
+                        ,header: '<b>".SECOND_SEMESTER."</b>'
+                        ,dataIndex: 'SECOND_ACADEMIC'
+                        ,disabled: true
+                        ,width: 100
+                        ,on: 1
+                        ,off: 0
                     ");
                     break;
             }
@@ -354,7 +396,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
             start:0
             ,limit:100
             ,classId: '".$this->facette->ID."'
-            ,cmd: 'searchStudent'
+            ,cmd: 'enrollStudentsByClassTerm'
         ";
         
         if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
@@ -426,33 +468,21 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         $ENROLLED_STUDENTS->forceFit = "false";
         $ENROLLED_STUDENTS->removeNAME = "STUDENT_NAME";
         $ENROLLED_STUDENTS->renderJS();
-
-        $PENEL_ITEMS = Array();
-        $FIRST = "{
-            title: '".LIST_OF_STUDENTS."'
-            ,layout: 'fit'
-            ,items:[{xtype: '".$ENROLLED_STUDENTS->getObjectXtype()."'}]
-        }";
-        $PENEL_ITEMS[] = $FIRST;
         
-        $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
-    
         ?>
                 
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
             ,items:[{
-                layout:'fit'
-                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
-                ,border: false
+                border: false
+                ,layout: 'card'
+                ,id: 'center'
+                ,activeItem: 0
                 ,items:[{
-                    xtype: 'tabpanel'
-                    ,tabPosition: 'top'
-                    ,plain:true
-                    ,activeTab: 0
-                    ,enableTabScroll:true
-                    ,items:<?=$CHOOSE_ITEMS?>
+                    border: false
+                    ,layout: 'fit'
+                    ,items: [{xtype: '<?=$ENROLLED_STUDENTS->getObjectXType()?>'}]
                 }]
             }]
         });
@@ -463,7 +493,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
         $DETAIL_INFORMATION = "
         {
-            text: '".DETAIL_INFORMATION." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            text: '".DETAIL_INFORMATION." &raquo; ' + record.data.FULL_NAME
             ,iconCls:'icon-application_form_magnify'
             ,handler:function(){
                 clickOpenPage('center','','/student/studentmonitor/?&target=".camemisId()."&objectId=' + record.data.ID);
@@ -476,18 +506,18 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
         $TEACHER_COMMENTS = "
         {
-            text: '".TEACHER_COMMENTS." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            text: '".TEACHER_COMMENTS." &raquo; ' + record.data.FULL_NAME
             ,hidden:true
             ,iconCls:'icon-application_form_add'
             ,handler:function(){
-                clickOpenPage('content',record.data.LASTNAME + ' ' + record.data.FIRSTNAME,'/note/?target=1&academicId=".$this->objectId."&objectId=' + record.data.ID);
+                clickOpenPage('content',record.data.FULL_NAME,'/note/?target=1&academicId=".$this->objectId."&objectId=' + record.data.ID);
             }
         }
         ";
 
         $CLASS_TRANSFER = "
         {
-            text: '".CLASS_TRANSFER." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            text: '".CLASS_TRANSFER." &raquo; ' + record.data.FULL_NAME
             ,iconCls:'icon-arrow_switch'
             ,handler:function(){
                 openWinIFrame('', '/student/classtransfer/?academicId=".$this->objectId."&objectId=' + record.data.ID + '&target=cancel',500,500);
@@ -499,7 +529,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
         $STUDENT_REMOVE_FROM_CLASS = "
         {
-            text: '".REMOVE." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            text: '".REMOVE." &raquo; ' + record.data.FULL_NAME
             ,iconCls:'icon-delete'
             ,handler:function(){
                 deleteItem(record.data.ID, $this->objectId);
@@ -512,11 +542,11 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         
         $SEND_MESSAGE ="
         {
-            text: '".SEND." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME
+            text: '".SEND." &raquo; ' + record.data.FULL_NAME
             ,iconCls: 'icon-email_add'
             ,disabled:false
             ,handler: function(){
-                clickOpenPage('content','".SEND_MAIL." &raquo; ' + record.data.LASTNAME + ' ' + record.data.FIRSTNAME, '/communication/tostudent/?page_name=loadstudentlist&objectId=' + record.data.ID)
+                clickOpenPage('content','".SEND_MAIL." &raquo; ' + record.data.FULL_NAME, '/communication/tostudent/?page_name=loadstudentlist&objectId=' + record.data.ID)
             }
         }
         ";
@@ -525,14 +555,14 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         $CHOOSE_CONTEXT_ITEMS = implode(',', $CONTEXT_ITEMS);
 
         if(UserAuth::getUserType() != "STUDENT"){
-            if($CONTEXTMENU_ITEMS){
+            if($CONTEXT_ITEMS){
                 $js = "";
                 $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
                 $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                     $js .="var record = grid.store.getAt(rowIndex);";
                     $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
                         $js .="var contextMenu = new Ext.menu.Menu({";
-                            $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                            $js .="items: [".$CHOOSE_CONTEXT_ITEMS."]";
                         $js .="});";
                         $js .="contextMenu.showAt(event.xy);";
                         $js .="event.stopEvent();";

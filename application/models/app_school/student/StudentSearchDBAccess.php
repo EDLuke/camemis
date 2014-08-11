@@ -15,47 +15,38 @@ class StudentSearchDBAccess {
 
     public $datafield = array();
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public function __get($name)
-    {
-        if (array_key_exists($name, $this->datafield))
-        {
+    public function __get($name) {
+        if (array_key_exists($name, $this->datafield)) {
             return $this->datafield[$name];
         }
         return null;
     }
 
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->datafield[$name] = $value;
     }
 
-    public function __isset($name)
-    {
+    public function __isset($name) {
         return array_key_exists($name, $this->datafield);
     }
 
-    public function __unset($name)
-    {
+    public function __unset($name) {
         unset($this->datafield[$name]);
     }
 
-    public function searchStudents($params, $isJson = true)
-    {
+    public function searchStudents($params, $isJson = true) {
 
         ini_set('memory_limit', '128M');
 
@@ -103,34 +94,25 @@ class StudentSearchDBAccess {
         return $this->getGridData($result, $allStudent);
     }
 
-    public function getSearchIn()
-    {
+    public function getSearchIn() {
 
         $output = "";
-        if ($this->campusId || $this->gradeId || $this->schoolyearId || $this->classId)
-        {
+        if ($this->campusId || $this->gradeId || $this->schoolyearId || $this->classId) {
             $output = "TRADITIONAL";
-        }
-        elseif ($this->creditCampusId || $this->creditSchoolyearId || $this->creditSubjectId || $this->creditClassId)
-        {
+        } elseif ($this->creditCampusId || $this->creditSchoolyearId || $this->creditSubjectId || $this->creditClassId) {
             $output = "CREDIT";
-        }
-        elseif ($this->programId || $this->levelId || $this->termId || $this->courseId)
-        {
+        } elseif ($this->programId || $this->levelId || $this->termId || $this->courseId) {
             $output = "COURSE";
         }
 
         return $output;
     }
 
-    public function queryAllStudents()
-    {
+    public function queryAllStudents() {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('STUDENT' => 't_student'), "*");
-        if ($this->getSearchIn())
-        {
-            switch ($this->getSearchIn())
-            {
+        if ($this->getSearchIn()) {
+            switch ($this->getSearchIn()) {
                 case "TRADITIONAL":
                     $SQL->joinInner(array('TRADITIONAL' => 't_student_schoolyear'), 'TRADITIONAL.STUDENT=STUDENT.ID', array());
                     $SQL->joinInner(array('CAMPUS' => 't_grade'), 'CAMPUS.ID=TRADITIONAL.CAMPUS', array("NAME AS CAMPUS_NAME"));
@@ -192,8 +174,7 @@ class StudentSearchDBAccess {
             }
         }
 
-        if ($this->searchDescription)
-        {
+        if ($this->searchDescription) {
             $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
             $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
         }
@@ -201,28 +182,22 @@ class StudentSearchDBAccess {
         $SQL->joinLeft(array('PERSON_INFOS' => 't_person_infos'), 'PERSON_INFOS.USER_ID=STUDENT.ID', array());
         $SQL->joinLeft(array('STUDENT_PREREQUIRMENT' => 't_student_prerequirements'), 'STUDENT_PREREQUIRMENT.STUDENT_ID=STUDENT.ID', array());
 
-        if ($this->institutionName)
-        {
+        if ($this->institutionName) {
             $SQL->where('PERSON_INFOS.INSTITUTION_NAME LIKE ?', "" . $this->institutionName . "%");
         }
-        if ($this->academicYear)
-        {
+        if ($this->academicYear) {
             $SQL->where('PERSON_INFOS.ACADEMIC_YEAR LIKE ?', "" . $this->academicYear . "%");
         }
-        if ($this->major)
-        {
+        if ($this->major) {
             $SQL->where('PERSON_INFOS.MAJOR LIKE ?', "" . $this->major . "%");
         }
-        if ($this->qualificationDegree)
-        {
+        if ($this->qualificationDegree) {
             $SQL->where('PERSON_INFOS.QUALIFICATION_DEGREE LIKE ?', "" . $this->qualificationDegree . "%");
         }
-        if ($this->name)
-        {
+        if ($this->name) {
             $SQL->where('STUDENT_PREREQUIRMENT.NAME LIKE ?', "" . $this->name . "%");
         }
-        if ($this->description)
-        {
+        if ($this->description) {
             $SQL->where('STUDENT_PREREQUIRMENT.DESCRIPTION LIKE ?', "" . $this->description . "%");
         }
         //
@@ -256,13 +231,11 @@ class StudentSearchDBAccess {
         if ($this->ethnic)
             $SQL->where("STUDENT.ETHNIC = '" . $this->ethnic . "'");
 
-        if ($this->startDate != "" && $this->endDate != "")
-        {
+        if ($this->startDate != "" && $this->endDate != "") {
             $SQL->where("(STUDENT.CREATED_DATE BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "') OR (STUDENT.CREATED_DATE BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "') ");
         }
 
-        if ($this->globalSearch)
-        {
+        if ($this->globalSearch) {
             $SQL->where('STUDENT.NAME LIKE ?', "%" . $this->globalSearch . "%");
             $SQL->orWhere('STUDENT.FIRSTNAME LIKE ?', "%" . $this->globalSearch . "%");
             $SQL->orWhere('STUDENT.LASTNAME LIKE ?', "%" . $this->globalSearch . "%");
@@ -272,8 +245,7 @@ class StudentSearchDBAccess {
             $SQL->orWhere('STUDENT.STUDENT_SCHOOL_ID LIKE ?', "%" . strtoupper($this->globalSearch) . "%");
         }
         //@veasna
-        if ($this->islimit)
-        {
+        if ($this->islimit) {
             $SQL->limit($this->limit, $this->start);
         }
         $SQL->group('STUDENT.ID');
@@ -281,36 +253,28 @@ class StudentSearchDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function searchDescriptionItems($params)
-    {
+    public static function searchDescriptionItems($params) {
         //$entries = DescriptionDBAccess::sqlDescription("ALL", "STUDENT", false);
         $entries = DescriptionDBAccess::sqlPersonalDescription("STUDENT");
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
         $INPUTFIELD_DATA = array();
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
 
-                if (isset($params["CHECKBOX_" . $value->ID . ""]))
-                {
+                if (isset($params["CHECKBOX_" . $value->ID . ""])) {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
                 }
 
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT)
-                {
-                    if (isset($params["RADIOBOX_" . $parentObject->PARENT]))
-                    {
+                if ($parentObject->PARENT) {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
                         $RADIOBOX_DATA[$value->ID] = $value->ID;
                     }
                 }
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT)
-                {
-                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT]))
-                    {
+                if ($parentObject->PARENT) {
+                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT])) {
                         $INPUTFIELD_DATA[$value->ID] = $value->ID;
                     }
                 }
@@ -321,27 +285,20 @@ class StudentSearchDBAccess {
         return $PERSON_DES_DATA ? implode(",", $PERSON_DES_DATA) : array();
     }
 
-    public static function getFullName($firstname, $lastname)
-    {
-        if (!SchoolDBAccess::displayPersonNameInGrid())
-        {
+    public static function getFullName($firstname, $lastname) {
+        if (!SchoolDBAccess::displayPersonNameInGrid()) {
             return setShowText($lastname) . " " . setShowText($firstname);
-        }
-        else
-        {
+        } else {
             return setShowText($firstname) . " " . setShowText($lastname);
         }
     }
 
-    public function getGridData($entries, $totalRecord)
-    {
+    public function getGridData($entries, $totalRecord) {
         $data = array();
 
-        if ($entries)
-        {
+        if ($entries) {
             $i = 0;
-            foreach ($entries as $value)
-            {
+            foreach ($entries as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["CODE"] = setShowText($value->CODE);
                 $data[$i]["FULL_NAME"] = self::getFullName($value->FIRSTNAME, $value->LASTNAME);
@@ -361,8 +318,7 @@ class StudentSearchDBAccess {
                 $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
                 $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
 
-                switch ($this->displayCurrentAcademic)
-                {
+                switch ($this->displayCurrentAcademic) {
                     case 1:
 
                         $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
@@ -388,28 +344,23 @@ class StudentSearchDBAccess {
         }
 
         $a = array();
-        for ($i = 0; $i < $this->limit; $i++)
-        {
+        for ($i = 0; $i < $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
-        if ($this->isJson)
-        {
+        if ($this->isJson) {
             return array(
                 "success" => true
                 , "totalCount" => $totalRecord
                 , "rows" => $a
             );
-        }
-        else
-        {
+        } else {
             return $data;
         }
     }
 
-    public function enrollStudentsSubjectTerm($params, $isJson = true)
-    {
+    public function enrollStudentsByClassTerm($params, $isJson = true) {
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $this->classId = isset($params["classId"]) ? (int) $params["classId"] : "";
@@ -419,42 +370,42 @@ class StudentSearchDBAccess {
         $this->islimit = true;
         $result = $this->queryAllStudents();
 
+        $academicObject = AcademicDBAccess::findGradeFromId($this->classId);
+
         $data = array();
 
-        $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->classId, false);
-
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
                 $data[$i]["ID"] = $value->ID;
                 $data[$i]["CODE"] = setShowText($value->CODE);
                 $data[$i]["FULL_NAME"] = self::getFullName($value->FIRSTNAME, $value->LASTNAME);
+                $data[$i]["FIRSTNAME"] = setShowText($value->FIRSTNAME);
+                $data[$i]["LASTNAME"] = setShowText($value->LASTNAME);
                 $data[$i]["STATUS_KEY"] = $value->STATUS_SHORT;
                 $data[$i]["BG_COLOR"] = $value->STATUS_COLOR;
                 $data[$i]["BG_COLOR_FONT"] = $value->STATUS_COLOR_FONT;
                 $data[$i]["GENDER"] = getGenderName($value->GENDER);
+                $data[$i]["DATE_BIRTH"] = getShowDate($value->DATE_BIRTH);
 
-                if ($listSubjects)
-                {
-                    foreach ($listSubjects as $subject)
-                    {
-                        $CHECK_FIRST = StudentAcademicDBAccess::checkStudentSchoolyearSubjectTerm(
-                                        $value->ID
-                                        , $this->classId
-                                        , "FIRST_SEMESTER"
-                                        , $subject->SUBJECT_ID);
+                if ($academicObject->ENROLLMENT_TYPE == 1) {
+                    $data[$i]["FIRST_ACADEMIC"] = StudentAcademicDBAccess::checkStudentSchoolyearAcademicTerm(
+                                    $value->ID
+                                    , $this->classId
+                                    , "FIRST_ACADEMIC");
 
-                        $CHECK_SECOND = StudentAcademicDBAccess::checkStudentSchoolyearSubjectTerm(
-                                        $value->ID
-                                        , $this->classId
-                                        , "SECOND_SEMESTER"
-                                        , $subject->SUBJECT_ID);
-
-                        $data[$i]["FIRST_SEMESTER__" . $subject->SUBJECT_ID . ""] = $CHECK_FIRST ? "X" : "---";
-                        $data[$i]["SECOND_SEMESTER__" . $subject->SUBJECT_ID . ""] = $CHECK_SECOND ? "X" : "---";
-                    }
+                    $data[$i]["SECOND_ACADEMIC"] = StudentAcademicDBAccess::checkStudentSchoolyearAcademicTerm(
+                                    $value->ID
+                                    , $this->classId
+                                    , "SECOND_ACADEMIC");
+                    $data[$i]["THIRD_ACADEMIC"] = StudentAcademicDBAccess::checkStudentSchoolyearAcademicTerm(
+                                    $value->ID
+                                    , $this->classId
+                                    , "THIRD_ACADEMIC");
+                    $data[$i]["FOURTH_ACADEMIC"] = StudentAcademicDBAccess::checkStudentSchoolyearAcademicTerm(
+                                    $value->ID
+                                    , $this->classId
+                                    , "FOURTH_ACADEMIC");
                 }
 
                 $i++;
@@ -462,8 +413,7 @@ class StudentSearchDBAccess {
         }
 
         $a = array();
-        for ($i = 0; $i < $this->limit; $i++)
-        {
+        for ($i = 0; $i < $this->limit; $i++) {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
@@ -475,8 +425,7 @@ class StudentSearchDBAccess {
         );
     }
 
-    public static function getCurrentTraining($studentId)
-    {
+    public static function getCurrentTraining($studentId) {
 
         $SELECT_A = array(
             'TRAINING AS TRAINING_ID'
@@ -503,12 +452,10 @@ class StudentSearchDBAccess {
         $entries = self::dbAccess()->fetchAll($SQL);
 
         $result = "---";
-        if ($entries)
-        {
+        if ($entries) {
             $o = array();
             $i = 0;
-            foreach ($entries as $v)
-            {
+            foreach ($entries as $v) {
                 $o[$i] = $v->TRAINING_NAME;
                 $i++;
             }
@@ -518,14 +465,12 @@ class StudentSearchDBAccess {
         return $result;
     }
 
-    public static function getCamemisType($typeId)
-    {
+    public static function getCamemisType($typeId) {
         $facette = CamemisTypeDBAccess::findObjectFromId($typeId);
         return $facette ? $facette->NAME : "---";
     }
 
-    public static function getCurrentAcademic($studentId)
-    {
+    public static function getCurrentAcademic($studentId) {
         $data = array();
         $facette = StudentAcademicDBAccess::getCurrentStudentAcademic($studentId);
         $data["CURRENT_SCHOOLYEAR"] = $facette ? $facette->SCHOOLYEAR : "---";

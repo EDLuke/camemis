@@ -23,10 +23,8 @@ require_once 'models/UserAuth.php';
 
 class StudentController extends Zend_Controller_Action {
 
-    public function init()
-    {
-        if (!UserAuth::mainidentify())
-        {
+    public function init() {
+        if (!UserAuth::mainidentify()) {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -37,8 +35,7 @@ class StudentController extends Zend_Controller_Action {
 
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds'))
-        {
+        if ($this->_getParam('camIds')) {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
@@ -64,12 +61,10 @@ class StudentController extends Zend_Controller_Action {
 
         $this->objectData = array();
         $this->OBJECT = null;
-        if ($this->_getParam('objectId'))
-        {
+        if ($this->_getParam('objectId')) {
 
             $this->objectId = $this->_getParam('objectId');
-            if (!StudentDBAccess::findStudentFromId($this->objectId))
-            {
+            if (!StudentDBAccess::findStudentFromId($this->objectId)) {
                 $this->_request->setControllerName('error');
             }
             $this->objectData = $this->DB_STUDENT->getStudentDataFromId($this->objectId);
@@ -77,85 +72,70 @@ class StudentController extends Zend_Controller_Action {
             $this->OBJECT = StudentStatusDBAccess::findIdStudentStatus($this->objectId);
         }
 
-        if ($this->_getParam('noSudentComboLsit'))
-        {
+        if ($this->_getParam('noSudentComboLsit')) {
             $this->noSudentComboLsit = $this->_getParam('noSudentComboLsit');
         }
 
-        if ($this->_getParam('studentId'))
-        {
+        if ($this->_getParam('studentId')) {
             $this->studentId = $this->_getParam('studentId');
         }
 
-        if ($this->_getParam('subjectId'))
-        {
+        if ($this->_getParam('subjectId')) {
             $this->subjectId = $this->_getParam('subjectId');
         }
 
-        if ($this->_getParam('schoolyearId'))
-        {
+        if ($this->_getParam('schoolyearId')) {
             $this->schoolyearId = $this->_getParam('schoolyearId');
         }
 
-        if ($this->_getParam('gradeId'))
-        {
+        if ($this->_getParam('gradeId')) {
             $this->gradeId = $this->_getParam('gradeId');
         }
 
-        if ($this->_getParam('academicId'))
-        {
+        if ($this->_getParam('academicId')) {
             $this->academicId = $this->_getParam('academicId');
         }
 
-        if ($this->_getParam('target'))
-        {
+        if ($this->_getParam('target')) {
             $this->target = $this->_getParam('target');
         }
 
-        if ($this->_getParam('trainingId'))
-        {
+        if ($this->_getParam('trainingId')) {
             $this->trainingId = $this->_getParam('trainingId');
         }
 
-        if ($this->_getParam('studentstatusType'))
-        {
+        if ($this->_getParam('studentstatusType')) {
             $this->studentstatusType = $this->_getParam('studentstatusType');
         }
 
-        if ($this->_getParam('campusId'))
-        {
+        if ($this->_getParam('campusId')) {
             $this->campusId = $this->_getParam('campusId');
         }
 
         $this->facette = StudentImportDBAccess::checkAllImportInTemp(); //@Math Man
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
     }
 
-    public function searchAction()
-    {
+    public function searchAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->URL_SEARCH_RESULT = $this->UTILES->buildURL('student/searchresult', array());
     }
 
-    public function searchchartreportAction()
-    {
+    public function searchchartreportAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->_helper->viewRenderer("chartreport");
     }
 
-    public function changepasswordAction()
-    {
+    public function changepasswordAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/password");
     }
 
-    public function classtransferAction()
-    {
+    public function classtransferAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
@@ -164,8 +144,7 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/classtransfer");
     }
 
-    public function settingstudentstatusAction()
-    {
+    public function settingstudentstatusAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_STATUS");
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
@@ -174,8 +153,7 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/settingstudentstatus");
     }
 
-    public function studentlongtextAction()
-    {
+    public function studentlongtextAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
@@ -183,13 +161,11 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/longtext");
     }
 
-    public function deletestudentAction()
-    {
+    public function deletestudentAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
     }
 
-    public function studentacademictraditionalAction()
-    {
+    public function studentacademictraditionalAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
@@ -198,50 +174,43 @@ class StudentController extends Zend_Controller_Action {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function medicalinfoAction()
-    {
+    public function medicalinfoAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/medicalinfo");
     }
 
-    public function studentgeneraleducationAction()
-    {
+    public function studentgeneraleducationAction() {
 
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/generaleducation");
     }
 
-    public function studenttrainingprogramsAction()
-    {
+    public function studenttrainingprogramsAction() {
 
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/trainingprograms");
     }
 
-    public function parentinfoAction()
-    {
+    public function parentinfoAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/parentinfo");
     }
 
-    public function prerequirementsAction()
-    {
+    public function prerequirementsAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/prerequirements");
     }
 
-    public function descriptionAction()
-    {
+    public function descriptionAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/description");
     }
 
-    public function studentmonitorAction()
-    {
+    public function studentmonitorAction() {
 
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION_READ_RIGHT");
 
@@ -253,8 +222,7 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/monitor");
     }
 
-    public function statusbystudentAction()
-    {
+    public function statusbystudentAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_STATUS");
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
@@ -262,8 +230,7 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/statusbystudent");
     }
 
-    public function studentstatusAction()
-    {
+    public function studentstatusAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_STATUS");
         $this->view->facette = $this->OBJECT;
         $this->view->objectId = $this->objectId;
@@ -272,22 +239,19 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/showstatus");
     }
 
-    public function showitemAction()
-    {
+    public function showitemAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION");
         $this->_redirect("/student/student/?objectId=" . $this->objectId . "");
     }
 
-    public function personinfosAction()
-    {
+    public function personinfosAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->target = $this->target;
         $this->_helper->viewRenderer("person/personinfos");
     }
 
-    public function studentAction()
-    {
+    public function studentAction() {
 
         UserAuth::actionPermint($this->_request, "STUDENT_PERSONAL_INFORMATION_READ_RIGHT");
 
@@ -297,12 +261,9 @@ class StudentController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
         $this->view->studentstatusType = $this->studentstatusType;
 
-        if ($this->studentObject->CHANGE_PASSWORD == 0)
-        {
+        if ($this->studentObject->CHANGE_PASSWORD == 0) {
             $this->view->HIDDEN_MSG_CHANGE_PASSWORD = "false";
-        }
-        else
-        {
+        } else {
             $this->view->HIDDEN_MSG_CHANGE_PASSWORD = "true";
         }
 
@@ -312,8 +273,7 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/person");
     }
 
-    public function statusAction()
-    {
+    public function statusAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_STATUS");
         $this->view->objectId = $this->objectId;
         $this->view->objectData = $this->objectData;
@@ -322,20 +282,17 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/status");
     }
 
-    public function liststudentstatusAction()
-    {
+    public function liststudentstatusAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_STATUS");
     }
 
-    public function importxlsAction()
-    {
+    public function importxlsAction() {
 
         $this->view->URL_TEMPLATE_XLS = $this->UTILES->buildURL('student/templatexls', array("target" => $this->target));
         $this->view->URL_STUDENT_IMPORT = $this->UTILES->buildURL('student/importxls', array("target" => $this->target));
         $this->view->facette = $this->facette; //@Math Man
 
-        switch (strtoupper($this->target))
-        {
+        switch (strtoupper($this->target)) {
             case "GENERAL":
                 $this->_helper->viewRenderer("import/general/importxls");
                 break;
@@ -345,11 +302,9 @@ class StudentController extends Zend_Controller_Action {
         }
     }
 
-    public function templatexlsAction()
-    {
+    public function templatexlsAction() {
         $this->view->target = $this->target;
-        switch (strtoupper($this->target))
-        {
+        switch (strtoupper($this->target)) {
             case "GENERAL":
                 $this->_helper->viewRenderer("import/general/templatexls");
                 break;
@@ -359,8 +314,7 @@ class StudentController extends Zend_Controller_Action {
         }
     }
 
-    public function currentgradeAction()
-    {
+    public function currentgradeAction() {
 
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
@@ -371,8 +325,7 @@ class StudentController extends Zend_Controller_Action {
         $this->view->term_number = $classObject->TERM_NUMBER;
     }
 
-    public function detailsassessmentAction()
-    {
+    public function detailsassessmentAction() {
 
         $this->DB_CLASS = AcademicDBAccess::getInstance();
         $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
@@ -384,27 +337,22 @@ class StudentController extends Zend_Controller_Action {
         $this->view->objectData = $this->objectData;
     }
 
-    public function enrollmentrecordAction()
-    {
+    public function enrollmentrecordAction() {
 
         $this->view->objectId = $this->objectId;
     }
 
-    public function registrationAction()
-    {
+    public function registrationAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_REGISTRATION_WIZARD");
         $this->view->gradeId = $this->gradeId;
 
         $this->db_grade = AcademicDBAccess::getInstance();
         $gradeObject = $this->db_grade->getGradeDataFromId($this->gradeId);
 
-        if ($gradeObject)
-        {
+        if ($gradeObject) {
 
             $this->view->gradeObject = $gradeObject;
-        }
-        else
-        {
+        } else {
             $this->view->gradeObject = null;
         }
 
@@ -415,35 +363,30 @@ class StudentController extends Zend_Controller_Action {
         );
     }
 
-    public function searchstudentscholarshipAction()
-    {
+    public function searchstudentscholarshipAction() {
         UserAuth::actionPermint($this->_request, "SCHOLARSHIP");
         $this->view->URL_SEARCH_STUDENT_SCHOLARSHIP_RESULT = $this->UTILES->buildURL('student/searchstudentscholarshipresult', array());
     }
 
-    public function studentscholarshipAction()
-    {
+    public function studentscholarshipAction() {
         UserAuth::actionPermint($this->_request, "SCHOLARSHIP");
     }
 
     ////////////////////////////////////////////////////////////////////////////
     //Credit System
-    public function creditstudentdashboardAction()
-    {
+    public function creditstudentdashboardAction() {
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
         $this->view->campusId = $this->campusId;
         $this->_helper->viewRenderer("person/creditsystem/dashboard");
     }
 
-    public function creditstudentscheduleAction()
-    {
+    public function creditstudentscheduleAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/schedule");
     }
 
-    public function creditstudentschooleventAction()
-    {
+    public function creditstudentschooleventAction() {
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->URL_SCHOOL_EVENT = $this->UTILES->buildURL("schoolevent", array(
             'schoolyearId' => $this->schoolyearId
@@ -453,27 +396,23 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/creditsystem/schoolevent");
     }
 
-    public function creditstudentsubjectAction()
-    {
+    public function creditstudentsubjectAction() {
         $this->view->objectId = $this->objectId;
         $this->view->schoolyearId = $this->schoolyearId;
         $this->_helper->viewRenderer("person/creditsystem/subject");
     }
 
-    public function creditstudenthomeworkAction()
-    {
+    public function creditstudenthomeworkAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/homework");
     }
 
-    public function creditstudentassessmentAction()
-    {
+    public function creditstudentassessmentAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/assessment");
     }
 
-    public function creditstudentattendanceAction()
-    {
+    public function creditstudentattendanceAction() {
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -482,68 +421,59 @@ class StudentController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("person/creditsystem/attendance");
     }
 
-    public function creditstudentdisciplineAction()
-    {
+    public function creditstudentdisciplineAction() {
         $this->view->objectId = $this->objectId;
         $this->view->schoolyearId = $this->schoolyearId;
         $this->view->academicId = $this->academicId;
         $this->_helper->viewRenderer("person/creditsystem/discipline");
     }
 
-    public function creditstudentlistAction()
-    {
+    public function creditstudentlistAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/studentlist");
     }
 
-    public function creditteacherlistAction()
-    {
+    public function creditteacherlistAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/teacherlist");
     }
 
-    public function studentsubjectcreditmainAction()
-    {
+    public function studentsubjectcreditmainAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/subjectmain");
     }
 
-    public function studentcampuscreditmainAction()
-    {
+    public function studentcampuscreditmainAction() {
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("person/creditsystem/campusmain");
     }
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public function traditionalstudentattendanceAction()
-    {
+    public function traditionalstudentattendanceAction() {
         //UserAuth::actionPermint($this->_request, "STUDENT_ATTENDANCE");
         $this->view->objectId = $this->objectId;
         $this->view->academicId = $this->academicId;
         $this->_helper->viewRenderer("person/traditionalsystem/attendance");
     }
 
-    public function trainingstudentattendanceAction()
-    {
+    public function trainingstudentattendanceAction() {
         UserAuth::actionPermint($this->_request, "STUDENT_ATTENDANCE");
         $this->view->objectId = $this->objectId;
         $this->view->trainingId = $this->trainingId;
         $this->_helper->viewRenderer("person/trainingsystem/attendance");
     }
 
-    public function jsonloadAction()
-    {
+    public function jsonloadAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "loadObject":
                 $jsondata = $this->DB_STUDENT->loadStudentFromId($this->REQUEST->getPost('objectId'));
                 break;
 
-            case "enrollStudentsSubjectTerm":
-                $jsondata = $this->DB_STUDENT_SEARCH->enrollStudentsSubjectTerm($this->REQUEST->getPost());
+            case "enrollStudentsByClassTerm":
+                $jsondata = $this->DB_STUDENT_SEARCH->enrollStudentsByClassTerm($this->REQUEST->getPost());
                 break;
 
             case "searchStudent":
@@ -661,11 +591,9 @@ class StudentController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction()
-    {
+    public function jsonsaveAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
 
             case "registrationRecord":
                 $jsondata = $this->DB_STUDENT_ENROLLMENT->registrationRecord($this->REQUEST->getPost());
@@ -778,21 +706,15 @@ class StudentController extends Zend_Controller_Action {
             case "jsonSetCurrentStudentAcademic":
                 $jsondata = StudentDBAccess::setCurrentStudentAcademic(false, true);
                 break;
-
-            case "jsonActionEnrollStudentSubjectTerm":
-                $jsondata = StudentAcademicDBAccess::jsonActionEnrollStudentSubjectTerm($this->REQUEST->getPost());
-                break;
         }
 
         if (isset($jsondata))
             $this->setJSON($jsondata);
     }
 
-    public function jsonimportAction()
-    {
+    public function jsonimportAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
             case "importXLS":
                 $jsondata = $this->DB_STUDENT_IMPORT->importXLS($this->REQUEST->getPost());
                 break;
@@ -810,11 +732,9 @@ class StudentController extends Zend_Controller_Action {
             $this->getResponse()->setBody($json);
     }
 
-    public function jsontreeAction()
-    {
+    public function jsontreeAction() {
 
-        switch ($this->REQUEST->getPost('cmd'))
-        {
+        switch ($this->REQUEST->getPost('cmd')) {
             case "academicHistoryTree":
                 $jsondata = $this->DB_STUDENT_ENROLLMENT->academicHistoryTree($this->REQUEST->getPost());
                 break;
@@ -836,16 +756,14 @@ class StudentController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function exportAction()
-    {
+    public function exportAction() {
         $this->view->academicId = $this->academicId;
         $this->_helper->viewRenderer("export/index");
     }
 
     //////////////////////////////////////////////////////
 
-    public function setJSON($jsondata)
-    {
+    public function setJSON($jsondata) {
 
         Zend_Loader::loadClass('Zend_Json');
 

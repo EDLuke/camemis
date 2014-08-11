@@ -221,17 +221,22 @@ Ext.onReady(function() {
     ////////////////////////////////////////////////////////////////////////////
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'ID'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CODE'");
+    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULL_NAME'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'GENDER'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CREATED_DATE'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS_KEY'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS'");
+    
+    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRST_ACADEMIC'");
+    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'SECOND_ACADEMIC'");
+    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'THIRD_ACADEMIC'");
+    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FOURTH_ACADEMIC'");
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
         case "VIETNAMESE": $width = 100;break;
@@ -243,7 +248,7 @@ Ext.onReady(function() {
     
     if(!SchoolDBAccess::displayPersonNameInGrid()){
 
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FULL_NAME'");
         $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
     }else{
 
@@ -267,62 +272,98 @@ Ext.onReady(function() {
         switch($TERM_NUMBER){
             case 1:
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".FIRST_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_TERM'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".FIRST_TERM."</b>'
+                    ,dataIndex: 'FIRST_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".SECOND_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_TERM'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".SECOND_TERM."</b>'
+                    ,dataIndex: 'SECOND_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".THIRD_TERM."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'THIRD_TERM'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".THIRD_TERM."</b>'
+                    ,dataIndex: 'THIRD_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 break;
             case 2:
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".FIRST_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_QUARTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".FIRST_QUARTER."</b>'
+                    ,dataIndex: 'FIRST_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".SECOND_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_QUARTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".SECOND_QUARTER."</b>'
+                    ,dataIndex: 'SECOND_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".THIRD_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'THIRD_QUARTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".THIRD_QUARTER."</b>'
+                    ,dataIndex: 'THIRD_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".FOURTH_QUARTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FOURTH_QUARTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".FOURTH_QUARTER."</b>'
+                    ,dataIndex: 'FOURTH_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 break;
             default:
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".FIRST_SEMESTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'FIRST_SEMESTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".FIRST_SEMESTER."</b>'
+                    ,dataIndex: 'FIRST_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 $ASSIGNED_STUDENTS_GRID->addColumn("
-                    header: '<b>".SECOND_SEMESTER."</b>'
-                    , width: 110
-                    , sortable: true
-                    , dataIndex: 'SECOND_SEMESTER'
+                    xtype: 'checkboxcolumn'
+                    ,align: 'center'
+                    ,header: '<b>".SECOND_SEMESTER."</b>'
+                    ,dataIndex: 'SECOND_ACADEMIC'
+                    ,disabled: true
+                    ,width: 100
+                    ,on: 1
+                    ,off: 0
                 ");
                 break;
         }
@@ -332,9 +373,7 @@ Ext.onReady(function() {
         start:0
         ,limit:100
         ,classId: '".$this->facette->ID."'
-        ,gradeId: '".$this->facette->GRADE_ID."'
-        ,schoolyearId: '".$this->facette->SCHOOL_YEAR."'
-        ,cmd: 'searchStudent'
+        ,cmd: 'enrollStudentsByClassTerm'
     ";
     
     $ASSIGNED_STUDENTS_GRID->setRemoveEmbeddedEvents("
@@ -364,31 +403,20 @@ Ext.onReady(function() {
     $ASSIGNED_STUDENTS_GRID->renderJS();
     ///////////////////////////////////////////////////////
     
-    $PENEL_ITEMS = Array();
-    $FIRST = "{
-        title: '".LIST_OF_STUDENTS."'
-        ,layout: 'fit'
-        ,items:[{xtype: '".$ASSIGNED_STUDENTS_GRID->getObjectXtype()."'}]
-    }";
-    $PENEL_ITEMS[] = $FIRST;
-    
-    $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
     ?>
             
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
         ,items:[{
-            layout:'fit'
-            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
-            ,border: false
+            border: false
+            ,layout: 'card'
+            ,id: 'center'
+            ,activeItem: 0
             ,items:[{
-                xtype: 'tabpanel'
-                ,tabPosition: 'top'
-                ,plain:true
-                ,activeTab: 0
-                ,enableTabScroll:true
-                ,items:<?=$CHOOSE_ITEMS?>
+                border: false
+                ,layout: 'fit'
+                ,items: [{xtype: '<?=$ASSIGNED_STUDENTS_GRID->getObjectXType()?>'}]
             }]
         }]
     });
@@ -398,11 +426,11 @@ Ext.onReady(function() {
                                                            
         $DETAIL_INFORMATION = "
         {
-            text: '".SHOW_DETAIL." &raquo; ' + record.data.LASTNAME+ ' ' + record.data.FIRSTNAME
+            text: '".SHOW_DETAIL." &raquo; ' + record.data.FULL_NAME
             ,iconCls: 'icon-user'
             ,disabled:false
             ,handler: function(){
-                clickOpenPage('center','".SHOW_DETAIL." &raquo; ' + record.data.LASTNAME+ ' ' + record.data.FIRSTNAME,'/student/studentmonitor/?target=".camemisId()."&objectId=' + record.data.ID);
+                clickOpenPage('center','".SHOW_DETAIL." &raquo; ' + record.data.FULL_NAME,'/student/studentmonitor/?target=".camemisId()."&objectId=' + record.data.ID);
             }
         }
         ";
@@ -411,7 +439,7 @@ Ext.onReady(function() {
 
         $STUDENT_REMOVE_FROM_CLASS = "
         {
-            text: '".REMOVE." &raquo; ' + record.data.LASTNAME+ ' ' + record.data.FIRSTNAME
+            text: '".REMOVE." &raquo; ' + record.data.FULL_NAME
             ,iconCls:'icon-delete'
             ,handler:function(){".deleteStudent($ASSIGNED_STUDENTS_GRID,$this->facette->GUID)."}
         }
@@ -420,14 +448,14 @@ Ext.onReady(function() {
         $CONTEXT_ITEMS[] = $STUDENT_REMOVE_FROM_CLASS;
         $CHOOSE_CONTEXT_ITEMS = implode(',', $CONTEXT_ITEMS);
         
-        if($CONTEXTMENU_ITEMS){
+        if($CONTEXT_ITEMS){
             $js = "";
             $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
             $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                 $js .="var record = grid.store.getAt(rowIndex);";
                 $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
                     $js .="var contextMenu = new Ext.menu.Menu({";
-                        $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
+                        $js .="items: [".$CHOOSE_CONTEXT_ITEMS."]";
                     $js .="});";
                     $js .="contextMenu.showAt(event.xy);";
                     $js .="event.stopEvent();";
