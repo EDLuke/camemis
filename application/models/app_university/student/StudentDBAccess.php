@@ -913,22 +913,29 @@ class StudentDBAccess {
         return array("success" => true, 'selectedCount' => $selectedCount);
     }
 
-    public function jsonRemoveEnrolledStudentClass($params) {
+    public static function jsonRemoveEnrolledStudentClass($params) {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
-        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
+        $objectId = isset($params["removeId"]) ? addText($params["removeId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
         if ($academicObject) {
-            $SQL = "
-			UPDATE t_student_schoolyear
-			SET CLASS= '' WHERE STUDENT = '" . $objectId . "' AND SCHOOL_YEAR='" . $academicObject->SCHOOL_YEAR . "'";
+            $SQL = "UPDATE t_student_schoolyear SET";
+            $SQL .= " CLASS= ''";
+            $SQL .= " ,FIRST_ACADEMIC = 0,SECOND_ACADEMIC = 0,THIRD_ACADEMIC = 0,FOURTH_ACADEMIC = 0";
+            $SQL .= " WHERE";
+            $SQL .= " STUDENT = '" . $objectId . "'";
+            $SQL .= " AND CLASS='" . $academicObject->ID . "'";
+            $SQL .= " AND SCHOOL_YEAR='" . $academicObject->SCHOOL_YEAR . "'";
             self::dbAccess()->query($SQL);
 
             self::dbAccess()->delete('t_student_assignment', array(
                 "STUDENT_ID = '" . $objectId . "'", "CLASS_ID = '" . $academicObject->ID . "'"
             ));
             self::dbAccess()->delete('t_student_subject_assessment', array(
+                "STUDENT_ID = '" . $objectId . "'", "CLASS_ID = '" . $academicObject->ID . "'"
+            ));
+            self::dbAccess()->delete('t_student_learning_performance', array(
                 "STUDENT_ID = '" . $objectId . "'", "CLASS_ID = '" . $academicObject->ID . "'"
             ));
         }

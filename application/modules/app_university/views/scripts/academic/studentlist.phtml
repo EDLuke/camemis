@@ -560,7 +560,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                 $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
                 $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                     $js .="var record = grid.store.getAt(rowIndex);";
-                    $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
+                    $js .= "if(columnIndex==1 || columnIndex==2){ ";
                         $js .="var contextMenu = new Ext.menu.Menu({";
                             $js .="items: [".$CHOOSE_CONTEXT_ITEMS."]";
                         $js .="});";

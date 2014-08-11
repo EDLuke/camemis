@@ -247,13 +247,51 @@ Ext.onReady(function() {
     $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
     
     if(!SchoolDBAccess::displayPersonNameInGrid()){
-
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FULL_NAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        $ASSIGNED_STUDENTS_GRID->addColumn("
+            header: '<b>".LASTNAME."</b>'
+            , width: 110
+            , sortable: true
+            , dataIndex: 'LASTNAME'
+            , editor: new Ext.form.TextField({
+                allowBlank: false
+                ,name: 'LASTNAME'
+            })
+        ");
+        
+        $ASSIGNED_STUDENTS_GRID->addColumn("
+            header: '<b>".FIRSTNAME."</b>'
+            , width: 110
+            , sortable: true
+            , dataIndex: 'FIRSTNAME'
+            , editor: new Ext.form.TextField({
+                allowBlank: false
+                ,name: 'FIRSTNAME'
+            })
+        ");
+        
     }else{
-
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".FIRSTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-        $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".LASTNAME."</b>', width: 120, renderer: cssText, sortable: true, dataIndex: 'LASTNAME'");
+        
+        $ASSIGNED_STUDENTS_GRID->addColumn("
+            header: '<b>".FIRSTNAME."</b>'
+            , width: 110
+            , sortable: true
+            , dataIndex: 'FIRSTNAME'
+            , editor: new Ext.form.TextField({
+                allowBlank: false
+                ,name: 'FIRSTNAME'
+            })
+        ");
+        
+        $ASSIGNED_STUDENTS_GRID->addColumn("
+            header: '<b>".LASTNAME."</b>'
+            , width: 110
+            , sortable: true
+            , dataIndex: 'LASTNAME'
+            , editor: new Ext.form.TextField({
+                allowBlank: false
+                ,name: 'LASTNAME'
+            })
+        ");
     }
     
     $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, renderer: cssText, sortable: true, dataIndex: 'GENDER'");
@@ -453,7 +491,7 @@ Ext.onReady(function() {
             $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
             $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                 $js .="var record = grid.store.getAt(rowIndex);";
-                $js .= "if(columnIndex==1 || columnIndex==2 || columnIndex==3 || columnIndex==4 || columnIndex==5){ ";
+                $js .= "if(columnIndex==1 || columnIndex==2){ ";
                     $js .="var contextMenu = new Ext.menu.Menu({";
                         $js .="items: [".$CHOOSE_CONTEXT_ITEMS."]";
                     $js .="});";
