@@ -39,47 +39,62 @@ Ext.onReady(function() {
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->renderJS();
     
-    ?>
-    viewport = new Ext.Viewport({
-        layout: 'fit'
-        ,border: false
-        ,items:[{
-            layout:'border'
-            ,border: false
-            ,defaults: {
-                collapsible: true
-                ,split: true
-            }
-            ,items: [{
-               	region:'west'
-                ,id: 'WEST_ID'
-                ,margins: '5 0 5 0'
-                ,cmargins: '3 3 3 3'
-                ,width: 300
-                ,minSize: 300
-                ,maxSize: 300
-                ,layout: 'fit'
-                ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
-            },{
-               	collapsible: false
-                ,id: 'center'
-                ,region:'center'
-                ,margins: '3 3 3 0'
-                ,layout: 'card'
-                ,activeItem: 0
-                ,items: [{
-                    layout: 'fit'
-                    ,border: false
-                    ,contentEl: 'initCenter'
-                }]
-            }]
-        }]
-    });
+    $defaultKey = CAMEMISHelpDBAccess::findFirsKeytHelpContent($this->key);
     
-    var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
-    myTree.on('click', function(node, event){
-        clickOpenPage('center','','/help/displaymain/?objectId=' + node.id);
-    });
+    $js ="";
+    $js .="viewport = new Ext.Viewport({";
+        $js .="layout: 'fit'";
+        $js .=",border: false";
+        $js .=",items:[{";
+            $js .="layout:'border'";
+            $js .=",border: false";
+            $js .=",defaults: {";
+                $js .="collapsible: true";
+                $js .=",split: true";
+            $js .="}";
+            $js .=",items: [{";
+               	$js .="region:'west'";
+                $js .=",id: 'WEST_ID'";
+                $js .=",margins: '5 0 5 0'";
+                $js .=",cmargins: '3 3 3 3'";
+                $js .=",width: 300";
+                $js .=",minSize: 300";
+                $js .=",maxSize: 300";
+                $js .=",layout: 'fit'";
+                $js .=",items:[{xtype: '".$OBJECT_TREE->getObjectXtype()."'}]";
+            $js .="},{";
+               	$js .="collapsible: false";
+                $js .=",id: 'center'";
+                $js .=",region:'center'";
+                $js .=",margins: '3 3 3 0'";
+                $js .=",layout: 'card'";
+                $js .=",activeItem: 0";
+                
+                if($defaultKey){
+                    $js .=",items: [{";
+                        $js .="layout: 'fit'";
+                        $js .=",border: false";
+                        $js .=",items: [new Ext.ux.IFrameComponent({ id: 'HELP_CONTENT', url:'/help/displaymain/?objectId=".$defaultKey."'})]";
+                    $js .="}]";
+                }else{
+                    $js .=",items: [{";
+                        $js .="layout: 'fit'";
+                        $js .=",border: false";
+                        $js .=",contentEl: 'initCenter'";
+                    $js .="}]";
+                }
+                
+            $js .="}]";
+        $js .="}]";
+    $js .="});";
+    
+    $js .="var myTree = ".$OBJECT_TREE->ExtgetCmp().";";
+    $js .="myTree.on('click', function(node, event){";
+        $js .="clickOpenPage('center','','/help/displaymain/?objectId=' + node.id);";
+    $js .="});";
+    
+    echo $js;
+    ?>
 });
 </script>
 <?
