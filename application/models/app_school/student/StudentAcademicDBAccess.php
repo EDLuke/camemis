@@ -1463,20 +1463,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
-
-    public static function checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, $term)
-    {
-
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
-        $SQL->where("STUDENT = ?", $studentId);
-        $SQL->where("GRADE = ?", $academicObject->GRADE_ID);
-        $SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
-        $SQL->where("" . $term . " = ?", 1);
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
-    }
-
+    
     ////////////////////////////////////////////////////////////////////////////
     // Credit System....
     ////////////////////////////////////////////////////////////////////////////
@@ -1562,6 +1549,19 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $SQL->where("B.STUDENT_ID = '" . $studentId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
+    }
+    
+    public static function checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, $term)
+    {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_schoolyear", array("C" => "COUNT(*)"));
+        $SQL->where("STUDENT = ?", $studentId);
+        $SQL->where("GRADE = ?", $academicObject->GRADE_ID);
+        $SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
+        $SQL->where("" . $term . " = ?", 1);
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
     }
 
 }

@@ -765,10 +765,25 @@ class StudentDBAccess {
 
                 if ($academicObject->ENROLLMENT_TYPE == 1)
                 {
-                    $SAVEDATA['FIRST_ACADEMIC'] = 1;
-                    $SAVEDATA['SECOND_ACADEMIC'] = 1;
-                    $SAVEDATA['THIRD_ACADEMIC'] = 1;
-                    $SAVEDATA['FOURTH_ACADEMIC'] = 1;
+                    if (!StudentAcademicDBAccess::checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, "FIRST_ACADEMIC"))
+                    {
+                        $SAVEDATA['FIRST_ACADEMIC'] = 1;
+                    }
+
+                    if (!StudentAcademicDBAccess::checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, "SECOND_ACADEMIC"))
+                    {
+                        $SAVEDATA['SECOND_ACADEMIC'] = 1;
+                    }
+
+                    if (!StudentAcademicDBAccess::checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, "THIRD_ACADEMIC"))
+                    {
+                        $SAVEDATA['THIRD_ACADEMIC'] = 1;
+                    }
+
+                    if (!StudentAcademicDBAccess::checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, "FOURTH_ACADEMIC"))
+                    {
+                        $SAVEDATA['FOURTH_ACADEMIC'] = 1;
+                    }
                 }
 
                 self::dbAccess()->insert('t_student_schoolyear', $SAVEDATA);
@@ -1124,6 +1139,8 @@ class StudentDBAccess {
         $studentId = isset($params["id"]) ? addText($params["id"]) : "0";
         $academicTerm = isset($params["academicTerm"]) ? addText($params["academicTerm"]) : "";
 
+        $academicObject = AcademicDBAccess::findGradeFromId($academicId);
+
         $callData = array();
 
         switch ($field)
@@ -1171,11 +1188,15 @@ class StudentDBAccess {
             case "THIRD_ACADEMIC":
             case "FOURTH_ACADEMIC":
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                $data["" . $field . ""] = $newValue;
-                $where[] = "STUDENT = '" . $studentId . "'";
-                $where[] = "CLASS = '" . $academicObject->ID . "'";
-                $where[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
-                self::dbAccess()->update("t_student_schoolyear", $data, $where);
+                if (!StudentAcademicDBAccess::checkUseStudentTermSchoolyearAcademic($studentId, $academicObject, $field))
+                {
+                    $data["" . $field . ""] = $newValue;
+                    $where[] = "STUDENT = '" . $studentId . "'";
+                    $where[] = "CLASS = '" . $academicObject->ID . "'";
+                    $where[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
+                    self::dbAccess()->update("t_student_schoolyear", $data, $where);
+                }
+
                 break;
         }
         //error_log($SQL);
