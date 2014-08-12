@@ -36,6 +36,16 @@ Ext.onReady(function() {
             ".CamemisField::Combo("FILTER", false, $store, false, false, 200, false, false)."
         }]
     ");
+    
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("FD5F-FF75")."
+            }
+        ");
+    
     $OBJECT_TREE->setBaseParams("
         cmd: 'jsonTreeAllCamemisType'
         ,objectId:''
