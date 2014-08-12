@@ -208,6 +208,17 @@ Ext.onReady(function() {
         }]);
     ");
     
+     $OBJECT_GRID->addTBarItems("
+        tbar.add(['-', {
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("385F-FA08")."
+            }
+        }]);
+    ");
+    
     $OBJECT_GRID->addTBarItems("
         tbar.add('->');
     ");

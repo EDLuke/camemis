@@ -527,6 +527,17 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
             }
         }
         
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-', {
+                text:''
+                ,tooltip:'".CAMEMIS_HELP."'
+                ,iconCls: 'icon-help'
+                ,handler:function(){
+                    ".CamemisPage::setEmbeddedHelp("EAAD-DD07")."
+                }
+            }]);
+        ");
+        
         ////////////////////////////////////////////////////////////////////////
         //EXPORT IN TO EXCEL...
         ////////////////////////////////////////////////////////////////////////
