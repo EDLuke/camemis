@@ -186,8 +186,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     case self::SCORE_NUMBER:
                         $TOTAL_RESULT = $this->getTotalSubjectResultsByMonth($stdClass, self::WITH_FORMAT);
                         $data[$i]["RANK"] = getScoreRank($scoreList, $TOTAL_RESULT);
-                        $data[$i]["DISPLAY_TOTAL"] = $TOTAL_RESULT;
-
+                        $data[$i]["TOTAL_RESULT"] = $TOTAL_RESULT;
                         switch ($this->getSettingEvaluationType()) {
                             case self::EVALUATION_TYPE_COEFF:
                                 $PERCENTAGE_VALUE = getPercent($TOTAL_RESULT, $this->getSubjectScoreMax());
@@ -551,13 +550,34 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getTotalSubjectResultsByTerm($stdClass, $withFormat = false) {
 
-        $result = 0;
-        $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults(
-                        $stdClass
-                        , $this->setIncludeMonthTermValue());
+        $OUTPUT = "---";
+        $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
+
+        if (UserAuth::isSchoolVersion()) {
+            $MONTH = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                            $stdClass
+                            , self::INCLUDE_IN_MONTH);
+
+            $TERM = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                            $stdClass
+                            , self::INCLUDE_IN_TERM);
+
+            if ($MONTH && $TERM) {
+                $OUTPUT = ($MONTH + $TERM) / 2;
+            } elseif ($MONTH && !$TERM) {
+                $OUTPUT = $MONTH;
+            } elseif (!$MONTH && $TERM) {
+                $OUTPUT = $TERM;
+            }
+        } else {
+            if (UserAuth::isUniVersion()) {
+                $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                                $stdClass
+                                , self::INCLUDE_IN_TERM);
+            }
+        }
 
         if ($withFormat) {
-            $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
             if (!$COUNT) {
                 $result = "---";
             } else {
