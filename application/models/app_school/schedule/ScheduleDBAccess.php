@@ -745,7 +745,7 @@ class ScheduleDBAccess {
                 }
                 if ($checkDay)
                 {
-                    $SQL->where("A.START_DATE >='" . $checkDay . "' AND A.END_DATE >='" . $checkDay . "'");
+                    $SQL->where("A.START_DATE <='" . $checkDay . "' AND A.END_DATE >='" . $checkDay . "'");
                 }
             }
             else
