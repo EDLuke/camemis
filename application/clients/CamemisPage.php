@@ -1136,7 +1136,7 @@ class CamemisPage {
     }
 
     public static function setEmbeddedHelp($key) {
-        return "openWinIFrame('" . CAMEMIS_HELP . "', '/help/?key=" . $key . "',percentWidth(75), percentHeight(85));";
+        return "openWinIFrame('" . CAMEMIS_HELP . "', '/help/?key=" . $key . "',percentWidth(85), percentHeight(85));";
     }
 
 }
