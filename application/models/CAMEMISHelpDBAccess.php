@@ -10,44 +10,34 @@ require_once 'include/Common.inc.php';
 
 class CAMEMISHelpDBAccess {
 
-    function __construct()
-    {
+    function __construct() {
         
     }
 
-    public static function dbAminAccess()
-    {
+    public static function dbAminAccess() {
         return Zend_Registry::get('ADMIN_DB_ACCESS');
     }
 
-    public static function findHelp($Id)
-    {
+    public static function findHelp($Id) {
 
         $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("*"));
 
-        if (is_numeric($Id))
-        {
+        if (is_numeric($Id)) {
             $SQL->where("ID = ?", "" . $Id . "");
-        }
-        else
-        {
+        } else {
             $SQL->where("TEXT_KEY = '" . $Id . "'");
         }
         return self::dbAminAccess()->fetchRow($SQL);
     }
 
-    public static function getSQLHelp($params)
-    {
+    public static function getSQLHelp($params) {
         $Id = isset($params["parent"]) ? $params["parent"] : "";
         $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("*"));
-        if (self::checkChild($Id))
-        {
+        if (self::checkChild($Id)) {
             $SQL->where("PARENT = ?", $Id);
-        }
-        else
-        {
+        } else {
             $SQL->where("ID = ?", $Id);
         }
         $SQL->order("SORTKEY ASC");
@@ -55,8 +45,7 @@ class CAMEMISHelpDBAccess {
         return self::dbAminAccess()->fetchAll($SQL);
     }
 
-    public function findBlockIdByName($block)
-    {
+    public function findBlockIdByName($block) {
 
         $SQL = "SELECT ID";
         $SQL .= " FROM t_help";
@@ -67,8 +56,7 @@ class CAMEMISHelpDBAccess {
         return $result ? $result->ID : null;
     }
 
-    public static function checkChild($Id)
-    {
+    public static function checkChild($Id) {
 
         $SQL = self::dbAminAccess()->select();
         $SQL->from("t_help", array("C" => "COUNT(*)"));
@@ -79,13 +67,11 @@ class CAMEMISHelpDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonLoadHelp($Id)
-    {
+    public function jsonLoadHelp($Id) {
 
         $facette = self::findHelp($Id);
 
-        if ($facette)
-        {
+        if ($facette) {
 
             $DATA["NAME_EN"] = $facette->NAME_EN;
             $DATA["NAME_VN"] = $facette->NAME_VN;
@@ -106,22 +92,40 @@ class CAMEMISHelpDBAccess {
         return $o;
     }
 
-    public static function treeUserHelps($params)
-    {
+    public static function findFirsKeytHelpContent($key) {
+
+        $facette = self::findHelp($key);
+        $newKey = "";
+        if ($facette) {
+            if (self::checkChild($facette->ID)) {
+                $SQL = self::dbAminAccess()->select();
+                $SQL->from("t_help", array("*"));
+                $SQL->where("PARENT = ?", $facette->ID);
+                $SQL->order("SORTKEY ASC");
+                $SQL->limitPage(0, 1);
+                $result = self::dbAminAccess()->fetchRow($SQL);
+                if ($result) {
+                    $newKey = $result->TEXT_KEY;
+                }
+            } else {
+                $newKey = $key;
+            }
+        }
+
+        return $newKey;
+    }
+
+    public static function treeUserHelps($params) {
         $node = isset($params["node"]) ? $params["node"] : "0";
         $key = isset($params["key"]) ? $params["key"] : "";
         $entries = "";
-        if ($node == 0)
-        {
+        if ($node == 0) {
             $facette = self::findHelp($key);
-            if ($facette)
-            {
+            if ($facette) {
                 $searchParams["parent"] = $facette->ID;
                 $entries = self::getSQLHelp($searchParams);
             }
-        }
-        else
-        {
+        } else {
             $searchParams["parent"] = $node;
             $entries = self::getSQLHelp($searchParams);
         }
@@ -130,19 +134,15 @@ class CAMEMISHelpDBAccess {
 
         $i = 0;
         if ($entries)
-            foreach ($entries as $value)
-            {
-                if (self::checkChild($value->ID))
-                {
+            foreach ($entries as $value) {
+                if (self::checkChild($value->ID)) {
 
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['iconCls'] = "icon-book";
                     $data[$i]['cls'] = "nodeTextBold";
                     $data[$i]['leaf'] = false;
-                }
-                else
-                {
+                } else {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['leaf'] = true;
