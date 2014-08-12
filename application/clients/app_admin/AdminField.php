@@ -149,7 +149,7 @@ class AdminField {
     }
 
     static function Textfield($id, $name, $fieldLabel, $allowBlank = false, $readOnly = false, $value = false) {
-        
+
         if ($allowBlank) {
             $emptyText = 'This field is required';
             $allowBlank = "false";
@@ -567,7 +567,7 @@ class AdminField {
 
         return $js;
     }
-    
+
     static function ComboCountry($fieldLabel) {
 
         $store = "[

@@ -15,69 +15,57 @@ class AdminHelpDBAccess {
     public $objectId = null;
     public $DB_DATABASE;
 
-    function __construct()
-    {
+    function __construct() {
         $this->DB_DATABASE = new AdminDatabaseDBAccess();
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public function __get($name)
-    {
-        if (Array_key_exists($name, $this->data))
-        {
+    public function __get($name) {
+        if (Array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
         return null;
     }
 
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->data[$name] = $value;
     }
 
-    public function __isset($name)
-    {
+    public function __isset($name) {
         return Array_key_exists($name, $this->data);
     }
 
-    public function __unset($name)
-    {
+    public function __unset($name) {
         unset($this->data[$name]);
     }
 
-    public static function findHelp($Id)
-    {
+    public static function findHelp($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_help", array("*"));
 
-        if (is_numeric($Id))
-        {
+        if (is_numeric($Id)) {
             $SQL->where("ID = ?", $Id);
-        }
-        else
-        {
+        } else {
             $SQL->where("TEXT_KEY = '" . $Id . "'");
         }
 
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function jsonLoadHelp($Id)
-    {
+    public function jsonLoadHelp($Id) {
 
         $facette = self::findHelp($Id);
 
         $DATA = array();
 
-        if ($facette)
-        {
+        if ($facette) {
 
             $DATA["NAME_ENGLISH"] = $facette->NAME_ENGLISH;
+            $DATA["DESCRIPTION"] = $facette->DESCRIPTION;
             $DATA["NAME_KHMER"] = $facette->NAME_KHMER ? $facette->NAME_KHMER : $facette->NAME_ENGLISH;
             $DATA["NAME_VIETNAMESE"] = $facette->NAME_VIETNAMESE ? $facette->NAME_VIETNAMESE : $facette->NAME_ENGLISH;
 
@@ -98,8 +86,7 @@ class AdminHelpDBAccess {
         return $o;
     }
 
-    public function addFolder($params)
-    {
+    public function addFolder($params) {
         if (isset($params["name"]))
             $SAVE_DATA['NAME_ENGLISH'] = addText($params["name"]);
         $SAVE_DATA["TEXT_KEY"] = createCode();
@@ -109,13 +96,15 @@ class AdminHelpDBAccess {
         );
     }
 
-    public function jsonSaveHelp($params)
-    {
+    public function jsonSaveHelp($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
 
         if (isset($params["SORTKEY"]))
             $SAVE_DATA["SORTKEY"] = addText($params["SORTKEY"]);
+        
+        if (isset($params["DESCRIPTION"]))
+            $SAVE_DATA["DESCRIPTION"] = addText($params["DESCRIPTION"]);
 
         if (isset($params["NAME_ENGLISH"]))
             $SAVE_DATA["NAME_ENGLISH"] = addText($params["NAME_ENGLISH"]);
@@ -138,13 +127,10 @@ class AdminHelpDBAccess {
         if (isset($params["TEXT_KEY"]))
             $SAVE_DATA["TEXT_KEY"] = addText($params["TEXT_KEY"]);
 
-        if ($objectId != "new")
-        {
+        if ($objectId != "new") {
             $WHERE = self::dbAccess()->quoteInto("ID = ?", $objectId);
             self::dbAccess()->update('t_help', $SAVE_DATA, $WHERE);
-        }
-        else
-        {
+        } else {
             $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
             if ($parentId)
                 $SAVE_DATA["PARENT"] = $parentId;
@@ -158,8 +144,7 @@ class AdminHelpDBAccess {
         );
     }
 
-    public static function actionSaveContent($params)
-    {
+    public static function actionSaveContent($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "0";
         $SAVE_DATA = Array();
@@ -177,8 +162,7 @@ class AdminHelpDBAccess {
         self::dbAccess()->update('t_help', $SAVE_DATA, $WHERE);
     }
 
-    public function jsonTreeHelps($params)
-    {
+    public function jsonTreeHelps($params) {
 
         $parentId = isset($params["node"]) ? addText($params["node"]) : "0";
 
@@ -191,19 +175,15 @@ class AdminHelpDBAccess {
         $data = array();
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
-                if (self::checkChild($value->ID))
-                {
+            foreach ($result as $value) {
+                if (self::checkChild($value->ID)) {
 
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['iconCls'] = "icon-book_add";
                     $data[$i]['cls'] = "nodeTextBold";
                     $data[$i]['leaf'] = false;
-                }
-                else
-                {
+                } else {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['text'] = stripslashes($value->NAME_ENGLISH);
                     $data[$i]['leaf'] = true;
@@ -211,8 +191,7 @@ class AdminHelpDBAccess {
                     $data[$i]['cls'] = "nodeTextBlue";
                 }
 
-                if ($parentId == 0)
-                {
+                if ($parentId == 0) {
                     $data[$i]['iconCls'] = "icon-box";
                     $data[$i]['cls'] = "nodeTextBold";
                 }
@@ -223,8 +202,7 @@ class AdminHelpDBAccess {
         return $data;
     }
 
-    public static function checkChild($Id)
-    {
+    public static function checkChild($Id) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_help", array("C" => "COUNT(*)"));
@@ -235,8 +213,7 @@ class AdminHelpDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public function jsonRemoveHelp($Id)
-    {
+    public function jsonRemoveHelp($Id) {
 
         $condition = array(
             'ID = ? ' => $Id
