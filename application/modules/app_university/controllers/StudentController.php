@@ -623,8 +623,8 @@ class StudentController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT->jsonRemoveEnrolledStudentFromClass($this->REQUEST->getPost());
                 break;
 
-            case "actionStudentSchoolYear":
-                $jsondata = $this->DB_STUDENT->actionStudentSchoolYear($this->REQUEST->getPost());
+            case "actionStudentGradeClassSchoolyear":
+                $jsondata = $this->DB_STUDENT->actionStudentGradeClassSchoolyear($this->REQUEST->getPost());
                 break;
 
             case "jsonRemoveStudentFromSchool":

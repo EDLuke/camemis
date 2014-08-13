@@ -1064,7 +1064,7 @@ class StudentDBAccess {
         );
     }
 
-    public function actionStudentSchoolYear($params) {
+    public function actionStudentGradeClassSchoolyear($params) {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
@@ -1128,12 +1128,21 @@ class StudentDBAccess {
                         $SAVEDATA["" . $field . ""] = 0;
                     }
                 }
+
                 $SAVEDATA['MODIFY_DATE'] = getCurrentDBDateTime();
                 $SAVEDATA['MODIFY_BY'] = Zend_Registry::get('USER')->CODE;
                 $WHERE[] = "STUDENT = '" . $studentId . "'";
                 $WHERE[] = "FIND_IN_SET($academicObject->ID,CLASSIDS)";
                 $WHERE[] = "SCHOOL_YEAR = '" . $academicObject->SCHOOL_YEAR . "'";
                 self::dbAccess()->update("t_student_schoolyear", $SAVEDATA, $WHERE);
+
+                $newfacette = StudentAcademicDBAccess::findStudentClassGradeSchoolyear($studentId, $academicObject);
+                if ($newfacette) {
+                    $callData["FIRST_ACADEMIC"] = ($academicObject->ID == $newfacette->FIRST_ACADEMIC) ? 1 : 0;
+                    $callData["SECOND_ACADEMIC"] = ($academicObject->ID == $newfacette->SECOND_ACADEMIC) ? 1 : 0;
+                    $callData["THIRD_ACADEMIC"] = ($academicObject->ID == $newfacette->THIRD_ACADEMIC) ? 1 : 0;
+                    $callData["FOURTH_ACADEMIC"] = ($academicObject->ID == $newfacette->FOURTH_ACADEMIC) ? 1 : 0;
+                }
 
                 break;
         }

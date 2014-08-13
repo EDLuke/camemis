@@ -453,16 +453,26 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
             case "ADMIN":
             case "SUPERADMIN":
                 $ENROLLED_STUDENTS->setSaveParams("
-                    cmd: 'actionStudentSchoolYear'
+                    cmd: 'actionStudentGradeClassSchoolyear'
                     ,academicId: '".$this->facette->GUID."'
                 ");
-                $ENROLLED_STUDENTS->setAftereditCallback("
-                    XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
-                ");
+                if($this->facette->ENROLLMENT_TYPE == 1){
+                    $ENROLLED_STUDENTS->setAftereditCallback("
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                        e.record.set('FIRST_ACADEMIC',jsonData.data.FIRST_ACADEMIC);
+                        e.record.set('SECOND_ACADEMIC',jsonData.data.SECOND_ACADEMIC);
+                        e.record.set('THIRD_ACADEMIC',jsonData.data.THIRD_ACADEMIC);
+                        e.record.set('FOURTH_ACADEMIC',jsonData.data.FOURTH_ACADEMIC);
+                    ");
+                }else{
+                    $ENROLLED_STUDENTS->setAftereditCallback("
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+                    ");
+                }
+                
                 $ENROLLED_STUDENTS->isGridEditing = true;
             break;
         }
-
         $ENROLLED_STUDENTS->isQuickySearch = true;
         $ENROLLED_STUDENTS->isCheckboxSelect = false;
         $ENROLLED_STUDENTS->forceFit = "false";

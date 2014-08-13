@@ -1017,7 +1017,7 @@ class StudentDBAccess {
         );
     }
 
-    public function actionStudentSchoolYear($params) {
+    public function actionStudentGradeClassSchoolyear($params) {
 
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $field = isset($params["field"]) ? addText($params["field"]) : "";
