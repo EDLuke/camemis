@@ -4,10 +4,9 @@
 //@CHHE Vathana
 //24.06.2014
 ////////////////////////////////////////////////////////////////////////////////
-require_once("Zend/Loader.php");
+require_once("Zend/Loader.php");                             
 require_once 'models/export/CamemisExportDBAccess.php';
-
-
+require_once 'models/CamemisTypeDBAccess.php';
 class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
 
     function __construct($objectId) {
@@ -15,16 +14,38 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
         $this->objectId = $objectId;
         parent::__construct();
     }
+    public static function dbAccess()
+    {
+        return Zend_Registry::get('DB_ACCESS');
+    }
 
+    public static function dbSelectAccess()
+    {
+        return self::dbAccess()->select();
+    }
     //Personal Information
     public function setContentPersonalInfo($params){
-        
+       
          $studentObject = StudentDBAccess::findStudentFromId($this->objectId);
+         
          $i=3;
          if($studentObject){
-            foreach($params as $values){
-                //error_log($studentObject->$values);
-                switch ($values){                    
+           
+            foreach($params as $key => $values){
+                
+                switch ($studentObject->$values)  {
+                    case "2":
+                        $result = "Female";
+                        break;
+                    case "1":
+                        $result = "Male";
+                        break;
+                    default:
+                        $result = $studentObject->$values; 
+                        break;
+                }
+                switch ($values){    
+                                    
                     case "FIRSTNAME":
                         $CONST_NAME = "Firstname in Khmer:";
                         break;
@@ -42,25 +63,46 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
                         break;
                     case "GENDER":
                         $CONST_NAME = "Gender:";
-                        break;
+                        break;                         
                     case "DATE_BIRTH":
-                        $CONST_NAME = "Date of birth:";
+                        $CONST_NAME = "Date of birth:";   
+                        break;                    
+                    case "BIRTH_PLACE":
+                        $CONST_NAME = "Place of birth:";   
+                        break;  
+                    case "RELIGION":          
+                        $CONST_NAME = "Religion:";
+                        $result = $studentObject->$values?CamemisTypeDBAccess::findObjectFromId($studentObject->RELIGION)->NAME:'?';   
                         break; 
+                    case "ETHNIC":
+                        $CONST_NAME = "Ethnic:"; 
+                        $result = $studentObject->$values?CamemisTypeDBAccess::findObjectFromId($studentObject->ETHNIC)->NAME:'?';  
+                        break; 
+                    case "NATIONALITY":
+                        $CONST_NAME = "Nationality:"; 
+                        $result = $studentObject->$values?CamemisTypeDBAccess::findObjectFromId($studentObject->NATIONALITY)->NAME:'?';  
+                        break; 
+                    case "ADDRESS":
+                        $CONST_NAME = "Address:";   
+                        break; 
+                    case "COUNTRY_PROVINCE":
+                        $CONST_NAME = "Province:";
+                        $result = $studentObject->$values?LocationDBAccess::findObjectFromId($studentObject->COUNTRY_PROVINCE)->NAME:'?';          
+                        break;
+                    case "TOWN_CITY":
+                        $CONST_NAME = "City:";
+                        $result = $studentObject->$values?LocationDBAccess::findObjectFromId($studentObject->TOWN_CITY)->NAME:'?';          
+                        break;
+                    case "PHONE":
+                        $CONST_NAME = "Phone:";          
+                        break;
+                    case "EMAIL":
+                        $CONST_NAME = "Email:";
+                        break;         
+                    
                 }
                 
-                switch ($studentObject->$values)  {
-                    case "2":
-                        $result = "Female";
-                        break;
-                    case "1":
-                        $result = "Male";
-                        break;
-                    default:
-                        $result = $studentObject->$values; 
-                        break;
-                }
-                
-                
+             
                 $this->setCellContent(0, $i,$CONST_NAME);
                 $this->setFontStyle(0, $i, false, 11, "000000");
                 $this->setCellStyle(0, $i, 30,20, true);
@@ -82,7 +124,7 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
         $this->setFontStyle(0, 1, true, 11, "000000");
         $this->setFullStyle(0, 1, "DFE3E8");
         $this->setCellStyle(0, 1, 30, 40, true);  
-        $this->setContentPersonalInfo(array('FIRSTNAME','FIRSTNAME_LATIN','LASTNAME','LASTNAME_LATIN','GENDER','DATE_BIRTH'));
+        $this->setContentPersonalInfo(array('FIRSTNAME','FIRSTNAME_LATIN','LASTNAME','LASTNAME_LATIN','GENDER','DATE_BIRTH','BIRTH_PLACE','RELIGION','ETHNIC','NATIONALITY','ADDRESS','COUNTRY_PROVINCE','TOWN_CITY','PHONE','EMAIL'));
         
         
     }
@@ -185,11 +227,11 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     public function setEducationBackgroundPanel() {
         
         
-        $this->setCellMergeContent(0, 10,"Background Education","A10","O10");
-        $this->setCellContent(0, 10,"Background Education");
-        $this->setFontStyle(0, 10, true, 11, "000000");
-        $this->setFullStyle(0, 10, "DFE3E8");
-        $this->setCellStyle(0, 10, 30, 40, true);
+        $this->setCellMergeContent(0, 18,"Background Education","A18","O18");
+        $this->setCellContent(0, 18,"Background Education");
+        $this->setFontStyle(0, 18, true, 11, "000000");
+        $this->setFullStyle(0, 18, "DFE3E8");      
+        $this->setCellStyle(0, 18, 30, 40, true);  
         $this->setEducationBackgroundHeader(0);
         $this->setContentEducationBackground(); 
         
@@ -239,11 +281,12 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
                 case "ETHNICITY":
                     $CONST_NAME = "ETHNICITY";
                     $colWidth = 25;
-                    break;
+                    break;            
                 case "NATIONALITY":
                     $CONST_NAME = "NATIONALITY";
                     $colWidth = 25;
                     break;
+           
                 case "EMERGENCY_CONTACT":
                     $CONST_NAME = "EMERGENCY_CONTACT";
                     $colWidth = 25;
@@ -309,11 +352,11 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     public function setParentGuardianPanel() {
         
         
-        $this->setCellMergeContent(0, 22,"Parent/Guardian","A22","O22");
-        $this->setCellContent(0, 22,"Parent/Guardian");
-        $this->setFontStyle(0, 22, true, 11, "000000");
-        $this->setFullStyle(0, 22, "DFE3E8");
-        $this->setCellStyle(0, 22, 30, 40, true);
+        $this->setCellMergeContent(0, 30,"Parent/Guardian","A22","O22");
+        $this->setCellContent(0, 30,"Parent/Guardian");
+        $this->setFontStyle(0, 30, true, 11, "000000");
+        $this->setFullStyle(0, 30, "DFE3E8");
+        $this->setCellStyle(0, 30, 30, 40, true);
         $this->setParentGuardianHeader(0);
         $this->setContentParentGaudian();
          
@@ -365,12 +408,12 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
                 case "NATIONALITY":
                     $CONST_NAME = "NATIONALITY";
                     $colWidth = 25;
-                    break;
+                    break;                              
                 case "EMERGENCY_CONTACT":
                     $CONST_NAME = "EMERGENCY_CONTACT";
                     $colWidth = 25;
                     break;
-                
+    
                 default:
                     $CONST_NAME = defined($value) ? constant($value) : $value;
                     $colWidth = 30;
@@ -403,7 +446,7 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
                     $STATUS_KEY = isset($entries[$i]["STATUS_KEY"]) ? $entries[$i]["STATUS_KEY"] : "";
                     $CONTENT = isset($entries[$i][$colName]) ? $entries[$i][$colName] : "";
                     $BG_COLOR = isset($entries[$i]["BG_COLOR"]) ? $entries[$i]["BG_COLOR"] : "";
-                    error_log($CONTENT);
+                    //error_log($CONTENT);
                     switch ($colName) {
                         case "STATUS_KEY":
                             $this->setCellContent($colIndex, $rowIndex, $STATUS_KEY);
@@ -430,11 +473,11 @@ class StudentPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     
     public function setPrerequirementsPanel() {
         
-        $this->setCellMergeContent(0, 36,"Pre requirements","A36","O36");
-        $this->setCellContent(0, 36,"Pre requirements");
-        $this->setFontStyle(0, 36, true, 11, "000000");
-        $this->setFullStyle(0, 36, "DFE3E8");
-        $this->setCellStyle(0, 36, 30, 40, true);
+        $this->setCellMergeContent(0, 44,"Pre requirements","A36","O36");
+        $this->setCellContent(0, 44,"Pre requirements");
+        $this->setFontStyle(0, 44, true, 11, "000000");
+        $this->setFullStyle(0, 44, "DFE3E8");
+        $this->setCellStyle(0, 44, 30, 40, true);
         $this->setPrerequirementHeader(0);
         $this->setContentPrerequirement();  
     }
