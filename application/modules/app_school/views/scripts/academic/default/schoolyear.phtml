@@ -111,7 +111,7 @@ $viewportItem = new ViewportItem(
             $DETAIL_INFORMATION_ITEMS = "[
                 {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
                 ,{".CamemisField::Checkbox("USE_OF_GROUPS","USE_OF_GROUPS",USE_OF_GROUPS, 1, false, false,true)."}    
-                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, false, false, false, false,false)."}
+                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, true, 0, false, false,false)."}
                 ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }
