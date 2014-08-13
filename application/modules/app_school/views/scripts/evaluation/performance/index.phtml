@@ -340,6 +340,12 @@ $setParams .= "&academicId=".$this->academicId."";
                         window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
                         window.parent.Ext.getCmp('ACADEMIC_ID').expand();
                     }
+                },'-',{text: ''
+                       ,tooltip: '<?=CAMEMIS_HELP?>'
+                       ,iconCls: 'icon-help'
+                       ,handler: function(){
+                           <?=CamemisPage::setEmbeddedHelp("D133-3CB7")?>
+                       }
                 },'-','<b><?=$academicObject->NAME?> &raquo; <?=ACADEMIC_PERFORMANCES?></b>']
                 ,items:[{
                     border: false
