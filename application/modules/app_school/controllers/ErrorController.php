@@ -9,27 +9,22 @@ require_once 'Zend/Controller/Action.php';
 
 class ErrorController extends Zend_Controller_Action {
 
-    public function errorAction()
-    {
+    public function errorAction() {
 
         $this->exception = $this->_getParam('error_handler');
         #echo get_class($this->exception->exception);
         #print_r($this->exception);
         #exit;
-        switch ($this->exception->type)
-        {
+        switch ($this->exception->type) {
 
             // EXCEPTION_NO_CONTROLLER
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
 
                 $this->_request->setControllerName('error');
 
-                if (!UserAuth::isVerifyTime())
-                {
+                if (!UserAuth::isVerifyTime()) {
                     $this->_request->setActionName('expired');
-                }
-                else
-                {
+                } else {
                     $this->_request->setActionName('nocontroller');
                 }
 
@@ -43,12 +38,9 @@ class ErrorController extends Zend_Controller_Action {
 
                 $this->_request->setControllerName('error');
 
-                if (!UserAuth::isVerifyTime())
-                {
+                if (!UserAuth::isVerifyTime()) {
                     $this->_request->setActionName('expired');
-                }
-                else
-                {
+                } else {
                     $this->_request->setActionName('noaction');
                 }
                 $this->_request->setDispatched(false);
@@ -59,18 +51,14 @@ class ErrorController extends Zend_Controller_Action {
 
                 //echo get_class($this->exception->exception);
 
-                switch (get_class($this->exception->exception))
-                {
+                switch (get_class($this->exception->exception)) {
 
                     case 'Zend_Viewexception' :
                         $this->_request->setControllerName('error');
 
-                        if (!UserAuth::isVerifyTime())
-                        {
+                        if (!UserAuth::isVerifyTime()) {
                             $this->_request->setActionName('expired');
-                        }
-                        else
-                        {
+                        } else {
                             $this->_request->setActionName('viewexception');
                         }
 
@@ -81,12 +69,9 @@ class ErrorController extends Zend_Controller_Action {
                     case 'Zend_Db_Statement_Exception':
                         $this->_request->setControllerName('error');
 
-                        if (!UserAuth::isVerifyTime())
-                        {
+                        if (!UserAuth::isVerifyTime()) {
                             $this->_request->setActionName('expired');
-                        }
-                        else
-                        {
+                        } else {
                             $this->_request->setActionName('dbstatement');
                         }
 
@@ -124,33 +109,27 @@ class ErrorController extends Zend_Controller_Action {
         }
     }
 
-    public function expiredAction()
-    {
+    public function expiredAction() {
         
     }
 
-    public function noactionAction()
-    {
+    public function noactionAction() {
         
     }
 
-    public function nocontrollerAction()
-    {
+    public function nocontrollerAction() {
         
     }
 
-    public function dbstatementAction()
-    {
+    public function dbstatementAction() {
         
     }
 
-    public function permissionAction()
-    {
+    public function permissionAction() {
         
     }
 
-    public function viewexceptionAction()
-    {
+    public function viewexceptionAction() {
         
     }
 

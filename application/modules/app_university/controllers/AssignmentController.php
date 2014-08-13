@@ -123,7 +123,6 @@ class AssignmentController extends Zend_Controller_Action {
         } else {
             $this->view->subjectId = $this->subjectId;
         }
-
     }
 
     public function showtempAction() {
@@ -252,7 +251,7 @@ class AssignmentController extends Zend_Controller_Action {
             case "jsonTreeAssignmentsBySubjctClass":
                 $jsondata = $this->DB_ASSIGNMENT->jsonTreeAssignmentsBySubjctClass($this->REQUEST->getPost());
                 break;
-                
+
             case "jsonTreeAssignmentsBySubjctTraining":
                 $jsondata = $this->DB_ASSIGNMENT_TEMP->jsonTreeAssignmentsBySubjctTraining($this->REQUEST->getPost());
                 break;
@@ -284,6 +283,7 @@ class AssignmentController extends Zend_Controller_Action {
         $this->getResponse()->setHeader('Content-Type', 'text/javascript');
         $this->getResponse()->setBody($json);
     }
+
 }
 
 ?>
