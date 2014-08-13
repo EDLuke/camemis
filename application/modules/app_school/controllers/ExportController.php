@@ -18,6 +18,8 @@ require_once 'models/export/StudentAdvisoryExportDBAccess.php';//@Visal
 require_once 'models/export/TraditionalFilterExportDBAccess.php';//@Visal
 require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/TrainingAssessmentExportDBAccess.php';//@CHHE Vathana
+require_once 'models/export/StudentPersonalInfoExportDBAccess.php';
+require_once 'models/export/StaffPersonalInfoExportDBAccess.php';
 
 class ExportController extends Zend_Controller_Action {
 
@@ -37,7 +39,8 @@ class ExportController extends Zend_Controller_Action {
         $this->TRADITION_FILTER_EXCEL = new TraditionalFilterExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         $this->STUDENT_TRAINING_ASSESSMENT_EXCEL = new TrainingAssessmentExportDBAccess($this->_getParam('objectId'));//@veasna
-        
+        $this->STUDENT_PERSONAL_EXCEL = new StudentPersonalInfoExportDBAccess($this->_getParam('objectId'));
+        $this->STAFF_PERSONAL_EXCEL = new StaffPersonalInfoExportDBAccess($this->_getParam('objectId'));
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
                 $this->_getParam('academicId')
@@ -155,6 +158,14 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
+    public function openstudentpersonalinfolistAction()
+    {
+         
+    }
+    public function openstaffpersonalinfolistAction()
+    {
+         
+    }
     //End...
     public function jsonexcelAction()
     {
@@ -213,6 +224,13 @@ class ExportController extends Zend_Controller_Action {
             case "getStudentDisciplineData":
             case "getStudentAdvisoryData":
                 $jsondata = $this->TRADITION_FILTER_EXCEL->getStudentAttendanceData($this->REQUEST->getPost());
+                break;
+                
+            case "studentpersonalinfo":
+                $jsondata = $this->STUDENT_PERSONAL_EXCEL->studentpersonalinfo($this->REQUEST->getPost());
+                break;
+            case "staffpersonalinfo":
+                $jsondata = $this->STAFF_PERSONAL_EXCEL->staffpersonalinfo($this->REQUEST->getPost());
                 break;
         }
 
