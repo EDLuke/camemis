@@ -364,14 +364,20 @@ class StudentSearchDBAccess {
         $this->start = isset($params["start"]) ? (int) $params["start"] : 0;
         $this->limit = isset($params["limit"]) ? (int) $params["limit"] : 100;
         $this->classId = isset($params["classId"]) ? (int) $params["classId"] : "";
-        $this->multipleClasses = true;
+        
         $this->islimit = false;
         $allStudent = count($this->queryAllStudents());
         $this->islimit = true;
         $result = $this->queryAllStudents();
 
         $academicObject = AcademicDBAccess::findGradeFromId($this->classId);
-
+        
+        if ($academicObject->ENROLLMENT_TYPE == 1) {
+            $this->multipleClasses = true;
+        }else{
+            $this->multipleClasses = false;
+        }
+        
         $data = array();
 
         if ($result) {
