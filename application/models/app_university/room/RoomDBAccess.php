@@ -339,12 +339,12 @@ class RoomDBAccess {
 
         if ($CHECK) {
             if ($REMVOE)
-                self::dbAccess()->delete("t_room", " ID ='" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " ID =" . $objectId);
             if ($REMVOE)
-                self::dbAccess()->delete("t_room", " PARENT ='" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " PARENT =" . $objectId);
         }else {
             if ($REMVOE)
-                self::dbAccess()->delete("t_room", " ID ='" . $objectId . "'");
+                self::dbAccess()->delete("t_room", " ID =" . $objectId);
         }
 
         return array("success" => true);
@@ -458,7 +458,7 @@ class RoomDBAccess {
                 $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
-        self::dbAccess()->update("t_room", $data, "ID='". $objectId ."'");
+        self::dbAccess()->update("t_room", $data, "ID=". $objectId);
 
         return array("success" => true, "status" => $newStatus);
     }

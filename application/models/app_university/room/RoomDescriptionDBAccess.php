@@ -99,7 +99,7 @@ class RoomDescriptionDBAccess {
     }
 
     public static function sqlRemoveObject($Id) {
-        self::dbAccess()->delete("t_room_description", " ID ='" . $Id . "'");
+        self::dbAccess()->delete("t_room_description", " ID =" . $Id );
     }
 
     public static function addObject($params) {
@@ -130,10 +130,10 @@ class RoomDescriptionDBAccess {
 
         if ($objectId != "new") {
             $data = array();
-            $data['NAME'] = "'". addText($params["NAME"]) ."'";
+            $data['NAME'] =  addText($params["NAME"]) ;
             if (isset($params["CHOOSE_TYPE"]))
-                $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
-            self::dbAccess()->update("t_room_description", $data, "ID='". addText($params["objectId"]) ."'");
+                $data['CHOOSE_TYPE'] =  addText($params["CHOOSE_TYPE"]);
+            self::dbAccess()->update("t_room_description", $data, "ID=". addText($params["objectId"]));
         }else {
             self::addObject($params);
         }
@@ -203,7 +203,7 @@ class RoomDescriptionDBAccess {
 
         if ($result) {
             foreach ($result as $value) {
-                self::dbAccess()->update("t_room_description", array('CHOOSE_TYPE' => "'". $facette->CHOOSE_TYPE ."'"), "ID='". $value->ID ."'");
+                self::dbAccess()->update("t_room_description", array('CHOOSE_TYPE' => $facette->CHOOSE_TYPE), "ID=". $value->ID);
             }
         }
     }

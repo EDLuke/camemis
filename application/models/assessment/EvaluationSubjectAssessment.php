@@ -554,26 +554,33 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $COUNT = SQLEvaluationStudentAssignment::checkExistStudentSubjectAssignment($stdClass);
 
         if (UserAuth::isSchoolVersion()) {
-            $MONTH = SQLEvaluationStudentAssignment::calculatedSubjectResults(
-                            $stdClass
-                            , self::INCLUDE_IN_MONTH);
 
-            $TERM = SQLEvaluationStudentAssignment::calculatedSubjectResults(
-                            $stdClass
-                            , self::INCLUDE_IN_TERM);
+            if ($this->getSettingFormulaTermResult()) {
+                $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                                $stdClass
+                                , self::INCLUDE_IN_TERM);
+            } else {
+                $MONTH = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                                $stdClass
+                                , self::INCLUDE_IN_MONTH);
 
-            if ($MONTH && $TERM) {
-                $OUTPUT = ($MONTH + $TERM) / 2;
-            } elseif ($MONTH && !$TERM) {
-                $OUTPUT = $MONTH;
-            } elseif (!$MONTH && $TERM) {
-                $OUTPUT = $TERM;
+                $TERM = SQLEvaluationStudentAssignment::calculatedSubjectResults(
+                                $stdClass
+                                , self::INCLUDE_IN_TERM);
+
+                if ($MONTH && $TERM) {
+                    $OUTPUT = ($MONTH + $TERM) / 2;
+                } elseif ($MONTH && !$TERM) {
+                    $OUTPUT = $MONTH;
+                } elseif (!$MONTH && $TERM) {
+                    $OUTPUT = $TERM;
+                }
             }
         } else {
             if (UserAuth::isUniVersion()) {
                 $OUTPUT = SQLEvaluationStudentAssignment::calculatedSubjectResults(
                                 $stdClass
-                                , self::INCLUDE_IN_TERM);
+                                , $this->setIncludeMonthTermValue());
             }
         }
 
