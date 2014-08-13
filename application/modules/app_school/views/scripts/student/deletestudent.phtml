@@ -114,7 +114,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ");
             
             $OBJECT_FORM->setSaveParams("
-                cmd: 'jsonRemoveEnrolledStudentClass'
+                cmd: 'jsonRemoveEnrolledStudentFromClass'
                 ,removeId: '".$STUDENT_CLASS->ID."'
             ");
             $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());

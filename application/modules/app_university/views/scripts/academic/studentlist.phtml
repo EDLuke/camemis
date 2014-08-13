@@ -47,7 +47,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                         Ext.Ajax.request({
                             url: '/student/jsonsave/'
                             ,method: 'POST'
-                            ,params: {cmd: 'jsonRemoveEnrolledStudentClass', objectId:Id, academicId:academicId}
+                            ,params: {cmd: 'jsonRemoveEnrolledStudentFromClass', objectId:Id, academicId:academicId}
                             ,success: function(response, options) {Ext.getCmp('<?=$ENROLLED_STUDENTS->getObjectId()?>').store.reload();}
                             ,failure: function(response, options) {}
                         });
@@ -139,7 +139,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                 ";
 
                 $LIST_OF_STUDENTS->setSelectionParams("
-                    cmd: 'jsonAddEnrollStudentClass'
+                    cmd: 'jsonAddStudent2GradeClassSchoolyear'
                     ,academicId: '" . $this->facette->GUID . "'
                 ");
                 break;
@@ -396,7 +396,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
             start:0
             ,limit:100
             ,classId: '".$this->facette->ID."'
-            ,cmd: 'enrollStudentsByClassTerm'
+            ,cmd: 'jsonEnrolledStudentsToClass'
         ";
         
         if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
@@ -557,7 +557,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
         if(UserAuth::getUserType() != "STUDENT"){
             if($CONTEXT_ITEMS){
                 $js = "";
-                $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
+                $js .="var grid = Ext.getCmp('".$ENROLLED_STUDENTS->getObjectId()."');";
                 $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                     $js .="var record = grid.store.getAt(rowIndex);";
                     $js .= "if(columnIndex==1 || columnIndex==2){ ";

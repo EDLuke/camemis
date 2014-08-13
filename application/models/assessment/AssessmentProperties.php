@@ -16,124 +16,97 @@ abstract class AssessmentProperties {
 
     public $datafield = array();
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return self::dbAccess()->select();
     }
 
-    public function __get($name)
-    {
-        if (array_key_exists($name, $this->datafield))
-        {
+    public function __get($name) {
+        if (array_key_exists($name, $this->datafield)) {
             return $this->datafield[$name];
         }
         return null;
     }
 
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->datafield[$name] = $value;
     }
 
-    public function __isset($name)
-    {
+    public function __isset($name) {
         return array_key_exists($name, $this->datafield);
     }
 
-    public function __unset($name)
-    {
+    public function __unset($name) {
         unset($this->datafield[$name]);
     }
 
-    public function getSubject()
-    {
-        if ($this->getCurrentClass()->EDUCATION_SYSTEM)
-        {
+    public function getSubject() {
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
             return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->getCurrentClass()->PARENT);
-        }
-        else
-        {
+        } else {
             return SubjectDBAccess::getAcademicSubject($this->subjectId, $this->academicId);
         }
     }
 
-    public function getSubjectScoreType()
-    {
+    public function getSubjectScoreType() {
         return $this->getSubject()->SCORE_TYPE ? $this->getSubject()->SCORE_TYPE : 1;
     }
 
-    public function getSubjectCoeff()
-    {
+    public function getSubjectCoeff() {
         return $this->getSubject()->COEFF_VALUE ? $this->getSubject()->COEFF_VALUE : 1;
     }
 
-    public function getSubjectScoreMax()
-    {
+    public function getSubjectScoreMax() {
         return $this->getSubject()->SCORE_MAX;
     }
 
-    public function getSubjectScoreMin()
-    {
+    public function getSubjectScoreMin() {
         return $this->getSubject()->SCORE_MIN;
     }
 
-    public function getSubjectCreditHours()
-    {
+    public function getSubjectCreditHours() {
         return $this->getSubject()->NUMBER_CREDIT;
     }
 
-    public function getSubjectScorePossible()
-    {
+    public function getSubjectScorePossible() {
         return $this->getSubject()->MAX_POSSIBLE_SCORE;
     }
 
-    public function getAssignment()
-    {
+    public function getAssignment() {
         return AssignmentDBAccess::findAssignmentFromId($this->assignmentId);
     }
 
-    public function getAssignmentPointsPossible()
-    {
+    public function getAssignmentPointsPossible() {
         return $this->getAssignment()->POINTS_POSSIBLE ? $this->getAssignment()->POINTS_POSSIBLE : 100;
     }
 
-    public function getAssignmentCoeff()
-    {
+    public function getAssignmentCoeff() {
         return $this->getAssignment()->COEFF_VALUE ? $this->getAssignment()->COEFF_VALUE : 1;
     }
 
-    public function getAssignmentEvaluationType()
-    {
+    public function getAssignmentEvaluationType() {
         return $this->getAssignment()->EVALUATION_TYPE;
     }
 
-    public function getAssignmentInCludeEvaluation()
-    {
+    public function getAssignmentInCludeEvaluation() {
         return $this->getAssignment()->INCLUDE_IN_EVALUATION;
     }
 
-    public function getCurrentClassAssignments()
-    {
+    public function getCurrentClassAssignments() {
 
-        if ($this->getCurrentClass()->EDUCATION_SYSTEM)
-        {
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
             return AssignmentDBAccess::getListAssignmentsToAcademic(
                             $this->getCurrentClass()->PARENT
                             , $this->subjectId
             );
-        }
-        else
-        {
+        } else {
             return AssignmentDBAccess::getListAssignmentsToAcademic(
                             $this->academicId
                             , $this->subjectId
@@ -141,92 +114,73 @@ abstract class AssessmentProperties {
         }
     }
 
-    public function getCurrentClass()
-    {
+    public function getCurrentClass() {
         return AcademicDBAccess::findGradeFromId($this->academicId);
     }
 
-    public function getCurrentSchoolyear()
-    {
+    public function getCurrentSchoolyear() {
         return $result = AcademicDateDBAccess::findAcademicDateFromId($this->getSchoolyearId());
     }
 
-    public function getTermNumber()
-    {
+    public function getTermNumber() {
         return AcademicDBAccess::findAcademicTerm($this->getSchoolyearId());
     }
 
-    public function isDisplayMonthResult()
-    {
+    public function isDisplayMonthResult() {
         return $this->getCurrentClass()->DISPLAY_MONTH_RESULT;
     }
 
-    public function isDisplayFirstResult()
-    {
+    public function isDisplayFirstResult() {
         return $this->getCurrentClass()->DISPLAY_FIRST_RESULT;
     }
 
-    public function isDisplaySecondResult()
-    {
+    public function isDisplaySecondResult() {
         return $this->getCurrentClass()->DISPLAY_SECOND_RESULT;
     }
 
-    public function isDisplayThirdResult()
-    {
+    public function isDisplayThirdResult() {
         return $this->getCurrentClass()->DISPLAY_THIRD_RESULT;
     }
 
-    public function isDisplayFourthResult()
-    {
+    public function isDisplayFourthResult() {
         return $this->getCurrentClass()->DISPLAY_FOURTH_RESULT;
     }
 
-    public function isDisplayYearResult()
-    {
+    public function isDisplayYearResult() {
         return $this->getCurrentClass()->DISPLAY_YEAR_RESULT;
     }
 
-    public function getEducationSystem()
-    {
+    public function getEducationSystem() {
         return $this->getCurrentClass()->EDUCATION_SYSTEM;
     }
 
-    public function getSchoolyearId()
-    {
+    public function getSchoolyearId() {
         return $this->getCurrentClass()->SCHOOL_YEAR;
     }
 
-    public function getMonth()
-    {
-        if ($this->date)
-        {
+    public function getMonth() {
+        if ($this->date) {
             return getMonthYearByDateStr($this->date)->MONTH * 1;
         }
 
-        if ($this->monthyear)
-        {
+        if ($this->monthyear) {
             return getMonthNumberFromMonthYear($this->monthyear) * 1;
         }
     }
 
-    public function getYear()
-    {
-        if ($this->date)
-        {
+    public function getYear() {
+        if ($this->date) {
             return getMonthYearByDateStr($this->date)->YEAR;
         }
 
-        if ($this->monthyear)
-        {
+        if ($this->monthyear) {
             return getYearFromMonthYear($this->monthyear);
         }
     }
 
-    public function getSection()
-    {
+    public function getSection() {
 
-        switch ($this->section)
-        {
+        switch ($this->section) {
             case 1:
                 return "MONTH";
             case 2:
@@ -240,13 +194,11 @@ abstract class AssessmentProperties {
         }
     }
 
-    public function getNameSectionByTerm()
-    {
+    public function getNameSectionByTerm() {
 
         $section = "";
 
-        switch ($this->term)
-        {
+        switch ($this->term) {
             case "FIRST_SEMESTER":
             case "SECOND_SEMESTER":
                 $section = "SEMESTER";
@@ -267,184 +219,144 @@ abstract class AssessmentProperties {
         return $section;
     }
 
-    public function getListSubjects()
-    {
+    public function getListSubjects() {
 
-        if ($this->getCurrentClass()->EDUCATION_SYSTEM)
-        {
+        if ($this->getCurrentClass()->EDUCATION_SYSTEM) {
             return GradeSubjectDBAccess::getListSubjectsFromAcademic($this->getCurrentClass()->PARENT, $this->term);
-        }
-        else
-        {
+        } else {
             return GradeSubjectDBAccess::getListSubjectsFromAcademic($this->academicId, $this->term);
         }
     }
 
-    public function getFirstSemesterCoeff()
-    {
+    public function getFirstSemesterCoeff() {
         return $this->getCurrentClass()->SEMESTER1_WEIGHTING ? $this->getCurrentClass()->SEMESTER1_WEIGHTING : 1;
     }
 
-    public function getSecondSemesterCoeff()
-    {
+    public function getSecondSemesterCoeff() {
         return $this->getCurrentClass()->SEMESTER2_WEIGHTING ? $this->getCurrentClass()->SEMESTER2_WEIGHTING : 1;
     }
 
-    public function getFirstTermCoeff()
-    {
+    public function getFirstTermCoeff() {
         return $this->getCurrentClass()->TERM1_WEIGHTING ? $this->getCurrentClass()->TERM1_WEIGHTING : 1;
     }
 
-    public function getSecondTermCoeff()
-    {
+    public function getSecondTermCoeff() {
         return $this->getCurrentClass()->TERM2_WEIGHTING ? $this->getCurrentClass()->TERM2_WEIGHTING : 1;
     }
 
-    public function getThirdTermCoeff()
-    {
+    public function getThirdTermCoeff() {
         return $this->getCurrentClass()->TERM3_WEIGHTING ? $this->getCurrentClass()->TERM3_WEIGHTING : 1;
     }
 
-    public function getFirstQuarterCoeff()
-    {
+    public function getFirstQuarterCoeff() {
         return $this->getCurrentClass()->QUARTER1_WEIGHTING ? $this->getCurrentClass()->QUARTER1_WEIGHTING : 1;
     }
 
-    public function getSecondQuarterCoeff()
-    {
+    public function getSecondQuarterCoeff() {
         return $this->getCurrentClass()->QUARTER2_WEIGHTING ? $this->getCurrentClass()->QUARTER2_WEIGHTING : 1;
     }
 
-    public function getThirdQuarterCoeff()
-    {
+    public function getThirdQuarterCoeff() {
         return $this->getCurrentClass()->QUARTER3_WEIGHTING ? $this->getCurrentClass()->QUARTER3_WEIGHTING : 1;
     }
 
-    public function getFourthQuarterCoeff()
-    {
+    public function getFourthQuarterCoeff() {
         return $this->getCurrentClass()->QUARTER4_WEIGHTING ? $this->getCurrentClass()->QUARTER4_WEIGHTING : 1;
     }
 
-    public function getSettingYearResult()
-    {
+    public function getSettingYearResult() {
         return $this->getCurrentClass()->YEAR_RESULT;
     }
 
-    public function getSettingYearTermResult()
-    {
+    public function getSettingYearTermResult() {
         return $this->getSubject()->AVERAGE_FROM_SEMESTER;
     }
 
-    public function getSettingEvaluationType()
-    {
+    public function getSettingEvaluationType() {
         return $this->getCurrentClass()->EVALUATION_TYPE;
     }
 
-    public function getSettingEvaluationOption()
-    {
+    public function getSettingEvaluationOption() {
         return $this->getCurrentClass()->EVALUATION_OPTION;
     }
 
-    public function getSettingFormulaTermResult()
-    {
+    public function getSettingFormulaTermResult() {
         return $this->getCurrentClass()->FORMULA_TERM;
     }
 
-    public function getSettingFormulaYearResult()
-    {
+    public function getSettingFormulaYearResult() {
         return $this->getCurrentClass()->FORMULA_YEAR;
     }
 
-    public function displayRank($average, $scoreList)
-    {
+    public function displayRank($average, $scoreList) {
         return getScoreRank($scoreList, $average);
     }
 
-    public function getSettingQualificationType()
-    {
+    public function getSettingQualificationType() {
         return AcademicDBAccess::findGradeFromId($this->getCurrentClass()->CAMPUS_ID)->QUALIFICATION_TYPE;
     }
 
-    public function getTermByDateAcademicId()
-    {
+    public function getTermByDateAcademicId() {
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->getCurrentClass()->ID);
     }
 
-    public function getTermByMonthYear()
-    {
+    public function getTermByMonthYear() {
 
-        if ($this->monthyear)
-        {
+        if ($this->monthyear) {
             return AcademicDBAccess::getTermByMonthYear($this->academicId, $this->monthyear);
-        }
-        elseif ($this->term)
-        {
+        } elseif ($this->term) {
             return $this->term;
         }
     }
 
-    public function getSettingFirstDivision()
-    {
+    public function getSettingFirstDivision() {
         return $this->getCurrentClass()->PERFORMANCE_FIRST_DIVISION_VALUE;
     }
 
-    public function getSettingSecondDivision()
-    {
+    public function getSettingSecondDivision() {
         return $this->getCurrentClass()->PERFORMANCE_SECOND_DIVISION_VALUE;
     }
 
-    public function getSettingThirdDivision()
-    {
+    public function getSettingThirdDivision() {
         return $this->getCurrentClass()->PERFORMANCE_THIRD_DIVISION_VALUE;
     }
 
-    public function getSettingFourthDivision()
-    {
+    public function getSettingFourthDivision() {
         return $this->getCurrentClass()->PERFORMANCE_FOURTH_DIVISION_VALUE;
     }
 
-    public function getAcademicTerm()
-    {
+    public function getAcademicTerm() {
 
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->academicId);
     }
 
-    public static function displayAssignmentResult($type, $object)
-    {
+    public static function displayAssignmentResult($type, $object) {
 
         $firstValue = $object ? $object->POINTS : "---";
         $secondValue = "---";
-        if ($object)
-        {
-            if (isset($object->POINTS_POSSIBLE))
-            {
+        if ($object) {
+            if (isset($object->POINTS_POSSIBLE)) {
                 $secondValue = $object ? $object->POINTS_POSSIBLE : "---";
             }
         }
 
-        switch ($type)
-        {
+        switch ($type) {
             case 0:
                 return $firstValue;
             case 1:
-                if (is_numeric($firstValue) && is_numeric($secondValue))
-                {
+                if (is_numeric($firstValue) && is_numeric($secondValue)) {
                     return $firstValue ? $firstValue . "/" . $secondValue : "";
-                }
-                else
-                {
+                } else {
                     return "---";
                 }
         }
     }
 
-    public function listClassStudents()
-    {
+    public function listClassStudents() {
         $studentsearch = new StudentSearchDBAccess();
         $studentsearch->globalSearch = $this->globalSearch;
 
-        switch ($this->getEducationSystem())
-        {
+        switch ($this->getEducationSystem()) {
             case 1:
                 $studentsearch->creditSubjectId = $this->subjectId;
                 $studentsearch->creditClassId = $this->academicId;
@@ -456,38 +368,37 @@ abstract class AssessmentProperties {
                 break;
         }
 
+        if ($this->getCurrentClass()->ENROLLMENT_TYPE == 1) {
+            $studentsearch->multipleClasses = true;
+        }
+
         $data = array();
         $CHECK = 0;
         $result = $studentsearch->queryAllStudents();
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
 
-                if ($this->getCurrentClass()->ENROLLMENT_TYPE == 1)
-                {
-                    switch ($this->term)
-                    {
+                if ($this->getCurrentClass()->ENROLLMENT_TYPE == 1) {
+                    switch ($this->term) {
                         case "FIRST_SEMESTER":
                         case "FIRST_TERM":
                         case "FIRST_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkStudentTermSchoolyearAcademic($value->ID, $this->getCurrentClass(), "FIRST_ACADEMIC");
+                            $CHECK = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FIRST_ACADEMIC");
                             break;
                         case "SECOND_SEMESTER":
                         case "SECOND_TERM":
                         case "SECOND_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkStudentTermSchoolyearAcademic($value->ID, $this->getCurrentClass(), "SECOND_ACADEMIC");
+                            $CHECK = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "SECOND_ACADEMIC");
                             break;
                         case "THIRD_TERM":
                         case "THIRD_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkStudentTermSchoolyearAcademic($value->ID, $this->getCurrentClass(), "THIRD_ACADEMIC");
+                            $CHECK = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "THIRD_ACADEMIC");
                             break;
                         case "FOURTH_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkStudentTermSchoolyearAcademic($value->ID, $this->getCurrentClass(), "FOURTH_ACADEMIC");
+                            $CHECK = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FOURTH_ACADEMIC");
                             break;
                     }
-                    if ($CHECK)
-                    {
+                    if ($CHECK) {
                         $stdClass = new stdClass();
                         $stdClass->ID = $value->ID;
                         $stdClass->CODE = $value->CODE;
@@ -499,9 +410,7 @@ abstract class AssessmentProperties {
                         $stdClass->FIRSTNAME_LATIN = $value->FIRSTNAME_LATIN;
                         $data[] = $stdClass;
                     }
-                }
-                else
-                {
+                } else {
                     $stdClass = new stdClass();
                     $stdClass->ID = $value->ID;
                     $stdClass->CODE = $value->CODE;
