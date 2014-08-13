@@ -172,7 +172,7 @@ switch($subjectObject->SCORE_TYPE){
         break;
 }
 $listAssignmentCategory = AssessmentConfig::getListAssignmentCategoryScoreDate(
-        $$academicObject->ID
+        $academicObject->ID
         ,$academicObject->FORMULA_TERM
         , $subjectId
         , $term

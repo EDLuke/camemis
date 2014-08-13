@@ -776,7 +776,7 @@ class ScheduleDBAccess {
             $SQL->where("A.END_TIME=" . $endtime . "");
 
         if ($groupIds) //@Man
-            $SQL->where("A.GROUP_IDS IN (?)", $groupIds);
+            $SQL->where("FIND_IN_SET($groupIds,A.GROUP_IDS)");
 
         $SQL->group("A.START_TIME");
         $SQL->group("A.END_TIME");

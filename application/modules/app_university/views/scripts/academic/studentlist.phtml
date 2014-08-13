@@ -513,30 +513,21 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
         if(UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_READ_RIGHT"))
         $CONTEXT_ITEMS[] = $DETAIL_INFORMATION;
-
-        $TEACHER_COMMENTS = "
-        {
-            text: '".TEACHER_COMMENTS." &raquo; ' + record.data.FULL_NAME
-            ,hidden:true
-            ,iconCls:'icon-application_form_add'
-            ,handler:function(){
-                clickOpenPage('content',record.data.FULL_NAME,'/note/?target=1&academicId=".$this->objectId."&objectId=' + record.data.ID);
+        
+        if($this->facette->ENROLLMENT_TYPE != 1){
+            $CLASS_TRANSFER = "
+            {
+                text: '".CLASS_TRANSFER." &raquo; ' + record.data.FULL_NAME
+                ,iconCls:'icon-arrow_switch'
+                ,handler:function(){
+                    openWinIFrame('', '/student/classtransfer/?academicId=".$this->objectId."&objectId=' + record.data.ID + '&target=cancel',500,500);
+                }
             }
+            ";
+           if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
+           $CONTEXT_ITEMS[] = $CLASS_TRANSFER;
         }
-        ";
-
-        $CLASS_TRANSFER = "
-        {
-            text: '".CLASS_TRANSFER." &raquo; ' + record.data.FULL_NAME
-            ,iconCls:'icon-arrow_switch'
-            ,handler:function(){
-                openWinIFrame('', '/student/classtransfer/?academicId=".$this->objectId."&objectId=' + record.data.ID + '&target=cancel',500,500);
-            }
-        }
-        ";
-       if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT"))
-       $CONTEXT_ITEMS[] = $CLASS_TRANSFER;
-
+        
         $STUDENT_REMOVE_FROM_CLASS = "
         {
             text: '".REMOVE." &raquo; ' + record.data.FULL_NAME

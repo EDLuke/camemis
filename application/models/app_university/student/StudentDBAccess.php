@@ -736,7 +736,6 @@ class StudentDBAccess {
                 }
             }
 
-            error_log($newIds);
             $SAVEDATA['CLASSIDS'] = $newIds ? $newIds : "";
             $SAVEDATA['CLASS'] = "";
         } else {
@@ -860,7 +859,7 @@ class StudentDBAccess {
             foreach ($result as $value) {
 
                 if ($academicObject->ENROLLMENT_TYPE == 1) {
-                    $CHECK = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($value->ID, $academicObject, false);
+                    $CHECK = StudentAcademicDBAccess::checkEnrolledStudentMultipleClasses($value->ID, $academicObject);
                 } else {
                     $CHECK = $value->CLASS ? 1 : 0;
                 }
