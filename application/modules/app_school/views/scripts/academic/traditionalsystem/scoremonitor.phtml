@@ -162,19 +162,24 @@ Ext.onReady(function() {
                     break;
                 }
                 $html .= ",id: 'CANCEL_ID'";
-                $html .= ",iconCls:'icon-cancel'";
+                $html .= ",iconCls:'icon-cancel'";    
                 $html .= ",scope:this";
                 $html .= ",handler: function(){";
                     $html .= "window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);";
                     $html .= "window.parent.Ext.getCmp('ACADEMIC_ID').expand();";
                 $html .= "}";
+            $html .= "},'-',{ text:''";
+                $html .= ",tooltip:'".CAMEMIS_HELP."'";
+                $html .= ",iconCls: 'icon-help'";
+                $html .= ",handler:function(){ ";
+                $html .= "".CamemisPage::setEmbeddedHelp("8248-819A")."}";
             $html .= "},'-','<b>".$academicObject->NAME." &raquo; ".TEACHER_ENTER_SCORE."</b>','->',";
                 $html .= "'<b>".SUBJECT.":</b>',{";
                 $html .= "xtype: 'buttongroup'";
                 $html .= ",items:".$COMBO_SUBJECT."";
             $html .= "}]";
             $html .= ",items:".$SHOW_LAYOUT."";
-        $html .= "}]";
+        $html .= "}]";;
     $html .= "});";
     
     echo $html;
