@@ -60,7 +60,7 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
                         Ext.Ajax.request({
                             url: '/student/jsonsave/'
                             ,method: 'POST'
-                            ,params: {cmd: 'jsonRemoveEnrolledStudentClass', objectId:Id, academicId:academicId}
+                            ,params: {cmd: 'jsonRemoveEnrolledStudentFromClass', objectId:Id, academicId:academicId}
                             ,success: function(response, options) {Ext.getCmp('<?=$ENROLLED_STUDENTS->getObjectId()?>').store.reload();}
                             ,failure: function(response, options) {}
                         });
@@ -130,7 +130,7 @@ $EXECUTE_RIGHT=UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")
                     ,cmd: 'jsonUnassignedStudentsByClass'
                 ";
                 $LIST_OF_STUDENTS->setSelectionParams("
-                    cmd: 'jsonAddEnrollStudentClass'
+                    cmd: 'jsonAddStudent2GradeClassSchoolyear'
                     ,academicId: '" . $this->objectId . "'
                 ");
                 break;

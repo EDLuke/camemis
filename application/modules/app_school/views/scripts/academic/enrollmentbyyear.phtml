@@ -414,7 +414,7 @@ switch($this->facette->ENROLLMENT_TYPE){
             case "ADMIN":
             case "SUPERADMIN":
                 $ASSIGNED_STUDENTS_GRID->setSaveParams("
-                    cmd: 'actionStudentSchoolYear'
+                    cmd: 'actionStudentGradeClassSchoolyear'
                     ,academicId: '".$this->facette->GUID."'
                     ,academicTerm:academicTerm
                 ");

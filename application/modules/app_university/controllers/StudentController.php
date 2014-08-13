@@ -472,8 +472,8 @@ class StudentController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT->loadStudentFromId($this->REQUEST->getPost('objectId'));
                 break;
 
-            case "enrollStudentsByClassTerm":
-                $jsondata = $this->DB_STUDENT_SEARCH->enrollStudentsByClassTerm($this->REQUEST->getPost());
+            case "jsonEnrolledStudentsToClass":
+                $jsondata = $this->DB_STUDENT_SEARCH->jsonEnrolledStudentsToClass($this->REQUEST->getPost());
                 break;
 
             case "searchStudent":
@@ -611,20 +611,20 @@ class StudentController extends Zend_Controller_Action {
                 $jsondata = $this->DB_STUDENT->jsonAddEnrollStudentSchoolyear($this->REQUEST->getPost());
                 break;
 
-            case "jsonAddEnrollStudentClass":
-                $jsondata = $this->DB_STUDENT->jsonAddEnrollStudentClass($this->REQUEST->getPost());
+            case "jsonAddStudent2GradeClassSchoolyear":
+                $jsondata = $this->DB_STUDENT->jsonAddStudent2GradeClassSchoolyear($this->REQUEST->getPost());
                 break;
 
             case "jsonRemoveEnrolledStudentSchoolyear":
                 $jsondata = $this->DB_STUDENT->jsonRemoveEnrolledStudentSchoolyear($this->REQUEST->getPost());
                 break;
 
-            case "jsonRemoveEnrolledStudentClass":
-                $jsondata = $this->DB_STUDENT->jsonRemoveEnrolledStudentClass($this->REQUEST->getPost());
+            case "jsonRemoveEnrolledStudentFromClass":
+                $jsondata = $this->DB_STUDENT->jsonRemoveEnrolledStudentFromClass($this->REQUEST->getPost());
                 break;
 
-            case "actionStudentSchoolYear":
-                $jsondata = $this->DB_STUDENT->actionStudentSchoolYear($this->REQUEST->getPost());
+            case "actionStudentGradeClassSchoolyear":
+                $jsondata = $this->DB_STUDENT->actionStudentGradeClassSchoolyear($this->REQUEST->getPost());
                 break;
 
             case "jsonRemoveStudentFromSchool":
@@ -738,15 +738,6 @@ class StudentController extends Zend_Controller_Action {
             case "academicHistoryTree":
                 $jsondata = $this->DB_STUDENT_ENROLLMENT->academicHistoryTree($this->REQUEST->getPost());
                 break;
-
-            case "jsonTreeStudentsByClass":
-                $jsondata = StudentAcademicDBAccess::jsonTreeStudentsByClass($this->REQUEST->getPost("Id"));
-                break;
-
-            case "jsonTreeAllStudentDescription":
-                $jsondata = DescriptionDBAccess::jsonTreeAllStudentDescription($this->REQUEST->getPost());
-                break;
-
             case "jsonTreeFeesByStudent":
                 $jsondata = StudentFeeDBAccess::jsonTreeFeesByStudent($this->REQUEST->getPost());
                 break;

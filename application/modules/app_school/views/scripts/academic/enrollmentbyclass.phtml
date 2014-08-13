@@ -38,7 +38,7 @@ function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
             Ext.Ajax.request({
                 url: '/student/jsonsave/'
                 ,method: 'POST'
-                ,params: {cmd: 'jsonRemoveEnrolledStudentClass',academicId:'".$academicId."',removeId:record.data.ID}
+                ,params: {cmd: 'jsonRemoveEnrolledStudentFromClass',academicId:'".$academicId."',removeId:record.data.ID}
                 ,success: function(response, options) {
                     XMsg('".STATUS."','".WAR_REMOVED_SUCCESSFULLY."');
                     Ext.getCmp('" . $ASSIGNED_STUDENTS_GRID->getObjectId() . "').store.reload();
@@ -132,7 +132,7 @@ Ext.onReady(function() {
     ";
 
     $LIST_OF_STUDENTS_GIRD->setSelectionParams("
-        cmd: 'jsonAddEnrollStudentClass'
+        cmd: 'jsonAddStudent2GradeClassSchoolyear'
         ,academicId: '".$this->facette->GUID."'
     ");
 
@@ -423,7 +423,7 @@ Ext.onReady(function() {
         start:0
         ,limit:100
         ,classId: '".$this->facette->ID."'
-        ,cmd: 'enrollStudentsByClassTerm'
+        ,cmd: 'jsonEnrolledStudentsToClass'
     ";
     
     $ASSIGNED_STUDENTS_GRID->setRemoveEmbeddedEvents("
@@ -434,7 +434,7 @@ Ext.onReady(function() {
         case "ADMIN":
         case "SUPERADMIN":
             $ASSIGNED_STUDENTS_GRID->setSaveParams("
-                cmd: 'actionStudentSchoolYear'
+                cmd: 'actionStudentGradeClassSchoolyear'
                 ,academicId: '".$this->facette->GUID."'
             ");
             $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
