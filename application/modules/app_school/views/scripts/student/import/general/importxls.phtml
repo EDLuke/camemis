@@ -561,8 +561,13 @@ $columndata = Utiles::getGridColumnData("STUDENT_LIST_ID");
     $FORM_TBAR .= "});";
     $FORM_TBAR .= "}";
     $FORM_TBAR .= "}";
+    $FORM_TBAR .= "},'-',{";
+    $FORM_TBAR .= "tooltip: '".CAMEMIS_HELP."'";
+    $FORM_TBAR .= ",iconCls:'icon-help'";
+    $FORM_TBAR .= ",handler: function(){";
+    $FORM_TBAR .= "".CamemisPage::setEmbeddedHelp("A2FE-E0CC")."}";
     $FORM_TBAR .= "}";
-
+    
     ?>
     var fp = new Ext.FormPanel({
         fileUpload: true

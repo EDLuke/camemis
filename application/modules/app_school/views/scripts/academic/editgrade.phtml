@@ -169,6 +169,15 @@ Ext.onReady(function() {
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($this->status));
     if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+    
+    $OBJECT_FORM->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("BAA5-5A2F")."
+            }
+        ");
 
     $OBJECT_FORM->labelAlign = "left";
     $OBJECT_FORM->labelWidth = 150;

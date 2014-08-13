@@ -47,6 +47,16 @@ Ext.onReady(function() {
                 clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_SCHOLARSHIP_TYPE."?&type=0&objectId=new');
             }
         ");
+    
+      $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("AB6A-AA1B")."
+            }
+        ");
+    
     $OBJECT_TREE->isTreeExpand=true; 
     $OBJECT_TREE->renderJS();
     

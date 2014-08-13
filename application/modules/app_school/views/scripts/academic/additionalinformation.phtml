@@ -40,6 +40,15 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
     
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("8404-480B")."
+            }
+        ");
+    
     $OBJECT_TREE->setBaseParams("
         cmd: 'jsonAllTreeAdditionalInformation'
         ,objectId: '".$this->objectId."'

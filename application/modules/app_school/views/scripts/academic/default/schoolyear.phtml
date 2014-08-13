@@ -491,6 +491,15 @@ $viewportItem = new ViewportItem(
         if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
         $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
         
+         $OBJECT_FORM->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("B0B8-8F9A")."
+            }
+        ");
+        
         $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '" . $this->objectId . "'");
         $OBJECT_FORM->setLoadParams("cmd: 'loadObject',objectId: '".$this->objectId."'");
         $OBJECT_FORM->setSaveParams("

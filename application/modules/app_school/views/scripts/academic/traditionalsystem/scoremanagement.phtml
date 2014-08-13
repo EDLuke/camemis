@@ -69,6 +69,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         ");
         
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("2833-34FF")."
+            }
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'getTreeTraditionalEducationSystem'
             ,SCHOOLYEAR:'".$currentSchoolyearId."'

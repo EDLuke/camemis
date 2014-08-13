@@ -217,6 +217,16 @@ Ext.onReady(function() {
         }
     ");
     
+     $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("2EC7-765C")."
+            }
+        ");
+    
+    
     $OBJECT_TREE->backgroundColor = "#F9F9F9";
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->setBaseParams("

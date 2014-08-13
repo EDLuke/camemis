@@ -51,7 +51,17 @@ Ext.onReady(function() {
             clickOpenPage('center', '".STUDENT."', '".$this->URL_SHOW_ABSENT_TYPE."?objectId=new&objectType=STUDENT');
         }
     ");
-    $STUDENT_TREE_OBJECT->setSaveParams("objectType: 'STUDENT'");
+     
+      $STUDENT_TREE_OBJECT->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("970A-A9FA")."
+            }
+        ");
+
+$STUDENT_TREE_OBJECT->setSaveParams("objectType: 'STUDENT'");
     $STUDENT_TREE_OBJECT->setBaseParams("
     	cmd: 'jsonTreeAllAbsentType'
 		,objectType: 'STUDENT'
@@ -82,6 +92,16 @@ Ext.onReady(function() {
             clickOpenPage('center', '".STAFF."', '".$this->URL_SHOW_ABSENT_TYPE."?objectId=new&objectType=STAFF');
         }
     ");
+     
+       $STAFF_TREE_OBJECT->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("D265-5761")."
+            }
+        ");
+     
     $STAFF_TREE_OBJECT->setSaveParams("objectType: 'STAFF'");
     $STAFF_TREE_OBJECT->setBaseParams("
         cmd: 'jsonTreeAllAbsentType'

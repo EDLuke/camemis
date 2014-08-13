@@ -331,7 +331,18 @@ switch($this->facette->ENROLLMENT_TYPE){
                 }]);
             ");
         }
-                                       
+        
+        $ASSIGNED_STUDENTS_GRID->addTBarItems("
+            tbar.add(['-', {
+                text:''
+                ,tooltip:'".CAMEMIS_HELP."'
+                ,iconCls: 'icon-help'
+                ,handler:function(){
+                    ".CamemisPage::setEmbeddedHelp("66B5-5155")."
+               }
+           }]);
+        ");
+        
         if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
             $ASSIGNED_STUDENTS_GRID->addTBarItems("
                 tbar.add(['->',{

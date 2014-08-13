@@ -50,6 +50,16 @@ Ext.onReady(function() {
             clickOpenPage('center', '".STUDENT."', '/dataset/showpersonstatus/?objectId=new&objectType=STUDENT');
         }
     ");
+     
+       $STUDENT_TREE_OBJECT->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("B286-6F51")."
+            }
+        ");
+     
     $STUDENT_TREE_OBJECT->setSaveParams("objectType: 'STUDENT'");
     $STUDENT_TREE_OBJECT->setBaseParams("
         cmd: 'jsonTreeAllPersonStatus'
@@ -81,6 +91,16 @@ Ext.onReady(function() {
             clickOpenPage('center', '".STAFF."', '/dataset/showpersonstatus/?objectId=new&objectType=STAFF');
         }
     ");
+     
+    $STAFF_TREE_OBJECT->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("8D27-70DE")."
+            }
+        ");
+     
     $STAFF_TREE_OBJECT->setSaveParams("objectType: 'STAFF'");
     $STAFF_TREE_OBJECT->setBaseParams("
         cmd: 'jsonTreeAllPersonStatus'
