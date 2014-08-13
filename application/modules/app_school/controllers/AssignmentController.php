@@ -94,39 +94,23 @@ class AssignmentController extends Zend_Controller_Action {
         $this->view->term_number = $gradeObject->TERM_NUMBER;
         $this->view->subjectId = $this->subjectId;
     }
-    
+
     public function showitemAction() {
 
         //UserAuth::actionPermint($this->_request, "ACADEMIC_SETTING");
 
-        $this->view->objectData = $this->objectData;
-        $this->view->gradeId = $this->gradeId;
-        $this->view->classId = $this->classId;
         $this->view->facette = $this->facette;
 
-        if ($this->classId) {
-            $gradeObject = AcademicDBAccess::findGradeFromId($this->classId);
-        } else {
-            $gradeObject = AcademicDBAccess::findGradeFromId($this->gradeId);
-        }
-
-        $this->view->teacherId = $this->teacherId;
-        $this->view->subjectId = $this->subjectId;
-        $this->view->objectId = $this->objectId;
-        $this->view->status = isset($this->objectData["STATUS"]) ? $this->objectData["STATUS"] : 0;
-
-        $status = isset($this->objectData["STATUS"]) ? $this->objectData["STATUS"] : false;
-        $remove_status = isset($this->objectData["REMOVE_STATUS"]) ? $this->objectData["REMOVE_STATUS"] : false;
-
-        if ($status) {
-            $this->view->remove_status = false;
-        } else {
-
-            if ($remove_status) {
+        if ($this->facette) {
+            $this->view->subjectId = $this->facette->SUBJECT;
+            $this->view->status = $this->facette->STATUS;
+            if ($this->facette->STATUS) {
                 $this->view->remove_status = false;
             } else {
                 $this->view->remove_status = true;
             }
+        } else {
+            $this->view->subjectId = $this->subjectId;
         }
     }
 

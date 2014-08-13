@@ -352,7 +352,7 @@ abstract class AssessmentProperties {
 
     public function getSettingFormulaYearResult()
     {
-        return $this->getCurrentClass()->FORMULA_TERM;
+        return $this->getCurrentClass()->FORMULA_YEAR;
     }
 
     public function displayRank($average, $scoreList)
