@@ -160,7 +160,7 @@ Ext.onReady(function() {
         case 'TEACHER':
              $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
-                , width: 130
+                , width: 110
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
@@ -172,7 +172,7 @@ Ext.onReady(function() {
          case 'STUDENT':
             $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
-                , width: 120
+                , width: 110
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
@@ -187,7 +187,7 @@ Ext.onReady(function() {
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
-            , width: 120
+            , width: 110
             , align: 'center'
             , sortable: true
             , dataIndex: 'RANK'
