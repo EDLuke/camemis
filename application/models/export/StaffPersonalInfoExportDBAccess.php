@@ -19,11 +19,25 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     //Personal Information
     public function setContentPersonalInfo($params){
         
-         $studentObject = StaffDBAccess::findStaffFromId($this->objectId);
+         $staffObject = StaffDBAccess::findStaffFromId($this->objectId);
          $i=3;
-         if($studentObject){
+         if($staffObject){
             foreach($params as $values){
                 //error_log($studentObject->$values);
+                switch ($staffObject->$values)  {
+                    case "2":
+                        $result = "Female";
+                        break;
+                    case "1":
+                        $result = "Male";
+                        break;
+                    case "0":
+                        $result = "No Data";
+                        break;
+                    default:
+                        $result = $staffObject->$values; 
+                        break;
+                }
                 switch ($values){                    
                     case "FIRSTNAME":
                         $CONST_NAME = "Firstname in Khmer:";
@@ -46,23 +60,41 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
                     case "DATE_BIRTH":
                         $CONST_NAME = "Date of birth:";
                         break; 
+                        
+                    case "BIRTH_PLACE":
+                        $CONST_NAME = "Place of birth:";   
+                        break;  
+                    case "RELIGION":          
+                        $CONST_NAME = "Religion:";
+                        $result = $staffObject->$values?CamemisTypeDBAccess::findObjectFromId($staffObject->RELIGION)->NAME:'?';   
+                        break; 
+                    case "ETHNIC":
+                        $CONST_NAME = "Ethnic:"; 
+                        $result = $staffObject->$values?CamemisTypeDBAccess::findObjectFromId($staffObject->ETHNIC)->NAME:'?';  
+                        break; 
+                    case "NATIONALITY":
+                        $CONST_NAME = "Nationality:"; 
+                        $result = $staffObject->$values?CamemisTypeDBAccess::findObjectFromId($staffObject->NATIONALITY)->NAME:'?';  
+                        break; 
+                    case "ADDRESS":
+                        $CONST_NAME = "Address:";   
+                        break; 
+                    case "COUNTRY_PROVINCE":
+                        $CONST_NAME = "Province:";
+                        $result = $staffObject->$values?LocationDBAccess::findObjectFromId($staffObject->COUNTRY_PROVINCE)->NAME:'?';          
+                        break;
+                    case "TOWN_CITY":
+                        $CONST_NAME = "City:";
+                        $result = $staffObject->$values?LocationDBAccess::findObjectFromId($staffObject->TOWN_CITY)->NAME:'?';          
+                        break;
+                    case "PHONE":
+                        $CONST_NAME = "Phone:";          
+                        break;
+                    case "EMAIL":
+                        $CONST_NAME = "Email:";
+                        break;         
                 }
-                
-                switch ($studentObject->$values)  {
-                    case "2":
-                        $result = "Female";
-                        break;
-                    case "1":
-                        $result = "Male";
-                        break;
-                    case "0":
-                        $result = "No Data";
-                        break;
-                    default:
-                        $result = $studentObject->$values; 
-                        break;
-                }
-                
+                              
                 
                 $this->setCellContent(0, $i,$CONST_NAME);
                 $this->setFontStyle(0, $i, false, 11, "000000");
@@ -85,9 +117,8 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
         $this->setFontStyle(0, 1, true, 11, "000000");
         $this->setFullStyle(0, 1, "DFE3E8");
         $this->setCellStyle(0, 1, 30, 40, true);  
-        $this->setContentPersonalInfo(array('FIRSTNAME','FIRSTNAME_LATIN','LASTNAME','LASTNAME_LATIN','GENDER','DATE_BIRTH'));
-        
-        
+        $this->setContentPersonalInfo(array('FIRSTNAME','FIRSTNAME_LATIN','LASTNAME','LASTNAME_LATIN','GENDER','DATE_BIRTH','BIRTH_PLACE','RELIGION','ETHNIC','NATIONALITY','ADDRESS','COUNTRY_PROVINCE','TOWN_CITY','PHONE','EMAIL'));
+     
     }
     
     
@@ -204,11 +235,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     public function setWorkExperiencePanel() {
         
         
-        $this->setCellMergeContent(0, 10,"Work Experience","A10","O10");
-        $this->setCellContent(0, 10,"Work Experience");
-        $this->setFontStyle(0, 10, true, 11, "000000");
-        $this->setFullStyle(0, 10, "DFE3E8");
-        $this->setCellStyle(0, 10, 30, 40, true);
+        $this->setCellMergeContent(0, 18,"Work Experience","A18","O18");
+        $this->setCellContent(0, 18,"Work Experience");
+        $this->setFontStyle(0, 18, true, 11, "000000");
+        $this->setFullStyle(0, 18, "DFE3E8");
+        $this->setCellStyle(0, 18, 30, 40, true);
         $this->setWorkExperienceHeader(0);
         $this->setContentWorkExperience(); 
         
@@ -313,11 +344,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     public function setShortTrainingPanel() {
         
         
-        $this->setCellMergeContent(0, 22,"Short Training","A22","O22");
-        $this->setCellContent(0, 22,"Short Training");
-        $this->setFontStyle(0, 22, true, 11, "000000");
-        $this->setFullStyle(0, 22, "DFE3E8");
-        $this->setCellStyle(0, 22, 30, 40, true);
+        $this->setCellMergeContent(0, 29,"Short Training","A29","O29");
+        $this->setCellContent(0, 29,"Short Training");
+        $this->setFontStyle(0, 29, true, 11, "000000");
+        $this->setFullStyle(0, 29, "DFE3E8");
+        $this->setCellStyle(0, 29, 30, 40, true);
         $this->setShortTrainingHeader(0);
         $this->setContentShortTraining();
          
@@ -445,11 +476,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     
     public function setRelativeInformationPanel() {
         
-        $this->setCellMergeContent(0, 32,"Relative Information","A32","O32");
-        $this->setCellContent(0, 32,"Relative Information");
-        $this->setFontStyle(0, 32, true, 11, "000000");
-        $this->setFullStyle(0, 32, "DFE3E8");
-        $this->setCellStyle(0, 32, 30, 40, true);
+        $this->setCellMergeContent(0, 39,"Relative Information","A39","O39");
+        $this->setCellContent(0, 39,"Relative Information");
+        $this->setFontStyle(0, 39, true, 11, "000000");
+        $this->setFullStyle(0, 39, "DFE3E8");
+        $this->setCellStyle(0, 39, 30, 40, true);
         $this->setRelativeInformationHeader(0);
         $this->setContentRelativeInformation();  
     }
@@ -561,11 +592,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     
     public function setEducationBackgroundPanel() {
         
-        $this->setCellMergeContent(0, 41,"Education Background","A41","O41");
-        $this->setCellContent(0, 41,"Education Background");
-        $this->setFontStyle(0, 41, true, 11, "000000");
-        $this->setFullStyle(0, 41, "DFE3E8");
-        $this->setCellStyle(0, 41, 30, 40, true);
+        $this->setCellMergeContent(0, 50,"Education Background","A50","O50");
+        $this->setCellContent(0, 50,"Education Background");
+        $this->setFontStyle(0, 50, true, 11, "000000");
+        $this->setFullStyle(0, 50, "DFE3E8");
+        $this->setCellStyle(0, 50, 30, 40, true);
         $this->setEducationBackgroundHeader(0);
         $this->setContentEducationBackground();  
     }
@@ -662,11 +693,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     
     public function setPublicationPanel() {
         
-        $this->setCellMergeContent(0, 50,"Publication","A50","O50");
-        $this->setCellContent(0, 50,"Publication");
-        $this->setFontStyle(0, 50, true, 11, "000000");
-        $this->setFullStyle(0, 50, "DFE3E8");
-        $this->setCellStyle(0, 50, 30, 40, true);
+        $this->setCellMergeContent(0, 58,"Publication","A58","O58");
+        $this->setCellContent(0, 58,"Publication");
+        $this->setFontStyle(0, 58, true, 11, "000000");
+        $this->setFullStyle(0, 58, "DFE3E8");
+        $this->setCellStyle(0, 58, 30, 40, true);
         $this->setPublicationHeader(0);
         $this->setContentPublication();  
     }
@@ -778,11 +809,11 @@ class StaffPersonalInfoExportDBAccess extends CamemisExportDBAccess {
     
     public function setStaffContractPanel() {
         
-        $this->setCellMergeContent(0, 59,"Staff Contract","A59","O59");
-        $this->setCellContent(0, 59,"Staff Contract");
-        $this->setFontStyle(0, 59, true, 11, "000000");
-        $this->setFullStyle(0, 59, "DFE3E8");
-        $this->setCellStyle(0, 59, 30, 40, true);
+        $this->setCellMergeContent(0, 65,"Staff Contract","A65","O65");
+        $this->setCellContent(0, 65,"Staff Contract");
+        $this->setFontStyle(0, 65, true, 11, "000000");
+        $this->setFullStyle(0, 65, "DFE3E8");
+        $this->setCellStyle(0, 65, 30, 40, true);
         $this->setStaffContractHeader(0);
         $this->setContentStaffContract();  
     }
