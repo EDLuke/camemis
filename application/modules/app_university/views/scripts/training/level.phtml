@@ -41,7 +41,7 @@ Ext.onReady(function() {
     $DETAIL_ITEMS = "
     [
         {".CamemisField::Box("CODE", CODE_ID, $OBJECT_DATA["CODE"])."}
-        ,{".CamemisField::Textfield("NAME","NAME",NAME)."}
+        ,{".CamemisField::Textfield("NAME","NAME",NAME, true)."}
         ,{".CamemisField::Numberfield("GRADE_LEVEL", "GRADE_LEVEL", LEVEL, true, false)."}
         ,{".CamemisField::Textfield("SORTKEY","SORTKEY",SORTKEY)."}
         ,{".CamemisField::Checkbox("EVALUATION","EVALUATION", EVALUATION, 1, false)."}

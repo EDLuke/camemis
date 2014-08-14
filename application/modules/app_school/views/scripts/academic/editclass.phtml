@@ -243,7 +243,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
         $DETAIL_INFORMATION_ITEMS = "[";
         $DETAIL_INFORMATION_ITEMS .= "{" . CamemisField::Textfield("CODE", "CODE", CODE_ID, false, true) . "}";
-        $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Textfield("NAME", "NAME", NAME) . "}";
+        $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Textfield("NAME", "NAME", NAME, true) . "}";
         
         if($this->facette->EDUCATION_SYSTEM){
             $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Textfield("CREDITS", "CREDITS", CREDITS, false, false) . "}";

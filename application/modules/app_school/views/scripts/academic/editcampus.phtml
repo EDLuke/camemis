@@ -49,7 +49,7 @@ Ext.onReady(function() {
 
     $BASIC_INFORMATION = "[";
     $BASIC_INFORMATION .= "{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID)."}";
-    $BASIC_INFORMATION .= ",{".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}";
+    $BASIC_INFORMATION .= ",{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}";
     $BASIC_INFORMATION .= ",{".CamemisField::Textfield("SHORT", "SHORT", SHORT)."}";
     $BASIC_INFORMATION .= ",{".CamemisField::Colorfield("COLOR", COLOR, false)."}";
     $BASIC_INFORMATION .= ",{".CamemisField::ComboQualificationType(false, false, false)."}";

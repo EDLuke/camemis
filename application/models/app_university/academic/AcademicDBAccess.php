@@ -342,21 +342,36 @@ class AcademicDBAccess {
 
     public function removeNode($params) {
 
-        $objectId = $params["objectId"];
+        $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $facette = self::findGradeFromId($objectId);
 
         if ($facette) {
             switch ($facette->OBJECT_TYPE) {
                 case "CAMPUS":
                     self::dbAccess()->delete('t_staff_campus', array("CAMPUS='" . $facette->ID . "'"));
+                    self::dbAccess()->delete('t_grade', array(
+                        "CAMPUS_ID='" . $facette->ID . "'"
+                    ));
                     break;
                 case "GRADE":
                     self::dbAccess()->delete('t_assignment', array("GRADE='" . $facette->ID . "'"));
                     self::dbAccess()->delete('t_grade_subject', array("GRADE='" . $facette->ID . "'"));
+                    self::dbAccess()->delete('t_grade', array(
+                        "GRADE_ID='" . $facette->ID . "'"
+                    ));
                     break;
                 case "SCHOOLYEAR":
-                    self::dbAccess()->delete('t_assignment', array("SCHOOLYEAR='" . $facette->SCHOOL_YEAR . "'"));
-                    self::dbAccess()->delete('t_grade_subject', array("SCHOOLYEAR='" . $facette->SCHOOL_YEAR . "'"));
+                    self::dbAccess()->delete('t_assignment', array(
+                        "GRADE='" . $facette->GRADE_ID . "'"
+                        , "SCHOOLYEAR='" . $facette->SCHOOL_YEAR . "'"
+                    ));
+                    self::dbAccess()->delete('t_grade_subject', array(
+                        "GRADE='" . $facette->GRADE_ID . "'"
+                        , "SCHOOLYEAR='" . $facette->SCHOOL_YEAR . "'"
+                    ));
+                    self::dbAccess()->delete('t_grade', array(
+                        "PARENT='" . $facette->ID . "'"
+                    ));
                     break;
                 case "CLASS";
                     self::dbAccess()->delete('t_student_attendance', array("CLASS_ID='" . $facette->ID . "'"));
