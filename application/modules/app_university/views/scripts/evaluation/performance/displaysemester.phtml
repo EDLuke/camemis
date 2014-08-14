@@ -79,6 +79,23 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal;color:#333;padding:4px;height:18px;">' + value + '</div>';
     }
     
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+    }
+    
+    function cssHeader0(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
+    }
+    
+    function cssHeader1(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
+    }
     <?
     ///////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -133,7 +150,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
     
     if($academicObject->DISPLAY_GPA){
-        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GPA'");
+        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'GPA'");
     }
     
     switch(UserAuth::getUserType()){
@@ -166,7 +183,7 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'RANK'");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssAssessment, dataIndex: 'RANK'");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
@@ -174,7 +191,7 @@ Ext.onReady(function() {
             , align: 'center'
             , sortable: true
             , dataIndex: 'RANK'
-            , renderer:cssNumber
+            , renderer:cssAssessment
             , editor: new Ext.form.NumberField({
                 allowBlank: false
                 ,name: 'RANK'   
@@ -184,15 +201,18 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssAssessment, dataIndex: 'TOTAL_RESULT'");
     
     if($entries){
+        $i = 0;
         foreach($entries as $value){
             if($value->SUBJECT_ID){
+                $cssValue = $i % 2;
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'center', width:80, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'center', width:80, renderer:cssHeader".$cssValue.", dataIndex: '".$value->SUBJECT_ID."'");
+                $i++;
             }
         }
     }
