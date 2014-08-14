@@ -949,7 +949,7 @@ class Utiles {
 
                 $item = "{";
                 $item .= "text: '" . $displayNameShort . "'";
-                $item .= ",tooltip:'" . $displayNameLong . "'";
+                $item .= ",qtip:'" . $displayNameLong . "'";
                 $item .= ",cls:'nodeTextBold'";
                 $item .= ",iconCls: 'icon-folder_magnify'";
                 $item .= ",leaf: false";
