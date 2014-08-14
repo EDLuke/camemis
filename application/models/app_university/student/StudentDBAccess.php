@@ -716,15 +716,7 @@ class StudentDBAccess {
                     }
                 }
             }
-
-            if ($newIds) {
-                $SAVEDATA['FIRST_ACADEMIC'] = $academicObject->ID;
-                $SAVEDATA['SECOND_ACADEMIC'] = $academicObject->ID;
-                $SAVEDATA['THIRD_ACADEMIC'] = $academicObject->ID;
-                $SAVEDATA['FOURTH_ACADEMIC'] = $academicObject->ID;
-                $SAVEDATA['CLASSIDS'] = $newIds ? $newIds : "";
-            }
-
+            $SAVEDATA['CLASSIDS'] = $newIds ? $newIds : "";
             $SAVEDATA['CLASS'] = "";
         } else {
             $SAVEDATA['CLASS'] = $academicObject->ID;
