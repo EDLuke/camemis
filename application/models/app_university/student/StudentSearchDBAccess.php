@@ -204,7 +204,7 @@ class StudentSearchDBAccess {
         if ($this->searchDescription)
         {
             $SQL->joinLeft(array('PERSON_DESCRIPTION' => 't_person_description_item'), 'PERSON_DESCRIPTION.PERSON_ID=STUDENT.ID', array());
-            $SQL->where("PERSON_DESCRIPTION.ITEM IN (" . $this->searchDescription . ")");
+            $SQL->where("FIND_IN_SET($this->searchDescription,PERSON_DESCRIPTION.ITEM)");
         }
 
         //What is this? 11.08.2014 Bong
@@ -235,7 +235,6 @@ class StudentSearchDBAccess {
         {
             $SQL->where('STUDENT_PREREQUIRMENT.DESCRIPTION LIKE ?', "" . $this->description . "%");
         }
-        //
 
         if ($this->firstname)
             $SQL->where('STUDENT.FIRSTNAME LIKE ?', "" . $this->firstname . "%");
@@ -455,7 +454,6 @@ class StudentSearchDBAccess {
                                     $value->ID
                                     , $academicObject
                                     , "FIRST_ACADEMIC");
-
                     $data[$i]["SECOND_ACADEMIC"] = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear(
                                     $value->ID
                                     , $academicObject

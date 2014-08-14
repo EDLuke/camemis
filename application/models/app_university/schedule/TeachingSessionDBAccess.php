@@ -19,42 +19,52 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     public $data = array();
     private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance === null) {
+    static function getInstance()
+    {
+        if (self::$instance === null)
+        {
 
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public static function findTeachingSession($Id) {
+    public static function findTeachingSession($Id)
+    {
 
         $scheduleObject = self::findScheduleFromGuId($Id);
         $teachingsessionObject = self::getTeachingSessionFromId($Id);
 
         $facette = null;
 
-        if ($scheduleObject) {
+        if ($scheduleObject)
+        {
             $facette = $scheduleObject;
-        } elseif ($teachingsessionObject) {
+        }
+        elseif ($teachingsessionObject)
+        {
             $facette = $teachingsessionObject;
         }
 
         return $facette;
     }
 
-    public function jsonLoadTeachingSession($Id) {
+    public function jsonLoadTeachingSession($Id)
+    {
 
         $facette = self::findTeachingSession($Id);
         $data = array();
 
-        if ($facette) {
+        if ($facette)
+        {
 
             $teachingsessionObject = self::getTeachingSessionFromId($Id);
 
-            if ($teachingsessionObject) {
+            if ($teachingsessionObject)
+            {
 
-                switch ($teachingsessionObject->ACTION_TYPE) {
+                switch ($teachingsessionObject->ACTION_TYPE)
+                {
                     case "SUBSTITUTE":
                         $teacherObject = StaffDBAccess::findStaffFromId($teachingsessionObject->SUBSTITUTE_TEACHER);
                         $roomObject = RoomDBAccess::findRoomFromId($teachingsessionObject->SUBSTITUTE_ROOM);
@@ -66,25 +76,32 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                         $roomObject = RoomDBAccess::findRoomFromId($facette->ROOM_ID);
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 $teacherObject = StaffDBAccess::findStaffFromId($facette->TEACHER_ID);
                 $roomObject = RoomDBAccess::findRoomFromId($facette->ROOM_ID);
             }
 
-            if ($teacherObject) {
+            if ($teacherObject)
+            {
                 $data["TEACHER_HIDDEN"] = $teacherObject->ID;
-                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
                     $data["TEACHER_NAME"] = $teacherObject->LASTNAME . " " . $teacherObject->FIRSTNAME;
-                } else {
+                }
+                else
+                {
                     $data["TEACHER_NAME"] = $teacherObject->FIRSTNAME . " " . $teacherObject->LASTNAME;
                 }
             }
 
-            if ($roomObject) {
+            if ($roomObject)
+            {
                 $data["ROOM_NAME"] = $roomObject->NAME;
                 $data["ROOM_HIDDEN"] = $roomObject->ID;
             }
-            
+
             $data["SUBJECT_ID"] = $facette->SUBJECT_ID;
             $data["EVENT"] = $facette->EVENT;
             $data["SCHEDULE_TYPE"] = $facette->SUBJECT_ID;
@@ -105,7 +122,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //VIK: 03.01.2013
     ////////////////////////////////////////////////////////////////////////////
-    public function jsonActionTeachingSession($params) {
+    public function jsonActionTeachingSession($params)
+    {
 
         $scheduleId = isset($params["scheduleId"]) ? addText($params["scheduleId"]) : '';
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : '';
@@ -114,13 +132,16 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $roomId = isset($params["ROOM_HIDDEN"]) ? addText($params["ROOM_HIDDEN"]) : '';
         $type = isset($params["type"]) ? addText($params["type"]) : '';
 
-        if ($type) {
+        if ($type)
+        {
 
-            switch (strtoupper($type)) {
+            switch (strtoupper($type))
+            {
                 case "SUBSTITUTE":
                     $scheduleObject = self::findScheduleFromGuId($scheduleId);
                     self::dbAccess()->delete("t_teaching_session", array('GUID = ? ' => $scheduleId));
-                    if ($scheduleObject) {
+                    if ($scheduleObject)
+                    {
                         $SAVEDATA["GUID"] = $scheduleId;
                         $SAVEDATA["TEACHER_ID"] = $scheduleObject->TEACHER_ID;
                         $SAVEDATA["TEACHING_DATE"] = $choosedate;
@@ -140,15 +161,19 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                         $SAVEDATA["EDUCATION_SYSTEM"] = $scheduleObject->EDUCATION_SYSTEM;
                         $SAVEDATA["ACTION_TYPE"] = "SUBSTITUTE";
 
-                        if ($roomId == $scheduleObject->ROOM_ID) {
-                            if ($teacherId != $scheduleObject->TEACHER_ID) {
+                        if ($roomId == $scheduleObject->ROOM_ID)
+                        {
+                            if ($teacherId != $scheduleObject->TEACHER_ID)
+                            {
                                 $SAVEDATA["SUBSTITUTED_TEACHER"] = $scheduleObject->TEACHER_ID;
                                 $SAVEDATA["SUBSTITUTE_TEACHER"] = $teacherId;
                             }
                         }
 
-                        if ($teacherId == $scheduleObject->TEACHER_ID) {
-                            if ($roomId != $scheduleObject->ROOM_ID) {
+                        if ($teacherId == $scheduleObject->TEACHER_ID)
+                        {
+                            if ($roomId != $scheduleObject->ROOM_ID)
+                            {
                                 $SAVEDATA["SUBSTITUTED_ROOM"] = $scheduleObject->ROOM_ID;
                                 $SAVEDATA["SUBSTITUTE_ROOM"] = $roomId;
                             }
@@ -188,7 +213,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         );
     }
 
-    public function jsonListExtraTeachingSession($params, $isJson = true) {
+    public function jsonListExtraTeachingSession($params, $isJson = true)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -199,18 +225,22 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $target = isset($params["target"]) ? addText($params["target"]) : "";
         ///@veasna
         $groupId = isset($params["groupId"]) ? $params["groupId"] : '';
-        if ($groupId) {
+        if ($groupId)
+        {
             $extraSessionGroupArr = array();
             $extraSessionGroup = self::findLinkedScheduleAcademicByAcademicId($groupId);
-            foreach ($extraSessionGroup as $extraSession) {
+            foreach ($extraSessionGroup as $extraSession)
+            {
                 $extraSessionGroupArr[] = $extraSession->TEACHING_SESSION_ID;
             }
         }
         ///
 
-        switch (strtoupper($target)) {
+        switch (strtoupper($target))
+        {
             case "GENERAL":
-                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -231,7 +261,9 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                         //, "CONCAT(D.NAME,'<br>',D.BUILDING,'<br>',D.FLOOR) AS ROOM"
                         , "E.NAME AS CLASS_NAME"
                     );
-                } else {
+                }
+                else
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -255,7 +287,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                 }
                 break;
             case "TRAINING":
-                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -275,7 +308,9 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                         , "D.NAME AS ROOM"
                         , "E.NAME AS TRAINING_NAME"
                     );
-                } else {
+                }
+                else
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -298,7 +333,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                 }
                 break;
             default:
-                if (!SchoolDBAccess::displayPersonNameInGrid()) {
+                if (!SchoolDBAccess::displayPersonNameInGrid())
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -318,7 +354,9 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                         , "D.NAME AS ROOM"
                         , "E.NAME AS CLASS_NAME"
                     );
-                } else {
+                }
+                else
+                {
                     $SELECT_DATA = array(
                         "A.GUID AS GUID"
                         , "A.ID AS EXTRA_TEACHING_SESSION_ID"
@@ -349,19 +387,23 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $SQL->joinLeft(array('C' => "t_staff"), 'A.TEACHER_ID=C.ID', array());
         $SQL->joinLeft(array('D' => "t_room"), 'A.ROOM_ID=D.ID', array());
 
-        switch (strtoupper($target)) {
+        switch (strtoupper($target))
+        {
             case "GENERAL":
                 $SQL->joinLeft(array('E' => self::TABLE_GRADE), 'A.ACADEMIC_ID=E.ID', array());
                 if ($academicId)
-                    $SQL->where("A.ACADEMIC_ID IN (" . $academicId . ")");
+                    $SQL->where("FIND_IN_SET($academicId,A.ACADEMIC_ID)");
                 break;
             case "TRAINING":
                 $SQL->joinLeft(array('E' => 't_training'), 'A.TRAINING_ID=E.ID', array());
                 $SQL->joinLeft(array('F' => 't_training'), 'E.PARENT=F.ID', array());
 
-                if ($trainingId) {
+                if ($trainingId)
+                {
                     $SQL->where("A.TRAINING_ID='" . $trainingId . "'");
-                } else {
+                }
+                else
+                {
                     $SQL->where("NOW()<=F.END_DATE");
                 }
                 break;
@@ -381,15 +423,19 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $data = array();
 
         $i = 0;
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
-                if ($groupId) { //$veasna    
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
+                if ($groupId)
+                { //$veasna    
                     if (!in_array($value->EXTRA_TEACHING_SESSION_ID, $extraSessionGroupArr))
                         continue;
                 }
                 $data[$i]["ID"] = $value->GUID;
 
-                switch ($value->SCHEDULE_TYPE) {
+                switch ($value->SCHEDULE_TYPE)
+                {
                     case 1:
                         $data[$i]["EVENT"] = setShowText($value->SUBJECT_NAME);
                         $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
@@ -415,26 +461,31 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
         //@soda
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
         //
     }
 
     ////@veasna
-    public function jsonListCreditStudentExtraTeachingSession($params, $isJson = true) {
+    public function jsonListCreditStudentExtraTeachingSession($params, $isJson = true)
+    {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
@@ -445,9 +496,12 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $facette = GradeSubjectDBAccess::getStudentCreditSubject($studentId, $schoolyearId);
         $studentGroupArr = array();
         $studentGroup = '';
-        if ($facette) {
-            foreach ($facette as $studentInSubject) {
-                if ($studentInSubject->CLASS_ID) {
+        if ($facette)
+        {
+            foreach ($facette as $studentInSubject)
+            {
+                if ($studentInSubject->CLASS_ID)
+                {
                     $studentGroupArr[] = $studentInSubject->CLASS_ID;
                 }
             }
@@ -490,15 +544,19 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $data = array();
 
         $i = 0;
-        if ($resultRows) {
-            foreach ($resultRows as $value) {
+        if ($resultRows)
+        {
+            foreach ($resultRows as $value)
+            {
                 $inCheck = self::checkCreditExtraSessionInGroup($value->EXTRA_TEACHING_SESSION_ID, $studentGroup);
-                if (!$inCheck) {
+                if (!$inCheck)
+                {
                     continue;
                 }
                 $data[$i]["ID"] = $value->GUID;
 
-                switch ($value->SCHEDULE_TYPE) {
+                switch ($value->SCHEDULE_TYPE)
+                {
                     case 1:
                         $data[$i]["EVENT"] = setShowText($value->SUBJECT_NAME);
                         $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
@@ -524,26 +582,31 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
         //@soda
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
         //
     }
 
     ///
-    public function jsonActionExtraTeachingSession($params) {
+    public function jsonActionExtraTeachingSession($params)
+    {
 
         $ERRORS = array();
 
@@ -561,7 +624,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : false;
         $trainingId = isset($params["trainingId"]) ? (int) $params["trainingId"] : false;
 
-        if ($choosedate) {
+        if ($choosedate)
+        {
             $SAVEDATA["TEACHING_DATE"] = setDate2DB($choosedate);
             $SAVEDATA["SHORTDAY"] = getWEEKDAY(setDate2DB($choosedate));
         }
@@ -590,37 +654,46 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         if ($description)
             $SAVEDATA["DESCRIPTION"] = addText($description);
 
-        if ($trainingId) {
+        if ($trainingId)
+        {
             $SAVEDATA["ACADEMIC_TYPE"] = 'TRAINING';
             $SAVEDATA["TRAINING_ID"] = addText($trainingId);
-        } elseif ($academicId) {
+        }
+        elseif ($academicId)
+        {
             $SAVEDATA["ACADEMIC_TYPE"] = 'GENERAL';
             $SAVEDATA["ACADEMIC_ID"] = addText($academicId);
         }
 
         $facette = self::getTeachingSessionFromId($scheduleId);
 
-        if ($facette) {
+        if ($facette)
+        {
             //Update...
             //$ERROR_TIME_HAS_BEEN_USED = false;
             $WHERE = array(
                 'GUID = ?' => $scheduleId
             );
             self::dbAccess()->update('t_teaching_session', $SAVEDATA, $WHERE);
-        } else {
+        }
+        else
+        {
             //Insert....
             $SAVEDATA["GUID"] = $scheduleId;
             $SAVEDATA["ACTION_TYPE"] = 'EXTRASESSION';
             self::dbAccess()->insert('t_teaching_session', $SAVEDATA);
         }
 
-        if ($ERRORS) {
+        if ($ERRORS)
+        {
             return array(
                 "success" => false
                 , "errors" => $ERRORS
                 , "objectId" => $scheduleId
             );
-        } else {
+        }
+        else
+        {
             return array(
                 "success" => true
                 , "errors" => $ERRORS
@@ -629,7 +702,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         }
     }
 
-    public function jsonDeleteTeachingSession($Id) {
+    public function jsonDeleteTeachingSession($Id)
+    {
         self::dbAccess()->delete('t_teaching_session', array("GUID='" . $Id . "'"));
         return array(
             "success" => true
@@ -639,7 +713,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //@Sea Peng
     ////////////////////////////////////////////////////////////////////////////
-    public static function getTeachingSession($teacherId, $day) {
+    public static function getTeachingSession($teacherId, $day)
+    {
 
         $SELECT_DATA = array(
             "A.ID AS SCHEDULE_ID"
@@ -672,7 +747,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
 
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
-    public static function sqlTeachingSession($params) {
+    public static function sqlTeachingSession($params)
+    {
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $startDate = isset($params["startDate"]) ? setDate2DB($params["startDate"]) : "";
@@ -702,7 +778,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $SQL->where("B.START_DATE<='" . $endDate . "'");
         $SQL->where("B.END_DATE>='" . $startDate . "'");
 
-        switch (strtoupper($academicType)) {
+        switch (strtoupper($academicType))
+        {
             case "GENERAL":
                 $SQL->where("B.ACADEMIC_ID<>0");
                 $SQL->where("B.EDUCATION_SYSTEM=0");
@@ -716,7 +793,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                 break;
         }
 
-        if ($globalSearch) {
+        if ($globalSearch)
+        {
             $SEARCH = " ((A.LASTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.FIRSTNAME LIKE '" . $globalSearch . "%')";
             $SEARCH .= " OR (A.FIRSTNAME_LATIN LIKE '" . $globalSearch . "%')";
@@ -733,17 +811,22 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountTeacherSession($teacherId, $startDate, $endDate, $academicType) {
+    public static function getCountTeacherSession($teacherId, $startDate, $endDate, $academicType)
+    {
         $days = getDatesBetween2Dates($startDate, $endDate);
         $data = array();
         $countSession = 0;
-        foreach ($days as $day) {
+        foreach ($days as $day)
+        {
             $shortday = getWEEKDAY($day);
-            if ($shortday) {
+            if ($shortday)
+            {
                 $entries = TeacherScheduleDBAccess::getShortSQLTeacherEvent($teacherId, $startDate, $endDate, $shortday, $academicType);
-                if ($entries) {
-                    foreach ($entries as $value) {
-                        $countSession++;    
+                if ($entries)
+                {
+                    foreach ($entries as $value)
+                    {
+                        $countSession++;
                     }
                 }
             }
@@ -755,7 +838,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountEventDayOffSchool($startdate, $enddate) {
+    public static function getCountEventDayOffSchool($startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_schoolevent", array('COUNT(*) AS C'));
         $SQL->where("DAY_OFF_SCHOOL='1'");
@@ -768,7 +852,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountTeacherAttendance($teacherId, $startdate, $enddate) {
+    public static function getCountTeacherAttendance($teacherId, $startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_staff_attendance", array('COUNT(*) AS C'));
         $SQL->where("STAFF_ID='" . $teacherId . "'");
@@ -780,7 +865,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountTeacherExtraSession($teacherId, $startdate, $enddate) {
+    public static function getCountTeacherExtraSession($teacherId, $startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array('COUNT(*) AS C'));
         $SQL->where("TEACHER_ID='" . $teacherId . "'");
@@ -793,7 +879,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountTeacherSubstitute($teacherId, $startdate, $enddate) {
+    public static function getCountTeacherSubstitute($teacherId, $startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array('COUNT(*) AS C'));
         $SQL->where("SUBSTITUTE_TEACHER='" . $teacherId . "'");
@@ -807,7 +894,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountTeacherSubstituted($teacherId, $startdate, $enddate) {
+    public static function getCountTeacherSubstituted($teacherId, $startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array('COUNT(*) AS C'));
         $SQL->where("SUBSTITUTED_TEACHER='" . $teacherId . "'");
@@ -821,7 +909,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getCountSessionCanceled($teacherId, $startdate, $enddate) {
+    public static function getCountSessionCanceled($teacherId, $startdate, $enddate)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_teaching_session", array('COUNT(*) AS C'));
         $SQL->where("TEACHER_ID='" . $teacherId . "'");
@@ -835,7 +924,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //Kaom 01.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function jsonListTeachingSession($params, $isJson = true) {
+    public static function jsonListTeachingSession($params, $isJson = true)
+    {
 
         set_time_limit(3600);
         ini_set('memory_limit', '128M');
@@ -851,7 +941,8 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         $result = self::sqlTeachingSession($params);
         $i = 0;
         if ($result)
-            foreach ($result as $value) {
+            foreach ($result as $value)
+            {
 
                 $COUNT_EVENT_DAY_OFF_SCHOOL = self::getCountEventDayOffSchool($startDate, $endDate);
                 $COUNT_EXTRA_SESSION = self::getCountTeacherExtraSession($value->STAFF_ID, $startDate, $endDate);
@@ -879,10 +970,13 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
                 $data[$i]["NUMBER_EXTRA_SESSION"] = $COUNT_EXTRA_SESSION;
                 $data[$i]["CANCEL"] = $COUNT_CANCELED_SESSION;
 
-                if ($COUNT_SUBSTITUTED > 0) {
+                if ($COUNT_SUBSTITUTED > 0)
+                {
                     $CALCULATED_SUBSTITUTE = "-" . $COUNT_SUBSTITUTED;
                     $TOTAL = ($COUNT_TEACHING_SESSION + $COUNT_EXTRA_SESSION - $COUNT_SUBSTITUTED) - ($COUNT_ATTENDANCE + $COUNT_EVENT_DAY_OFF_SCHOOL + $COUNT_CANCELED_SESSION);
-                } else {
+                }
+                else
+                {
                     $CALCULATED_SUBSTITUTE = ($COUNT_SUBSTITUTE > 0) ? "+" . $COUNT_SUBSTITUTE : $COUNT_SUBSTITUTE;
                     $TOTAL = ($COUNT_TEACHING_SESSION + $COUNT_EXTRA_SESSION + $COUNT_SUBSTITUTE) - ($COUNT_ATTENDANCE + $COUNT_EVENT_DAY_OFF_SCHOOL + $COUNT_CANCELED_SESSION);
                 }
@@ -894,25 +988,30 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
             }
 
         $a = array();
-        for ($i = $start; $i < $start + $limit; $i++) {
+        for ($i = $start; $i < $start + $limit; $i++)
+        {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
 
-        if ($isJson) {
+        if ($isJson)
+        {
             return array(
                 "success" => true
                 , "totalCount" => sizeof($data)
                 , "rows" => $a
             );
-        } else {
+        }
+        else
+        {
             return $data;
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public static function getTeachingSessionFromId($Id) {
+    public static function getTeachingSessionFromId($Id)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_teaching_session', '*');
@@ -921,17 +1020,20 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function getDetailSubstitute($object) {
+    public static function getDetailSubstitute($object)
+    {
 
         $teacherObject = StaffDBAccess::findStaffFromId($object->SUBSTITUTE_TEACHER);
         $roomObject = RoomDBAccess::findRoomFromId($object->SUBSTITUTE_ROOM);
 
         $html = "";
-        if ($teacherObject) {
+        if ($teacherObject)
+        {
             $html .= $teacherObject->LASTNAME . " " . $teacherObject->FIRSTNAME;
         }
 
-        if ($roomObject) {
+        if ($roomObject)
+        {
             $html .= "<br>";
             $html .= $roomObject->NAME;
         }
@@ -940,25 +1042,32 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
     }
 
     //@veasna
-    public static function getTeacherSessionCreditSystem($teacherId, $startDate, $endDate, $subjectCreditId, $term) {
+    public static function getTeacherSessionCreditSystem($teacherId, $startDate, $endDate, $subjectCreditId, $term)
+    {
 
         $days = getDatesBetween2Dates($startDate, $endDate);
         $countTeacherSession = 0;
 
-        if ($days) {
+        if ($days)
+        {
             $CHECK_DAYS = array();
-            foreach ($days as $day) {
+            foreach ($days as $day)
+            {
                 $CHECK_DAY = TeacherScheduleDBAccess::checkDay($day);
-                if (!$CHECK_DAY) {
+                if (!$CHECK_DAY)
+                {
                     $CHECK_DAYS[$day] = $day;
                 }
             }
 
-            if ($CHECK_DAYS) {
-                foreach ($CHECK_DAYS as $day) {
+            if ($CHECK_DAYS)
+            {
+                foreach ($CHECK_DAYS as $day)
+                {
                     $shortday = getWEEKDAY($day);
                     $teacherScedule = self::countTeacherScheduleSemester($teacherId, $shortday, $subjectCreditId, $term);
-                    if ($teacherScedule) {
+                    if ($teacherScedule)
+                    {
                         $countTeacherSession = $countTeacherSession + $teacherScedule;
                     }
                 }
@@ -968,14 +1077,15 @@ class TeachingSessionDBAccess extends ScheduleDBAccess {
         return $countTeacherSession;
     }
 
-    public static function countTeacherScheduleSemester($teacherId, $shortday, $subjectCreditId, $term) {
+    public static function countTeacherScheduleSemester($teacherId, $shortday, $subjectCreditId, $term)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_schedule'), array("C" => "COUNT(*)"));
         $SQL->joinLeft(array('B' => 't_link_schedule_academic'), 'A.ID=B.SCHEDULE_ID');
         $SQL->where("B.ACADEMIC_ID = '" . $subjectCreditId . "'");
         $SQL->where("A.TEACHER_ID = '" . $teacherId . "'");
-        $SQL->where("A.SHORTDAY = ?",$shortday);
+        $SQL->where("A.SHORTDAY = ?", $shortday);
         $SQL->where("A.TERM = '" . $term . "'");
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
