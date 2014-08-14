@@ -689,25 +689,6 @@ class StudentDBAccess {
                 $SAVEDATA['SCHOOL_YEAR'] = $academicObject->SCHOOL_YEAR;
                 $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
                 $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
-
-                if ($academicObject->ENROLLMENT_TYPE == 1) {
-                    if (!StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($studentId, $academicObject, "FIRST_ACADEMIC")) {
-                        $SAVEDATA['FIRST_ACADEMIC'] = 1;
-                    }
-
-                    if (!StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($studentId, $academicObject, "SECOND_ACADEMIC")) {
-                        $SAVEDATA['SECOND_ACADEMIC'] = 1;
-                    }
-
-                    if (!StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($studentId, $academicObject, "THIRD_ACADEMIC")) {
-                        $SAVEDATA['THIRD_ACADEMIC'] = 1;
-                    }
-
-                    if (!StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear($studentId, $academicObject, "FOURTH_ACADEMIC")) {
-                        $SAVEDATA['FOURTH_ACADEMIC'] = 1;
-                    }
-                }
-
                 self::dbAccess()->insert('t_student_schoolyear', $SAVEDATA);
             }
             ////////////////////////////////////////////////////////////////////
@@ -859,7 +840,14 @@ class StudentDBAccess {
             foreach ($result as $value) {
 
                 if ($academicObject->ENROLLMENT_TYPE == 1) {
-                    $CHECK = StudentAcademicDBAccess::checkEnrolledStudentMultipleClasses($value->ID, $academicObject);
+                    $CHECK_COUNT = StudentAcademicDBAccess::checkUsedCountStudentClassTermSchoolyear(
+                                    $value->ID
+                                    , $academicObject);
+                    if (!$CHECK_COUNT) {
+                        $CHECK = StudentAcademicDBAccess::checkEnrolledStudentMultipleClasses($value->ID, $academicObject);
+                    } else {
+                        $CHECK = 1;
+                    }
                 } else {
                     $CHECK = $value->CLASS ? 1 : 0;
                 }
