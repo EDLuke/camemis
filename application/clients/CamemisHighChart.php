@@ -13,15 +13,16 @@ Class CamemisHighChart {
     const COLUMN_CHART = "COLUMN_CHART";
     const AREA_SPLINE_CHART = "AREA_SPLINE_CHART";
     const AREA_STACKED_CHART = "AREA_STACKED_CHART";
+    const COLUMN_DRILLDOWN_CHART = "COLUMN_DRILLDOWN_CHART";
 
-    public $maxwidth = 750;
+    public $maxWidth = 85;
+    public $minWidth = 310;
     public $allowPointSelect = "false";
     public $plotShadow = "false";
     public $dataLabels = "true";
     public $height = null;
-
     public $plotBackgroundColor = "null";
-    public $plotBorderWidth = "null";
+    public $plotBorderWidth = 1;
     public $pointColor = "#FFFFFF";
     public $cursor = "pointer";
     public $pointPadding = 0.2;
@@ -61,6 +62,47 @@ Class CamemisHighChart {
     public $plotOptionsAreaLineWidth = 1;
     public $plotOptionsAreaMarkerLineColor = "#666666";
     public $plotOptionsAreaMarkerLineWidth = 1;
+    public $preSet = "<pre id='tsv' style='display:none'>Browser Version    Total Market Share
+Microsoft Internet Explorer 8.0    26.61%
+Microsoft Internet Explorer 9.0    16.96%
+Chrome 18.0    8.01%
+Chrome 19.0    7.73%
+Firefox 12    6.72%
+Microsoft Internet Explorer 6.0    6.40%
+Firefox 11    4.72%
+Microsoft Internet Explorer 7.0    3.55%
+Safari 5.1    3.53%
+Firefox 13    2.16%
+Firefox 3.6    1.87%
+Opera 11.x    1.30%
+Chrome 17.0    1.13%
+Firefox 10    0.90%
+Safari 5.0    0.85%
+Firefox 9.0    0.65%
+Firefox 8.0    0.55%
+Firefox 4.0    0.50%
+Chrome 16.0    0.45%
+Firefox 3.0    0.36%
+Firefox 3.5    0.36%
+Firefox 6.0    0.32%
+Firefox 5.0    0.31%
+Firefox 7.0    0.29%
+Proprietary or Undetectable    0.29%
+Chrome 18.0 - Maxthon Edition    0.26%
+Chrome 14.0    0.25%
+Chrome 20.0    0.24%
+Chrome 15.0    0.18%
+Chrome 12.0    0.16%
+Opera 12.x    0.15%
+Safari 4.0    0.14%
+Chrome 13.0    0.13%
+Safari 4.1    0.12%
+Chrome 11.0    0.10%
+Firefox 14    0.10%
+Firefox 2.0    0.09%
+Chrome 10.0    0.09%
+Opera 10.x    0.09%
+Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
 
     function __construct($type, $id, $title, $dataSet)
     {
@@ -170,6 +212,17 @@ Class CamemisHighChart {
                         , $this->plotOptionsAreaMarkerLineColor
                         , $this->plotOptionsAreaMarkerLineWidth);
                 break;
+            case self::COLUMN_DRILLDOWN_CHART:
+                $chart = new calumnDrillDownChart(
+                        $this->id
+                        , $this->title
+                        , $this->text
+                        ,$this->legend
+                        ,$this->dataLabels
+                        ,$this->headerFontsize
+                        ,$this->plotBorderWidth);
+                break;
+            
         }
 
         print $chart->rendererChart();
@@ -188,7 +241,12 @@ Class CamemisHighChart {
             case self::COLUMN_CHART:
             case self::AREA_SPLINE_CHART:
             case self::AREA_STACKED_CHART:
-                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:85%; margin: 0 auto'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:".$this->maxWidth."%; margin: 0 auto'></div>";
+                break;
+            case self::COLUMN_DRILLDOWN_CHART:
+                $js = "<div id='".$this->id."' style='height: " . $this->height . "px; min-width: ".$this->minWidth."px; margin: 0 auto'></div>";
+                $js.= $this->preSet;
+
                 break;
         }
 
@@ -673,6 +731,132 @@ Class areaStackedChart {
         $js.="},";
         $js.="series: " . $this->dataSet;
         $js.="});";
+
+        return $js;
+    }
+
+}
+
+Class calumnDrillDownChart {
+
+    function __construct($id, $title, $text, $legend, $dataLabels, $headerFontsize, $plotBorderWidth)
+    {
+        $this->id = $id;
+        $this->title = $title;
+        $this->text = $text;
+        $this->legend  = $legend;
+        $this->dataLabels  = $dataLabels;
+        $this->headerFontsize = $headerFontsize;
+        $this->plotBorderWidth =$plotBorderWidth;
+    }
+
+    public function rendererChart()
+    {
+       
+        $js="Highcharts.data({";
+            $js.="csv: document.getElementById('tsv').innerHTML,";
+            $js.="itemDelimiter: '    ',";
+            $js.="parsed: function (columns) {";
+                $js.="var brands = {},";
+                    $js.="brandsData = [],";
+                    $js.="versions = {},";
+                    $js.="drilldownSeries = [];";
+                // Parse percentage strings
+                $js.="columns[1] = $.map(columns[1], function (value) {";
+                    $js.="if (value.indexOf('%') === value.length - 1) {";
+                        $js.="value = parseFloat(value);";
+                    $js.="}";
+                    $js.="return value;";
+                $js.="});";
+                $js.="$.each(columns[0], function (i, name) {";
+                    $js.="var brand,";
+                        $js.="version;";
+                    $js.="if (i > 0) {";
+                        // Remove special edition notes
+                        $js.="name = name.split(' -')[0];";
+                        // Split into brand and version
+                        $js.="version = name.match(/([0-9]+[\.0-9x]*)/);";
+                        $js.="if (version) {";
+                            $js.="version = version[0];";
+                        $js.="}";
+                        $js.="brand = name.replace(version, '');";
+                        // Create the main data
+                        $js.="if (!brands[brand]) {";
+                            $js.="brands[brand] = columns[1][i];";
+                        $js.="} else {";
+                            $js.="brands[brand] += columns[1][i];";
+                        $js.="}";
+                        // Create the version data
+                        $js.="if (version !== null) {";
+                            $js.="if (!versions[brand]) {";
+                                $js.="versions[brand] = [];";
+                            $js.="}";
+                            $js.="versions[brand].push(['v' + version, columns[1][i]]);";
+                        $js.="}";
+                    $js.="}";
+                    
+                $js.="});";
+
+                $js.="$.each(brands, function (name, y) {";
+                    $js.="brandsData.push({"; 
+                        $js.="name: name,"; 
+                        $js.="y: y,";
+                        $js.="drilldown: versions[name] ? name : null";
+                    $js.="});";
+                $js.="});";
+                $js.="$.each(versions, function (key, value) {";
+                    $js.="drilldownSeries.push({";
+                        $js.="name: key,";
+                        $js.="id: key,";
+                        $js.="data: value";
+                    $js.="});";
+                $js.="});";
+
+                // Create the chart
+                $js.="$('#".$this->id."').highcharts({";
+                    $js.="chart: {";
+                        $js.="type: 'column'";
+                        $js.=",plotBorderWidth: ".$this->plotBorderWidth;
+                    $js.="},";
+                    $js.="title: {";
+                        $js.="text: '".$this->title."'";
+                    $js.="},";
+                    $js.="xAxis: {";
+                        $js.="type: 'category'";
+                    $js.="},";
+                    $js.="yAxis: {";
+                        $js.="title: {";
+                            $js.="text: '".$this->text."'";
+                        $js.="}";
+                    $js.="},";
+                    $js.="legend: {";
+                        $js.="enabled: ".$this->legend;
+                    $js.="},";
+                    $js.="plotOptions: {";
+                        $js.="series: {";
+                            $js.="borderWidth: 0,";
+                            $js.="dataLabels: {";
+                                $js.="enabled: ".$this->dataLabels.",";
+                                $js.="format: '{point.y:.1f}%'";
+                            $js.="}";
+                        $js.="}";
+                    $js.="},";
+                    $js.="tooltip: {";
+                        $js.="headerFormat: '<span style=\"font-size:".$this->headerFontsize."px\">{series.name}</span><br>',";
+                        $js.="pointFormat: '<span style=\"color:{point.color}\">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'";
+                    $js.="},";
+                    $js.="series: [{";
+                        $js.="name: 'Brands',";
+                        $js.="colorByPoint: true,";
+                        $js.="data: brandsData";
+                    $js.="}],";
+                    $js.="drilldown: {";
+                        $js.="series: drilldownSeries";
+                    $js.="}";
+                $js.="})";
+            $js.="}";
+        $js.="});";
+       
 
         return $js;
     }
