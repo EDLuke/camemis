@@ -55,7 +55,7 @@ if($subjectId){
     $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
 }
 
-$TEACHER_COMMENT = $facette?$facette->TEACHER_COMMENT:"---";
+$TEACHER_COMMENT = $facette?setShowText($facette->TEACHER_COMMENT):"---";
 
 if ($_POST){
     

@@ -42,7 +42,7 @@ Ext.onReady(function() {
     $OBJECT_FORM->setReleaseParams("cmd: 'releaseObject',objectId: '".$this->objectId."'");
     $DETAIL_ITEMS = "
     [
-        {".CamemisField::Textfield("NAME","NAME",NAME)."}
+        {".CamemisField::Textfield("NAME","NAME",NAME, true)."}
         ,{".CamemisField::Numberfield("LEVEL", "LEVEL", GRADE_LEVEL, true, false)."}
         ,{".CamemisField::Displayfield("CODE",CODE_ID,false)."} 
         ,{".CamemisField::Checkbox("END_OF_GRADE","END_OF_GRADE",END_OF_GRADE, 1, false, false)."}

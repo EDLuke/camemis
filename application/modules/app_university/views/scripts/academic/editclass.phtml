@@ -145,7 +145,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $DETAIL_INFORMATION_ITEMS = "[";
         
         $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Textfield("CODE_ID", "CODE", CODE_ID)."}";
-        $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Textfield("NAME", "NAME", NAME) . "}";
+        $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Textfield("NAME", "NAME", NAME, true) . "}";
         $DETAIL_INFORMATION_ITEMS .= ",{" . CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false) . "}";
         
         $DETAIL_INFORMATION_ITEMS .= "]";
