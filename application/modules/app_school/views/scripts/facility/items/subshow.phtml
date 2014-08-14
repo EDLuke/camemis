@@ -495,6 +495,7 @@ Ext.onReady(function() {
         ");
         
         $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            
             if(window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID')){
                 myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
                 myNode = myTree.getNodeById('".$this->facette->PARENT."');
@@ -513,13 +514,22 @@ Ext.onReady(function() {
                         myNode.expand(true, false);
                     }
                 }
-                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
             }
             
             if(window.parent.Ext.getCmp('FACILITY_LIST_ID')){
                 window.parent.Ext.getCmp('FACILITY_LIST_ID').store.reload();
-                window.parent.Ext.getCmp('CONTENT').getLayout().setActiveItem(0);
             }
+            
+            if(window.parent.Ext.getCmp('CONTENT')){
+                window.parent.Ext.getCmp('ITEM_LIST_ID').store.load();
+                window.parent.parent.Ext.getCmp('TREE.FACILITY_LIST_ID').root.reload();
+                window.parent.Ext.getCmp('CONTENT').getLayout().setActiveItem(0); 
+            }
+            if(window.parent.Ext.getCmp('center')){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('WEST_ID').expand();
+            }
+            
         ");
         
     }else{
@@ -565,6 +575,7 @@ Ext.onReady(function() {
         ,objectId: '".$this->objectId."'
         ,parentId: '".$this->parentId."'
         ,STATUS: 'CHECK-IN'
+        ,isFolder: '".$this->isFolder."'
           
     ");
     

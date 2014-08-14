@@ -43,8 +43,10 @@ class FacilityController extends Zend_Controller_Action {
         }
 
         if ($this->_getParam('objectId')) {
-
             $this->objectId = $this->_getParam('objectId');
+        }
+        if ($this->_getParam('isFolder')) {
+            $this->isFolder = $this->_getParam('isFolder');
         }
     }
 
@@ -82,8 +84,8 @@ class FacilityController extends Zend_Controller_Action {
     }
 
     public function manageitemAction() {
-        $this->view->URL_SHOW_MANAGE_ITEM = $this->UTILES->buildURL('facility/showmanageitem', array());
-        $this->view->URL_SHOW_SUB_MANAGE_ITEM = $this->UTILES->buildURL('facility/subshowmanageitem', array());
+        $this->view->URL_SHOW_MANAGE_ITEM = $this->UTILES->buildURL('facility/showmanageitem', array('isFolder'=>'true'));
+        $this->view->URL_SHOW_SUB_MANAGE_ITEM = $this->UTILES->buildURL('facility/subshowmanageitem', array('isFolder'=>'false'));
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("items/list");
     }
@@ -91,13 +93,14 @@ class FacilityController extends Zend_Controller_Action {
     public function showmanageitemAction() {
         $this->view->objectId = $this->objectId;
         $this->view->parentId = $this->parentId;
+        $this->view->isFolder = $this->isFolder;
         $this->view->facette = FacilityDBAccess::findFacilityItem($this->objectId);
         $this->_helper->viewRenderer("items/show");
     }
 
     public function subshowmanageitemAction() {
         $this->view->objectId = $this->objectId;
-
+        $this->view->isFolder = $this->isFolder;
         $parentObject = FacilityDBAccess::findFacilityItem($this->parentId);
         $facette = FacilityDBAccess::findFacilityItem($this->objectId);
 
