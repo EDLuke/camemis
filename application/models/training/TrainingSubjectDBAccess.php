@@ -425,7 +425,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
             $SQL .= " FROM t_subject AS A";
             $SQL .= " LEFT JOIN t_training_subject AS B ON A.ID=B.SUBJECT";
             $SQL .= " WHERE 1=1";
-            $SQL .= " AND A.STATUS=1";
+            //$SQL .= " AND A.STATUS=1";
             $SQL .= " AND B.OBJECT_TYPE='FOLDER'";
             $SQL .= " AND B.PROGRAM='" . $facette->PROGRAM . "'";
 

@@ -958,40 +958,47 @@ class StudentDBAccess {
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
+        $data = array();
+
         if ($academicObject) {
             $SQL = "UPDATE t_student_schoolyear SET";
 
             if ($academicObject->ENROLLMENT_TYPE == 1) {
                 $facette = StudentAcademicDBAccess::findStudentClassGradeSchoolyear($objectId, $academicObject);
-                $Ids = explode(",", $facette->CLASSIDS);
-                if (count($Ids) <= 1) {
+
+                if (is_numeric($facette->CLASSIDS)) {
                     $newIds = "";
                 } else {
-                    if (isset($Ids[$academicId]))
-                        unset($Ids[$academicId]);
-                    $newIds = implode(",", $Ids);
+                    $Ids = explode(",", $facette->CLASSIDS);
+                    foreach ($Ids as $Id) {
+                        if ($academicId != $Id) {
+                            $data[] = $Id;
+                        }
+                    }
+
+                    $newIds = implode(",", $data);
                 }
 
                 $SQL .= " CLASSIDS = '" . $newIds . "'";
-                $CHECK_FIRST = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear(
+                $CHECK_FIRST = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear(
                                 $objectId
                                 , $academicObject
                                 , "FIRST_ACADEMIC");
                 if ($CHECK_FIRST)
                     $SQL .= " ,FIRST_ACADEMIC = 0";
-                $CHECK_SECOND = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear(
+                $CHECK_SECOND = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear(
                                 $objectId
                                 , $academicObject
                                 , "SECOND_ACADEMIC");
                 if ($CHECK_SECOND)
                     $SQL .= " ,SECOND_ACADEMIC = 0";
-                $CHECK_THIRD = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear(
+                $CHECK_THIRD = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear(
                                 $objectId
                                 , $academicObject
                                 , "THIRD_ACADEMIC");
                 if ($CHECK_THIRD)
                     $SQL .= " ,THIRD_ACADEMIC = 0";
-                $CHECK_FOURTH = StudentAcademicDBAccess::checkUsedStudentClassTermSchoolyear(
+                $CHECK_FOURTH = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear(
                                 $objectId
                                 , $academicObject
                                 , "FOURTH_ACADEMIC");
@@ -1012,7 +1019,7 @@ class StudentDBAccess {
             }
 
             $SQL .= " AND SCHOOL_YEAR='" . $academicObject->SCHOOL_YEAR . "'";
-            error_log($SQL);
+            //error_log($SQL);
             self::dbAccess()->query($SQL);
 
             self::dbAccess()->delete('t_student_assignment', array(
@@ -1864,7 +1871,7 @@ class StudentDBAccess {
         $SQL = self::dbAccess()->select()
                 ->from("t_student_prerequirements", array('*'))
                 ->where("STUDENT_ID = '" . $studentId . "'");
-        error_log($SQL);
+        //error_log($SQL);
 
         $result = self::dbAccess()->fetchAll($SQL);
 
