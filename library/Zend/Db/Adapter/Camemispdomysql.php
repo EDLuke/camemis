@@ -65,7 +65,7 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql
             $values['OBJECT_ID'] = $data_delete['KEY'];
         }
         $values["FIELD_NOTE" ]   = $data;
-        error_log(print_r($values, true));
+        // error_log(print_r($values, true));
         parent::insert("t_track_log", $values);
     }
 
@@ -81,11 +81,11 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql
                     $primary_data = $value;
                 }
                 if ($key != $primary_field && $value != $fields[$key]) {  // record only field change
-                    $data[] = "'$key': { 'old': '$value', 'new': '{$fields[$key]}' }";
+                    $data[] = "\"$key\": { \"old\": \"$value\", \"new\": \"{$fields[$key]}\" }";
                 }
             }
         }
-        return array('KEY'=> $primary_data, 'DATA' => "{ ". implode(",", $data) ."}" );
+        return array("KEY"=> $primary_data, "DATA" => "{ ". implode(",", $data) ."}" );
     }
 
     private function getLogDelete($table, $where = '') {
@@ -98,10 +98,10 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql
                 if ($key == $primary_field) {
                     $primary_data = $value;
                 }
-                $data[] = "'$key': '$value'";
+                $data[] = "\"$key\": \"$value\"";
             }
         }
-        return array('KEY' => $primary_data, 'DATA' => "{ ". implode(", ", $data) ."}" );
+        return array("KEY" => $primary_data, "DATA" => "{ ". implode(", ", $data) ."}" );
     }
 	
 }
