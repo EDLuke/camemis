@@ -53,8 +53,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->addColumn("header: '<b>".SHORT."</b>', width: 80, renderer:cssText, sortable: true, dataIndex: 'SUBJECT_SHORT'");
         $OBJECT_GRID->addColumn("header: '<b>".NAME."</b>', width: 150, renderer:cssText, sortable: true, dataIndex: 'SUBJECT_NAME'");
         $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', width: 80, renderer:cssText, align: 'center', sortable: true, dataIndex: 'RANK'");
-        $OBJECT_GRID->addColumn("header: '<b>".VALUE."</b>', width: 120, renderer:cssText, align: 'center', sortable: true, dataIndex: 'SUBJECT_VALUE'");
-        $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', width: 120, renderer:cssText, align: 'center', sortable: true, dataIndex: 'ASSESSMENT'");
+        $OBJECT_GRID->addColumn("header: '<b>".VALUE."</b>', width: 110, renderer:cssText, align: 'center', sortable: true, dataIndex: 'SUBJECT_VALUE'");
+        $OBJECT_GRID->addColumn("header: '<b>".ASSESSMENT."</b>', width: 110, renderer:cssText, align: 'center', sortable: true, dataIndex: 'ASSESSMENT'");
 
         $setParams = "";
         $setParams .= "&academicId=".$academicObject->ID."";

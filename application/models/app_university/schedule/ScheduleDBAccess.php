@@ -2443,7 +2443,7 @@ class ScheduleDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', 'COUNT(*) AS C');
         $SQL->where("SCHEDULE_ID = '" . $scheduleId . "'");
-        $SQL->where("ACADEMIC_ID IN (" . $group . ")");
+        $SQL->where("FIND_IN_SET($group,ACADEMIC_ID)");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
@@ -2455,7 +2455,7 @@ class ScheduleDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from('t_link_schedule_academic', 'COUNT(*) AS C');
         $SQL->where("TEACHING_SESSION_ID = '" . $scheduleId . "'");
-        $SQL->where("ACADEMIC_ID IN (" . $group . ")");
+        $SQL->where("FIND_IN_SET($group,ACADEMIC_ID)");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
 
