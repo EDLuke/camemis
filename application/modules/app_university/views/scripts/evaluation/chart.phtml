@@ -1,4 +1,5 @@
 <?
+
 ///////////////////////////////////////////////////////////
 // @THORN Visal
 // Date: 01.08.2014
@@ -11,6 +12,39 @@ require_once setUserLoacalization();
 $academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
 $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
+$section = isset($_GET["section"]) ? addText($_GET["section"]) : "";
+
+if($term){
+    switch($term){
+        case "FIRST_SEMESTER":
+            $section ="2";
+            break;
+        case "SECOND_SEMESTER":
+            $section ="2";
+            break;
+        case "FIRST_TERM":
+            $section ="4";
+            break;
+        case "SECOND_TERM":
+            $section ="4";
+            break;
+        case "THIRD_TERM":
+            $section ="4";
+            break;
+        case "FIRST_QUARTER":
+            $section ="5";
+            break;
+        case "SECOND_QUARTER":
+            $section ="5";
+            break;
+        case "THIRD_QUARTER":
+            $section ="5";
+            break;
+        case "FOURTH_QUARTER":
+            $section ="5";
+        break;
+    }
+}
 
 $CHART = new AssessmentChart();
 
@@ -22,46 +56,56 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$SUBJECT_GRADINGSCALE = new CamemisHighChart("PIC_CHART", 'SUBJECT_GRADINGSCALE', 'All Grading Scale of Students', $CHART->getSubjectGradingScaleByClass());
-$SUBJECT_GRADINGSCALE->divFloatLeft = true;
+CamemisHighChart::setHighChartLIB();
+
+$SUBJECT_GRADINGSCALE = new CamemisHighChart(
+        "PIC_CHART"
+        , 'SUBJECT_GRADINGSCALE'
+        , 'All Grading Scale of Students'
+        , $CHART->getSubjectGradingScaleByClass()
+);
+
 $SUBJECT_GRADINGSCALE->allowPointSelect = 'true';
 $SUBJECT_GRADINGSCALE->pointColor = 'black';
 $SUBJECT_GRADINGSCALE->height = 300;
-$SUBJECT_GRADINGSCALE->maxWidth = 45;
+$SUBJECT_GRADINGSCALE->maxWidth = 450;
+$SUBJECT_GRADINGSCALE->maxWidthPercentage = false;
 $SUBJECT_GRADINGSCALE->plotBorderWidth = "null";
 
-$SUBJECT_PASS_STATUS = new CamemisHighChart("COLUMN_COMPARE_CHART", 'SUBJECT_PASS_STATUS', 'Pass/Fail Status', $CHART->getSubjectPassStatus());
-$SUBJECT_PASS_STATUS->divFloatLeft = true;
+$SUBJECT_PASS_STATUS = new CamemisHighChart(
+        "COLUMN_COMPARE_CHART"
+        , 'SUBJECT_PASS_STATUS'
+        , 'Pass/Fail Status'
+        , $CHART->getSubjectPassStatus()
+);
+
 $SUBJECT_PASS_STATUS->allowPointSelect = 'true';
 $SUBJECT_PASS_STATUS->pointColor = 'black';
-$SUBJECT_PASS_STATUS->height = 350;
-$SUBJECT_PASS_STATUS->maxWidth = 45;
+$SUBJECT_PASS_STATUS->height = 400;
+$SUBJECT_PASS_STATUS->maxWidth = 450;
+$SUBJECT_PASS_STATUS->maxWidthPercentage = false;
 $SUBJECT_PASS_STATUS->plotBorderWidth = "null";
-$SUBJECT_PASS_STATUS->xAxis ="{categories:['".PASS."','".FAIL."']}";
+$SUBJECT_PASS_STATUS->xAxis = "{categories:['" . PASS . "','" . FAIL . "']}";
 
-$SUBJECT_AVG_STUDENT_LIST = new CamemisHighChart("COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST', 'List of Students Average', $CHART->getSubjectAVGStudentList());
+$SUBJECT_AVG_STUDENT_LIST = new CamemisHighChart(
+        "COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST'
+        , 'List of Students Average'
+        , $CHART->getSubjectAVGStudentList()
+);
 $SUBJECT_AVG_STUDENT_LIST->text = false;
 $SUBJECT_AVG_STUDENT_LIST->allowPointSelect = 'true';
 $SUBJECT_AVG_STUDENT_LIST->pointColor = 'black';
 $SUBJECT_AVG_STUDENT_LIST->height = 400;
+$SUBJECT_AVG_STUDENT_LIST->maxWidthPercentage = true;
 $SUBJECT_AVG_STUDENT_LIST->plotBorderWidth = "null";
-?>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script src="/public/js/highcharts.js"></script>
-<script src="/public/js/modules/drilldown.js"></script>
-<script src="/public/js/modules/exporting.js"></script>
-<script src="/public/js/modules/data.js"></script>
+$SUBJECT_GRADINGSCALE->setDIVHighChart();
+$SUBJECT_PASS_STATUS->setDIVHighChart();
+$SUBJECT_AVG_STUDENT_LIST->setDIVHighChart();
 
-<?= $SUBJECT_GRADINGSCALE->setChartDisplay(); ?>
-<script type="text/javascript"><?= $SUBJECT_GRADINGSCALE->setChartScript(); ?></script>
+$SUBJECT_GRADINGSCALE->setHighChartScript();
+$SUBJECT_PASS_STATUS->setHighChartScript();
+$SUBJECT_AVG_STUDENT_LIST->setHighChartScript();
 
-<?= $SUBJECT_PASS_STATUS->setChartDisplay(); ?>
-<script type="text/javascript"><?= $SUBJECT_PASS_STATUS->setChartScript(); ?></script>
-
-<?= $SUBJECT_AVG_STUDENT_LIST->setChartDisplay(); ?>
-<script type="text/javascript"><?= $SUBJECT_AVG_STUDENT_LIST->setChartScript(); ?></script>
-
-<?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>

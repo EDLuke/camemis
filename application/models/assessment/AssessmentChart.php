@@ -54,8 +54,7 @@ class AssessmentChart extends AssessmentProperties {
             $i = 0;
             foreach ($entries as $value) {
                 $ii = $i + 1;
-                $data[] = "['" . $value->LASTNAME . "', " . $i . "]";
-
+                $data[] = "['" . getFullName($value->FIRSTNAME, $value->LASTNAME) . "', " . $i . "]";
                 $i++;
             }
         }
