@@ -120,16 +120,16 @@ Ext.onReady(function() {
         }
     }
     
-      $OBJECT_GRID->addTBarItems("
-            tbar.add(['-', {
-                text:''
-                ,tooltip:'".CAMEMIS_HELP."'
-                ,iconCls: 'icon-help'
-                ,handler:function(){
-                    ".CamemisPage::setEmbeddedHelp("8773-30AB")."
-                }
-            }]);
-        ");
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-', {
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("8773-30AB")."
+            }
+        }]);
+    ");
     
     $OBJECT_GRID->addColumn("
         header: '<b>" . TIME . "</b>'
