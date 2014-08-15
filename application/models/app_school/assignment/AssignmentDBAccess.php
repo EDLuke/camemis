@@ -731,7 +731,7 @@ class AssignmentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function getAllScoreDate($assignmentId, $classId, $subjectId)
+    public static function getAllScoreDate($assignmentId, $academicId, $subjectId)
     {
 
         $SQL = self::dbAccess()->select();
@@ -739,7 +739,8 @@ class AssignmentDBAccess {
         if ($assignmentId)
             $SQL->where("ASSIGNMENT_ID = ?", $assignmentId);
         $SQL->where("SUBJECT_ID = ?", $subjectId);
-        $SQL->where("CLASS_ID = ?", $classId);
+        $SQL->where("CLASS_ID = ?", $academicId);
+        $SQL->order("SCORE_INPUT_DATE ASC");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }

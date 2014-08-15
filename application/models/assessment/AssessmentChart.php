@@ -102,17 +102,33 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getImplodeCountTeacherSubjectScoreEnter()
+    public function getCountTeacherSubjectScoreEnter($assignmentId, $date)
+    {
+        $SQL = self::dbAccess()->select();
+        $SQL->from('t_student_assignment', 'COUNT(*) AS C');
+        $SQL->where("ASSIGNMENT_ID = ?", "" . $assignmentId . "");
+        $SQL->where("CLASS_ID = ?", "" . $this->academicId . "");
+        $SQL->where("SUBJECT_ID = ?", "" . $this->subjectId . "");
+        $SQL->where("SCORE_DATE = ?", "" . $date . "");
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->C : 0;
+    }
+
+    public function getDataTeacherSubjectScoreEnter($assignmentId)
     {
 
-        $SQL = self::dbAccess()->select();
-        $SQL->distinct();
-        $SQL->from(array('A' => "t_logininfo"), array("DATE(DATE) AS SECTION_DATE", "DATE"));
-        $SQL->joinLeft(array('B' => 't_memberrole'), 'A.ROLE=B.ID', array());
-        $SQL->group("DATE(A.DATE)");
-        $SQL->order("DATE(A.DATE) ASC");
-        //error_log($SQL->__toString());
-        $entries = self::dbAccess()->fetchAll($SQL);
+        $entries = AssignmentDBAccess::getAllScoreDate(false, $this->academicId, $this->subjectId);
+        $data = array();
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
+                $data[] = $this->getCountTeacherSubjectScoreEnter($assignmentId, $value->SCORE_INPUT_DATE);
+            }
+        }
+
+        return implode(",", $data);
     }
 
     public function getDatasetTeacherSubjectScoreEnter()
@@ -124,9 +140,12 @@ class AssessmentChart extends AssessmentProperties {
         {
             foreach ($entries as $value)
             {
+
+                #error_log("academicId: " . $this->academicId . " subjectId: " . $this->subjectId . " assignmentId: " . $value->ASSIGNMENT_ID);
+
                 $str = "{";
                 $str .= "name: '(" . $value->SHORT . ") " . $value->NAME . "'";
-                $str .= ",data: [3, 4, 3, 5, 4, 10, 12]";
+                $str .= ",data: [" . $this->getDataTeacherSubjectScoreEnter($value->ASSIGNMENT_ID) . "]";
                 $str .= "}";
                 $data[] = $str;
             }
