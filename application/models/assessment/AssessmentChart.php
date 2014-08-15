@@ -10,6 +10,8 @@ require_once 'models/assessment/AssessmentProperties.php';
 
 class AssessmentChart extends AssessmentProperties {
 
+    const SCORE_NUMBER = 1;
+
     public static function dbAccess()
     {
         return Zend_Registry::get('DB_ACCESS');
@@ -33,6 +35,51 @@ class AssessmentChart extends AssessmentProperties {
     public function setTerm($value)
     {
         return $this->term = $value;
+    }
+
+    public function getSubjectGradingScaleByClass()
+    {
+
+        $entries = AssessmentConfig::getListGradingScales(
+                        self::SCORE_NUMBER
+                        , $this->getSettingQualificationType());
+
+        $data = array();
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
+                $data[] = "['" . $value->DESCRIPTION . "', " . $value->ID . "]";
+            }
+        }
+        return "[" . implode(",", $data) . "]";
+    }
+
+    public function getSubjectAVGStudentList()
+    {
+        $entries = $this->listClassStudents();
+        $data = array();
+        if ($entries)
+        {
+            $i = 0;
+            foreach ($entries as $value)
+            {
+                $ii = $i + 1;
+                $data[] = "['" . $value->LASTNAME . "', " . $i . "]";
+
+                $i++;
+            }
+        }
+        return "[" . implode(",", $data) . "]";
+    }
+
+    public function getSubjectPassStatus()
+    {
+        $data = array(
+            "Pass1" => 41
+            , "Pass2" => 41
+        );
+        return "[" . implode(",", $data) . "]";
     }
 
 }
