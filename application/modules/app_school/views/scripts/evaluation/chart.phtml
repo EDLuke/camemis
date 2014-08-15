@@ -12,35 +12,33 @@ $academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
 $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 
-$ASSESSMENT_CHART = new AssessmentChart();
+$CHART = new AssessmentChart();
 
-$ASSESSMENT_CHART->setAcademicId($academicId);
-$ASSESSMENT_CHART->setSubjectId($subjectId);
-$ASSESSMENT_CHART->setTerm($term);
+$CHART->setAcademicId($academicId);
+$CHART->setSubjectId($subjectId);
+$CHART->setTerm($term);
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-//$params = Utiles::setPostDecrypteParams($this->urlEncryp->encryptedGet($setParams));
-//$this->setParams($params);
-//$objectDataSet = new FilterChartDataSet();
-//$dataSetGradingScale = $objectDataSet->getDatasetGradingScale();
+$SUBJECT_GRADINGSCALE = new CamemisHighChart("PIC_CHART", 'SUBJECT_GRADINGSCALE', 'All Grading Scale of Students', $CHART->getSubjectGradingScaleByClass());
+$SUBJECT_GRADINGSCALE->text = "Student Grading Scale";
+$SUBJECT_GRADINGSCALE->allowPointSelect = 'true';
+$SUBJECT_GRADINGSCALE->pointColor = 'black';
+$SUBJECT_GRADINGSCALE->height = 400;
 
-/*$chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'PIC_CHART', 'All Grading Scale of Students', false);
-$chartAllGradingScale->text = "Student Grading Scale";
-$chartAllGradingScale->allowPointSelect = 'true';
-$chartAllGradingScale->pointColor = 'black';
-$chartAllGradingScale->minWidth = 310;
-$chartAllGradingScale->height = 400; */
+$SUBJECT_PASS_STATUS = new CamemisHighChart("PIC_CHART", 'SUBJECT_PASS_STATUS', 'All Grading Scale of Students', $CHART->getSubjectPassStatus());
+$SUBJECT_PASS_STATUS->text = "Student Grading Scale";
+$SUBJECT_PASS_STATUS->allowPointSelect = 'true';
+$SUBJECT_PASS_STATUS->pointColor = 'black';
+$SUBJECT_PASS_STATUS->height = 400;
 
-$chartAllGradingScale1 = new CamemisHighChart("COLUMN_DRILLDOWN_CHART", 'COLUMN_DRILLDOWN_CHART', 'Work', false);
-$chartAllGradingScale1->text = "Test Camemis";
-$chartAllGradingScale1->height = 400;
-$chartAllGradingScale1->minWidth = 310;
-
-
-
+$SUBJECT_AVG_STUDENT_LIST = new CamemisHighChart("COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST', 'All Grading Scale of Students', $CHART->getSubjectAVGStudentList());
+$SUBJECT_AVG_STUDENT_LIST->text = "Student Grading Scale";
+$SUBJECT_AVG_STUDENT_LIST->allowPointSelect = 'true';
+$SUBJECT_AVG_STUDENT_LIST->pointColor = 'black';
+$SUBJECT_AVG_STUDENT_LIST->height = 400;
 ?>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -49,9 +47,14 @@ $chartAllGradingScale1->minWidth = 310;
 <script src="/public/js/modules/exporting.js"></script>
 <script src="/public/js/modules/data.js"></script>
 
-<?= $chartAllGradingScale1->setChartDisplay(); ?>
-<script type="text/javascript"><?= $chartAllGradingScale1->setChartScript(); ?></script>
+<?= $SUBJECT_GRADINGSCALE->setChartDisplay(); ?>
+<script type="text/javascript"><?= $SUBJECT_GRADINGSCALE->setChartScript(); ?></script>
 
+<?= $SUBJECT_AVG_STUDENT_LIST->setChartDisplay(); ?>
+<script type="text/javascript"><?= $SUBJECT_AVG_STUDENT_LIST->setChartScript(); ?></script>
+
+<?= $SUBJECT_PASS_STATUS->setChartDisplay(); ?>
+<script type="text/javascript"><?= $SUBJECT_PASS_STATUS->setChartScript(); ?></script>
 
 <?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
