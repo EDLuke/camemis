@@ -15,6 +15,8 @@ Class CamemisHighChart {
     const AREA_STACKED_CHART = "AREA_STACKED_CHART";
     const COLUMN_DRILLDOWN_CHART = "COLUMN_DRILLDOWN_CHART";
 
+    public $divFloatLeft = false;
+    public $xAxis = null;
     public $seriesName = null;
     public $maxWidth = 85;
     public $minWidth = 310;
@@ -105,8 +107,7 @@ Chrome 10.0    0.09%
 Opera 10.x    0.09%
 Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
 
-    function __construct($type, $id, $title, $dataSet)
-    {
+    function __construct($type, $id, $title, $dataSet) {
 
         $this->type = strtoupper($type);
         $this->title = $title;
@@ -114,11 +115,9 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
         $this->id = $id;
     }
 
-    public function setChartScript()
-    {
+    public function setChartScript() {
 
-        switch ($this->type)
-        {
+        switch ($this->type) {
             case self::PIC_CHART:
                 $chart = new picChart(
                         $this->id
@@ -218,34 +217,31 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
                         $this->id
                         , $this->title
                         , $this->text
-                        ,$this->legend
-                        ,$this->dataLabels
-                        ,$this->headerFontsize
-                        ,$this->plotBorderWidth);
+                        , $this->legend
+                        , $this->dataLabels
+                        , $this->headerFontsize
+                        , $this->plotBorderWidth);
                 break;
-            
         }
 
         print $chart->rendererChart();
     }
 
-    public function setChartDisplay()
-    {
+    public function setChartDisplay() {
 
         $js = "";
 
-        switch ($this->type)
-        {
+        switch ($this->type) {
 
             case self::PIC_CHART:
             case self::COLUMN_COMPARE_CHART:
             case self::COLUMN_CHART:
             case self::AREA_SPLINE_CHART:
             case self::AREA_STACKED_CHART:
-                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:".$this->maxWidth."%; margin: 0 auto'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:" . $this->maxWidth . "%; margin: 0 auto'></div>";
                 break;
             case self::COLUMN_DRILLDOWN_CHART:
-                $js = "<div id='".$this->id."' style='height: " . $this->height . "px; min-width: ".$this->minWidth."px; margin: 0 auto'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; min-width: " . $this->minWidth . "px; margin: 0 auto'></div>";
                 $js.= $this->preSet;
 
                 break;
@@ -258,8 +254,7 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
 
 Class picChart {
 
-    function __construct($id, $text, $dataSet, $allowPointSelect, $title, $plotShadow, $plotBackgroundColor, $plotBorderWidth, $pointColor, $cursor, $dataLabels)
-    {
+    function __construct($id, $text, $dataSet, $allowPointSelect, $title, $plotShadow, $plotBackgroundColor, $plotBorderWidth, $pointColor, $cursor, $dataLabels) {
 
         $this->text = $text;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -274,8 +269,7 @@ Class picChart {
         $this->dataLabels = $dataLabels;
     }
 
-    public static function dafaultDataSet()
-    {
+    public static function dafaultDataSet() {
         return "[
                 ['One', 1]
                 ,['Two',2]
@@ -286,8 +280,7 @@ Class picChart {
         ]";
     }
 
-    public function rendererChart()
-    {
+    public function rendererChart() {
 
         $js = "$('#" . $this->id . "').highcharts({";
         $js .="chart: {";
@@ -328,8 +321,7 @@ Class picChart {
 
 Class columnCompareChart {
 
-    function __construct($id, $title, $dataSet, $xAxis, $text, $pointPadding, $borderWidth, $headerFontsize, $tooltipsShared, $tooltipsUseHTML, $yAxisMin, $plotBorderWidth)
-    {
+    function __construct($id, $title, $dataSet, $xAxis, $text, $pointPadding, $borderWidth, $headerFontsize, $tooltipsShared, $tooltipsUseHTML, $yAxisMin, $plotBorderWidth) {
 
         $this->title = $title;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -345,8 +337,7 @@ Class columnCompareChart {
         $this->plotBorderWidth = $plotBorderWidth;
     }
 
-    public static function dafaultDataSet()
-    {
+    public static function dafaultDataSet() {
         return "[{
             name: 'Mail',
             data: [10,5,10]
@@ -358,8 +349,7 @@ Class columnCompareChart {
         }]";
     }
 
-    public static function dafaultxAxis()
-    {
+    public static function dafaultxAxis() {
         return "{
             categories: [
                 'Good',
@@ -369,8 +359,7 @@ Class columnCompareChart {
         }";
     }
 
-    public function rendererChart()
-    {
+    public function rendererChart() {
 
 
         $js = "$('#" . $this->id . "').highcharts({";
@@ -412,8 +401,7 @@ Class columnCompareChart {
 
 Class columnChart {
 
-    function __construct($id, $text, $dataSet, $title, $legend, $seriesName, $dataLabelsColor, $dataLabelsAlign, $dataLabelsX, $dataLabelsY, $dataLabelsStyleFontsize, $dataLabelsStyleFontfamily, $dataLabelsStyleShadow, $dataLabels, $dataLabelsRotation, $xAxisLabelsRotation, $xAxisLabelsStyleFontsize, $xAxisLablesStyleFontfamily, $plotBorderWidth, $yAxisMin)
-    {
+    function __construct($id, $text, $dataSet, $title, $legend, $seriesName, $dataLabelsColor, $dataLabelsAlign, $dataLabelsX, $dataLabelsY, $dataLabelsStyleFontsize, $dataLabelsStyleFontfamily, $dataLabelsStyleShadow, $dataLabels, $dataLabelsRotation, $xAxisLabelsRotation, $xAxisLabelsStyleFontsize, $xAxisLablesStyleFontfamily, $plotBorderWidth, $yAxisMin) {
 
         $this->id = $id;
         $this->text = $text;
@@ -437,8 +425,7 @@ Class columnChart {
         $this->yAxisMin = $yAxisMin;
     }
 
-    public static function dafaultDataSet()
-    {
+    public static function dafaultDataSet() {
         return "[
                 ['One', 1]
                 ,['Two',2]
@@ -484,8 +471,7 @@ Class columnChart {
         ]";
     }
 
-    public function rendererChart()
-    {
+    public function rendererChart() {
 
         $js = "$('#" . $this->id . "').highcharts({";
         $js.="chart: {";
@@ -544,8 +530,7 @@ Class columnChart {
 Class areaSplineChart {
 
     function __construct($id, $title, $dataSet, $xAxis, $text, $plotBorderWidth, $tooltipsShared, $pointColor, $legendLayout, $legendAlign, $legendVerticalAlign, $legendX, $legendY, $legendFloating, $legendBorderWidth
-    , $plotBandsFrom, $plotBandsTo, $plotBandsColor, $tooltipsValueSuffix, $credits, $plotOptionsAreasplineFillOpacity)
-    {
+    , $plotBandsFrom, $plotBandsTo, $plotBandsColor, $tooltipsValueSuffix, $credits, $plotOptionsAreasplineFillOpacity) {
 
         $this->title = $title;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -570,8 +555,7 @@ Class areaSplineChart {
         $this->plotOptionsAreasplineFillOpacity = $plotOptionsAreasplineFillOpacity;
     }
 
-    public static function dafaultDataSet()
-    {
+    public static function dafaultDataSet() {
         return "[{
             name: 'John',
             data: [3, 4, 3, 5, 4, 10, 12]
@@ -581,15 +565,13 @@ Class areaSplineChart {
         }]";
     }
 
-    public static function dafaultxAxis()
-    {
+    public static function dafaultxAxis() {
         return "
             categories: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
         ";
     }
 
-    public function rendererChart()
-    {
+    public function rendererChart() {
 
         $js = "$('#" . $this->id . "').highcharts({";
         $js.="chart: {";
@@ -644,8 +626,7 @@ Class areaSplineChart {
 Class areaStackedChart {
 
     function __construct($id, $title, $dataSet, $xAxis, $text, $plotBorderWidth, $tooltipsShared, $pointColor, $tooltipsValueSuffix, $tickmarkPlacement
-    , $plotOptionsAreaStacking, $plotOptionsAreaLineColor, $plotOptionsAreaLineWidth, $plotOptionsAreaMarkerLineColor, $plotOptionsAreaMarkerLineWidth)
-    {
+    , $plotOptionsAreaStacking, $plotOptionsAreaLineColor, $plotOptionsAreaLineWidth, $plotOptionsAreaMarkerLineColor, $plotOptionsAreaMarkerLineWidth) {
 
         $this->title = $title;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -664,8 +645,7 @@ Class areaStackedChart {
         $this->plotOptionsAreaMarkerLineWidth = $plotOptionsAreaMarkerLineWidth;
     }
 
-    public static function dafaultDataSet()
-    {
+    public static function dafaultDataSet() {
         return "[{
             name: 'Asia',
             data: [502, 635, 809, 947, 1402, 3634, 5268]
@@ -684,15 +664,13 @@ Class areaStackedChart {
         }]";
     }
 
-    public static function dafaultxAxis()
-    {
+    public static function dafaultxAxis() {
         return "
             categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050']
         ";
     }
 
-    public function rendererChart()
-    {
+    public function rendererChart() {
 
         $js = "$('#" . $this->id . "').highcharts({";
         $js.="chart: {";
@@ -740,124 +718,122 @@ Class areaStackedChart {
 
 Class calumnDrillDownChart {
 
-    function __construct($id, $title, $text, $legend, $dataLabels, $headerFontsize, $plotBorderWidth)
-    {
+    function __construct($id, $title, $text, $legend, $dataLabels, $headerFontsize, $plotBorderWidth) {
         $this->id = $id;
         $this->title = $title;
         $this->text = $text;
-        $this->legend  = $legend;
-        $this->dataLabels  = $dataLabels;
+        $this->legend = $legend;
+        $this->dataLabels = $dataLabels;
         $this->headerFontsize = $headerFontsize;
-        $this->plotBorderWidth =$plotBorderWidth;
+        $this->plotBorderWidth = $plotBorderWidth;
     }
 
-    public function rendererChart()
-    {
-       
-        $js="Highcharts.data({";
-            $js.="csv: document.getElementById('tsv').innerHTML,";
-            $js.="itemDelimiter: '    ',";
-            $js.="parsed: function (columns) {";
-                $js.="var brands = {},";
-                    $js.="brandsData = [],";
-                    $js.="versions = {},";
-                    $js.="drilldownSeries = [];";
-                // Parse percentage strings
-                $js.="columns[1] = $.map(columns[1], function (value) {";
-                    $js.="if (value.indexOf('%') === value.length - 1) {";
-                        $js.="value = parseFloat(value);";
-                    $js.="}";
-                    $js.="return value;";
-                $js.="});";
-                $js.="$.each(columns[0], function (i, name) {";
-                    $js.="var brand,";
-                        $js.="version;";
-                    $js.="if (i > 0) {";
-                        // Remove special edition notes
-                        $js.="name = name.split(' -')[0];";
-                        // Split into brand and version
-                        $js.="version = name.match(/([0-9]+[\.0-9x]*)/);";
-                        $js.="if (version) {";
-                            $js.="version = version[0];";
-                        $js.="}";
-                        $js.="brand = name.replace(version, '');";
-                        // Create the main data
-                        $js.="if (!brands[brand]) {";
-                            $js.="brands[brand] = columns[1][i];";
-                        $js.="} else {";
-                            $js.="brands[brand] += columns[1][i];";
-                        $js.="}";
-                        // Create the version data
-                        $js.="if (version !== null) {";
-                            $js.="if (!versions[brand]) {";
-                                $js.="versions[brand] = [];";
-                            $js.="}";
-                            $js.="versions[brand].push(['v' + version, columns[1][i]]);";
-                        $js.="}";
-                    $js.="}";
-                    
-                $js.="});";
+    public function rendererChart() {
 
-                $js.="$.each(brands, function (name, y) {";
-                    $js.="brandsData.push({"; 
-                        $js.="name: name,"; 
-                        $js.="y: y,";
-                        $js.="drilldown: versions[name] ? name : null";
-                    $js.="});";
-                $js.="});";
-                $js.="$.each(versions, function (key, value) {";
-                    $js.="drilldownSeries.push({";
-                        $js.="name: key,";
-                        $js.="id: key,";
-                        $js.="data: value";
-                    $js.="});";
-                $js.="});";
-
-                // Create the chart
-                $js.="$('#".$this->id."').highcharts({";
-                    $js.="chart: {";
-                        $js.="type: 'column'";
-                        $js.=",plotBorderWidth: ".$this->plotBorderWidth;
-                    $js.="},";
-                    $js.="title: {";
-                        $js.="text: '".$this->title."'";
-                    $js.="},";
-                    $js.="xAxis: {";
-                        $js.="type: 'category'";
-                    $js.="},";
-                    $js.="yAxis: {";
-                        $js.="title: {";
-                            $js.="text: '".$this->text."'";
-                        $js.="}";
-                    $js.="},";
-                    $js.="legend: {";
-                        $js.="enabled: ".$this->legend;
-                    $js.="},";
-                    $js.="plotOptions: {";
-                        $js.="series: {";
-                            $js.="borderWidth: 0,";
-                            $js.="dataLabels: {";
-                                $js.="enabled: ".$this->dataLabels.",";
-                                $js.="format: '{point.y:.1f}%'";
-                            $js.="}";
-                        $js.="}";
-                    $js.="},";
-                    $js.="tooltip: {";
-                        $js.="headerFormat: '<span style=\"font-size:".$this->headerFontsize."px\">{series.name}</span><br>',";
-                        $js.="pointFormat: '<span style=\"color:{point.color}\">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'";
-                    $js.="},";
-                    $js.="series: [{";
-                        $js.="name: 'Brands',";
-                        $js.="colorByPoint: true,";
-                        $js.="data: brandsData";
-                    $js.="}],";
-                    $js.="drilldown: {";
-                        $js.="series: drilldownSeries";
-                    $js.="}";
-                $js.="})";
-            $js.="}";
+        $js = "Highcharts.data({";
+        $js.="csv: document.getElementById('tsv').innerHTML,";
+        $js.="itemDelimiter: '    ',";
+        $js.="parsed: function (columns) {";
+        $js.="var brands = {},";
+        $js.="brandsData = [],";
+        $js.="versions = {},";
+        $js.="drilldownSeries = [];";
+        // Parse percentage strings
+        $js.="columns[1] = $.map(columns[1], function (value) {";
+        $js.="if (value.indexOf('%') === value.length - 1) {";
+        $js.="value = parseFloat(value);";
+        $js.="}";
+        $js.="return value;";
         $js.="});";
-       
+        $js.="$.each(columns[0], function (i, name) {";
+        $js.="var brand,";
+        $js.="version;";
+        $js.="if (i > 0) {";
+        // Remove special edition notes
+        $js.="name = name.split(' -')[0];";
+        // Split into brand and version
+        $js.="version = name.match(/([0-9]+[\.0-9x]*)/);";
+        $js.="if (version) {";
+        $js.="version = version[0];";
+        $js.="}";
+        $js.="brand = name.replace(version, '');";
+        // Create the main data
+        $js.="if (!brands[brand]) {";
+        $js.="brands[brand] = columns[1][i];";
+        $js.="} else {";
+        $js.="brands[brand] += columns[1][i];";
+        $js.="}";
+        // Create the version data
+        $js.="if (version !== null) {";
+        $js.="if (!versions[brand]) {";
+        $js.="versions[brand] = [];";
+        $js.="}";
+        $js.="versions[brand].push(['v' + version, columns[1][i]]);";
+        $js.="}";
+        $js.="}";
+
+        $js.="});";
+
+        $js.="$.each(brands, function (name, y) {";
+        $js.="brandsData.push({";
+        $js.="name: name,";
+        $js.="y: y,";
+        $js.="drilldown: versions[name] ? name : null";
+        $js.="});";
+        $js.="});";
+        $js.="$.each(versions, function (key, value) {";
+        $js.="drilldownSeries.push({";
+        $js.="name: key,";
+        $js.="id: key,";
+        $js.="data: value";
+        $js.="});";
+        $js.="});";
+
+        // Create the chart
+        $js.="$('#" . $this->id . "').highcharts({";
+        $js.="chart: {";
+        $js.="type: 'column'";
+        $js.=",plotBorderWidth: " . $this->plotBorderWidth;
+        $js.="},";
+        $js.="title: {";
+        $js.="text: '" . $this->title . "'";
+        $js.="},";
+        $js.="xAxis: {";
+        $js.="type: 'category'";
+        $js.="},";
+        $js.="yAxis: {";
+        $js.="title: {";
+        $js.="text: '" . $this->text . "'";
+        $js.="}";
+        $js.="},";
+        $js.="legend: {";
+        $js.="enabled: " . $this->legend;
+        $js.="},";
+        $js.="plotOptions: {";
+        $js.="series: {";
+        $js.="borderWidth: 0,";
+        $js.="dataLabels: {";
+        $js.="enabled: " . $this->dataLabels . ",";
+        $js.="format: '{point.y:.1f}%'";
+        $js.="}";
+        $js.="}";
+        $js.="},";
+        $js.="tooltip: {";
+        $js.="headerFormat: '<span style=\"font-size:" . $this->headerFontsize . "px\">{series.name}</span><br>',";
+        $js.="pointFormat: '<span style=\"color:{point.color}\">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'";
+        $js.="},";
+        $js.="series: [{";
+        $js.="name: 'Brands',";
+        $js.="colorByPoint: true,";
+        $js.="data: brandsData";
+        $js.="}],";
+        $js.="drilldown: {";
+        $js.="series: drilldownSeries";
+        $js.="}";
+        $js.="})";
+        $js.="}";
+        $js.="});";
+
 
         return $js;
     }

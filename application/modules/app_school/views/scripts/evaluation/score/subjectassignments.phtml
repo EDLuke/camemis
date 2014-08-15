@@ -307,7 +307,9 @@ Ext.onReady(function() {
             },{
                 text:'".CHARTS."'
                 ,iconCls:'icon-chart_bar'
-                ,disabled:true
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParams)."');
+                }
             }]
         }";
         $BAR_ITEMS[] = $MONTHLY_RESULT;
@@ -355,7 +357,9 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,disabled:true
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart');
+                    }
                 }]
             }";
             
@@ -518,7 +522,9 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,disabled:true
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
+                    }
                 }]
             }";
             if($academicObject->DISPLAY_SECOND_RESULT)
