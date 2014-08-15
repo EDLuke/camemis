@@ -124,12 +124,24 @@ Class DisplayChart{
     }
 
     protected function getTeacherEnterScoreChart(){
+        
+        $dataset = "[{
+            name: 'Assignment1',
+            data: [3, 4, 3, 5, 4, 10, 12]
+        },{
+            name: 'Assignment2',
+            data: [1, 3, 4, 3, 3, 5, 4]
+        }]";
+    
         $CHART = new CamemisHighChart(
-            "COLUMN_COMPARE_CHART"
-            , 'SUBJECT_PASS_STATUS'
-            , 'Pass/Fail Status'
-            , false
+            "AREA_SPLINE_CHART"
+            , 'TEACHER_ENTER_SCORE'
+            , TEACHER_ENTER_SCORE
+            , $dataset
         );
+        $CHART->xAxis ="categories: ['Date1','Date2','Date3','Date4','Date5','Date6','Date7']";
+        $CHART->allowPointSelect = 'true';
+        $CHART->plotBorderWidth = "null";
         $CHART->setDIVHighChart();
         $CHART->setHighChartScript();
     }
