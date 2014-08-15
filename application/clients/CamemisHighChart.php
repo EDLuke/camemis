@@ -15,6 +15,7 @@ Class CamemisHighChart {
     const AREA_STACKED_CHART = "AREA_STACKED_CHART";
     const COLUMN_DRILLDOWN_CHART = "COLUMN_DRILLDOWN_CHART";
 
+    public $seriesName = null;
     public $maxWidth = 85;
     public $minWidth = 310;
     public $allowPointSelect = "false";
