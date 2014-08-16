@@ -30,6 +30,16 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
     $OBJECT_TREE->isAsyncTreeNode = false;
+    
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("B85D-D780")."
+            }
+    ");
+    
     $OBJECT_TREE->setBaseParams("
     	cmd: 'treeReportTraditionalAcademic'
     ");
