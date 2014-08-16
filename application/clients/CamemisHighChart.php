@@ -58,7 +58,7 @@ Class CamemisHighChart {
     public $plotBandsFrom = 4.5;
     public $plotBandsTo = 6.5;
     public $plotBandsColor = "rgba(68, 170, 213, .2)";
-    public $tooltipsValueSuffix = "false";
+    public $tooltipsValueSuffix = "";
     public $credits = "false";
     public $plotOptionsAreasplineFillOpacity = 0.5;
     public $tickmarkPlacement = "on";
