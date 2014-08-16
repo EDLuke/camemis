@@ -34,10 +34,33 @@ $chartAllGradingScale->pointColor = 'black';
 $chartAllGradingScale->minWidth = 310;
 $chartAllGradingScale->height = 400; */
 
-$chartAllGradingScale1 = new CamemisHighChart("COLUMN_DRILLDOWN_CHART", 'COLUMN_DRILLDOWN_CHART', 'Work', false);
-$chartAllGradingScale1->text = "Test Camemis";
-$chartAllGradingScale1->height = 400;
-$chartAllGradingScale1->minWidth = 310;
+$drillDownChart = new CamemisHighChart("COLUMN_DRILLDOWN_CHART", 'COLUMN_DRILLDOWN_CHART', 'Work', false);
+$drillDownChart->text = "Drill Down Chart";
+
+$pieChart = new CamemisHighChart("PIE_CHART", 'PIE_CHART', 'Work', false);
+$pieChart->text = "Pie Chart";
+
+$pieLegendChart = new CamemisHighChart("PIE_LEGEND_CHART", 'PIE_LEGEND_CHART', 'Work', false);
+$pieLegendChart->text = "Pie Legend Chart";
+$pieLegendChart->tooltipsValueSuffix = "%";
+
+$columnCompareChart = new CamemisHighChart("COLUMN_COMPARE_CHART", 'COLUMN_COMPARE_CHART', 'Work', false);
+$columnCompareChart->text = "Column Compare Chart";
+
+$columnChart = new CamemisHighChart("COLUMN_CHART", 'COLUMN_CHART', 'Work', false);
+$columnChart->text = "Column Chart";
+$columnChart->seriesName = "SeriesName";
+
+$areaSplineChart = new CamemisHighChart("AREA_SPLINE_CHART", 'AREA_SPLINE_CHART', 'Work', false);
+$areaSplineChart->text = "Area Spline Chart";
+
+$areaStackedChart = new CamemisHighChart("AREA_STACKED_CHART", 'AREA_STACKED_CHART', 'Work', false);
+$areaStackedChart->text = "Area Stacked Chart";
+$areaStackedChart->tooltipsValueSuffix = "%";
+
+$areaBasicChart = new CamemisHighChart("AREA_BASIC_CHART", 'AREA_BASIC_CHART', 'Work', false);
+$areaBasicChart->text = "Area Basic Chart";
+$areaBasicChart->subtitle = "subtitle";
 
 
 
@@ -49,8 +72,29 @@ $chartAllGradingScale1->minWidth = 310;
 <script src="/public/js/modules/exporting.js"></script>
 <script src="/public/js/modules/data.js"></script>
 
-<?= $chartAllGradingScale1->setChartDisplay(); ?>
-<script type="text/javascript"><?= $chartAllGradingScale1->setChartScript(); ?></script>
+<?= $pieLegendChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $pieLegendChart->setChartScript(); ?></script>
+
+<?= $areaBasicChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaBasicChart->setChartScript(); ?></script>
+
+<?= $drillDownChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $drillDownChart->setChartScript(); ?></script>
+
+<?= $pieChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $pieChart->setChartScript(); ?></script>
+
+<?= $columnCompareChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $columnCompareChart->setChartScript(); ?></script>
+
+<?= $columnChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $columnChart->setChartScript(); ?></script>
+
+<?= $areaSplineChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaSplineChart->setChartScript(); ?></script>
+
+<?= $areaStackedChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaStackedChart->setChartScript(); ?></script>
 
 
 <?
