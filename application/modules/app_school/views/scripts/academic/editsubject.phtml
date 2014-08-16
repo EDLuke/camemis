@@ -250,6 +250,15 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
         $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
         
+        $OBJECT_FORM->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("5F43-3846")."
+            }
+        ");
+        
         $OBJECT_FORM->labelAlign = "left";
         $OBJECT_FORM->labelWidth = 150;
         $OBJECT_FORM->setonEmbeddedEvents("

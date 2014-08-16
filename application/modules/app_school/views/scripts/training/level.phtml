@@ -115,6 +115,15 @@ Ext.onReady(function() {
     if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
     
+    $OBJECT_FORM->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("CB73-31E3")."
+            }
+    ");
+    
     $OBJECT_FORM->setonEmbeddedEvents("
         ".camemisPage::setRequestURI()."
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     

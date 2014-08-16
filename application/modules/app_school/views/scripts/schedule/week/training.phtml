@@ -678,6 +678,18 @@ $setParams .= "&teacherId=".$this->teacherId."";
                 }]
             }]);
         ");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['-', {
+                text:''
+                ,tooltip:'".CAMEMIS_HELP."'
+                ,iconCls: 'icon-help'
+                ,handler:function(){
+                    ".CamemisPage::setEmbeddedHelp("0FF7-7306")."
+                }
+            }]);
+        ");
+        
         ////////////////////////////////////////////////////////////////////////
         //EXPORT IN TO EXCEL...
         ////////////////////////////////////////////////////////////////////////

@@ -44,6 +44,7 @@ Ext.onReady(function() {
     }
 
     $STORE_SCHOOLYEAR .= "]";
+    
     $OBJECT_TREE->addTBarItems("
         xtype: 'buttongroup'
         ,items:[{
@@ -65,6 +66,15 @@ Ext.onReady(function() {
         }]
     ");
     
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("D773-3668")."
+            }
+        ");
+     
     $OBJECT_TREE->setBaseParams("
     	cmd: 'treeReportTraditionalAcademic'
         ,schoolyearId:'".$currentSchoolyearId."'

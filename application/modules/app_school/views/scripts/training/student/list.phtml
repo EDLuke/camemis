@@ -214,6 +214,18 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $ADD_STUDENTS_GRID->addTBarItems("
             tbar.add('->');
         ");
+        
+        $ADD_STUDENTS_GRID->addTBarItems("
+            tbar.add(['-', {
+                text:''
+                ,tooltip:'".CAMEMIS_HELP."'
+                ,iconCls: 'icon-help'
+                ,handler:function(){
+                    ".CamemisPage::setEmbeddedHelp("8EFA-A4D4")."
+                }
+            }]);
+        ");
+                
         $ADD_STUDENTS_GRID->isQuickySearch = true;
         $ADD_STUDENTS_GRID->isGridEditing = true;
         $ADD_STUDENTS_GRID->isObjectDefaultOnLoad = false;

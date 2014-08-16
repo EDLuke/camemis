@@ -121,6 +121,7 @@ Ext.onReady(function() {
         }]);
     ");
     }
+
     ///////////////////////////////////////////////////////
     if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
     if($display == "target"){  
@@ -158,6 +159,19 @@ Ext.onReady(function() {
                 }]);
             ");
     }
+    
+        
+    $ASSIGNED_STUDENTS_GRID->addTBarItems("
+        tbar.add(['-', {
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("0459-9571")."
+           }
+       }]);
+    ");
+    
     
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'ID'");
     $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CODE_ID'");

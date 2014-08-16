@@ -54,6 +54,11 @@ if($monthList){
 $TREE_ITEMS = "[".implode(",",$data)."]";
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$setParams = "";
+$setParams .="&subjectId=".$subjectId."";
+$setParams .="&academicId=".$academicObject->ID."";
+$setParams .="&section=1";
 ?>
 <style>
     .x-vr-tab-panel-bwrap {
@@ -109,15 +114,15 @@ Ext.onReady(function() {
                 ,margins: '3 3 3 0'
                 ,items: [{
                     border: false
-                    ,layout: 'anchor'
-                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
-                    ,items: [{
-                        title: ''
-                        ,height:60
-                        ,width:500
-                        ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
-                        ,html:'<h1 class="header"><?=PLEASE_MAKE_YOUR_SELECTIONS;?></h1>'
+                    ,tbar:[{
+                        text:'<?=REFRESH?>'
+                        ,iconCls:'icon-reload'
+                        ,handler: function(){
+                            <?=CamemisPage::setRequestURI(false)?>;
+                        }
                     }]
+                    ,layout: 'fit'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'CHART', url:'/evaluation/chart/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>'})]
                 }]
             }]
         }]
