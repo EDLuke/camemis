@@ -53,18 +53,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
     
-    function cssHeader0(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
-    }
-    
-    function cssHeader1(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
-    }
-    
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();

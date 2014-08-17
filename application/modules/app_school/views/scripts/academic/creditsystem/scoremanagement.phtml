@@ -70,15 +70,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         ");
 
-        $OBJECT_TREE->addTBarItems("
-            text:''
-            ,tooltip:'".CAMEMIS_HELP."'
-            ,iconCls: 'icon-help'
-            ,handler:function(){
-                ".CamemisPage::setEmbeddedHelp("475E-E899")."
-            }
-        ");
-         
         $OBJECT_TREE->setBaseParams("
             cmd: 'getTreeCreditEducationSystem'
             ,educationSystem:1

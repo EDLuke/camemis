@@ -56,23 +56,6 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal;color:#333;padding:4px;height:18px;">' + value + '</div>';
     }
     
-    function cssAssessment(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
-    }
-    
-    function cssHeader0(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
-    }
-    
-    function cssHeader1(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
-    }
     <?
     ////////////////////////////////////////////////////////////////////////////
     $comboEditor = "
@@ -140,7 +123,7 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width: 150, renderer: cssDefault, dataIndex: 'STUDENT'");
     
     if($academicObject->DISPLAY_GPA){
-        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'GPA'");
+        $OBJECT_GRID->addColumn("header: '<b>".GPA."</b>', width: 80, align: 'center', sortable: true, renderer:cssDefault, dataIndex: 'GPA'");
     }
     
     switch(UserAuth::getUserType()){
@@ -150,11 +133,11 @@ Ext.onReady(function() {
         case 'TEACHER':
             $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
-                , width: 110
+                , width: 130
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
-                , renderer:cssAssessment
+                , renderer:cssDefault
                 , editor: ".$comboEditor."
                 
             ");
@@ -162,7 +145,7 @@ Ext.onReady(function() {
          case 'STUDENT':
             $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
-                , width: 110
+                , width: 120
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
@@ -172,15 +155,15 @@ Ext.onReady(function() {
     }
     
     if(!$academicObject->EVALUATION_OPTION){
-        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssAssessment, dataIndex: 'RANK'");
+        $OBJECT_GRID->addColumn("header: '<b>".RANK."</b>', align: 'center', width: 80,sortable: true, renderer: cssNumber, dataIndex: 'RANK'");
     }else{
         $OBJECT_GRID->addColumn("
             header: '<b>".RANK."</b>'
-            , width: 110
+            , width: 120
             , align: 'center'
             , sortable: true
             , dataIndex: 'RANK'
-            , renderer:cssAssessment
+            , renderer:cssNumber
             , editor: new Ext.form.NumberField({
                 allowBlank: false
                 ,name: 'RANK'   
@@ -190,25 +173,25 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_GRADE_POINTS){
-        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssAssessment, dataIndex: 'GRADE_POINTS'");
+        $OBJECT_GRID->addColumn("header: '<b>".GRADE_POINTS."</b>', width: 80, align: 'center', sortable: true, renderer:cssNumber, dataIndex: 'GRADE_POINTS'");
     }
-    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssAssessment, dataIndex: 'TOTAL_RESULT'");
+    $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
     
     switch($TERM_NUMBER){
         case 1:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader0, dataIndex: 'FIRST_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader1, dataIndex: 'SECOND_TERM_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader0, dataIndex: 'THIRD_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'FIRST_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'SECOND_TERM_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_TERM_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'THIRD_TERM_RESULT'");
             break;
         case 2:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader0, dataIndex: 'FIRST_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader1, dataIndex: 'SECOND_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader0, dataIndex: 'THIRD_QUARTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssHeader1, dataIndex: 'FOURTH_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'FIRST_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'SECOND_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".THIRD_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'THIRD_QUARTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FOURTH_QUARTER_RESULT."</b>', width: 110, align: 'center', renderer:cssNumber, dataIndex: 'FOURTH_QUARTER_RESULT'");
             break;
         default:
-            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', align: 'center', width: 110, sortable: true, renderer: cssHeader0, dataIndex: 'FIRST_SEMESTER_RESULT'");
-            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', align: 'center', width: 110, sortable: true, renderer: cssHeader1, dataIndex: 'SECOND_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".FIRST_SEMESTER_RESULT."</b>', align: 'center', width: 110, sortable: true, renderer: cssNumber, dataIndex: 'FIRST_SEMESTER_RESULT'");
+            $OBJECT_GRID->addColumn("header: '<b>".SECOND_SEMESTER_RESULT."</b>', align: 'center', width: 110, sortable: true, renderer: cssNumber, dataIndex: 'SECOND_SEMESTER_RESULT'");
             break;
     }
     

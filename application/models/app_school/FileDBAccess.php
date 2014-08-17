@@ -15,23 +15,19 @@ require_once setUserLoacalization();
 
 class FileDBAccess {
 
-    static function getInstance()
-    {
+    static function getInstance() {
         static $me;
-        if ($me == null)
-        {
+        if ($me == null) {
             $me = new FileDBAccess();
         }
         return $me;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function findFileFromId($Id)
-    {
+    public static function findFileFromId($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
@@ -40,14 +36,12 @@ class FileDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getFileDataFromId($Id)
-    {
+    public function getFileDataFromId($Id) {
 
         $data = array();
         $result = self::findFileFromId($Id);
 
-        if ($result)
-        {
+        if ($result) {
             $data["ID"] = $result->ID;
             $data["GUID"] = $result->GUID;
             $data["NAME"] = setShowText($result->NAME);
@@ -57,8 +51,7 @@ class FileDBAccess {
         return $data;
     }
 
-    public static function findFileFromGuId($GuId)
-    {
+    public static function findFileFromGuId($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
@@ -67,14 +60,12 @@ class FileDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function getFileDataFromGuId($GuId)
-    {
+    public function getFileDataFromGuId($GuId) {
 
         $data = array();
         $result = self::findFileFromGuId($GuId);
 
-        if ($result)
-        {
+        if ($result) {
             $data["ID"] = $result->ID;
             $data["GUID"] = $result->GUID;
             $data["NAME"] = setShowText($result->NAME);
@@ -84,8 +75,7 @@ class FileDBAccess {
         return $data;
     }
 
-    public static function findGuidFromlastId($lastId)
-    {
+    public static function findGuidFromlastId($lastId) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('t_file'));
@@ -94,20 +84,16 @@ class FileDBAccess {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public function jsonLoadFile($GuId)
-    {
+    public function jsonLoadFile($GuId) {
 
         $result = self::findFileFromGuId($GuId);
 
-        if ($result)
-        {
+        if ($result) {
             $o = array(
                 "success" => true
                 , "data" => $this->getFileDataFromGuId($GuId)
             );
-        }
-        else
-        {
+        } else {
             $o = array(
                 "success" => true
                 , "data" => array()
@@ -116,8 +102,7 @@ class FileDBAccess {
         return $o;
     }
 
-    public static function getAllFilesQuery($params)
-    {
+    public static function getAllFilesQuery($params) {
 
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
         $studentId = isset($params["studentId"]) ? addText($params["studentId"]) : '';
@@ -127,46 +112,35 @@ class FileDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_file'));
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "STUDENT"://@veasna modify
                 $SQL->joinRight(array('B' => 't_file_user'), 'A.GUID=B.FILE', array('B.FILE', 'B.SCHOOLYEAR_ID'));
-                if ($schoolyearId)
-                {
+                if ($schoolyearId) {
                     $classObject = Utiles::getStudentClassTraditional($studentId, $schoolyearId);
-                    if ($classObject)
-                    {
+                    if ($classObject) {
                         $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.SCHOOLYEAR_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
-                        if ($studentId)
-                        {
+                        if ($studentId) {
                             $SQL->where("C.STUDENT='" . $studentId . "'");
                         }
-                        if ($schoolyearId)
-                        {
+                        if ($schoolyearId) {
                             $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $data = BulletinDBAccess::findAcademicByStudentId($studentId, 3);
                         $academicIds = ($data) ? implode(",", $data) : 'NULL';
-                        $SQL->where("FIND_IN_SET($academicIds,B.CREDIT_ACADEMIC_ID)");
-                        if ($schoolyearId)
-                        {
+                        $SQL->where("B.CREDIT_ACADEMIC_ID IN (" . $academicIds . ")");
+                        if ($schoolyearId) {
                             $SQL->where("B.SCHOOLYEAR_ID='" . $schoolyearId . "'");
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $data = BulletinDBAccess::findAcademicByStudentId($studentId, 3);
                     $academicIds = ($data) ? implode(",", $data) : 'NULL';
                     $SQL->joinLeft(array('C' => 't_student_schoolyear'), 'B.SCHOOLYEAR_ID=C.SCHOOL_YEAR AND B.GRADE=C.GRADE', array('C.STUDENT'));
-                    if ($studentId)
-                    {
+                    if ($studentId) {
                         $SQL->where("C.STUDENT='" . $studentId . "'");
                     }
-                    $SQL->orWhere("FIND_IN_SET($academicIds,B.CREDIT_ACADEMIC_ID)");
+                    $SQL->orWhere("B.CREDIT_ACADEMIC_ID IN (" . $academicIds . ")");
                 }
                 break;
 
@@ -174,35 +148,29 @@ class FileDBAccess {
             case "INSTRUCTOR":
                 $SQL->joinRight(array('B' => 't_file_user'), 'A.GUID=B.FILE', array('B.FILE', 'B.USER_ROLE_ID'));
                 $SQL->joinLeft(array('C' => 't_members'), 'B.USER_ROLE_ID=C.ROLE', array('C.ID AS MEMBER_ID'));
-                if ($teacherId)
-                {
+                if ($teacherId) {
                     $SQL->where("C.ID='" . $teacherId . "'");
                 }
                 break;
 
             case "SUPERADMIN":
             case "ADMIN":
-                if ($parentId)
-                {
-                    $SQL->where("A.PARENT = ?", $parentId);
-                }
-                else
-                {
+                if ($parentId) {
+                    $SQL->where("A.PARENT = ?",$parentId);
+                } else {
                     $SQL->where("A.PARENT=0");
                 }
                 break;
         }
 
-        if ($globalSearch)
-        {
+        if ($globalSearch) {
             $SQL->where("A.NAME LIKE '" . $globalSearch . "%'");
         }
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public function jsonTreeAllFiles($params)
-    {
+    public function jsonTreeAllFiles($params) {
 
         $params["parentId"] = isset($params["node"]) ? addText($params["node"]) : '';
         $result = self::getAllFilesQuery($params);
@@ -210,11 +178,9 @@ class FileDBAccess {
         $data = array();
         $i = 0;
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
-                if ($value->NAME)
-                {
+                if ($value->NAME) {
                     $data[$i]['id'] = "" . $value->ID . "";
                     $data[$i]['guid'] = "" . $value->GUID . "";
                     $data[$i]['parentId'] = "" . $value->PARENT . "";
@@ -223,13 +189,10 @@ class FileDBAccess {
                     $data[$i]['uploadFile'] = self::checkUploadFile($value->GUID);
                     $data[$i]['fileRecipient'] = self::checkFileRecipient($value->GUID);
 
-                    if (!self::checkChild($value->GUID))
-                    {
+                    if (!self::checkChild($value->GUID)) {
                         $data[$i]['leaf'] = true;
                         $data[$i]['iconCls'] = "icon-attach";
-                    }
-                    else
-                    {
+                    } else {
                         $data[$i]['leaf'] = false;
                         $data[$i]['cls'] = "nodeTextBlue";
                         $data[$i]['iconCls'] = "icon-folder_magnify";
@@ -242,8 +205,7 @@ class FileDBAccess {
         return $data;
     }
 
-    public function jsonSaveFile($params)
-    {
+    public function jsonSaveFile($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "new";
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : '';
@@ -256,8 +218,7 @@ class FileDBAccess {
         if (isset($params["DESCRIPTION"]))
             $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
 
-        if ($objectId == "new")
-        {
+        if ($objectId == "new") {
             $uniqueId = generateGuid();
             $SAVEDATA['GUID'] = $uniqueId;
             $SAVEDATA['PARENT'] = $parentId;
@@ -267,13 +228,10 @@ class FileDBAccess {
 
             $lastId = self::dbAccess()->lastInsertId();
             $result = self::findGuidFromlastId($lastId);
-            if ($result)
-            {
+            if ($result) {
                 $objectId = $result->GUID;
             }
-        }
-        else
-        {
+        } else {
             $WHERE = self::dbAccess()->quoteInto("GUID = ?", $objectId);
             self::dbAccess()->update('t_file', $SAVEDATA, $WHERE);
         }
@@ -284,8 +242,7 @@ class FileDBAccess {
         );
     }
 
-    public function jsonRemoveFile($GuId)
-    {
+    public function jsonRemoveFile($GuId) {
 
         self::dbAccess()->delete('t_file', array("GUID='" . $GuId . "'"));
 
@@ -296,27 +253,22 @@ class FileDBAccess {
         return array("success" => true);
     }
 
-    public static function checkChild($GuId)
-    {
+    public static function checkChild($GuId) {
         $facette = self::findFileFromGuId($GuId);
         $parentId = $facette ? $facette->ID : 0;
-        if ($parentId)
-        {
+        if ($parentId) {
             $SQL = self::dbAccess()->select();
             $SQL->from("t_file", array("C" => "COUNT(*)"));
             $SQL->where("PARENT = ?", $parentId);
             //error_log($SQL);
             $result = self::dbAccess()->fetchRow($SQL);
             return $result ? $result->C : 0;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public static function checkUploadFile($GuId)
-    {
+    public static function checkUploadFile($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_school_upload", array("C" => "COUNT(*)"));
         $SQL->where("OBJECT_ID = ?", $GuId);
@@ -325,18 +277,16 @@ class FileDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkFileRecipient($GuId)
-    {
+    public static function checkFileRecipient($GuId) {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
-        $SQL->where("FILE = ?", $GuId);
+        $SQL->where("FILE = ?",$GuId);
         //error_log($SQL);
         $result = self::dbAccess()->fetchRow($SQL);
         return $result ? $result->C : 0;
     }
 
-    public static function getAcademicsByFile($params)
-    {
+    public static function getAcademicsByFile($params) {
 
         $DATA_FOR_JSON = array();
 
@@ -346,8 +296,7 @@ class FileDBAccess {
 
 
         if ($result)
-            foreach ($result as $value)
-            {
+            foreach ($result as $value) {
 
                 $data['id'] = "" . $value->ID . "";
                 $data['guid'] = "" . $value->GUID . "";
@@ -355,8 +304,7 @@ class FileDBAccess {
                 $data['objectType'] = $value->OBJECT_TYPE;
                 $data['schoolyearId'] = $value->SCHOOL_YEAR;
 
-                switch ($value->OBJECT_TYPE)
-                {
+                switch ($value->OBJECT_TYPE) {
 
                     case "CAMPUS":
                         $data['leaf'] = false;
@@ -371,12 +319,9 @@ class FileDBAccess {
                         $data['iconCls'] = "icon-folder_magnify";
                         break;
                     case "SCHOOLYEAR":
-                        if ($educationSystem)
-                        {
+                        if ($educationSystem) {
                             $data['leaf'] = false;
-                        }
-                        else
-                        {
+                        } else {
                             $data['leaf'] = true;
                         }
 
@@ -389,20 +334,14 @@ class FileDBAccess {
                         $data['leaf'] = true;
                         $subjectObject = SubjectDBAccess::findSubjectFromId($value->SUBJECT_ID);
 
-                        if ($subjectObject)
-                        {
+                        if ($subjectObject) {
                             $data['title'] = $subjectObject->NAME;
-                            if ($subjectObject->SHORT)
-                            {
+                            if ($subjectObject->SHORT) {
                                 $data['text'] = "($subjectObject->SHORT) " . $subjectObject->NAME;
-                            }
-                            else
-                            {
+                            } else {
                                 $data['text'] = $subjectObject->NAME;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             $data['text'] = "?";
                         }
                         $data['cls'] = "nodeFolderBold";
@@ -417,62 +356,48 @@ class FileDBAccess {
         return $DATA_FOR_JSON;
     }
 
-    public static function checkFileAcademic($objectId, $Id)
-    {
+    public static function checkFileAcademic($objectId, $Id) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($Id);
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_file_user", array("C" => "COUNT(*)"));
-        if ($academicObject->EDUCATION_SYSTEM)
-        { //@veasna
+        if ($academicObject->EDUCATION_SYSTEM) { //@veasna
             $SQL->where("CREDIT_ACADEMIC_ID = '" . $academicObject->ID . "'");
-        }
-        else
-        {
+        } else {
             $SQL->where("GRADE = '" . $academicObject->GRADE_ID . "'");
         }
         $SQL->where("SCHOOLYEAR_ID = '" . $academicObject->SCHOOL_YEAR . "'");
-        $SQL->where("FILE = ?", $objectId);
+        $SQL->where("FILE = ?",$objectId);
 
         $result = self::dbAccess()->fetchRow($SQL);
 
-        if ($result)
-        {
+        if ($result) {
             return $result->C ? true : false;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public static function jsonActionAcademicToFile($params)
-    {
+    public static function jsonActionAcademicToFile($params) {
 
         $objectId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
         $checked = isset($params["checked"]) ? addText($params["checked"]) : "";
         $academicId = isset($params["academic"]) ? (int) $params["academic"] : "";
         $userroleId = isset($params["userroleId"]) ? addText($params["userroleId"]) : "";
 
-        if ($checked == "true")
-        {
-            if ($academicId)
-            {
+        if ($checked == "true") {
+            if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                if ($academicObject->EDUCATION_SYSTEM)
-                {
+                if ($academicObject->EDUCATION_SYSTEM) {
                     $SAVEDATA["CREDIT_ACADEMIC_ID"] = $academicObject->ID; //@veasna  
-                }
-                else
-                {
+                } else {
                     $SAVEDATA["GRADE"] = $academicObject->GRADE_ID;
                 }
                 $SAVEDATA["SCHOOLYEAR_ID"] = $academicObject->SCHOOL_YEAR;
             }
 
-            if ($userroleId)
-            {
+            if ($userroleId) {
                 $SAVEDATA["USER_ROLE_ID"] = $userroleId;
             }
 
@@ -480,24 +405,17 @@ class FileDBAccess {
             self::dbAccess()->insert("t_file_user", $SAVEDATA);
 
             $msg = RECORD_WAS_ADDED;
-        }
-        else
-        {
-            if ($academicId)
-            {
+        } else {
+            if ($academicId) {
                 $academicObject = AcademicDBAccess::findGradeFromId($academicId);
-                if ($academicObject->EDUCATION_SYSTEM)
-                {   //@veasna
+                if ($academicObject->EDUCATION_SYSTEM) {   //@veasna
                     self::dbAccess()->delete("t_file_user", array("CREDIT_ACADEMIC_ID='" . $academicObject->ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
-                }
-                else
-                {
+                } else {
                     self::dbAccess()->delete("t_file_user", array("GRADE='" . $academicObject->GRADE_ID . "'", "SCHOOLYEAR_ID='" . $academicObject->SCHOOL_YEAR . "'", "FILE='" . $objectId . "'"));
                 }
             }
 
-            if ($userroleId)
-            {
+            if ($userroleId) {
                 self::dbAccess()->delete("t_file_user", array("USER_ROLE_ID='" . $userroleId . "'", "FILE='" . $objectId . "'"));
             }
 
