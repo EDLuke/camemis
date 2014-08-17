@@ -87,18 +87,6 @@ $viewportItem = new ViewportItem(
 
         $ENROLLMENT_TYPE_STORE = "[";
             $ENROLLMENT_TYPE_STORE .= "[0, '" . ENROLLMENT_IN_SCHOOLYEAR_N_CLASS . "']";
-            switch ($TERM_NUMBER) {
-                case 1:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_TERM."']";
-                    break;
-                case 2:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_QUARTER."']";
-                    break;
-                default:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_SEMESTER."']";
-                    break;
-            }
-            $ENROLLMENT_TYPE_STORE .= ",[2, '".ENROLLMENT_IN_MULTI_SCHOOLYEAR."']";
         $ENROLLMENT_TYPE_STORE .= "]";
         
         if($this->facette->EDUCATION_SYSTEM){
@@ -111,7 +99,7 @@ $viewportItem = new ViewportItem(
             $DETAIL_INFORMATION_ITEMS = "[
                 {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
                 ,{".CamemisField::Checkbox("USE_OF_GROUPS","USE_OF_GROUPS",USE_OF_GROUPS, 1, false, false,true)."}    
-                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, true, 0, false, false,false)."}
+                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, false, false, false, false,false)."}
                 ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }
