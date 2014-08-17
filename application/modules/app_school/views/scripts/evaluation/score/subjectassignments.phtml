@@ -294,8 +294,6 @@ Ext.onReady(function() {
     }
     
     if($academicObject->DISPLAY_MONTH_RESULT){
-        $setMonthParams = $setParams;
-        $setMonthParams .="&section=1";
         $MONTHLY_RESULT = "{
             text: '".MONTHLY_RESULT."'
             ,id:'MONTHLY_RESULT'
@@ -309,9 +307,7 @@ Ext.onReady(function() {
             },{
                 text:'".CHARTS."'
                 ,iconCls:'icon-chart_bar'
-                ,handler:function(){
-                    clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setMonthParams)."');
-                }
+                ,disabled:true
             }]
         }";
         $BAR_ITEMS[] = $MONTHLY_RESULT;
@@ -336,7 +332,7 @@ Ext.onReady(function() {
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
                     ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
+                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart');
                     }
                 }]
             }";
@@ -359,9 +355,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -383,9 +377,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -410,9 +402,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -434,9 +424,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -458,9 +446,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsThird)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -485,9 +471,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsFirst)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             
@@ -534,9 +518,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             if($academicObject->DISPLAY_SECOND_RESULT)
@@ -547,7 +529,6 @@ Ext.onReady(function() {
     if($academicObject->ENROLLMENT_TYPE !=1){
         if($academicObject->DISPLAY_YEAR_RESULT){
             $setParamsYear = $setParams;
-            $setParamsYear .="&section=3";
             $YEAR_RESULT = "{
                 text: '".YEAR_RESULT."'
                 ,id:'YEAR_RESULT'
@@ -561,9 +542,7 @@ Ext.onReady(function() {
                 },{
                     text:'".CHARTS."'
                     ,iconCls:'icon-chart_bar'
-                    ,handler:function(){
-                        clickOpenPage('MAIN_CONTENT','','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsYear)."');
-                    }
+                    ,disabled:true
                 }]
             }";
             $BAR_ITEMS[] = $YEAR_RESULT;
@@ -577,9 +556,6 @@ Ext.onReady(function() {
     $VIEWPORT_ITEMS = Array();
     
     if(!$academicObject->EVALUATION_OPTION){
-        
-        $setParamsTeacherEnterScore = $setParams;
-        $setParamsTeacherEnterScore .= "&target=TEACHER_ENTER_SCORE";
         $TEACHER_ENTER_SCORE = "{
             title: ''
             ,layout:'fit'
@@ -610,15 +586,15 @@ Ext.onReady(function() {
                     ,activeItem: 0
                     ,items: [{
                         border: false
-                        ,tbar:[{
-                            text:'".REFRESH."'
-                            ,iconCls:'icon-reload'
-                            ,handler: function(){
-                                ".CamemisPage::setRequestURI(false).";
-                            }
+                        ,layout: 'anchor'
+                        ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                        ,items: [{
+                            title: ''
+                            ,height:60
+                            ,width:500
+                            ,bodyStyle: 'background:#F9F9F9; padding:10px; border:1px dotted #999;text-align:center;'
+                            ,html:'<h1 class=\"header\">".PLEASE_MAKE_YOUR_SELECTIONS."</h1>'
                         }]
-                        ,layout: 'fit'
-                        ,items: [new Ext.ux.IFrameComponent({ id: 'CHART', url:'/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsTeacherEnterScore)."'})]
                     }]
                 }]
             }]

@@ -257,12 +257,10 @@ if(!$academicObject->EVALUATION_OPTION){
             , $monthyear
             , false);
     if($listAssignments){
-        $i=0;
         foreach($listAssignments as $value){
-            $cssValue = $i % 2;
-            $COLUMNS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:80,align:'center',renderer:cssHeader".$cssValue."}"; 
+
+            $COLUMNS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
             $FIELDS .= ",{name: 'A_".$value->OBJECT_ID."'}";
-            $i++;
         }
     }
 }
@@ -308,18 +306,6 @@ Ext.onReady(function() {
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#333; padding:4px;height:18px;">' + value + '</div>';
-    }
-    
-    function cssHeader0(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
-    }
-    
-    function cssHeader1(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
     }
     
     <?php
@@ -469,33 +455,6 @@ Ext.onReady(function() {
     $html .= "});";
     
     echo $html;
-    
-    $TEACHER_COMMENTS ="{";
-    $TEACHER_COMMENTS .="text: '".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT";
-    $TEACHER_COMMENTS .=",iconCls: 'icon-comments_add'";
-    $TEACHER_COMMENTS .=",disabled:false";
-    $TEACHER_COMMENTS .=",handler: function(){";
-    $TEACHER_COMMENTS .="openWinIFrame('".TEACHER_COMMENTS." &raquo; ' + record.data.STUDENT,'/evaluation/teachercomment/?camIds=".$this->urlEncryp->encryptedGet($setParams)."&studentId=' + record.data.ID, 600,percentHeight(85));";
-    $TEACHER_COMMENTS .="}";
-    $TEACHER_COMMENTS .="}";
-    
-    $CONTEXTMENU_ITEMS[] = $TEACHER_COMMENTS;
-    
-    $CHOOSE_CONTEXTMENU_ITEMS = implode(",",$CONTEXTMENU_ITEMS);
-    if($CONTEXTMENU_ITEMS){
-        $js = "";
-        $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
-            $js .="if(columnIndex<=2){";
-                $js .="var record = grid.store.getAt(rowIndex);";
-                $js .="var contextMenu = new Ext.menu.Menu({";
-                $js .="items: [".$CHOOSE_CONTEXTMENU_ITEMS."]";
-                $js .="});";
-                $js .="event.stopEvent();";
-                $js .="contextMenu.showAt(event.xy);"; 
-            $js .="}";
-        $js .="});";
-        echo $js;
-    }
     ?>
 });
 </script>

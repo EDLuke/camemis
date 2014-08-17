@@ -1,5 +1,4 @@
 <?
-
 ///////////////////////////////////////////////////////////
 // @THORN Visal
 // Date: 01.08.2014
@@ -9,148 +8,95 @@ require_once 'clients/CamemisPage.php';
 require_once 'models/assessment/AssessmentChart.php';
 require_once setUserLoacalization();
 
-$target = isset($_GET["target"]) ? addText($_GET["target"]) : "";
-$studentId = isset($_GET["studentId"]) ? addText($_GET["studentId"]) : "";
 $academicId = isset($_GET["academicId"]) ? addText($_GET["academicId"]) : "";
 $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
-$section = isset($_GET["section"]) ? addText($_GET["section"]) : "";
 
-if($term){
-    switch($term){
-        case "FIRST_SEMESTER":
-            $section ="2";
-            break;
-        case "SECOND_SEMESTER":
-            $section ="2";
-            break;
-        case "FIRST_TERM":
-            $section ="4";
-            break;
-        case "SECOND_TERM":
-            $section ="4";
-            break;
-        case "THIRD_TERM":
-            $section ="4";
-            break;
-        case "FIRST_QUARTER":
-            $section ="5";
-            break;
-        case "SECOND_QUARTER":
-            $section ="5";
-            break;
-        case "THIRD_QUARTER":
-            $section ="5";
-            break;
-        case "FOURTH_QUARTER":
-            $section ="5";
-        break;
-    }
-}
+$ASSESSMENT_CHART = new AssessmentChart();
+
+$ASSESSMENT_CHART->setAcademicId($academicId);
+$ASSESSMENT_CHART->setSubjectId($subjectId);
+$ASSESSMENT_CHART->setTerm($term);
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-CamemisHighChart::setHighChartLIB();
+//$params = Utiles::setPostDecrypteParams($this->urlEncryp->encryptedGet($setParams));
+//$this->setParams($params);
+//$objectDataSet = new FilterChartDataSet();
+//$dataSetGradingScale = $objectDataSet->getDatasetGradingScale();
 
-Class DisplayChart{
-    
-    function __construct($_target, $_academicId, $_subjectId, $_term, $_section, $_studentId) {
-        
-        $this->target = strtoupper($_target);
-        $this->academicId = $_academicId;
-        $this->subjectId = $_subjectId;
-        $this->term = $_term;
-        $this->section = $_section;
-        $this->studentId = $_studentId;
-        
-        $this->chart = new AssessmentChart();
-        $this->chart->setAcademicId($this->academicId);
-        $this->chart->setSubjectId($this->subjectId);
-        $this->chart->setTerm($this->term);
-    }
-    
-    protected function setDefaultChart(){
-        $SUBJECT_GRADINGSCALE = new CamemisHighChart(
-            "PIC_CHART"
-            , 'SUBJECT_GRADINGSCALE'
-            , 'All Grading Scale of Students'
-            , $this->chart->getSubjectGradingScaleByClass()
-        );
+/*$chartAllGradingScale = new CamemisHighChart("PIC_CHART", 'PIC_CHART', 'All Grading Scale of Students', false);
+$chartAllGradingScale->text = "Student Grading Scale";
+$chartAllGradingScale->allowPointSelect = 'true';
+$chartAllGradingScale->pointColor = 'black';
+$chartAllGradingScale->minWidth = 310;
+$chartAllGradingScale->height = 400; */
 
-        $SUBJECT_GRADINGSCALE->allowPointSelect = 'true';
-        $SUBJECT_GRADINGSCALE->pointColor = 'black';
-        $SUBJECT_GRADINGSCALE->height = 300;
-        $SUBJECT_GRADINGSCALE->maxWidth = 450;
-        $SUBJECT_GRADINGSCALE->maxWidthPercentage = false;
-        $SUBJECT_GRADINGSCALE->plotBorderWidth = "null";
+$drillDownChart = new CamemisHighChart("COLUMN_DRILLDOWN_CHART", 'COLUMN_DRILLDOWN_CHART', 'Work', false);
+$drillDownChart->text = "Drill Down Chart";
 
-        $SUBJECT_PASS_STATUS = new CamemisHighChart(
-            "COLUMN_COMPARE_CHART"
-            , 'SUBJECT_PASS_STATUS'
-            , 'Pass/Fail Status'
-            , $this->chart->getSubjectPassStatus()
-        );
+$pieChart = new CamemisHighChart("PIE_CHART", 'PIE_CHART', 'Work', false);
+$pieChart->text = "Pie Chart";
 
-        $SUBJECT_PASS_STATUS->allowPointSelect = 'true';
-        $SUBJECT_PASS_STATUS->pointColor = 'black';
-        $SUBJECT_PASS_STATUS->height = 400;
-        $SUBJECT_PASS_STATUS->maxWidth = 450;
-        $SUBJECT_PASS_STATUS->maxWidthPercentage = false;
-        $SUBJECT_PASS_STATUS->plotBorderWidth = "null";
-        $SUBJECT_PASS_STATUS->xAxis = "{categories:['" . PASS . "','" . FAIL . "']}";
+$pieLegendChart = new CamemisHighChart("PIE_LEGEND_CHART", 'PIE_LEGEND_CHART', 'Work', false);
+$pieLegendChart->text = "Pie Legend Chart";
+$pieLegendChart->tooltipsValueSuffix = "%";
 
-        $SUBJECT_AVG_STUDENT_LIST = new CamemisHighChart(
-            "COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST'
-            , 'List of Students Average'
-            , $this->chart->getSubjectAVGStudentList()
-        );
-        $SUBJECT_AVG_STUDENT_LIST->text = false;
-        $SUBJECT_AVG_STUDENT_LIST->allowPointSelect = 'true';
-        $SUBJECT_AVG_STUDENT_LIST->pointColor = 'black';
-        $SUBJECT_AVG_STUDENT_LIST->height = 400;
-        $SUBJECT_AVG_STUDENT_LIST->maxWidthPercentage = true;
-        $SUBJECT_AVG_STUDENT_LIST->plotBorderWidth = "null";
+$columnCompareChart = new CamemisHighChart("COLUMN_COMPARE_CHART", 'COLUMN_COMPARE_CHART', 'Work', false);
+$columnCompareChart->text = "Column Compare Chart";
 
-        $SUBJECT_GRADINGSCALE->setDIVHighChart();
-        $SUBJECT_PASS_STATUS->setDIVHighChart();
-        $SUBJECT_AVG_STUDENT_LIST->setDIVHighChart();
+$columnChart = new CamemisHighChart("COLUMN_CHART", 'COLUMN_CHART', 'Work', false);
+$columnChart->text = "Column Chart";
+$columnChart->seriesName = "SeriesName";
 
-        $SUBJECT_GRADINGSCALE->setHighChartScript();
-        $SUBJECT_PASS_STATUS->setHighChartScript();
-        $SUBJECT_AVG_STUDENT_LIST->setHighChartScript();
-    }
+$areaSplineChart = new CamemisHighChart("AREA_SPLINE_CHART", 'AREA_SPLINE_CHART', 'Work', false);
+$areaSplineChart->text = "Area Spline Chart";
 
-    protected function getTeacherEnterScoreChart(){
-        
-        $CHART = new CamemisHighChart(
-            "AREA_SPLINE_CHART"
-            , 'TEACHER_ENTER_SCORE'
-            , TEACHER_ENTER_SCORE
-            , $this->chart->getDatasetTeacherSubjectScoreEnter()
-        );
-        $CHART->xAxis ="categories: [".$this->chart->getImplodeTeacherSubjectScoreDate()."]";
-        $CHART->allowPointSelect = 'true';
-        $CHART->plotBorderWidth = "null";
-        $CHART->setDIVHighChart();
-        $CHART->setHighChartScript();
-    }
-    
-    public function setDisplayChart(){
-        switch($this->target){
-            case "TEACHER_ENTER_SCORE":
-                return $this->getTeacherEnterScoreChart();
-            break;
-            default:
-                return $this->setDefaultChart();
-            break;
-        }
-    }
-}
+$areaStackedChart = new CamemisHighChart("AREA_STACKED_CHART", 'AREA_STACKED_CHART', 'Work', false);
+$areaStackedChart->text = "Area Stacked Chart";
+$areaStackedChart->tooltipsValueSuffix = "%";
 
-$DISPLAY = new DisplayChart($target, $academicId, $subjectId, $term, $section, $studentId);
-$DISPLAY->setDisplayChart();
+$areaBasicChart = new CamemisHighChart("AREA_BASIC_CHART", 'AREA_BASIC_CHART', 'Work', false);
+$areaBasicChart->text = "Area Basic Chart";
+$areaBasicChart->subtitle = "subtitle";
 
+
+
+?>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="/public/js/highcharts.js"></script>
+<script src="/public/js/modules/drilldown.js"></script>
+<script src="/public/js/modules/exporting.js"></script>
+<script src="/public/js/modules/data.js"></script>
+
+<?= $pieLegendChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $pieLegendChart->setChartScript(); ?></script>
+
+<?= $areaBasicChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaBasicChart->setChartScript(); ?></script>
+
+<?= $drillDownChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $drillDownChart->setChartScript(); ?></script>
+
+<?= $pieChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $pieChart->setChartScript(); ?></script>
+
+<?= $columnCompareChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $columnCompareChart->setChartScript(); ?></script>
+
+<?= $columnChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $columnChart->setChartScript(); ?></script>
+
+<?= $areaSplineChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaSplineChart->setChartScript(); ?></script>
+
+<?= $areaStackedChart->setChartDisplay(); ?>
+<script type="text/javascript"><?= $areaStackedChart->setChartScript(); ?></script>
+
+
+<?
 print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
 ?>

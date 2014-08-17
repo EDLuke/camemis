@@ -36,15 +36,6 @@ class AssessmentConfig {
         }
     }
 
-    public static function getListGradingScales($scoreType, $qualificationType)
-    {
-        $SQL = self::dbAccess()->select();
-        $SQL->from("t_gradingsystem", array("*"));
-        $SQL->where("SCORE_TYPE = '" . $scoreType . "'");
-        $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
-        return self::dbAccess()->fetchAll($SQL);
-    }
-
     public static function getSQLGradingScale($score, $scoreType, $qualificationType, $all)
     {
         $SQL = self::dbAccess()->select();

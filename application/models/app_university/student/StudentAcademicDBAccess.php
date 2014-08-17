@@ -1540,38 +1540,6 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function checkUsedCountStudentClassTermSchoolyear($studentId, $academicObject)
-    {
-
-        $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
-        $facette = self::findStudentClassGradeSchoolyear($studentId, $academicObject);
-
-        $count = 0;
-        $CHECK = false;
-        if ($facette)
-        {
-            if ($facette->CLASSIDS)
-            {
-                $count = count(explode(",", $facette->CLASSIDS));
-            }
-
-            switch ($TERM_NUMBER)
-            {
-                case 1:
-                    $CHECK = ($count == 3) ? true : false;
-                    break;
-                case 2:
-                    $CHECK = ($count == 4) ? true : false;
-                    break;
-                default:
-                    $CHECK = ($count == 2) ? true : false;
-                    break;
-            }
-        }
-
-        return $CHECK;
-    }
-
 }
 
 ?>

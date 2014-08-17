@@ -232,7 +232,7 @@ class StaffDBAccess {
         $endSalary = isset($params["END_SALARY"]) ? addText($params["END_SALARY"]) : "";
         $course = isset($params["COURSE"]) ? addText($params["COURSE"]) : "";
         $institutionName = isset($params["INSTITUTION_NAME"]) ? addText($params["INSTITUTION_NAME"]) : "";
-        $name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
+        $name= isset($params["NAME"]) ? addText($params["NAME"]) : "";
         $academicYear = isset($params["ACADEMIC_YEAR"]) ? addText($params["ACADEMIC_YEAR"]) : "";
         $publicationTitle = isset($params["PUBLICATION_TITLE"]) ? addText($params["PUBLICATION_TITLE"]) : "";
         $description = isset($params["DESCRIPTION"]) ? addText($params["DESCRIPTION"]) : "";
@@ -292,7 +292,7 @@ class StaffDBAccess {
         //PERSON DESCRIPTION...
         ////////////////////////////////////////////////////////////////////////
         //$person_description_entries = DescriptionDBAccess::sqlDescription("ALL", "STAFF", false);
-
+        
         $person_description_entries = DescriptionDBAccess::sqlPersonalDescription("STAFF");
         $CHECKBOX_DATA = array();
         $RADIOBOX_DATA = array();
@@ -304,21 +304,18 @@ class StaffDBAccess {
                 if (isset($params["CHECKBOX_" . $value->ID . ""]))
                 {
                     $CHECKBOX_DATA[] = addText($params["CHECKBOX_" . $value->ID . ""]);
+                  
                 }
 
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT)
-                {
-                    if (isset($params["RADIOBOX_" . $parentObject->PARENT]))
-                    {
+                if ($parentObject->PARENT) {
+                    if (isset($params["RADIOBOX_" . $parentObject->PARENT])) {
                         $RADIOBOX_DATA[$value->ID] = $value->ID;
                     }
                 }
                 $parentObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                if ($parentObject->PARENT)
-                {
-                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT]))
-                    {
+                if ($parentObject->PARENT) {
+                    if (isset($params["INPUTFIELD_" . $parentObject->PARENT])) {
                         $INPUTFIELD_DATA[$value->ID] = $value->ID;
                     }
                 }
@@ -547,31 +544,31 @@ class StaffDBAccess {
 
         if ($qualification_degree)
             $SQL .= " AND Z.QUALIFICATION_DEGREE='" . $qualification_degree . "' ";
-
+            
         if ($companyName)
             $SQL .= " AND Z.COMPANY_NAME='" . $companyName . "' ";
 
         if ($position)
             $SQL .= " AND Z.POSITION='" . $position . "' ";
-
+        
         if ($startSalary)
             $SQL .= " AND Z.START_SALARY='" . $startSalary . "' ";
 
         if ($endSalary)
             $SQL .= " AND Z.END_SALARY='" . $endSalary . "' ";
-
+            
         if ($course)
             $SQL .= " AND Z.COURSE='" . $course . "' ";
 
         if ($institutionName)
             $SQL .= " AND Z.INSTITUTION_NAME='" . $institutionName . "' ";
-
+            
         if ($name)
             $SQL .= " AND Z.NAME='" . $name . "' ";
 
         if ($academicYear)
             $SQL .= " AND Z.ACADEMIC_YEAR='" . $academicYear . "' ";
-
+            
         if ($publicationTitle)
             $SQL .= " AND Z.PUBLICATION_TITLE='" . $publicationTitle . "' ";
 
@@ -697,7 +694,7 @@ class StaffDBAccess {
     {
 
         ini_set('memory_limit', '128M');
-
+        
         /**
          * Advanced Search Staff....
          */
@@ -1139,21 +1136,21 @@ class StaffDBAccess {
         {
             case 0:
                 $newStatus = 1;
-                $USERDATA["STATUS"] = 1;
-                $data['STATUS'] = 1;
-                $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                $USERDATA["STATUS"]  = 1;
+                $data['STATUS']      = 1;
+                $data['ENABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['ENABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
             case 1:
                 $newStatus = 0;
-                $USERDATA["STATUS"] = 0;
-                $data['STATUS'] = 0;
-                $data['DISABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                $USERDATA["STATUS"]   = 0;
+                $data['STATUS']       = 0;
+                $data['DISABLED_DATE']= "'". getCurrentDBDateTime() ."'";
+                $data['DISABLED_BY']  = "'". Zend_Registry::get('USER')->CODE ."'";
                 break;
         }
 
-        self::dbAccess()->update("t_staff", $data, "ID='" . $objectId . "'");
+        self::dbAccess()->update("t_staff", $data, "ID='". $objectId ."'");
 
         $WHERE[] = "ID = '" . $objectId . "'";
         self::dbAccess()->update('t_members', $USERDATA, $WHERE);
@@ -1742,7 +1739,7 @@ class StaffDBAccess {
             $SQL .= " AND B.SUBJECT_ID= '" . $subjectId . "'";
 
         if ($classId)
-            $SQL .= " AND FIND_IN_SET($classId,B.ACADEMIC_ID)";
+            $SQL .= " AND B.ACADEMIC_ID IN (" . $classId . ")";
 
         //echo $SQL;
         //error_log($SQL);
@@ -2921,14 +2918,14 @@ class StaffDBAccess {
                     $m = isset($explode[1]) ? trim($explode[1]) : "00";
                     $y = isset($explode[2]) ? trim($explode[2]) : "0000";
                     $newValue = $y . "-" . $m . "-" . $d;
-                    $data["'" . $params["field"] . "'"] = "'" . $newValue . "'";
+                    $data["'". $params["field"] ."'"] = "'". $newValue ."'";
                 }
                 break;
             default:
-                $data["'" . $params["field"] . "'"] = "'" . $params["newValue"] . "'";
+                $data["'". $params["field"] ."'"] = "'". $params["newValue"] ."'";
                 break;
         }
-        self::dbAccess()->update("t_staff", $data, "ID='" . $params["id"] . "'");
+        self::dbAccess()->update("t_staff", $data, "ID='". $params["id"] ."'");
         return array("success" => true);
     }
 
@@ -3152,9 +3149,8 @@ class StaffDBAccess {
         $field = isset($params["field"]) ? addText($params["field"]) : "";
         $objectId = isset($params["id"]) ? addText($params["id"]) : "";
         $object = isset($params["object"]) ? addText($params["object"]) : "";
-
-        switch ($field)
-        {
+        
+        switch ($field) {
             case "CITY_PROVINCE":
             case "RELATIONSHIP":
             case "ETHNICITY":
@@ -3223,13 +3219,13 @@ class StaffDBAccess {
     {
 
         $staffId = isset($params["objectId"]) ? addText($params["objectId"]) : "";
-        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : ""; //@veasna
+        $objectType = isset($params["objectType"]) ? addText($params["objectType"]) : "";//@veasna
 
         $SQL = self::dbAccess()->select()
                 ->from("t_person_infos", array('*'))
                 ->where("USER_ID = '" . $staffId . "'");
-        if ($objectType)
-            $SQL->where("OBJECT_TYPE =?", strtoupper($objectType));
+        if($objectType)
+        $SQL->where("OBJECT_TYPE =?",strtoupper($objectType));
         $result = self::dbAccess()->fetchAll($SQL);
 
         $i = 0;
