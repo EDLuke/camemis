@@ -255,7 +255,7 @@ class Utiles {
                 {
                     foreach ($entries as $value)
                     {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                        $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
@@ -265,7 +265,7 @@ class Utiles {
                 {
                     foreach ($entries as $value)
                     {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
+                        $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
@@ -308,7 +308,6 @@ class Utiles {
                     $fieldObject = AcademicAdditionalDBAccess::findAcademicAdditionalFromId($value->ID);
                     if ($fieldObject)
                     {
-
                         $ITEMS = "";
                         $ITEMS .= "{";
                         $ITEMS .= "title: '" . setShowTextExtjs($fieldObject->NAME) . "'";
