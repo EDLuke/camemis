@@ -213,7 +213,7 @@
                 $i = 0;
                 foreach ($result as $value) {
 
-                    $data[$i]['text'] = $value->NAME;
+                    $data[$i]['text'] = setShowText($value->NAME);
                     $data[$i]['id'] = $value->ID;
 
                     switch ($value->OBJECT_TYPE) {

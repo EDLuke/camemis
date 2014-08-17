@@ -189,19 +189,19 @@ class DescriptionDBAccess {
                     case "FOLDER":
                         switch ($value->CHOOSE_TYPE) {
                             case 1:
-                                $data[$i]['text'] = $value->NAME . " (Checkbox)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Checkbox)";
                                 break;
                             case 2:
-                                $data[$i]['text'] = $value->NAME . " (Radiobox)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Radiobox)";
                                 break;
                             case 3:
-                                $data[$i]['text'] = $value->NAME . " (Inputfield)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Inputfield)";
                                 break;
                             case 4:
-                                $data[$i]['text'] = $value->NAME . " (Textarea)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Textarea)";
                                 break;
                             case 5:
-                                $data[$i]['text'] = $value->NAME . " (Text)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Text)";
                                 break;
                         }
                         $data[$i]['leaf'] = false;
