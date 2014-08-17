@@ -893,7 +893,14 @@ function setAddition($value)
 
 function setShowTextExtjs($text)
 {
-    return addslashes(trim($text));
+    if (isUTF8($text))
+    {
+        return $text ? htmlspecialchars_decode(addslashes(trim($text))) : "";
+    }
+    else
+    {
+        return "?";
+    }
 }
 
 function setShowText($text)
