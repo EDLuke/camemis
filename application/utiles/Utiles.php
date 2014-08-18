@@ -13,86 +13,69 @@ class Utiles {
 
     public $data = array();
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-    static function getInstance()
-    {
+    static function getInstance() {
 
         static $me;
 
-        if ($me == null)
-        {
+        if ($me == null) {
             $me = new Utiles();
         }
 
         return $me;
     }
 
-    public static function urlEncryp()
-    {
+    public static function urlEncryp() {
         return new URLEncryption();
     }
 
-    public static function setUserPublicRoot()
-    {
+    public static function setUserPublicRoot() {
         $user = "";
         $explode = explode(".", $_SERVER['SERVER_NAME']);
-        if (is_array($explode))
-        {
+        if (is_array($explode)) {
             $user = $explode[0];
         }
 
         $CHECK_FOLDER_ATTACHMENT = $_SERVER['DOCUMENT_ROOT'] . "/public/users/" . $user . "/attachment/";
-        if (!is_dir($CHECK_FOLDER_ATTACHMENT))
-        {
+        if (!is_dir($CHECK_FOLDER_ATTACHMENT)) {
             mkdir($CHECK_FOLDER_ATTACHMENT, 0777, true); // true for recursive create
         }
         $CHECK_FOLDER_DATABASE = $_SERVER['DOCUMENT_ROOT'] . "/public/users/" . $user . "/database/";
-        if (!is_dir($CHECK_FOLDER_DATABASE))
-        {
+        if (!is_dir($CHECK_FOLDER_DATABASE)) {
             mkdir($CHECK_FOLDER_DATABASE, 0777, true); // true for recursive create
         }
     }
 
-    public function processHTML($html)
-    {
+    public function processHTML($html) {
 
         return preg_replace("/'/", "/\'/", $html);
     }
 
-    static function comboData($objectArray)
-    {
+    static function comboData($objectArray) {
         $data = Array();
 
         if ($objectArray)
-            foreach ($objectArray as $value)
-            {
+            foreach ($objectArray as $value) {
                 $data[] = "[\"$value->ID\",\"$value->NAME\"]";
             }
         return "[" . implode(",", $data) . "]";
     }
 
-    public function getValueRegistry($index)
-    {
+    public function getValueRegistry($index) {
         $registry = Zend_Registry::getInstance();
         return isset($registry[$index]) ? $registry[$index] : 'camemis';
     }
 
-    function xml2phpArray($xml, $arr, $dimension = 0)
-    {
+    function xml2phpArray($xml, $arr, $dimension = 0) {
         $iter = 0;
-        foreach ($xml->children() as $b)
-        {
+        foreach ($xml->children() as $b) {
             $a = $b->getName();
-            if (!$b->children())
-            {
+            if (!$b->children()) {
                 $arr[$a] = trim($b[0]);
-            }
-            else
-            {
+            } else {
 
                 $_iter = $iter - $dimension;
                 $arr[$a][$_iter] = array();
@@ -104,24 +87,17 @@ class Utiles {
         return $arr;
     }
 
-    static function removeStatus($data)
-    {
+    static function removeStatus($data) {
 
         $status = isset($data["STATUS"]) ? $data["STATUS"] : 0;
         $remove_status = isset($data["REMOVE_STATUS"]) ? $data["REMOVE_STATUS"] : 0;
 
-        if ($status == 1)
-        {
+        if ($status == 1) {
             $status = false;
-        }
-        else
-        {
-            if ($remove_status > 0)
-            {
+        } else {
+            if ($remove_status > 0) {
                 $status = false;
-            }
-            else
-            {
+            } else {
                 $status = true;
             }
         }
@@ -129,14 +105,12 @@ class Utiles {
         return $status;
     }
 
-    public static function createUrl($url, $params = array())
-    {
+    public static function createUrl($url, $params = array()) {
         $urlEncryp = new URLEncryption();
         return "/" . $url . "/?camIds=" . $urlEncryp->encryptedGet(http_build_query($params));
     }
 
-    public function buildURL($script, $params = array())
-    {
+    public function buildURL($script, $params = array()) {
 
         $ret = $script;
         $ret.= "?goId=" . camemisId() . "&";
@@ -147,27 +121,19 @@ class Utiles {
         return "" . Zend_Registry::get('CAMEMIS_URL') . "/" . $ret;
     }
 
-    public function remotedURL($script, $parms = array())
-    {
+    public function remotedURL($script, $parms = array()) {
 
         $ret = $script;
 
-        if (is_array($parms))
-        {
+        if (is_array($parms)) {
 
-            while (list($key, $value) = each($parms))
-            {
-                if (!empty($value))
-                {
-                    if (is_array($value))
-                    {
-                        while (list($key1, $value1) = each($value))
-                        {
+            while (list($key, $value) = each($parms)) {
+                if (!empty($value)) {
+                    if (is_array($value)) {
+                        while (list($key1, $value1) = each($value)) {
                             $ret .= $key . "[" . $key1 . "]=" . $value1 . "&";
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $ret .= "" . $key . "=" . $value . "&";
                     }
                 }
@@ -177,114 +143,89 @@ class Utiles {
         return "" . Zend_Registry::get('CAMEMIS_URL') . "/" . $ret;
     }
 
-    public static function to_constant($data = array())
-    {
+    public static function to_constant($data = array()) {
         $headers = $data;
-        for ($i = 0; $i < count($headers); $i++)
-        {
+        for ($i = 0; $i < count($headers); $i++) {
             $headers[$i] = trim($headers[$i]);
-            if (defined("" . $headers[$i] . ""))
-            {
+            if (defined("" . $headers[$i] . "")) {
                 $headers[$i] = "'" . constant($headers[$i]) . "'";
-            }
-            else
-            {
+            } else {
                 $headers[$i] = '?';
             }
         }
         return $headers;
     }
 
-    public static function setPostDecrypteParams($postParams)
-    {
-        if (isset($postParams["camIds"]))
-        {
+    public static function setPostDecrypteParams($postParams) {
+        if (isset($postParams["camIds"])) {
             $urlEncryp = new URLEncryption();
             $urlEncryp->parseEncryptedGET($postParams["camIds"]);
             return array_merge($postParams, $_GET);
-        }
-        else
-        {
+        } else {
             return $postParams;
         }
     }
 
-    public static function isLocalServer()
-    {
+    public static function isLocalServer() {
         return ($_SERVER['REMOTE_ADDR'] == "127.0.0.1") ? true : false;
     }
 
-    public static function setRegistry($index, $value)
-    {
+    public static function setRegistry($index, $value) {
 
         $registry = Zend_Registry::getInstance();
-        if (Zend_Registry::isRegistered($index))
-        {
+        if (Zend_Registry::isRegistered($index)) {
             $registry->offsetUnset($index);
         }
         $registry->set($index, $value);
     }
 
-    public static function getRegistry($index)
-    {
+    public static function getRegistry($index) {
         $result = "";
-        if (Zend_Registry::isRegistered($index))
-        {
+        if (Zend_Registry::isRegistered($index)) {
             $result = Zend_Registry::get($index);
         }
         return $result;
     }
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
     ////////////////////////////////////////////////////////////////////////////
     //STUDENT ACADEMIC ADDITONAL INFORMATIONS
     ////////////////////////////////////////////////////////////////////////////
-    protected static function studentAcademicInformationSetItems($fieldObject)
-    {
+    protected static function studentAcademicInformationSetItems($fieldObject) {
 
         $data = Array();
-        switch ($fieldObject->CHOOSE_TYPE)
-        {
+        switch ($fieldObject->CHOOSE_TYPE) {
             case 1:
                 $entries = AcademicAdditionalDBAccess::sqlAcademicAdditional($fieldObject->ID, 1);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
+                if ($entries) {
+                    foreach ($entries as $value) {
                         $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
             case 2:
                 $entries = AcademicAdditionalDBAccess::sqlAcademicAdditional($fieldObject->ID, 2);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
+                if ($entries) {
+                    foreach ($entries as $value) {
                         $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
             case 3:
                 $entries = AcademicAdditionalDBAccess::sqlAcademicAdditional($fieldObject->ID, 3);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
+                if ($entries) {
+                    foreach ($entries as $value) {
                         $data[] = "{xtype: 'textfield',id: 'INPUTFIELD_" . $value->ID . "'" . ",fieldLabel: '" . stripcslashes($value->NAME) . "',width:250,name: 'INPUTFIELD_" . $value->ID . "'}";
                     }
                 }
                 break;
             case 4:
                 $entries = AcademicAdditionalDBAccess::sqlAcademicAdditional($fieldObject->ID, 4);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
+                if ($entries) {
+                    foreach ($entries as $value) {
                         $data[] = "{xtype: 'textarea',id: 'TEXTAREA_" . $value->ID . "'" . ",fieldLabel: '" . stripcslashes($value->NAME) . "',width:250,height:100,name: 'TEXTAREA_" . $value->ID . "'}";
                     }
                 }
@@ -293,24 +234,19 @@ class Utiles {
         return implode(",", $data);
     }
 
-    public static function studentAcademicDisplayFields($student, $classId, $target = 'traditional', $width = 550)
-    {
+    public static function studentAcademicDisplayFields($student, $classId, $target = 'traditional', $width = 550) {
 
         $FIELD_PANEL_ITEMS = Array();
         $entries = AcademicAdditionalDBAccess::sqlAcademicAdditionalByStudent($student, $classId, $target);
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
 
-                if (AcademicAdditionalDBAccess::checkChild($value->ID))
-                {
+                if (AcademicAdditionalDBAccess::checkChild($value->ID)) {
                     $fieldObject = AcademicAdditionalDBAccess::findAcademicAdditionalFromId($value->ID);
-                    if ($fieldObject)
-                    {
+                    if ($fieldObject) {
                         $ITEMS = "";
                         $ITEMS .= "{";
-                        $ITEMS .= "title: '" . setShowTextExtjs($fieldObject->NAME) . "'";
+                        $ITEMS .= "title: '" . addslashes($fieldObject->NAME) . "'";
                         $ITEMS .= ",autoHeight: true";
                         $ITEMS .= ",collapsible: true";
                         $ITEMS .= ",collapsed: false";
@@ -318,8 +254,7 @@ class Utiles {
                         $ITEMS .= ",style: 'padding-bottom: 5px'";
                         $ITEMS .= ",width: " . $width . "";
 
-                        switch ($fieldObject->CHOOSE_TYPE)
-                        {
+                        switch ($fieldObject->CHOOSE_TYPE) {
                             case 1:
                                 $ITEMS .= ",items:[{";
                                 $ITEMS .= "xtype: 'checkboxgroup'";
@@ -378,48 +313,37 @@ class Utiles {
     ////////////////////////////////////////////////////////////////////////////
     //STUDENT PERSONAL DESCRIPTION
     ////////////////////////////////////////////////////////////////////////////
-    protected static function personalDescriptionSetItems($fieldObject, $type, $width = 550)
-    {
+    protected static function personalDescriptionSetItems($fieldObject, $type, $width = 550) {
 
-        if ($width == 550)
-        {
+        if ($width == 550) {
             $fieldWidth = 250;
-        }
-        else
-        {
+        } else {
             $fieldWidth = 120;
         }
 
         $data = Array();
-        switch ($fieldObject->CHOOSE_TYPE)
-        {
+        switch ($fieldObject->CHOOSE_TYPE) {
             case 1:
                 $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 1);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
+                if ($entries) {
+                    foreach ($entries as $value) {
+                        $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'CHECKBOX_" . $value->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
             case 2:
                 $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 2);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
-                        $data[] = "{boxLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
+                if ($entries) {
+                    foreach ($entries as $value) {
+                        $data[] = "{boxLabel: '" . addslashes($value->NAME) . "', name:'RADIOBOX_" . $fieldObject->ID . "', inputValue: '" . $value->ID . "'}";
                     }
                 }
                 break;
             case 3:
                 $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 3);
-                if ($entries)
-                {
-                    foreach ($entries as $value)
-                    {
-                        $data[] = "{xtype: 'textfield',id: 'INPUTFIELD_" . $value->ID . "'" . ",fieldLabel: '" . setShowTextExtjs(setShowText($value->NAME)) . "',width:" . $fieldWidth . ",name: 'INPUTFIELD_" . $value->ID . "'}";
+                if ($entries) {
+                    foreach ($entries as $value) {
+                        $data[] = "{xtype: 'textfield',id: 'INPUTFIELD_" . $value->ID . "'" . ",fieldLabel: '" . addslashes($value->NAME) . "',width:" . $fieldWidth . ",name: 'INPUTFIELD_" . $value->ID . "'}";
                     }
                 }
                 break;
@@ -427,34 +351,28 @@ class Utiles {
         return implode(",", $data);
     }
 
-    public static function personalDescriptionDisplayFields($type, $width = 550)
-    {
+    public static function personalDescriptionDisplayFields($type, $width = 550) {
 
         $FIELD_PANEL_ITEMS = Array();
         $entries = DescriptionDBAccess::sqlDescription(false, $type, false);
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
 
-                if (DescriptionDBAccess::checkChild($value->ID))
-                {
+                if (DescriptionDBAccess::checkChild($value->ID)) {
                     $fieldObject = DescriptionDBAccess::findObjectFromId($value->ID);
-                    if ($fieldObject)
-                    {
+                    if ($fieldObject) {
 
                         $ITEMS = "";
                         $ITEMS .= "{";
                         $ITEMS .= "xtype:'fieldset'";
                         $ITEMS .= ",collapsible: true";
                         $ITEMS .= ",collapsed: false";
-                        $ITEMS .= ",title: '" . setShowTextExtjs($fieldObject->NAME) . "'";
+                        $ITEMS .= ",title: '" . addslashes($fieldObject->NAME) . "'";
                         $ITEMS .= ",bodyStyle: 'padding:10px;background:" . CamemisPage::userFormBgColor() . ";'";
                         $ITEMS .= ",style: 'padding-bottom: 5px'";
                         $ITEMS .= ",width: " . $width . "";
 
-                        switch ($fieldObject->CHOOSE_TYPE)
-                        {
+                        switch ($fieldObject->CHOOSE_TYPE) {
                             case 1:
                                 $entries = DescriptionDBAccess::sqlDescription($fieldObject->ID, $type, 1);
                                 $ITEMS .= ",items:[{";
@@ -466,10 +384,8 @@ class Utiles {
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
-                                if ($entries)
-                                {
-                                    foreach ($entries as $value)
-                                    {
+                                if ($entries) {
+                                    foreach ($entries as $value) {
                                         $ITEMS .= ",name:'CHECKBOX_" . $value->ID . "'";
                                     }
                                 }
@@ -486,10 +402,8 @@ class Utiles {
                                 $ITEMS .= ",columns:2";
                                 $ITEMS .= ",itemCls: 'x-check-group-alt'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
-                                if ($entries)
-                                {
-                                    foreach ($entries as $value)
-                                    {
+                                if ($entries) {
+                                    foreach ($entries as $value) {
                                         $ITEMS .= ",name:'RADIOBOX_" . $value->ID . "'";
                                     }
                                 }
@@ -503,10 +417,8 @@ class Utiles {
                                 $ITEMS .= ",autoHeight:true";
                                 $ITEMS .= ",bodyStyle: 'padding:10px'";
                                 $ITEMS .= ",items:[" . self::personalDescriptionSetItems($fieldObject, $type, $width) . "]";
-                                if ($entries)
-                                {
-                                    foreach ($entries as $value)
-                                    {
+                                if ($entries) {
+                                    foreach ($entries as $value) {
                                         $ITEMS .= ",name:'INPUTFIELD_" . $value->ID . "'";
                                     }
                                 }
@@ -532,8 +444,7 @@ class Utiles {
     /**
      * STUDENT ACADEMIC HISTORY
      */
-    protected static function listStudentSchoolyearTraditional($Id)
-    {
+    protected static function listStudentSchoolyearTraditional($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear'), array());
         $SQL->joinLeft(array('B' => 't_academicdate'), 'A.SCHOOL_YEAR=B.ID', array('ID AS SCHOOLYEAR_ID', 'NAME AS SCHOOLYEAR_NAME', 'START AS YEAR_START'));
@@ -545,8 +456,7 @@ class Utiles {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    protected static function listStudentSchoolyearCredit($Id)
-    {
+    protected static function listStudentSchoolyearCredit($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear_subject'), array());
         $SQL->joinLeft(array('B' => 't_academicdate'), 'A.SCHOOLYEAR_ID=B.ID', array('ID AS SCHOOLYEAR_ID', 'NAME AS SCHOOLYEAR_NAME', 'START AS YEAR_START'));
@@ -556,8 +466,7 @@ class Utiles {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function getStudentClassTraditional($Id, $schoolyearId)
-    {
+    public static function getStudentClassTraditional($Id, $schoolyearId) {
         $SQL = self::dbAccess()->select();
         $SQL->from(array('A' => 't_student_schoolyear'), array());
         $SQL->joinLeft(array('B' => 't_grade'), 'A.CLASS=B.ID', array('ID AS CLASS_ID', 'NAME AS CLASS_NAME', 'EDUCATION_SYSTEM'));
@@ -568,8 +477,7 @@ class Utiles {
     }
 
     //@Sea Peng
-    protected static function listStudentTrainingProgram($Id)
-    {
+    protected static function listStudentTrainingProgram($Id) {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
         $SQL->from(array('A' => 't_student_training'), array('A.TRAINING AS TRAINING_ID', 'A.PROGRAM AS PROGRAM_ID'));
@@ -585,13 +493,10 @@ class Utiles {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function listStudentSchoolyear($Id)
-    {
+    public static function listStudentSchoolyear($Id) {
         $firstData = Array();
-        if (self::listStudentSchoolyearTraditional($Id))
-        {
-            foreach (self::listStudentSchoolyearTraditional($Id) as $value)
-            {
+        if (self::listStudentSchoolyearTraditional($Id)) {
+            foreach (self::listStudentSchoolyearTraditional($Id) as $value) {
                 $firstData[$value->YEAR_START]['ID'] = $value->SCHOOLYEAR_ID;
                 $firstData[$value->YEAR_START]['NAME'] = $value->SCHOOLYEAR_NAME;
                 $firstData[$value->YEAR_START]['DATE'] = $value->YEAR_START;
@@ -599,10 +504,8 @@ class Utiles {
         }
 
         $secondData = Array();
-        if (self::listStudentSchoolyearCredit($Id))
-        {
-            foreach (self::listStudentSchoolyearCredit($Id) as $value)
-            {
+        if (self::listStudentSchoolyearCredit($Id)) {
+            foreach (self::listStudentSchoolyearCredit($Id) as $value) {
                 $secondData[$value->YEAR_START]['ID'] = $value->SCHOOLYEAR_ID;
                 $secondData[$value->YEAR_START]['NAME'] = $value->SCHOOLYEAR_NAME;
                 $secondData[$value->YEAR_START]['DATE'] = $value->YEAR_START;
@@ -616,14 +519,11 @@ class Utiles {
     }
 
     //@Sea Peng
-    protected static function listDataStudentTrainingProgram($Id)
-    {
+    protected static function listDataStudentTrainingProgram($Id) {
         $data = Array();
         $i = 0;
-        if (self::listStudentTrainingProgram($Id))
-        {
-            foreach (self::listStudentTrainingProgram($Id) as $value)
-            {
+        if (self::listStudentTrainingProgram($Id)) {
+            foreach (self::listStudentTrainingProgram($Id) as $value) {
                 $data[$i]['TRAINING_ID'] = $value->TRAINING_ID;
                 $data[$i]['PROGRAM_ID'] = $value->PROGRAM_ID;
                 $data[$i]['TRAINING'] = $value->TRAINING;
@@ -637,17 +537,14 @@ class Utiles {
         return $data;
     }
 
-    protected static function getStudentAcademicHistorySubTreeItems($Id, $classObject, $schoolyearId)
-    {
+    protected static function getStudentAcademicHistorySubTreeItems($Id, $classObject, $schoolyearId) {
 
-        if ($classObject)
-        {
+        if ($classObject) {
 
             $className = setShowTextExtjs($classObject->CLASS_NAME);
             $classId = $classObject->CLASS_ID;
 
-            switch (Zend_Registry::get('MODUL_API'))
-            {
+            switch (Zend_Registry::get('MODUL_API')) {
                 case "dfe34ef0f0b812ea32d92866dbe9e3cb":
                     $classparam = "academicId=" . $classId . "";
                     break;
@@ -756,17 +653,13 @@ class Utiles {
             $item .= ",url:'/extraclass/showitem/?camIds=" . self::urlEncryp()->encryptedGet("studentId=" . $classId . "") . "'";
             $item .= ",isClick:true";
             $item .= "}";
-        }
-        else
-        {
+        } else {
 
             $entries = StudentAcademicDBAccess::getEnrolledSubjectByStudentCreditSystem($Id, $schoolyearId);
 
             $data = array();
-            if ($entries)
-            {
-                foreach ($entries as $value)
-                {
+            if ($entries) {
+                foreach ($entries as $value) {
                     $groupName = $value->GROUP_NAME ? setShowText($value->GROUP_NAME) : "?";
                     $strItem = "{";
                     $strItem .= "text: '" . setShowText($value->SUBJECT_NAME) . " (" . $groupName . ")'";
@@ -789,29 +682,22 @@ class Utiles {
         return $item;
     }
 
-    public static function getStudentAcademicHistyTreeItems($Id)
-    {
+    public static function getStudentAcademicHistyTreeItems($Id) {
 
         $entries = self::listStudentSchoolyear($Id);
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $schoolyearId = isset($value['ID']) ? $value['ID'] : "";
                 $classObject = self::getStudentClassTraditional($Id, $schoolyearId);
-                if ($classObject)
-                {
+                if ($classObject) {
                     $displayName = isset($value['NAME']) ? $value['NAME'] . " (" . $classObject->CLASS_NAME . ")" : "?";
                     $link = "/student/studentacademictraditional/?camIds=" . self::urlEncryp()->encryptedGet("objectId=" . $Id . "&academicId=" . $classObject->CLASS_ID . "&schoolyearId=" . $schoolyearId . "") . "";
-                }
-                else
-                {
+                } else {
                     $academicObject = StudentAcademicDBAccess::getStudentCurrentAcademicCreditSystem($Id, $schoolyearId);
                     $displayName = isset($value['NAME']) ? $value['NAME'] : "?";
-                    if ($academicObject)
-                    {
+                    if ($academicObject) {
                         $displayName .= " (" . $academicObject->CAMPUS_NAME . ")";
                     }
                     $link = "/student/studentcampuscreditmain/?camIds=" . self::urlEncryp()->encryptedGet("studentId=" . $Id . "&academicId=" . $academicObject->TGRADE_SCHOOLYEAR . "&schoolyearId=" . $schoolyearId . "&campusId=" . $academicObject->CAMPUS_ID . "") . "";  //@veasna modify
@@ -834,8 +720,7 @@ class Utiles {
         return "[" . implode(",", $data) . "]";
     }
 
-    protected static function getStudentTrainingHistoryTreeSubItems($Id, $trainingId)
-    {
+    protected static function getStudentTrainingHistoryTreeSubItems($Id, $trainingId) {
 
         $item = "{";
         $item .= "text: '" . SCHEDULE . "'";
@@ -915,8 +800,7 @@ class Utiles {
     /**
      * Student Training History....
      */
-    public static function getStudentTrainingHistoryTreeItems($Id)
-    {
+    public static function getStudentTrainingHistoryTreeItems($Id) {
         $SQL = "
 		SELECT
 		DISTINCT
@@ -938,10 +822,8 @@ class Utiles {
         $entries = self::dbAccess()->fetchAll($SQL);
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
 
                 $displayNameShort = $value->RROGRAM;
                 $displayNameLong = "(" . getShowDate($value->START_DATE) . "-" . getShowDate($value->END_DATE) . " " . $value->LEVEL . " " . $value->RROGRAM . ")";
@@ -962,12 +844,10 @@ class Utiles {
         return "[" . implode(",", $data) . "]";
     }
 
-    public static function getDashboardItems()
-    {
+    public static function getDashboardItems() {
 
         $data = array();
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "SUPERADMIN":
                 $data = array(
                     "USER_ONLINE_LOG" => "/chart/stackeareachart/"
@@ -1029,8 +909,7 @@ class Utiles {
         return $data;
     }
 
-    public static function setDashboard()
-    {
+    public static function setDashboard() {
 
         $userId = Zend_Registry::get('USER')->ID;
         $SQL = self::dbAccess()->select();
@@ -1040,8 +919,7 @@ class Utiles {
         $result = self::dbAccess()->fetchRow($SQL);
         $CHECK = $result ? $result->C : 0;
 
-        switch (UserAuth::getUserType())
-        {
+        switch (UserAuth::getUserType()) {
             case "SUPERADMIN":
                 $userType = "SUPERADMIN";
                 break;
@@ -1062,13 +940,10 @@ class Utiles {
                 break;
         }
 
-        if (!$CHECK)
-        {
-            if (self::getDashboardItems())
-            {
+        if (!$CHECK) {
+            if (self::getDashboardItems()) {
                 $i = 0;
-                foreach (self::getDashboardItems() as $key => $url)
-                {
+                foreach (self::getDashboardItems() as $key => $url) {
                     $SAVEDATA["USER_ID"] = $userId;
                     $SAVEDATA["POSITION"] = $i + 1;
                     $SAVEDATA["CONST"] = $key;
@@ -1081,8 +956,7 @@ class Utiles {
         }
     }
 
-    public static function getUserDashboardItems()
-    {
+    public static function getUserDashboardItems() {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_dashboard", array("*"));
         $SQL->where("USER_ID = '" . Zend_Registry::get('USER')->ID . "'");
@@ -1094,8 +968,7 @@ class Utiles {
     //END.....
     ////////////////////////////////////////////////////////////////////////////
     //
-	public static function dbClean()
-    {
+	public static function dbClean() {
         self::dbAccess()->delete('t_subject_teacher_class', array("TEACHER=''"));
         self::dbAccess()->delete('t_subject_teacher_class', array("CAMPUS='0'"));
         self::dbAccess()->delete('t_subject_teacher_class', array("GRADE='0'"));
@@ -1105,8 +978,7 @@ class Utiles {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public static function getSelectedGridColumns($objectId)
-    {
+    public static function getSelectedGridColumns($objectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_display_column", array("*"));
@@ -1118,30 +990,22 @@ class Utiles {
         $COLUMN_COKIS_DATA = Utiles::getGridColumnData($objectId);
         $DATA = array();
 
-        if ($facette)
-        {
+        if ($facette) {
             $COLUMN_DATA = explode(",", $facette->COLUMN_DATA);
 
-            if ($COLUMN_DATA)
-            {
-                if ($COLUMN_COKIS_DATA)
-                {
+            if ($COLUMN_DATA) {
+                if ($COLUMN_COKIS_DATA) {
                     $i = 0;
-                    foreach ($COLUMN_DATA as $value)
-                    {
-                        if (checkColHidden($i + 1, $COLUMN_COKIS_DATA) == 'false')
-                        {
+                    foreach ($COLUMN_DATA as $value) {
+                        if (checkColHidden($i + 1, $COLUMN_COKIS_DATA) == 'false') {
                             $DATA[$i + 1] = $value;
                         }
 
                         $i++;
                     }
-                }
-                else
-                {
+                } else {
                     $i = 0;
-                    foreach ($COLUMN_DATA as $value)
-                    {
+                    foreach ($COLUMN_DATA as $value) {
                         $DATA[$i + 1] = $value;
                         $i++;
                     }
@@ -1151,8 +1015,7 @@ class Utiles {
         return $DATA;
     }
 
-    public static function getGridColumnData($objectId)
-    {
+    public static function getGridColumnData($objectId) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_display_column", array("*"));
@@ -1162,8 +1025,7 @@ class Utiles {
         $facette = self::dbAccess()->fetchRow($SQL);
 
         $CHECK_DATA = array();
-        if ($facette)
-        {
+        if ($facette) {
             $string1 = urldecode($facette->COLUMN_DATA_COKIS);
             $string2 = urldecode($string1);
             $string3 = urldecode($string2);
@@ -1173,13 +1035,11 @@ class Utiles {
 
             $explode = explode("id=n", $string6);
 
-            foreach ($explode as $key => $value)
-            {
+            foreach ($explode as $key => $value) {
 
                 $p = strpos($value, "^");
                 $i = substr($value, 1, $p - 1);
-                if (preg_match('/hidden/i', $value, $matches))
-                {
+                if (preg_match('/hidden/i', $value, $matches)) {
                     $CHECK_DATA[$key] = $key;
                 }
             }
@@ -1187,30 +1047,24 @@ class Utiles {
         return $CHECK_DATA;
     }
 
-    public static function setGridColumnData($objectId, $cokisdata, $columnsdata = false)
-    {
+    public static function setGridColumnData($objectId, $cokisdata, $columnsdata = false) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_display_column", array("*"));
         $SQL->where("USER_ID = '" . Zend_Registry::get('USER')->ID . "'");
         $SQL->where("GRID_OBJECT_ID = '" . $objectId . "'");
         $facette = self::dbAccess()->fetchRow($SQL);
-        if ($cokisdata)
-        {
+        if ($cokisdata) {
             $SAVEDATA["COLUMN_DATA_COKIS"] = $cokisdata;
         }
-        if ($columnsdata)
-        {
+        if ($columnsdata) {
             $SAVEDATA["COLUMN_DATA"] = $columnsdata;
         }
-        if ($facette)
-        {
+        if ($facette) {
             $WHERE[] = "USER_ID = '" . Zend_Registry::get('USER')->ID . "'";
             $WHERE[] = "GRID_OBJECT_ID = '" . $objectId . "'";
             self::dbAccess()->update('t_user_display_column', $SAVEDATA, $WHERE);
-        }
-        else
-        {
+        } else {
             $SAVEDATA["USER_ID"] = Zend_Registry::get('USER')->ID;
             $SAVEDATA["GRID_OBJECT_ID"] = $objectId;
             self::dbAccess()->insert('t_user_display_column', $SAVEDATA);
@@ -1221,15 +1075,12 @@ class Utiles {
     ////////////////////////////////////////////////////////////////////////////
     //GUARDIAN TREE  @Sea Peng 15.01.2014
     ////////////////////////////////////////////////////////////////////////////
-    public static function getStudentGuardianHistyTreeItems($Id)
-    {
+    public static function getStudentGuardianHistyTreeItems($Id) {
         $entries = self::listStudentGuardian($Id);
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $studentId = isset($value['ID']) ? $value['ID'] : "";
                 $displayName = isset($value['STUDENT']) ? $value['STUDENT'] : "";
                 $item = "{";
@@ -1249,21 +1100,15 @@ class Utiles {
         return "[" . implode(",", $data) . "]";
     }
 
-    protected static function listStudentGuardian($Id)
-    {
+    protected static function listStudentGuardian($Id) {
         $data = Array();
         $i = 0;
-        if (GuardianDBAccess::sqlStudentGuardian($Id))
-        {
-            foreach (GuardianDBAccess::sqlStudentGuardian($Id) as $value)
-            {
+        if (GuardianDBAccess::sqlStudentGuardian($Id)) {
+            foreach (GuardianDBAccess::sqlStudentGuardian($Id) as $value) {
                 $data[$i]['ID'] = $value->ID;
-                if (!SchoolDBAccess::displayPersonNameInGrid())
-                {
+                if (!SchoolDBAccess::displayPersonNameInGrid()) {
                     $data[$i]["STUDENT"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);
-                }
-                else
-                {
+                } else {
                     $data[$i]["STUDENT"] = setShowText($value->FIRSTNAME) . " " . setShowText($value->LASTNAME);
                 }
                 $i++;
@@ -1272,8 +1117,7 @@ class Utiles {
         return $data;
     }
 
-    protected static function getStudentGuardianTranditionalSubTreeItems($Id)
-    {
+    protected static function getStudentGuardianTranditionalSubTreeItems($Id) {
 
         $item = "{";
         $item .= "text: '" . GENERAL_EDUCATION . "'";
@@ -1299,26 +1143,21 @@ class Utiles {
         return $item;
     }
 
-    protected static function getStudentGuardianSchoolyearSubTreeItems($Id)
-    {
+    protected static function getStudentGuardianSchoolyearSubTreeItems($Id) {
 
         $entries = self::listStudentSchoolyear($Id);
 
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $schoolyearId = isset($value['ID']) ? $value['ID'] : "";
                 $classObject = self::getStudentClassTraditional($Id, $schoolyearId);
 
-                if ($classObject)
-                {
+                if ($classObject) {
                     $displayName = isset($value['NAME']) ? $value['NAME'] . " (" . $classObject->CLASS_NAME . ")" : "?";
                     $classId = $classObject->CLASS_ID;
-                    switch (Zend_Registry::get('MODUL_API'))
-                    {
+                    switch (Zend_Registry::get('MODUL_API')) {
                         case "dfe34ef0f0b812ea32d92866dbe9e3cb":
                             $classparam = "academicId=" . $classId . "";
                             break;
@@ -1327,13 +1166,10 @@ class Utiles {
                             break;
                     }
                     $link = "/guardian/studenttranditional/?camIds=" . self::urlEncryp()->encryptedGet("" . $classparam . "&studentId=" . $Id . "") . "";
-                }
-                else
-                {   //@veasna
+                } else {   //@veasna
                     $academicObject = StudentAcademicDBAccess::getStudentCurrentAcademicCreditSystem($Id, $schoolyearId);
                     $displayName = isset($value['NAME']) ? $value['NAME'] : "?";
-                    if ($academicObject)
-                    {
+                    if ($academicObject) {
                         $displayName .= " (" . $academicObject->CAMPUS_NAME . ")";
                     }
                     $link = "/student/studentcampuscreditmain/?camIds=" . self::urlEncryp()->encryptedGet("studentId=" . $Id . "&academicId=" . $academicObject->TGRADE_SCHOOLYEAR . "&schoolyearId=" . $schoolyearId . "&campusId=" . $academicObject->CAMPUS_ID . "") . "";  //@veasna modify            
@@ -1355,17 +1191,14 @@ class Utiles {
         return implode(",", $data);
     }
 
-    protected static function getStudentGuardianTrainingProgramSubTreeItems($Id)
-    {
+    protected static function getStudentGuardianTrainingProgramSubTreeItems($Id) {
 
         $entries = self::listDataStudentTrainingProgram($Id);
 
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $displayName = isset($value['RROGRAM']) ? $value['RROGRAM'] : "";
                 $item = "{";
                 $item .= "text: '" . $displayName . "'";
@@ -1383,17 +1216,14 @@ class Utiles {
         return implode(",", $data);
     }
 
-    protected static function getStudentGuardianTrainingTermSubTreeItems($Id)
-    {
+    protected static function getStudentGuardianTrainingTermSubTreeItems($Id) {
 
         $entries = self::listDataStudentTrainingProgram($Id);
 
         $data = array();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $trainingId = isset($value['TRAINING_ID']) ? $value['TRAINING_ID'] : "";
                 $startDate = isset($value['START_DATE']) ? getShowDate($value['START_DATE']) : "";
                 $endDate = isset($value['END_DATE']) ? getShowDate($value['END_DATE']) : "";
