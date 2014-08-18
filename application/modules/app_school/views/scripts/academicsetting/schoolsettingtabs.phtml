@@ -70,6 +70,13 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[new Ext.ux.IFrameComponent({ id: 'TRANSLATION', url: '/translation/?camIds=".$this->urlEncryp->encryptedGet("target=translation")."'})]
         }";
         $PENEL_ITEMS[] = $TRANSLATION;
+
+        $TRANSLATION2 = "{
+            title: '"."Track"."'
+            ,layout: 'fit'
+            ,items:[new Ext.ux.IFrameComponent({ id: 'TRANSLATION2', url: '/tracklog/?camIds=".$this->urlEncryp->encryptedGet("target=translation")."'})]
+        }";
+        $PENEL_ITEMS[] = $TRANSLATION2;
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         ?>
