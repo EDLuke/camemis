@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 require_once 'models/assessment/AssessmentProperties.php';
+require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 
 class AssessmentChart extends AssessmentProperties {
 
@@ -32,6 +33,10 @@ class AssessmentChart extends AssessmentProperties {
         return $this->term = $value;
     }
 
+    public function setSection($value) {
+        return $this->section = $section;
+    }
+
     public function getSubjectGradingScaleByClass() {
 
         $entries = AssessmentConfig::getListGradingScales(
@@ -47,19 +52,40 @@ class AssessmentChart extends AssessmentProperties {
         return "[" . implode(",", $data) . "]";
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //  CLASS STUDENTS SUBJECT AVERAGE...
+    ////////////////////////////////////////////////////////////////////////////
     public function getSubjectAVGStudentList() {
-        $entries = $this->listClassStudents();
+
+        $stdClass = (object) array(
+                    "academicId" => $this->academicId
+                    , "scoreType" => 1
+                    , "subjectId" => $this->subjectId
+                    , "term" => $this->term
+                    , "month" => $this->getMonth()
+                    , "year" => $this->getYear()
+                    , "section" => $this->getSection()
+                    , "schoolyearId" => $this->getSchoolyearId()
+        );
+
         $data = array();
+        $entries = $this->listClassStudents();
+
         if ($entries) {
             $i = 0;
             foreach ($entries as $value) {
+                $stdClass->studentId = $value->ID;
+                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
                 $ii = $i + 1;
-                $data[] = "['" . getFullName($value->FIRSTNAME, $value->LASTNAME) . "', " . $i . "]";
+                $data[] = "['" . getFullName($value->FIRSTNAME, $value->LASTNAME) . "', " . $ii . "]";
                 $i++;
             }
         }
         return "[" . implode(",", $data) . "]";
     }
+
+    //  END CLASS STUDENTS SUBJECT AVERAGE...
+    ////////////////////////////////////////////////////////////////////////////
 
     public function getSubjectPassStatus() {
 
