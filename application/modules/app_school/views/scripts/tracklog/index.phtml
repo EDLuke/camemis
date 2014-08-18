@@ -56,7 +56,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     $OBJECT_GRID->addColumn("header: '".FIELD_NOTE."', renderer: renderText, align:'left', width: 250, dataIndex: 'FIELD_NOTE'");
 
     if (Zend_Registry::get('SYSTEM_LANGUAGE')!="ENGLISH")
-    $OBJECT_GRID->addColumn("header: '".Zend_Registry::get('SYSTEM_LANGUAGE')."', renderer: renderText,align:'left', width: 450, dataIndex: '".Zend_Registry::get('SYSTEM_LANGUAGE')."'");
+    $OBJECT_GRID->addColumn("header: '".Zend_Registry::get('SYSTEM_LANGUAGE')."', renderer: renderText,align:'left', width: 450, dataIndex: '".constant(UserAuth::systemLanguage())."'");
     
     $OBJECT_GRID->baseParams = "
         start:0
