@@ -740,13 +740,13 @@ class MainController extends Zend_Controller_Action {
             }
         } ";
 
-        $LETTER_MANAGEMENT = "{
-            text: '" . LETTER_MANAGEMENT . "'
-            ,iconCls:'icon-certificate'
-            ,handler: function(){
-                addTab('LETTER_MANAGEMENT','" . LETTER_MANAGEMENT . "','/letter/?key=" . camemisId() . "');
-            }
-        } ";
+//        $LETTER_MANAGEMENT = "{
+//            text: '" . LETTER_MANAGEMENT . "'
+//            ,iconCls:'icon-certificate'
+//            ,handler: function(){
+//                addTab('LETTER_MANAGEMENT','" . LETTER_MANAGEMENT . "','/letter/?key=" . camemisId() . "');
+//            }
+//        } ";
 
         $SYSTEM_USER = "{
             text: '" . SYSTEM_USER . "'
