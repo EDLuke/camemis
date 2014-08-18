@@ -115,10 +115,10 @@ class DescriptionDBAccess {
         $facette = self::findObjectFromId($objectId);
 
         if ($facette) {
-            self::dbAccess()->delete('t_personal_description', array("ID='" . $objectId . "'"));
+            self::dbAccess()->delete('t_personal_description', array("ID=" . $objectId));
 
             if ($facette->OBJECT_TYPE == 'FOLDER') {
-                self::dbAccess()->delete('t_personal_description', array("PARENT='" . $objectId . "'"));
+                self::dbAccess()->delete('t_personal_description', array("PARENT=" . $objectId ));
             }
         }
 
@@ -131,12 +131,12 @@ class DescriptionDBAccess {
 
         if ($objectId != "new") {
             $data = array();
-            $data['NAME'] = "'". addText($params["NAME"]) ."'";
+            $data['NAME'] =addText($params["NAME"]);
             if (isset($params["CHOOSE_TYPE"]))
-                $data['CHOOSE_TYPE'] = "'". addText($params["CHOOSE_TYPE"]) ."'";
+                $data['CHOOSE_TYPE'] = "". addText($params["CHOOSE_TYPE"]);
             if (isset($params["SORTKEY"]))//@veasna
-                $data['SORTKEY'] = "'". $params["SORTKEY"] ."'";
-            self::dbAccess()->update("t_personal_description", $data, "ID='". addText($params["objectId"]) ."'");
+                $data['SORTKEY'] =  $params["SORTKEY"];
+            self::dbAccess()->update("t_personal_description", $data, "ID=". addText($params["objectId"]));
         }else {
             self::addObject($params);
         }
@@ -189,19 +189,19 @@ class DescriptionDBAccess {
                     case "FOLDER":
                         switch ($value->CHOOSE_TYPE) {
                             case 1:
-                                $data[$i]['text'] = $value->NAME . " (Checkbox)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Checkbox)";
                                 break;
                             case 2:
-                                $data[$i]['text'] = $value->NAME . " (Radiobox)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Radiobox)";
                                 break;
                             case 3:
-                                $data[$i]['text'] = $value->NAME . " (Inputfield)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Inputfield)";
                                 break;
                             case 4:
-                                $data[$i]['text'] = $value->NAME . " (Textarea)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Textarea)";
                                 break;
                             case 5:
-                                $data[$i]['text'] = $value->NAME . " (Text)";
+                                $data[$i]['text'] = setShowText($value->NAME) . " (Text)";
                                 break;
                         }
                         $data[$i]['leaf'] = false;
@@ -235,7 +235,7 @@ class DescriptionDBAccess {
 
         if ($result) {
             foreach ($result as $value) {
-                self::dbAccess()->update("t_personal_description", array('CHOOSE_TYPE' => $facette->CHOOSE_TYPE ), "ID='". $value->ID ."'");
+                self::dbAccess()->update("t_personal_description", array('CHOOSE_TYPE' => $facette->CHOOSE_TYPE ), "ID=". $value->ID);
             }
         }
     }

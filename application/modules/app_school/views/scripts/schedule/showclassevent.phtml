@@ -418,7 +418,7 @@ Ext.onReady(function() {
                     
                     $sharedStore = "[[0, '".NO."'],[1, '" . YES . "']]";
                     
-                    $ITEMS .= ",{".CamemisField::Combo('SHARED_SCHEDULE', SHARED_SCHEDULE, $sharedStore, $READONLY_EVENT_TYPE, false,$this->facette?false:0,false, true)."}";
+                    $ITEMS .= ",{".CamemisField::Combo('SHARED_SCHEDULE', SHARED_SCHEDULE, $sharedStore, $READONLY_EVENT_TYPE, 0,false,false, true)."}";
                     $ITEMS .= " ,{xtype:'datefield'
                         ,fieldLabel: '".START_DATE."'
                         ,name: 'EXTRA_START_DATE'

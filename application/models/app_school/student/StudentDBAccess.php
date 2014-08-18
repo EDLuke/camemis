@@ -690,6 +690,8 @@ class StudentDBAccess {
         if ($academicObject && $studentId) {
             $condition = array(
                 'STUDENT = ? ' => $studentId
+                , 'CAMPUS = ? ' => $academicObject->CAMPUS_ID
+                , 'GRADE = ? ' => $academicObject->GRADE_ID
                 , 'SCHOOL_YEAR = ? ' => $academicObject->SCHOOL_YEAR
             );
             self::dbAccess()->delete("t_student_schoolyear", $condition);

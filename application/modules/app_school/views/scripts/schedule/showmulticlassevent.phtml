@@ -1,0 +1,586 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 18.07.2009
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisSchoolTree.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisForm.php';
+require_once 'clients/CamemisTree.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/app_school/subject/GradeSubjectDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+
+$OBJECT_FORM = new CamemisForm("SCHEDULE");
+$OBJECT_FORM->setLoadUrl('/schedule/jsonload/');
+$OBJECT_FORM->setSaveUrl('/schedule/jsonsave/');
+
+$setParams = "";
+$setParams .= "&scheduleId=".$this->scheduleId."";
+$setParams .= "&academicId=".$this->academicId."";
+$setParams .= "&target=".$this->target."";
+$setParams .= "&term=".$this->term."";
+$setParams .= "&shortday=".$this->shortday."";
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$objectId = isset($_GET["scheduleId"]) ? addText($_GET["scheduleId"]):"";
+$isCancel = isset($_GET["isCancel"]) ? addText($_GET["isCancel"]):"";
+$status = $this->facette?$this->facette->STATUS:1;
+
+if($objectId !="new"){
+    if(!$this->facette) {header("Location: /main/permission/");exit;}
+}
+
+if ($this->facette){
+    $HIDDEN_TEACHER = "false";
+    $HIDDEN_ROOM = "false";
+    $READONLY_EVENT_TYPE = true;
+    $READONLY_END_TIME = "true";
+}else{
+    $HIDDEN_TEACHER = "true";
+    $HIDDEN_ROOM = "true";
+    $READONLY_EVENT_TYPE = false;
+    $READONLY_END_TIME = "false";
+}
+
+if($this->academicId){
+    $TITLE_EVENT = " (".displaySchoolTerm($this->term).")";
+    Zend_Registry::set('GRADE_ID', $this->gradeId);
+    Zend_Registry::set('SCHOOLYEAR_ID', $this->schoolyearId);  
+}
+
+if($this->academicId){
+    if(!$this->academicObject && !$this->facette) {header("Location: /main/permission/");exit;}
+    
+    if($this->academicObject->EDUCATION_SYSTEM){
+        $CREDIT_GROUP_GRID = new CamemisGrid("GROUP", "LIST");
+        $CREDIT_GROUP_GRID->setLoadUrl("/schedule/jsonload/");
+        $CREDIT_GROUP_GRID->setSaveUrl("/schedule/jsonsave/");
+    }
+    
+    $entries = GradeSubjectDBAccess::sqlAllSubjectsByClass($this->academicId);
+    
+    $data = array();
+    if($entries){
+        $i = 0;
+        foreach($entries as $value){
+            $data[$i] = "[" . $value->SUBJECT_ID . ", '" . $value->NAME . "']";
+            $i++;
+        }
+    }
+    $traditionalSubjectStore = "[".implode(",",$data)."]";
+}
+
+switch($this->shortday){
+    case "MO":
+        $TITLE_EVENT = MONDAY.$TITLE_EVENT;
+        break;
+    case "TU":
+        $TITLE_EVENT = TUESDAY.$TITLE_EVENT;
+        break;
+    case "WE":
+        $TITLE_EVENT = WEDNESDAY.$TITLE_EVENT;
+        break;
+    case "TH":
+        $TITLE_EVENT = THURSDAY.$TITLE_EVENT;
+        break;
+    case "FR":
+        $TITLE_EVENT = FRIDAY.$TITLE_EVENT;
+        break;
+    case "SA":
+        $TITLE_EVENT = SATURDAY.$TITLE_EVENT;
+        break;
+    case "SU":
+        $TITLE_EVENT = SUNDAY.$TITLE_EVENT;
+        break;
+}
+
+?>
+<style>
+    span.showText {
+        font-weight:normal;
+        color:#333;
+        white-space:normal;
+    }
+</style>
+<script>
+Ext.onReady(function() {
+    
+    Ext.form.Field.prototype.msgTarget = 'side';
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            return true;
+        }
+    });
+
+    function cssAvailaleRoom(value, metadata, record){
+        switch(record.data.AVAILABLE){
+            case 1:
+                var bgColor = "#FFF";
+                var Color = "#333";
+                break;
+            case 2:
+                //Shared...
+                var bgColor = "#2773f3";
+                var Color = "#FFF";
+                break;
+            default:
+                var bgColor = "#d94a38";
+                var Color = "#FFF";
+                break;
+        }
+        return '<div style="font-weight:normal; color:' + Color +'; padding: 5px;background:' + bgColor + ';">' + value + '</div>';
+    }
+    
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333; padding: 5px; height: 35px;">' + value + '</div>';
+    }
+    
+    function cssTextRed(value, metadata, record){
+        
+        return '<div style="font-weight:bold; color:#CC0000; padding: 5px; height: 35px;">' + value + '</div>';
+    }
+    
+    <?
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    if($this->academicId){
+        if($this->academicObject){
+            if($this->academicObject->EDUCATION_SYSTEM){
+                $subjectObject = SubjectDBAccess::findSubjectFromId($this->academicObject->SUBJECT_ID);
+                $ITEMS = "
+                [
+                    {".CamemisField::Displayfield("CREDIT_SUBJECT", SUBJECT, $subjectObject->NAME, false)."}
+                    ,{".CamemisField::Displayfield("DAY_EVENT", DAY, $TITLE_EVENT, false)."}
+                    ,{".CamemisField::Textfield("EVENT", "EVENT", EVENT, false, false, true)."}
+                    //1=TEACHING_EVENT, 2 = EVENT
+                    ,{".CamemisField::scheduleType(EVENT_TYPE, $READONLY_EVENT_TYPE)."} 
+                    ,{".CamemisField::Hidden("SUBJECT", $this->academicObject->SUBJECT_ID)."}
+                ]
+                ";
+            }else{
+                $ITEMS = "";
+                $ITEMS .= "[";
+                    $ITEMS .= "{".CamemisField::Displayfield("DAY_EVENT", DAY, $TITLE_EVENT, false)."}";
+                    $ITEMS .= ",{".CamemisField::scheduleType(EVENT_TYPE, $READONLY_EVENT_TYPE)."} ";
+                    $ITEMS .= ",{".CamemisField::Textfield("EVENT", "EVENT", EVENT, false, false, true)."}";
+                    if ($this->scheduleAction =="UPDATE"){
+                        $ITEMS .= ",{".CamemisField::Combo('SUBJECT', SUBJECT, $traditionalSubjectStore, true, false,false)."}";
+                        $disabled = true;
+                    }else{
+                        $ITEMS .= ",{".CamemisField::Combo('SUBJECT', SUBJECT, $traditionalSubjectStore, false, false,false, true)."}";
+                        $disabled = false;
+                    }
+                    $ITEMS .= " ,{".CamemisField::Hidden("OLD_SUBJECT", $this->subjectId)."}";
+                $ITEMS .= "]";
+            }
+        }
+    }
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: ".$ITEMS."
+        }]
+    }
+    ";
+    
+    $FIRST_TIME = "
+    {
+        title: '" . TIME . " (" . $this->academicObject->FIRST_SESSION_GROUP . ") '
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'FIRST_START_TIME'
+                ,fieldLabel: '".START_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'FIRST_END_TIME'
+                ,fieldLabel: '".END_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            }]
+        }]
+    }
+    ";
+     
+    $SECOND_TIME = "
+    {
+        title: '" . TIME . " (" . $this->academicObject->SECOND_SESSION_GROUP . ") '
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'SECOND_START_TIME'
+                ,fieldLabel: '".START_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'SECON_END_TIME'
+                ,fieldLabel: '".END_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            }]
+        }]
+    }
+    ";
+    
+    $THIRD_TIME = "
+    {
+        title: '" . TIME . " (" . $this->academicObject->THIRD_SESSION_GROUP . ") '
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,width: 550
+        ,style: 'padding-bottom: 5px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'THIRD_START_TIME'
+                ,fieldLabel: '".START_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            },{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'THIRD_END_TIME'
+                ,fieldLabel: '".END_TIME."'
+                ,width: 250
+                ,allowBlank:false
+            }]
+        }]
+    }
+    ";
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= "".$DETAIL_INFORMATION."";
+    $FORM_ITEMS .= ",".$FIRST_TIME."";
+    $FORM_ITEMS .= ",".$SECOND_TIME."";
+    $FORM_ITEMS .= ",".$THIRD_TIME."";
+    $FORM_ITEMS .= "]";
+    
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+    
+    if(!$isCancel){
+        $OBJECT_FORM->addTBarItems("
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,scope:this
+            ,handler: function(){
+                window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.load();
+            }
+        ");
+    }
+    
+    if ($this->scheduleAction =="UPDATE"){       
+        if($this->facette){
+            if($this->academicId){
+                if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
+                    if($this->facette->SHARED_SCHEDULE){
+                        if(!$this->facette->SHARED_FROM){
+                            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+                        }
+                    }else{
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+                    }
+                }
+                
+                if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_REMOVE_RIGHT")){
+                    $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
+                }
+                
+                if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT")){
+                    if($this->facette->SHARED_SCHEDULE){
+                        if(!$this->facette->SHARED_FROM){
+                            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                        }
+                    }else{
+                        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+                    }
+                }
+                
+            }else{           
+                if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EXECUTE_RIGHT"))
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSetRelease($status));
+                if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_REMOVE_RIGHT"))
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormRemoveObject($this->remove_status));
+                if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+                $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
+            } 
+        }
+    }else{
+        if($this->academicId){
+            if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EDIT_RIGHT"))
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());              
+        }else{           
+            if(UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
+            $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());                   
+        }   
+    }
+    
+    $OBJECT_FORM->setLoadParams("
+            cmd: 'loadClassEvent'
+            ,scheduleId: '".$this->scheduleId."'
+            ,academicId: '".$this->academicId."'
+            ,target: '".$this->target."'
+            ,trainingId: '".$this->trainingId."'
+            ,term: '".$this->term."'
+            ,shortday: '".$this->shortday."'"
+    );
+    
+    if ($this->scheduleAction == "INSERT"){
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'saveClassEvent'
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ");
+    }else{
+        $OBJECT_FORM->setSaveParams("
+            cmd: 'saveClassEvent'
+            ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ");
+    }
+    
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'jsonDeleteDayClassEvent'
+        ,scheduleId: '".$this->scheduleId."'
+        ,academicId: '".$this->academicId."'
+        ,target: '".$this->target."'
+        ,trainingId: '".$this->trainingId."'
+        ,term: '".$this->term."'
+        ,shortday: '".$this->shortday."'
+    ");
+    
+    $OBJECT_FORM->setReleaseParams("
+        cmd: 'releaseClassEvent'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+    "); 
+
+    $OBJECT_FORM->setonEmbeddedEvents("
+        if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+        ".camemisPage::setRequestURI("scheduleId=".$this->scheduleId."")."
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedReleaseEvents("
+        if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+        ".camemisPage::setRequestURI()."
+    ");
+    
+    $setLink = "";
+    $setLink .= "academicId=".$this->academicId."";
+    $setLink .= "&term=".$this->term."";
+    $setLink .= "&target=".$this->target."";
+    $setLink .= "&trainingId=".$this->trainingId."";
+    if($this->facette){
+        if(ScheduleDBAccess::checkDoubleGroupEvent($this->facette)>1){
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                window.parent.window.location='/schedule/weekclassevents/?camIds=".$this->urlEncryp->encryptedGet($setLink)."';
+            "); 
+        }else{
+            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+                if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+                window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+            "); 
+        }
+    }
+    
+    $OBJECT_FORM->isObjectDefaultOnLoad = true;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: true
+        ,items:[{
+            layout:'fit'
+            ,border: false
+            ,items: [{xtype: '<?= $OBJECT_FORM->getObjectXType(); ?>'}]
+        }]
+    });
+
+    if(Ext.getCmp('SUBJECT_ID')){
+        Ext.getCmp('SUBJECT_ID').on('select', function() {
+            if (Ext.getCmp('TEACHER_INFORMATION')) Ext.getCmp('TEACHER_INFORMATION').hide();
+            if (Ext.getCmp('ROOM_INFORMATION')) Ext.getCmp('ROOM_INFORMATION').hide();
+            
+            Ext.Ajax.request({
+                url: '/schedule/jsonsave/'
+                ,method: 'POST'
+                ,params: {
+                    cmd: 'deleteOldSubject'
+                    ,subjectId: '<?=$this->subjectId;?>'
+                    ,scheduleId: '<?=$this->scheduleId?>'
+                    ,academicId: '<?=$this->academicId;?>'
+                    ,term: '<?=$this->term;?>'
+                }
+                ,success: function(response, options) { }
+                ,failure: function(response, options) {}
+            });
+            if (Ext.getCmp('TEACHER_HIDDEN')) Ext.getCmp('TEACHER_HIDDEN').setValue('0');
+        });
+    }
+    
+    <?
+    if ($this->facette){
+        switch($this->facette->SCHEDULE_TYPE){
+            case 1:
+                ?>
+                if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').show();
+                if (Ext.getCmp('SUBJECT_ID')) Ext.getCmp('SUBJECT_ID').show();
+                if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').hide();
+                <?
+            break;
+            case 2:
+                ?>
+                if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').show();
+                if (Ext.getCmp('SUBJECT_ID')) Ext.getCmp('SUBJECT_ID').hide();
+                if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').setValue('');
+                if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').enable();
+                <?
+            break;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        $js = "var myTree = Ext.getCmp('TREE.CLASS_GROUP_LIST_ID');";
+        $js .= "if (myTree) myTree.on('checkchange', function(node, checked){";
+            $js .= "Ext.Ajax.request({";
+                $js .= "url: '/schedule/jsonsave/'";
+                $js .= ",method: 'POST'";
+                $js .= ",scope:this";
+                $js .= ",params: {";
+                    $js .= "cmd: 'actionSharingSchedule2Academic'";
+                    $js .= ",selectedId: node.id, checked:checked";
+                    $js .= ",scheduleId: '".$this->scheduleId."'";
+                $js .= "}";
+                $js .= ",success: function(response, options) {";
+                    $js .= "XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); ";
+                $js .= "}";
+            $js .= "});";
+        $js .= "});";
+        echo $js;
+        ////////////////////////////////////////////////////////////////////////
+    }else{
+        ?>
+        if(Ext.getCmp('SUBJECT_ID')){
+            Ext.getCmp('SUBJECT_ID').on('select', function() {
+                if (Ext.getCmp('TEACHER_INFORMATION')) Ext.getCmp('TEACHER_INFORMATION').hide();
+                if (Ext.getCmp('ROOM_INFORMATION')) Ext.getCmp('ROOM_INFORMATION').hide();
+
+                Ext.Ajax.request({
+                    url: '/schedule/jsonsave/'
+                    ,method: 'POST'
+                    ,params: {
+                        cmd: 'deleteOldSubject'
+                        ,subjectId: '<?=$this->subjectId;?>'
+                        ,scheduleId: '<?=$this->scheduleId?>'
+                        ,academicId: '<?=$this->academicId;?>'
+                        ,term: '<?=$this->term;?>'
+                    }
+                    ,success: function(response, options) { }
+                    ,failure: function(response, options) {}
+                });
+                if (Ext.getCmp('TEACHER_HIDDEN')) Ext.getCmp('TEACHER_HIDDEN').setValue('0');
+            });
+        }
+        if(Ext.getCmp('SCHEDULE_TYPE_ID')) Ext.getCmp('SCHEDULE_TYPE_ID').on('select', function() {
+            switch(Ext.getCmp('SCHEDULE_TYPE_ID').getValue()){
+                case 1:
+                    Ext.getCmp('SUBJECT_ID').allowBlank = false;
+                    if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').hide();
+                    if (Ext.getCmp('SUBJECT_ID')) Ext.getCmp('SUBJECT_ID').show();
+                    break;
+                case 2:
+                    Ext.getCmp('SUBJECT_ID').allowBlank = true;
+                    if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').show();
+                    if (Ext.getCmp('SUBJECT_ID')) Ext.getCmp('SUBJECT_ID').hide();
+                    if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').setValue('');
+                break;
+                default:
+                    Ext.getCmp('SUBJECT_ID').allowBlank = false;
+                    if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').hide();
+                    if (Ext.getCmp('SUBJECT_ID')) Ext.getCmp('SUBJECT_ID').hide();
+                    if (Ext.getCmp('EVENT')) Ext.getCmp('EVENT').setValue('');
+                break;
+            }
+        });
+        <?
+    }
+    ?>
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>

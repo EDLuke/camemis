@@ -87,31 +87,19 @@ $viewportItem = new ViewportItem(
 
         $ENROLLMENT_TYPE_STORE = "[";
             $ENROLLMENT_TYPE_STORE .= "[0, '" . ENROLLMENT_IN_SCHOOLYEAR_N_CLASS . "']";
-            switch ($TERM_NUMBER) {
-                case 1:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_TERM."']";
-                    break;
-                case 2:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_QUARTER."']";
-                    break;
-                default:
-                    $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_SEMESTER."']";
-                    break;
-            }
-            $ENROLLMENT_TYPE_STORE .= ",[2, '".ENROLLMENT_IN_MULTI_SCHOOLYEAR."']";
         $ENROLLMENT_TYPE_STORE .= "]";
         
         if($this->facette->EDUCATION_SYSTEM){
             $DETAIL_INFORMATION_ITEMS = "[
-                {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
+                {".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
                 ,{".CamemisField::Numberfield("NUMBER_CREDIT", "NUMBER_CREDIT", NUMBER_CREDIT, false, false, false)."}
                 ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }else{
             $DETAIL_INFORMATION_ITEMS = "[
-                {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
+                {".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
                 ,{".CamemisField::Checkbox("USE_OF_GROUPS","USE_OF_GROUPS",USE_OF_GROUPS, 1, false, false,true)."}    
-                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, true, 0, false, false,false)."}
+                ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, false, false, false, false,false)."}
                 ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
         }
@@ -199,29 +187,29 @@ $viewportItem = new ViewportItem(
         $FORMULA_TERM_RESULT_STORE .= "]";
         
         $DIVISION_NUMBER_ITEMS = "[";
-        $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("PERFORMANCE_MONTH_DIVISION_VALUE","PERFORMANCE_MONTH_DIVISION_VALUE", MONTHLY_RESULT, false, false)."}";
+        $DIVISION_NUMBER_ITEMS .= "{".CamemisField::Numberfield("PERFORMANCE_MONTH_DIVISION_VALUE","PERFORMANCE_MONTH_DIVISION_VALUE", MONTHLY_RESULT, false, false, false, false, false, 50)."}";
         switch ($TERM_NUMBER) {
             case 1:
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_TERM_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_TERM_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_TERM_RESULT, false, false)."}";   
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_TERM_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_TERM_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_TERM_RESULT, false, false, false, false, false, 50)."}";   
                 break;
             case 2:
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_QUARTER_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_QUARTER_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_QUARTER_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FOURTH_DIVISION_VALUE","PERFORMANCE_FOURTH_DIVISION_VALUE", FOURTH_QUARTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FIRST_DIVISION_VALUE","PERFORMANCE_FIRST_DIVISION_VALUE", FIRST_QUARTER_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_QUARTER_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", THIRD_QUARTER_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_FOURTH_DIVISION_VALUE","PERFORMANCE_FOURTH_DIVISION_VALUE", FOURTH_QUARTER_RESULT, false, false, false, false, false, 50)."}";
                 break;
             default:
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", FIRST_SEMESTER_RESULT, false, false)."}";
-                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_SEMESTER_RESULT, false, false)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_THIRD_DIVISION_VALUE","PERFORMANCE_THIRD_DIVISION_VALUE", FIRST_SEMESTER_RESULT, false, false, false, false, false, 50)."}";
+                $DIVISION_NUMBER_ITEMS .= ",{".CamemisField::Numberfield("PERFORMANCE_SECOND_DIVISION_VALUE","PERFORMANCE_SECOND_DIVISION_VALUE", SECOND_SEMESTER_RESULT, false, false, false, false, false, 50)."}";
                 break;   
         }
         $DIVISION_NUMBER_ITEMS .= "]";
         
         $ACADEMIC_DATE_SETTING = "
         {
-            title: ''
+            title: '".ACADEMIC_DATE."'
             ,collapsible: true
             ,collapsed: false
             ,autoHeight: true
@@ -309,27 +297,27 @@ $viewportItem = new ViewportItem(
         $WEIGHTING = "[";
             switch ($TERM_NUMBER) {
                 case 1:
-                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_TERM, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_TERM, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM1_WEIGHTING","TERM1_WEIGHTING", THIRD_TERM, true, 1)."}";   
+                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_TERM, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_TERM, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM1_WEIGHTING","TERM1_WEIGHTING", THIRD_TERM, true, 1, false, false, false, 50)."}";   
                     break;
                 case 2:
-                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_QUARTER, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_QUARTER, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM1_WEIGHTING","TERM1_WEIGHTING", THIRD_QUARTER, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM2_WEIGHTING","TERM2_WEIGHTING", FOURTH_QUARTER, true, 1)."}";
+                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_QUARTER, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_QUARTER, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM1_WEIGHTING","TERM1_WEIGHTING", THIRD_QUARTER, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("TERM2_WEIGHTING","TERM2_WEIGHTING", FOURTH_QUARTER, true, 1, false, false, false, 50)."}";
                     break;
                 default:
-                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_SEMESTER, true, 1)."}";
-                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_SEMESTER, true, 1)."}";
+                    $WEIGHTING .= "{".CamemisField::Numberfield("SEMESTER1_WEIGHTING","SEMESTER1_WEIGHTING", FIRST_SEMESTER, true, 1, false, false, false, 50)."}";
+                    $WEIGHTING .= ",{".CamemisField::Numberfield("SEMESTER2_WEIGHTING","SEMESTER2_WEIGHTING", SECOND_SEMESTER, true, 1, false, false, false, 50)."}";
                     break;   
             }
             
         $WEIGHTING .= "]";
 
-        $CAMEMIS_ASSESSMENT_SETTINGS = "
+        $SCHOOLYEAR_SETTINGS = "
         {
-            title: '".EVALUATION_SETTINGS."'
+            title: '".SETTINGS."'
             ,collapsible: true
             ,collapsed: false
             ,autoHeight: true
@@ -339,20 +327,125 @@ $viewportItem = new ViewportItem(
             ,items:[{
                 xtype:'fieldset'
                 ,width: 500
-                ,title:'".EVALUATION_TYPE."'
-                ,checkboxToggle:true
-                ,collapsed: false
+                ,title:'".SESSION_GROUP."'
+                ,collapsible: true
+                ,collapsed: true
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
+                    ,items:[{
+                        ".CamemisField::Checkbox("MULTIPLE_SESSIONS","MULTIPLE_SESSIONS",MULTIPLE_SESSIONS, 1, false, false)."
+                    },{
+                        layout: 'column'
+                        ,id:'COL_FIRST_SESSION_GROUP'
+                        ,hidden:true
+                        ,border: false
+                        ,autoHeight:true
+                        ,bodyStyle:'padding:5px;background:#EEE;'
+                        ,items:[{
+                            columnWidth:280
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'textfield'
+                                ,fieldLabel: '".SESSION_GROUP." (1)'
+                                ,name: 'FIRST_SESSION_GROUP'
+                                ,width:200
+                            }]
+                        },{
+                            columnWidth:20
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'checkbox'
+                                ,fieldLabel: ''
+                                ,boxLabel:''
+                                ,name: 'CHECK_FIRST_SESSION_GROUP'
+                            }]
+                        }]
+                    },{
+                        layout: 'column'
+                        ,id:'COL_SECOND_SESSION_GROUP'
+                        ,hidden:true
+                        ,border: false
+                        ,autoHeight:true
+                        ,bodyStyle:'padding:5px;background:#EEE;'
+                        ,items:[{
+                            columnWidth:280
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'textfield'
+                                ,fieldLabel: '".SESSION_GROUP." (2)'
+                                ,name: 'SECOND_SESSION_GROUP'
+                                ,width:200
+                            }]
+                        },{
+                            columnWidth:20
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'checkbox'
+                                ,fieldLabel: ''
+                                ,boxLabel:''
+                                ,name: 'CHECK_SECOND_SESSION_GROUP'
+                            }]
+                        }]
+                    },{
+                        layout: 'column'
+                        ,id:'COL_THIRD_SESSION_GROUP'
+                        ,hidden:true
+                        ,border: false
+                        ,autoHeight:true
+                        ,bodyStyle:'padding:5px;background:#EEE;'
+                        ,items:[{
+                            columnWidth:280
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'textfield'
+                                ,fieldLabel: '".SESSION_GROUP." (3)'
+                                ,name: 'THIRD_SESSION_GROUP'
+                                ,width:200
+                            }]
+                        },{
+                            columnWidth:20
+                            ,border:false
+                            ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
+                            ,items: [{
+                                xtype:'checkbox'
+                                ,fieldLabel: ''
+                                ,boxLabel:''
+                                ,name: 'CHECK_THIRD_SESSION_GROUP'
+                            }]
+                        }]
+                    }]
+                }]
+            },{
+                xtype:'fieldset'
+                ,width: 500
+                ,title:'".EVALUATION_TYPE."'
+                ,collapsible: true
+                ,collapsed: true
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items:[
-                        {".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, false, false,false)."}
-                        ,{html:'&nbsp;',border:false}
+                        {".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, 150, false,false)."}
+                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#EEE;'}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
-                        ,{html:'&nbsp;',border:false}
+                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#EEE;'}
                         ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
                         ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
                     ]
@@ -361,55 +454,55 @@ $viewportItem = new ViewportItem(
                 xtype:'fieldset'
                 ,width: 500
                 ,title:'".DISPLAYING."'
-                ,checkboxToggle:true
-                ,collapsed: false
+                ,collapsible: true
+                ,collapsed: true
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$DISPLAYING."
                 }]
             },{
                 xtype:'fieldset'
                 ,width: 500
                 ,title:'".WEIGHTING."'
-                ,checkboxToggle:true
+                ,collapsible: true
                 ,collapsed: false
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$WEIGHTING."
                 }]
             },{
                 xtype:'fieldset'
                 ,width: 500
                 ,title:'".FORMULA_CALCULATOR."'
-                ,checkboxToggle:true
+                ,collapsible: true
                 ,collapsed: false
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items:[
-                        {".CamemisField::Combo('FORMULA_TERM', $TITLE_FORMULA_TERM_RESULT, $FORMULA_TERM_RESULT_STORE, false, false, false, false,false)."}
-                        ,{".CamemisField::Combo('FORMULA_YEAR', YEAR_RESULT, $AVERAGE_STORE, false, false, false, false,false)."}
+                        {".CamemisField::Combo('FORMULA_TERM', $TITLE_FORMULA_TERM_RESULT, $FORMULA_TERM_RESULT_STORE, false, false,230, false,false)."}
+                        ,{".CamemisField::Combo('FORMULA_YEAR', YEAR_RESULT, $AVERAGE_STORE, false, false, 230, false,false)."}
                     ]
                 }]
             },{
                 xtype:'fieldset'
                 ,width: 500
                 ,title:'".DIVISION_NUMBER."'
-                ,checkboxToggle:true
-                ,collapsed: false
+                ,collapsible: true
+                ,collapsed: true
                 ,items:[{
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$DIVISION_NUMBER_ITEMS."
                 }]
             }]
@@ -447,14 +540,14 @@ $viewportItem = new ViewportItem(
         if($this->facette->EDUCATION_SYSTEM){
             $ITEMS = "[
                 ".$DETAIL_INFORMATION."
+                ,".$SCHOOLYEAR_SETTINGS." 
                 ,".$ACADEMIC_DATE_SETTING."
-                ,".$CAMEMIS_ASSESSMENT_SETTINGS." 
             ]";
         }else{
             $ITEMS = "[
                 ".$DETAIL_INFORMATION."
+                ,".$SCHOOLYEAR_SETTINGS." 
                 ,".$ACADEMIC_DATE_SETTING."
-                ,".$CAMEMIS_ASSESSMENT_SETTINGS." 
                 ,".$WORKING_DAYS."
             ]";
         }
@@ -525,48 +618,55 @@ $viewportItem = new ViewportItem(
         $OBJECT_FORM->labelWidth = 150;
         $OBJECT_FORM->renderJS();
 
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'fit'";
+                $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                $js .= ",border: false";
+                $js .= ",items:[{";
+                    $js .= "xtype: 'tabpanel'";
+                    $js .= ",tabPosition: 'top'";
+                    $js .= ",plain:true";
+                    $js .= ",activeTab: 0";
+                    $js .= ",enableTabScroll:true";
+                    $js .= ",items:[{";
+                    	$js .= "layout: 'fit'";
+                        $js .= ",title:'".MAIN_CONTENT."'";
+                        $js .= ",items:[{";
+                            $js .= "border: false";
+                            $js .= ",id: 'CONTENT'";
+                            $js .= ",xtype: 'panel'";
+                            $js .= ",layout: 'card'";
+                            $js .= ",enableTabScroll:true";
+                            $js .= ",activeItem: 0";
+                            $js .= ",items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]";
+                        $js .= "}]";
+                    $js .= "},{";
+                        $js .= "title: '".PERMISSION_ASSESSMENT_ENTRY."'";
+                        $js .= ",layout: 'fit'";
+                        $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'PERMISSION_SCORE', url:'/academic/permissionscore/?objectId=".$this->objectId."'})]";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+        $js .= "if (Ext.getCmp('MULTIPLE_SESSIONS')) Ext.getCmp('MULTIPLE_SESSIONS').on('check', function(){";
+            $js .= "if(Ext.getCmp('MULTIPLE_SESSIONS').getValue() == true){";
+                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').show();";
+                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').show();";
+                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').show();";
+            $js .= "}else{";
+                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').hide();";
+                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').hide();";
+                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').hide();";
+            $js .= "}";
+        $js .= "});";
+        
+        echo $js;
+        
         ?>
-        viewport = new Ext.Viewport({
-            layout: 'fit'
-            ,border: false
-            ,items:[{
-                layout:'fit'
-                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
-                ,border: false
-                ,items:[{
-                    xtype: 'tabpanel'
-                    ,tabPosition: 'top'
-                    ,plain:true
-                    ,activeTab: 0
-                    ,enableTabScroll:true
-                    ,items:[{
-                    	layout: 'fit'
-                        ,title:'<?=MAIN_CONTENT;?>'
-                        ,items:[{
-                            border: false
-                            ,id: 'CONTENT'
-                            ,xtype: 'panel'
-                            ,layout: 'card'
-                            ,enableTabScroll:true
-                            ,activeItem: 0
-                            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
-                        }]
-                    },{
-                        title: '<?=PERMISSION_ASSESSMENT_ENTRY?>'
-                        ,layout: 'fit'
-                        ,items: [new Ext.ux.IFrameComponent({ id: 'PERMISSION_SCORE', url:'/academic/permissionscore/?objectId=<?=$this->objectId;?>'})]
-                    }]
-                }]
-            }]
-        });
-
-        Ext.getCmp('EVALUATION_TYPE_ID').on('select', function() {
-            if(Ext.getCmp('EVALUATION_TYPE_ID').getValue() == 1){
-                Ext.getCmp('DISTRIBUTION_VALUE').hide();    
-            }else{
-                Ext.getCmp('DISTRIBUTION_VALUE').show();  
-            }
-        });
     });
 </script>
 <?
