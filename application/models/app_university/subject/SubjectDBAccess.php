@@ -838,14 +838,14 @@ class SubjectDBAccess {
                 case 0:
                     $newStatus = 1;
                     $data['STATUS'] = 1;
-                    $data['ENABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                    $data['ENABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['ENABLED_DATE'] = "" . getCurrentDBDateTime() . "";
+                    $data['ENABLED_BY'] = "" . Zend_Registry::get('USER')->CODE . "";
                     break;
                 case 1:
                     $newStatus = 0;
                     $data['STATUS'] = 0;
-                    $data['DISABLED_DATE'] = "'" . getCurrentDBDateTime() . "'";
-                    $data['DISABLED_BY'] = "'" . Zend_Registry::get('USER')->CODE . "'";
+                    $data['DISABLED_DATE'] = "" . getCurrentDBDateTime() . "";
+                    $data['DISABLED_BY'] = "" . Zend_Registry::get('USER')->CODE . "";
                     break;
             }
         }
