@@ -8,7 +8,7 @@
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
-require_once 'models/app_university/UserDBAccess.php';
+require_once 'models/app_school/UserDBAccess.php';
 require_once 'models/UserAuth.php';
 require_once 'models/TracklogDBAccess.php';
 
