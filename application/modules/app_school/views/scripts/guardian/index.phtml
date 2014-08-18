@@ -43,7 +43,7 @@ $columndata = Utiles::getGridColumnData("GUARDIAN_LIST_ID");
         
         $PERSONAL_INFORMATION ="{
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".PERSONAL_INFORMATION."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
@@ -60,7 +60,7 @@ $columndata = Utiles::getGridColumnData("GUARDIAN_LIST_ID");
         
         $ADDRESS ="{
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".ADDRESS."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'

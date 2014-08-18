@@ -68,7 +68,7 @@ Class DisplayChart{
         
         $this->chart = new AssessmentChart();
         $this->chart->setAcademicId($this->academicId);
-        $this->chart->setSubjectId($this->section);
+        $this->chart->setSubjectId($this->subjectId);
         $this->chart->setTerm($this->term);
     }
     
@@ -134,12 +134,12 @@ Class DisplayChart{
         }]";
     
         $CHART = new CamemisHighChart(
-            "AREA_SPLINE_CHART"
+            "COLUMN_COMPARE_CHART"
             , 'TEACHER_ENTER_SCORE'
             , TEACHER_ENTER_SCORE
-            , $dataset
+            , $this->chart->getDataSetTeacherEnterScore()
         );
-        $CHART->xAxis ="categories: ['Date1','Date2','Date3','Date4','Date5','Date6','Date7']";
+        $CHART->xAxis ="{categories: [".$this->chart->getImplodeAssignments()."]}";
         $CHART->allowPointSelect = 'true';
         $CHART->plotBorderWidth = "null";
         $CHART->setDIVHighChart();

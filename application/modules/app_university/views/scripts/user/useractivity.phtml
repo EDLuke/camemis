@@ -64,7 +64,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         if(!SchoolDBAccess::displayPersonNameInGrid()){
             $OBJECT_FORM->addObjectItems("
                 xtype:'fieldset'
-                ,checkboxToggle:true
+                ,collapsible:true,collapsed:false
                 ,collapsed: false
                 ,title: '".PERSONAL_INFORMATION."'
                 ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -101,7 +101,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         }else{
             $OBJECT_FORM->addObjectItems("
                 xtype:'fieldset'
-                ,checkboxToggle:true
+                ,collapsible:true,collapsed:false
                 ,collapsed: false
                 ,title: '".PERSONAL_INFORMATION."'
                 ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'

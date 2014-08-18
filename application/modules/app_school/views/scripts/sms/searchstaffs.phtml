@@ -152,7 +152,7 @@ Ext.onReady(function() {
     if(!SchoolDBAccess::displayPersonNameInGrid()){
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,title: '".STAFF_SEARCH."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
             ,width: 310
@@ -165,7 +165,7 @@ Ext.onReady(function() {
     }else{
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,title: '".STAFF_SEARCH."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
             ,width: 310
@@ -179,7 +179,7 @@ Ext.onReady(function() {
     
     $OBJECT_FORM->addObjectItems("
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible:true,collapsed:false
         ,title: '".SCHOOL_INFORMATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";padding:10px'
         ,width: 310

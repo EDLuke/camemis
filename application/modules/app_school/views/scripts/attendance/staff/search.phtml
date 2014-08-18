@@ -163,7 +163,7 @@ $columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
         
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,title: '".DATE."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
             ,width: 310
@@ -194,7 +194,7 @@ $columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
         if(!SchoolDBAccess::displayPersonNameInGrid()){
             $OBJECT_FORM->addObjectItems("
                 xtype:'fieldset'
-                ,checkboxToggle:true
+                ,collapsible:true,collapsed:false
                 ,title: '".PERSONAL_INFORMATION."'
                 ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
                 ,width: 310
@@ -211,7 +211,7 @@ $columndata = Utiles::getGridColumnData("STAFF_ATTENDANCE_LIST_ID");
 	}else{
             $OBJECT_FORM->addObjectItems("
                 xtype:'fieldset'
-                ,checkboxToggle:true
+                ,collapsible:true,collapsed:false
                 ,title: '".PERSONAL_INFORMATION."'
                 ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:15px'
                 ,width: 310

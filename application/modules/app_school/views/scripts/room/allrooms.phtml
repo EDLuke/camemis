@@ -57,7 +57,7 @@ if($entries){
                 $ITEMS = "";
                 $ITEMS .= "{";
                 $ITEMS .= "xtype:'fieldset'";
-                $ITEMS .= ",checkboxToggle:true";
+                $ITEMS .= ",collapsible:true,collapsed:false";
                 $ITEMS .= ",collapsed: false";
                 $ITEMS .= ",title: '".setShowText($fieldObject->NAME)."'";
                 $ITEMS .= ",bodyStyle: 'padding:10px;background: ".CamemisPage::userFormBgColor().";'";
@@ -130,7 +130,7 @@ Ext.onReady(function() {
     $DETAIL_INFORMATION = "
     {
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible:true,collapsed:false
         ,collapsed: false
         ,title: '".DETAIL_INFORMATION."'
         ,autoHeight: true
@@ -153,7 +153,7 @@ Ext.onReady(function() {
     $FACILITY_INFORMATION = "
     {
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible:true,collapsed:false
         ,collapsed: false
         ,title: '".FACILITY_INFORMATION."'
         ,autoHeight: true

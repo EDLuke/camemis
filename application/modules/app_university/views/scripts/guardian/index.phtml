@@ -41,7 +41,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $PERSONAL_INFORMATION ="{
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".PERSONAL_INFORMATION."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
@@ -58,7 +58,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $ADDRESS ="{
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".ADDRESS."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'

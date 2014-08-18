@@ -95,7 +95,7 @@ Ext.onReady(function() {
           
     $OBJECT_FORM->addObjectItems("
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible:true,collapsed:false
         ,collapsed: false
         ,title: '".PAYMENT."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
@@ -132,7 +132,7 @@ Ext.onReady(function() {
     if(!SchoolDBAccess::displayPersonNameInGrid()){
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".PERSONAL_INFORMATION."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
@@ -146,7 +146,7 @@ Ext.onReady(function() {
     }else{
         $OBJECT_FORM->addObjectItems("
             xtype:'fieldset'
-            ,checkboxToggle:true
+            ,collapsible:true,collapsed:false
             ,collapsed: false
             ,title: '".PERSONAL_INFORMATION."'
             ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'

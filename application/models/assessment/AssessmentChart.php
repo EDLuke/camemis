@@ -74,6 +74,69 @@ class AssessmentChart extends AssessmentProperties {
         }]";
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // TEACHER ENTER SCORE...
+    ////////////////////////////////////////////////////////////////////////////
+    public function getImplodeAssignments() {
+
+        $entries = $this->getCurrentClassAssignments();
+
+        $data = array();
+        if ($entries) {
+            foreach ($entries as $value) {
+                $data[] = "'" . addslashes($value->SHORT) . "'";
+            }
+        }
+
+        return implode(",", $data);
+    }
+
+    public function getCountTeacherEnterScore($date) {
+
+        $entries = $this->getCurrentClassAssignments();
+
+        $data = array();
+        if ($entries) {
+            foreach ($entries as $value) {
+
+                $SQL = self::dbAccess()->select();
+                $SQL->from("t_student_assignment", Array("C" => "COUNT(*)"));
+                $SQL->where("SUBJECT_ID = ?", $this->subjectId);
+                $SQL->where("CLASS_ID = '" . $this->academicId . "'");
+                $SQL->where("SCORE_DATE = '" . $date . "'");
+                $SQL->where("ASSIGNMENT_ID = '" . $value->ASSIGNMENT_ID . "'");
+                $SQL->group('ASSIGNMENT_ID');
+                //error_log($SQL->__toString());
+                $facette = self::dbAccess()->fetchRow($SQL);
+                $data[] = $facette ? $facette->C : 0;
+            }
+        }
+        return implode(",", $data);
+    }
+
+    public function getDataSetTeacherEnterScore() {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_score_date", Array("*"));
+        $SQL->where("SUBJECT_ID = ?", $this->subjectId);
+        $SQL->where("CLASS_ID = '" . $this->academicId . "'");
+        $SQL->group('SCORE_INPUT_DATE');
+        $result = self::dbAccess()->fetchAll($SQL);
+
+        $data = array();
+        if ($result) {
+            foreach ($result as $value) {
+                $name = "{name:'" . getShowDate($value->SCORE_INPUT_DATE) . "'";
+                $name .= ",data:[" . $this->getCountTeacherEnterScore($value->SCORE_INPUT_DATE) . "]}";
+                $data[] = $name;
+            }
+        }
+        return "[" . implode(",", $data) . "]";
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // END TEACHER ENTER SCORE...
+    ////////////////////////////////////////////////////////////////////////////
 }
 
 ?>
