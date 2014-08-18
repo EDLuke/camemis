@@ -334,18 +334,21 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items:[{
                         ".CamemisField::Checkbox("MULTIPLE_SESSIONS","MULTIPLE_SESSIONS",MULTIPLE_SESSIONS, 1, false, false)."
                     },{
                         layout: 'column'
+                        ,id:'COL_FIRST_SESSION_GROUP'
+                        ,hidden:true
                         ,border: false
                         ,autoHeight:true
-                        ,bodyStyle: 'padding:5px'
+                        ,bodyStyle:'padding:5px;background:#EEE;'
                         ,items:[{
                             columnWidth:280
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'textfield'
                                 ,fieldLabel: '".SESSION_GROUP." (1)'
@@ -356,6 +359,7 @@ $viewportItem = new ViewportItem(
                             columnWidth:20
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'checkbox'
                                 ,fieldLabel: ''
@@ -365,13 +369,16 @@ $viewportItem = new ViewportItem(
                         }]
                     },{
                         layout: 'column'
+                        ,id:'COL_SECOND_SESSION_GROUP'
+                        ,hidden:true
                         ,border: false
                         ,autoHeight:true
-                        ,bodyStyle: 'padding:5px'
+                        ,bodyStyle:'padding:5px;background:#EEE;'
                         ,items:[{
                             columnWidth:280
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'textfield'
                                 ,fieldLabel: '".SESSION_GROUP." (2)'
@@ -382,6 +389,7 @@ $viewportItem = new ViewportItem(
                             columnWidth:20
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'checkbox'
                                 ,fieldLabel: ''
@@ -391,13 +399,16 @@ $viewportItem = new ViewportItem(
                         }]
                     },{
                         layout: 'column'
+                        ,id:'COL_THIRD_SESSION_GROUP'
+                        ,hidden:true
                         ,border: false
                         ,autoHeight:true
-                        ,bodyStyle: 'padding:5px'
+                        ,bodyStyle:'padding:5px;background:#EEE;'
                         ,items:[{
                             columnWidth:280
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'textfield'
                                 ,fieldLabel: '".SESSION_GROUP." (3)'
@@ -408,6 +419,7 @@ $viewportItem = new ViewportItem(
                             columnWidth:20
                             ,border:false
                             ,layout: 'form'
+                            ,bodyStyle:'background:#EEE;'
                             ,items: [{
                                 xtype:'checkbox'
                                 ,fieldLabel: ''
@@ -427,13 +439,13 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items:[
                         {".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, 150, false,false)."}
-                        ,{html:'&nbsp;',border:false}
+                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#EEE;'}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
-                        ,{html:'&nbsp;',border:false}
+                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#EEE;'}
                         ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
                         ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
                     ]
@@ -448,7 +460,7 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$DISPLAYING."
                 }]
             },{
@@ -461,7 +473,7 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$WEIGHTING."
                 }]
             },{
@@ -474,7 +486,7 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items:[
                         {".CamemisField::Combo('FORMULA_TERM', $TITLE_FORMULA_TERM_RESULT, $FORMULA_TERM_RESULT_STORE, false, false,230, false,false)."}
                         ,{".CamemisField::Combo('FORMULA_YEAR', YEAR_RESULT, $AVERAGE_STORE, false, false, 230, false,false)."}
@@ -490,7 +502,7 @@ $viewportItem = new ViewportItem(
                     layout: 'form'
                     ,border: false
                     ,autoHeight:true
-                    ,bodyStyle: 'padding:15px'
+                    ,bodyStyle:'padding:15px;background:#EEE;'
                     ,items: ".$DIVISION_NUMBER_ITEMS."
                 }]
             }]
@@ -606,40 +618,55 @@ $viewportItem = new ViewportItem(
         $OBJECT_FORM->labelWidth = 150;
         $OBJECT_FORM->renderJS();
 
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'fit'";
+                $js .= ",bodyStyle: 'background:".CamemisPage::userBgColor().";padding:3px'";
+                $js .= ",border: false";
+                $js .= ",items:[{";
+                    $js .= "xtype: 'tabpanel'";
+                    $js .= ",tabPosition: 'top'";
+                    $js .= ",plain:true";
+                    $js .= ",activeTab: 0";
+                    $js .= ",enableTabScroll:true";
+                    $js .= ",items:[{";
+                    	$js .= "layout: 'fit'";
+                        $js .= ",title:'".MAIN_CONTENT."'";
+                        $js .= ",items:[{";
+                            $js .= "border: false";
+                            $js .= ",id: 'CONTENT'";
+                            $js .= ",xtype: 'panel'";
+                            $js .= ",layout: 'card'";
+                            $js .= ",enableTabScroll:true";
+                            $js .= ",activeItem: 0";
+                            $js .= ",items:[{xtype: '".$OBJECT_FORM->getObjectXtype()."'}]";
+                        $js .= "}]";
+                    $js .= "},{";
+                        $js .= "title: '".PERMISSION_ASSESSMENT_ENTRY."'";
+                        $js .= ",layout: 'fit'";
+                        $js .= ",items: [new Ext.ux.IFrameComponent({ id: 'PERMISSION_SCORE', url:'/academic/permissionscore/?objectId=".$this->objectId."'})]";
+                    $js .= "}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "});";
+        $js .= "if (Ext.getCmp('MULTIPLE_SESSIONS')) Ext.getCmp('MULTIPLE_SESSIONS').on('check', function(){";
+            $js .= "if(Ext.getCmp('MULTIPLE_SESSIONS').getValue() == true){";
+                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').show();";
+                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').show();";
+                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').show();";
+            $js .= "}else{";
+                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').hide();";
+                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').hide();";
+                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').hide();";
+            $js .= "}";
+        $js .= "});";
+        
+        echo $js;
+        
         ?>
-        viewport = new Ext.Viewport({
-            layout: 'fit'
-            ,border: false
-            ,items:[{
-                layout:'fit'
-                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
-                ,border: false
-                ,items:[{
-                    xtype: 'tabpanel'
-                    ,tabPosition: 'top'
-                    ,plain:true
-                    ,activeTab: 0
-                    ,enableTabScroll:true
-                    ,items:[{
-                    	layout: 'fit'
-                        ,title:'<?=MAIN_CONTENT;?>'
-                        ,items:[{
-                            border: false
-                            ,id: 'CONTENT'
-                            ,xtype: 'panel'
-                            ,layout: 'card'
-                            ,enableTabScroll:true
-                            ,activeItem: 0
-                            ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
-                        }]
-                    },{
-                        title: '<?=PERMISSION_ASSESSMENT_ENTRY?>'
-                        ,layout: 'fit'
-                        ,items: [new Ext.ux.IFrameComponent({ id: 'PERMISSION_SCORE', url:'/academic/permissionscore/?objectId=<?=$this->objectId;?>'})]
-                    }]
-                }]
-            }]
-        });
     });
 </script>
 <?
