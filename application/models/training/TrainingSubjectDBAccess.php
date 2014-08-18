@@ -93,6 +93,7 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
 
         $searchParams["target"] = "TRAINING";
         $searchParams["query"] = isset($params["query"]) ? addText($params["query"]) : "";
+        $searchParams["status"] = 1;
         $result = self::getAllSubjectsQuery($searchParams);
 
         $selectedResult = self::sqlAssignedSubjectsByTraining($params);

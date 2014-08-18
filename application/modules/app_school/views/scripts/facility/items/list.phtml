@@ -103,7 +103,7 @@ Ext.onReady(function() {
         ,tooltip:'".ADD_A_NEW_ITEM."'
         ,iconCls:'icon-application_form_add'
         ,handler: function(){   
-            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_MANAGE_ITEM."&objectId=new');
+            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_MANAGE_ITEM."&objectId=new&isFolder=true');
             //Ext.getCmp('WEST_ID').collapse();
         }
     ");
@@ -191,7 +191,7 @@ Ext.onReady(function() {
          $JS_EVENT.=",iconCls:'icon-add'";
          $JS_EVENT.=",disabled:false";
          $JS_EVENT.=",handler:function(){ ";
-             $JS_EVENT.="clickOpenPage('center','','".$this->URL_SHOW_MANAGE_ITEM."objectId=new&parentId='+node.id);";
+             $JS_EVENT.="clickOpenPage('center','','".$this->URL_SHOW_MANAGE_ITEM."objectId=new&parentId='+node.id+'&isFolder=false');";
          $JS_EVENT.="} ";
     
     $JS_EVENT.="},{";

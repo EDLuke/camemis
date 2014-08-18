@@ -29,7 +29,20 @@ Ext.onReady(function() {
     
     $OBJECT_TREE->isAsyncTreeNode = false;
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
-    
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
+    $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+
+    if (UserAuth::getACLValue("ACADEMIC_SETTING_EDIT_RIGHT"))
+    $OBJECT_TREE->addTBarItems("
+        id: 'ADD_ID'
+        ,scope:this
+        ,text:'".ADD_A_NEW_ITEM."'
+        ,tooltip:'".ADD_A_NEW_ITEM."'
+        ,iconCls:'icon-application_form_add'
+        ,handler: function(){
+            clickOpenPage('center','".ADD_A_NEW_ITEM."', '".$this->URL_SHOW_ASSIGNMENT_TEMP."&objectId=new&target=training');
+        }
+    ");
     $OBJECT_TREE->setBaseParams("
         cmd: 'jsonTreeAllAssignmentTemp'
         ,target:'TRAINING'

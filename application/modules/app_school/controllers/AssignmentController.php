@@ -131,7 +131,7 @@ class AssignmentController extends Zend_Controller_Action {
                 }
             }
         } else {
-            $this->view->target = $this->target;
+            $this->view->target = strtoupper($this->target);
         }
     }
 

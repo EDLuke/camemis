@@ -302,6 +302,7 @@ Ext.onReady(function() {
         cmd: 'jsonSaveFacilityItem'
         ,objectId: '".$this->objectId."'
         ,parentId: '".$this->parentId."'
+        ,isFolder: '".$this->isFolder."'
           
     ");
     
@@ -377,6 +378,7 @@ Ext.onReady(function() {
         ,limit:100
         ,cmd: 'jsonSearchFacilityItem'
         ,parentId: '".$this->objectId."'
+        ,isFolder: 'false'
     ";
     
     $ASSIGNED_ITEMS_GRID->forceFit = "false";
