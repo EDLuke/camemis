@@ -110,7 +110,7 @@ class StudentAdvisoryDBAccess {
             $SQL->where("E.LASTNAME LIKE '" . $lastname . "%'");
 
         if ($name)
-            $SQL->where("A.NAME = " . $name . "");
+            $SQL->where("A.NAME LIKE '" . $name . "%'");
 
         if ($advisoryId)
             $SQL->where("A.ADVISORY_TYPE = " . $advisoryId . "");
