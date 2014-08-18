@@ -76,7 +76,19 @@ Ext.onReady(function() {
     function cssNumber(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal;color:#333;padding:4px;height:18px;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
+    }
+    
+    function cssHeader0(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
+    }
+    
+    function cssHeader1(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
     }
     
     <?
@@ -143,11 +155,11 @@ Ext.onReady(function() {
         case 'TEACHER':
              $OBJECT_GRID->addColumn("
                 header: '<b>".constant($GRADING_TYPE)."</b>'
-                , width: 130
+                , width: 120
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
-                , renderer:cssDefault
+                , renderer:cssNumber
                 , editor: ".$comboEditor."
                 
             ");
@@ -159,7 +171,7 @@ Ext.onReady(function() {
                 , align: 'center'
                 , sortable: true
                 , dataIndex: 'TOTAL_ASSESSMENT'
-                , renderer:cssDefault
+                , renderer:cssNumber
                 
             ");
             break;  
@@ -189,10 +201,13 @@ Ext.onReady(function() {
     $OBJECT_GRID->addColumn("header: '<b>".AVERAGE."</b>', align: 'center', width: 80, sortable: true, renderer: cssNumber, dataIndex: 'TOTAL_RESULT'");
     
     if($entries){
+        $i=0;
         foreach($entries as $value){
             if($value->SUBJECT_ID){
+                $cssValue = $i % 2;
                 $SHORT = $value->SUBJECT_SHORT?$value->SUBJECT_SHORT:SHORT."?";
-                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'center', width:80, renderer: cssNumber, dataIndex: '".$value->SUBJECT_ID."'");
+                $OBJECT_GRID->addColumn("header: '<b>".$SHORT."</b>', align: 'center', width:70, renderer:cssHeader".$cssValue.", dataIndex: '".$value->SUBJECT_ID."'");
+                $i++;
             }
         }
     }
