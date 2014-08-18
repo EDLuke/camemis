@@ -127,6 +127,7 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
             ,iconCls:'icon-magnifier'
             ,scope:this
             ,handler: function(){
+                Ext.getCmp('TABPANEL_ID').getLayout().setActiveItem(1);
                 var formObject = Ext.getCmp('".$OBJECT_FORM->getObjectId()."');
                 var gridObject = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');
                 myAjaxRequest(formObject, gridObject);
@@ -262,12 +263,12 @@ $columndata = Utiles::getGridColumnData("ADVISORY_LIST_ID");
         
         $OBJECT_GRID->loadMask = true;
         $OBJECT_GRID->isQuickySearch = true;
-        $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->isObjectDefaultOnLoad = false;
         $OBJECT_GRID->isGroupingView = true;
         $OBJECT_GRID->groupField = "ADVISORY_NAME";
         $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->forceFit = "false";
-        $OBJECT_GRID->renderJS()
+        $OBJECT_GRID->renderJS() ;
    
         ?>
 
