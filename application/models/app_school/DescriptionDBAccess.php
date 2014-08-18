@@ -134,11 +134,11 @@ class DescriptionDBAccess {
 
         if ($facette)
         {
-            self::dbAccess()->delete('t_personal_description', array("ID='" . $objectId . "'"));
+            self::dbAccess()->delete('t_personal_description', array("ID=" . $objectId));
 
             if ($facette->OBJECT_TYPE == 'FOLDER')
             {
-                self::dbAccess()->delete('t_personal_description', array("PARENT='" . $objectId . "'"));
+                self::dbAccess()->delete('t_personal_description', array("PARENT=" . $objectId));
             }
         }
 
@@ -153,12 +153,12 @@ class DescriptionDBAccess {
         if ($objectId != "new")
         {
             $data = array();
-            $data['NAME'] = "'" . addText($params["NAME"]) . "'";
+            $data['NAME'] = addText($params["NAME"]);
             if (isset($params["CHOOSE_TYPE"]))
-                $data['CHOOSE_TYPE'] = "'" . addText($params["CHOOSE_TYPE"]) . "'";
+                $data['CHOOSE_TYPE'] = addText($params["CHOOSE_TYPE"]);
             if (isset($params["SORTKEY"]))//@veasna
-                $data['SORTKEY'] = "'" . $params["SORTKEY"] . "'";
-            self::dbAccess()->update("t_personal_description", $data, "ID='" . addText($params["objectId"]) . "'");
+                $data['SORTKEY'] = $params["SORTKEY"];
+            self::dbAccess()->update("t_personal_description", $data, "ID=" . addText($params["objectId"]));
         }else
         {
             self::addObject($params);
