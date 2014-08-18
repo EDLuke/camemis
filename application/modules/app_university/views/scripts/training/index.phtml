@@ -295,7 +295,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                             $html .= ",iconCls: 'icon-wand'"; 
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/training/trainingassessment/?objectId=' + node.id);";
+                                $html .= "clickOpenPage('center','','/training/trainingperformance/?objectId=' + node.id);";
                             $html .= "}";
                        $html .= "},{"; 
                         $html .= "text: '".TEACHER_ENTER_SCORE."'";

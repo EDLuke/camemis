@@ -1,9 +1,10 @@
 <?
-///////////////////////////////////////////////////////////
-// @sor veasna 
-// Date: 10.03.2013
+////////////////////////////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 01.08.2014
 // Am Stollheen 18, 55120 Mainz, Germany
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
@@ -11,9 +12,7 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisForm.php';
 require_once 'clients/CamemisTree.php';
 require_once 'include/Common.inc.php';
-require_once 'models/training/TrainingSubjectDBAccess.php';
 require_once 'utiles/Utiles.php';
-require_once 'clients/CamemisViewport.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -21,163 +20,192 @@ $OBJECT_GRID = new CamemisGrid("TRAINING", "LIST");
 $OBJECT_GRID->setLoadUrl('/training/jsonload/');
 $OBJECT_GRID->setSaveUrl('/training/jsonsave/');
 
-$VIEWPORT = new CamemisViewport();
-
-$subjectId = isset($_GET["subjectId"])? (int)$_GET["subjectId"]:"";
-$trainingId = isset($_GET["trainingId"])?addText($_GET["trainingId"]):"";
-$studentId = isset($_GET["studentId"])? addText($_GET["studentId"]):"";
-$teacherId = isset($_GET["teacherId"])?addText($_GET["teacherId"]):"";
-
-$firstParams["trainingId"] = $trainingId;
-$firstParams["include_in_evaluation"] = 1;
-$ENTRIES = TrainingSubjectDBAccess::sqlAssignedSubjectsByTraining($firstParams);
-
-/* @soda */ 
-//$params["objectId"] = $trainingId;
-//$params["subjectId"] = $subjectId;
-//$params["studentId"] = $studentId;
-
-//$score = StudentTrainingDBAccess::jsonStudentSubjectAssignment($params, false);
-//$option = "false";
-//$sum = 0;
-//if($score){
-//    foreach($score as $value){  
-//        foreach ($ENTRIES_ASSIGNMENT as $key => $assignment) {
-//            $sum+= $value['ASSIGNMENT_'.$assignment->ID];
-//        } 
-//    }
-//    if($sum == 0){
-//         $option = "false";
-//    }else{
-//         $option = "true";
-//    }
-//}
-///* --- */
+$listSubjects = TrainingAssessmentDBAccess::getListTrainingSubjects($this->objectId);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$columndata = Utiles::getGridColumnData($OBJECT_GRID->getObjectId());
+
+$setParams = "";
+$setParams .="&trainingId=".$this->objectId."";
 ?>
 
 <script>
 Ext.onReady(function() {
     
-    function cssFirst(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #333; padding: 5px; height:15px; background:#fff4bf;">' + value + '</div>';
-    }
-    
-    function cssSecond(value, metadata, record){
-        var name = record.data.STUDENT;
-        metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:bold; color: #141414; padding: 5px; height:15px; background:#D1DDEF;">' + value + '</div>';
+    function cssStatus(v, p, record){
+        return String.format('<div style=\"font-weight:normal;padding:4px;height:18px;background:{1};color:{2};\">{0}</div>'
+            ,v
+            ,record.data['BG_COLOR']
+            ,record.data['BG_COLOR_FONT']
+        );
     }
     
     function cssDefault(value, metadata, record){
         var name = record.data.STUDENT;
         metadata.attr = 'ext:qtip="' + name + '"';
-        return '<div style="font-weight:normal; color: #FFFFFF; padding: 5px; height:15px; background:#2fd5eb;">' + value + '</div>';
+        return '<div style="font-weight:normal; color:#000;background:#FFF;padding:4px;height:18px;">' + value + '</div>';
+    }
+    
+    function cssAssessment(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
     
     <?
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
-    $EDITOR = "new Ext.form.TextField({allowBlank: false})";
-    $OBJECT_GRID->addCellRenderer("
-        function renderText(v, p, record, rowIndex){
-            var str = '<span class=spanText>' + v + '</span>';
-            return str;
-        }
-    ");
-    
-    $OBJECT_GRID->addReadField("name: 'STUDENT_ID'");
-    $OBJECT_GRID->addReadField("name: 'CODE'");
+    $OBJECT_GRID->addReadField("name: 'STATUS_KEY'");
     $OBJECT_GRID->addReadField("name: 'STUDENT'");
+    $OBJECT_GRID->addReadField("name: 'GENDER'");  
+    $OBJECT_GRID->addReadField("name: 'RANK'");
     $OBJECT_GRID->addReadField("name: 'AVERAGE'");
     $OBJECT_GRID->addReadField("name: 'ASSESSMENT'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR'");
+    $OBJECT_GRID->addReadField("name: 'BG_COLOR_FONT'");
     
-    if($ENTRIES_ASSIGNMENT){
-        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-            $OBJECT_GRID->addReadField("name: 'ASSIGNMENT_".$value->ID."'");
+    if($listSubjects){
+        foreach($listSubjects as $value){
+            $OBJECT_GRID->addReadField("name: 'SUB_" . $value->SUBJECT_ID . "'");
         }
     }
     
-    $OBJECT_GRID->addColumn("header: '<b>" . STUDENT . "</b>', align:'left', renderer: cssDefault, width: 200, dataIndex: 'STUDENT'");
-       
-//    if($ENTRIES_ASSIGNMENT){
-//    
-//        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-//            if(($key % 2) == 1){
-//                $RENDERER = "cssFirst";
-//            }else{
-//                $RENDERER = "cssSecond";
-//            }
-//            switch(UserAuth::getUserType()){
-//                case "SUPERADMIN":
-//                case "ADMIN":
-//                case 'INSTRUCTOR':
-//                case 'TEACHER':
-//                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>', editor: ".$EDITOR.",align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-//                    break;
-//                case 'STUDENT':
-//                    $OBJECT_GRID->addColumn("header: '<b>" . $value->NAME . "</b>',align:'center', renderer: ".$RENDERER.", width: 110, dataIndex: 'ASSIGNMENT_".$value->ID."'");
-//                    break;
-//            }
-//        }
-//    }
+    switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
+        case "VIETNAMESE": $width = 100;break;
+        default: $width = 85;break;
+    }
     
-    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'AVERAGE'");
-    $OBJECT_GRID->addColumn("header: '<b>" . ASSESSMENT . "</b>', align:'center', renderer: cssDefault, width: 110, dataIndex: 'ASSESSMENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", hidden:".checkColHidden(1, $columndata).", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $OBJECT_GRID->addColumn("header: '<b>".STUDENT."</b>', width:140, hidden:".checkColHidden(2, $columndata).", renderer: cssDefault, dataIndex: 'STUDENT'");
+    $OBJECT_GRID->addColumn("header: '<b>".GENDER."</b>', width: 80, hidden:".checkColHidden(3, $columndata).",align:'center', renderer:cssDefault, sortable: true, dataIndex: 'GENDER'");
+    $OBJECT_GRID->addColumn("header: '<b>" . RANK . "</b>', align:'center', renderer: cssDefault, width: 100, hidden:".checkColHidden(4, $columndata).", sortable: true, dataIndex: 'RANK'");
+    $OBJECT_GRID->addColumn("header: '<b>" . ASSESSMENT . "</b>', align:'center', renderer: cssDefault, width: 110, hidden:".checkColHidden(5, $columndata).", sortable: true, dataIndex: 'ASSESSMENT'");
+    $OBJECT_GRID->addColumn("header: '<b>" . AVERAGE . "</b>', align:'center', renderer: cssDefault, width: 100, hidden:".checkColHidden(6, $columndata).", sortable: true, dataIndex: 'AVERAGE'");
+    $i=7;
+    if($listSubjects){
+        foreach($listSubjects as $value){
+            $OBJECT_GRID->addColumn("header: '<b>" . $value->SUBJECT_SHORT . "</b>', align:'center', renderer: cssDefault, width: 100, hidden:".checkColHidden($i, $columndata).", dataIndex: 'SUB_" . $value->SUBJECT_ID . "'");
+            $i++;
+        }
+    }
     
     $OBJECT_GRID->isObjectDefaultOnLoad = true;
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,objectId:'".$trainingId."'
-        ,subjectId:'".$subjectId."'
-        ,studentId:'".$studentId."'
-        ,cmd: 'jsonStudentSubjectAssignment'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'jsonTrainingPerformance'
     ";
         
     $OBJECT_GRID->setSaveParams("
-        cmd: 'actionTrainingStudentAssignment'
-        ,subjectId:'".$subjectId."'
+        cmd: 'jsonActionTrainingPerformance'
+        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
     ");
-
-//    $CALLBACK_DATA = "";
-//    if($ENTRIES_ASSIGNMENT){
-//        foreach($ENTRIES_ASSIGNMENT as $key=>$value){
-//            $CALLBACK_DATA .= "if (jsonData.data.ASSIGNMENT_".$value->ID.") e.record.set('ASSIGNMENT_".$value->ID."',jsonData.data.ASSIGNMENT_".$value->ID.");";
-//        }
-//    }
-//    
-//    $CALLBACK_DATA .= "if (jsonData.data.AVERAGE) e.record.set('AVERAGE',jsonData.data.AVERAGE);";
     
-//    $OBJECT_GRID->setAftereditCallback($CALLBACK_DATA);
-        
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '".CANCEL."'
+            ,id: 'CANCEL_ID'
+            ,formBind:true
+            ,iconCls:'icon-cancel'
+            ,handler: function(){
+                window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
+                window.parent.Ext.getCmp('TRAINING_ID').expand();
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '<b>" . REFRESH . "</b>'
+            ,iconCls:'icon-reload'
+            ,handler: function(){
+                ".CamemisPage::setRequestURI(false)."
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: '<b>" . PUBLISH_SCORE . "</b>'
+            ,iconCls:'icon-lightning_add'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url: '/training/jsonsave/'
+                    ,method: 'POST'
+                    ,params:{
+                        cmd: 'jsonActionPublishTrainingPerformance'
+                        ,camIds: '".$this->urlEncryp->encryptedGet($setParams)."'
+                    }
+                    ,success: function() {
+                        Ext.MessageBox.hide();
+                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+                    }
+                });
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
+        tbar.add('-',[{
+            text: '" . EXPORT_TO_EXCEL . "'
+            ,id: 'EXPORT_TO_EXCEL'
+            ,iconCls:'icon-page_excel'
+            ,handler: function(){
+                Ext.MessageBox.show({
+                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                    progressText: 'Saving...',
+                    width:300,
+                    wait:true,
+                    waitConfig: {interval:200},
+                    icon:'ext-mb-download'
+                });
+                Ext.Ajax.request({
+                    url: '/export/jsonexcel/'
+                    ,method: 'POST'
+                    ,timeout: 600000
+                    ,params:{cmd: 'jsonTrainingPerformance',camIds: '".$this->urlEncryp->encryptedGet($setParams)."',objectId:'".$OBJECT_GRID->getObjectId()."'}
+                    ,success: function(response, options) {
+                        Ext.MessageBox.hide();
+                        window.location='/export/openstudentrainingassessmentlist/'
+                    }
+                });
+            }
+        }]);
+    ");
+    
     $OBJECT_GRID->isGridEditing = true;
+    $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->forceFit = "false";
     $OBJECT_GRID->renderJS();
     
-    $VIEWPORT->viewportLayout = "Normal";
-    $VIEWPORT->collapsible = "false";
-    
-    $TBAR_ITEMS = "";
-    $TBAR_ITEMS .= "text:'".CANCEL."'";
-    $TBAR_ITEMS .= ",id:'CANCEL_ID'";
-    $TBAR_ITEMS .= ",iconCls:'icon-cancel'";
-    $TBAR_ITEMS .= ",handler: function(){window.parent.Ext.getCmp('CENTER_CONTENT').getLayout().setActiveItem(0);}";
-    $VIEWPORT->addViewportTbarItem($TBAR_ITEMS);
-    
-    $ITEMS = "xtype:'".$OBJECT_GRID->getObjectXtype()."'";
-    $VIEWPORT->addItem($ITEMS);
-    
-    $VIEWPORT->renderJS();
     ?>
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            border: false
+            ,id:'content'
+            ,layout: 'card'
+            ,activeItem: 0
+            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+        }]
+    });
     var grid = Ext.getCmp('<?=$OBJECT_GRID->getObjectId()?>');
     grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {
-        
+        //
     });
+    Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));
 });
 </script>
 <?

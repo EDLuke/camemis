@@ -262,10 +262,10 @@ class TrainingController extends Zend_Controller_Action {
             case "ADMIN":
             case 'INSTRUCTOR':
             case 'TEACHER':
-                $this->_helper->viewRenderer('/evaluation/trainingtranscript');
+                $this->_helper->viewRenderer('/evaluation/performance');
                 break;
             case 'STUDENT':
-                $this->_helper->viewRenderer('/evaluation/trainingshowitem');
+                $this->_helper->viewRenderer('/evaluation/studenttranscript');
                 break;
         }
     }
@@ -275,18 +275,6 @@ class TrainingController extends Zend_Controller_Action {
         $this->view->subjectId = $this->subjectId;
         $this->view->objectId = $this->objectId;
         $this->_helper->viewRenderer("evaluation/scoremonitor");
-    }
-
-    public function trainingtranscriptshowitemAction()
-    {
-        $this->_helper->viewRenderer('/evaluation/trainingtranscript');
-    }
-
-    public function trainingtranscriptassignmentAction()
-    {
-        $this->_helper->viewRenderer('/evaluation/trainingtranscriptassignment');
-        $this->view->objectId = $this->objectId;
-        $this->view->studentId = $this->studentId;
     }
 
     //
