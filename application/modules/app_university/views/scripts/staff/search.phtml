@@ -192,7 +192,8 @@ Ext.onReady(function() {
 
     $PERSONAL_INFORMATION = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
+        ,collapsed: false
         ,title: '".PERSONAL_INFORMATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
@@ -213,8 +214,8 @@ Ext.onReady(function() {
     //        
     $WORK_EXPERIENCE = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
-        ,collapsed:true
+        ,collapsible: true
+        ,collapsed: true
         ,title: '".WORK_EXPERIENCE."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310                                                    
@@ -228,8 +229,8 @@ Ext.onReady(function() {
     
     $SKILL = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
-        ,collapsed:true
+        ,collapsible: true
+        ,collapsed: true
         ,title: '".SKILL."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
@@ -240,8 +241,8 @@ Ext.onReady(function() {
     }";
     $RELATIVE_INFORMATION = "{                
         xtype:'fieldset'
-        ,checkboxToggle:true
-        ,collapsed:true
+        ,collapsible: true
+        ,collapsed: true
         ,title: '".RELATIVE_INFORMATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
@@ -251,8 +252,8 @@ Ext.onReady(function() {
     }";              
     $EDUCATION_BACKGROUND = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
-        ,collapsed:true
+        ,collapsible: true
+        ,collapsed: true
         ,title: '".EDUCATION_BACKGROUND."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
@@ -264,8 +265,8 @@ Ext.onReady(function() {
     }";
     $PUBLICATION = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
-        ,collapsed:true
+        ,collapsible: true
+        ,collapsed: true
         ,title: '".PUBLICATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
         ,width: 310
@@ -277,7 +278,7 @@ Ext.onReady(function() {
     //  
     $REGISTRATION = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".REGISTRATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -309,7 +310,7 @@ Ext.onReady(function() {
 
     $ADDRESS = "{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".ADDRESS."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'

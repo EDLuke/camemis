@@ -76,6 +76,17 @@ Ext.onReady(function() {
         return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#b8cfee">' + value + '</div>';
     }
     
+    function cssHeader0(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#F3F3F3">' + value + '</div>';
+    }
+    
+    function cssHeader1(value, metadata, record){
+        var name = record.data.STUDENT;
+        metadata.attr = 'ext:qtip="' + name + '"';
+        return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
+    }
     <?
     
     switch($subjectObject->SCORE_TYPE){
@@ -251,8 +262,11 @@ Ext.onReady(function() {
     }
     
     if($listAssignments){
+        $i=0;
         foreach($listAssignments as $value){
-            $COLUMNS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssDefault}"; 
+            $cssValue = $i % 2;
+            $COLUMNS .= ",{dataIndex:'A_".$value->OBJECT_ID."',header:'".getShowDate($value->SCORE_INPUT_DATE)."',width:100,align:'center',renderer:cssHeader".$cssValue."}";
+            $i++;
         }
     }
     

@@ -256,7 +256,7 @@ Ext.onReady(function() {
 
     $PERSONAL_INFORMATION ="{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: false
         ,title: '".PERSONAL_INFORMATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;font-weight: bold; padding:10px'
@@ -276,7 +276,7 @@ Ext.onReady(function() {
 
     $REGISTRATION ="{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".REGISTRATION."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -308,7 +308,7 @@ Ext.onReady(function() {
 
     $ADDRESS ="{
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".ADDRESS."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -323,7 +323,7 @@ Ext.onReady(function() {
     //
     $PRE_REQUIREMENTS ="{
         xtype:'fieldset'                        
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".PRE_REQUIREMENTS."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -336,7 +336,7 @@ Ext.onReady(function() {
     
     $EDUCATION_BACKGROUND ="{                      
         xtype:'fieldset'
-        ,checkboxToggle:true
+        ,collapsible: true
         ,collapsed: true
         ,title: '".EDUCATION_BACKGROUND."'
         ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
@@ -658,16 +658,6 @@ Ext.onReady(function() {
 
     if (UserAuth::getACLValue("STUDENT_PERSONAL_INFORMATION_READ_RIGHT"))
     $CONTEXTMENU_ITEMS[] = $SHOW_DETAIL;
-
-//    $HEALTH_INFORMATION ="{";
-//    $HEALTH_INFORMATION .="text: '".HEALTH_INFORMATION." &raquo; ' + record.data.FULL_NAME";
-//    $HEALTH_INFORMATION .=",iconCls: 'icon-paste_plain'";
-//    $HEALTH_INFORMATION .=",handler: function(){";
-//    $HEALTH_INFORMATION .="contextMenu.hide();clickOpenPage('center','','/student/medicalinfo/?&target=".camemisId()."&objectId=' + record.data.ID + '&noSudentComboLsit=true');";
-//    $HEALTH_INFORMATION .="Ext.getCmp('WEST_ID').collapse();";
-//    $HEALTH_INFORMATION .="}";
-//    $HEALTH_INFORMATION .="}";
-//    $CONTEXTMENU_ITEMS[] = $HEALTH_INFORMATION;
 
     $SEND_SMS ="{";
     $SEND_SMS .="text: '".SEND." &raquo; ' + record.data.FULL_NAME";

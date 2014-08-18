@@ -446,7 +446,7 @@ class Utiles {
                         $ITEMS = "";
                         $ITEMS .= "{";
                         $ITEMS .= "xtype:'fieldset'";
-                        $ITEMS .= ",checkboxToggle:true";
+                        $ITEMS .= ",collapsible: true";
                         $ITEMS .= ",collapsed: false";
                         $ITEMS .= ",title: '" . setShowTextExtjs($fieldObject->NAME) . "'";
                         $ITEMS .= ",bodyStyle: 'padding:10px;background:" . CamemisPage::userFormBgColor() . ";'";
