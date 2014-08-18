@@ -118,6 +118,10 @@ class AcademicDBAccess {
 
             $data["TITLE"] = $title;
             $data["COLOR"] = $facette->COLOR;
+            $data["FIRST_SESSION_GROUP"] = $facette->FIRST_SESSION_GROUP;
+            $data["SECOND_SESSION_GROUP"] = $facette->SECOND_SESSION_GROUP;
+            $data["THIRD_SESSION_GROUP"] = $facette->THIRD_SESSION_GROUP;
+            $data["MULTIPLE_SESSIONS"] = $facette->MULTIPLE_SESSIONS ? true : false;
             $data["ID"] = $facette->ID;
             $data["SHORT"] = $facette->SHORT;
             $data["SORTKEY"] = $facette->SORTKEY;
@@ -468,6 +472,14 @@ class AcademicDBAccess {
 
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
+
+        if (isset($params["FIRST_SESSION_GROUP"]))
+            $SAVEDATA['FIRST_SESSION_GROUP'] = addText($params["FIRST_SESSION_GROUP"]);
+        if (isset($params["SECOND_SESSION_GROUP"]))
+            $SAVEDATA['SECOND_SESSION_GROUP'] = addText($params["SECOND_SESSION_GROUP"]);
+        if (isset($params["THIRD_SESSION_GROUP"]))
+            $SAVEDATA['THIRD_SESSION_GROUP'] = addText($params["THIRD_SESSION_GROUP"]);
+        $SAVEDATA['MULTIPLE_SESSIONS'] = isset($params["MULTIPLE_SESSIONS"]) ? 1 : 0;
 
         if (isset($params["COLOR"]))
             $SAVEDATA['COLOR'] = addText($params["COLOR"]);
@@ -1036,6 +1048,10 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["PERFORMANCE_FOURTH_DIVISION_VALUE"] = $schoolyearObject->PERFORMANCE_FOURTH_DIVISION_VALUE;
                     $FIRST_SAVEDATA["FORMULA_TERM"] = $schoolyearObject->FORMULA_TERM;
                     $FIRST_SAVEDATA["FORMULA_YEAR"] = $schoolyearObject->FORMULA_YEAR;
+                    $FIRST_SAVEDATA["MULTIPLE_SESSIONS"] = $schoolyearObject->MULTIPLE_SESSIONS;
+                    $FIRST_SAVEDATA["FIRST_SESSION_GROUP"] = $schoolyearObject->FIRST_SESSION_GROUP;
+                    $FIRST_SAVEDATA["SECOND_SESSION_GROUP"] = $schoolyearObject->SECOND_SESSION_GROUP;
+                    $FIRST_SAVEDATA["THIRD_SESSION_GROUP"] = $schoolyearObject->THIRD_SESSION_GROUP;
 
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);
@@ -1128,6 +1144,11 @@ class AcademicDBAccess {
                     $SAVEDATA["SU"] = $schoolyearsubjectObject->SU;
                     $SAVEDATA["USE_OF_GROUPS"] = $schoolyearsubjectObject->USE_OF_GROUPS;
                     $SAVEDATA["SUBJECT_ID"] = $schoolyearsubjectObject->SUBJECT_ID;
+
+                    $SAVEDATA["MULTIPLE_SESSIONS"] = $schoolyearsubjectObject->MULTIPLE_SESSIONS;
+                    $SAVEDATA["FIRST_SESSION_GROUP"] = $schoolyearsubjectObject->FIRST_SESSION_GROUP;
+                    $SAVEDATA["SECOND_SESSION_GROUP"] = $schoolyearsubjectObject->SECOND_SESSION_GROUP;
+                    $SAVEDATA["THIRD_SESSION_GROUP"] = $schoolyearsubjectObject->THIRD_SESSION_GROUP;
 
                     $WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $SAVEDATA, $WHERE);

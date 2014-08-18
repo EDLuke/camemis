@@ -155,6 +155,14 @@ class EvaluationController extends Zend_Controller_Action {
         $this->_helper->viewRenderer('display/gradebookmonth');
     }
 
+    //@Visal
+    public function chartAction()
+    {
+        $this->view->academicId = $this->academicId;
+        $this->view->studentId = $this->studentId;
+        $this->_helper->viewRenderer('chart');
+    }
+
     public function creditgradebookmonthAction()
     {
 

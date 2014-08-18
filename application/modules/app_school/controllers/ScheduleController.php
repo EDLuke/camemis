@@ -21,16 +21,18 @@ require_once 'models/app_school/schedule/TeachingSessionDBAccess.php';
 require_once 'models/app_school/schedule/CopyScheduleDBAccess.php';
 require_once 'models/app_school/schedule/ImportScheduleDBAccess.php';
 require_once 'models/app_school/schedule/TeachingSessionDBAccess.php';
-require_once 'models/app_school/schedule/ScheduleDaySettingData.php';//@veasna
+require_once 'models/app_school/schedule/ScheduleDaySettingData.php'; //@veasna
 require_once 'models/app_school/room/RoomSessionDBAccess.php';
 
 class ScheduleController extends Zend_Controller_Action {
 
     protected $roleAdmin = array("SYSTEM");
 
-    public function init() {
+    public function init()
+    {
 
-        if (!UserAuth::identify()) {
+        if (!UserAuth::identify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -41,12 +43,13 @@ class ScheduleController extends Zend_Controller_Action {
 
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
-        if ($this->_getParam('camIds')) {
+        if ($this->_getParam('camIds'))
+        {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
         $this->DB_TRAINING = TrainingDBAccess::getInstance();
-        
+
         $this->DB_SCHEDULE_DAY_SETTING = new ScheduleDaySettingData();
 
         $this->DB_ACADEMIC = AcademicDBAccess::getInstance();
@@ -145,7 +148,8 @@ class ScheduleController extends Zend_Controller_Action {
             $this->facette = $this->DB_SCHEDULE->findScheduleFromGuId($this->scheduleId);
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
@@ -170,7 +174,8 @@ class ScheduleController extends Zend_Controller_Action {
         );
     }
 
-    public function campusscheduleAction() {
+    public function campusscheduleAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
@@ -187,58 +192,68 @@ class ScheduleController extends Zend_Controller_Action {
         );
     }
 
-    public function campusscheduledayAction() {
+    public function campusscheduledayAction()
+    {
 
         $this->view->academicId = $this->academicId;
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
         $this->_helper->viewRenderer("day/campus");
     }
 
-    public function campusscheduleweekAction() {
+    public function campusscheduleweekAction()
+    {
 
         $this->view->academicId = $this->academicId;
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
         $this->_helper->viewRenderer("week/campus");
     }
 
-    public function assignedtoroomAction() {
+    public function assignedtoroomAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
     }
 
-    public function assignedtoteacherAction() {
+    public function assignedtoteacherAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
     }
 
-    public function trainingscheduleAction() {
+    public function trainingscheduleAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
     }
 
-    public function trainingscheduledayAction() {
+    public function trainingscheduledayAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
         $this->view->trainingId = $this->trainingId;
         $this->_helper->viewRenderer("day/training");
     }
 
-    public function trainingscheduleweekAction() {
+    public function trainingscheduleweekAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
         $this->view->trainingId = $this->trainingId;
         $this->_helper->viewRenderer("week/training");
     }
 
-    public function listteachingsessionAction() {
+    public function listteachingsessionAction()
+    {
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
         $this->_helper->viewRenderer("teachingsession/listteachingsession");
     }
 
-    public function classeventsettingAction() {
+    public function classeventsettingAction()
+    {
 
         $this->view->academicId = $this->academicId;
         $this->view->teacherId = $this->teacherId;
         $this->view->target = $this->target;
         $this->view->classId = $this->classId;
 
-        if ($this->academicId) {
+        if ($this->academicId)
+        {
             $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
             $this->view->classObject = $classObject;
             $schoolyearObject = AcademicDateDBAccess::getInstance();
@@ -247,7 +262,8 @@ class ScheduleController extends Zend_Controller_Action {
             Zend_Registry::set('SCHOOLYEAR_ID', $classObject->SCHOOL_YEAR);
         }
 
-        if ($this->trainingId) {
+        if ($this->trainingId)
+        {
             $this->view->trainingId = $this->trainingId;
             $this->view->trainingObject = $this->DB_TRAINING->findTrainingFromId($this->trainingId);
         }
@@ -265,11 +281,13 @@ class ScheduleController extends Zend_Controller_Action {
         $this->view->URL_IMPORT_FROM_EXCEL = $this->UTILES->buildURL("schedule/import", array("academicId" => $this->academicId));
     }
 
-    public function teachingsessionchartAction() {
+    public function teachingsessionchartAction()
+    {
         $this->_helper->viewRenderer("teachingsession/chart");
     }
 
-    public function weekclasseventsAction() {
+    public function weekclasseventsAction()
+    {
 
         $this->view->academicId = $this->academicId;
         $this->view->teacherId = $this->teacherId;
@@ -278,7 +296,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->view->target = $this->target;
         $this->view->trainingId = $this->trainingId;
 
-        switch (strtoupper($this->target)) {
+        switch (strtoupper($this->target))
+        {
             case "GENERAL":
                 $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
                 $schoolyearObject = AcademicDateDBAccess::getInstance();
@@ -314,7 +333,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("week/classevent");
     }
 
-    public function showdayclasseventAction() {
+    public function showdayclasseventAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
@@ -347,7 +367,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("day/classevent");
     }
 
-    public function teachingsessionAction() {
+    public function teachingsessionAction()
+    {
 
         $this->view->scheduleId = $this->scheduleId;
         $this->view->target = $this->target;
@@ -355,13 +376,17 @@ class ScheduleController extends Zend_Controller_Action {
         $scheduleObject = $this->DB_SCHEDULE->findScheduleFromGuId($this->scheduleId);
         $teachingsessionObject = TeachingSessionDBAccess::getTeachingSessionFromId($this->scheduleId);
 
-        if ($scheduleObject) {
+        if ($scheduleObject)
+        {
             $this->view->facette = $scheduleObject;
-        } elseif ($teachingsessionObject) {
+        }
+        elseif ($teachingsessionObject)
+        {
             $this->view->facette = $teachingsessionObject;
         }
 
-        switch (strtoupper($this->_getParam('type'))) {
+        switch (strtoupper($this->_getParam('type')))
+        {
             case "SUBSTITUTE":
                 $this->_helper->viewRenderer("teachingsession/substitute");
                 break;
@@ -371,7 +396,8 @@ class ScheduleController extends Zend_Controller_Action {
         }
     }
 
-    public function extrateachingsessionAction() {
+    public function extrateachingsessionAction()
+    {
 
         $this->view->scheduleId = $this->scheduleId;
         $this->view->target = $this->target;
@@ -383,7 +409,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("teachingsession/extrateachingsession");
     }
 
-    public function importAction() {
+    public function importAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
@@ -391,17 +418,20 @@ class ScheduleController extends Zend_Controller_Action {
         $this->view->academicId = $this->academicId;
     }
 
-    public function exportweekscheduleAction() {
+    public function exportweekscheduleAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
     }
 
-    public function templatexlsAction() {
+    public function templatexlsAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
     }
 
-    public function dayeventlistAction() {
+    public function dayeventlistAction()
+    {
 
         $this->view->academicId = $this->academicId;
         $this->view->teacherId = $this->teacherId;
@@ -410,7 +440,8 @@ class ScheduleController extends Zend_Controller_Action {
 
         $this->view->trainingId = $this->trainingId;
 
-        if ($this->academicId) {
+        if ($this->academicId)
+        {
             $classObject = AcademicDBAccess::findGradeFromId($this->academicId);
             $schoolyearObject = AcademicDateDBAccess::getInstance();
             $schoolyearData = $schoolyearObject->getAcademicDatetDataFromId($classObject->SCHOOL_YEAR);
@@ -426,7 +457,8 @@ class ScheduleController extends Zend_Controller_Action {
 
     //@veasna
 
-    public function daycrediteventlistAction() {
+    public function daycrediteventlistAction()
+    {
 
         $this->view->studentId = $this->studentId;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -435,14 +467,16 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("day/creditlist");
     }
 
-    public function creditstudenteventsettingAction() {
+    public function creditstudenteventsettingAction()
+    {
 
         $this->view->studentId = $this->studentId;
         $this->view->schoolyearId = $this->schoolyearId;
         //$this->view->target = $this->target;
     }
 
-    public function weekcrediteventAction() {
+    public function weekcrediteventAction()
+    {
 
         $this->view->studentId = $this->studentId;
         $this->view->schoolyearId = $this->schoolyearId;
@@ -452,7 +486,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("week/creditevent");
     }
 
-    public function byclassAction() {
+    public function byclassAction()
+    {
 
         $this->view->academicId = $this->academicId;
         $this->view->target = $this->target;
@@ -465,9 +500,11 @@ class ScheduleController extends Zend_Controller_Action {
 
         $dbSchoolyear = AcademicDateDBAccess::getInstance();
 
-        if ($academicObject) {
+        if ($academicObject)
+        {
             $schoolyearObject = $dbSchoolyear->findAcademicDateFromId($academicObject->SCHOOL_YEAR);
-            if ($schoolyearObject) {
+            if ($schoolyearObject)
+            {
                 $this->view->className = $academicObject->NAME . " &raquo; " . $schoolyearObject->NAME;
                 $this->view->isCurrentYear = $dbSchoolyear->isCurrentSchoolyear($academicObject->SCHOOL_YEAR);
             }
@@ -502,7 +539,8 @@ class ScheduleController extends Zend_Controller_Action {
         );
     }
 
-    public function listextrateachingsessionAction() {
+    public function listextrateachingsessionAction()
+    {
         $this->view->academicId = $this->academicId;
         $this->view->trainingId = $this->trainingId;
         $this->view->target = $this->target;
@@ -510,18 +548,21 @@ class ScheduleController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("teachingsession/listextrateachingsession");
     }
 
-    public function groupscheduleAction() {
+    public function groupscheduleAction()
+    {
         $this->view->scheduleId = $this->scheduleId;
     }
 
     // Aktuell.....
-    public function showclasseventAction() {
+    public function showclasseventAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
         $this->view->remove_status = true;
 
-        if ($this->scheduleId == "new") {
+        if ($this->scheduleId == "new")
+        {
             $this->view->scheduleId = generateGuid();
             $this->view->term = $this->term;
             $this->view->roomId = $this->roomId;
@@ -530,8 +571,11 @@ class ScheduleController extends Zend_Controller_Action {
             $this->view->shortday = $this->shortday;
             $this->view->scheduleAction = "INSERT";
             $this->view->status = false;
-        } else {
-            if ($this->facette) {
+        }
+        else
+        {
+            if ($this->facette)
+            {
                 $this->view->minValue = "06:00";
                 $this->view->scheduleId = $this->facette->GUID;
                 $this->view->term = $this->facette->TERM;
@@ -542,10 +586,13 @@ class ScheduleController extends Zend_Controller_Action {
 
                 $this->view->scheduleAction = "UPDATE";
 
-                if ($this->facette->STATUS) {
+                if ($this->facette->STATUS)
+                {
                     $this->view->remove_status = false;
                     $this->view->status = true;
-                } else {
+                }
+                else
+                {
                     $this->view->remove_status = true;
                     $this->view->status = true;
                 }
@@ -556,7 +603,9 @@ class ScheduleController extends Zend_Controller_Action {
         $this->view->scheduleData = $this->SCHEDULE_DATA;
         $this->view->academicId = $this->academicId;
 
-        $this->view->academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+        $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+
+        $this->view->academicObject = $academicObject;
 
         if (isset($this->CLASS_OBJECT->GRADE_ID))
             $this->view->gradeId = $this->CLASS_OBJECT->GRADE_ID;
@@ -566,11 +615,26 @@ class ScheduleController extends Zend_Controller_Action {
 
         $this->view->target = $this->target;
         $this->view->trainingId = $this->trainingId;
+
+        if (!$this->trainingId)
+        {
+            if ($academicObject)
+            {
+                if ($academicObject->MULTIPLE_SESSIONS)
+                {
+                    $this->_helper->viewRenderer("showmulticlassevent");
+                }else{
+                    $this->_helper->viewRenderer("showclassevent");
+                }
+            }
+        }
     }
 
-    public function jsonloadAction() {
+    public function jsonloadAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "loadClassEvent":
                 $jsondata = $this->DB_SCHEDULE->loadClassEvent($this->REQUEST->getPost('scheduleId'));
@@ -579,7 +643,7 @@ class ScheduleController extends Zend_Controller_Action {
             case "loadClassEvents":
                 $jsondata = $this->DB_SCHEDULE->loadClassEvents($this->REQUEST->getPost());
                 break;
-                
+
             case "dataScheduleDayTrainingSetting"://@veasna 
                 $jsondata = $this->DB_SCHEDULE_DAY_SETTING->dataScheduleDayTrainingSetting($this->REQUEST->getPost());
                 break;
@@ -674,11 +738,13 @@ class ScheduleController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "saveClassEvent":
                 $jsondata = $this->DB_SCHEDULE->saveClassEvent($this->REQUEST->getPost());
@@ -739,9 +805,11 @@ class ScheduleController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
             case "jsonTreeSharedSchedule2Academic":
                 $jsondata = ScheduleDBAccess::jsonTreeSharedSchedule2Academic($this->REQUEST->getPost());
                 break;
@@ -751,7 +819,8 @@ class ScheduleController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsonimportAction() {
+    public function jsonimportAction()
+    {
 
         //UserAuth::actionPermintGroup($this->_request, "GENERAL_EDUCATION", "TRAINING_PROGRAMS");
 
@@ -762,7 +831,8 @@ class ScheduleController extends Zend_Controller_Action {
         $this->getResponse()->setBody($json);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);
