@@ -225,10 +225,10 @@ Ext.onReady(function() {
         $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleRemove());
         
         $OBJECT_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$parentId."');
-            if(myNode.parentNode.id==null){
+            myNode = myTree.getNodeById('".$this->objectId."');
+            if(myNode.parentNode==null){
                 myTree.root.reload();
             }else{
                 var parentId = myNode.parentNode.id
@@ -251,57 +251,44 @@ Ext.onReady(function() {
         ");
         
         $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-            XMsg('".STATUS."','".MSG_ACTION_REMOVED_ITEM."');
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$parentId."');
-            if(myNode.parentNode==null){
-                myTree.root.reload();
-            }else{
-                var parentId = myNode.parentNode.id
-                myPerentNode = myTree.getNodeById(parentId);
-                if(myNode.isLeaf()){
-                    if(myPerentNode){
-                        myPerentNode.reload();
-                        myPerentNode.expand(true, false);
-                    }else{
-                        myTree.root.reload();
-                    }
-                }else{
-                    if (myNode.hasChildNodes()) {
-                        myNode.reload();
-                        myNode.expand(true, false);
-                    }
-                }
-            }
+            myNode = myTree.getNodeById('".$this->objectId."');
+            myNode.remove('".$this->objectId."');
             window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
         ");
         
     }else{
+        
         $OBJECT_FORM->setonEmbeddedEvents("
-            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+            XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
             myTree = window.parent.Ext.getCmp('TREE.FACILITY_LIST_ID');
-            myNode = myTree.getNodeById('".$parentId."');
-            if(myNode.parentNode==null){
-                myTree.root.reload();
-            }else{
-                var parentId = myNode.parentNode.id
-                myPerentNode = myTree.getNodeById(parentId);
-                if(myNode.isLeaf()){
-                    if(myPerentNode){
-                        myPerentNode.reload();
-                        myPerentNode.expand(true, false);
-                    }else{
-                        myTree.root.reload();
-                    }
+            myNode = myTree.getNodeById('".$this->parentId."');
+            if(myNode){
+                if(myNode.parentNode==null){
+                    myTree.root.reload();
                 }else{
-                    if (myNode.hasChildNodes()) {
-                        myNode.reload();
-                        myNode.expand(true, false);
+                    var parentId = myNode.parentNode.id
+                    myPerentNode = myTree.getNodeById(parentId);
+                    if(myNode.isLeaf()){
+                        if(myPerentNode){
+                            myPerentNode.reload();
+                            myPerentNode.expand(true, false);
+                        }else{
+                            myTree.root.reload();
+                        }
+                    }else{
+                        if (myNode.hasChildNodes()) {
+                            myNode.reload();
+                            myNode.expand(true, false);
+                        }
                     }
                 }
+            }else{
+                myTree.root.reload();
             }
-            var result = Ext.util.JSON.decode(action.response.responseText);
-            window.location='".$_SERVER["REQUEST_URI"]."&objectId='+result.objectId;
+            
+            window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
         ");
     }
     
@@ -316,7 +303,7 @@ Ext.onReady(function() {
         cmd: 'jsonSaveFacilityItem'
         ,objectId: '".$this->objectId."'
         ,parentId: '".$this->parentId."'
-          
+        ,isFolder: '".$this->isFolder."'  
     ");
     
     $OBJECT_FORM->setRemoveParams("
@@ -392,6 +379,7 @@ Ext.onReady(function() {
         ,limit:100
         ,cmd: 'jsonSearchFacilityItem'
         ,parentId: '".$this->objectId."'
+        ,isFolder: 'false'
     ";
     
     $ASSIGNED_ITEMS_GRID->forceFit = "false";

@@ -42,6 +42,7 @@ Ext.onReady(function() {
     $DETAIL_ITEMS = "[";
     $DETAIL_ITEMS .= "{".CamemisField::Textfield("SHORT_ID", "SHORT", SHORT, true)."}";
     $DETAIL_ITEMS .= ",{".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}";
+    if(strtoupper($this->target)!='TRAINING')
     $DETAIL_ITEMS .= ",{".CamemisField::Combo(
             'SUBJECT'
             , SUBJECT

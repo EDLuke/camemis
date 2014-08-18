@@ -276,6 +276,7 @@ class FacilityDBAccess {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_facility", array("C" => "COUNT(*)"));
         $SQL->where("PARENT = ?",$Id);
+        $SQL->where("TYPE = ?", 1);
         $SQL->where("STATUS = 'CHECK-IN'");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchRow($SQL);
@@ -297,6 +298,7 @@ class FacilityDBAccess {
         $parentId = isset($params["parentId"]) ? addText($params["parentId"]) : "";
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
         $facility_type = isset($params["type"]) ? addText($params["type"]) : "";
+        $isFolder = isset($params["isFolder"]) ? addText($params["isFolder"]) : "";
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_facility', array('*'));
@@ -306,7 +308,11 @@ class FacilityDBAccess {
         } else {
             $SQL->where("PARENT='0'");
         }
-
+        
+        if ($isFolder){
+            $type=($isFolder=='true')?0:1;
+            $SQL->where("TYPE = ?",$type);    
+        }
         if ($facility_type) {
             $SQL->where("FACILITY_TYPE = ?", $facility_type);
         }
@@ -457,6 +463,7 @@ class FacilityDBAccess {
             foreach ($result as $value) {
 
                 if ($node == 0) {
+                //if($value->TYPE==0){
 
                     $data[$i]['leaf'] = false;
                     $data[$i]['id'] = $value->ID;
@@ -478,19 +485,37 @@ class FacilityDBAccess {
                     $data[$i]['parentId'] = $value->PARENT;
                 } else {
 
-                    if (self::checkChildItem($value->ID)) {
+                    if (self::getCountSubItem($value->ID)) {
                         $data[$i]['leaf'] = false;
-                        $data[$i]['iconCls'] = "icon-folder_up";
+                        //$data[$i]['iconCls'] = "icon-folder_up";
                         $data[$i]['cls'] = "nodeTextBold";
+                        
+                        
+                        if ($value->PERMANENT_CHECKOUT) {
+                            $subParams['parentId'] = $value->ID;
+                            $obejct = self::getAllFacilityItem($subParams);
+                            $inStock = 0;
+                            foreach ($obejct as $item) {
+                                $inStock+=$item->INSTOCK_QUANTITY;
+                            }
+                            $data[$i]['text'] = stripslashes($value->NAME) . " (" . $inStock . ")";
+                            $data[$i]['iconCls'] = "icon-folder_wrench";
+                        } else {
+                            $data[$i]['text'] = stripslashes($value->NAME) . " (" . self::getCountAvailableSubItem($value->ID) . ")";
+                            $data[$i]['iconCls'] = "icon-folder_up";
+                        }
+                        
+                        
                     } else {
                         $data[$i]['leaf'] = true;
                         $data[$i]['iconCls'] = "icon-application_form_magnify";
                         $data[$i]['cls'] = "nodeTextBlue";
+                        $data[$i]['text'] = $value->NAME ? stripslashes($value->NAME) : "?";
                     }
 
                     $data[$i]['id'] = $value->ID;
                     $data[$i]['parent'] = $value->PARENT;
-                    $data[$i]['text'] = $value->NAME ? stripslashes($value->NAME) : "?";
+                    
                 }
 
                 $i++;
@@ -622,7 +647,7 @@ class FacilityDBAccess {
 
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
-        
+            
         if (isset($params["SERIAL_NUMBER"]))
             $SAVEDATA['SERIAL_NUMBER'] = addText($params["SERIAL_NUMBER"]);
 
@@ -658,6 +683,9 @@ class FacilityDBAccess {
 
         if (isset($params["STATUS"]))
             $SAVEDATA['STATUS'] = addText($params["STATUS"]);
+        
+        if (isset($params["isFolder"]))
+            $SAVEDATA['TYPE'] = ($params["isFolder"]=='true')?0:1;
 
         $SAVEDATA['PERMANENT_CHECKOUT'] = isset($params["PERMANENT_CHCK_OUT"]) ? 1 : 0;
 
@@ -669,6 +697,8 @@ class FacilityDBAccess {
                 if ($parentObject) {
                     $SAVEDATA['PERMANENT_CHECKOUT'] = $parentObject->PERMANENT_CHECKOUT;
                     $SAVEDATA['FACILITY_TYPE'] = $parentObject->FACILITY_TYPE;
+                    $WHERE = self::dbAccess()->quoteInto("ID = ?", $parentId);
+                    self::dbAccess()->update('t_facility', array('TYPE'=>0), $WHERE);
                 }
             }
 
@@ -892,6 +922,7 @@ class FacilityDBAccess {
                     $IMPORT_DATA['BARCODE'] = addText($BARCODE);
                     $IMPORT_DATA['COST'] = addText($COST);
                     $IMPORT_DATA['QUANTITY'] = addText($QUANTITY);
+                    $IMPORT_DATA['INSTOCK_QUANTITY']=addText($QUANTITY);
                     $IMPORT_DATA['LOCATION'] = setImportChartset($LOCATION);
                     break;
                 default:
@@ -899,6 +930,7 @@ class FacilityDBAccess {
                     $IMPORT_DATA['BARCODE'] = addText($BARCODE);
                     $IMPORT_DATA['COST'] = addText($COST);
                     $IMPORT_DATA['QUANTITY'] = addText($QUANTITY);
+                    $IMPORT_DATA['INSTOCK_QUANTITY']=addText($QUANTITY);
                     $IMPORT_DATA['LOCATION'] = addText($LOCATION);
                     break;
             }
@@ -940,16 +972,19 @@ class FacilityDBAccess {
             $IMPORT_DATA['PARENT'] = $parentId;
             $IMPORT_DATA['CREATED_DATE'] = getCurrentDBDateTime();
             $IMPORT_DATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
+            $IMPORT_DATA['TYPE'] = 1;
 
             if ($NAME && $parentObject) {
                 $importCount += $QUANTITY;
                 $IMPORT_DATA['FACILITY_TYPE'] = $parentObject->FACILITY_TYPE;
                 $IMPORT_DATA['PERMANENT_CHECKOUT'] = $parentObject->PERMANENT_CHECKOUT;
-                $IMPORT_DATA['STATUS'] = "CHCK-IN";
+                $IMPORT_DATA['STATUS'] = "CHECK-IN";
                 self::dbAccess()->insert('t_facility', $IMPORT_DATA);
+                
             }
         }
-
+        $WHERE = self::dbAccess()->quoteInto("ID = ?", $parentId);
+        self::dbAccess()->update('t_facility', array('TYPE'=>0), $WHERE);
         self::updateInstockQuantity($parentId, $importCount);
     }
 
