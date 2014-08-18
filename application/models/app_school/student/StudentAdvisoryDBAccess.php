@@ -83,7 +83,7 @@ class StudentAdvisoryDBAccess {
         $firstname = isset($params["FIRSTNAME"]) ? addText($params["FIRSTNAME"]) : "";
         $lastname = isset($params["LASTNAME"]) ? addText($params["LASTNAME"]) : "";
 
-        $name = isset($params["NAME"]) ? addText($params["NAME"]) : "";
+        $name = isset($params["NAME"]) ? addText($params["NAME"]) : "";    
         $advisoryId = isset($params["ADVISORY_TYPE"]) ? addText($params["ADVISORY_TYPE"]) : "";
         
         $campusId = isset($params["campusId"]) ? addText($params["campusId"]) : "";
@@ -110,7 +110,7 @@ class StudentAdvisoryDBAccess {
             $SQL->where("E.LASTNAME LIKE '" . $lastname . "%'");
 
         if ($name)
-            $SQL->where("A.NAME = " . $name . "");
+            $SQL->where("A.NAME LIKE '" . $name . "%'"); 
 
         if ($advisoryId)
             $SQL->where("A.ADVISORY_TYPE = " . $advisoryId . "");
