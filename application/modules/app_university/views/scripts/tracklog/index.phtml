@@ -50,10 +50,10 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     $OBJECT_GRID->addReadField("name: '".Zend_Registry::get('SYSTEM_LANGUAGE')."'");
 
     $OBJECT_GRID->addColumn("header: 'ID', renderer: renderText, hidden: true,align:'left', width: 250, dataIndex: 'ID'");
-    $OBJECT_GRID->addColumn("header: 'ACCESSED_DATE', renderer: renderText, align:'left', width: 125, dataIndex: 'ACCESSED_DATE'");
-    $OBJECT_GRID->addColumn("header: 'ACCESSED_BY', renderer: renderText, align:'left', width: 125, dataIndex: 'ACCESSED_BY'");
-    $OBJECT_GRID->addColumn("header: 'TABLE_NAME', renderer: renderText, align:'left', width: 150, dataIndex: 'TABLE_NAME'");
-    $OBJECT_GRID->addColumn("header: 'FIELD_NOTE', renderer: renderText, align:'left', width: 250, dataIndex: 'FIELD_NOTE'");
+    $OBJECT_GRID->addColumn("header: '".ACCESSED_DATE."', renderer: renderText, align:'left', width: 125, dataIndex: 'ACCESSED_DATE'");
+    $OBJECT_GRID->addColumn("header: '".ACCESSED_BY."', renderer: renderText, align:'left', width: 125, dataIndex: 'ACCESSED_BY'");
+    $OBJECT_GRID->addColumn("header: '".TABLE_NAME."', renderer: renderText, align:'left', width: 150, dataIndex: 'TABLE_NAME'");
+    $OBJECT_GRID->addColumn("header: '".FIELD_NOTE."', renderer: renderText, align:'left', width: 250, dataIndex: 'FIELD_NOTE'");
 
     if (Zend_Registry::get('SYSTEM_LANGUAGE')!="ENGLISH")
     $OBJECT_GRID->addColumn("header: '".Zend_Registry::get('SYSTEM_LANGUAGE')."', renderer: renderText,align:'left', width: 450, dataIndex: '".Zend_Registry::get('SYSTEM_LANGUAGE')."'");
