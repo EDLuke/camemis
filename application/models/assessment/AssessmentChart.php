@@ -12,6 +12,7 @@ require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 class AssessmentChart extends AssessmentProperties {
 
     const SCORE_NUMBER = 1;
+    const SCORE_STRING = 2;
     const IS_PASS = 1;
     const IS_FAIL = 2;
 
@@ -42,7 +43,7 @@ class AssessmentChart extends AssessmentProperties {
     public function setParams() {
         $object = new stdClass();
         $object->academicId = $this->academicId;
-        $object->scoreType = self::SCORE_NUMBER;
+        $object->scoreType = $this->getSubjectScoreType();
         $object->subjectId = $this->subjectId;
         if ($this->term)
             $object->term = $this->term;
@@ -58,15 +59,14 @@ class AssessmentChart extends AssessmentProperties {
 
         $stdClass = $this->setParams();
         $entries = AssessmentConfig::getListGradingScales(
-                        self::SCORE_NUMBER
+                        $stdClass->scoreType
                         , $this->getSettingQualificationType());
 
         $data = array();
-        
+
         $COUNT = 0;
         if ($entries) {
             foreach ($entries as $value) {
-
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_subject_assessment", Array("C" => "COUNT(*)"));
                 $SQL->where("SUBJECT_ID = ?", $this->subjectId);
@@ -86,12 +86,22 @@ class AssessmentChart extends AssessmentProperties {
                         $SQL->where("TERM = '" . $stdClass->term . "'");
                         break;
                 }
+                $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
                 $SQL->where("SECTION = '" . $stdClass->section . "'");
+                $SQL->group("ASSESSMENT_ID");
+                
                 //error_log($SQL->__toString());
                 $facette = self::dbAccess()->fetchRow($SQL);
-                $COUNT += $facette ? $facette->C : 0;
+                $COUNT = $facette ? $facette->C : 0;
 
-                $data[] = "['" . $value->DESCRIPTION . "', " . $COUNT . "]";
+                switch ($stdClass->scoreType) {
+                    case self::SCORE_NUMBER:
+                        $data[] = "['" . $value->DESCRIPTION . "', " . $COUNT . "]";
+                        break;
+                    case self::SCORE_STRING:
+                        $data[] = "['" . $value->LETTER_GRADE . "', " . $COUNT . "]";
+                        break;
+                }
             }
         }
         return "[" . implode(",", $data) . "]";
