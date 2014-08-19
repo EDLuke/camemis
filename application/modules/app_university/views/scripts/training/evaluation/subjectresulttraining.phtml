@@ -32,7 +32,7 @@ $listGroups = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
 $listAssignments = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
         $this->trainingId
         , $this->subjectId
-        , "DATE");
+        , false);
 
 $setParams = "";
 $setParams .="&trainingId=".$this->trainingId."";
@@ -87,7 +87,6 @@ Ext.onReady(function() {
         metadata.attr = 'ext:qtip="' + name + '"';
         return '<div style="font-weight:normal; color:#000; padding:4px;height:18px;background:#FFFFCC">' + value + '</div>';
     }
-    
     <?
     
     switch($subjectObject->SCORE_TYPE){
@@ -253,6 +252,7 @@ Ext.onReady(function() {
                 , renderer:cssAssessment
                 , editor: ".$comboAssessment."}
             ";
+
             $AVG_TITLE = $trainingObject->EVALUATION_TYPE?"AVG%":"AVG";
             $COLUMNS .= ",{dataIndex: 'AVG', header: '<b>".$AVG_TITLE."</b>', width: 80 ,align: 'center',sortable: true,renderer:cssAssessment}";
             break;

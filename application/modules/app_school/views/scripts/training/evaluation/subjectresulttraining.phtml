@@ -32,7 +32,7 @@ $listGroups = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
 $listAssignments = TrainingAssessmentDBAccess::getTrainingListAssignmentScoreDate(
         $this->trainingId
         , $this->subjectId
-        , "DATE");
+        , false);
 
 $setParams = "";
 $setParams .="&trainingId=".$this->trainingId."";

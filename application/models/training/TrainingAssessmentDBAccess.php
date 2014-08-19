@@ -86,7 +86,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         if ($date)
             $SQL->where("A.SCORE_DATE = '" . $date . "'");
 
-        //error_log($SQL->__toString());
+        error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -468,7 +468,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
 
         $data = array();
         $listAssignments = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, "ASSIGNMENT");
-        $listAssignmentsScoreDate = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId, "DATE");
+        $listAssignmentsScoreDate = self::getTrainingListAssignmentScoreDate($this->trainingId, $this->subjectId,false);
 
         $scoreList = $this->getScoreListTrainingSubject(
                 $this->subjectId
@@ -856,6 +856,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
                 $SQL->group("C.SCORE_INPUT_DATE");
                 break;
         }
+        
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchAll($SQL);
     }
@@ -869,6 +870,8 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         $SQL->where("B.TRAINING_ID = ?", $trainingId);
         $SQL->where("B.ASSIGNMENT_ID = ?", $assignmentId);
         $result = UserAuth::dbAccess()->fetchRow($SQL);
+        
+        //error_log($SQL->__toString());
         return $result ? $result->C : 0;
     }
 
