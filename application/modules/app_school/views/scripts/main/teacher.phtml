@@ -195,15 +195,15 @@ $HTML .= "</div>";
             $CHOOSE_PANEL[] = "" . $TRADITIONAL_EDUCATION . "";
         }
         
-        if (UserAuth::displayCreditEducationSystem()) {
-            $CREDIT_EDUCATION = "{";
-            $CREDIT_EDUCATION .= "title: '".CREDIT_EDUCATION_SYSTEM."'";
-            $CREDIT_EDUCATION .= ",id: 'CREDIT_EDUCATION_SYSTEM'";
-            $CREDIT_EDUCATION .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
-            $CREDIT_EDUCATION .= ",items: [new Ext.ux.IFrameComponent({ id: 'FRAME_CREDIT_EDUCATION_SYSTEM', url:'/staff/crediteducationsystem/?objectId=".$objectId."'})]";
-            $CREDIT_EDUCATION .= "}";
-            $CHOOSE_PANEL[] = "" . $CREDIT_EDUCATION . "";
-        }
+//        if (UserAuth::displayCreditEducationSystem()) {
+//            $CREDIT_EDUCATION = "{";
+//            $CREDIT_EDUCATION .= "title: '".CREDIT_EDUCATION_SYSTEM."'";
+//            $CREDIT_EDUCATION .= ",id: 'CREDIT_EDUCATION_SYSTEM'";
+//            $CREDIT_EDUCATION .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
+//            $CREDIT_EDUCATION .= ",items: [new Ext.ux.IFrameComponent({ id: 'FRAME_CREDIT_EDUCATION_SYSTEM', url:'/staff/crediteducationsystem/?objectId=".$objectId."'})]";
+//            $CREDIT_EDUCATION .= "}";
+//            $CHOOSE_PANEL[] = "" . $CREDIT_EDUCATION . "";
+//        }
         
         if (UserAuth::displayRoleTrainingEducation()) {
             $TRAINING_PROGRAMS = "{";
@@ -214,15 +214,6 @@ $HTML .= "</div>";
             $TRAINING_PROGRAMS .= "}";
             $CHOOSE_PANEL[] = "" . $TRAINING_PROGRAMS . "";
         }
-        
-//        //@Man 05.03.2014
-//        $LETTER = "{";
-//        $LETTER .= "title: '".LETTER."'";
-//        $LETTER .= ",layout: 'fit',bodyStyle:'background:".CamemisPage::userBgColor().";padding:3px'";
-//        $LETTER .= ",items: [new Ext.ux.IFrameComponent({ id: 'LETTER', url:'/letter/?personId=".$objectId."&personType=staff'})]";
-//        $LETTER .= "}";
-//        $CHOOSE_PANEL[] = "" . $LETTER . "";
-//        //////////////////////////////
         
         $USER_TAB = "";
         $USER_TAB .= "var tabs =  new Ext.TabPanel({";

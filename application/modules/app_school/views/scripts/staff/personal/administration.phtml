@@ -172,11 +172,6 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,items:[{xtype: '".$ORGANIZATION_GRID->getObjectXtype()."'}]
         }";
         
-//        $PENEL_ITEMS[] = $CAMPUS;
-//        if (UserAuth::displayRoleTrainingEducation()){
-//            $PENEL_ITEMS[] = $TRAINING_PROGRAMS;
-//        }
-        
         $PENEL_ITEMS[] = $ORGANIZATION_CHART;
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
