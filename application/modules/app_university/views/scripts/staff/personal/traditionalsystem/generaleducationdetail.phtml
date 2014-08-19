@@ -21,6 +21,9 @@ if(!$classObject) {header("Location: /main/permission/");exit;}
     
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
+$OBJECT_TREE = new CamemisTree("STAFFS", "LIST");
+$OBJECT_TREE->setURL('/staff/jsontree/');
+
 ?>
 <script>
     
@@ -33,132 +36,164 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
-        $PANEL_ITEMS = array();
-
-        $attendanceParams = "target=general&academicId=".$classObject->ID."&teacherId=".$this->objectId."";
-        $ATTENDANCE_INFORMATION = "{
-            title: '".ATTENDANCE_INFORMATION."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '/attendance/studentclassmain/?camIds=".$this->urlEncryp->encryptedGet($attendanceParams)."'})]
-        }";
+        $TREE_ITEMS = Array();
         
-        //if (UserAuth::getACLTutorPermint("STUDENT_ATTENDANCE"))
-        $PANEL_ITEMS[] = "" . $ATTENDANCE_INFORMATION . "";
+        $attendanceParams = "target=general&classId=".$classObject->ID."&teacherId=".$this->objectId."";
+        $ATTENDANCE_INFORMATION = "{";
+            $ATTENDANCE_INFORMATION .= "text:'".ATTENDANCE_INFORMATION."'";
+            $ATTENDANCE_INFORMATION .= ",leaf:true";
+            $ATTENDANCE_INFORMATION .= ",url:'/attendance/studentclassmain/?camIds=".$this->urlEncryp->encryptedGet($attendanceParams)."'";
+            $ATTENDANCE_INFORMATION .= ",cls:'nodeTextBold'";
+            $ATTENDANCE_INFORMATION .= ",iconCls: 'icon-component'";
+        $ATTENDANCE_INFORMATION .= "}";
+        $TREE_ITEMS[] = $ATTENDANCE_INFORMATION;
         
         $scheduleParams = "academicId=".$classObject->ID."";
-        $SCHEDULE = "{
-            title: '".SCHEDULE."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'SCHEDULE', url: '/schedule/byclass/?camIds=".$this->urlEncryp->encryptedGet($scheduleParams)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $SCHEDULE . "";
+        $SCHEDULE = "{";
+            $SCHEDULE .= "text:'".SCHEDULE."'";
+            $SCHEDULE .= ",leaf:true";
+            $SCHEDULE .= ",url:'/schedule/byclass/?camIds=".$this->urlEncryp->encryptedGet($scheduleParams)."'";
+            $SCHEDULE .= ",cls:'nodeTextBold'";
+            $SCHEDULE .= ",iconCls: 'icon-component_yellow'";
+        $SCHEDULE .= "}";
+        $TREE_ITEMS[] = $SCHEDULE;
         
-        $scheduleParams = "target=general&classId=".$this->classId."";
-        $EVENT = "{
-            title: '".EVENT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'EVENT', url: '/schoolevent/classevents/?camIds=".$this->urlEncryp->encryptedGet($scheduleParams)."'})]
-        }";
+        $eventParams = "target=general&classId=".$this->classId."";
+        $EVENT = "{";
+            $EVENT .= "text:'".EVENT."'";
+            $EVENT .= ",leaf:true";
+            $EVENT .= ",url:'/schoolevent/classevents/?camIds=".$this->urlEncryp->encryptedGet($scheduleParams)."'";
+            $EVENT .= ",cls:'nodeTextBold'";
+            $EVENT .= ",iconCls: 'icon-component'";
+        $EVENT .= "}";
+        $TREE_ITEMS[] = $EVENT;
         
-        //if (UserAuth::getACLTutorPermint("CLASS_EVENTS"))
-        $PANEL_ITEMS[] = "" . $EVENT . "";
+        $homeworkParams = "classId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."";
+        $HOMEWORK = "{";
+            $HOMEWORK .= "text:'".HOMEWORK."'";
+            $HOMEWORK .= ",leaf:true";
+            $HOMEWORK .= ",url:'/homework/homeworkmain/?camIds=".$this->urlEncryp->encryptedGet($homeworkParams)."'";
+            $HOMEWORK .= ",cls:'nodeTextBold'";
+            $HOMEWORK .= ",iconCls: 'icon-component_yellow'";
+        $HOMEWORK .= "}";
+        $TREE_ITEMS[] = $HOMEWORK;
         
-        $homeworkParams = "academicId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."";
-        $HOMEWORK = "{
-            title: '".HOMEWORK."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/homework/homeworkmain/?camIds=".$this->urlEncryp->encryptedGet($homeworkParams)."'})]
-        }";
+        $subjectParams = "general&classId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."";
+        $SUBJECT_LIST = "{";
+            $SUBJECT_LIST .= "text:'".SUBJECT_LIST."'";
+            $SUBJECT_LIST .= ",leaf:true";
+            $SUBJECT_LIST .= ",url:'/subject/byclass/?camIds=".$this->urlEncryp->encryptedGet($subjectParams)."'";
+            $SUBJECT_LIST .= ",cls:'nodeTextBold'";
+            $SUBJECT_LIST .= ",iconCls: 'icon-component'";
+        $SUBJECT_LIST .= "}";
+        $TREE_ITEMS[] = $SUBJECT_LIST;
         
-        $PANEL_ITEMS[] = "" . $HOMEWORK . "";
+        $teachingreportParams = "classId=".$this->classId."&teacherId=".$this->objectId."";
+        $TEACHING_REPORT = "{";
+            $TEACHING_REPORT .= "text:'".TEACHING_REPORT."'";
+            $TEACHING_REPORT .= ",leaf:true";
+            $TEACHING_REPORT .= ",url:'/subjectreport/subjectreportmain/?camIds=".$this->urlEncryp->encryptedGet($teachingreportParams)."'";
+            $TEACHING_REPORT .= ",cls:'nodeTextBold'";
+            $TEACHING_REPORT .= ",iconCls: 'icon-component_yellow'";
+        $TEACHING_REPORT .= "}";
+        $TREE_ITEMS[] = $TEACHING_REPORT;
         
-        $subjectParams = "general&academicId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."";
-        $SUBJECT= "{
-            title: '".SUBJECT_LIST."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ALL_SUBJECTS', url: '/subject/byclass/?camIds=".$this->urlEncryp->encryptedGet($subjectParams)."'})]
-        }";
+        $assessmentParams = "classId=".$this->classId."&teacherId=".$this->objectId."";
+        $ASSESSMENT = "{";
+            $ASSESSMENT .= "text:'".ASSESSMENT."'";
+            $ASSESSMENT .= ",leaf:true";
+            $ASSESSMENT .= ",url:'/academic/scoremonitor/?camIds=".$this->urlEncryp->encryptedGet($assessmentParams)."'";
+            $ASSESSMENT .= ",cls:'nodeTextBold'";
+            $ASSESSMENT .= ",iconCls: 'icon-component'";
+        $ASSESSMENT .= "}";
+        $TREE_ITEMS[] = $ASSESSMENT;
         
-        $PANEL_ITEMS[] = "" . $SUBJECT . "";
-        
-        $teachingreportParams = "academicId=".$this->classId."&teacherId=".$this->objectId."";
-        $TEACHING_REPORT= "{
-            title: '".TEACHING_REPORT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'TEACHING_REPORT', url: '/subjectreport/subjectreportmain/?camIds=".$this->urlEncryp->encryptedGet($teachingreportParams)."'})]
-        }";
-        
-        //if (UserAuth::getACLTutorPermint("TEACHING_REPORT"))
-        $PANEL_ITEMS[] = "" . $TEACHING_REPORT . "";
-        
-        $assessmentParams = "academicId=".$this->classId."&teacherId=".$this->objectId."";
-        $ASSESSMENT = "{
-            title: '".ASSESSMENT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ASSESSMENT', url: '/academic/scoremonitor/?camIds=".$this->urlEncryp->encryptedGet($assessmentParams)."'})]
-        }";
-      
-        
-        //if (UserAuth::getACLTutorPermint("SCORES_MANAGEMENT"))
-        $PANEL_ITEMS[] = "" . $ASSESSMENT . "";
-        
-        $disciplineParams = "target=general&personType=STAFF&academicId=".$classObject->ID."";
-        $DISCIPLINE_INFORMATION = "{
-            title: '".DISCIPLINE_INFORMATION."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_INFORMATION', url: '/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'})]
-        }";
-        
-        //if (UserAuth::getACLTutorPermint("STUDENT_DISCIPLINE"))
-        $PANEL_ITEMS[] = "" . $DISCIPLINE_INFORMATION . "";
+        $disciplineParams = "target=general&personType=STAFF&classId=".$classObject->ID."";
+        $DISCIPLINE_INFORMATION = "{";
+            $DISCIPLINE_INFORMATION .= "text:'".DISCIPLINE_INFORMATION."'";
+            $DISCIPLINE_INFORMATION .= ",leaf:true";
+            $DISCIPLINE_INFORMATION .= ",url:'/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'";
+            $DISCIPLINE_INFORMATION .= ",cls:'nodeTextBold'";
+            $DISCIPLINE_INFORMATION .= ",iconCls: 'icon-component_yellow'";
+        $DISCIPLINE_INFORMATION .= "}";
+        $TREE_ITEMS[] = $DISCIPLINE_INFORMATION;
         
         $listOfStudentsParams = "objectId=".$classObject->ID."";
-        $LIST_OF_STUDENTS = "{
-            title: '".LIST_OF_STUDENTS."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/academic/studentlist?camIds=".$this->urlEncryp->encryptedGet($listOfStudentsParams)."'})]
-        }";
-        
-        //if (UserAuth::getACLTutorPermint("LIST_OF_STUDENTS"))
-        $PANEL_ITEMS[] = "" . $LIST_OF_STUDENTS . "";
+        $LIST_OF_STUDENTS = "{";
+            $LIST_OF_STUDENTS .= "text:'".LIST_OF_STUDENTS."'";
+            $LIST_OF_STUDENTS .= ",leaf:true";
+            $LIST_OF_STUDENTS .= ",url:'/discipline/byclass/?camIds=".$this->urlEncryp->encryptedGet($disciplineParams)."'";
+            $LIST_OF_STUDENTS .= ",cls:'nodeTextBold'";
+            $LIST_OF_STUDENTS .= ",iconCls: 'icon-component'";
+        $LIST_OF_STUDENTS .= "}";
+        $TREE_ITEMS[] = $LIST_OF_STUDENTS;
         
         $listOfTeachersParams = "objectId=".$classObject->ID."";
-        $LIST_OF_TEACHERS = "{
-            title: '".LIST_OF_TEACHERS."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_TEACHERS', url: '/academic/teacherclassmain/?camIds=".$this->urlEncryp->encryptedGet($listOfTeachersParams)."'})]
-        }";
-        
-        //if (UserAuth::getACLTutorPermint("LIST_OF_TEACHERS"))
-        $PANEL_ITEMS[] = "" . $LIST_OF_TEACHERS . "";
+        $LIST_OF_TEACHERS = "{";
+            $LIST_OF_TEACHERS .= "text:'".LIST_OF_TEACHERS."'";
+            $LIST_OF_TEACHERS .= ",leaf:true";
+            $LIST_OF_TEACHERS .= ",url:'/academic/teacherclassmain/?camIds=".$this->urlEncryp->encryptedGet($listOfTeachersParams)."'";
+            $LIST_OF_TEACHERS .= ",cls:'nodeTextBold'";
+            $LIST_OF_TEACHERS .= ",iconCls: 'icon-component_yellow'";
+        $LIST_OF_TEACHERS .= "}";
+        $TREE_ITEMS[] = $LIST_OF_TEACHERS;
         
         $extraclassParams = "objectId=".$classObject->ID."&teacherId=".$this->objectId."";
-        $EXTRA_CLASS = "{
-            title: '".EXTRA_CLASS."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'EXTRA_CLASS', url: '/extraclass/showitem/?camIds=".$this->urlEncryp->encryptedGet($extraclassParams)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $EXTRA_CLASS . "";
+        $EXTRA_CLASS = "{";
+            $EXTRA_CLASS .= "text:'".EXTRA_CLASS."'";
+            $EXTRA_CLASS .= ",leaf:true";
+            $EXTRA_CLASS .= ",url:'/extraclass/showitem/?camIds=".$this->urlEncryp->encryptedGet($extraclassParams)."'";
+            $EXTRA_CLASS .= ",cls:'nodeTextBold'";
+            $EXTRA_CLASS .= ",iconCls: 'icon-component'";
+        $EXTRA_CLASS .= "}";
+        $TREE_ITEMS[] = $EXTRA_CLASS;
         
-        $CHOOSE_ITEMS = "[".implode(',',$PANEL_ITEMS)."]";
+        $CHOOSE_ITEMS = "[".implode(',',$TREE_ITEMS)."]";
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isAsyncTreeNode = true;
+        $OBJECT_TREE->setAsyncTreeNode($CHOOSE_ITEMS);
+        $OBJECT_TREE->renderJS();
         
         ?>
         viewport = new Ext.Viewport({
             layout: 'fit'
             ,border: false
             ,items:[{
-                layout:'fit'
-                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+                layout:'border'
                 ,border: false
-                ,items:[{
-                    xtype: 'tabpanel'
-                    ,tabPosition: 'top'
-                    ,plain:true
-                    ,activeTab: 0
-                    ,enableTabScroll:true
-                    ,items:<?=$CHOOSE_ITEMS?>
+                ,defaults: {
+                    collapsible:true
+                    ,split: true
+                }
+                ,items: [{
+                    title: ''
+                    ,id:'WEST_ID'
+                    ,region:'west'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width:200
+                    ,minSize:200
+                    ,maxSize:200
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+                },{
+                    title: ''
+                    ,border:true
+                    ,collapsible: false
+                    ,region:'center'
+                    ,id: 'center'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,margins: '3 3 3 0'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'MAIN_CONTENT', url:'/attendance/studentclassmain/?camIds=<?=$this->urlEncryp->encryptedGet($attendanceParams)?>'})]
                 }]
             }]
+        });
+        
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        myTree.on('click', function(node, event){
+            clickOpenPage('center','',node.attributes.url);
         });
     });
 </script>

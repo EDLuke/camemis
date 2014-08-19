@@ -13,39 +13,48 @@ class AssessmentChart extends AssessmentProperties {
 
     const SCORE_NUMBER = 1;
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return false::dbAccess()->select();
     }
 
-    public function setAcademicId($value) {
+    public function setAcademicId($value)
+    {
         return $this->academicId = $value;
     }
 
-    public function setSubjectId($value) {
+    public function setSubjectId($value)
+    {
         return $this->subjectId = $value;
     }
 
-    public function setTerm($value) {
+    public function setTerm($value)
+    {
         return $this->term = $value;
     }
 
-    public function setSection($value) {
+    public function setSection($value)
+    {
         return $this->section = $section;
     }
 
-    public function getSubjectGradingScaleByClass() {
+    public function getSubjectGradingScaleByClass()
+    {
 
         $entries = AssessmentConfig::getListGradingScales(
                         self::SCORE_NUMBER
                         , $this->getSettingQualificationType());
 
         $data = array();
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $data[] = "['" . $value->DESCRIPTION . "', " . $value->ID . "]";
             }
         }
@@ -55,11 +64,12 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //  CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectAVGStudentList() {
+    public function getSubjectAVGStudentList()
+    {
 
         $stdClass = (object) array(
                     "academicId" => $this->academicId
-                    , "scoreType" => 1
+                    , "scoreType" => self::SCORE_NUMBER
                     , "subjectId" => $this->subjectId
                     , "term" => $this->term
                     , "month" => $this->getMonth()
@@ -71,9 +81,11 @@ class AssessmentChart extends AssessmentProperties {
         $data = array();
         $entries = $this->listClassStudents();
 
-        if ($entries) {
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $value) {
+            foreach ($entries as $value)
+            {
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
                 $ii = $i + 1;
@@ -87,7 +99,8 @@ class AssessmentChart extends AssessmentProperties {
     //  END CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
 
-    public function getSubjectPassStatus() {
+    public function getSubjectPassStatus()
+    {
 
         return "[{
             name: '" . MALE_STUDENTS . "',
@@ -103,13 +116,16 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // TEACHER ENTER SCORE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getImplodeAssignments() {
+    public function getImplodeAssignments()
+    {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $data[] = "'" . addslashes($value->SHORT) . "'";
             }
         }
@@ -117,13 +133,16 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getCountTeacherEnterScore($date) {
+    public function getCountTeacherEnterScore($date)
+    {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
 
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_assignment", Array("C" => "COUNT(*)"));
@@ -140,7 +159,8 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getDataSetTeacherEnterScore() {
+    public function getDataSetTeacherEnterScore()
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array("*"));
@@ -150,8 +170,10 @@ class AssessmentChart extends AssessmentProperties {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $name = "{name:'" . getShowDate($value->SCORE_INPUT_DATE) . "'";
                 $name .= ",data:[" . $this->getCountTeacherEnterScore($value->SCORE_INPUT_DATE) . "]}";
                 $data[] = $name;
