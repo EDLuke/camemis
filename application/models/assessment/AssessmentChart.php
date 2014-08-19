@@ -12,39 +12,34 @@ require_once 'models/assessment/SQLEvaluationStudentSubject.php';
 class AssessmentChart extends AssessmentProperties {
 
     const SCORE_NUMBER = 1;
+    const IS_PASS = 1;
+    const IS_FAIL = 2;
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return false::dbAccess()->select();
     }
 
-    public function setAcademicId($value)
-    {
+    public function setAcademicId($value) {
         return $this->academicId = $value;
     }
 
-    public function setSubjectId($value)
-    {
+    public function setSubjectId($value) {
         return $this->subjectId = $value;
     }
 
-    public function setTerm($value)
-    {
+    public function setTerm($value) {
         return $this->term = $value;
     }
 
-    public function setSection($value)
-    {
+    public function setSection($value) {
         return $this->section = $value;
     }
 
-    public function setParams()
-    {
+    public function setParams() {
         $object = new stdClass();
         $object->academicId = $this->academicId;
         $object->scoreType = self::SCORE_NUMBER;
@@ -59,19 +54,44 @@ class AssessmentChart extends AssessmentProperties {
         return $object;
     }
 
-    public function getSubjectGradingScaleByClass()
-    {
+    public function getSubjectGradingScaleByClass() {
 
+        $stdClass = $this->setParams();
         $entries = AssessmentConfig::getListGradingScales(
                         self::SCORE_NUMBER
                         , $this->getSettingQualificationType());
 
         $data = array();
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
-                $data[] = "['" . $value->DESCRIPTION . "', " . $value->ID . "]";
+        
+        $COUNT = 0;
+        if ($entries) {
+            foreach ($entries as $value) {
+
+                $SQL = self::dbAccess()->select();
+                $SQL->from("t_student_subject_assessment", Array("C" => "COUNT(*)"));
+                $SQL->where("SUBJECT_ID = ?", $this->subjectId);
+                $SQL->where("CLASS_ID = '" . $this->academicId . "'");
+                $SQL->where("ASSESSMENT_ID = '" . $value->ID . "'");
+                switch ($stdClass->section) {
+                    case "MONTH":
+                        if (isset($stdClass->month))
+                            $SQL->where("MONTH = '" . $stdClass->month . "'");
+
+                        if (isset($stdClass->year))
+                            $SQL->where("YEAR = '" . $stdClass->year . "'");
+                        break;
+                    case "TERM":
+                    case "QUARTER":
+                    case "SEMESTER":
+                        $SQL->where("TERM = '" . $stdClass->term . "'");
+                        break;
+                }
+                $SQL->where("SECTION = '" . $stdClass->section . "'");
+                //error_log($SQL->__toString());
+                $facette = self::dbAccess()->fetchRow($SQL);
+                $COUNT += $facette ? $facette->C : 0;
+
+                $data[] = "['" . $value->DESCRIPTION . "', " . $COUNT . "]";
             }
         }
         return "[" . implode(",", $data) . "]";
@@ -80,17 +100,16 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //  CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectAVGStudentList()
-    {
+    public function getSubjectAVGStudentList() {
+
         $stdClass = $this->setParams();
+        $entries = $this->listClassStudents();
 
         $data = array();
         $entries = $this->listClassStudents();
 
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $stdClass->studentId = $value->ID;
                 $data[] = "['" . getFullName($value->FIRSTNAME, $value->LASTNAME) . "', " . self::getStudentSubjectValue($stdClass) . "]";
             }
@@ -101,75 +120,40 @@ class AssessmentChart extends AssessmentProperties {
     //  END CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
 
-    public function getSubjectPassStatus()
-    {
+    public function getSubjectPassStatus() {
 
         $stdClass = $this->setParams();
         $entries = $this->listClassStudents();
 
-        $MALE_FAL_DATA = array();
-        $MALE_PASS_DATA = array();
+        $COUNT_MALE_FAIL = 0;
+        $COUNT_MALE_PASS = 0;
+        $COUNT_FEMALE_FAIL = 0;
+        $COUNT_FEMALE_PASS = 0;
+        $COUNT_UNKNOWN_FAIL = 0;
+        $COUNT_UNKNOWN_PASS = 0;
 
-        $FEMALE_FAL_DATA = array();
-        $FEMALE_PASS_DATA = array();
-
-        $UNKNOWN_FAL_DATA = array();
-        $UNKNOWN_PASS_DATA = array();
-
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $stdClass->studentId = $value->ID;
                 $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
-
-                if ($facette)
-                {
-                    switch ($value->GENDER)
-                    {
+                if ($facette) {
+                    switch ($value->GENDER) {
                         case 1:
-                            if ($facette->IS_FAIL)
-                            {
-                                $MALE_FAL_DATA[] = 1;
-                            }
-                            else
-                            {
-                                $MALE_PASS_DATA[] = 1;
-                            }
+                            $COUNT_MALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                            $COUNT_MALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
                             break;
                         case 2:
-                            if ($facette->IS_FAIL)
-                            {
-                                $FEMALE_FAL_DATA[] = 1;
-                            }
-                            else
-                            {
-                                $FEMALE_PASS_DATA[] = 1;
-                            }
+                            $COUNT_FEMALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                            $COUNT_FEMALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
                             break;
                         default:
-                            if ($facette->IS_FAIL)
-                            {
-                                $UNKNOWN_FAL_DATA[] = 1;
-                            }
-                            else
-                            {
-                                $UNKNOWN_PASS_DATA[] = 1;
-                            }
+                            $COUNT_UNKNOWN_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                            $COUNT_UNKNOWN_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
                             break;
                     }
                 }
             }
         }
-
-        $COUNT_MALE_FAIL = count($MALE_FAL_DATA);
-        $COUNT_MALE_PASS = count($MALE_PASS_DATA);
-
-        $COUNT_FEMALE_FAIL = count($FEMALE_FAL_DATA);
-        $COUNT_FEMALE_PASS = count($FEMALE_PASS_DATA);
-
-        $COUNT_UNKNOWN_FAIL = count($UNKNOWN_FAL_DATA);
-        $COUNT_UNKNOWN_PASS = count($UNKNOWN_PASS_DATA);
 
         return "[{
             name: '" . MALE . "',
@@ -186,16 +170,13 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     // TEACHER ENTER SCORE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getImplodeAssignments()
-    {
+    public function getImplodeAssignments() {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $data[] = "'" . addslashes($value->SHORT) . "'";
             }
         }
@@ -203,16 +184,13 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getCountTeacherEnterScore($date)
-    {
+    public function getCountTeacherEnterScore($date) {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries)
-        {
-            foreach ($entries as $value)
-            {
+        if ($entries) {
+            foreach ($entries as $value) {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_assignment", Array("C" => "COUNT(*)"));
                 $SQL->where("SUBJECT_ID = ?", $this->subjectId);
@@ -228,8 +206,7 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getDataSetTeacherEnterScore()
-    {
+    public function getDataSetTeacherEnterScore() {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array("*"));
@@ -239,10 +216,8 @@ class AssessmentChart extends AssessmentProperties {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result)
-        {
-            foreach ($result as $value)
-            {
+        if ($result) {
+            foreach ($result as $value) {
                 $name = "{name:'" . getShowDate($value->SCORE_INPUT_DATE) . "'";
                 $name .= ",data:[" . $this->getCountTeacherEnterScore($value->SCORE_INPUT_DATE) . "]}";
                 $data[] = $name;
@@ -255,23 +230,13 @@ class AssessmentChart extends AssessmentProperties {
     // END TEACHER ENTER SCORE...
     ////////////////////////////////////////////////////////////////////////////
 
-    public static function getStudentSubjectValue($stdClass)
-    {
+    public static function getStudentSubjectValue($stdClass) {
         $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
-        if ($facette)
-        {
+        if ($facette) {
             return (is_numeric($facette->SUBJECT_VALUE)) ? $facette->SUBJECT_VALUE : 1;
-        }
-        else
-        {
+        } else {
             return 0;
         }
-    }
-
-    public static function getStudentSubjectPassFailValue($stdClass)
-    {
-        $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
-        return $facette ? $facette->IS_FAIL : 1;
     }
 
 }
