@@ -38,7 +38,7 @@ $OBJECT_TREE->setURL('/staff/jsontree/');
         
         $TREE_ITEMS = Array();
         
-        $attendanceParams = "target=general&classId=".$classObject->ID."&teacherId=".$this->objectId."";
+        $attendanceParams = "target=general&academicId=".$classObject->ID."&teacherId=".$this->objectId."";
         $ATTENDANCE_INFORMATION = "{";
             $ATTENDANCE_INFORMATION .= "text:'".ATTENDANCE_INFORMATION."'";
             $ATTENDANCE_INFORMATION .= ",leaf:true";

@@ -48,7 +48,6 @@ if($term){
     }
 }
 
-
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -70,7 +69,7 @@ Class DisplayChart{
         $this->chart->setAcademicId($this->academicId);
         $this->chart->setSubjectId($this->subjectId);
         $this->chart->setTerm($this->term);
-        $this->chart->setTerm($this->section);
+        $this->chart->setSection($this->section);
     }
     
     protected function setDefaultChart(){
