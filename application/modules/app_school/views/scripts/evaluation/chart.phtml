@@ -124,7 +124,7 @@ Class DisplayChart {
         $SUBJECT_AVG_STUDENT_LIST->setHighChartScript();
     }
 
-    protected function getTeacherEnterScoreChart() {
+    protected function getChartTeacherEnterScore() {
 
         $CHART = new CamemisHighChart(
                 "COLUMN_COMPARE_CHART"
@@ -139,14 +139,32 @@ Class DisplayChart {
         $CHART->setHighChartScript();
     }
 
-    protected function setDefaultChart() {
+    protected function setChartAcademicPerfomanceMonth() {
+
+        for ($i = 1; $i <= 7; $i++) {
+            $object = new CamemisHighChart("PIC_CHART", "PIC_CHART_" . $i . "", "Default " . $i . "", false);
+            $object->text = "Default " . $i . "";
+            $object->allowPointSelect = 'true';
+            $object->pointColor = 'black';
+            $object->height = 350;
+            $object->maxWidth = 300;
+            $object->maxWidthPercentage = false;
+            $object->plotBorderWidth = "null";
+            $object->setDIVHighChart();
+            $object->setHighChartScript();
+        }
+    }
+
+    protected function setDefaultPicChart() {
 
         $object = new CamemisHighChart(
-                "COLUMN_CHART"
+                "PIC_CHART"
                 , 'DEFAULT_CHART'
                 , 'Default...'
                 , false
         );
+        $object->allowPointSelect = 'true';
+        $object->plotBorderWidth = "null";
         $object->setDIVHighChart();
         $object->setHighChartScript();
     }
@@ -154,12 +172,13 @@ Class DisplayChart {
     public function setDisplayChart() {
         switch ($this->target) {
             case "TEACHER_ENTER_SCORE":
-                return $this->getTeacherEnterScoreChart();
+                return $this->getChartTeacherEnterScore();
             case "SUBJECT_ASSESSMENT":
                 return $this->setChartSubjectAssessment();
+            case "ACADEMIC_PERFORMANCE_MONTH":
+                return $this->setChartAcademicPerfomanceMonth();
             default:
-                return $this->setDefaultChart();
-                break;
+                return $this->setDefaultPicChart();
         }
     }
 
