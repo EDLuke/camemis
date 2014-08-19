@@ -20,9 +20,18 @@ $classObject = AcademicDBAccess::findGradeFromId($this->classId);
 if(!$classObject) {header("Location: /main/permission/");exit;}
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
 //@THORN Visal
 $subjectObject = AcademicDBAccess::findGradeFromId($this->classId);
-$getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->CAMPUS_ID,$subjectObject->SUBJECT_ID,$subjectObject->SCHOOL_YEAR);
+$getGradeSubject = GradeSubjectDBAccess::getGradeSubject(
+    false
+    , $subjectObject->CAMPUS_ID
+    ,$subjectObject->SUBJECT_ID
+    ,$subjectObject->SCHOOL_YEAR
+);
+
+$OBJECT_TREE = new CamemisTree("STAFFS", "LIST");
+$OBJECT_TREE->setURL('/staff/jsontree/');
 ?>
 <script>
     
@@ -35,31 +44,22 @@ $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();  
         
-        $PANEL_ITEMS = array(); 
-        //@THORN Visal
-        $setParamsMaincontent = "";
-        /*$setParamsMaincontent .= "target=".camemisId();
-        if(Zend_Registry::get('USER')->ID)
-        $setParamsMaincontent .= "&teacherId=".Zend_Registry::get('USER')->ID;
-        if($classObject->ID)
-        $setParamsMaincontent .="&classId=".$classObject->ID;
-        if($subjectObject->SUBJECT_ID)
-        $setParamsMaincontent .="&subjectId=".$subjectObject->SUBJECT_ID;
-        if($getGradeSubject->ID)
-        $setParamsMaincontent .="&gradesubjectId=".$getGradeSubject->ID;*/
+        $TREE_ITEMS = Array();
+        
         if($this->classId){
-        $setParamsMaincontent .= "classId=".$this->classId;
+            $setParamsMaincontent .= "classId=".$this->classId;
         }
         if($this->objectId){
-        $setParamsMaincontent .= "&objectId=".$this->objectId;
+            $setParamsMaincontent .= "&objectId=".$this->objectId;
         }
-        
-        $MAIN_CONTENT = "{
-            title: '".MAIN_CONTENT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'MAIN_CONTENT', url: '/staff/creditsystemsubjectdetail/?camIds=".$this->urlEncryp->encryptedGet($setParamsMaincontent)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $MAIN_CONTENT . "";
+        $MAIN_CONTENT = "{";
+            $MAIN_CONTENT .= "text:'".MAIN_CONTENT."'";
+            $MAIN_CONTENT .= ",leaf:true";
+            $MAIN_CONTENT .= ",url:'/staff/creditsystemsubjectdetail/?camIds=".$this->urlEncryp->encryptedGet($setParamsMaincontent)."'";
+            $MAIN_CONTENT .= ",cls:'nodeTextBold'";
+            $MAIN_CONTENT .= ",iconCls: 'icon-component'";
+        $MAIN_CONTENT .= "}";
+        $TREE_ITEMS[] = $MAIN_CONTENT;
         
         $setParamsAttendance = "";
         if(Zend_Registry::get('USER')->ID)
@@ -68,26 +68,28 @@ $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->
         $setParamsAttendance .="&classId=".$classObject->ID;
         if($this->subjectId)/////@THORN Visal
         $setParamsAttendance .="&subjectId=".$this->subjectId;  
-        
-        $ATTENDANCE_INFORMATION = "{
-            title: '".ATTENDANCE_INFORMATION."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ATTENDANCE_INFORMATION', url: '/staff/creditsystemstudentattendancesetting/?".$setParamsAttendance."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $ATTENDANCE_INFORMATION . "";
+        $ATTENDANCE_INFORMATION = "{";
+            $ATTENDANCE_INFORMATION .= "text:'".ATTENDANCE_INFORMATION."'";
+            $ATTENDANCE_INFORMATION .= ",leaf:true";
+            $ATTENDANCE_INFORMATION .= ",url:'/staff/creditsystemstudentattendancesetting/?".$setParamsAttendance."'";
+            $ATTENDANCE_INFORMATION .= ",cls:'nodeTextBold'";
+            $ATTENDANCE_INFORMATION .= ",iconCls: 'icon-component_yellow'";
+        $ATTENDANCE_INFORMATION .= "}";
+        $TREE_ITEMS[] = $ATTENDANCE_INFORMATION;
         
         $setParamsSchedule = "";
         if($classObject->ID)
         $setParamsSchedule .= "academicId=".$classObject->ID;
         if($this->objectId)
         $setParamsSchedule .="&teacherId=".$this->objectId;
-        
-        $SCHEDULE = "{
-            title: '".SCHEDULE."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'SCHEDULE', url: '/schedule/byclass/?camIds=".$this->urlEncryp->encryptedGet($setParamsSchedule)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $SCHEDULE . "";
+        $SCHEDULE = "{";
+            $SCHEDULE .= "text:'".SCHEDULE."'";
+            $SCHEDULE .= ",leaf:true";
+            $SCHEDULE .= ",url:'/schedule/byclass/?camIds=".$this->urlEncryp->encryptedGet($setParamsSchedule)."'";
+            $SCHEDULE .= ",cls:'nodeTextBold'";
+            $SCHEDULE .= ",iconCls: 'icon-component'";
+        $SCHEDULE .= "}";
+        $TREE_ITEMS[] = $SCHEDULE;
         
         /////@THORN Visal
         $setParamsEvent = "";
@@ -98,13 +100,15 @@ $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->
         $setParamsEvent .= "&subjectId=".$this->subjectId;
         if(Zend_Registry::get('USER')->ID)
         $setParamsEvent .="&objectId=".Zend_Registry::get('USER')->ID;
-        $EVENT = "{
-            title: '".EVENT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'EVENT', url: '/staff/creditsystemeventsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsEvent)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $EVENT . "";
-        /////////////////
+        $EVENT = "{";
+            $EVENT .= "text:'".EVENT."'";
+            $EVENT .= ",leaf:true";
+            $EVENT .= ",url:'/staff/creditsystemeventsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsEvent)."'";
+            $EVENT .= ",cls:'nodeTextBold'";
+            $EVENT .= ",iconCls: 'icon-component_yellow'";
+        $EVENT .= "}";
+        $TREE_ITEMS[] = $EVENT;
+        
         $setParamsHomework = "";
         if($classObject->ID)
         $setParamsHomework .= "classId=".$classObject->ID;
@@ -114,32 +118,38 @@ $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->
         $setParamsHomework .="&schoolyearId=".$classObject->SCHOOL_YEAR;
         if($this->objectId)
         $setParamsHomework .="&objectId=".$this->objectId;
+        $HOMEWORK = "{";
+            $HOMEWORK .= "text:'".HOMEWORK."'";
+            $HOMEWORK .= ",leaf:true";
+            $HOMEWORK .= ",url:'/staff/creditsystemhomeworksetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsHomework)."'";
+            $HOMEWORK .= ",cls:'nodeTextBold'";
+            $HOMEWORK .= ",iconCls: 'icon-component'";
+        $HOMEWORK .= "}";
+        $TREE_ITEMS[] = $HOMEWORK;
         
-        $HOMEWORK = "{
-            title: '".HOMEWORK."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'HOMEWORK', url: '/staff/creditsystemhomeworksetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsHomework)."'})]
-        }"; 
-        
-        $PANEL_ITEMS[] = "" . $HOMEWORK . "";
-        
-        $SUBJECT= "{
-            title: '".SUBJECT_LIST."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ALL_SUBJECTS', url: '/subject/byclass/?target=general&classId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."'})]
-        }";
+        $SUBJECT_LIST = "{";
+            $SUBJECT_LIST .= "text:'".SUBJECT_LIST."'";
+            $SUBJECT_LIST .= ",leaf:true";
+            $SUBJECT_LIST .= ",url:'/subject/byclass/?target=general&classId=".$classObject->ID."&gradeId=".$classObject->GRADE_ID."&schoolyearId=".$classObject->SCHOOL_YEAR."&teacherId=".$this->objectId."'";
+            $SUBJECT_LIST .= ",cls:'nodeTextBold'";
+            $SUBJECT_LIST .= ",iconCls: 'icon-component_yellow'";
+        $SUBJECT_LIST .= "}";
+        $TREE_ITEMS[] = $SUBJECT_LIST;
         
         $setParamsTeachingReport = "";
         if($classObject->ID) 
         $setParamsTeachingReport = "classId=".$classObject->ID;
         if($this->objectId)
         $setParamsTeachingReport .= "&objectId=".$this->objectId;//@THORN Visal
-        $TEACHING_REPORT= "{
-            title: '".TEACHING_REPORT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'TEACHING_REPORT', url: '/staff/creditsystemsubjectteachingreportsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsTeachingReport)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $TEACHING_REPORT . "";
+        $TEACHING_REPORT = "{";
+            $TEACHING_REPORT .= "text:'".TEACHING_REPORT."'";
+            $TEACHING_REPORT .= ",leaf:true";
+            $TEACHING_REPORT .= ",url:'/staff/creditsystemsubjectteachingreportsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsTeachingReport)."'";
+            $TEACHING_REPORT .= ",cls:'nodeTextBold'";
+            $TEACHING_REPORT .= ",iconCls: 'icon-component'";
+        $TEACHING_REPORT .= "}";
+        $TREE_ITEMS[] = $TEACHING_REPORT;
+        
         //@THORN Visal
         $setParamsAssessment = "";
         $setParamsAssessment .= "target=general";
@@ -149,46 +159,78 @@ $getGradeSubject = GradeSubjectDBAccess::getGradeSubject(false, $subjectObject->
         $setParamsAssessment .= "&subjectId=".$this->subjectId;
         if(Zend_Registry::get('USER')->ID)
         $setParamsAssessment .="&objectId=".Zend_Registry::get('USER')->ID;
-        $ASSESSMENT = "{
-            title: '".ASSESSMENT."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'ASSESSMENT', url: '/staff/creditsystemassessmentsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsAssessment)."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $ASSESSMENT . "";
+        $ASSESSMENT = "{";
+            $ASSESSMENT .= "text:'".ASSESSMENT."'";
+            $ASSESSMENT .= ",leaf:true";
+            $ASSESSMENT .= ",url:'/staff/creditsystemassessmentsetting/?camIds=".$this->urlEncryp->encryptedGet($setParamsAssessment)."'";
+            $ASSESSMENT .= ",cls:'nodeTextBold'";
+            $ASSESSMENT .= ",iconCls: 'icon-component_yellow'";
+        $ASSESSMENT .= "}";
+        $TREE_ITEMS[] = $ASSESSMENT;
         
-        $DISCIPLINE_INFORMATION = "{
-            title: '".DISCIPLINE_INFORMATION."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'DISCIPLINE_INFORMATION', url: '/discipline/byclass/?target=general&classId=".$classObject->ID."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $DISCIPLINE_INFORMATION . "";
+        $DISCIPLINE_INFORMATION = "{";
+            $DISCIPLINE_INFORMATION .= "text:'".DISCIPLINE_INFORMATION."'";
+            $DISCIPLINE_INFORMATION .= ",leaf:true";
+            $DISCIPLINE_INFORMATION .= ",url:'/discipline/byclass/?target=general&classId=".$classObject->ID."'";
+            $DISCIPLINE_INFORMATION .= ",cls:'nodeTextBold'";
+            $DISCIPLINE_INFORMATION .= ",iconCls: 'icon-component'";
+        $DISCIPLINE_INFORMATION .= "}";
+        $TREE_ITEMS[] = $DISCIPLINE_INFORMATION;
         
-        $LIST_OF_STUDENTS = "{
-            title: '".LIST_OF_STUDENTS."'
-            ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/staff/creditsystemstudentsetting?classId=".$classObject->ID."'})]
-        }";
-        $PANEL_ITEMS[] = "" . $LIST_OF_STUDENTS . "";
+        $LIST_OF_STUDENTS = "{";
+            $LIST_OF_STUDENTS .= "text:'".LIST_OF_STUDENTS."'";
+            $LIST_OF_STUDENTS .= ",leaf:true";
+            $LIST_OF_STUDENTS .= ",url:'/staff/creditsystemstudentsetting?classId=".$classObject->ID."'";
+            $LIST_OF_STUDENTS .= ",cls:'nodeTextBold'";
+            $LIST_OF_STUDENTS .= ",iconCls: 'icon-component_yellow'";
+        $LIST_OF_STUDENTS .= "}";
+        $TREE_ITEMS[] = $LIST_OF_STUDENTS;
         
-        $CHOOSE_ITEMS = "[".implode(',',$PANEL_ITEMS)."]";  
-         
+        $CHOOSE_ITEMS = "[".implode(',',$TREE_ITEMS)."]";
+        
+        $OBJECT_TREE->backgroundColor = "#F9F9F9";
+        $OBJECT_TREE->isAsyncTreeNode = true;
+        $OBJECT_TREE->setAsyncTreeNode($CHOOSE_ITEMS);
+        $OBJECT_TREE->renderJS();
         ?>
         viewport = new Ext.Viewport({
             layout: 'fit'
-            ,border: false 
+            ,border: false
             ,items:[{
-                layout:'fit'
-                ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
-                ,border: false  
-                ,items:[{
-                    xtype: 'tabpanel'
-                    ,tabPosition: 'top'
-                    ,plain:true
-                    ,activeTab: 0
-                    ,enableTabScroll:true   
-                    ,items:<?=$CHOOSE_ITEMS?>
+                layout:'border'
+                ,border: false
+                ,defaults: {
+                    collapsible:true
+                    ,split: true
+                }
+                ,items: [{
+                    title: ''
+                    ,id:'WEST_ID'
+                    ,region:'west'
+                    ,margins: '3 0 3 3'
+                    ,cmargins: '3 3 3 3'
+                    ,width:200
+                    ,minSize:200
+                    ,maxSize:200
+                    ,layout: 'fit'
+                    ,items:[{xtype: '<?=$OBJECT_TREE->getObjectXtype();?>'}]
+                },{
+                    title: ''
+                    ,border:true
+                    ,collapsible: false
+                    ,region:'center'
+                    ,id: 'center'
+                    ,layout: 'card'
+                    ,activeItem: 0
+                    ,margins: '3 3 3 0'
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'MAIN_CONTENT', url:'/staff/creditsystemsubjectdetail/?camIds=<?=$this->urlEncryp->encryptedGet($setParamsMaincontent)?>'})]
                 }]
             }]
+        });
+        
+        var myTree = <?=$OBJECT_TREE->ExtgetCmp();?>;
+        myTree.on('click', function(node, event){
+            clickOpenPage('center','',node.attributes.url);
         });
     });
 </script>
