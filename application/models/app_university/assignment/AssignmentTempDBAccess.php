@@ -126,7 +126,8 @@ class AssignmentTempDBAccess {
         if (isset($params["EVALUATION_TYPE"]))
         {
             $SAVEDATA["EVALUATION_TYPE"] = (int) $params["EVALUATION_TYPE"];
-            $SAVEDATA["SUBJECT"] = (int) $params["SUBJECT"];
+            if (isset($params["SUBJECT"]))
+                $SAVEDATA["SUBJECT"] = (int) $params["SUBJECT"];
         }
 
         if (isset($params["WEIGHTING"]))
@@ -814,7 +815,7 @@ class AssignmentTempDBAccess {
         //error_log($SQL);
         return self::dbAccess()->fetchAll($SQL);
     }
-    
+
     /**
      * 
      * @param type $eduType
