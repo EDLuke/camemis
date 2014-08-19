@@ -261,14 +261,14 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
             case self::AREA_SPLINE_CHART:
             case self::AREA_STACKED_CHART:
                 if ($this->maxWidthPercentage) {
-                    $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:" . $this->maxWidth . "%; margin: 0 auto'></div>";
+                    $js = "<div id='" . $this->id . "'; style='height: " . $this->height . "px; max-width:" . $this->maxWidth . "%; margin:20px;'></div>";
                 } else {
-                    $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; max-width:" . $this->maxWidth . "px; margin: 0 auto'></div>";
+                    $js = "<div id='" . $this->id . "'; style='height: " . $this->height . "px; width:" . $this->maxWidth . "px; float:left; margin:20px;'></div>";
                 }
 
                 break;
             case self::COLUMN_DRILLDOWN_CHART:
-                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; min-width: " . $this->minWidth . "px; margin: 0 auto'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; min-width: " . $this->minWidth . "px; margin:20px;'></div>";
                 $js.= $this->preSet;
 
                 break;
@@ -281,7 +281,7 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
 
 Class picChart {
 
-    function __construct($id, $text, $dataSet, $allowPointSelect, $title , $subtitle, $plotShadow, $plotBackgroundColor, $plotBorderWidth, $pointColor, $cursor, $dataLabels) {
+    function __construct($id, $text, $dataSet, $allowPointSelect, $title, $subtitle, $plotShadow, $plotBackgroundColor, $plotBorderWidth, $pointColor, $cursor, $dataLabels) {
 
         $this->text = $text;
         $this->dataSet = $dataSet ? $dataSet : self::dafaultDataSet();
@@ -319,13 +319,13 @@ Class picChart {
         $js .="title: {";
         $js .="text: '" . $this->title . "'";
         $js .="},";
-        
-        if($this->subtitle){
+
+        if ($this->subtitle) {
             $js.=",subtitle: {";
-                $js.="text: '" . $this->subtitle . "'";
+            $js.="text: '" . $this->subtitle . "'";
             $js.="}";
         }
-        
+
         $js .="tooltip: {";
         $js .="pointFormat: '{series.name}: <b>{point.y}</b>'";
         $js .="},";
@@ -404,11 +404,11 @@ Class columnCompareChart {
         $js.="title: {";
         $js.="text: '" . $this->title . "'";
         $js.="}";
-        
+
         $js.=",subtitle: {";
-            $js.="text: '" . $this->subtitle . "'";
+        $js.="text: '" . $this->subtitle . "'";
         $js.="}";
-        
+
         $js.=",xAxis:" . $this->xAxis;
         $js.=",yAxis: {";
         $js.="min: " . $this->yAxisMin . ",";
@@ -520,11 +520,11 @@ Class columnChart {
         $js.="title: {";
         $js.="text: '" . $this->title . "'";
         $js.="}";
-        
+
         $js.=",subtitle: {";
-            $js.="text: '" . $this->subtitle . "'";
+        $js.="text: '" . $this->subtitle . "'";
         $js.="}";
-        
+
         $js.=",xAxis: {";
         $js.="type: 'category',";
         $js.="labels: {";
@@ -626,11 +626,11 @@ Class areaSplineChart {
         $js.="title: {";
         $js.="text: '" . $this->title . "'";
         $js.="}";
-        
+
         $js.=",subtitle: {";
-            $js.="text: '" . $this->subtitle . "'";
+        $js.="text: '" . $this->subtitle . "'";
         $js.="}";
-        
+
         $js.=",legend: {";
         $js.="layout: '" . $this->legendLayout . "'";
         $js.=",align: '" . $this->legendAlign . "',";
@@ -731,11 +731,11 @@ Class areaStackedChart {
         $js.="title: {";
         $js.="text: '" . $this->title . "'";
         $js.="}";
-        
+
         $js.=",subtitle: {";
-            $js.="text: '" . $this->subtitle . "'";
+        $js.="text: '" . $this->subtitle . "'";
         $js.="}";
-        
+
         $js.=",xAxis: {" . $this->xAxis . ",";
         $js.="tickmarkPlacement: '" . $this->tickmarkPlacement . "',";
         $js.="},";
@@ -855,11 +855,11 @@ Class calumnDrillDownChart {
         $js.="title: {";
         $js.="text: '" . $this->title . "'";
         $js.="}";
-        
+
         $js.=",subtitle: {";
-            $js.="text: '" . $this->subtitle . "'";
+        $js.="text: '" . $this->subtitle . "'";
         $js.="}";
-        
+
         $js.=",xAxis: {";
         $js.="type: 'category'";
         $js.="},";
@@ -895,10 +895,9 @@ Class calumnDrillDownChart {
         $js.="})";
         $js.="}";
         $js.="});";
-
-
         return $js;
     }
 
 }
+
 ?>

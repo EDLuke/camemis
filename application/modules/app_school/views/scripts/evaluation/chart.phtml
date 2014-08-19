@@ -16,35 +16,35 @@ $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 $section = isset($_GET["section"]) ? addText($_GET["section"]) : "";
 
-if($term){
-    switch($term){
+if ($term) {
+    switch ($term) {
         case "FIRST_SEMESTER":
-            $section ="2";
+            $section = "2";
             break;
         case "SECOND_SEMESTER":
-            $section ="2";
+            $section = "2";
             break;
         case "FIRST_TERM":
-            $section ="4";
+            $section = "4";
             break;
         case "SECOND_TERM":
-            $section ="4";
+            $section = "4";
             break;
         case "THIRD_TERM":
-            $section ="4";
+            $section = "4";
             break;
         case "FIRST_QUARTER":
-            $section ="5";
+            $section = "5";
             break;
         case "SECOND_QUARTER":
-            $section ="5";
+            $section = "5";
             break;
         case "THIRD_QUARTER":
-            $section ="5";
+            $section = "5";
             break;
         case "FOURTH_QUARTER":
-            $section ="5";
-        break;
+            $section = "5";
+            break;
     }
 }
 
@@ -54,58 +54,59 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 CamemisHighChart::setHighChartLIB();
 
-Class DisplayChart{
-    
+Class DisplayChart {
+
     function __construct($_target, $_academicId, $_subjectId, $_term, $_section, $_studentId) {
-        
+
         $this->target = strtoupper($_target);
         $this->academicId = $_academicId;
         $this->subjectId = $_subjectId;
         $this->term = $_term;
         $this->section = $_section;
         $this->studentId = $_studentId;
-        
+
         $this->chart = new AssessmentChart();
         $this->chart->setAcademicId($this->academicId);
         $this->chart->setSubjectId($this->subjectId);
         $this->chart->setTerm($this->term);
         $this->chart->setSection($this->section);
     }
-    
-    protected function setDefaultChart(){
+
+    protected function setChartSubjectAssessment() {
         $SUBJECT_GRADINGSCALE = new CamemisHighChart(
-            "PIC_CHART"
-            , 'SUBJECT_GRADINGSCALE'
-            , 'All Grading Scale of Students'
-            , $this->chart->getSubjectGradingScaleByClass()
+                "PIC_CHART"
+                , 'SUBJECT_GRADINGSCALE'
+                , 'All Grading Scale of Students'
+                , $this->chart->getSubjectGradingScaleByClass()
         );
 
         $SUBJECT_GRADINGSCALE->allowPointSelect = 'true';
         $SUBJECT_GRADINGSCALE->pointColor = 'black';
-        $SUBJECT_GRADINGSCALE->height = 300;
-        $SUBJECT_GRADINGSCALE->maxWidth = 450;
+        $SUBJECT_GRADINGSCALE->height = 320;
+        $SUBJECT_GRADINGSCALE->maxWidth = 300;
         $SUBJECT_GRADINGSCALE->maxWidthPercentage = false;
         $SUBJECT_GRADINGSCALE->plotBorderWidth = "null";
+        $SUBJECT_GRADINGSCALE->divFloatLeft = true;
 
         $SUBJECT_PASS_STATUS = new CamemisHighChart(
-            "COLUMN_COMPARE_CHART"
-            , 'SUBJECT_PASS_STATUS'
-            , 'Pass/Fail Status'
-            , $this->chart->getSubjectPassStatus()
+                "COLUMN_COMPARE_CHART"
+                , 'SUBJECT_PASS_STATUS'
+                , 'Pass/Fail Status'
+                , $this->chart->getSubjectPassStatus()
         );
 
         $SUBJECT_PASS_STATUS->allowPointSelect = 'true';
         $SUBJECT_PASS_STATUS->pointColor = 'black';
-        $SUBJECT_PASS_STATUS->height = 400;
-        $SUBJECT_PASS_STATUS->maxWidth = 450;
+        $SUBJECT_PASS_STATUS->height = 320;
+        $SUBJECT_PASS_STATUS->maxWidth = 300;
         $SUBJECT_PASS_STATUS->maxWidthPercentage = false;
         $SUBJECT_PASS_STATUS->plotBorderWidth = "null";
         $SUBJECT_PASS_STATUS->xAxis = "{categories:['" . PASS . "','" . FAIL . "']}";
 
         $SUBJECT_AVG_STUDENT_LIST = new CamemisHighChart(
-            "COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST'
-            , 'List of Students Average'
-            , $this->chart->getSubjectAVGStudentList()
+                "COLUMN_CHART", 'SUBJECT_AVG_STUDENT_LIST'
+                , 'List of Students Average'
+                , $this->chart->getSubjectAVGStudentList()
         );
         $SUBJECT_AVG_STUDENT_LIST->text = false;
         $SUBJECT_AVG_STUDENT_LIST->allowPointSelect = 'true';
@@ -123,31 +124,45 @@ Class DisplayChart{
         $SUBJECT_AVG_STUDENT_LIST->setHighChartScript();
     }
 
-    protected function getTeacherEnterScoreChart(){
-        
+    protected function getTeacherEnterScoreChart() {
+
         $CHART = new CamemisHighChart(
-            "COLUMN_COMPARE_CHART"
-            , 'TEACHER_ENTER_SCORE'
-            , TEACHER_ENTER_SCORE
-            , $this->chart->getDataSetTeacherEnterScore()
+                "COLUMN_COMPARE_CHART"
+                , 'TEACHER_ENTER_SCORE'
+                , TEACHER_ENTER_SCORE
+                , $this->chart->getDataSetTeacherEnterScore()
         );
-        $CHART->xAxis ="{categories: [".$this->chart->getImplodeAssignments()."]}";
+        $CHART->xAxis = "{categories: [" . $this->chart->getImplodeAssignments() . "]}";
         $CHART->allowPointSelect = 'true';
         $CHART->plotBorderWidth = "null";
         $CHART->setDIVHighChart();
         $CHART->setHighChartScript();
     }
-    
-    public function setDisplayChart(){
-        switch($this->target){
+
+    protected function setDefaultChart() {
+
+        $object = new CamemisHighChart(
+                "COLUMN_CHART"
+                , 'DEFAULT_CHART'
+                , 'Default...'
+                , false
+        );
+        $object->setDIVHighChart();
+        $object->setHighChartScript();
+    }
+
+    public function setDisplayChart() {
+        switch ($this->target) {
             case "TEACHER_ENTER_SCORE":
                 return $this->getTeacherEnterScoreChart();
-            break;
+            case "SUBJECT_ASSESSMENT":
+                return $this->setChartSubjectAssessment();
             default:
                 return $this->setDefaultChart();
-            break;
+                break;
         }
     }
+
 }
 
 $DISPLAY = new DisplayChart($target, $academicId, $subjectId, $term, $section, $studentId);
