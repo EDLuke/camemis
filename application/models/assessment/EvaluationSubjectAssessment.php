@@ -90,7 +90,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
     public function setIncludeMonthTermValue() {
         return $this->getCurrentClass()->FORMULA_TERM ? "2,3" : "1,2,3";
     }
-
+    
     public function listStudentsData() {
 
         $data = array();
