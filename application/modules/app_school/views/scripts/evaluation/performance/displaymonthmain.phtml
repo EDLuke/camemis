@@ -92,7 +92,11 @@ Ext.onReady(function() {
                 ,items: [{
                     border: false
                     ,layout: 'fit'
-                    ,bodyStyle: 'background:#FFFFFF; padding:25px;'
+                    ,tbar:[{
+                        text:'<?=REFRESH?>'
+                        ,iconCls:'icon-reload'
+                        ,handler: function(){<?=CamemisPage::setRequestURI(false)?>;}
+                    }]
                     ,items: [new Ext.ux.IFrameComponent({ id: 'MAIN_CONTENT', url:'/evaluation/chart/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>'})]
                 }]
             }]

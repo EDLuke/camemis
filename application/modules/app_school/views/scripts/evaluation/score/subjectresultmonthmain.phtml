@@ -82,6 +82,8 @@ Ext.onReady(function() {
     $OBJECT_TREE->setAsyncTreeNode($TREE_ITEMS);
     $OBJECT_TREE->renderJS();
     
+    $setMonthParams = $setParams;
+    $setMonthParams .="&section=1&target=SUBJECT_ASSESSMENT_MONTH";
     ?>
     viewport = new Ext.Viewport({
         layout: 'fit'
@@ -117,12 +119,10 @@ Ext.onReady(function() {
                     ,tbar:[{
                         text:'<?=REFRESH?>'
                         ,iconCls:'icon-reload'
-                        ,handler: function(){
-                            <?=CamemisPage::setRequestURI(false)?>;
-                        }
+                        ,handler: function(){<?=CamemisPage::setRequestURI(false)?>;}
                     }]
                     ,layout: 'fit'
-                    ,items: [new Ext.ux.IFrameComponent({ id: 'CHART', url:'/evaluation/chart/?camIds=<?=$this->urlEncryp->encryptedGet($setParams)?>'})]
+                    ,items: [new Ext.ux.IFrameComponent({ id: 'CHART', url:'/evaluation/chart/?camIds=<?=$this->urlEncryp->encryptedGet($setMonthParams)?>'})]
                 }]
             }]
         }]

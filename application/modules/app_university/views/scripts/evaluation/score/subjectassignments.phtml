@@ -295,7 +295,7 @@ Ext.onReady(function() {
     
     if($academicObject->DISPLAY_MONTH_RESULT){
         $setMonthParams = $setParams;
-        $setMonthParams .="&section=1&target=SUBJECT_ASSESSMENT";
+        $setMonthParams .="&section=1&target=SUBJECT_ASSESSMENT_MONTH";
         $MONTHLY_RESULT = "{
             text: '".MONTHLY_RESULT."'
             ,id:'MONTHLY_RESULT'
@@ -321,7 +321,7 @@ Ext.onReady(function() {
         case 1:
             
             $setParamsFirst = $setParams;
-            $setParamsFirst .= "&term=FIRST_TERM&target=SUBJECT_ASSESSMENT";
+            $setParamsFirst .= "&term=FIRST_TERM&target=SUBJECT_ASSESSMENT_TERM";
             $FIRST_TERM_RESULT = "{
                 text: '".FIRST_TERM_RESULT."'
                 ,id:'FIRST_TERM_RESULT'
@@ -345,7 +345,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $FIRST_TERM_RESULT;
 
             $setParamsSecond = $setParams;
-            $setParamsSecond .= "&term=SECOND_TERM&target=SUBJECT_ASSESSMENT";
+            $setParamsSecond .= "&term=SECOND_TERM&target=SUBJECT_ASSESSMENT_TERM";
             $SECOND_TERM_RESULT = "{
                 text: '".SECOND_TERM_RESULT."'
                 ,id:'SECOND_TERM_RESULT'
@@ -369,7 +369,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $SECOND_TERM_RESULT;
             
             $setParamsThird = $setParams;
-            $setParamsThird .= "&term=SECOND_TERM&target=SUBJECT_ASSESSMENT";
+            $setParamsThird .= "&term=SECOND_TERM&target=SUBJECT_ASSESSMENT_TERM";
             $THIRD_TERM_RESULT = "{
                 text: '".THIRD_TERM_RESULT."'
                 ,id:'THIRD_TERM_RESULT'
@@ -396,7 +396,7 @@ Ext.onReady(function() {
         case 2:
             
             $setParamsFirst = $setParams;
-            $setParamsFirst .= "&term=FIRST_QUARTER&target=SUBJECT_ASSESSMENT";
+            $setParamsFirst .= "&term=FIRST_QUARTER&target=SUBJECT_ASSESSMENT_TERM";
             $FIRST_QUARTER_RESULT = "{
                 text: '".FIRST_QUARTER_RESULT."'
                 ,id:'FIRST_QUARTER_RESULT'
@@ -420,7 +420,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $FIRST_QUARTER_RESULT;
 
             $setParamsSecond = $setParams;
-            $setParamsSecond .= "&term=SECOND_QUARTER&target=SUBJECT_ASSESSMENT";
+            $setParamsSecond .= "&term=SECOND_QUARTER&target=SUBJECT_ASSESSMENT_TERM";
             $SECOND_QUARTER_RESULT = "{
                 text: '".SECOND_QUARTER_RESULT."'
                 ,id:'SECOND_QUARTER_RESULT'
@@ -444,7 +444,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $SECOND_QUARTER_RESULT;
             
             $setParamsThird = $setParams;
-            $setParamsThird .= "&term=THIRD_QUARTER&target=SUBJECT_ASSESSMENT";
+            $setParamsThird .= "&term=THIRD_QUARTER&target=SUBJECT_ASSESSMENT_TERM";
             $THIRD_QUARTER_RESULT = "{
                 text: '".THIRD_QUARTER_RESULT."'
                 ,id:'THIRD_QUARTER_RESULT'
@@ -471,7 +471,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $SECOND_QUARTER_RESULT;
             
             $setParamsFourth = $setParams;
-            $setParamsFourth .= "&term=FOURTH_QUARTER&target=SUBJECT_ASSESSMENT";
+            $setParamsFourth .= "&term=FOURTH_QUARTER&target=SUBJECT_ASSESSMENT_TERM";
             $FOURTH_QUARTER_RESULT = "{
                 text: '".FOURTH_QUARTER_RESULT."'
                 ,id:'FOURTH_QUARTER_RESULT'
@@ -497,7 +497,7 @@ Ext.onReady(function() {
         break;
         default:
             $setParamsFirst = $setParams;
-            $setParamsFirst .= "&term=FIRST_SEMESTER&target=SUBJECT_ASSESSMENT";
+            $setParamsFirst .= "&term=FIRST_SEMESTER&target=SUBJECT_ASSESSMENT_TERM";
             $FIRST_SEMESTER_RESULT = "{
                 text: '".FIRST_SEMESTER_RESULT."'
                 ,id:'FIRST_SEMESTER_RESULT'
@@ -520,7 +520,7 @@ Ext.onReady(function() {
             $BAR_ITEMS[] = $FIRST_SEMESTER_RESULT;
 
             $setParamsSecond = $setParams;
-            $setParamsSecond .= "&term=SECOND_SEMESTER&target=SUBJECT_ASSESSMENT";
+            $setParamsSecond .= "&term=SECOND_SEMESTER&target=SUBJECT_ASSESSMENT_TERM";
             $SECOND_SEMESTER_RESULT = "{
                 text: '".SECOND_SEMESTER_RESULT."'
                 ,id:'SECOND_SEMESTER_RESULT'
@@ -547,7 +547,7 @@ Ext.onReady(function() {
     if($academicObject->ENROLLMENT_TYPE !=1){
         if($academicObject->DISPLAY_YEAR_RESULT){
             $setParamsYear = $setParams;
-            $setParamsYear .="&section=3&target=SUBJECT_ASSESSMENT";
+            $setParamsYear .="&section=3&target=SUBJECT_ASSESSMENT_YEAR";
             $YEAR_RESULT = "{
                 text: '".YEAR_RESULT."'
                 ,id:'YEAR_RESULT'

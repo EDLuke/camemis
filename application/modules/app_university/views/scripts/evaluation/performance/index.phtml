@@ -40,6 +40,8 @@ $setParams .= "&academicId=".$this->academicId."";
         $TBAR_ITEMS = Array();
         $DEFAUL_DISPLAY_ITEMS = Array();
         
+        $setParamsChartMonth = $setParams;
+        $setParamsChartMonth .= "&target=ACADEMIC_PERFORMANCE_MONTH";
         $MONTHLY_RESULT = "{
             text: '".MONTHLY_RESULT."'
             ,iconCls:'icon-brick_magnify'
@@ -52,7 +54,9 @@ $setParams .= "&academicId=".$this->academicId."";
             },{
                 text:'".CHARTS."'
                 ,iconCls:'icon-chart_bar'
-                ,disabled:true
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartMonth)."');
+                }
             }]
         }";
         
@@ -66,6 +70,10 @@ $setParams .= "&academicId=".$this->academicId."";
 
                 $setParamsFirst = $setParams;
                 $setParamsFirst .= "&term=FIRST_TERM";
+                
+                $setParamsChartFirst = $setParamsFirst;
+                $setParamsChartFirst .= "&target=ACADEMIC_PERFORMANCE_TERM";
+        
                 $FIRST_TERM_RESULT = "{
                     text: '".FIRST_TERM_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -78,7 +86,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartFirst)."');
+                        }
                     }]
                 }";
 
@@ -89,6 +99,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsSecond = $setParams;
                 $setParamsSecond .= "&term=SECOND_TERM";
+                
+                $setParamsChartSecond = $setParamsSecond;
+                $setParamsChartSecond .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $SECOND_TERM_RESULT = "{
                     text: '".SECOND_TERM_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -96,12 +110,14 @@ $setParams .= "&academicId=".$this->academicId."";
                         text:'".SECOND_TERM_RESULT."'
                         ,iconCls:'icon-application_view_detail'
                         ,handler:function(){
-                            clickOpenPage('MAIN_CONTENT','".SECOND_TERM_RESULT."','/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsSecond)."');
+                            clickOpenPage('MAIN_CONTENT','".SECOND_TERM_RESULT."','/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartSecond)."');
                         }
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartSecond)."');
+                        }
                     }]
                 }";
 
@@ -112,6 +128,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsThird = $setParams;
                 $setParamsThird .= "&term=THIRD_TERM";
+                
+                $setParamsChartThird = $setParamsThird;
+                $setParamsChartThird .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $THIRD_TERM_RESULT = "{
                     text: '".THIRD_TERM_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -124,7 +144,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartThird)."');
+                        }
                     }]
                 }";
 
@@ -138,6 +160,10 @@ $setParams .= "&academicId=".$this->academicId."";
 
                 $setParamsFirst = $setParams;
                 $setParamsFirst .= "&term=FIRST_QUARTER";
+                
+                $setParamsChartFirst = $setParams;
+                $setParamsChartFirst .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $FIRST_QUARTER_RESULT = "{
                     text: '".FIRST_QUARTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -150,7 +176,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartFirst)."');
+                        }
                     }]
                 }";
 
@@ -161,6 +189,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsSecond = $setParams;
                 $setParamsSecond .= "&term=SECOND_QUARTER";
+                
+                $setParamsChartSecond = $setParamsSecond;
+                $setParamsChartSecond .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $SECOND_QUARTER_RESULT = "{
                     text: '".SECOND_QUARTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -173,7 +205,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartSecond)."');
+                        }
                     }]
                 }";
 
@@ -184,6 +218,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsThird = $setParams;
                 $setParamsThird .= "&term=THIRD_QUARTER";
+                
+                $setParamsChartThird = $setParamsThird;
+                $setParamsChartThird .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $THIRD_QUARTER_RESULT = "{
                     text: '".THIRD_QUARTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -196,7 +234,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartThird)."');
+                        }
                     }]
                 }";
 
@@ -207,6 +247,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsFourth = $setParams;
                 $setParamsFourth .= "&term=FOURTH_QUARTER";
+                
+                $setParamsChartFourth = $setParamsFourth;
+                $setParamsChartFourth .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $FOURTH_QUARTER_RESULT = "{
                     text: '".FOURTH_QUARTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -214,12 +258,14 @@ $setParams .= "&academicId=".$this->academicId."";
                         text:'".FOURTH_QUARTER_RESULT."'
                         ,iconCls:'icon-application_view_detail'
                         ,handler:function(){
-                            clickOpenPage('MAIN_CONTENT','".FOURTH_QUARTER_RESULT."','/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsFourth)."');
+                            clickOpenPage('MAIN_CONTENT','".FOURTH_QUARTER_RESULT."','/evaluation/performancesemestertraditional/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartFourth)."');
                         }
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartThird)."');
+                        }
                     }]
                 }";
 
@@ -232,6 +278,10 @@ $setParams .= "&academicId=".$this->academicId."";
             default:
                 $setParamsFirst = $setParams;
                 $setParamsFirst .= "&term=FIRST_SEMESTER";
+                
+                $setParamsChartFirst = $setParamsFirst;
+                $setParamsChartFirst .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $FIRST_SEMESTER_RESULT = "{
                     text: '".FIRST_SEMESTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -244,7 +294,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartFirst)."');
+                        }
                     }]
                 }";
                 if($academicObject->DISPLAY_FIRST_RESULT){
@@ -255,6 +307,10 @@ $setParams .= "&academicId=".$this->academicId."";
                 
                 $setParamsSecond = $setParams;
                 $setParamsSecond .= "&term=SECOND_SEMESTER";
+                
+                $setParamsChartSecond = $setParamsSecond;
+                $setParamsChartSecond .= "&target=ACADEMIC_PERFORMANCE_TERM";
+                
                 $SECOND_SEMESTER_RESULT = "{
                     text: '".SECOND_SEMESTER_RESULT."'
                     ,iconCls:'icon-brick_magnify'
@@ -267,7 +323,9 @@ $setParams .= "&academicId=".$this->academicId."";
                     },{
                         text:'".CHARTS."'
                         ,iconCls:'icon-chart_bar'
-                        ,disabled:true
+                        ,handler:function(){
+                            clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartSecond)."');
+                        }
                     }]
                 }";
                 if($academicObject->DISPLAY_SECOND_RESULT){
@@ -280,6 +338,10 @@ $setParams .= "&academicId=".$this->academicId."";
         
         $setYearParams = "";
         $setYearParams .= $setParams;
+
+        $setParamsChartYear = $setYearParams;
+        $setParamsChartYear .= "&target=ACADEMIC_PERFORMANCE_YEAR";
+
         $YEAR_RESULT = "{
             text: '".YEAR_RESULT."'
             ,iconCls:'icon-brick_magnify'
@@ -292,7 +354,9 @@ $setParams .= "&academicId=".$this->academicId."";
             },{
                 text:'".CHARTS."'
                 ,iconCls:'icon-chart_bar'
-                ,disabled:true
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','".CHARTS."','/evaluation/chart/?camIds=".$this->urlEncryp->encryptedGet($setParamsChartYear)."');
+                }
             }]
         }";
         if($academicObject->DISPLAY_YEAR_RESULT){

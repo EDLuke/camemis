@@ -16,8 +16,10 @@ $subjectId = isset($_GET["subjectId"]) ? addText($_GET["subjectId"]) : "";
 $term = isset($_GET["term"]) ? addText($_GET["term"]) : "";
 $section = isset($_GET["section"]) ? addText($_GET["section"]) : "";
 
-if ($term) {
-    switch ($term) {
+if ($term)
+{
+    switch ($term)
+    {
         case "FIRST_SEMESTER":
             $section = "2";
             break;
@@ -56,7 +58,8 @@ CamemisHighChart::setHighChartLIB();
 
 Class DisplayChart {
 
-    function __construct($_target, $_academicId, $_subjectId, $_term, $_section, $_studentId) {
+    function __construct($_target, $_academicId, $_subjectId, $_term, $_section, $_studentId)
+    {
 
         $this->target = strtoupper($_target);
         $this->academicId = $_academicId;
@@ -72,7 +75,31 @@ Class DisplayChart {
         $this->chart->setSection($this->section);
     }
 
-    protected function setChartSubjectAssessment() {
+    protected function setChartSubjectAssessmentMonth()
+    {
+        $dataset = "[['" . PASS . "', 80],['" . FAIL . "',20]]";
+        $monthList = AcademicDBAccess::getAcademicMonthList($this->academicId);
+
+        if ($monthList)
+        {
+            foreach ($monthList as $key => $value)
+            {
+                $title = constant($key) . " (" . $value . ")";
+                $object = new CamemisHighChart("PIC_CHART", "PIC_CHART_" . $key . "_" . $value . "", $title, $dataset);
+                $object->allowPointSelect = 'true';
+                $object->pointColor = 'black';
+                $object->height = 250;
+                $object->maxWidth = 230;
+                $object->maxWidthPercentage = false;
+                $object->plotBorderWidth = "null";
+                $object->setDIVHighChart();
+                $object->setHighChartScript();
+            }
+        }
+    }
+
+    protected function setChartSubjectAssessment()
+    {
         $SUBJECT_GRADINGSCALE = new CamemisHighChart(
                 "PIC_CHART"
                 , 'SUBJECT_GRADINGSCALE'
@@ -124,7 +151,8 @@ Class DisplayChart {
         $SUBJECT_AVG_STUDENT_LIST->setHighChartScript();
     }
 
-    protected function getTeacherEnterScoreChart() {
+    protected function getChartTeacherEnterScore()
+    {
 
         $CHART = new CamemisHighChart(
                 "COLUMN_COMPARE_CHART"
@@ -139,27 +167,88 @@ Class DisplayChart {
         $CHART->setHighChartScript();
     }
 
-    protected function setDefaultChart() {
+    protected function setChartAcademicPerfomanceMonth()
+    {
+        $dataset = "[['" . PASS . "', 80],['" . FAIL . "',20]]";
+        $monthList = AcademicDBAccess::getAcademicMonthList($this->academicId);
+
+        if ($monthList)
+        {
+            foreach ($monthList as $key => $value)
+            {
+                $title = constant($key) . " (" . $value . ")";
+                $object = new CamemisHighChart("PIC_CHART", "PIC_CHART_" . $key . "_" . $value . "", $title, $dataset);
+                $object->allowPointSelect = 'true';
+                $object->pointColor = 'black';
+                $object->height = 250;
+                $object->maxWidth = 230;
+                $object->maxWidthPercentage = false;
+                $object->plotBorderWidth = "null";
+                $object->setDIVHighChart();
+                $object->setHighChartScript();
+            }
+        }
+    }
+
+    protected function setChartAcademicPerformance()
+    {
+
+        $datasetPassFail = "[['Pass',80],['Fail',20]]";
+        $CHART_FIRST = new CamemisHighChart("PIC_CHART", "PASS_FAIL", "Pass/Fail", $datasetPassFail);
+        $CHART_FIRST->allowPointSelect = 'true';
+        $CHART_FIRST->pointColor = 'black';
+        $CHART_FIRST->height = 320;
+        $CHART_FIRST->maxWidth = 300;
+        $CHART_FIRST->maxWidthPercentage = false;
+        $CHART_FIRST->plotBorderWidth = "null";
+        $CHART_FIRST->setDIVHighChart();
+        $CHART_FIRST->setHighChartScript();
+
+        $datasetAssessment = "[['Excellent', 10],['Good',30],['Average',30],['Below Average',20],['Failing',10]]";
+        $CHART_SECOND = new CamemisHighChart("COLUMN_CHART", "ASSESSMENT", "Assessment", $datasetAssessment);
+        $CHART_SECOND->allowPointSelect = 'true';
+        $CHART_SECOND->pointColor = 'black';
+        $CHART_SECOND->height = 320;
+        $CHART_SECOND->maxWidth = 300;
+        $CHART_SECOND->maxWidthPercentage = false;
+        $CHART_SECOND->plotBorderWidth = "null";
+        $CHART_SECOND->setDIVHighChart();
+        $CHART_SECOND->setHighChartScript();
+    }
+
+    protected function setDefaultPicChart()
+    {
 
         $object = new CamemisHighChart(
-                "COLUMN_CHART"
+                "PIC_CHART"
                 , 'DEFAULT_CHART'
                 , 'Default...'
                 , false
         );
+        $object->allowPointSelect = 'true';
+        $object->plotBorderWidth = "null";
         $object->setDIVHighChart();
         $object->setHighChartScript();
     }
 
-    public function setDisplayChart() {
-        switch ($this->target) {
+    public function setDisplayChart()
+    {
+        switch ($this->target)
+        {
             case "TEACHER_ENTER_SCORE":
-                return $this->getTeacherEnterScoreChart();
-            case "SUBJECT_ASSESSMENT":
+                return $this->getChartTeacherEnterScore();
+            case "SUBJECT_ASSESSMENT_MONTH":
+                return $this->setChartSubjectAssessmentMonth();
+            case "SUBJECT_ASSESSMENT_TERM":
+            case "SUBJECT_ASSESSMENT_YEAR":
                 return $this->setChartSubjectAssessment();
+            case "ACADEMIC_PERFORMANCE_MONTH":
+                return $this->setChartAcademicPerfomanceMonth();
+            case "ACADEMIC_PERFORMANCE_TERM":
+            case "ACADEMIC_PERFORMANCE_YEAR":
+                return $this->setChartAcademicPerformance();
             default:
-                return $this->setDefaultChart();
-                break;
+                return $this->setDefaultPicChart();
         }
     }
 
