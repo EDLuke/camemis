@@ -10,6 +10,7 @@ require_once 'utiles/Utiles.php';
 require_once 'models/training/TrainingDBAccess.php';
 require_once 'models/training/StudentTrainingDBAccess.php';
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/subject/SubjectDBAccess.php";
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/assignment/AssignmentTempDBAccess.php";
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 
@@ -857,17 +858,24 @@ class TrainingSubjectDBAccess extends SubjectDBAccess {
         $CHECK = self::checkTrainingSubjectAssignment($trainingId, $subjectId, $assignmentId);
 
         if (!$CHECK) {
-            $facette = TrainingDBAccess::findTrainingFromId($trainingId);
-            $SAVEDATA["PROGRAM"] = $facette->PROGRAM;
-            $SAVEDATA["TERM"] = $facette->ID;
-            $SAVEDATA["LEVEL"] = $facette->LEVEL;
-            $SAVEDATA["EVALUATION_TYPE"] = $facette->EVALUATION_TYPE;
-            $SAVEDATA["TRAINING"] = $trainingId;
-            $SAVEDATA["SUBJECT"] = $subjectId;
-            $trainingSubject = self::getTrainingSubject($trainingId, $subjectId);
-            $SAVEDATA["PARENT"] = $trainingSubject ? $trainingSubject->ID : "";
-            $SAVEDATA["ASSIGNMENT"] = $assignmentId;
-            $SAVEDATA["OBJECT_TYPE"] = "ITEM";
+
+            $trainingObject = TrainingDBAccess::findTrainingFromId($trainingId);
+            $assignmentObject = AssignmentTempDBAccess::findAssignmentTempFromId($assignmentId);
+
+            if ($trainingObject && $assignmentObject) {
+                $SAVEDATA["PROGRAM"] = $trainingObject->PROGRAM;
+                $SAVEDATA["TERM"] = $trainingObject->ID;
+                $SAVEDATA["LEVEL"] = $trainingObject->LEVEL;
+                $SAVEDATA["EVALUATION_TYPE"] = $trainingObject->EVALUATION_TYPE;
+                $SAVEDATA["TRAINING"] = $trainingId;
+                $SAVEDATA["SUBJECT"] = $subjectId;
+                $trainingSubject = self::getTrainingSubject($trainingId, $subjectId);
+                $SAVEDATA["PARENT"] = $trainingSubject ? $trainingSubject->ID : "";
+                $SAVEDATA["ASSIGNMENT"] = $assignmentId;
+                $SAVEDATA["COEFF_VALUE"] = $assignmentObject->COEFF_VALUE;
+                $SAVEDATA["MAX_POSSIBLE_SCORE"] = $assignmentObject->POINTS_POSSIBLE;
+                $SAVEDATA["OBJECT_TYPE"] = "ITEM";
+            }
             self::dbAccess()->insert('t_training_subject', $SAVEDATA);
         }
 
