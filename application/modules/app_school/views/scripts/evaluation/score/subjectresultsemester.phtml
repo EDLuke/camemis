@@ -426,37 +426,43 @@ Ext.onReady(function() {
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
             
-        switch($subjectObject->SCORE_TYPE){
-            case 1:
-                $html .= "},'-',{";
-                $html .= "text: '<b>".CALCULATION."</b>'";
-                $html .= ",iconCls:'icon-calculator_add'";
-                $html .= ",handler: function(){";
-                    $html .= "Ext.MessageBox.show({";
-                        $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
-                        $html .= "progressText: 'Saving...',";
-                        $html .= "width:300,";
-                        $html .= "wait:true,";
-                        $html .= "waitConfig: {interval:200},";
-                        $html .= "icon:'ext-mb-download'";
-                    $html .= "});";
-                    $html .= "Ext.Ajax.request({";
-                        $html .= "url: '/evaluation/jsonsave/'";
-                        $html .= ",method: 'POST'";
-                        $html .= ",params:{";
-                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
-                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
-                        $html .= "}";
-                        $html .= ",success: function() {";
-                            $html .= "Ext.MessageBox.hide();";
-                            $html .= "grid.store.load();";
-                        $html .= "}";
-                    $html .= "});";
-                $html .= "}";
-            break;
+        if(!$academicObject->EVALUATION_OPTION){
+            switch($subjectObject->SCORE_TYPE){
+                case 1:
+                    $html .= "},'-',{";
+                    $html .= "text: '<b>".CALCULATION."</b>'";
+                    $html .= ",iconCls:'icon-calculator_add'";
+                    $html .= ",handler: function(){";
+                        $html .= "Ext.MessageBox.show({";
+                            $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
+                            $html .= "progressText: 'Saving...',";
+                            $html .= "width:300,";
+                            $html .= "wait:true,";
+                            $html .= "waitConfig: {interval:200},";
+                            $html .= "icon:'ext-mb-download'";
+                        $html .= "});";
+                        $html .= "Ext.Ajax.request({";
+                            $html .= "url: '/evaluation/jsonsave/'";
+                            $html .= ",method: 'POST'";
+                            $html .= ",params:{";
+                                $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
+                                $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
+                            $html .= "}";
+                            $html .= ",success: function() {";
+                                $html .= "Ext.MessageBox.hide();";
+                                $html .= "grid.store.load();";
+                            $html .= "}";
+                        $html .= "});";
+                    $html .= "}";
+                break;
+            }
         }
         
         if($academicObject->EVALUATION_OPTION){
+            
+            $importParams = $setParams;
+            $importParams .= "&target=subjectresultsemester";
+            
             $html .= "},'-',{";
                 $html .= "text: '<b>".EXCEL_TEMPLATE."</b>'";
                 $html .= ",iconCls:'icon-page_excel'";
@@ -464,7 +470,7 @@ Ext.onReady(function() {
             $html .= "},'-',{";
                 $html .= "text: '<b>".IMPORT."</b>'";
                 $html .= ",iconCls:'icon-database_copy'";
-                $html .= ",handler: function(){window.location='/evaluation/scoreimporttemplate/?camIds=".$this->urlEncryp->encryptedGet($setParams)."';}";
+                $html .= ",handler: function(){openWinIFrame('" . IMPORT . "', '/evaluation/scoreimport/?camIds=".$this->urlEncryp->encryptedGet($importParams)."', 450,250);}";
             $html .= "";
         }
         
