@@ -86,7 +86,7 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         if ($date)
             $SQL->where("A.SCORE_DATE = '" . $date . "'");
 
-        error_log($SQL->__toString());
+        //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
     }
 
@@ -851,9 +851,6 @@ class TrainingAssessmentDBAccess extends StudentTrainingDBAccess {
         {
             case "ASSIGNMENT":
                 $SQL->group("C.ASSIGNMENT_ID");
-                break;
-            case "DATE":
-                $SQL->group("C.SCORE_INPUT_DATE");
                 break;
         }
         
