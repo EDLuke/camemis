@@ -261,14 +261,14 @@ Microsoft Internet Explorer 8.0 - Tencent Traveler Edition    0.09%</pre>";
             case self::AREA_SPLINE_CHART:
             case self::AREA_STACKED_CHART:
                 if ($this->maxWidthPercentage) {
-                    $js = "<div id='" . $this->id . "'; style='height: " . $this->height . "px; max-width:" . $this->maxWidth . "%; margin:20px;'></div>";
+                    $js = "<div id='" . $this->id . "'; style='height: " . $this->height . "px; width:" . $this->maxWidth . "%; float:left; margin:20px;'></div>";
                 } else {
                     $js = "<div id='" . $this->id . "'; style='height: " . $this->height . "px; width:" . $this->maxWidth . "px; float:left; margin:20px;'></div>";
                 }
 
                 break;
             case self::COLUMN_DRILLDOWN_CHART:
-                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; min-width: " . $this->minWidth . "px; margin:20px;'></div>";
+                $js = "<div id='" . $this->id . "' style='height: " . $this->height . "px; min-width: " . $this->minWidth . "px; float:left; margin:20px;'></div>";
                 $js.= $this->preSet;
 
                 break;
