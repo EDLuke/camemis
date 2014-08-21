@@ -21,8 +21,10 @@ require_once "models/filter/FilterData.php"; //@Visal
 require_once "models/training/StudentTrainingDBAccess.php"; //@CHHE Vathana 
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/student/StudentDBAccess.php"; //@CHHE Vathana
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffDBAccess.php"; //@CHHE Vathana
-require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffContractDBAccess.php"; //@CHHE Vathana
-
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffContractDBAccess.php"; 
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/TeachingSessionDBAccess.php"; 
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/TeacherScheduleDBAccess.php"; 
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffStatusDBAccess.php"; 
 error_reporting(E_ALL);
 
 abstract class CamemisExportDBAccess {
@@ -47,11 +49,12 @@ abstract class CamemisExportDBAccess {
         $this->DB_STUDENT_PREREQUIREMENT_LIST = StudentDBAccess::getInstance(); //@CHHE Vathana
         $this->DB_STAFF_INFO_LIST = StaffDBAccess::getInstance(); //@CHHE Vathana
         $this->DB_STAFF_CONTRACT_LIST = StaffContractDBAccess::getInstance(); //@CHHE Vathana
-        
-        
+        $this->DB_TEACHING_SESSION = TeachingSessionDBAccess::getInstance(); 
+        $this->DB_TEACHER_TEACHING_SESSION = TeacherScheduleDBAccess::getInstance(); 
+        $this->DB_STAFF_STATUS_LIST = StaffStatusDBAccess::getInstance();
     }
 
-    public function getFileStaffList() {
+    public function getFileStaffList() {                                  
         return self::getUserPhath("_stafflist.xls");
     }
 
@@ -113,9 +116,18 @@ abstract class CamemisExportDBAccess {
     public function getStaffPersonalList() {
         return self::getUserPhath("_staffpersonalinformation.xls");
     }
-    
-    //End...
-
+    public function getTeachingSession() {
+        return self::getUserPhath("_teachingsession.xls");
+    }
+    public function getTeacherTeachingSession() {
+        return self::getUserPhath("_teacherteachingsession.xls");
+    }
+    public function getStaffContract() {
+        return self::getUserPhath("_staffcontract.xls");
+    }
+    public function getStaffStatus() {
+        return self::getUserPhath("_staffstatus.xls");
+    }
     public function startContent() {
         return $this->startHeader + 1;
     }
