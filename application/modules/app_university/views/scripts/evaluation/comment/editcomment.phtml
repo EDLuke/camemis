@@ -48,11 +48,11 @@ switch ($section)
 if($subjectId){
     
     $stdClass->subjectId = $subjectId;
-    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
     
 }else{
     
-    $facette = SQLAcademicPerformances::getCallStudentAcademicPerformance($stdClass);
+    $facette = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass);
 }
 
 $TEACHER_COMMENT = $facette?$facette->TEACHER_COMMENT:"---";
@@ -106,7 +106,7 @@ if ($_POST){
 
     }else{
 
-        SQLAcademicPerformances::getActionStudentAcademicPerformance($stdClass);
+        SQLAcademicPerformances::getActionStudentAPF($stdClass);
     }
 
     header("Location: ".$_SERVER['REQUEST_URI']."");

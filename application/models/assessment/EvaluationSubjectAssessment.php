@@ -189,7 +189,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         if ($this->getSettingEvaluationOption()) {
-                            $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                            $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                             $TOTAL_RESULT = $facette ? $facette->SUBJECT_VALUE : "";
                         } else {
                             $TOTAL_RESULT = $this->getTotalSubjectResultsByMonth($stdClass, self::WITH_FORMAT);
@@ -245,7 +245,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                     case self::SCORE_NUMBER:
 
                         if ($this->getSettingEvaluationOption()) {
-                            $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                            $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                             $TOTAL_RESULT = $facette ? $facette->SUBJECT_VALUE : "";
                         } else {
                             $TOTAL_RESULT = $this->getTotalSubjectResultsByTerm($stdClass, self::WITH_FORMAT);
@@ -303,7 +303,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->studentId = $value->ID;
 
                 if ($this->getSettingEvaluationOption()) {
-                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                     $TOTAL_RESULT = $facette ? $facette->SUBJECT_VALUE : "";
                 } else {
                     $TOTAL_RESULT = $this->getTotalSubjectResultsByYear($stdClass);
@@ -315,29 +315,29 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getTermNumber()) {
                     case 1:
                         $stdClass->section = "TERM";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_TERM");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_TERM");
                         $data[$i]["FIRST_TERM_RESULT"] = $FIRST->SUBJECT_VALUE;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_TERM");
                         $data[$i]["SECOND_TERM_RESULT"] = $SECOND->SUBJECT_VALUE;
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_TERM");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_TERM");
                         $data[$i]["THIRD_TERM_RESULT"] = $THIRD->SUBJECT_VALUE;
                         break;
                     case 2:
                         $stdClass->section = "QUARTER";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_QUARTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_QUARTER");
                         $data[$i]["FIRST_QUARTER_RESULT"] = $FIRST->SUBJECT_VALUE;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_QUARTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_QUARTER");
                         $data[$i]["SECOND_QUARTER_RESULT"] = $SECOND->SUBJECT_VALUE;
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_QUARTER");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_QUARTER");
                         $data[$i]["FOURTH_QUARTER_RESULT"] = $THIRD->SUBJECT_VALUE;
-                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FOURTH_QUARTER");
+                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FOURTH_QUARTER");
                         $data[$i]["FOURTH_QUARTER_RESULT"] = $FOURTH->SUBJECT_VALUE;
                         break;
                     default:
                         $stdClass->section = "SEMESTER";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_SEMESTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_SEMESTER");
                         $data[$i]["FIRST_SEMESTER_RESULT"] = $FIRST->SUBJECT_VALUE;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_SEMESTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_SEMESTER");
                         $data[$i]["SECOND_SEMESTER_RESULT"] = $SECOND->SUBJECT_VALUE;
                         break;
                 }
@@ -396,7 +396,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
                         $data[$i]["RANK"] = $facette->RANK;
@@ -457,7 +457,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
 
                 switch ($this->getSettingEvaluationOption()) {
                     case self::EVALUATION_OF_ASSIGNMENT:
@@ -530,7 +530,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
 
                 $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
 
                 switch ($this->getSubjectScoreType()) {
                     case self::SCORE_NUMBER:
@@ -625,23 +625,23 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->section = "TERM";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_T1:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_TERM");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_TERM");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_T2:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_TERM");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_T3:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_TERM");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_TERM");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_TERM");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_TERM");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_TERM");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_TERM");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_TERM");
                         $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : 0;
 
                         if ($FIRST_VALUE && !$SECOND_VALUE && !$THIRD_VALUE) {
@@ -666,29 +666,29 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->section = "QUARTER";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_Q1:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_QUARTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_QUARTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q2:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_QUARTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_QUARTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q3:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_QUARTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_QUARTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_Q4:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FOURTH_QUARTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FOURTH_QUARTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_QUARTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_QUARTER");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_QUARTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_QUARTER");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_QUARTER");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_QUARTER");
                         $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : 0;
-                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FOURTH_QUARTER");
+                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FOURTH_QUARTER");
                         $FOURTH_VALUE = is_numeric($FOURTH->SUBJECT_VALUE) ? $FOURTH->SUBJECT_VALUE : 0;
 
                         if ($FIRST_VALUE && !$SECOND_VALUE && !$THIRD_VALUE && !$FOURTH_VALUE) {
@@ -715,17 +715,17 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 $stdClass->section = "SEMESTER";
                 switch ($this->getSettingYearTermResult()) {
                     case self::AVG_S1:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_SEMESTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_SEMESTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     case self::AVG_S2:
-                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_SEMESTER");
+                        $object = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_SEMESTER");
                         $result = is_numeric($object->SUBJECT_VALUE) ? $object->SUBJECT_VALUE : 0;
                         break;
                     default:
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_SEMESTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_SEMESTER");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : 0;
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_SEMESTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_SEMESTER");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : 0;
 
                         if ($FIRST_VALUE && !$SECOND_VALUE) {
@@ -836,7 +836,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
                 $stdClass->studentId = $value->ID;
                 if ($this->getSettingEvaluationOption()) {
-                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                     $data[] = $facette ? $facette->SUBJECT_VALUE : 0;
                 } else {
                     $data[] = $this->getTotalSubjectResultsByMonth($stdClass);
@@ -853,7 +853,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
                 $stdClass->studentId = $value->ID;
                 if ($this->getSettingEvaluationOption()) {
-                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                     $data[] = $facette ? $facette->SUBJECT_VALUE : 0;
                 } else {
                     $data[] = $this->getTotalSubjectResultsByTerm($stdClass);
@@ -865,7 +865,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getTotalSubjectAssessmentByMonth($stdClass) {
 
-        return SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        return SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
     }
 
     protected function getScoreListTotalSubjectResultsByYear($stdClass) {
@@ -875,7 +875,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
             foreach ($this->listClassStudents() as $value) {
                 $stdClass->studentId = $value->ID;
                 if ($this->getSettingEvaluationOption()) {
-                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                     $data[] = $facette ? $facette->SUBJECT_VALUE : 0;
                 } else {
                     $data[] = $this->getTotalSubjectResultsByYear($stdClass);
@@ -887,12 +887,12 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
 
     public function getTotalSubjectAssessmentByTerm($stdClass) {
 
-        return SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        return SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
     }
 
     public function getTotalSubjectAssessmentByYear($stdClass) {
 
-        return SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        return SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -947,7 +947,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
         $stdClass = $defaultObject;
         SQLEvaluationStudentSubject::setActionStudentSubjectEvaluation($stdClass);
 
-        return SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        return SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
     }
 
     public function getSubjectValue($stdClass) {
@@ -1319,51 +1319,51 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                 switch ($this->getTermNumber()) {
                     case 1:
                         $stdClass->section = "TERM";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_TERM");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_TERM");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
                         $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
                         $data[$i]["FIRST_CREDIT_STATUS"] = "---";
 
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_TERM");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
                         $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
                         $data[$i]["SECOND_CREDIT_STATUS"] = "---";
 
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_TERM");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_TERM");
                         $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : "---";
                         $data[$i]["THIRD_LEARNING_RESULT"] = $THIRD_VALUE;
                         $data[$i]["THIRD_CREDIT_STATUS"] = "---";
                         break;
                     case 1:
                         $stdClass->section = "QUARTER";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_QUARTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_QUARTER");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
                         $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
                         $data[$i]["FIRST_CREDIT_STATUS"] = "---";
 
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_QUARTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_QUARTER");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
                         $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
                         $data[$i]["SECOND_CREDIT_STATUS"] = "---";
 
-                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "THIRD_QUARTER");
+                        $THIRD = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "THIRD_QUARTER");
                         $THIRD_VALUE = is_numeric($THIRD->SUBJECT_VALUE) ? $THIRD->SUBJECT_VALUE : "---";
                         $data[$i]["THIRD_LEARNING_RESULT"] = $THIRD_VALUE;
                         $data[$i]["THIRD_CREDIT_STATUS"] = "---";
 
-                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FOURTH_QUARTER");
+                        $FOURTH = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FOURTH_QUARTER");
                         $FOURTH_VALUE = is_numeric($FOURTH->SUBJECT_VALUE) ? $FOURTH->SUBJECT_VALUE : "---";
                         $data[$i]["FOURTH_LEARNING_RESULT"] = $FOURTH_VALUE;
                         $data[$i]["FOURTH_CREDIT_STATUS"] = "---";
                         break;
                     default:
                         $stdClass->section = "SEMESTER";
-                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "FIRST_SEMESTER");
+                        $FIRST = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "FIRST_SEMESTER");
                         $FIRST_VALUE = is_numeric($FIRST->SUBJECT_VALUE) ? $FIRST->SUBJECT_VALUE : "---";
                         $data[$i]["FIRST_LEARNING_RESULT"] = $FIRST_VALUE;
                         $data[$i]["FIRST_CREDIT_STATUS"] = "---";
 
-                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, "SECOND_SEMESTER");
+                        $SECOND = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, "SECOND_SEMESTER");
                         $SECOND_VALUE = is_numeric($SECOND->SUBJECT_VALUE) ? $SECOND->SUBJECT_VALUE : "---";
                         $data[$i]["SECOND_LEARNING_RESULT"] = $SECOND_VALUE;
                         $data[$i]["SECOND_CREDIT_STATUS"] = "---";
