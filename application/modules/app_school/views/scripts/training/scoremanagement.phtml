@@ -53,6 +53,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         ");
         
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("CC96-6E23")."
+            }
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllTrainings'
             ,choosedate:choosedate

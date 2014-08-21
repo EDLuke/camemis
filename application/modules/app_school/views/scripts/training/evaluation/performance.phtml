@@ -184,6 +184,17 @@ Ext.onReady(function() {
         }]);
     ");
     
+    $OBJECT_GRID->addTBarItems("
+        tbar.add([{
+            text:''
+             ,tooltip:'".CAMEMIS_HELP."'
+             ,iconCls: 'icon-help'
+             ,handler:function(){
+                 ".CamemisPage::setEmbeddedHelp("9EF4-4C33")."
+                }
+        }]);
+    ");
+    
     $OBJECT_GRID->isGridEditing = true;
     $OBJECT_GRID->setUserColumn = true;
     $OBJECT_GRID->forceFit = "false";

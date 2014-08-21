@@ -210,7 +210,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 }
             }]);
         ");
-    
+        
         $ADD_STUDENTS_GRID->addTBarItems("
             tbar.add('->');
         ");
@@ -284,6 +284,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     }]);
                 ");
                 }
+                
+                $OBJECT_GRID->addTBarItems("
+                    tbar.add([{
+                        text:''
+                         ,tooltip:'".CAMEMIS_HELP."'
+                         ,iconCls: 'icon-help'
+                         ,handler:function(){
+                             ".CamemisPage::setEmbeddedHelp("8EFA-A4D4")."
+                            }
+                    }]);
+                ");
                 
                 break;
             case "TERM":

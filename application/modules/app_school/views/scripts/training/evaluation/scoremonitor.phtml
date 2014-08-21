@@ -165,7 +165,14 @@ Ext.onReady(function() {
                     window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);
                     window.parent.Ext.getCmp('TRAINING_ID').expand();
                 }
-            },'-','<b><?=$trainingObject->NAME?> &raquo; <?=TEACHER_ENTER_SCORE?></b>','->',
+            },'-',{text:''
+                    ,tooltip: '<?=CAMEMIS_HELP?>' 
+                    ,iconCls: 'icon-help'
+                    ,handler: function(){
+                            <?=CamemisPage::setEmbeddedHelp("C5BF-F38C")?>
+                        }
+                  }
+                ,'-','<b><?=$trainingObject->NAME?> &raquo; <?=TEACHER_ENTER_SCORE?></b>','->',
                 '<b><?=SUBJECT?>:</b>',{
                 xtype: 'buttongroup'
                 ,items:<?=$COMBO_SUBJECT;?>

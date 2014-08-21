@@ -111,6 +111,15 @@ Ext.onReady(function() {
     if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS_EDIT_RIGHT"))
     $OBJECT_FORM->addTBarItems(CamemisBar::tbarSave());
     
+    $OBJECT_FORM->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("23C7-7B15")."
+        }
+    ");
+    
     $OBJECT_FORM->setonEmbeddedEvents("
         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');     
         myTree = window.parent.Ext.getCmp('TRAINING_TREE_ID');

@@ -92,6 +92,15 @@ Ext.onReady(function() {
     $OBJECT_TREE->isTreeExpand = true;
     $OBJECT_TREE->isAsyncTreeNode = false;
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
+    
+    $OBJECT_TREE->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("8F1D-D169")."
+        }
+    ");
        
     if($this->facette->OBJECT_TYPE == "TERM"){
         $OBJECT_TREE->addTBarItems("

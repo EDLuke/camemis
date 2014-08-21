@@ -101,6 +101,19 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 ");
            }
         }
+        
+        $OBJECT_GRID->addTBarItems("
+                    tbar.add([{
+                        text:''
+                         ,tooltip:'".CAMEMIS_HELP."'
+                         ,iconCls: 'icon-help'
+                         ,handler:function(){
+                             ".CamemisPage::setEmbeddedHelp("D1DE-EB18")."
+                            }
+                    }]);
+        ");
+        
+        
         if(UserAuth::getUserType() == "INSTRUCTOR" || UserAuth::getUserType() == "TEACHER"){
             $OBJECT_GRID->addTBarItems("
                 tbar.add([{

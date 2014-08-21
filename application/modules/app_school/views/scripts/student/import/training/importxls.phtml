@@ -486,7 +486,16 @@ $READ_RIGHT = UserAuth::getACLValue("STUDENT_MODUL_IMPORT_FROM_XLS_FILE_TRAINING
                     });
                 }
             }
-        }]
+        },'-',{
+                text:''
+                ,tooltip: '<?=CAMEMIS_HELP?>' 
+                ,iconCls: 'icon-help'
+                ,handler: function(){
+                        <?=CamemisPage::setEmbeddedHelp("AE34-48A0")?>
+                    }
+                }
+        
+        ]
     });
 
     viewport = new Ext.Viewport({
