@@ -22,14 +22,20 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
-$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
-
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+
+$GRADING_TYPE = $academicObject->GRADING_TYPE?"LETTER_GRADE":"ASSESSMENT";
 
 $setParams = "";
 $setParams .= "&academicId=".$this->academicId."";
 $setParams .="&section=3";
 
+$PERFORMANCE = new AcademicPerformances();
+$PERFORMANCE->setAcademicId($this->academicId);
+$PERFORMANCE->setSection(3);
+$PERFORMANCE->setTarget("YEAR");
+$PERFORMANCE->actionCalculationPerformanceEvaluation();
+    
 ?>
 <script>          
 Ext.onReady(function() {
@@ -223,36 +229,36 @@ Ext.onReady(function() {
         break;
     }
     
-    $setActionPareams = $setParams;
-    $setActionPareams .= "&target=YEAR";
-    $OBJECT_GRID->addTBarItems("
-        tbar.add(['-',{
-            text: '<b>" . CALCULATION . "</b>'
-            ,iconCls:'icon-calculator_add'
-            ,handler: function(){
-                Ext.MessageBox.show({
-                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                    progressText: 'Saving...',
-                    width:300,
-                    wait:true,
-                    waitConfig: {interval:200},
-                    icon:'ext-mb-download'
-                });
-                Ext.Ajax.request({
-                    url: '/evaluation/jsonsave/'
-                    ,method: 'POST'
-                    ,params:{
-                        cmd: 'jsonActionCalculationPerformanceEvaluation'
-                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
-                    }
-                    ,success: function() {
-                        Ext.MessageBox.hide();
-                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
-                    }
-                });
-            }
-        }]);
-    ");
+//    $setActionPareams = $setParams;
+//    $setActionPareams .= "&target=YEAR";
+//    $OBJECT_GRID->addTBarItems("
+//        tbar.add(['-',{
+//            text: '<b>" . CALCULATION . "</b>'
+//            ,iconCls:'icon-calculator_add'
+//            ,handler: function(){
+//                Ext.MessageBox.show({
+//                    msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+//                    progressText: 'Saving...',
+//                    width:300,
+//                    wait:true,
+//                    waitConfig: {interval:200},
+//                    icon:'ext-mb-download'
+//                });
+//                Ext.Ajax.request({
+//                    url: '/evaluation/jsonsave/'
+//                    ,method: 'POST'
+//                    ,params:{
+//                        cmd: 'xxxx'
+//                        ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
+//                    }
+//                    ,success: function() {
+//                        Ext.MessageBox.hide();
+//                        Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
+//                    }
+//                });
+//            }
+//        }]);
+//    ");
     
     //Task for Ratha
     $OBJECT_GRID->addTBarItems("

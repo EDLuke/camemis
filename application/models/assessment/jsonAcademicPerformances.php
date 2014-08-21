@@ -130,18 +130,6 @@ class jsonAcademicPerformances extends AcademicPerformances {
             "success" => true
         );
     }
-
-    public function jsonActionCalculationPerformanceEvaluation($encrypParams) {
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-        $this->setParams($params);
-
-        $this->actionCalculationPerformanceEvaluation();
-
-        return array(
-            "success" => true
-        );
-    }
-
 }
 
 ?>
