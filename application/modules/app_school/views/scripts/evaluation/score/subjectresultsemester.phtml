@@ -87,6 +87,23 @@ if(!is_object($subjectObject)) {header("Location: /main/permission/");exit;}
 
 $campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
+$setParams = "";
+$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
+$setParams .="&academicId=".$academicId."";
+$setParams .="&term=".$term."";
+$setParams .="&section=".$section."";
+
+////////////////////////////////////////////////////////////////////////////////
+if($subjectObject->SCORE_TYPE == 1){
+    $EVALUATION = new EvaluationSubjectAssessment();
+    $EVALUATION->setAcademicId($academicId);
+    $EVALUATION->setSubjectId($subjectObject->SUBJECT_ID);
+    $EVALUATION->setTerm($term);
+    $EVALUATION->setSection($section);
+    $EVALUATION->setTarget("TERM");
+    $EVALUATION->actionCalculationSubjectEvaluation();
+}
+
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,11 +204,6 @@ if($listAssignmentCategory){
 ////////////////////////////////////////////////////////////////////////////////
 //GROUP OF ROW...
 ////////////////////////////////////////////////////////////////////////////////
-$setParams = "";
-$setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
-$setParams .="&academicId=".$academicId."";
-$setParams .="&term=".$term."";
-$setParams .="&section=".$section."";
 
 $GROUP_ROW = "";
 $GROUP_ROW .= "{header: '&nbsp;', colspan: 1, align: 'center'}";
@@ -426,38 +438,6 @@ Ext.onReady(function() {
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
             
-        if(!$academicObject->EVALUATION_OPTION){
-            switch($subjectObject->SCORE_TYPE){
-                case 1:
-                    $html .= "},'-',{";
-                    $html .= "text: '<b>".CALCULATION."</b>'";
-                    $html .= ",iconCls:'icon-calculator_add'";
-                    $html .= ",handler: function(){";
-                        $html .= "Ext.MessageBox.show({";
-                            $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
-                            $html .= "progressText: 'Saving...',";
-                            $html .= "width:300,";
-                            $html .= "wait:true,";
-                            $html .= "waitConfig: {interval:200},";
-                            $html .= "icon:'ext-mb-download'";
-                        $html .= "});";
-                        $html .= "Ext.Ajax.request({";
-                            $html .= "url: '/evaluation/jsonsave/'";
-                            $html .= ",method: 'POST'";
-                            $html .= ",params:{";
-                                $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
-                                $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
-                            $html .= "}";
-                            $html .= ",success: function() {";
-                                $html .= "Ext.MessageBox.hide();";
-                                $html .= "grid.store.load();";
-                            $html .= "}";
-                        $html .= "});";
-                    $html .= "}";
-                break;
-            }
-        }
-        
         if($academicObject->EVALUATION_OPTION){
             
             $importParams = $setParams;

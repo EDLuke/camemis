@@ -8,21 +8,25 @@
 
 class SQLEvaluationStudentSubject {
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return false::dbAccess()->select();
     }
 
-    public static function getCallStudentSubjectEvaluation($stdClass, $staticTerm = false) {
+    public static function getCallStudentSubjectEvaluation($stdClass, $staticTerm = false)
+    {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
 
         $data = array(
             'SUBJECT_VALUE' => ""
+            , 'IS_MANUAL' => 0
             , 'SUBJECT_VALUE_REPEAT' => ""
             , 'RANK' => ""
             , 'GRADE_POINTS' => ""
@@ -40,10 +44,13 @@ class SQLEvaluationStudentSubject {
             , 'FOURTH_RESULT' => ""
         );
 
-        if (isset($stdClass->studentId)) {
-            if ($stdClass->studentId) {
+        if (isset($stdClass->studentId))
+        {
+            if ($stdClass->studentId)
+            {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
+                    , 'IS_MANUAL'
                     , 'SUBJECT_VALUE_REPEAT'
                     , 'RANK'
                     , 'GRADE_POINTS'
@@ -59,8 +66,10 @@ class SQLEvaluationStudentSubject {
                     , 'FOURTH_RESULT'
                 );
 
-                if (isset($stdClass->scoreType)) {
-                    switch ($stdClass->scoreType) {
+                if (isset($stdClass->scoreType))
+                {
+                    switch ($stdClass->scoreType)
+                    {
                         case 1:
                             $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "IS_FAIL");
                             break;
@@ -68,7 +77,9 @@ class SQLEvaluationStudentSubject {
                             $SELECTION_B = array('LETTER_GRADE AS GRADING', "IS_FAIL");
                             break;
                     }
-                } else {
+                }
+                else
+                {
                     $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "IS_FAIL");
                 }
 
@@ -80,7 +91,8 @@ class SQLEvaluationStudentSubject {
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                switch ($stdClass->section) {
+                switch ($stdClass->section)
+                {
                     case "MONTH":
                         if (isset($stdClass->month))
                             $SQL->where("A.MONTH = '" . $stdClass->month . "'");
@@ -92,9 +104,12 @@ class SQLEvaluationStudentSubject {
                     case "QUARTER":
                     case "SEMESTER":
 
-                        if ($staticTerm) {
+                        if ($staticTerm)
+                        {
                             $SQL->where("A.TERM = '" . $staticTerm . "'");
-                        } else {
+                        }
+                        else
+                        {
                             if (isset($stdClass->term))
                                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         }
@@ -107,7 +122,8 @@ class SQLEvaluationStudentSubject {
 
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
-                if ($result) {
+                if ($result)
+                {
                     $data = array(
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
                         , 'SUBJECT_VALUE_REPEAT' => $result->SUBJECT_VALUE_REPEAT ? $result->SUBJECT_VALUE_REPEAT : "---"
@@ -125,6 +141,7 @@ class SQLEvaluationStudentSubject {
                         , 'SECOND_RESULT' => $result->SECOND_RESULT
                         , 'THIRD_RESULT' => $result->THIRD_RESULT
                         , 'FOURTH_RESULT' => $result->FOURTH_RESULT
+                        , 'IS_MANUAL' => $result->IS_MANUAL
                     );
                 }
 
@@ -135,21 +152,24 @@ class SQLEvaluationStudentSubject {
         return (object) $data;
     }
 
-    public static function checkStudentSubjectEvaluation($stdClass) {
+    public static function findStudentSubjectEvaluation($stdClass)
+    {
 
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_student_subject_assessment", array("C" => "COUNT(*)"));
+        $SQL->from("t_student_subject_assessment", array("*"));
         $SQL->where("STUDENT_ID = '" . $stdClass->studentId . "'");
         $SQL->where("SUBJECT_ID = '" . $stdClass->subjectId . "'");
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-        switch ($stdClass->section) {
+        switch ($stdClass->section)
+        {
             case "MONTH":
                 if (isset($stdClass->month))
                     $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if (isset($stdClass->year)) {
+                if (isset($stdClass->year))
+                {
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
@@ -164,34 +184,37 @@ class SQLEvaluationStudentSubject {
         $SQL->where("SECTION = '" . $stdClass->section . "'");
 
         //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchRow($SQL);
-        return $result ? $result->C : 0;
+        return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function setActionStudentSubjectEvaluation($stdClass) {
+    public static function setActionStudentSubjectEvaluation($stdClass)
+    {
 
-        if (isset($stdClass->average)) {
+        if (isset($stdClass->average))
+        {
             $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
         }
 
-        if (isset($stdClass->average) && isset($stdClass->oldValue)) {
-            if (is_numeric($stdClass->oldValue)) {
+        if (isset($stdClass->average) && isset($stdClass->oldValue))
+        {
+            if (is_numeric($stdClass->oldValue))
+            {
                 $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = $stdClass->oldValue;
                 $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
             }
-        } else {
+        }
+        else
+        {
             $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = "";
         }
 
-        if (isset($stdClass->mappingValue)) {
+        if (isset($stdClass->mappingValue))
+        {
             $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->mappingValue;
         }
 
-        if (isset($stdClass->assessmentId)) {
-            $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
-        }
-
-        if (isset($stdClass->actionRank)) {
+        if (isset($stdClass->actionRank))
+        {
             if ($stdClass->actionRank)
                 $SAVE_DATA["RANK"] = $stdClass->actionRank;
         }
@@ -226,32 +249,52 @@ class SQLEvaluationStudentSubject {
         if (isset($stdClass->term))
             $SAVE_DATA["TERM"] = $stdClass->term;
 
-        if (isset($stdClass->creditHours)) {
+        if (isset($stdClass->creditHours))
+        {
             if ($stdClass->creditHours)
                 $SAVE_DATA["CREDIT_HOURS"] = $stdClass->creditHours;
         }
 
-        if (isset($stdClass->coeffValue)) {
+        if (isset($stdClass->coeffValue))
+        {
             if ($stdClass->coeffValue)
                 $SAVE_DATA["COEFF_VALUE"] = $stdClass->coeffValue;
         }
 
-        if (isset($stdClass->scoreType)) {
+        if (isset($stdClass->scoreType))
+        {
             if ($stdClass->scoreType)
                 $SAVE_DATA["SCORE_TYPE"] = $stdClass->scoreType;
         }
 
-        if (isset($stdClass->studentId)) {
-            if ($stdClass->studentId) {
+        if (isset($stdClass->studentId))
+        {
+            if ($stdClass->studentId)
+            {
+                $facette = self::findStudentSubjectEvaluation($stdClass);
 
-                if (self::checkStudentSubjectEvaluation($stdClass)) {
+                if ($facette)
+                {
+                    if ($facette->IS_MANUAL)
+                    {
+                        $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+                    }
+                    else
+                    {
+                        $SAVE_DATA['IS_MANUAL'] = $stdClass->isManual;
+                        if (isset($stdClass->assessmentId))
+                        {
+                            $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+                        }
+                    }
 
                     $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
                     $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
                     $WHERE[] = "SUBJECT_ID = '" . $stdClass->subjectId . "'";
                     $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
 
-                    switch ($stdClass->section) {
+                    switch ($stdClass->section)
+                    {
                         case "MONTH":
                             $WHERE[] = "MONTH = '" . $stdClass->month . "'";
                             $WHERE[] = "YEAR = '" . $stdClass->year . "'";
@@ -270,12 +313,19 @@ class SQLEvaluationStudentSubject {
                     $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
                     $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
                     self::dbAccess()->update('t_student_subject_assessment', $SAVE_DATA, $WHERE);
-                } else {
+                }
+                else
+                {
 
                     $SAVE_DATA["STUDENT_ID"] = $stdClass->studentId;
                     $SAVE_DATA["SUBJECT_ID"] = $stdClass->subjectId;
                     $SAVE_DATA["CLASS_ID"] = $stdClass->academicId;
                     $SAVE_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
+
+                    if (isset($stdClass->assessmentId))
+                    {
+                        $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
+                    }
 
                     if (isset($stdClass->month))
                         $SAVE_DATA["MONTH"] = $stdClass->month;
@@ -306,7 +356,8 @@ class SQLEvaluationStudentSubject {
         }
     }
 
-    public static function getActionDeleteSubjectScoreAssessment($stdClass) {
+    public static function getActionDeleteSubjectScoreAssessment($stdClass)
+    {
 
         self::dbAccess()->delete('t_student_subject_assessment'
                 , array(
