@@ -293,13 +293,14 @@ $STAFF_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STAFF_REGISTRATION_WIZAR
                     ,email: formCard1.findField('EMAIL').getValue()                     
                     ,userRole: formCard2.findField('USER_ROLE').getValue()
                     ,CONTRACT_TYPE: formCard2.findField('CONTRACT_TYPE').getValue()
-                    ,START_DATE: formCard2.findField('START_DATE').getValue().format('Y-m-d')
-                    ,EXPIRED_DATE: formCard2.findField('EXPIRED_DATE').getValue().format('Y-m-d')
+                    ,START_DATE: formCard2.findField('START_DATE').getValue()
+                    ,EXPIRED_DATE: formCard2.findField('EXPIRED_DATE').getValue()
                     ,NAME: formCard2.findField('NAME').getValue()
                 }
                 ,method: 'POST'
                 ,success: function (result) {
                     <?=camemisPage::setRequestURI();?>
+                    XMsg('<?=STATUS?>','<?=ACTION_SUCCESSFULLY_SAVED?>');
                 }
             });
         }

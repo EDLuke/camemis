@@ -88,7 +88,7 @@ class StudentDBAccess {
             $data["LOGINNAME"] = $result->LOGINNAME;
             $data["SOURCE_IMAGE"] = $result->SOURCE_IMAGE;
             $data["SYSTEM_LANGUAGE"] = $result->SYSTEM_LANGUAGE;
-
+            $data["NATIONALITY"] = $result->NATIONALITY;
             $data["RELIGION"] = $result->RELIGION;
             $data["ETHNIC"] = $result->ETHNIC;
 
@@ -270,10 +270,9 @@ class StudentDBAccess {
             $SAVEDATA['ETHNIC'] = addText($params["ETHNIC"]);
 
         if (isset($params["NATIONALITY"]))
-        {
+      
             $SAVEDATA['NATIONALITY'] = addText($params["NATIONALITY"]);
-        }
-
+       
         if (isset($params["SMS_SERVICES"]))
             $SAVEDATA['SMS_SERVICES'] = addText($params["SMS_SERVICES"]);
 

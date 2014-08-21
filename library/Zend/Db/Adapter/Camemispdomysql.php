@@ -8,24 +8,24 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql {
 
     public function update($table, array $bind, $where = '') {
         // error_log("update $table");
-        if ($this->is_track_table($table)) {
+        if ($this->is_log_table($table)) {
             $this->writeLogRecord($table, "UPDATE", $where, $bind);
         }
         parent::update($table, $bind, $where);
     }
 
     public function delete($table, $where = '') {
-        // error_log("delete $table");
-        if ($this->is_track_table($table)) {
+        error_log("delete $table");
+        if ($this->is_log_table($table)) {
             $this->writeLogRecord($table, "DELETE", $where, null);
         }
         parent::delete($table, $where);
     }
 
     // ==== helper ====
-    private function is_track_table($table) {
+    private function is_log_table($table) {
         $all_tables = array();
-        $stmt = "SELECT TABLE_NAME FROM t_track_table";
+        $stmt = "SELECT TABLE_NAME FROM t_log_table";
         foreach ($this->query($stmt) as $row) {
             foreach ($row as $key => $value) {
                 $all_tables[] = $value;
@@ -35,7 +35,7 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql {
     }
 
     private function get_primary_field($table) {
-        $stmt = "SELECT FIELD_PRIMARY FROM t_track_table WHERE TABLE_NAME='" . $table . "'";
+        $stmt = "SELECT FIELD_PRIMARY FROM t_log_table WHERE TABLE_NAME='" . $table . "'";
         foreach ($this->query($stmt) as $row) {
             foreach ($row as $key => $value) {
                 return $value;
@@ -64,7 +64,7 @@ class Zend_Db_Adapter_CamemisPdoMysql extends Zend_Db_Adapter_Pdo_Mysql {
         }
         $values["FIELD_NOTE"] = $data;
         // error_log(print_r($values, true));
-        parent::insert("t_track_log", $values);
+        parent::insert("t_log", $values);
     }
 
     private function getLogUpdate($table, $where, $fields) {

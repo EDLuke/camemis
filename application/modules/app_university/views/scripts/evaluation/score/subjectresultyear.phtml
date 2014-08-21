@@ -45,6 +45,15 @@ $setParams .="&subjectId=".$subjectObject->SUBJECT_ID."";
 $setParams .="&academicId=".$academicObject->ID."";
 $setParams .="&section=3";
 
+if($subjectObject->SCORE_TYPE == 1){
+    $EVALUATION = new EvaluationSubjectAssessment();
+    $EVALUATION->setAcademicId($academicObject->ID);
+    $EVALUATION->setSubjectId($subjectObject->SUBJECT_ID);
+    $EVALUATION->setSection(3);
+    $EVALUATION->setTarget("YEAR");
+    $EVALUATION->actionCalculationSubjectEvaluation();
+}
+
 ?>
 <style>
     .filter-row-grid .x-grid3-header {
@@ -285,40 +294,6 @@ Ext.onReady(function() {
             }
         }]);
     ");
-    
-    $setActionPareams = $setParams;
-    $setActionPareams .= "&target=YEAR";
-    
-    if($subjectObject->SCORE_TYPE == 1){
-        $OBJECT_GRID->addTBarItems("
-            tbar.add(['-',{
-                text: '<b>" . CALCULATION . "</b>'
-                ,iconCls:'icon-calculator_add'
-                ,handler: function(){
-                    Ext.MessageBox.show({
-                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
-                        progressText: 'Saving...',
-                        width:300,
-                        wait:true,
-                        waitConfig: {interval:200},
-                        icon:'ext-mb-download'
-                    });
-                    Ext.Ajax.request({
-                        url: '/evaluation/jsonsave/'
-                        ,method: 'POST'
-                        ,params:{
-                            cmd: 'jsonActionCalculationSubjectEvaluation'
-                            ,camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'
-                        }
-                        ,success: function() {
-                            Ext.MessageBox.hide();
-                            Ext.getCmp('".$OBJECT_GRID->getObjectId()."').store.load();
-                        }
-                    });
-                }
-            }]);
-        ");
-    }
     
     //Task for Ratha
     $OBJECT_GRID->addTBarItems("

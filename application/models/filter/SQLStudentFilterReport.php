@@ -315,8 +315,7 @@ class SQLStudentFilterReport {
         $SQL->join(array('B' => 't_student_schoolyear'), 'A.STUDENT=B.STUDENT', array());
         if (isset($stdClass->objectGrade))
         {
-            $SQL->where("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE <= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
-            $SQL->Orwhere("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
+            $SQL->where("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE <= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "' OR A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
             
         }
         if (isset($stdClass->campusId)) {
@@ -332,11 +331,42 @@ class SQLStudentFilterReport {
 
         if (isset($stdClass->statusType))
             $SQL->where("A.STATUS_ID = '" . $stdClass->statusType . "'");
+        $SQL->group("A.STUDENT");
         //error_log($SQL);
         $result = self::dbAccess()->fetchAll($SQL);
         return $result;
     }
     
+    public static function getStudentRgistration($stdClass) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_student_schoolyear'), array("*"));
+        $SQL->join(array('B' => 't_student'), 'A.STUDENT=B.ID', array());
+        
+        if (isset($stdClass->campusId)) {
+            $SQL->where("A.CAMPUS = '" . $stdClass->campusId . "'");
+        }
+
+        if (isset($stdClass->gradeId)) {
+            $SQL->where("A.GRADE = '" . $stdClass->gradeId . "'");
+        }
+        
+        if (isset($stdClass->gender)) {
+            $SQL->where("B.GENDER = '" . $stdClass->gender . "'");
+        }
+        
+        if (isset($stdClass->classId))
+            $SQL->where("A.CLASS = '" . $stdClass->classId . "'");
+        if(isset($stdClass->month)){
+            $SQL->where("MONTH(A.CREATED_DATE) = '" . getMonthNumberFromMonthYear($stdClass->month) . "'"); 
+            $SQL->where("YEAR(A.CREATED_DATE) = '" . getYearFromMonthYear($stdClass->month) . "'");   
+        }
+        
+        $SQL->group("A.STUDENT");
+        error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
+    }
 }
 
 ?>

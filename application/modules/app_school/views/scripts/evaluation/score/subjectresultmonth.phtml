@@ -52,6 +52,15 @@ $setParams .="&monthyear=".$monthyear."";
 $setParams .="&section=1";
 
 ////////////////////////////////////////////////////////////////////////////////
+if($subjectObject->SCORE_TYPE == 1){
+    $EVALUATION = new EvaluationSubjectAssessment();
+    $EVALUATION->setAcademicId($academicId);
+    $EVALUATION->setSubjectId($subjectId);
+    $EVALUATION->setSection(1);
+    $EVALUATION->setTarget("MONTH");
+    $EVALUATION->actionCalculationSubjectEvaluation();
+}
+////////////////////////////////////////////////////////////////////////////////
 switch($subjectObject->SCORE_TYPE){
     case 1:
         $comboAssessment = "
@@ -355,48 +364,18 @@ Ext.onReady(function() {
 
     $html .= "var grid = new Ext.grid.EditorGridPanel({";
         $html .= "tbar:[{";
-                $html .= "text: '<b>".CANCEL."</b>'";
-                $html .= ",iconCls:'icon-cancel'";
-                $html .= ",handler: function(){";
-                    $html .= "window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);";
-                    $html .= "window.parent.Ext.getCmp('WEST_ID').expand();";
-                $html .= "}";
+            $html .= "text: '<b>".CANCEL."</b>'";
+            $html .= ",iconCls:'icon-cancel'";
+            $html .= ",handler: function(){";
+                $html .= "window.parent.Ext.getCmp('center').getLayout().setActiveItem(0);";
+                $html .= "window.parent.Ext.getCmp('WEST_ID').expand();";
+            $html .= "}";
         $html .= "},'-',{";
             $html .= "text: '<b>".REFRESH."'";
             $html .= ",iconCls:'icon-reload'";
             $html .= ",handler: function(){";
                 $html .= "".CamemisPage::setRequestURI(false)."";
             $html .= "}";
-            
-        switch($subjectObject->SCORE_TYPE){
-            case 1:
-                $html .= "},'-',{";
-                $html .= "text: '<b>".CALCULATION."</b>'";
-                $html .= ",iconCls:'icon-calculator_add'";
-                $html .= ",handler: function(){";
-                    $html .= "Ext.MessageBox.show({";
-                        $html .= "msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',";
-                        $html .= "progressText: 'Saving...',";
-                        $html .= "width:300,";
-                        $html .= "wait:true,";
-                        $html .= "waitConfig: {interval:200},";
-                        $html .= "icon:'ext-mb-download'";
-                    $html .= "});";
-                    $html .= "Ext.Ajax.request({";
-                        $html .= "url: '/evaluation/jsonsave/'";
-                        $html .= ",method: 'POST'";
-                        $html .= ",params:{";
-                            $html .= "cmd: 'jsonActionCalculationSubjectEvaluation'";
-                            $html .= ",camIds: '".$this->urlEncryp->encryptedGet($setActionPareams)."'";
-                        $html .= "}";
-                        $html .= ",success: function() {";
-                            $html .= "Ext.MessageBox.hide();";
-                            $html .= "grid.store.load();";
-                        $html .= "}";
-                    $html .= "});";
-                $html .= "}";
-            break;
-        }
         
         if($academicObject->EVALUATION_OPTION){
             $html .= "},'-',{";

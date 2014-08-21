@@ -185,8 +185,41 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
             
             $GENERAL_EDUCATION->loadMask = true;
             $GENERAL_EDUCATION->isPagingToolbar = true;
+            $GENERAL_EDUCATION->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                    cmd: 'jsonTeachingSession'
+                                    ,objectId:'GENERAL_EDUCATION_LIST_ID'
+                                    ,academicType:'general'
+                                    ,startDate: startDate
+                                    ,endDate: endDate
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openteachingsession/'
+                            }
+                        });
+                    }
+                }]);
+            ");
             $GENERAL_EDUCATION->isQuickySearch = true;
             $GENERAL_EDUCATION->isObjectDefaultOnLoad = true;
+            $GENERAL_EDUCATION->setUserColumn = true;
             $GENERAL_EDUCATION->forceFit = "false";
             $GENERAL_EDUCATION->renderJS(); 
 
@@ -273,8 +306,41 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
             
             $CREDIT_EDUCATION->loadMask = true;
             $CREDIT_EDUCATION->isPagingToolbar = true;
+            $CREDIT_EDUCATION->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                    cmd: 'jsonTeachingSession'
+                                    ,objectId:'CREDIT_EDUCATION_LIST_ID'
+                                    ,academicType:'credit'
+                                    ,startDate: startDate
+                                    ,endDate: endDate
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openteachingsession/'
+                            }
+                        });
+                    }
+                }]);
+            ");
             $CREDIT_EDUCATION->isQuickySearch = true;
             $CREDIT_EDUCATION->isObjectDefaultOnLoad = true;
+            $CREDIT_EDUCATION->setUserColumn = true;
             $CREDIT_EDUCATION->forceFit = "false";
             $CREDIT_EDUCATION->renderJS(); 
 
@@ -362,8 +428,41 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
             
             $TRAINING_EDUCATION->loadMask = true;
             $TRAINING_EDUCATION->isPagingToolbar = true;
+            $TRAINING_EDUCATION->addTBarItems("
+                tbar.add(['->',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                    cmd: 'jsonTeachingSession'
+                                    ,objectId:'TRAINING_LIST_ID'
+                                    ,academicType:'training'
+                                    ,startDate: startDate
+                                    ,endDate: endDate
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openteachingsession/'
+                            }
+                        });
+                    }
+                }]);
+            ");
             $TRAINING_EDUCATION->isQuickySearch = true;
             $TRAINING_EDUCATION->isObjectDefaultOnLoad = true;
+            $TRAINING_EDUCATION->setUserColumn = true;
             $TRAINING_EDUCATION->forceFit = "false";
             $TRAINING_EDUCATION->renderJS(); 
 

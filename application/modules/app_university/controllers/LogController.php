@@ -8,11 +8,11 @@
 require_once 'utiles/Utiles.php';
 require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
-require_once 'models/app_school/UserDBAccess.php';
+require_once 'models/app_university/UserDBAccess.php';
 require_once 'models/UserAuth.php';
-require_once 'models/TracklogDBAccess.php';
+require_once 'models/LogDBAccess.php';
 
-class TracklogController extends Zend_Controller_Action {
+class LogController extends Zend_Controller_Action {
 
     public function init() {
         if (!UserAuth::identify()) {
@@ -25,7 +25,7 @@ class TracklogController extends Zend_Controller_Action {
 
         $this->UTILES = Utiles::getInstance();
 
-        $this->DB_TRACKLOG = TracklogDBAccess::getInstance();
+        $this->DB_LOG = LogDBAccess::getInstance();
 
         $this->objectId = null;
 
@@ -33,7 +33,7 @@ class TracklogController extends Zend_Controller_Action {
 
         if ($this->_getParam('objectId')) {
             $this->objectId = $this->_getParam('objectId');
-            $this->objectData = $this->DB_TRACKLOG->getTracklogFromId($this->objectId);
+            // $this->objectData = $this->DB_LOG->getTracklogFromId($this->objectId);
         }
     }
 
@@ -44,8 +44,8 @@ class TracklogController extends Zend_Controller_Action {
     public function jsonloadAction() {
 
         switch ($this->REQUEST->getPost('cmd')) {
-            case "allTracklogs":
-                $jsondata = $this->DB_TRACKLOG->allTracklogs($this->REQUEST->getPost());
+            case "getLogs":
+                $jsondata = $this->DB_LOG->getLogs($this->REQUEST->getPost());
                 break;
         }
 

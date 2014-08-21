@@ -19,7 +19,7 @@ $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("SCHEDULE", "LIST");
 $OBJECT_GRID->setLoadUrl("/schedule/jsonload/");
 $OBJECT_GRID->setSaveUrl("/schedule/jsonsave/");
-
+$columndata = Utiles::getGridColumnData("SCHEDULE_LIST_ID");
 function ComboEducationType() {
     
     $PENEL_ITEMS = Array();    
@@ -112,8 +112,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             , align:'center'
             ,renderer: showText
             , sortable: false
-            , dataIndex: 'SESSION_DATE'
-            , width: 150
+            ,dataIndex: 'SESSION_DATE', width: 150
+            , hidden:".checkColHidden(1, $columndata)."
         ");
     
         $OBJECT_GRID->addColumn("
@@ -121,8 +121,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             , align:'center'
             ,renderer: showText
             , sortable: false
-            , dataIndex: 'CLASS'
-            , width: 150
+            ,dataIndex: 'CLASS', width: 150
+            , hidden:".checkColHidden(2, $columndata)."
         ");
         
         $OBJECT_GRID->addColumn("
@@ -130,8 +130,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,renderer: showText
             , align:'center'
             , sortable: false
-            , dataIndex: 'EVENT'
-            , width: 200
+            ,dataIndex: 'EVENT', width: 200
+            , hidden:".checkColHidden(3, $columndata)."
         ");
         
         $OBJECT_GRID->addColumn("
@@ -139,8 +139,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             , renderer: showText
             , align:'center'
             , sortable: false
-            , dataIndex: 'ROOM'
-            , width: 150
+            ,dataIndex: 'ROOM', width: 150
+            , hidden:".checkColHidden(4, $columndata)."
         ");
         
         $OBJECT_GRID->addColumn("
@@ -148,8 +148,8 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             , renderer: showText
             , align:'center'
             , sortable: false
-            , dataIndex: 'TEACHING'
-            , width: 150
+            ,dataIndex: 'TEACHING', width: 150
+            , hidden:".checkColHidden(5, $columndata)."
         ");
         
         $OBJECT_GRID->baseParams = "
@@ -158,24 +158,38 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             ,cmd: 'searchTeachingSession'
         ";
          
-        //@soda
-        $OBJECT_GRID->addTBarItems("  
-            tbar.add([{
-                text: '" . EXPORT_TO_EXCEL . "'
-                ,disabled: true
-                ,id: 'EXPORT_TO_EXCEL'
-                ,iconCls:'icon-page_excel'
-                ,handler: function(){ 
-                    var param='';
-                    if(teacherId){param +='&teacherId='+ teacherId;}
-                    if(types){param +='&typeedu='+ types;}
-                    if(startDate){param +='&startdt='+ startDate;}
-                    if(endDate){param +='&enddt='+ endDate;} 
-                    window.location='/export/index/?type=export_teaching_session_school' + param;
-                }
-            }]);
-        ");
-        //
+         $OBJECT_GRID->addTBarItems("
+                tbar.add(['',{
+                    text: '" . EXPORT_TO_EXCEL . "'
+                    ,id: 'EXPORT_TO_EXCEL'
+                    ,iconCls:'icon-page_excel'
+                    ,handler: function(){
+                        Ext.MessageBox.show({
+                            msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                            progressText: 'Saving...',
+                            width:300,
+                            wait:true,
+                            waitConfig: {interval:200},
+                            icon:'ext-mb-download'
+                        });
+                        Ext.Ajax.request({
+                            url: '/export/jsonexcel/'
+                            ,method: 'POST'
+                            ,params:{
+                                    cmd: 'jsonTeacherTeachingSession'
+                                    ,objectId:'SCHEDULE_LIST_ID'
+                                    ,teacherId:'".$this->objectId."'
+                                    ,startdt:'".firstDayOfMonth()."'
+                                    ,enddt:'".lastDayOfMonth()."'
+                            }
+                            ,success: function(response, options) {
+                                Ext.MessageBox.hide();
+                                window.location='/export/openteacherteachingsession/'
+                            }
+                        });
+                    }
+                }]);
+         ");
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
@@ -187,6 +201,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_GRID->loadMask = true;
         $OBJECT_GRID->isPagingToolbar = true;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         
@@ -303,7 +318,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         store.on('load', function(ds){ 
             Ext.getCmp('TOTAL').update('<b><?=TOTAL?>: '+ ds.getTotalCount() +'</b>');
         });
-                                
+        Ext.state.Manager.setProvider(new Ext.state.HttpProvider({url: '/dataset/jsonsave/'}));                        
    });
 </script>
 <?

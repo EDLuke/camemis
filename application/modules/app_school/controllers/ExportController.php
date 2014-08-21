@@ -20,9 +20,12 @@ require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/TrainingAssessmentExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/StudentPersonalInfoExportDBAccess.php';
 require_once 'models/export/StaffPersonalInfoExportDBAccess.php';
-
+require_once 'models/export/TeachingSessionExportDBAccess.php';
+require_once 'models/export/TeacherTeachingSessionExportDBAccess.php';
+require_once 'models/export/StaffContractExportDBAccess.php';
+require_once 'models/export/StaffStatusExportDBAccess.php';
 class ExportController extends Zend_Controller_Action {
-
+                                                                               
     public function init()
     {
 
@@ -39,9 +42,13 @@ class ExportController extends Zend_Controller_Action {
         $this->TRADITION_FILTER_EXCEL = new TraditionalFilterExportDBAccess($this->_getParam('objectId'));//@Visal
         $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         $this->STUDENT_TRAINING_ASSESSMENT_EXCEL = new TrainingAssessmentExportDBAccess($this->_getParam('objectId'));//@veasna
-        $this->STUDENT_PERSONAL_EXCEL = new StudentPersonalInfoExportDBAccess($this->_getParam('objectId'));
+        $this->STUDENT_PERSONAL_EXCEL = new StudentPersonalInfoExportDBAccess($this->_getParam('objectId'));    
         $this->STAFF_PERSONAL_EXCEL = new StaffPersonalInfoExportDBAccess($this->_getParam('objectId'));
-
+        $this->TEACHING_SESSION_EXCEL = new TeachingSessionExportDBAccess($this->_getParam('objectId'));
+        $this->TEACHER_TEACHING_SESSION_EXCEL = new TeacherTeachingSessionExportDBAccess($this->_getParam('objectId'));
+        $this->STAFF_CONTRACT_EXCEL = new StaffContractExportDBAccess($this->_getParam('objectId'));
+        $this->STAFF_STATUS_EXCEL = new StaffStatusExportDBAccess($this->_getParam('objectId'));
+        
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
                 $this->_getParam('academicId')
                 , $this->_getParam('trainingId')
@@ -165,6 +172,22 @@ class ExportController extends Zend_Controller_Action {
     public function openstaffpersonalinfolistAction()
     {
          
+    } 
+    public function openteachingsessionAction()
+    {
+         
+    }
+    public function openteacherteachingsessionAction()
+    {
+         
+    }
+    public function openstaffcontractAction()
+    {
+         
+    }
+    public function openstaffstatusAction()
+    {
+         
     }
     //End...
     public function jsonexcelAction()
@@ -231,6 +254,18 @@ class ExportController extends Zend_Controller_Action {
                 break;
             case "staffpersonalinfo":
                 $jsondata = $this->STAFF_PERSONAL_EXCEL->staffpersonalinfo($this->REQUEST->getPost());
+                break;
+            case "jsonTeachingSession":
+                $jsondata = $this->TEACHING_SESSION_EXCEL->jsonTeachingSession($this->REQUEST->getPost());
+                break;
+            case "jsonTeacherTeachingSession":
+                $jsondata = $this->TEACHER_TEACHING_SESSION_EXCEL->jsonTeacherTeachingSession($this->REQUEST->getPost());
+                break;
+            case "jsonStaffContract":
+                $jsondata = $this->STAFF_CONTRACT_EXCEL->jsonStaffContract($this->REQUEST->getPost());
+                break;
+            case "jsonStaffStatus":
+                $jsondata = $this->STAFF_STATUS_EXCEL->jsonStaffStatus($this->REQUEST->getPost());
                 break;
         }
 

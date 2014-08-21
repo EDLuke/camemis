@@ -698,6 +698,14 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->personType = "STUDENT";
         $this->view->objectType = "PARINFO";
     }
+    
+    public function studentregistrationstatisticAction()
+    {
+        //$this->_helper->viewRenderer("filter/studentparentguardianfilter"); 
+        $this->_helper->viewRenderer("filter/studentregistrationstatistic");
+        $this->view->personType = "STUDENT";
+        $this->view->objectType = "PARINFO";
+    }
 
     public function studentattendancefilterAction()
     {
@@ -734,6 +742,12 @@ class AcademicController extends Zend_Controller_Action {
         $this->_helper->viewRenderer("filter/personinfofilter");
         $this->view->personType = "STAFF";
         $this->view->objectType = "WORK_EXPERIENCE";
+    }
+    
+    public function teacherstatusfilterAction()
+    {
+        $this->_helper->viewRenderer("filter/statusstatistic");
+        $this->view->personType = "STAFF";
     }
 
     public function teacherrelationshipfilterAction()

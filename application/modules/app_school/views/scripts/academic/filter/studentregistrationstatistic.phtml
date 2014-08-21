@@ -23,15 +23,18 @@ if (strpos($objectId, "CAMPUS_") !== false) {
     $campusId = isset($Ids[0])?$Ids[0]:"";
     $schoolyearId = isset($Ids[1])?$Ids[1]:"";
     $objectType = "CAMPUS";
+    $academicObject=AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
 } elseif (strpos($objectId, "GRADE_") !== false) {
     $objectType = "GRADE";
     $Ids = explode("_",substr($objectId, 6));
     $gradeId = isset($Ids[0])?$Ids[0]:"";
     $campusId = isset($Ids[1])?$Ids[1]:"";
     $schoolyearId = isset($Ids[2])?$Ids[2]:"";
+    $academicObject=AcademicDBAccess::findCampusSchoolyear($campusId, $schoolyearId);
 } else{
     $objectType = "CLASS";
     $classId = $objectId;
+    $academicObject=AcademicDBAccess::findGradeFromId($objectId);
 }
 $setParams="";
 
@@ -59,30 +62,32 @@ if($this->personType){
 $objectDataSet->personType=$this->personType;    
 }
 
-$dataSetStatusDaily = $objectDataSet->getDataSethighchartStatus();
+$monthList = AcademicDBAccess::getAcademicMonthList($academicObject->ID);
 
-//print($dataSetAbsenceDaily);exit;
+$dataSet=$objectDataSet->getDataSetHighChartStudentRegistration($monthList);
 
-/*$chartAbsenceDaily = new CamemisChart("DISCRETE_BAR_CHART", 'chartAbsenceDailly', $dataSetAbsenceDaily);
-$chartAbsenceDaily->chartSVG = "displayAbsenceDailly";
-$chartAbsenceDaily->showLegend='true';
-$chartAbsenceDaily->tooltips = 'true';
-$chartAbsenceDaily->showValues ='true';
-$chartAbsenceDaily->height = 280;  */
-// print($dataSetStatusDaily);exit;
-$STATUS = new CamemisHighChart(
-            "COLUMN_CHART"
-            , 'STATUS'
-            , STATUS
-            , $dataSetStatusDaily
+$month = array();
+foreach($monthList as $key=>$value){
+    $month[]="'".constant($key)." (".$value.")'";    
+}
+
+$CATEGORIES = "{categories:[".implode(",",$month)."]}";
+
+$SUBJECT_GRADINGSCALE = new CamemisHighChart(
+            "COLUMN_COMPARE_CHART"
+            , 'SUBJECT_GRADINGSCALE'
+            , REGISTRATION
+            , $dataSet
         );
+$SUBJECT_GRADINGSCALE->xAxis= $CATEGORIES;
+$SUBJECT_GRADINGSCALE->allowPointSelect = 'true';
+$SUBJECT_GRADINGSCALE->pointColor = 'black';
+$SUBJECT_GRADINGSCALE->height = 300;
+$SUBJECT_GRADINGSCALE->maxWidth = 98;
+$SUBJECT_GRADINGSCALE->maxWidthPercentage = true;
+$SUBJECT_GRADINGSCALE->plotBorderWidth = "null";
 
-$STATUS->allowPointSelect = 'true';
-$STATUS->pointColor = 'black';
-$STATUS->height = 300;
-$STATUS->maxWidth = 98;
-$STATUS->maxWidthPercentage = true;
-$STATUS->plotBorderWidth = "null";
+
 
 ?>
 
@@ -90,20 +95,22 @@ $STATUS->plotBorderWidth = "null";
 <link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="/public/bootstrap/css/custom.css" rel="stylesheet">
 
-    <div id="initStatistic" class="container-fluid" style="background-color:#fff;">
+    <div id="initStatistic" class="container-fluid" style="background-color:#fff; height:100%;">
     
          <div class="row">
             <div class="col-md-12">
+                
                 <div class="panel-body">
                     <button type="button" id="btnStudentEDMajor" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
-                    <?$STATUS->setDIVHighChart();?> 
+                    <?$SUBJECT_GRADINGSCALE->setDIVHighChart();?>
                 </div>     
             </div>  
         </div>
         
         
     </div>
-    <?  $STATUS->setHighChartScript(); ?>
+    
+<?  $SUBJECT_GRADINGSCALE->setHighChartScript(); ?>
     <script>
         Ext.onReady(function() {
             
@@ -117,7 +124,7 @@ $STATUS->plotBorderWidth = "null";
                     ,border: false
                     ,items:[{
                         border: false
-                        ,bodyStyle: 'background:#fff;'
+                        ,bodyStyle: 'background:#f9f9f9;'
                         ,autoScroll:true
                         ,contentEl: 'initStatistic'
                     }]

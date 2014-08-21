@@ -552,7 +552,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                 $SQL->where("A.TRAINING_ID<>0");
                 break;
         }
-        //error_log($SQL->__toString());
+        //error_log($SQL->__toString());  
         return self::dbAccess()->fetchAll($SQL);
     }
 
@@ -596,7 +596,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
     ////////////////////////////////////////////////////////////////////////////
     //VIK 01.01.214
     ////////////////////////////////////////////////////////////////////////////
-    public function searchTeachingSession($params) {
+    public function searchTeachingSession($params,$isJson = true) {
 
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "100";
@@ -628,6 +628,7 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                         $data[$i]["COLOR"] = $value->SUBJECT_COLOR;
                         $data[$i]["COLOR_FONT"] = getFontColor($value->SUBJECT_COLOR);
                         $data[$i]["CLASS"] = $value->ACADEMIC_NAME;
+                        $data[$i]["TEACHER_NAME"] = setShowText($value->LASTNAME) . " " . setShowText($value->FIRSTNAME);   
                         $data[$i]["TERM"] = displaySchoolTerm($value->TERM);
                         $data[$i]["HOURS"] = ($value->END_TIME-$value->START_TIME)/3600;
                     }
@@ -643,10 +644,15 @@ class TeacherScheduleDBAccess extends ScheduleDBAccess {
                 $a[] = $data[$i];
         }
 
-        return array(
-            "success" => true
-            , "rows" => $a
-        );
+        if ($isJson) {
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        } else {
+            return $data;
+        }
     }
 
     public static function getStaffAttendanceByDate($staffId, $date) {

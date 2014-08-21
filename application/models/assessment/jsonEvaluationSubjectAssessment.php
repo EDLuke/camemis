@@ -310,17 +310,7 @@ class jsonEvaluationSubjectAssessment extends EvaluationSubjectAssessment {
             , "data" => $this->loadContentTeacherScoreInputDate()
         );
     }
-
-    public function jsonActionCalculationSubjectEvaluation($encrypParams)
-    {
-        $params = Utiles::setPostDecrypteParams($encrypParams);
-        $this->setParams($params);
-
-        $this->actionCalculationSubjectEvaluation();
-
-        return array("success" => true);
-    }
-
+    
     public function jsonScoreImport($encrypParams)
     {
 

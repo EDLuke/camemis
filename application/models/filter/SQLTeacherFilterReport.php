@@ -259,6 +259,35 @@ class SQLTeacherFilterReport {
         return $result;    
     }
     
+    public static function getTeacherStatus($stdClass) {
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from(array('A' => 't_staff_status'), array("*"));
+        $SQL->join(array('B' => 't_schedule'), 'A.STAFF=B.TEACHER_ID', array());
+        $SQL->join(array('C' => 't_grade'), 'B.ACADEMIC_ID=C.ID', array());
+        if (isset($stdClass->objectGrade))
+        {
+            $SQL->where("A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE <= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "' OR A.START_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_START . "' AND A.END_DATE >= '" . $stdClass->objectGrade->SCHOOLYEAR_END . "'");
+            
+        }
+        if (isset($stdClass->campusId)) {
+            $SQL->where("C.CAMPUS_ID = '" . $stdClass->campusId . "'");
+        }
+
+        if (isset($stdClass->gradeId)) {
+            $SQL->where("B.GRADE_ID = '" . $stdClass->gradeId . "'");
+        }
+        
+        if (isset($stdClass->classId))
+            $SQL->where("B.ACADEMIC_ID = '" . $stdClass->classId . "'");
+
+        if (isset($stdClass->statusType))
+            $SQL->where("A.STATUS_ID = '" . $stdClass->statusType . "'");
+        $SQL->group("A.STAFF");
+        //error_log($SQL);
+        $result = self::dbAccess()->fetchAll($SQL);
+        return $result;
+    }
 }
 
 ?>
