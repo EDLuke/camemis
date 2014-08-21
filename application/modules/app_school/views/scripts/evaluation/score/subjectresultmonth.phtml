@@ -52,13 +52,18 @@ $setParams .="&monthyear=".$monthyear."";
 $setParams .="&section=1";
 
 ////////////////////////////////////////////////////////////////////////////////
-if($subjectObject->SCORE_TYPE == 1){
-    $EVALUATION = new EvaluationSubjectAssessment();
-    $EVALUATION->setAcademicId($academicId);
-    $EVALUATION->setSubjectId($subjectId);
-    $EVALUATION->setSection(1);
-    $EVALUATION->setTarget("MONTH");
-    $EVALUATION->actionCalculationSubjectEvaluation();
+switch($academicObject->EVALUATION_OPTION){
+    case 0:
+        if($subjectObject->SCORE_TYPE == 1){
+            $EVALUATION = new EvaluationSubjectAssessment();
+            $EVALUATION->setAcademicId($academicId);
+            $EVALUATION->setSubjectId($subjectId);
+            $EVALUATION->setMonthYear($monthyear);
+            $EVALUATION->setSection(1);
+            $EVALUATION->setTarget("MONTH");
+            $EVALUATION->actionCalculationSubjectEvaluation();
+        }
+    break;
 }
 ////////////////////////////////////////////////////////////////////////////////
 switch($subjectObject->SCORE_TYPE){

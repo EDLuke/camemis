@@ -48,7 +48,7 @@ switch ($section)
 if($subjectId){
     
     $stdClass->subjectId = $subjectId;
-    $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+    $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
     
 }else{
     

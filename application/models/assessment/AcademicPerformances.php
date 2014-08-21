@@ -135,7 +135,7 @@ class AcademicPerformances extends AssessmentProperties {
                         if ($v->SUBJECT_ID)
                         {
                             $stdClass->subjectId = $v->SUBJECT_ID;
-                            $SUBJECT_VALUE = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
+                            $SUBJECT_VALUE = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                             $data[$i][$v->SUBJECT_ID] = $SUBJECT_VALUE;
                         }
                     }
@@ -190,7 +190,7 @@ class AcademicPerformances extends AssessmentProperties {
                         {
                             $stdClass->subjectId = $v->SUBJECT_ID;
 
-                            $performance = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass);
+                            $performance = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
                             if ($performance)
                             {
                                 $SUBJECT_VALUE = $performance->SUBJECT_VALUE;
@@ -360,7 +360,7 @@ class AcademicPerformances extends AssessmentProperties {
                         if ($v->SUBJECT_ID)
                         {
                             $stdClass->subjectId = $v->SUBJECT_ID;
-                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
                         }
                     }
                 }
