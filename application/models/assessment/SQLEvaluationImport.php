@@ -123,6 +123,7 @@ class SQLEvaluationImport {
 
         $date = isset($sheets['cells'][2][2]) ? $sheets['cells'][2][2] : "";
         $keys = isset($sheets['cells'][2][3]) ? $sheets['cells'][2][3] : "";
+        $stdClass->isManual = 0;
 
         if ($keys) {
 
@@ -189,6 +190,8 @@ class SQLEvaluationImport {
         $xls->read($stdClass->tmp_name);
 
         $STUDENT_DATA = self::getListStudents($stdClass);
+        $stdClass->isManual = 0;
+        $stdClass->evaluationOption = 1;
 
         for ($i = 0; $i <= $xls->sheets[0]['numRows']; $i++) {
 

@@ -145,7 +145,7 @@ class AssessmentChart extends AssessmentProperties {
         if ($entries) {
             foreach ($entries as $value) {
                 $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
+                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, false);
                 if ($facette) {
                     switch ($value->GENDER) {
                         case 1:
@@ -241,7 +241,7 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
 
     public static function getStudentSubjectValue($stdClass) {
-        $facette = SQLEvaluationStudentSubject::getCallStudentSubjectEvaluation($stdClass, false);
+        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass, false);
         if ($facette) {
             return (is_numeric($facette->SUBJECT_VALUE)) ? $facette->SUBJECT_VALUE : 1;
         } else {

@@ -8,18 +8,15 @@
 
 class SQLEvaluationStudentSubject {
 
-    public static function dbAccess()
-    {
+    public static function dbAccess() {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess()
-    {
+    public static function dbSelectAccess() {
         return false::dbAccess()->select();
     }
 
-    public static function getCallStudentSubjectEvaluation($stdClass, $staticTerm = false)
-    {
+    public static function getPropertiesStudentSubjectEvaluation($stdClass, $staticTerm = false) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";
@@ -44,10 +41,8 @@ class SQLEvaluationStudentSubject {
             , 'FOURTH_RESULT' => ""
         );
 
-        if (isset($stdClass->studentId))
-        {
-            if ($stdClass->studentId)
-            {
+        if (isset($stdClass->studentId)) {
+            if ($stdClass->studentId) {
                 $SELECTION_A = array(
                     'SUBJECT_VALUE'
                     , 'IS_MANUAL'
@@ -66,10 +61,8 @@ class SQLEvaluationStudentSubject {
                     , 'FOURTH_RESULT'
                 );
 
-                if (isset($stdClass->scoreType))
-                {
-                    switch ($stdClass->scoreType)
-                    {
+                if (isset($stdClass->scoreType)) {
+                    switch ($stdClass->scoreType) {
                         case 1:
                             $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "IS_FAIL");
                             break;
@@ -77,9 +70,7 @@ class SQLEvaluationStudentSubject {
                             $SELECTION_B = array('LETTER_GRADE AS GRADING', "IS_FAIL");
                             break;
                     }
-                }
-                else
-                {
+                } else {
                     $SELECTION_B = array("" . $GRADING_TYPE . " AS GRADING", "IS_FAIL");
                 }
 
@@ -91,8 +82,7 @@ class SQLEvaluationStudentSubject {
                 $SQL->where("A.CLASS_ID = '" . $stdClass->academicId . "'");
                 $SQL->where("A.SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-                switch ($stdClass->section)
-                {
+                switch ($stdClass->section) {
                     case "MONTH":
                         if (isset($stdClass->month))
                             $SQL->where("A.MONTH = '" . $stdClass->month . "'");
@@ -104,12 +94,9 @@ class SQLEvaluationStudentSubject {
                     case "QUARTER":
                     case "SEMESTER":
 
-                        if ($staticTerm)
-                        {
+                        if ($staticTerm) {
                             $SQL->where("A.TERM = '" . $staticTerm . "'");
-                        }
-                        else
-                        {
+                        } else {
                             if (isset($stdClass->term))
                                 $SQL->where("A.TERM = '" . $stdClass->term . "'");
                         }
@@ -122,8 +109,7 @@ class SQLEvaluationStudentSubject {
 
                 //error_log($SQL->__toString());
                 $result = self::dbAccess()->fetchRow($SQL);
-                if ($result)
-                {
+                if ($result) {
                     $data = array(
                         'SUBJECT_VALUE' => $result->SUBJECT_VALUE
                         , 'SUBJECT_VALUE_REPEAT' => $result->SUBJECT_VALUE_REPEAT ? $result->SUBJECT_VALUE_REPEAT : "---"
@@ -152,8 +138,7 @@ class SQLEvaluationStudentSubject {
         return (object) $data;
     }
 
-    public static function findStudentSubjectEvaluation($stdClass)
-    {
+    public static function findStudentSubjectEvaluation($stdClass) {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_subject_assessment", array("*"));
@@ -162,14 +147,12 @@ class SQLEvaluationStudentSubject {
         $SQL->where("CLASS_ID = '" . $stdClass->academicId . "'");
         $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
 
-        switch ($stdClass->section)
-        {
+        switch ($stdClass->section) {
             case "MONTH":
                 if (isset($stdClass->month))
                     $SQL->where("MONTH = '" . $stdClass->month . "'");
 
-                if (isset($stdClass->year))
-                {
+                if (isset($stdClass->year)) {
                     $SQL->where("YEAR = '" . $stdClass->year . "'");
                 }
                 break;
@@ -187,177 +170,156 @@ class SQLEvaluationStudentSubject {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    public static function setActionStudentSubjectEvaluation($stdClass)
-    {
+    public static function setActionStudentSubjectEvaluation($stdClass) {
 
-        if (isset($stdClass->average))
-        {
-            $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
-        }
+        $studentId = (isset($stdClass->studentId)) ? $stdClass->studentId : "";
+        $comment = (isset($stdClass->comment)) ? $stdClass->comment : "";
+        $isManual = (isset($stdClass->isManual)) ? $stdClass->isManual : 0;
+        $average = (isset($stdClass->average)) ? $stdClass->average : "";
+        $oldValue = (isset($stdClass->oldValue)) ? $stdClass->oldValue : "";
+        $actionRank = (isset($stdClass->actionRank)) ? $stdClass->actionRank : "";
+        $term = (isset($stdClass->term)) ? $stdClass->term : "";
+        $month = (isset($stdClass->month)) ? $stdClass->month : "";
+        $year = (isset($stdClass->year)) ? $stdClass->year : "";
+        $coeffValue = (isset($stdClass->coeffValue)) ? $stdClass->coeffValue : "";
+        $scoreType = (isset($stdClass->scoreType)) ? $stdClass->scoreType : "";
+        $section = (isset($stdClass->section)) ? $stdClass->section : "";
 
-        if (isset($stdClass->average) && isset($stdClass->oldValue))
-        {
-            if (is_numeric($stdClass->oldValue))
-            {
-                $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = $stdClass->oldValue;
-                $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->average;
+        $assessmentId = (isset($stdClass->assessmentId)) ? $stdClass->assessmentId : "";
+        $monthResult = (isset($stdClass->monthResult)) ? $stdClass->monthResult : "";
+        $termResult = (isset($stdClass->termResult)) ? $stdClass->termResult : "";
+        $monthAssignment = (isset($stdClass->monthAssignment)) ? $stdClass->monthAssignment : "";
+        $termAssignment = (isset($stdClass->termAssignment)) ? $stdClass->termAssignment : "";
+        $firstResult = (isset($stdClass->firstResult)) ? $stdClass->firstResult : "";
+        $secondResult = (isset($stdClass->secondResult)) ? $stdClass->secondResult : "";
+        $thirdResult = (isset($stdClass->thirdResult)) ? $stdClass->thirdResult : "";
+        $fourthResult = (isset($stdClass->fourthResult)) ? $stdClass->fourthResult : "";
+        $creditHours = (isset($stdClass->creditHours)) ? $stdClass->creditHours : "";
+        $mappingValue = (isset($stdClass->mappingValue)) ? $stdClass->mappingValue : "";
+
+        if ($average && $oldValue) {
+            if (is_numeric($oldValue)) {
+                $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = $oldValue;
+                $SAVE_DATA["SUBJECT_VALUE"] = $average;
             }
-        }
-        else
-        {
+        } else {
             $SAVE_DATA["SUBJECT_VALUE_REPEAT"] = "";
         }
 
-        if (isset($stdClass->mappingValue))
-        {
-            $SAVE_DATA["SUBJECT_VALUE"] = $stdClass->mappingValue;
-        }
+        if ($mappingValue)
+            $SAVE_DATA["SUBJECT_VALUE"] = $mappingValue;
+        if ($comment)
+            $SAVE_DATA["TEACHER_COMMENT"] = $comment;
+        if ($monthResult)
+            $SAVE_DATA["MONTH_RESULT"] = $monthResult;
+        if ($termResult)
+            $SAVE_DATA["TERM_RESULT"] = $termResult;
+        if ($monthAssignment)
+            $SAVE_DATA["ASSIGNMENT_MONTH"] = $monthAssignment;
+        if ($termAssignment)
+            $SAVE_DATA["ASSIGNMENT_TERM"] = $termAssignment;
+        if ($firstResult)
+            $SAVE_DATA["FIRST_RESULT"] = $firstResult;
+        if ($secondResult)
+            $SAVE_DATA["SECOND_RESULT"] = $secondResult;
+        if ($thirdResult)
+            $SAVE_DATA["THIRD_RESULT"] = $thirdResult;
+        if ($fourthResult)
+            $SAVE_DATA["FOURTH_RESULT"] = $fourthResult;
+        if ($creditHours)
+            $SAVE_DATA["CREDIT_HOURS"] = $creditHours;
+        if ($average)
+            $SAVE_DATA["SUBJECT_VALUE"] = $average;
+        if ($actionRank)
+            $SAVE_DATA["RANK"] = $actionRank;
+        if ($term)
+            $SAVE_DATA["TERM"] = $term;
+        if ($coeffValue)
+            $SAVE_DATA["COEFF_VALUE"] = $coeffValue;
+        if ($scoreType)
+            $SAVE_DATA["SCORE_TYPE"] = $scoreType;
 
-        if (isset($stdClass->actionRank))
-        {
-            if ($stdClass->actionRank)
-                $SAVE_DATA["RANK"] = $stdClass->actionRank;
-        }
+        if ($studentId) {
 
-        if (isset($stdClass->comment))
-            $SAVE_DATA["TEACHER_COMMENT"] = $stdClass->comment;
+            $facette = self::findStudentSubjectEvaluation($stdClass);
+            if ($facette) {
 
-        if (isset($stdClass->monthResult))
-            $SAVE_DATA["MONTH_RESULT"] = $stdClass->monthResult;
-
-        if (isset($stdClass->termResult))
-            $SAVE_DATA["TERM_RESULT"] = $stdClass->termResult;
-
-        if (isset($stdClass->monthAssignment))
-            $SAVE_DATA["ASSIGNMENT_MONTH"] = $stdClass->monthAssignment;
-
-        if (isset($stdClass->termAssignment))
-            $SAVE_DATA["ASSIGNMENT_TERM"] = $stdClass->termAssignment;
-
-        if (isset($stdClass->firstResult))
-            $SAVE_DATA["FIRST_RESULT"] = $stdClass->firstResult;
-
-        if (isset($stdClass->secondResult))
-            $SAVE_DATA["SECOND_RESULT"] = $stdClass->secondResult;
-
-        if (isset($stdClass->thirdResult))
-            $SAVE_DATA["THIRD_RESULT"] = $stdClass->thirdResult;
-
-        if (isset($stdClass->fourthResult))
-            $SAVE_DATA["FOURTH_RESULT"] = $stdClass->fourthResult;
-
-        if (isset($stdClass->term))
-            $SAVE_DATA["TERM"] = $stdClass->term;
-
-        if (isset($stdClass->creditHours))
-        {
-            if ($stdClass->creditHours)
-                $SAVE_DATA["CREDIT_HOURS"] = $stdClass->creditHours;
-        }
-
-        if (isset($stdClass->coeffValue))
-        {
-            if ($stdClass->coeffValue)
-                $SAVE_DATA["COEFF_VALUE"] = $stdClass->coeffValue;
-        }
-
-        if (isset($stdClass->scoreType))
-        {
-            if ($stdClass->scoreType)
-                $SAVE_DATA["SCORE_TYPE"] = $stdClass->scoreType;
-        }
-
-        if (isset($stdClass->studentId))
-        {
-            if ($stdClass->studentId)
-            {
-                $facette = self::findStudentSubjectEvaluation($stdClass);
-
-                if ($facette)
-                {
-                    if ($facette->IS_MANUAL)
-                    {
-                        $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
-                    }
-                    else
-                    {
-                        $SAVE_DATA['IS_MANUAL'] = $stdClass->isManual;
-                        if (isset($stdClass->assessmentId))
-                        {
-                            $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
-                        }
-                    }
-
-                    $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
-                    $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
-                    $WHERE[] = "SUBJECT_ID = '" . $stdClass->subjectId . "'";
-                    $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
-
-                    switch ($stdClass->section)
-                    {
-                        case "MONTH":
-                            $WHERE[] = "MONTH = '" . $stdClass->month . "'";
-                            $WHERE[] = "YEAR = '" . $stdClass->year . "'";
-                            break;
-                        case "TERM":
-                        case "QUARTER":
-                        case "SEMESTER":
-                            $WHERE[] = "TERM = '" . $stdClass->term . "'";
-                            break;
-                        case "YEAR":
-                            $WHERE[] = "SECTION = 'YEAR'";
-                            break;
-                    }
-                    $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
-
-                    $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
-                    $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
-                    self::dbAccess()->update('t_student_subject_assessment', $SAVE_DATA, $WHERE);
+                if (!$facette->IS_MANUAL && !$isManual) {
+                    $SAVE_DATA["ASSESSMENT_ID"] = $assessmentId;
                 }
-                else
-                {
 
-                    $SAVE_DATA["STUDENT_ID"] = $stdClass->studentId;
-                    $SAVE_DATA["SUBJECT_ID"] = $stdClass->subjectId;
-                    $SAVE_DATA["CLASS_ID"] = $stdClass->academicId;
-                    $SAVE_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
-
-                    if (isset($stdClass->assessmentId))
-                    {
-                        $SAVE_DATA["ASSESSMENT_ID"] = $stdClass->assessmentId;
-                    }
-
-                    if (isset($stdClass->month))
-                        $SAVE_DATA["MONTH"] = $stdClass->month;
-
-                    if (isset($stdClass->year))
-                        $SAVE_DATA["YEAR"] = $stdClass->year;
-
-                    if (isset($stdClass->term))
-                        $SAVE_DATA["TERM"] = $stdClass->term;
-
-                    if ($stdClass->section)
-                        $SAVE_DATA["SECTION"] = $stdClass->section;
-
-                    if (isset($stdClass->educationSystem))
-                        $SAVE_DATA["EDUCATION_SYSTEM"] = $stdClass->educationSystem;
-
-                    if (isset($stdClass->comment))
-                        $SAVE_DATA["TEACHER_COMMENT"] = $stdClass->comment;
-
-                    $SAVE_DATA["ACTION_TYPE"] = "ASSESSMENT";
-                    $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
-                    $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
-
-                    //if ($stdClass->studentId == "0n5CE2hU5wfpLCLJXo9ApyQLiQ1iIEydDvR")
-                    self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
+                if (!$facette->IS_MANUAL && $isManual) {
+                    $SAVE_DATA["ASSESSMENT_ID"] = $assessmentId;
                 }
+
+                if ($facette->IS_MANUAL && $isManual) {
+                    $SAVE_DATA["ASSESSMENT_ID"] = $assessmentId;
+                }
+
+                $SAVE_DATA['IS_MANUAL'] = $isManual;
+
+                $WHERE[] = "STUDENT_ID = '" . $stdClass->studentId . "'";
+                $WHERE[] = "CLASS_ID = '" . $stdClass->academicId . "'";
+                $WHERE[] = "SUBJECT_ID = '" . $stdClass->subjectId . "'";
+                $WHERE[] = "SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'";
+
+                switch ($section) {
+                    case "MONTH":
+                        $WHERE[] = "MONTH = '" . $month . "'";
+                        $WHERE[] = "YEAR = '" . $year . "'";
+                        break;
+                    case "TERM":
+                    case "QUARTER":
+                    case "SEMESTER":
+                        $WHERE[] = "TERM = '" . $term . "'";
+                        break;
+                    case "YEAR":
+                        $WHERE[] = "SECTION = 'YEAR'";
+                        break;
+                }
+                $WHERE[] = "ACTION_TYPE = 'ASSESSMENT'";
+
+                $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
+                $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
+                self::dbAccess()->update('t_student_subject_assessment', $SAVE_DATA, $WHERE);
+            } else {
+
+                $SAVE_DATA["STUDENT_ID"] = $stdClass->studentId;
+                $SAVE_DATA["SUBJECT_ID"] = $stdClass->subjectId;
+                $SAVE_DATA["CLASS_ID"] = $stdClass->academicId;
+                $SAVE_DATA["SCHOOLYEAR_ID"] = $stdClass->schoolyearId;
+
+                if ($assessmentId) {
+                    $SAVE_DATA["ASSESSMENT_ID"] = $assessmentId;
+                }
+
+                if ($month)
+                    $SAVE_DATA["MONTH"] = $month;
+
+                if ($year)
+                    $SAVE_DATA["YEAR"] = $year;
+
+                if ($term)
+                    $SAVE_DATA["TERM"] = $term;
+
+                if ($section)
+                    $SAVE_DATA["SECTION"] = $section;
+
+                if (isset($stdClass->educationSystem))
+                    $SAVE_DATA["EDUCATION_SYSTEM"] = $stdClass->educationSystem;
+
+                if ($comment)
+                    $SAVE_DATA["TEACHER_COMMENT"] = $comment;
+
+                $SAVE_DATA["ACTION_TYPE"] = "ASSESSMENT";
+                $SAVE_DATA['PUBLISHED_DATE'] = getCurrentDBDateTime();
+                $SAVE_DATA['PUBLISHED_BY'] = Zend_Registry::get('USER')->CODE;
+                self::dbAccess()->insert("t_student_subject_assessment", $SAVE_DATA);
             }
         }
     }
 
-    public static function getActionDeleteSubjectScoreAssessment($stdClass)
-    {
+    public static function getActionDeleteSubjectScoreAssessment($stdClass) {
 
         self::dbAccess()->delete('t_student_subject_assessment'
                 , array(
