@@ -119,8 +119,8 @@ class StaffContractDBAccess {
         $SQL->joinLeft(array('C' => 't_members'), 'A.CREATED_BY = C.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
         $SQL->joinLeft(array('D' => 't_camemis_type'), 'A.CONTRACT_TYPE = D.ID', array('NAME AS CONTRACT_NAME'));
 
-        if ($objectId)
-            $SQL->where("B.ID = '" . $objectId . "'");
+        //if ($objectId)
+            //$SQL->where("B.ID = '" . $objectId . "'");
 
         if ($startDate and $endDate) {
             if ($searchType == 'START_DATE') {
@@ -153,7 +153,7 @@ class StaffContractDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonShowAllStaffContracts($params) {
+    public static function jsonShowAllStaffContracts($params, $isJson = true) {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
         $data = array();
@@ -188,11 +188,15 @@ class StaffContractDBAccess {
                 $a[] = $data[$i];
         }
 
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
+        if ($isJson) {
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        } else {
+            return $data;
+        }
     }
 
     public static function sqlGetAllMembers($params) {
