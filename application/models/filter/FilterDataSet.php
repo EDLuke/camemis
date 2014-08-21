@@ -16,17 +16,17 @@ class FilterDataSet extends FilterData{
     public function getDataSetAbsenceType(){
         
         $entries = $this->getAttendanceType($this->personType,$this->type);
-        $DATASET = "[{";
-        switch(strtoupper($this->type)){
+        $DATASET = "[";
+        /*switch(strtoupper($this->type)){
             case 'DAILY':
                 $DATASET .= "key: 'daily',";
                 break;
             case 'BLOCK':
                 $DATASET .= "key: 'block',";
                 break;       
-        }
+        }*/
         
-        $DATASET .= "values: [";
+        //$DATASET .= "values: [";
         if ($entries)
         {
             $i = 0;
@@ -34,16 +34,16 @@ class FilterDataSet extends FilterData{
             {
                 $this->absentType=$value->ID;
                 $DATASET .= $i ? "," : "";
-                $DATASET .= "{";
-                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= "[";
+                //$DATASET .= "'label':'" . $value->NAME . "'";
                 switch(strtoupper($this->personType)){
                     case 'STUDENT':
                         switch(strtoupper($this->type)){
                             case 'DAILY':
-                                 $DATASET .= ",'value':'" . $this->getCountDailyStudentAbsence() . "'";
+                                 $DATASET .= "'".$value->NAME."'," . $this->getCountDailyStudentAbsence() . "";
                                 break;
                             case 'BLOCK':
-                                $DATASET .= ",'value':'" . $this->getCountBlockStudentAbsence() . "'";
+                                $DATASET .= "'".$value->NAME."'," . $this->getCountBlockStudentAbsence() . "";
                                 break;       
                         }
                        
@@ -51,32 +51,32 @@ class FilterDataSet extends FilterData{
                     case 'STAFF':
                         switch(strtoupper($this->type)){
                             case 'DAILY':
-                                 $DATASET .= ",'value':'" . $this->getCountDailyTeacherAbsence() . "'";
+                                 $DATASET .= "'".$value->NAME."'," . $this->getCountDailyTeacherAbsence() . "";
                                 break;
                             case 'BLOCK':
-                                $DATASET .= ",'value':'" . $this->getCountBlockTeacherAbsence() . "'";
+                                $DATASET .= "'".$value->NAME."'," . $this->getCountBlockTeacherAbsence() . "";
                                 break;       
                         }
                         break;       
                 }
                 
-                $DATASET .= "}";
+                $DATASET .= "]";
                 $i++;
             }
         }
         $DATASET .= "]";
-        $DATASET .= "}]";
+        //$DATASET .= "}]";
         
         return $DATASET;      
     }
     
     //Status
-    public function getDataSetStatus(){
+    public function getDataSethighchartStatus(){
         
         $entries = $this->getPersonStatus($this->personType);
-        $DATASET = "[{";
-        $DATASET .= "key: '".STATUS."',";
-        $DATASET .= "values: [";
+        $DATASET = "[";
+        //$DATASET .= "key: '".STATUS."',";
+        //$DATASET .= "values: [";
         if ($entries)
         {
             $i = 0;
@@ -84,23 +84,23 @@ class FilterDataSet extends FilterData{
             {
                 $this->statusType=$value->ID;
                 $DATASET .= $i ? "," : "";
-                $DATASET .= "{";
-                $DATASET .= "'label':'" . $value->NAME . "'";
+                $DATASET .= "[";
+                //$DATASET .= "'label':'" . $value->NAME . "'";
                 switch(strtoupper($this->personType)){
                     case 'STUDENT':
-                        $DATASET .= ",'value':'" . $this->getCountStudentStatus() . "'";
+                        $DATASET .= "'" .$value->NAME."'," . $this->getCountStudentStatus() . "";
                         break;
                     case 'STAFF':
-                        $DATASET .= ",'value':'" . $this->getCountTeacherStatus() . "'";
+                        $DATASET .= "'" .$value->NAME."'," . $this->getCountTeacherStatus() . "";
                         break;       
                 }
                 
-                $DATASET .= "}";
+                $DATASET .= "]";
                 $i++;
             }
         }
         $DATASET .= "]";
-        $DATASET .= "}]";
+        //$DATASET .= "}]";
         
         return $DATASET;      
     }
@@ -389,6 +389,39 @@ class FilterDataSet extends FilterData{
         }
         $DATASET .= "]";
         $DATASET .= "}]";
+        
+        return $DATASET;      
+    }
+    
+    public function getDataSetHighChartStudentRegistration($month){
+        
+        $DATASET = "[";
+            $DATASET .= "{";
+            $DATASET .= "name:'".FEMALE."'";
+            $DATASET .= ",data: [";
+            $i=0;
+            foreach($month as $key=>$value){
+                $this->month=$key."_".$value;
+                $this->gender=2; 
+                $DATASET .= $i ? "," : ""; 
+                $DATASET .= $this->getCountStudentRegistration();
+                $i++;  
+            }
+            $DATASET .= "]";
+            $DATASET .= "},{";
+            $DATASET .= "name:'".MALE."'";
+            $DATASET .= ",data: [";
+            $i=0;
+            foreach($month as $key=>$value){
+                $this->month=$key."_".$value;
+                $this->gender=1; 
+                $DATASET .= $i ? "," : ""; 
+                $DATASET .= $this->getCountStudentRegistration();
+                $i++;  
+            }
+            $DATASET .= "]";
+            $DATASET .= "}";
+        $DATASET .= "]";
         
         return $DATASET;      
     }

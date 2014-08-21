@@ -4,7 +4,8 @@
 // Date: 24.07.2014
 ///////////////////////////////////////////////////////////
 
-require_once 'clients/CamemisChart.php';
+//require_once 'clients/CamemisChart.php';
+require_once 'clients/CamemisHighChart.php';
 require_once 'clients/CamemisPage.php';
 require_once 'models/filter/FilterData.php';
 require_once 'models/filter/FilterDataSet.php';
@@ -12,6 +13,7 @@ require_once setUserLoacalization();
 $objectId = isset($_GET["objectId"])?addText($_GET["objectId"]):"";
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+CamemisHighChart::setHighChartLIB();
 $gradeId = "";
 $campusId = "";
 $schoolyearId = "";
@@ -61,22 +63,39 @@ $objectDataSet->personType=$this->personType;
 $objectDataSet->type='DAILY';
 $dataSetAbsenceDaily = $objectDataSet->getDataSetAbsenceType();
 
-$chartAbsenceDaily = new CamemisChart("DISCRETE_BAR_CHART", 'chartAbsenceDailly', $dataSetAbsenceDaily);
-$chartAbsenceDaily->chartSVG = "displayAbsenceDailly";
-$chartAbsenceDaily->showLegend='true';
-$chartAbsenceDaily->tooltips = 'true';
-$chartAbsenceDaily->showValues ='true';
-$chartAbsenceDaily->height = 280;
+$ABSENCE_DAILY = new CamemisHighChart(
+            "COLUMN_CHART"
+            , 'ABSENCE_DAILY'
+            , 'Daily Attendance'
+            , $dataSetAbsenceDaily
+        );
+
+$ABSENCE_DAILY->allowPointSelect = 'true';
+$ABSENCE_DAILY->pointColor = 'black';
+$ABSENCE_DAILY->height = 300;
+$ABSENCE_DAILY->maxWidth = 98;
+$ABSENCE_DAILY->maxWidthPercentage = true;
+$ABSENCE_DAILY->plotBorderWidth = "null";
+
 
 $objectDataSet->type='BLOCK';
 $dataSetAbsenceBlock = $objectDataSet->getDataSetAbsenceType(); 
 
-$chartAbsenceBlock = new CamemisChart("DISCRETE_BAR_CHART", 'chartAbsenceBlock', $dataSetAbsenceBlock);
-$chartAbsenceBlock->chartSVG = "displayAbsenceBlock";
-$chartAbsenceBlock->showLegend='true';
-$chartAbsenceBlock->tooltips = 'true';
-$chartAbsenceBlock->showValues ='true';
-$chartAbsenceBlock->height = 280;
+
+$ABSENCE_BLOCK = new CamemisHighChart(
+            "COLUMN_CHART"
+            , 'ABSENCE_BLOCK'
+            , 'Block Attendance'
+            , $dataSetAbsenceBlock
+        );
+
+$ABSENCE_BLOCK->allowPointSelect = 'true';
+$ABSENCE_BLOCK->pointColor = 'black';
+$ABSENCE_BLOCK->height = 300;
+$ABSENCE_BLOCK->maxWidth = 98;
+$ABSENCE_BLOCK->maxWidthPercentage = true;
+$ABSENCE_BLOCK->plotBorderWidth = "null";
+
 
 ?>
 
@@ -85,33 +104,29 @@ $chartAbsenceBlock->height = 280;
 <link href="/public/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="/public/bootstrap/css/custom.css" rel="stylesheet">
 <script src="/public/nvd3/nvd3-camemis.php"></script>
-    <div id="initStatistic" class="container-fluid" style="background-color:#f9f9f9;">
+    <div id="initStatistic" class="container-fluid" style="background-color:#FFF;">
     
          <div class="row">
             <div class="col-md-12">
-                <div class="panel-heading"><h5><b>Daily Attendance</b></h5></div>
-                
                 <div class="panel-body">
                     <button type="button" id="btnStudentEDMajor" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
-                    <?= $chartAbsenceDaily->setChartDisplay(); ?>
-                    <script><?= $chartAbsenceDaily->setChartScript(); ?></script> 
+                    <?$ABSENCE_DAILY->setDIVHighChart();?> 
                 </div>     
             </div>  
         </div>
         
         <div class="row">
             <div class="col-md-12">
-                <div class="panel-heading"><h5><b>Block Attendance</b></h5></div>
-                
                 <div class="panel-body">
                     <button type="button" id="btnStudentEDMajor" class="btn btn-info"><span class="glyphicon glyphicon-search"></span>View Details</button>
-                    <?= $chartAbsenceBlock->setChartDisplay(); ?>
-                    <script><?= $chartAbsenceBlock->setChartScript(); ?></script> 
+                    <?$ABSENCE_BLOCK->setDIVHighChart();?>
                 </div>     
             </div>  
         </div>
         
     </div>
+    <?  $ABSENCE_DAILY->setHighChartScript(); ?>
+    <?  $ABSENCE_BLOCK->setHighChartScript(); ?>
     <script>
         Ext.onReady(function() {
             

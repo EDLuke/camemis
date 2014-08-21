@@ -256,6 +256,21 @@ class FilterData extends FilterProperties {
         }
         return $count;
     }
+    
+    public function getCountStudentRegistration(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "gender" => $this->gender
+                , "month" => $this->month
+        );
+        $result = SQLStudentFilterReport::getStudentRgistration($stdClass);
+        
+        return count($result);    
+    }
+    
     //////////////////////
     ///Staff Data
     /////////////////////
@@ -418,6 +433,19 @@ class FilterData extends FilterProperties {
     }
     ///
    
+    public function getCountTeacherStatus(){
+        $stdClass = (object) array(
+                "schoolyearId" => $this->schoolyearId
+                , "campusId" => $this->campusId
+                , "gradeId" => $this->gradeId
+                , "classId" => $this->classId
+                , "statusType" => $this->statusType
+                , "objectGrade"=> $this->getObjectGradeData()
+        );
+        $result = SQLTeacherFilterReport::getTeacherStatus($stdClass);
+        
+        return count($result);    
+    }
 }
 
 ?>
