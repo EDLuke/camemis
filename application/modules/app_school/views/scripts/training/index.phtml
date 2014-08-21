@@ -70,6 +70,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }
         ");
         
+        
         $OBJECT_TREE->addTBarItems("
             xtype: 'buttongroup'
             ,items:[{
@@ -87,6 +88,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                     }
                 }
             }]
+        ");
+        
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("E1B3-3255")."
+            }
         ");
         
         $OBJECT_TREE->setBaseParams("
