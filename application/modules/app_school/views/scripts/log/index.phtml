@@ -16,7 +16,7 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 $OBJECT_GRID = new CamemisGrid("TRANSLATION", "LIST");
-$OBJECT_GRID->setLoadUrl('/tracklog/jsonload/');
+$OBJECT_GRID->setLoadUrl('/log/jsonload/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -61,7 +61,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     $OBJECT_GRID->baseParams = "
         start:0
         ,limit:100
-        ,cmd: 'allTracklogs'
+        ,cmd: 'getLogs'
     ";
     
     $OBJECT_GRID->addTBarItems("

@@ -71,12 +71,12 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         }";
         $PENEL_ITEMS[] = $TRANSLATION;
 
-        $TRANSLATION2 = "{
+        $LOG = "{
             title: '"."Track"."'
             ,layout: 'fit'
-            ,items:[new Ext.ux.IFrameComponent({ id: 'TRANSLATION2', url: '/tracklog/?camIds=".$this->urlEncryp->encryptedGet("target=translation")."'})]
+            ,items:[new Ext.ux.IFrameComponent({ id: 'LOG', url: '/log/?camIds=".$this->urlEncryp->encryptedGet("target=translation")."'})]
         }";
-        $PENEL_ITEMS[] = $TRANSLATION2;
+        $PENEL_ITEMS[] = $LOG;
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         ?>

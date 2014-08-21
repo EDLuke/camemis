@@ -11,12 +11,12 @@ require_once 'include/Common.inc.php';
 require_once setUserLoacalization();
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffDBAccess.php";
 
-class TracklogDBAccess {
+class LogDBAccess {
 
     static function getInstance() {
         static $me;
         if ($me == null) {
-            $me = new TracklogDBAccess();
+            $me = new LogDBAccess();
         }
         return $me;
     }
@@ -29,7 +29,7 @@ class TracklogDBAccess {
         return self::dbAccess()->select();
     }
 
-    public function allTracklogs($params) {
+    public function getLogs($params) {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
@@ -39,7 +39,7 @@ class TracklogDBAccess {
         $SQL = "";
         $SQL .= " SELECT DISTINCT";
         $SQL .= " ID, ACCESSED_BY, ACCESSED_DATE, TABLE_NAME, ACCESS_TYPE, OBJECT_ID, FIELD_NOTE";
-        $SQL .= " FROM t_track_log";
+        $SQL .= " FROM t_log";
         $SQL .= " WHERE 1=1";
 
         if ($globalSearch) {
@@ -86,7 +86,7 @@ class TracklogDBAccess {
 
     private function getFieldConstant($field_in_table) {   // table_name.field_name
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_track_field_name", array('DESC_CONST'));
+        $SQL->from("t_log_field_name", array('DESC_CONST'));
         $SQL->where("TABLE_FIELD_NAME='" . $field_in_table . "'");
         $data = self::dbAccess()->fetchRow($SQL);
         if ($data)
@@ -96,7 +96,7 @@ class TracklogDBAccess {
 
     private function getTableConstant($tbl) {
         $SQL = self::dbAccess()->select();
-        $SQL->from("t_track_table", array('DESC_CONST'));
+        $SQL->from("t_log_table", array('DESC_CONST'));
         $SQL->where("TABLE_NAME='" . $tbl . "'");
         $data = self::dbAccess()->fetchRow($SQL);
         if ($data)
