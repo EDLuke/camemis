@@ -94,18 +94,14 @@ $setParams .="&term=".$term."";
 $setParams .="&section=".$section."";
 
 ////////////////////////////////////////////////////////////////////////////////
-switch($academicObject->EVALUATION_OPTION){
-    case 0:
-        if($subjectObject->SCORE_TYPE == 1){
-            $EVALUATION = new EvaluationSubjectAssessment();
-            $EVALUATION->setAcademicId($academicId);
-            $EVALUATION->setSubjectId($subjectObject->SUBJECT_ID);
-            $EVALUATION->setTerm($term);
-            $EVALUATION->setSection($section);
-            $EVALUATION->setTarget("TERM");
-            $EVALUATION->actionCalculationSubjectEvaluation();
-        }
-    break;
+if($subjectObject->SCORE_TYPE == 1){
+    $EVALUATION = new EvaluationSubjectAssessment();
+    $EVALUATION->setAcademicId($academicId);
+    $EVALUATION->setSubjectId($subjectObject->SUBJECT_ID);
+    $EVALUATION->setTerm($term);
+    $EVALUATION->setSection($section);
+    $EVALUATION->setTarget("TERM");
+    $EVALUATION->actionCalculationSubjectEvaluation();
 }
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
