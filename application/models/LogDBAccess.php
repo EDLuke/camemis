@@ -33,6 +33,8 @@ class LogDBAccess {
 
         $start = $params["start"] ? (int) $params["start"] : "0";
         $limit = $params["limit"] ? (int) $params["limit"] : "50";
+        $startDate = isset($params["START_DATE"]) ? setDate2DB($params["START_DATE"]) : "";
+        $endDate   = isset($params["END_DATE"])   ? setDate2DB($params["END_DATE"])   : "";
 
         $globalSearch = isset($params["query"]) ? addText($params["query"]) : "";
 
@@ -41,6 +43,11 @@ class LogDBAccess {
         $SQL .= " ID, ACCESSED_BY, ACCESSED_DATE, TABLE_NAME, ACCESS_TYPE, OBJECT_ID, FIELD_NOTE";
         $SQL .= " FROM t_log";
         $SQL .= " WHERE 1=1";
+
+        if ($startDate && $endDate)
+        {
+            $SQL .= " AND (DATE(ACCESSED_DATE) >= '" . $startDate . "' AND DATE(ACCESSED_DATE) <= '" . $endDate . "')";
+        }
 
         if ($globalSearch) {
             // $SQL .= " AND ((ENGLISH LIKE '%" . $globalSearch . "%')";

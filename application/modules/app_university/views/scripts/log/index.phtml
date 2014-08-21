@@ -14,14 +14,44 @@ require_once 'include/Common.inc.php';
 require_once 'utiles/Utiles.php';
 require_once setUserLoacalization();
 
+
+
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
-$OBJECT_GRID = new CamemisGrid("TRANSLATION", "LIST");
+
+$OBJECT_FORM = new CamemisForm("LOG");
+$OBJECT_FORM->setLoadUrl('/log/jsonload/');
+
+$OBJECT_GRID = new CamemisGrid("LOG", "LIST");
 $OBJECT_GRID->setLoadUrl('/log/jsonload/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 ?>
 <script>
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+        if(!date){
+            return false;
+        }
+        if (field.startDateField) {
+            var start = Ext.getCmp(field.startDateField);
+            if (!start.maxValue || (date.getTime() !== start.maxValue.getTime())) {
+                start.setMaxValue(date);
+                start.validate();
+            }
+        }
+        else if (field.endDateField) {
+            var end = Ext.getCmp(field.endDateField);
+            if (!end.minValue || (date.getTime() !== end.minValue.getTime())) {
+                end.setMinValue(date);
+                end.validate();
+            }
+        }
+        return true;
+    }
+});
+
 
     Ext.onReady(function() {
 
@@ -31,6 +61,87 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
      */
     $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+
+
+    $ACCESSED_DATE = "{
+        xtype:'fieldset'
+        ,collapsible: true
+        ,collapsed: true
+        ,title: '".ACCESSED_DATE."'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor()."; color:#000;padding:10px'
+        ,width: 310
+        ,items:[{
+            name: 'START_DATE'
+            ,hidden: false
+            ,width: 150
+            ,fieldLabel: '" . START_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'START_DATE'
+            ,vtype: 'daterange'
+            ,endDateField: 'END_DATE'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,allowBlank: true
+        },{
+            name: 'END_DATE'
+            ,hidden: false
+            ,width: 150
+            ,fieldLabel: '" . END_DATE . "'
+            ,xtype: 'datefield'
+            ,id: 'END_DATE'
+            ,vtype: 'daterange'
+            ,format: '" . setExtDatafieldFormat() . "'
+            ,startDateField: 'START_DATE'
+            ,allowBlank: true
+        }]
+    }";
+
+    $FORM_ITEMS = "[";
+    $FORM_ITEMS .= "".$ACCESSED_DATE;
+    // $FORM_ITEMS .= ",".$WORK_EXPERIENCE;
+    $FORM_ITEMS .= "]";
+
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'background:".CamemisPage::userFormBgColor().";'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".RESET."'
+        ,iconCls:'icon-arrow_undo'
+        ,handler:function(){
+            " . camemisPage::setRequestURI() . "
+        }
+    ");
+
+    $OBJECT_FORM->addTBarItems("
+        text:'".SEARCH."'
+        ,iconCls:'icon-zoom'
+        ,disabled: false
+        ,handler: function(){
+            Ext.getCmp('center').getLayout().setActiveItem(0);
+            var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS " . LOADING . "</b>', msgCls:'x-mask-loading-camemis'});
+            loadMask.show();
+            Ext.Ajax.request({
+                url: '/log/jsonload'
+                ,method: 'POST'
+                ,params:{cmd: 'getLogs', start: 0, limit: 100}
+                ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
+                ,success: function(response, options) {
+                    jsonData = Ext.util.JSON.decode(response.responseText);
+                    Ext.getCmp('".$OBJECT_GRID->getObjectId()."').getStore().loadData(jsonData);
+                    loadMask.hide();
+                }
+            });
+        }
+    ");
+    $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
+    $OBJECT_FORM->isObjectDefaultOnLoad = false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 110;
+    $OBJECT_FORM->renderJS();    
 
     $OBJECT_GRID->addCellRenderer("
         function renderText(v, p, record, rowIndex){
@@ -73,17 +184,41 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     $OBJECT_GRID->renderJS();
 
     ?>
+
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
         ,items:[{
-            border: false
-            ,id:'content'
-            ,layout: 'card'
-            ,activeItem: 0
-            ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+            layout:'border'
+            ,border: false
+            ,defaults: {
+                collapsible: true
+                ,split: true
+            }
+            ,items: [{
+                title: ''
+                ,id:'WEST_ID'
+                ,region:'west'
+                ,margins: '3 0 3 3'
+                ,cmargins: '3 3 3 3'
+                ,width: 350
+                ,minSize: 350
+                ,maxSize: 350
+                ,layout: 'fit'
+                ,items:[{xtype: '<?=$OBJECT_FORM->getObjectXtype();?>'}]
+            },{
+                title: ''
+                ,collapsible: false
+                ,region:'center'
+                ,id: 'center'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,margins: '3 3 3 0'
+                ,items:[{xtype: '<?=$OBJECT_GRID->getObjectXtype();?>'}]
+            }]
         }]
     });
+
     
 });
 </script>
