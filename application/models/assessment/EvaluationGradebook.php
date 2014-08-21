@@ -150,17 +150,17 @@ class EvaluationGradebook extends AssessmentProperties {
 
     public function getSubjectValue($stdClass) {
 
-        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
         return $facette->SUBJECT_VALUE;
     }
 
     public function getSubjectRank($stdClass) {
-        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
         return $facette->RANK;
     }
 
     public function getSubjectAssessment($stdClass) {
-        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
 
         switch ($this->getSubjectScoreType()) {
             case self::SCORE_TYPE_NUMBER:

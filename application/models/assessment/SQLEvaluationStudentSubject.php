@@ -16,7 +16,7 @@ class SQLEvaluationStudentSubject {
         return false::dbAccess()->select();
     }
 
-    public static function getPropertiesStudentSubjectEvaluation($stdClass, $staticTerm = false) {
+    public static function getPropertiesStudentSE($stdClass, $staticTerm = false) {
 
         $academicObject = AcademicDBAccess::findGradeFromId($stdClass->academicId);
         $GRADING_TYPE = $academicObject->GRADING_TYPE ? "LETTER_GRADE" : "DESCRIPTION";

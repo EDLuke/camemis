@@ -125,7 +125,7 @@ class AcademicPerformances extends AssessmentProperties {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
-                            $SUBJECT_VALUE = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
+                            $SUBJECT_VALUE = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass)->SUBJECT_VALUE;
                             $data[$i][$v->SUBJECT_ID] = $SUBJECT_VALUE;
                         }
                     }
@@ -174,7 +174,7 @@ class AcademicPerformances extends AssessmentProperties {
                         if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
 
-                            $performance = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass);
+                            $performance = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass);
                             if ($performance) {
                                 $SUBJECT_VALUE = $performance->SUBJECT_VALUE;
                                 $data[$i][$v->SUBJECT_ID] = $SUBJECT_VALUE;
@@ -336,7 +336,7 @@ class AcademicPerformances extends AssessmentProperties {
                     foreach ($this->getListSubjects() as $v) {
                         if ($v->SUBJECT_ID) {
                             $stdClass->subjectId = $v->SUBJECT_ID;
-                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getPropertiesStudentSubjectEvaluation($stdClass)->SUBJECT_VALUE;
+                            $data[$i][$v->SUBJECT_ID] = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass)->SUBJECT_VALUE;
                         }
                     }
                 }
@@ -681,7 +681,7 @@ class AcademicPerformances extends AssessmentProperties {
                     $rank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
                     $average = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
                     $stdClass->gpaValue = isset($entries[$i]["GPA"]) ? $entries[$i]["GPA"] : "";
-
+                    
                     if (is_numeric($average)) {
                         $stdClass->rank = $rank ? $rank : "---";
                     }
