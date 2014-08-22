@@ -274,6 +274,7 @@ class AssessmentConfig {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
+        $SQL->order("SCORE_MAX DESC");
         //error_log($SQL->__toString());
         $result = self::dbAccess()->fetchAll($SQL);
         if ($result)
