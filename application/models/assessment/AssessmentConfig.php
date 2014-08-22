@@ -219,25 +219,16 @@ class AssessmentConfig {
         return implode(",", $data);
     }
 
-    public static function calculateGradingScale($checkValue, $qualificationType) {
+    public static function calculateGradingScale($val, $qualificationType) {
 
-        $OUTPUT = "";
         $SQL = self::dbAccess()->select();
         $SQL->from("t_gradingsystem", array("*"));
         $SQL->where("EDUCATION_TYPE = '" . $qualificationType . "'");
-        $SQL->order("SCORE_MAX DESC");
+        $SQL->where("SCORE_MIN <= '" . $val . "'");
+        $SQL->where("SCORE_MAX >= '" . $val . "'");
         //error_log($SQL->__toString());
-        $result = self::dbAccess()->fetchAll($SQL);
-        if ($result) {
-            foreach ($result as $value) {
-                if (number_is_between($checkValue, $value->SCORE_MIN, $value->SCORE_MAX)) {
-                    $OUTPUT = $value->ID;
-                    break;
-                }
-            }
-        }
-
-        return $OUTPUT;
+        $result = self::dbAccess()->fetchRow($SQL);
+        return $result ? $result->ID : "";
     }
 
     ////////////////////////////////////////////////////////////////////////////
