@@ -351,7 +351,9 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                         break;
                 }
 
-                $data[$i]["ASSESSMENT_ID"] = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
+                $assessmentId = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
+                $data[$i]["ASSESSMENT_ID"] = $assessmentId;
+                $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
 
                 $i++;
             }
@@ -1272,6 +1274,7 @@ class EvaluationSubjectAssessment extends AssessmentProperties {
                             $stdClass->termAssignment = isset($entries[$i]["ASSIGNMENT_TERM"]) ? $entries[$i]["ASSIGNMENT_TERM"] : "";
                             break;
                         case "YEAR":
+                            $stdClass->gradePoints = isset($entries[$i]["GRADE_POINTS"]) ? $entries[$i]["GRADE_POINTS"] : "";
                             switch ($this->getTermNumber()) {
                                 case 1:
                                     $stdClass->firstResult = isset($entries[$i]["FIRST_TERM_RESULT"]) ? $entries[$i]["FIRST_TERM_RESULT"] : "";
