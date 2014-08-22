@@ -65,6 +65,15 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]
         ");
         
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("8B9A-A3EF")."
+            }
+        ");
+        
         $OBJECT_TREE->isTreeExpand = false;
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllTrainings'

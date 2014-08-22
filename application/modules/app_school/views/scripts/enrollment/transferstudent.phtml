@@ -67,6 +67,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         ");
         
         $OBJECT_TREE->isTreeExpand = false;
+        
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("CBD0-038A")."
+            }
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'getTreeTraditionalEducationSystem'
 

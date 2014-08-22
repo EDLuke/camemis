@@ -143,6 +143,15 @@ Ext.onReady(function() {
             clickOpenPage('center','', '/bulletin/editbulletin/?objectId=new');
         }
     ");
+        
+    $OBJECT_FORM->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("472D-D614")."
+        }
+    ");    
 	
     $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
     $OBJECT_FORM->labelAlign = "left";

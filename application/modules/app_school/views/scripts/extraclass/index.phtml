@@ -68,6 +68,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                  clickOpenPage('center', '".EXTRA_CLASS."', '/extraclass/addprogram/?template=PROGRAM&objectId=new');
             }
         ");
+        
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("85BB-BC30")."
+            }
+        ");
+        
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllExtraClass'
         ");

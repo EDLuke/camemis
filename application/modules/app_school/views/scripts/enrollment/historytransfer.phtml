@@ -189,6 +189,15 @@ Ext.onReady(function() {
             });   
         }
     ");
+    
+     $OBJECT_FORM->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("783F-F1D9")."
+            }
+        ");
      
     $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
     $OBJECT_FORM->labelAlign = "left";

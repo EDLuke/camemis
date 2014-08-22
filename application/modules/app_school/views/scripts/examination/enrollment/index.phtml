@@ -67,6 +67,15 @@ $examType = 6;
             }]
         ");
         
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("B1E1-1A63")."
+            }
+        ");
+        
         $OBJECT_TREE->isTreeExpand = false;
         $OBJECT_TREE->setBaseParams("
             cmd: 'jsonTreeAllExaminations'
