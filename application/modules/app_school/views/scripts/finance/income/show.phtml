@@ -36,7 +36,7 @@ $CHECKBOX_ITEMS = array();
 if($entriesParentCheckbox){
     foreach($entriesParentCheckbox as $value){
         if(FinanceDescriptionDBAccess::checkChild($value->ID)){
-            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 1, 1);
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 0, 0);
             $CHECKBOX_JS .= "var CHECKBOX_$value->ID = new Ext.form.CheckboxGroup({";
                $CHECKBOX_JS .= "fieldLabel: '".$value->NAME."'";
                $CHECKBOX_JS .= ",columns: 2";
@@ -61,7 +61,7 @@ $RADIOBOX_ITEMS = array();
 if($entriesParentRadiobox){
     foreach($entriesParentRadiobox as $value){
         if(FinanceDescriptionDBAccess::checkChild($value->ID)){
-            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 2, 1);
+            $entries = FinanceDescriptionDBAccess::sqlDescription($value->ID, 0, 0);
             $RADIOBOX_JS .= "var RADIOBOX_$value->ID = new Ext.form.RadioGroup({";
                 $RADIOBOX_JS .= "fieldLabel: '".$value->NAME."'";
                 $RADIOBOX_JS .= ",columns: 2";
@@ -192,7 +192,7 @@ Ext.onReady(function() {
 
     $DETAIL_CHECKBOX = "
     {
-        title: '".CHECKBOX."'
+        title: '".CHECK_BOX."'
         ,collapsible: true
         ,collapsed: ".$collapsed."
         ,autoHeight: true
@@ -210,7 +210,7 @@ Ext.onReady(function() {
         
     $DETAIL_RADIOBOX = "
     {
-        title: '".RADIOBOX."'
+        title: '".RADIO_BOX."'
         ,collapsible: true
         ,collapsed: ".$collapsed."
         ,autoHeight: true
