@@ -329,7 +329,8 @@ class AcademicPerformances extends AssessmentProperties {
                 if ($IS_MANUAL) {
                     $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                    $PERCENTAGE_VALUE = getPercent($AVERAGE, $this->getCountryTotalScoreMax());
+                    $assessmentId = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
                 }
                 $data[$i]["ASSESSMENT"] = $assessmentId;
                 $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
@@ -387,7 +388,8 @@ class AcademicPerformances extends AssessmentProperties {
                 if ($IS_MANUAL) {
                     $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                    $PERCENTAGE_VALUE = getPercent($AVERAGE, $this->getCountryTotalScoreMax());
+                    $assessmentId = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
                 }
                 $data[$i]["ASSESSMENT"] = $assessmentId;
                 $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
@@ -431,7 +433,8 @@ class AcademicPerformances extends AssessmentProperties {
                 if ($IS_MANUAL) {
                     $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                    $PERCENTAGE_VALUE = getPercent($AVERAGE, $this->getCountryTotalScoreMax());
+                    $assessmentId = AssessmentConfig::calculateGradingScale($PERCENTAGE_VALUE, $this->getSettingQualificationType());
                 }
                 $data[$i]["ASSESSMENT"] = $assessmentId;
                 $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);

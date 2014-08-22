@@ -297,6 +297,54 @@ $viewportItem = new ViewportItem(
             ,items:[{
                 xtype:'fieldset'
                 ,width: 500
+                ,title:'".EVALUATION_TYPE."'
+                ,collapsible: true
+                ,collapsed: false
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle:'padding:15px;background:#d1ddef;'
+                    ,items:[
+                        {".CamemisField::Radio("EVALUATION_TYPE_1", "EVALUATION_TYPE", NUMBER,0, false)."}
+                        ,{".CamemisField::Radio("EVALUATION_TYPE_2", "EVALUATION_TYPE", PERCENTAGE,1, false)."}
+                        ,{html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
+                        ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
+                        ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
+                        ,{html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
+                        ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
+                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
+                    ]
+                }]
+            },{
+                xtype:'fieldset'
+                ,width: 500
+                ,title:'".DISPLAYING."'
+                ,collapsible: true
+                ,collapsed: true
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle:'padding:15px;background:#d1ddef;'
+                    ,items: ".$DISPLAYING."
+                }]
+            },{
+                xtype:'fieldset'
+                ,width: 500
+                ,title:'".WEIGHTING."'
+                ,collapsible: true
+                ,collapsed: false
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle:'padding:15px;background:#d1ddef;'
+                    ,items: ".$WEIGHTING."
+                }]
+            },{
+                xtype:'fieldset'
+                ,width: 500
                 ,title:'".SESSION_GROUP."'
                 ,collapsible: true
                 ,collapsed: true
@@ -398,53 +446,6 @@ $viewportItem = new ViewportItem(
                             }]
                         }]
                     }]
-                }]
-            },{
-                xtype:'fieldset'
-                ,width: 500
-                ,title:'".EVALUATION_TYPE."'
-                ,collapsible: true
-                ,collapsed: true
-                ,items:[{
-                    layout: 'form'
-                    ,border: false
-                    ,autoHeight:true
-                    ,bodyStyle:'padding:15px;background:#d1ddef;'
-                    ,items:[
-                        {".CamemisField::Combo('EVALUATION_TYPE', TYPE, $EVALUATION_TYPE_STORE, false, false, 150, false,false)."}
-                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#d1ddef;'}
-                        ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
-                        ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
-                        ,{html:'&nbsp;',border:false,bodyStyle:'background:#d1ddef;'}
-                        ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
-                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
-                    ]
-                }]
-            },{
-                xtype:'fieldset'
-                ,width: 500
-                ,title:'".DISPLAYING."'
-                ,collapsible: true
-                ,collapsed: true
-                ,items:[{
-                    layout: 'form'
-                    ,border: false
-                    ,autoHeight:true
-                    ,bodyStyle:'padding:15px;background:#d1ddef;'
-                    ,items: ".$DISPLAYING."
-                }]
-            },{
-                xtype:'fieldset'
-                ,width: 500
-                ,title:'".WEIGHTING."'
-                ,collapsible: true
-                ,collapsed: false
-                ,items:[{
-                    layout: 'form'
-                    ,border: false
-                    ,autoHeight:true
-                    ,bodyStyle:'padding:15px;background:#d1ddef;'
-                    ,items: ".$WEIGHTING."
                 }]
             }]
         }

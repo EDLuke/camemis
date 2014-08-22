@@ -330,6 +330,29 @@ abstract class AssessmentProperties {
         return AcademicDBAccess::getNameOfSchoolTermByDate($this->date, $this->academicId);
     }
 
+    public function getCountryTotalScoreMax() {
+
+        /**
+         * ,['KHM', 'Cambodia']
+          ,['COL', 'Colombia']
+          ,['ETH', 'Ethiopia']
+          ,['LAO', 'Lao']
+          ,['PER', 'Peru']
+          ,['THA', 'Thailand']
+          ,['VNM', 'Vietnam']
+         */
+        switch (UserAuth::getCountryEducation()) {
+            case "VNM":
+                return 10;
+            case "KHM":
+                return 100;
+            case "VNM":
+                return 10;
+            default:
+                return 100;
+        }
+    }
+
     public static function displayAssignmentResult($type, $object) {
 
         $firstValue = $object ? $object->POINTS : "---";
