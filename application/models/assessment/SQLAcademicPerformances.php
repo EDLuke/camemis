@@ -242,6 +242,7 @@ class SQLAcademicPerformances {
 
     public static function getActionStudentAPF($stdClass) {
 
+        $gradePoints = (isset($stdClass->gradePoints)) ? $stdClass->gradePoints : "";
         $average = (isset($stdClass->average)) ? $stdClass->average : "";
         $rank = (isset($stdClass->rank)) ? $stdClass->rank : "";
         $isManual = (isset($stdClass->isManual)) ? $stdClass->isManual : "";
@@ -270,6 +271,8 @@ class SQLAcademicPerformances {
             $SAVE_DATA["FOURTH_RESULT"] = $fourthResult;
         if ($gpaValue)
             $SAVE_DATA["GPA"] = $gpaValue;
+        if ($gradePoints)
+            $SAVE_DATA["GRADE_POINTS"] = $gradePoints;
 
         $facette = self::findStudentAPF($stdClass);
 
