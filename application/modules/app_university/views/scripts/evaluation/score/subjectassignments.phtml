@@ -24,6 +24,7 @@ if(!$myObject) {header("Location: /main/permission/");exit;}
 
 AcademicDBAccess::mappingAcademicSchoolyear($myObject);
 $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
+$campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 
 AssessmentConfig::setGradingScale($academicObject);
 
@@ -568,6 +569,22 @@ Ext.onReady(function() {
             }";
             $BAR_ITEMS[] = $YEAR_RESULT;
         }
+    }
+    
+    switch(UserAuth::getUserType()){
+        case "ADMIN":
+        case "SUPERADMIN":
+            $setParamsGrading = "target=general&eduSystem=".$campusObject->QUALIFICATION_TYPE."";
+            $DISPLAY_GRADING_SCALES = "{
+                text: '".GRADING_SCALES."'
+                ,id:'GRADING_SCALES'
+                ,iconCls: 'icon-brick_magnify'
+                ,handler:function(){
+                    clickOpenPage('MAIN_CONTENT','','/academicsetting/gradingsystemlist/?camIds=".$this->urlEncryp->encryptedGet($setParamsGrading)."');
+                }
+            }";
+            $BAR_ITEMS[] = $DISPLAY_GRADING_SCALES;
+        break;
     }
     
     ////////////////////////////////////////////////////////////////////////////

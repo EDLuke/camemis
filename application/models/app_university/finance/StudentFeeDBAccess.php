@@ -287,6 +287,7 @@ class StudentFeeDBAccess extends FeeDBAccess {
         $SAVEDATA['CREATED_DATE'] = getCurrentDBDateTime();
         $SAVEDATA['CREATED_BY'] = Zend_Registry::get('USER')->CODE;
         //@veasna
+        $SAVEDATA['DESCRIPTION'] = addText($params["DESCRIPTION"]);
         $SAVEDATA['AMOUNT_TAX'] = $taxAmount;
         $SAVEDATA['FORMULAR_TAX'] = $taxFormular;
         $SAVEDATA['DISCOUNT'] = $discount_amount;
@@ -1481,9 +1482,9 @@ class StudentFeeDBAccess extends FeeDBAccess {
 
             $data  = array();
             $where = array();
-            $data['PAID_STATUS'] = "'". $PAID_STATUS ."'";
+            $data['PAID_STATUS'] = $PAID_STATUS;
             if ($USER_OWED)
-                $data['AMOUNT_OWED'] = "'". $USER_OWED ."'";
+                $data['AMOUNT_OWED'] = $USER_OWED;
 
             $where[] = "STUDENT='". $studentId ."'";
             $where[] = "FEE='". $feeId ."'";

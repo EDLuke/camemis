@@ -196,6 +196,7 @@ class SQLEvaluationStudentSubject {
         $fourthResult = (isset($stdClass->fourthResult)) ? $stdClass->fourthResult : "";
         $creditHours = (isset($stdClass->creditHours)) ? $stdClass->creditHours : "";
         $mappingValue = (isset($stdClass->mappingValue)) ? $stdClass->mappingValue : "";
+        $gradePoints = (isset($stdClass->gradePoints)) ? $stdClass->gradePoints : "";
 
         if ($average && $oldValue) {
             if (is_numeric($oldValue)) {
@@ -238,6 +239,8 @@ class SQLEvaluationStudentSubject {
             $SAVE_DATA["COEFF_VALUE"] = $coeffValue;
         if ($scoreType)
             $SAVE_DATA["SCORE_TYPE"] = $scoreType;
+        if ($gradePoints)
+            $SAVE_DATA["GRADE_POINTS"] = $gradePoints;
 
         if ($studentId) {
 

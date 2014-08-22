@@ -19,6 +19,7 @@ $academicObject = AcademicDBAccess::findGradeFromId($this->academicId);
 
 if(!$academicObject) {header("Location: /main/permission/");exit;}
 
+$campusObject = AcademicDBAccess::findGradeFromId($academicObject->CAMPUS_ID);
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($academicObject->SCHOOL_YEAR);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
@@ -362,6 +363,22 @@ $setParams .= "&academicId=".$this->academicId."";
         if($academicObject->DISPLAY_YEAR_RESULT){
             $TBAR_ITEMS[] = $YEAR_RESULT;
             $DEFAUL_DISPLAY_ITEMS[] = "/evaluation/performanceyeartraditional/?camIds=".$this->urlEncryp->encryptedGet($setYearParams)."";
+        }
+        
+        switch(UserAuth::getUserType()){
+            case "ADMIN":
+            case "SUPERADMIN":
+                $setParamsGrading = "target=general&eduSystem=".$campusObject->QUALIFICATION_TYPE."";
+                $DISPLAY_GRADING_SCALES = "{
+                    text: '".GRADING_SCALES."'
+                    ,id:'GRADING_SCALES'
+                    ,iconCls: 'icon-brick_magnify'
+                    ,handler:function(){
+                        clickOpenPage('MAIN_CONTENT','','/academicsetting/gradingsystemlist/?camIds=".$this->urlEncryp->encryptedGet($setParamsGrading)."');
+                    }
+                }";
+            $TBAR_ITEMS[] = $DISPLAY_GRADING_SCALES;
+            break;
         }
         
         $DISPLAY_TBAR_ITEMS = "['-',".implode(",'-',",$TBAR_ITEMS)."]";

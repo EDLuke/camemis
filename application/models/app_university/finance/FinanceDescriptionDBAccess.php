@@ -187,11 +187,11 @@ class FinanceDescriptionDBAccess {
         if ($objectId != "new")
         {
             $data = array();
-            $data['NAME'] = "'" . addText($params["NAME"]) . "'";
+            $data['NAME'] = addText($params["NAME"]);
             if (isset($params["CHOOSE_TYPE"]))
-                $data['CHOOSE_TYPE'] = "'" . addText($params["CHOOSE_TYPE"]) . "'";
+                $data['CHOOSE_TYPE'] = addText($params["CHOOSE_TYPE"]);
             if (isset($params["LINK"]))
-                $data['LINK'] = "'" . $params["LINK"] . "'";
+                $data['LINK'] = addText($params["LINK"]);
             self::dbAccess()->update("t_finance_description", $data, "ID='" . addText($params["objectId"]) . "'");
             self::updateChildren($objectId);
         }else
@@ -305,8 +305,8 @@ class FinanceDescriptionDBAccess {
             foreach ($result as $value)
             {
                 $data = array();
-                $data['CHOOSE_TYPE'] = "'" . $facette->CHOOSE_TYPE . "'";
-                $data['LINK'] = "'" . $facette->LINK . "'";
+                $data['CHOOSE_TYPE'] = $facette->CHOOSE_TYPE;
+                $data['LINK'] = $facette->LINK;
                 self::dbAccess()->update("t_finance_description", $data, "PARENT='" . $value->PARENT . "'");
             }
         }

@@ -35,7 +35,7 @@ $OBJECT_SCHOLARSHIP_TREE->setSaveUrl("/dataset/jsonsave/");
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-$DISABLED_READ_RIGHT = UserAuth::getACLStudent("READ_RIGHT")?"false":"true";
+$DISABLED_READ_RIGHT = UserAuth::getACLValue("CASH_MANAGEMENT_STUDENT_READ_RIGHT")?"false":"true";
 
 ?>
 <script>

@@ -324,11 +324,15 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["RANK"] = getScoreRank($scoreList, $AVERAGE);
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
 
-                if ($this->getSettingEvaluationOption()) {
-                    $data[$i]["ASSESSMENT"] = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                $facette = SQLAcademicPerformances::findStudentAPF($stdClass);
+                $IS_MANUAL = $facette ? $facette->IS_MANUAL : false;
+                if ($IS_MANUAL) {
+                    $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
+                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
                 }
+                $data[$i]["ASSESSMENT"] = $assessmentId;
+                $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
 
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
 
@@ -378,11 +382,15 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, $this->term);
 
-                if ($this->getSettingEvaluationOption()) {
-                    $data[$i]["ASSESSMENT"] = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                $facette = SQLAcademicPerformances::findStudentAPF($stdClass);
+                $IS_MANUAL = $facette ? $facette->IS_MANUAL : false;
+                if ($IS_MANUAL) {
+                    $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
+                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
                 }
+                $data[$i]["ASSESSMENT"] = $assessmentId;
+                $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
 
                 $i++;
             }
@@ -418,12 +426,15 @@ class AcademicPerformances extends AssessmentProperties {
                 $data[$i]["RANK"] = $RANK ? $RANK : "---";
                 $data[$i]["AVERAGE"] = $AVERAGE ? $AVERAGE : "---";
 
-                if ($this->getSettingEvaluationOption()) {
-                    $data[$i]["ASSESSMENT"] = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
+                $facette = SQLAcademicPerformances::findStudentAPF($stdClass);
+                $IS_MANUAL = $facette ? $facette->IS_MANUAL : false;
+                if ($IS_MANUAL) {
+                    $assessmentId = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
                 } else {
-                    $data[$i]["ASSESSMENT"] = SQLAcademicPerformances::getPropertiesStudentAPF($stdClass)->GRADING;
+                    $assessmentId = AssessmentConfig::calculateGradingScale($AVERAGE, $this->getSettingQualificationType());
                 }
-
+                $data[$i]["ASSESSMENT"] = $assessmentId;
+                $data[$i]["GRADE_POINTS"] = AssessmentConfig::getGradePointsById($assessmentId);
                 $data[$i]["GPA"] = SQLAcademicPerformances::getSQLStudentGPA($stdClass, false);
 
                 switch ($this->getTermNumber()) {
@@ -681,7 +692,8 @@ class AcademicPerformances extends AssessmentProperties {
                     $rank = isset($entries[$i]["RANK"]) ? $entries[$i]["RANK"] : "";
                     $average = isset($entries[$i]["AVERAGE"]) ? $entries[$i]["AVERAGE"] : "";
                     $stdClass->gpaValue = isset($entries[$i]["GPA"]) ? $entries[$i]["GPA"] : "";
-                    
+                    $stdClass->gradePoints = isset($entries[$i]["GRADE_POINTS"]) ? $entries[$i]["GRADE_POINTS"] : "";
+
                     if (is_numeric($average)) {
                         $stdClass->rank = $rank ? $rank : "---";
                     }
