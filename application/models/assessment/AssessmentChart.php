@@ -16,31 +16,43 @@ class AssessmentChart extends AssessmentProperties {
     const IS_PASS = 1;
     const IS_FAIL = 2;
 
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    public static function dbSelectAccess() {
+    public static function dbSelectAccess()
+    {
         return false::dbAccess()->select();
     }
 
-    public function setAcademicId($value) {
+    public function setAcademicId($value)
+    {
         return $this->academicId = $value;
     }
 
-    public function setSubjectId($value) {
+    public function setSubjectId($value)
+    {
         return $this->subjectId = $value;
     }
 
-    public function setTerm($value) {
+    public function setTerm($value)
+    {
         return $this->term = $value;
     }
 
-    public function setSection($value) {
+    public function setSection($value)
+    {
         return $this->section = $value;
     }
 
-    public function setParams() {
+    public function setMonthYear($value)
+    {
+        return $this->monthyear = $value;
+    }
+
+    public function setParams()
+    {
         $object = new stdClass();
         $object->academicId = $this->academicId;
         $object->scoreType = $this->getSubjectScoreType();
@@ -55,7 +67,8 @@ class AssessmentChart extends AssessmentProperties {
         return $object;
     }
 
-    public function getSubjectGradingScaleByClass() {
+    public function getSubjectGradingScaleByClass()
+    {
 
         $stdClass = $this->setParams();
         $entries = AssessmentConfig::getListGradingScales(
@@ -65,14 +78,17 @@ class AssessmentChart extends AssessmentProperties {
         $data = array();
 
         $COUNT = 0;
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_subject_assessment", Array("C" => "COUNT(*)"));
                 $SQL->where("SUBJECT_ID = ?", $this->subjectId);
                 $SQL->where("CLASS_ID = '" . $this->academicId . "'");
                 $SQL->where("ASSESSMENT_ID = '" . $value->ID . "'");
-                switch ($stdClass->section) {
+                switch ($stdClass->section)
+                {
                     case "MONTH":
                         if (isset($stdClass->month))
                             $SQL->where("MONTH = '" . $stdClass->month . "'");
@@ -89,12 +105,13 @@ class AssessmentChart extends AssessmentProperties {
                 $SQL->where("SCHOOLYEAR_ID = '" . $stdClass->schoolyearId . "'");
                 $SQL->where("SECTION = '" . $stdClass->section . "'");
                 $SQL->group("ASSESSMENT_ID");
-                
+
                 //error_log($SQL->__toString());
                 $facette = self::dbAccess()->fetchRow($SQL);
                 $COUNT = $facette ? $facette->C : 0;
 
-                switch ($stdClass->scoreType) {
+                switch ($stdClass->scoreType)
+                {
                     case self::SCORE_NUMBER:
                         $data[] = "['" . $value->DESCRIPTION . "', " . $COUNT . "]";
                         break;
@@ -110,7 +127,8 @@ class AssessmentChart extends AssessmentProperties {
     ////////////////////////////////////////////////////////////////////////////
     //  CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getSubjectAVGStudentList() {
+    public function getSubjectAVGStudentList()
+    {
 
         $stdClass = $this->setParams();
         $entries = $this->listClassStudents();
@@ -118,8 +136,10 @@ class AssessmentChart extends AssessmentProperties {
         $data = array();
         $entries = $this->listClassStudents();
 
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $stdClass->studentId = $value->ID;
                 $data[] = "['" . getFullName($value->FIRSTNAME, $value->LASTNAME) . "', " . self::getStudentSubjectValue($stdClass) . "]";
             }
@@ -130,63 +150,96 @@ class AssessmentChart extends AssessmentProperties {
     //  END CLASS STUDENTS SUBJECT AVERAGE...
     ////////////////////////////////////////////////////////////////////////////
 
-    public function getSubjectPassStatus() {
+    public function getSubjectPassStatus($display)
+    {
 
         $stdClass = $this->setParams();
         $entries = $this->listClassStudents();
 
-        $COUNT_MALE_FAIL = 0;
-        $COUNT_MALE_PASS = 0;
-        $COUNT_FEMALE_FAIL = 0;
-        $COUNT_FEMALE_PASS = 0;
-        $COUNT_UNKNOWN_FAIL = 0;
-        $COUNT_UNKNOWN_PASS = 0;
+        switch ($display)
+        {
+            case "WITH_GENDER":
+                $COUNT_MALE_FAIL = 0;
+                $COUNT_MALE_PASS = 0;
+                $COUNT_FEMALE_FAIL = 0;
+                $COUNT_FEMALE_PASS = 0;
+                $COUNT_UNKNOWN_FAIL = 0;
+                $COUNT_UNKNOWN_PASS = 0;
 
-        if ($entries) {
-            foreach ($entries as $value) {
-                $stdClass->studentId = $value->ID;
-                $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, false);
-                if ($facette) {
-                    switch ($value->GENDER) {
-                        case 1:
-                            $COUNT_MALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
-                            $COUNT_MALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
-                            break;
-                        case 2:
-                            $COUNT_FEMALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
-                            $COUNT_FEMALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
-                            break;
-                        default:
-                            $COUNT_UNKNOWN_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
-                            $COUNT_UNKNOWN_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
-                            break;
+                if ($entries)
+                {
+                    foreach ($entries as $value)
+                    {
+                        $stdClass->studentId = $value->ID;
+                        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, false);
+                        if ($facette)
+                        {
+                            switch ($value->GENDER)
+                            {
+                                case 1:
+                                    $COUNT_MALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                                    $COUNT_MALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
+                                    break;
+                                case 2:
+                                    $COUNT_FEMALE_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                                    $COUNT_FEMALE_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
+                                    break;
+                                default:
+                                    $COUNT_UNKNOWN_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                                    $COUNT_UNKNOWN_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
+                                    break;
+                            }
+                        }
                     }
                 }
-            }
+
+                $OUTPUT = "";
+                $OUTPUT .= "[{";
+                $OUTPUT .= "name:'" . MALE . "',data:[" . $COUNT_MALE_PASS . "," . $COUNT_MALE_FAIL . ",]";
+                $OUTPUT .= "},{";
+                $OUTPUT .= "name:'" . FEMALE . "',data:[" . $COUNT_FEMALE_PASS . "," . $COUNT_FEMALE_FAIL . "]";
+                $OUTPUT .= "},{";
+                $OUTPUT .= "name:'" . UNKNOWN . "',data:[" . $COUNT_UNKNOWN_PASS . "," . $COUNT_UNKNOWN_FAIL . "]";
+                $OUTPUT .= "}]";
+
+                break;
+            case "WITHOUT_GENDER":
+                $COUNT_FAIL = 0;
+                $COUNT_PASS = 0;
+                if ($entries)
+                {
+                    foreach ($entries as $value)
+                    {
+                        $stdClass->studentId = $value->ID;
+                        $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, false);
+                        if ($facette)
+                        {
+                            $COUNT_FAIL += ($facette->IS_FAIL == self::IS_FAIL) ? 1 : 0;
+                            $COUNT_PASS += ($facette->IS_FAIL == self::IS_PASS) ? 1 : 0;
+                        }
+                    }
+
+                    $OUTPUT = "[['" . PASS . "'," . $COUNT_PASS . "],['" . FAIL . "'," . $COUNT_FAIL . "]]";
+                }
+                break;
         }
 
-        return "[{
-            name: '" . MALE . "',
-            data: [" . $COUNT_MALE_PASS . "," . $COUNT_MALE_FAIL . ", ]
-        },{
-            name: '" . FEMALE . "',
-            data: [" . $COUNT_FEMALE_PASS . "," . $COUNT_FEMALE_FAIL . "]
-        },{
-            name: '" . UNKNOWN . "',
-            data: [" . $COUNT_UNKNOWN_PASS . "," . $COUNT_UNKNOWN_FAIL . "]
-        }]";
+        return $OUTPUT;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // TEACHER ENTER SCORE...
     ////////////////////////////////////////////////////////////////////////////
-    public function getImplodeAssignments() {
+    public function getImplodeAssignments()
+    {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $data[] = "'" . addslashes($value->SHORT) . "'";
             }
         }
@@ -194,13 +247,16 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getCountTeacherEnterScore($date) {
+    public function getCountTeacherEnterScore($date)
+    {
 
         $entries = $this->getCurrentClassAssignments();
 
         $data = array();
-        if ($entries) {
-            foreach ($entries as $value) {
+        if ($entries)
+        {
+            foreach ($entries as $value)
+            {
                 $SQL = self::dbAccess()->select();
                 $SQL->from("t_student_assignment", Array("C" => "COUNT(*)"));
                 $SQL->where("SUBJECT_ID = ?", $this->subjectId);
@@ -216,7 +272,8 @@ class AssessmentChart extends AssessmentProperties {
         return implode(",", $data);
     }
 
-    public function getDataSetTeacherEnterScore() {
+    public function getDataSetTeacherEnterScore()
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student_score_date", Array("*"));
@@ -226,8 +283,10 @@ class AssessmentChart extends AssessmentProperties {
         $result = self::dbAccess()->fetchAll($SQL);
 
         $data = array();
-        if ($result) {
-            foreach ($result as $value) {
+        if ($result)
+        {
+            foreach ($result as $value)
+            {
                 $name = "{name:'" . getShowDate($value->SCORE_INPUT_DATE) . "'";
                 $name .= ",data:[" . $this->getCountTeacherEnterScore($value->SCORE_INPUT_DATE) . "]}";
                 $data[] = $name;
@@ -240,11 +299,15 @@ class AssessmentChart extends AssessmentProperties {
     // END TEACHER ENTER SCORE...
     ////////////////////////////////////////////////////////////////////////////
 
-    public static function getStudentSubjectValue($stdClass) {
+    public static function getStudentSubjectValue($stdClass)
+    {
         $facette = SQLEvaluationStudentSubject::getPropertiesStudentSE($stdClass, false);
-        if ($facette) {
+        if ($facette)
+        {
             return (is_numeric($facette->SUBJECT_VALUE)) ? $facette->SUBJECT_VALUE : 1;
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }

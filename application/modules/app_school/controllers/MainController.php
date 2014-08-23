@@ -18,8 +18,10 @@ require_once 'models/UserAuth.php';
 
 class MainController extends Zend_Controller_Action {
 
-    public function init() {
-        if (!UserAuth::mainidentify()) {
+    public function init()
+    {
+        if (!UserAuth::mainidentify())
+        {
             $this->_request->setControllerName('error');
             $this->_request->setActionName('expired');
             $this->_request->setDispatched(false);
@@ -31,86 +33,104 @@ class MainController extends Zend_Controller_Action {
         $this->urlEncryp = new URLEncryption();
         $this->view->urlEncryp = $this->urlEncryp;
 
-        if ($this->_getParam('camIds')) {
+        if ($this->_getParam('camIds'))
+        {
             $this->urlEncryp->parseEncryptedGET($this->_getParam('camIds'));
         }
 
         $this->DB_USER = UserMemberDBAccess::getInstance();
         $this->SCHOOL = SchoolDBAccess::getSchool();
     }
-    
-    public function testAction() {
+
+    public function testAction()
+    {
         
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     //DASHBOARD....
     ////////////////////////////////////////////////////////////////////////////
-    public function userdashboardAction() {
+    public function userdashboardAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/index");
     }
 
-    public function dashboardenrolledstudentAction() {
+    public function dashboardenrolledstudentAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/enrolledstudent");
     }
 
-    public function dashboardstudentattendanceAction() {
+    public function dashboardstudentattendanceAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/studentattendance");
     }
 
-    public function dashboardstaffattendanceAction() {
+    public function dashboardstaffattendanceAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/staffattendance");
     }
 
-    public function dashboardstaffdisciplineAction() {
+    public function dashboardstaffdisciplineAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/staffdiscipline");
     }
 
-    public function dashboardstudentdisciplineAction() {
+    public function dashboardstudentdisciplineAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/studentdiscipline");
     }
 
-    public function studentdashboardAction() {
+    public function studentdashboardAction()
+    {
         $this->_helper->viewRenderer("dashboard/student/index");
     }
 
-    public function dashboardstudentassessmentAction() {
+    public function dashboardstudentassessmentAction()
+    {
         $this->_helper->viewRenderer("dashboard/student/assessment");
     }
 
-    public function studentdashboardnewsAction() {
+    public function studentdashboardnewsAction()
+    {
         $this->_helper->viewRenderer("dashboard/student/news");
     }
 
-    public function teacherdashboardnewsAction() {
+    public function teacherdashboardnewsAction()
+    {
         $this->_helper->viewRenderer("dashboard/teacher/news");
     }
 
-    public function dashboardfacilityAction() {
+    public function dashboardfacilityAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/facility");
     }
 
-    public function dashboardstaffcontractAction() {
+    public function dashboardstaffcontractAction()
+    {
         $this->_helper->viewRenderer("dashboard/user/staffcontract");
     }
 
     ////////////////////////////////////////////////////////////////////////////
 
-    public function permissionAction() {
+    public function permissionAction()
+    {
         
     }
 
-    public function mycalendarAction() {
+    public function mycalendarAction()
+    {
         
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         $this->setMainIndexApplication();
         $this->view->SCHOOL = $this->SCHOOL;
 
         //error_log(UserAuth::getUserType());
-        switch (UserAuth::getUserType()) {
+        switch (UserAuth::getUserType())
+        {
             case "STUDENT":
                 $this->_helper->viewRenderer('student');
                 break;
@@ -122,15 +142,18 @@ class MainController extends Zend_Controller_Action {
                 $this->_helper->viewRenderer('teacher');
                 break;
             default:
-                if (UserAuth::getAddedUserRole()) {
+                if (UserAuth::getAddedUserRole())
+                {
                     $this->_helper->viewRenderer('teacher');
                 }
                 break;
         }
     }
 
-    public function showstudentmainAction() {
-        switch (UserAuth::getUserType()) {
+    public function showstudentmainAction()
+    {
+        switch (UserAuth::getUserType())
+        {
             case "ADMIN":
             case "SUPERADMIN":
             case "GUARDIAN":
@@ -139,13 +162,17 @@ class MainController extends Zend_Controller_Action {
         }
     }
 
-    public function homeAction() {
+    public function homeAction()
+    {
 
         $this->view->SCHOOL = $this->SCHOOL;
 
-        if (Zend_Registry::get('ADDITIONAL_ROLE')) {
+        if (Zend_Registry::get('ADDITIONAL_ROLE'))
+        {
             $this->view->URL_USER_LOGIN = $this->UTILES->buildURL('staff/tutor', array("objectId" => Zend_Registry::get('USERID')));
-        } else {
+        }
+        else
+        {
             $this->view->URL_USER_LOGIN = $this->UTILES->buildURL('staff/showitem', array("objectId" => Zend_Registry::get('USERID')));
         }
 
@@ -154,23 +181,28 @@ class MainController extends Zend_Controller_Action {
         $this->view->URL_VIDEO = $this->UTILES->buildURL('school/video', array());
     }
 
-    public function ldapAction() {
+    public function ldapAction()
+    {
         
     }
 
-    public function chatAction() {
+    public function chatAction()
+    {
         
     }
 
-    public function verticalbarchartAction() {
+    public function verticalbarchartAction()
+    {
         
     }
 
-    public function piechartAction() {
+    public function piechartAction()
+    {
         
     }
 
-    private function studentModul() {
+    private function studentModul()
+    {
 
         $STUDENT_SEARCH = "{
             text: '" . STUDENT_SEARCH . "'
@@ -339,7 +371,8 @@ class MainController extends Zend_Controller_Action {
         return $js = $CHOOSE_STUDENT_MODUL ? $js : "";
     }
 
-    private function staffModul() {
+    private function staffModul()
+    {
 
         $STAFF_SEARCH = "{
             text: '" . STAFF_SEARCH . "'
@@ -454,7 +487,8 @@ class MainController extends Zend_Controller_Action {
         return $CHOOSE_MODUL ? $js : "";
     }
 
-    private function academicModul() {
+    private function academicModul()
+    {
 
         ////////////////////////////////////////////////////////////////////////
         //EXAM
@@ -507,15 +541,21 @@ class MainController extends Zend_Controller_Action {
         //ACADEMIC_MODUL
         ////////////////////////////////////////////////////////////////////////
 
-        if (UserAuth::getACLValue("SCORES_MANAGEMENT")) {
+        if (UserAuth::getACLValue("SCORES_MANAGEMENT"))
+        {
             $HIDDEN_SCORES_MANAGEMENT = 'false';
-        } else {
+        }
+        else
+        {
             $HIDDEN_SCORES_MANAGEMENT = 'true';
         }
 
-        if (UserAuth::getACLValue("STUDENT_ATTENDANCE")) {
+        if (UserAuth::getACLValue("STUDENT_ATTENDANCE"))
+        {
             $HIDDEN_STUDENT_ATTENDANCE = 'false';
-        } else {
+        }
+        else
+        {
             $HIDDEN_STUDENT_ATTENDANCE = 'true';
         }
 
@@ -653,25 +693,31 @@ class MainController extends Zend_Controller_Action {
         if (UserAuth::displayCreditEducationSystem())
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = $CREDIT_EDUCATION_SYSTEM;
 
-        if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS) {
+        if (Zend_Registry::get('SCHOOL')->TRAINING_PROGRAMS)
+        {
             if (UserAuth::getACLValue("ACADEMIC_TRAINING_PROGRAMS"))
                 $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $TRAINING_PROGRAMS . "";
         }
 
-        if (Zend_Registry::get('SCHOOL')->AVAILABLE_ELEARNING == 1) {
+        if (Zend_Registry::get('SCHOOL')->AVAILABLE_ELEARNING == 1)
+        {
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $ELEARNING_MANAGEMENT . "";
         }
 
-        if (UserAuth::displayRoleGeneralEducation()) {
+        if (UserAuth::displayRoleGeneralEducation())
+        {
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $CLASS_TRANSFER . "";
         }
 
-        if (UserAuth::displayRoleGeneralEducation()) {
+        if (UserAuth::displayRoleGeneralEducation())
+        {
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $EXAMINATION_MANAGEMENT . "";
         }
 
-        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION) {
-            if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION")) {
+        if (Zend_Registry::get('SCHOOL')->GENERAL_EDUCATION)
+        {
+            if (UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION"))
+            {
                 $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $EXTRA_CLASS_MANAGEMENT . "";
             }
         }
@@ -679,7 +725,8 @@ class MainController extends Zend_Controller_Action {
         if (UserAuth::getACLValue("BULLETIN_BOARD"))
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $BULLETIN_BOARD . "";
 
-        if (UserAuth::getACLValue("ACADEMIC_SETTING")) {
+        if (UserAuth::getACLValue("ACADEMIC_SETTING"))
+        {
 
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $SCHOOL_DOCUMENTATION . "";
             $CHOOSE_ACADEMIC_MODUL_ITEMS[] = "" . $ACADEMIC_SETTING . "";
@@ -697,11 +744,15 @@ class MainController extends Zend_Controller_Action {
         return $CHOOSE_ACADEMIC_MODUL_ITEMS ? $js : "";
     }
 
-    private function administrationModul() {
+    private function administrationModul()
+    {
 
-        if (Zend_Registry::get('SCHOOL')->MULTI_BRANCH_OFFICE) {
+        if (Zend_Registry::get('SCHOOL')->MULTI_BRANCH_OFFICE)
+        {
             $DISABLED_BRANCH_OFFICE = "false";
-        } else {
+        }
+        else
+        {
             $DISABLED_BRANCH_OFFICE = "true";
         }
 
@@ -732,21 +783,21 @@ class MainController extends Zend_Controller_Action {
             }
         } ";
 
-        $EVALUATION_MANAGEMENT = "{
-            text: '" . EVALUATION_MANAGEMENT . "'
-            ,iconCls:'icon-clipboard_add'
-            ,handler: function(){
-                addTab('EVALUATION_MANAGEMENT','" . EVALUATION_MANAGEMENT . "','/camemisevaluation/evaluationmanagementmain/?key=" . camemisId() . "');
-            }
-        } ";
-
-        $LETTER_MANAGEMENT = "{
-            text: '" . LETTER_MANAGEMENT . "'
-            ,iconCls:'icon-certificate'
-            ,handler: function(){
-                addTab('LETTER_MANAGEMENT','" . LETTER_MANAGEMENT . "','/letter/?key=" . camemisId() . "');
-            }
-        } ";
+//        $EVALUATION_MANAGEMENT = "{
+//            text: '" . EVALUATION_MANAGEMENT . "'
+//            ,iconCls:'icon-clipboard_add'
+//            ,handler: function(){
+//                addTab('EVALUATION_MANAGEMENT','" . EVALUATION_MANAGEMENT . "','/camemisevaluation/evaluationmanagementmain/?key=" . camemisId() . "');
+//            }
+//        } ";
+//
+//        $LETTER_MANAGEMENT = "{
+//            text: '" . LETTER_MANAGEMENT . "'
+//            ,iconCls:'icon-certificate'
+//            ,handler: function(){
+//                addTab('LETTER_MANAGEMENT','" . LETTER_MANAGEMENT . "','/letter/?key=" . camemisId() . "');
+//            }
+//        } ";
 
         $SYSTEM_USER = "{
             text: '" . SYSTEM_USER . "'
@@ -773,12 +824,11 @@ class MainController extends Zend_Controller_Action {
 
         if (UserAuth::getACLValue("FACILITY_MANAGEMENT"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $FACILITY_MANAGEMENT . "";
-        
+
         //if (UserAuth::getACLValue("EVALUATION_MANAGEMENT"))
-        $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $EVALUATION_MANAGEMENT . "";
-        
-        if (UserAuth::getACLValue("LETTER_MANAGEMENT"))
-            $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $LETTER_MANAGEMENT . "";
+        //$CHOOSE_ADMINISTRATION_ITEMS[] = "" . $EVALUATION_MANAGEMENT . "";
+        //if (UserAuth::getACLValue("LETTER_MANAGEMENT"))
+        //$CHOOSE_ADMINISTRATION_ITEMS[] = "" . $LETTER_MANAGEMENT . "";
 
         if (UserAuth::getACLValue("SYSTEM_USER"))
             $CHOOSE_ADMINISTRATION_ITEMS[] = "" . $SYSTEM_USER . "";
@@ -798,7 +848,8 @@ class MainController extends Zend_Controller_Action {
         return $CHOOSE_ADMINISTRATION_ITEMS ? $js : "";
     }
 
-    private function setToolbar() {
+    private function setToolbar()
+    {
 
         $CHOOSE_MODUL = array();
 
@@ -818,7 +869,8 @@ class MainController extends Zend_Controller_Action {
         $SCHOOL_NAME = Zend_Registry::get('SCHOOL')->NAME ? Zend_Registry::get('SCHOOL')->NAME : "";
         $SCHOOL_URL = Zend_Registry::get('SCHOOL')->WEBSITE ? Zend_Registry::get('SCHOOL')->WEBSITE : "";
 
-        if ($CHOOSE_MODUL) {
+        if ($CHOOSE_MODUL)
+        {
             $js .= ",'->',{
                 text: '" . $SCHOOL_NAME . "'
                 ,iconCls: 'icon-application_home'
@@ -832,7 +884,9 @@ class MainController extends Zend_Controller_Action {
                     Ext.MessageBox.confirm('" . CONFIRM . "', '" . MSG_LOGOFF . "', showResult);
                 }
             }";
-        } else {
+        }
+        else
+        {
             $js .= "'->',{
                 text: '" . $SCHOOL_NAME . "'
                 ,iconCls: 'icon-application_home'
@@ -851,12 +905,14 @@ class MainController extends Zend_Controller_Action {
         return $js;
     }
 
-    private function userToolBar() {
+    private function userToolBar()
+    {
 
         $SCHOOL_NAME = Zend_Registry::get('SCHOOL')->NAME ? Zend_Registry::get('SCHOOL')->NAME : "";
         $SCHOOL_URL = Zend_Registry::get('SCHOOL')->WEBSITE ? Zend_Registry::get('SCHOOL')->WEBSITE : "";
 
-        switch (UserAuth::getUserType()) {
+        switch (UserAuth::getUserType())
+        {
             case "GUARDIAN":
             case "STUDENT":
                 $js = "'->',{
@@ -882,35 +938,41 @@ class MainController extends Zend_Controller_Action {
         return $js;
     }
 
-    private function setMainIndexApplication() {
+    private function setMainIndexApplication()
+    {
         $this->view->TOOLBAR = $this->userToolBar();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     //Model Dashborad....
     ////////////////////////////////////////////////////////////////////////////
-    public static function dbAccess() {
+    public static function dbAccess()
+    {
         return Zend_Registry::get('DB_ACCESS');
     }
 
-    protected static function setPositionDashboardItem($newposition, $const) {
+    protected static function setPositionDashboardItem($newposition, $const)
+    {
 
         $currentObject = self::getObjectByConst($const);
         $nextObject = self::getNextObject($newposition);
-        if ($currentObject && $nextObject) {
-            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $currentObject->POSITION), "ID=". $nextObject->ID);
-            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $newposition), "ID=". $currentObject->ID);
+        if ($currentObject && $nextObject)
+        {
+            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $currentObject->POSITION), "ID=" . $nextObject->ID);
+            self::dbAccess()->update("t_user_dashboard", array('POSITION' => $newposition), "ID=" . $currentObject->ID);
         }
 
         return array("success" => true);
     }
 
-    protected static function actionRemovePanel($Id) {
+    protected static function actionRemovePanel($Id)
+    {
         self::dbAccess()->delete("t_user_dashboard", " CONST='" . $Id . "' AND USER_ID='" . Zend_Registry::get('USER')->ID . "'");
         return array("success" => true);
     }
 
-    protected static function getObjectByConst($const) {
+    protected static function getObjectByConst($const)
+    {
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_dashboard", array("*"));
         $SQL->where("CONST = '" . $const . "'");
@@ -919,7 +981,8 @@ class MainController extends Zend_Controller_Action {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function getNextObject($position) {
+    protected static function getNextObject($position)
+    {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_user_dashboard", array("*"));
@@ -929,22 +992,28 @@ class MainController extends Zend_Controller_Action {
         return self::dbAccess()->fetchRow($SQL);
     }
 
-    protected static function jsonTreeUnassignedDashboardItems() {
+    protected static function jsonTreeUnassignedDashboardItems()
+    {
 
         $entries = Utiles::getDashboardItems();
 
         $USED_DATA = array();
-        if (Utiles::getUserDashboardItems()) {
-            foreach (Utiles::getUserDashboardItems() as $value) {
+        if (Utiles::getUserDashboardItems())
+        {
+            foreach (Utiles::getUserDashboardItems() as $value)
+            {
                 $USED_DATA[] = $value->CONST;
             }
         }
 
         $data = array();
-        if ($entries) {
+        if ($entries)
+        {
             $i = 0;
-            foreach ($entries as $key => $value) {
-                if (!in_array($key, $USED_DATA)) {
+            foreach ($entries as $key => $value)
+            {
+                if (!in_array($key, $USED_DATA))
+                {
                     $text = defined(trim($key)) ? constant(trim($key)) : trim($key);
                     $data[$i]['id'] = "" . $key . "";
                     $data[$i]['text'] = $text;
@@ -960,9 +1029,11 @@ class MainController extends Zend_Controller_Action {
         return $data;
     }
 
-    protected static function actionAddUserDashboardItem($Id) {
+    protected static function actionAddUserDashboardItem($Id)
+    {
 
-        switch (UserAuth::getUserType()) {
+        switch (UserAuth::getUserType())
+        {
             case "SUPERADMIN":
                 $userType = "SUPERADMIN";
                 break;
@@ -983,9 +1054,11 @@ class MainController extends Zend_Controller_Action {
         $SQL = "SELECT * FROM t_user_dashboard ORDER BY POSITION DESC LIMIT 0 ,1";
         $facette = self::dbAccess()->fetchRow($SQL);
 
-        if ($facette) {
+        if ($facette)
+        {
             $data = Utiles::getDashboardItems();
-            if (isset($data[$Id])) {
+            if (isset($data[$Id]))
+            {
                 $SAVEDATA["USER_ID"] = Zend_Registry::get('USER')->ID;
                 $SAVEDATA["POSITION"] = $facette->POSITION + 1;
                 $SAVEDATA["CONST"] = $Id;
@@ -999,9 +1072,11 @@ class MainController extends Zend_Controller_Action {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    public function jsonsaveAction() {
+    public function jsonsaveAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
             case "setPositionDashboardItem":
                 $jsondata = self::setPositionDashboardItem($this->REQUEST->getPost('newposition'), $this->REQUEST->getPost('clickId'));
                 break;
@@ -1017,9 +1092,11 @@ class MainController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function jsontreeAction() {
+    public function jsontreeAction()
+    {
 
-        switch ($this->REQUEST->getPost('cmd')) {
+        switch ($this->REQUEST->getPost('cmd'))
+        {
 
             case "jsonTreeUnassignedDashboardItems":
                 $jsondata = self::jsonTreeUnassignedDashboardItems();
@@ -1029,7 +1106,8 @@ class MainController extends Zend_Controller_Action {
             $this->setJSON($jsondata);
     }
 
-    public function setJSON($jsondata) {
+    public function setJSON($jsondata)
+    {
 
         Zend_Loader::loadClass('Zend_Json');
         $json = Zend_Json::encode($jsondata);

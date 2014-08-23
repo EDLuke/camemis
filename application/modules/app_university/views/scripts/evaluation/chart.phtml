@@ -77,7 +77,6 @@ Class DisplayChart {
 
     protected function setChartSubjectAssessmentMonth()
     {
-        $dataset = "[['" . PASS . "', 80],['" . FAIL . "',20]]";
         $monthList = AcademicDBAccess::getAcademicMonthList($this->academicId);
 
         if ($monthList)
@@ -85,7 +84,12 @@ Class DisplayChart {
             foreach ($monthList as $key => $value)
             {
                 $title = constant($key) . " (" . $value . ")";
-                $object = new CamemisHighChart("PIC_CHART", "PIC_CHART_" . $key . "_" . $value . "", $title, $dataset);
+                $monthyear = $key . "_" . $value;
+                $object = new CamemisHighChart(
+                        "PIC_CHART"
+                        , "PIC_CHART_" . $monthyear . ""
+                        , $title
+                        , $this->chart->getSubjectPassStatus("WITH_GENDER", $monthyear));
                 $object->allowPointSelect = 'true';
                 $object->pointColor = 'black';
                 $object->height = 250;
@@ -119,7 +123,7 @@ Class DisplayChart {
                 "COLUMN_COMPARE_CHART"
                 , 'SUBJECT_PASS_STATUS'
                 , 'Pass/Fail Status'
-                , $this->chart->getSubjectPassStatus()
+                , $this->chart->getSubjectPassStatus("WITH_GENDER", false)
         );
 
         $SUBJECT_PASS_STATUS->allowPointSelect = 'true';
@@ -177,7 +181,12 @@ Class DisplayChart {
             foreach ($monthList as $key => $value)
             {
                 $title = constant($key) . " (" . $value . ")";
-                $object = new CamemisHighChart("PIC_CHART", "PIC_CHART_" . $key . "_" . $value . "", $title, $dataset);
+                $monthyear = $key . "_" . $value;
+                $object = new CamemisHighChart(
+                        "PIC_CHART"
+                        , "PIC_CHART_" . $monthyear . ""
+                        , $title
+                        , $this->chart->getSubjectPassStatus("WITH_GENDER", false));
                 $object->allowPointSelect = 'true';
                 $object->pointColor = 'black';
                 $object->height = 250;

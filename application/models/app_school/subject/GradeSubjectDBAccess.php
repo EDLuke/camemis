@@ -313,8 +313,6 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
         }
 
         $SAVEDATA['INCLUDE_IN_EVALUATION'] = isset($params["INCLUDE_IN_EVALUATION"]) ? 1 : 0;
-
-        $SAVEDATA['USED_IN_CLASS'] = $academicObject->EDUCATION_SYSTEM ? 0 : 1;
         $SAVEDATA['NATIONAL_EXAM'] = isset($params["NATIONAL_EXAM"]) ? 1 : 0;
         $SAVEDATA['FORMULA_TYPE'] = addText($params["FORMULA_TYPE"]);
         $SAVEDATA['SCORE_TYPE'] = isset($params["SCORE_TYPE"]) ? addText($params["SCORE_TYPE"]) : 1;
@@ -1009,25 +1007,25 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
 
                     if (!$value->USED_IN_CLASS)
                     {
-                        $data  = array();
+                        $data = array();
                         $where = array();
-                        $data['SUBJECT_TYPE']    = "'". $facette->SUBJECT_TYPE ."'";
-                        $data['INCLUDE_IN_EVALUATION'] = "'". $facette->INCLUDE_IN_EVALUATION ."'";
-                        $data['EDUCATION_TYPE']  = "'". $facette->EDUCATION_TYPE ."'";
-                        $data['EVALUATION_TYPE'] = "'". $facette->EVALUATION_TYPE ."'";
-                        $data['NATIONAL_EXAM']   = "'". $facette->NATIONAL_EXAM ."'";
-                        $data['SCORE_TYPE']      = "'". $facette->SCORE_TYPE ."'";
-                        $data['TEMPLATE']        = "'". $facette->TEMPLATE ."'";
-                        $data['TRAINING']        = "'". $facette->TRAINING ."'";
-                        $data['MAX_POSSIBLE_SCORE'] = "'". $facette->MAX_POSSIBLE_SCORE ."'";
-                        $data['SCORE_MIN']       = "'". $facette->SCORE_MIN ."'";
-                        $data['SCORE_MAX']       = "'". $facette->SCORE_MAX ."'";
-                        $data['COEFF_VALUE']     = "'". $facette->COEFF_VALUE ."'";
-                        $data['FORMULA_TYPE']    = "'". $facette->FORMULA_TYPE ."'";
-                        $data['COEFF']           = "'". $facette->COEFF ."'";
-                        $where[] = "SUBJECT='". $value->SUBJECT ."'";
-                        $where[] = "GRADE='". $gradeId ."'";
-                        $where[] = "SCHOOLYEAR='". $schoolyearId ."'";
+                        $data['SUBJECT_TYPE'] = "'" . $facette->SUBJECT_TYPE . "'";
+                        $data['INCLUDE_IN_EVALUATION'] = "'" . $facette->INCLUDE_IN_EVALUATION . "'";
+                        $data['EDUCATION_TYPE'] = "'" . $facette->EDUCATION_TYPE . "'";
+                        $data['EVALUATION_TYPE'] = "'" . $facette->EVALUATION_TYPE . "'";
+                        $data['NATIONAL_EXAM'] = "'" . $facette->NATIONAL_EXAM . "'";
+                        $data['SCORE_TYPE'] = "'" . $facette->SCORE_TYPE . "'";
+                        $data['TEMPLATE'] = "'" . $facette->TEMPLATE . "'";
+                        $data['TRAINING'] = "'" . $facette->TRAINING . "'";
+                        $data['MAX_POSSIBLE_SCORE'] = "'" . $facette->MAX_POSSIBLE_SCORE . "'";
+                        $data['SCORE_MIN'] = "'" . $facette->SCORE_MIN . "'";
+                        $data['SCORE_MAX'] = "'" . $facette->SCORE_MAX . "'";
+                        $data['COEFF_VALUE'] = "'" . $facette->COEFF_VALUE . "'";
+                        $data['FORMULA_TYPE'] = "'" . $facette->FORMULA_TYPE . "'";
+                        $data['COEFF'] = "'" . $facette->COEFF . "'";
+                        $where[] = "SUBJECT='" . $value->SUBJECT . "'";
+                        $where[] = "GRADE='" . $gradeId . "'";
+                        $where[] = "SCHOOLYEAR='" . $schoolyearId . "'";
 
                         self::dbAccess()->update("t_grade_subject", $data, $where);
                     }
@@ -1272,8 +1270,8 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                 if (!$result->C)
                 {
                     $where = array();
-                    $where[] = "CLASS='". $classId ."'";
-                    $where[] = "SUBJECT='". $subjectId ."'";
+                    $where[] = "CLASS='" . $classId . "'";
+                    $where[] = "SUBJECT='" . $subjectId . "'";
                     self::dbAccess()->update("t_grade_subject", array('USED_IN_CLASS' => 1), $where);
                 }
             }

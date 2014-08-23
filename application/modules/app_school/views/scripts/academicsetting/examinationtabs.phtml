@@ -36,37 +36,37 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         }";
         $PENEL_ITEMS[] = $ENROLLMENT_EXAMINATION;
         
-        $SEMESTER_TEST = "{
-            title: '".SEMESTER_TEST."'
-            ,layout: 'fit'
-            ,disabled:true
-            ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_TEST', url: '/examination/listexaminations/?parentId=1'})]
-        }";
-        $PENEL_ITEMS[] = $SEMESTER_TEST;
-        
-        $LEARNING_QUALITY = "{
-            title: '".LEARNING_QUALITY."'
-            ,layout: 'fit'
-            ,disabled:false
-            ,items:[new Ext.ux.IFrameComponent({ id: 'LEARNING_QUALITY', url: '/examination/listexaminations/?parentId=4'})]
-        }";
-        $PENEL_ITEMS[] = $LEARNING_QUALITY;
-        
-        $OLYMPIA_TEST = "{
-            title: '".OLYMPIA_TEST."'
-            ,layout: 'fit'
-            ,disabled:false
-            ,items:[new Ext.ux.IFrameComponent({ id: 'OLYMPIA_TEST', url: '/examination/listexaminations/?parentId=3'})]
-        }";
-        $PENEL_ITEMS[] = $OLYMPIA_TEST;
-        
-        $STATE_EXAM = "{
-            title: '".STATE_EXAM."'
-            ,layout: 'fit'
-            ,disabled:true
-            ,items:[new Ext.ux.IFrameComponent({ id: 'STATE_EXAM', url: '/examination/listexaminations/?parentId=5'})]
-        }";
-        $PENEL_ITEMS[] = $STATE_EXAM;
+//        $SEMESTER_TEST = "{
+//            title: '".SEMESTER_TEST."'
+//            ,layout: 'fit'
+//            ,disabled:true
+//            ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_TEST', url: '/examination/listexaminations/?parentId=1'})]
+//        }";
+//        $PENEL_ITEMS[] = $SEMESTER_TEST;
+//        
+//        $LEARNING_QUALITY = "{
+//            title: '".LEARNING_QUALITY."'
+//            ,layout: 'fit'
+//            ,disabled:false
+//            ,items:[new Ext.ux.IFrameComponent({ id: 'LEARNING_QUALITY', url: '/examination/listexaminations/?parentId=4'})]
+//        }";
+//        $PENEL_ITEMS[] = $LEARNING_QUALITY;
+//        
+//        $OLYMPIA_TEST = "{
+//            title: '".OLYMPIA_TEST."'
+//            ,layout: 'fit'
+//            ,disabled:false
+//            ,items:[new Ext.ux.IFrameComponent({ id: 'OLYMPIA_TEST', url: '/examination/listexaminations/?parentId=3'})]
+//        }";
+//        $PENEL_ITEMS[] = $OLYMPIA_TEST;
+//        
+//        $STATE_EXAM = "{
+//            title: '".STATE_EXAM."'
+//            ,layout: 'fit'
+//            ,disabled:true
+//            ,items:[new Ext.ux.IFrameComponent({ id: 'STATE_EXAM', url: '/examination/listexaminations/?parentId=5'})]
+//        }";
+//        $PENEL_ITEMS[] = $STATE_EXAM;
         
         $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
         ?>
