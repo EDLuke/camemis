@@ -98,6 +98,7 @@ $viewportItem = new ViewportItem(
                     $ENROLLMENT_TYPE_STORE .= ",[1, '".ENROLLMENT_IN_SCHOOLYEAR_N_SEMESTER."']";
                     break;
             }
+            $ENROLLMENT_TYPE_STORE .= ",[2, '".ENROLLMENT_IN_SCHOOLYEAR_N_CLASS_SUBJECT."']";
         $ENROLLMENT_TYPE_STORE .= "]";
         
         if($this->facette->EDUCATION_SYSTEM){
@@ -108,8 +109,7 @@ $viewportItem = new ViewportItem(
             ]";
         }else{
             $DETAIL_INFORMATION_ITEMS = "[
-                {".CamemisField::Textfield("NAME_ID", "NAME", NAME)."}
-                ,{".CamemisField::Checkbox("USE_OF_GROUPS","USE_OF_GROUPS",USE_OF_GROUPS, 1, false, false)."}    
+                {".CamemisField::Textfield("NAME_ID", "NAME", NAME, true)."}
                 ,{".CamemisField::Combo('ENROLLMENT_TYPE', ENROLLMENT_TYPE, $ENROLLMENT_TYPE_STORE, false, false, false, false,false)."}
                 ,{".CamemisField::Numberfield("SORTKEY", "SORTKEY", SORTKEY, false, false, false)."}
             ]";
@@ -297,6 +297,23 @@ $viewportItem = new ViewportItem(
             ,items:[{
                 xtype:'fieldset'
                 ,width: 500
+                ,title:'".SESSION_GROUP."'
+                ,collapsible: true
+                ,collapsed: false
+                ,items:[{
+                    layout: 'form'
+                    ,border: false
+                    ,autoHeight:true
+                    ,bodyStyle:'padding:15px;background:#d1ddef;'
+                    ,items:[
+                        {html:'".MORNING.", ".AFTERNOON.", ".EVENING."',border:false,bodyStyle:'background:#d1ddef;'}
+                        ,{".CamemisField::Radio("SESSION_GROUP_1", "SESSION_GROUP", NO,0, false)."}
+                        ,{".CamemisField::Radio("SESSION_GROUP_2", "SESSION_GROUP", YES,1, false)."}
+                    ]
+                }]
+            },{
+                xtype:'fieldset'
+                ,width: 500
                 ,title:'".EVALUATION_TYPE."'
                 ,collapsible: true
                 ,collapsed: false
@@ -306,14 +323,16 @@ $viewportItem = new ViewportItem(
                     ,autoHeight:true
                     ,bodyStyle:'padding:15px;background:#d1ddef;'
                     ,items:[
-                        {".CamemisField::Radio("EVALUATION_TYPE_1", "EVALUATION_TYPE", NUMBER,0, false)."}
+                        {html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
+                        ,{".CamemisField::Radio("EVALUATION_TYPE_1", "EVALUATION_TYPE", NUMBER,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_TYPE_2", "EVALUATION_TYPE", PERCENTAGE,1, false)."}
                         ,{html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_1", "EVALUATION_OPTION", EVALUATION_OF_ASSIGNMENT,0, false)."}
                         ,{".CamemisField::Radio("EVALUATION_OPTION_2", "EVALUATION_OPTION", EVALUATION_OF_SUBJECT,1, false)."}
                         ,{html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
-                        ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE", GRADING." (".ASSESSMENT.")",0, false)."}
-                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE", GRADING." (".LETTER_GRADE.")",1, false)."}
+                        ,{".CamemisField::Radio("GRADING_TYPE_1", "GRADING_TYPE",ASSESSMENT,0, false)."}
+                        ,{".CamemisField::Radio("GRADING_TYPE_2", "GRADING_TYPE",LETTER_GRADE,1, false)."}
+                        ,{html:'<hr>',border:false,bodyStyle:'background:#d1ddef;'}
                     ]
                 }]
             },{
@@ -341,111 +360,6 @@ $viewportItem = new ViewportItem(
                     ,autoHeight:true
                     ,bodyStyle:'padding:15px;background:#d1ddef;'
                     ,items: ".$WEIGHTING."
-                }]
-            },{
-                xtype:'fieldset'
-                ,width: 500
-                ,title:'".SESSION_GROUP."'
-                ,collapsible: true
-                ,collapsed: true
-                ,items:[{
-                    layout: 'form'
-                    ,border: false
-                    ,autoHeight:true
-                    ,bodyStyle:'padding:15px;background:#d1ddef;'
-                    ,items:[{
-                        ".CamemisField::Checkbox("MULTIPLE_SESSIONS","MULTIPLE_SESSIONS",MULTIPLE_SESSIONS, 1, false, false)."
-                    },{
-                        layout: 'column'
-                        ,id:'COL_FIRST_SESSION_GROUP'
-                        ,hidden:true
-                        ,border: false
-                        ,autoHeight:true
-                        ,bodyStyle:'padding:5px;background:#d1ddef;'
-                        ,items:[{
-                            columnWidth:280
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'textfield'
-                                ,fieldLabel: '".SESSION_GROUP." (1)'
-                                ,name: 'FIRST_SESSION_GROUP'
-                                ,width:200
-                            }]
-                        },{
-                            columnWidth:20
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'checkbox'
-                                ,fieldLabel: ''
-                                ,boxLabel:''
-                                ,name: 'CHECK_FIRST_SESSION_GROUP'
-                            }]
-                        }]
-                    },{
-                        layout: 'column'
-                        ,id:'COL_SECOND_SESSION_GROUP'
-                        ,hidden:true
-                        ,border: false
-                        ,autoHeight:true
-                        ,bodyStyle:'padding:5px;background:#d1ddef;'
-                        ,items:[{
-                            columnWidth:280
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'textfield'
-                                ,fieldLabel: '".SESSION_GROUP." (2)'
-                                ,name: 'SECOND_SESSION_GROUP'
-                                ,width:200
-                            }]
-                        },{
-                            columnWidth:20
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'checkbox'
-                                ,fieldLabel: ''
-                                ,boxLabel:''
-                                ,name: 'CHECK_SECOND_SESSION_GROUP'
-                            }]
-                        }]
-                    },{
-                        layout: 'column'
-                        ,id:'COL_THIRD_SESSION_GROUP'
-                        ,hidden:true
-                        ,border: false
-                        ,autoHeight:true
-                        ,bodyStyle:'padding:5px;background:#d1ddef;'
-                        ,items:[{
-                            columnWidth:280
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'textfield'
-                                ,fieldLabel: '".SESSION_GROUP." (3)'
-                                ,name: 'THIRD_SESSION_GROUP'
-                                ,width:200
-                            }]
-                        },{
-                            columnWidth:20
-                            ,border:false
-                            ,layout: 'form'
-                            ,bodyStyle:'background:#d1ddef;'
-                            ,items: [{
-                                xtype:'checkbox'
-                                ,fieldLabel: ''
-                                ,boxLabel:''
-                                ,name: 'CHECK_THIRD_SESSION_GROUP'
-                            }]
-                        }]
-                    }]
                 }]
             }]
         }
@@ -584,17 +498,17 @@ $viewportItem = new ViewportItem(
                 $js .= "}]";
             $js .= "}]";
         $js .= "});";
-        $js .= "if (Ext.getCmp('MULTIPLE_SESSIONS')) Ext.getCmp('MULTIPLE_SESSIONS').on('check', function(){";
-            $js .= "if(Ext.getCmp('MULTIPLE_SESSIONS').getValue() == true){";
-                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').show();";
-                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').show();";
-                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').show();";
-            $js .= "}else{";
-                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').hide();";
-                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').hide();";
-                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').hide();";
-            $js .= "}";
-        $js .= "});";
+//        $js .= "if (Ext.getCmp('MULTIPLE_SESSIONS')) Ext.getCmp('MULTIPLE_SESSIONS').on('check', function(){";
+//            $js .= "if(Ext.getCmp('MULTIPLE_SESSIONS').getValue() == true){";
+//                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').show();";
+//                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').show();";
+//                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').show();";
+//            $js .= "}else{";
+//                $js .= "Ext.getCmp('COL_FIRST_SESSION_GROUP').hide();";
+//                $js .= "Ext.getCmp('COL_SECOND_SESSION_GROUP').hide();";
+//                $js .= "Ext.getCmp('COL_THIRD_SESSION_GROUP').hide();";
+//            $js .= "}";
+//        $js .= "});";
         
         echo $js;
         ?>
