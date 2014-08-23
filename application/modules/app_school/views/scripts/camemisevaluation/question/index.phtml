@@ -48,6 +48,23 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
             }]);
         ");
         
+        $OBJECT_GRID->addTBarItems("
+            tbar.add('-');
+        ");
+        
+        $OBJECT_GRID->addTBarItems("
+            tbar.add([{ 
+                text:''
+                ,tooltip:'".CAMEMIS_HELP."'
+                ,iconCls: 'icon-help'
+                ,handler:function(){
+                    ".CamemisPage::setEmbeddedHelp("99B9-92B7")."
+                }
+             }]);
+        ");
+         
+         
+        
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
