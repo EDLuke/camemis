@@ -94,6 +94,17 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
     ");
     
     $OBJECT_GRID->addTBarItems("
+        tbar.add(['-',{
+            text: ''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("3E9B-B210")."
+            }
+        }]);
+    ");
+    
+    $OBJECT_GRID->addTBarItems("
         tbar.add('->');
     ");
     

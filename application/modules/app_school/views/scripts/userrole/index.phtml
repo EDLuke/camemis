@@ -67,6 +67,16 @@ Ext.onReady(function() {
     
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarCreateUserRole("this.createOnlyItem"));
     $OBJECT_TREE->setSaveParams("cmd:'createObject'");
+    
+    $OBJECT_TREE->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("F22B-B792")."
+        }
+    ");
+    
     $OBJECT_TREE->setBaseParams("
     	cmd: 'treeAllUserrole'
     ");

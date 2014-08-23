@@ -92,6 +92,16 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         $OBJECT_TREE->backgroundColor = "#F9F9F9";
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeExpand());
         $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeCollapse());
+        
+        $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("E718-8B04")."
+            }
+        ");
+        
         $OBJECT_TREE->isAsyncTreeNode = true;
         $OBJECT_TREE->setAsyncTreeNode($CHOOSE_ITEMS);
         $OBJECT_TREE->renderJS();

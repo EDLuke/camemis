@@ -29,6 +29,16 @@ Ext.onReady(function() {
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarTreeRefresh(false));
     if(UserAuth::getACLValue("ORGANIZATION_CHART_EDIT_RIGHT"))
     $OBJECT_TREE->addTBarItems(CamemisBar::tbarCreate("this.createOnlyItem"));
+    
+    $OBJECT_TREE->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("9785-5477")."
+        }
+    ");
+     
     $OBJECT_TREE->setSaveParams("
     	cmd: 'addObject'
     ");

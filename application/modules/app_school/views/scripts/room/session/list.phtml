@@ -76,6 +76,15 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
+        $HELP_BAR="{
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("A2DF-FF22")."
+            }
+        }";
+        
         $FIND_OBJECT = "{
             text:'".FIND."'
             ,disabled: false
@@ -108,7 +117,7 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
                 window.location='".$_SERVER["REQUEST_URI"]."&startDate='+startDate+'&endDate='+endDate;
             }
         }";
-
+               
         $OBJECT_GRID->addReadField("name: 'TEACHING_STATUS'");
         $OBJECT_GRID->addReadField("name: 'SESSION_DATE'");
         $OBJECT_GRID->addReadField("name: 'EVENT'");
@@ -134,7 +143,7 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
         ";
         
         $OBJECT_GRID->isObjectDefaultOnLoad = true; 
-        
+           
         $OBJECT_GRID->addTBarItems("
             tbar.add('->');
         ");  
@@ -172,7 +181,7 @@ $endDate = isset($_GET["endDate"])?addText($_GET["endDate"]):lastDayOfMonth();
                     ,format: '<?=setExtDatafieldFormat()?>'
                     ,allowBlank:false
                     ,value: endDate
-                },<?=$FIND_OBJECT?>]
+                },<?=$FIND_OBJECT?>,'-',<?= $HELP_BAR?>]
                 ,items: [{
                     region:'west'
                     ,title:''

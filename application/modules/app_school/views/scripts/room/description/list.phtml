@@ -50,6 +50,15 @@ Ext.onReady(function() {
         }
     ");
     
+    $OBJECT_TREE->addTBarItems("
+            text:''
+            ,tooltip:'".CAMEMIS_HELP."'
+            ,iconCls: 'icon-help'
+            ,handler:function(){
+                ".CamemisPage::setEmbeddedHelp("C20C-CDB0")."
+            }
+        ");
+      
     $OBJECT_TREE->setSaveParams("
     	cmd: 'addObject'
         ,type:'description'

@@ -220,6 +220,15 @@ Ext.onReady(function() {
             });
         }
     ");
+    
+    $OBJECT_FORM->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("4CAB-B922")."
+        }
+    ");
 
     $OBJECT_FORM->setBodyStyle("padding:10px;background:".CamemisPage::userFormBgColor().";");
     $OBJECT_FORM->isObjectDefaultOnLoad = false;

@@ -41,6 +41,15 @@ Ext.onReady(function() {
         ,handler: this.createOnlyItem
     ");
     
+    $OBJECT_TREE->addTBarItems("
+        text:''
+        ,tooltip:'".CAMEMIS_HELP."'
+        ,iconCls: 'icon-help'
+        ,handler:function(){
+            ".CamemisPage::setEmbeddedHelp("2CC5-5FFD")."
+        }
+    ");
+    
     $OBJECT_TREE->setBaseParams("
     	cmd: 'jsonTreeAllLocation'
     ");
