@@ -376,12 +376,15 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
         
         $PENEL_ITEMS = Array();
 
-        $ENROLLMENT_EXAMINATION = "{
+        $LIST_OF_STUDENTS = "{
             title: '".LIST_OF_STUDENTS."'
+            ,id: 'center'
             ,layout: 'fit'
+            ,layout: 'card'
+            ,activeItem: 0
             ,items: [{xtype: '".$ASSIGNED_STUDENTS->getObjectXType()."'}]
         }";
-        $PENEL_ITEMS[] = $ENROLLMENT_EXAMINATION;
+        $PENEL_ITEMS[] = $LIST_OF_STUDENTS;
 
         switch($this->facette->ENROLLMENT_TYPE){
             case 1:
