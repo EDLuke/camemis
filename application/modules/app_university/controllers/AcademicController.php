@@ -289,7 +289,7 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->_helper->viewRenderer("default/schoolyear");
     }
-    
+
     public function enrollmentbysubjectgroupAction()
     {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
@@ -315,6 +315,15 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->view->facette = $this->facette;
         $this->view->objectId = $this->objectId;
+        $this->_helper->viewRenderer("default/enrollbysubject");
+    }
+
+    public function enrollmentbysemesterAction()
+    {
+
+        $this->view->facette = $this->facette;
+        $this->view->objectId = $this->objectId;
+        $this->_helper->viewRenderer("default/enrollbysemester");
     }
 
     public function teacherscoreAction()

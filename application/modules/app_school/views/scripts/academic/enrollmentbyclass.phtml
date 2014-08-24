@@ -198,11 +198,10 @@ Ext.onReady(function() {
             }
         }]);
     ");
-        
     
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
         $ASSIGNED_STUDENTS->addTBarItems("
-            tbar.add(['->',{
+            tbar.add(['-',{
                 text: '" . EXPORT_TO_EXCEL . "'
                 ,id: 'EXPORT_TO_EXCEL'
                 ,iconCls:'icon-page_excel'

@@ -12,7 +12,6 @@ require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once 'models/app_university/AcademicDateDBAccess.php';
 require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -28,8 +27,6 @@ $ASSIGNED_STUDENTS->setSaveUrl("/student/jsonsave/");
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 if(!$this->facette) {header("Location: /main/permission/");exit;}
-
-$TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
 ?>
 
@@ -289,108 +286,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                 ,name: 'DATE_BIRTH'
             })
         ");
-
-        if($this->facette->ENROLLMENT_TYPE == 1){
-            switch($TERM_NUMBER){
-                case 1:
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".FIRST_TERM."</b>'
-                        ,dataIndex: 'FIRST_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".SECOND_TERM."</b>'
-                        ,dataIndex: 'SECOND_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".THIRD_TERM."</b>'
-                        ,dataIndex: 'THIRD_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    break;
-                case 2:
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".FIRST_QUARTER."</b>'
-                        ,dataIndex: 'FIRST_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".SECOND_QUARTER."</b>'
-                        ,dataIndex: 'SECOND_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".THIRD_QUARTER."</b>'
-                        ,dataIndex: 'THIRD_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".FOURTH_QUARTER."</b>'
-                        ,dataIndex: 'FOURTH_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    break;
-                default:
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".FIRST_SEMESTER."</b>'
-                        ,dataIndex: 'FIRST_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    $ASSIGNED_STUDENTS->addColumn("
-                        xtype: 'checkboxcolumn'
-                        ,align: 'center'
-                        ,header: '<b>".SECOND_SEMESTER."</b>'
-                        ,dataIndex: 'SECOND_ACADEMIC'
-                        ,disabled: true
-                        ,width: 100
-                        ,on: 1
-                        ,off: 0
-                    ");
-                    break;
-            }
-        }
-
+        
         $ASSIGNED_STUDENTS->baseParams = "
             start:0
             ,limit:100
@@ -413,7 +309,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
         if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
             $ASSIGNED_STUDENTS->addTBarItems("
-                tbar.add(['->',{
+                tbar.add(['-',{
                     text: '" . EXPORT_TO_EXCEL . "'
                     ,id: 'EXPORT_TO_EXCEL'
                     ,iconCls:'icon-page_excel'
@@ -492,7 +388,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                 $SEMESTER_ENROLLMENT = "{
                     title: '".SEMESTER_ENROLLMENT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysemester/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."")."'})]
                 }";
                 $PENEL_ITEMS[] = $SEMESTER_ENROLLMENT;
                 break;
@@ -500,7 +396,7 @@ $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
                 $SUBJECT_ENROLLMENT = "{
                     title: '".SUBJECT_ENROLLMENT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: ''})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysubject/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."")."'})]
                 }";
                 $PENEL_ITEMS[] = $SUBJECT_ENROLLMENT;
                 break;

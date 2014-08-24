@@ -325,8 +325,18 @@ class AcademicController extends Zend_Controller_Action {
 
     public function enrollmentbysubjectAction()
     {
+
         $this->view->facette = $this->facette;
         $this->view->objectId = $this->objectId;
+        $this->_helper->viewRenderer("default/enrollbysubject");
+    }
+
+    public function enrollmentbysemesterAction()
+    {
+
+        $this->view->facette = $this->facette;
+        $this->view->objectId = $this->objectId;
+        $this->_helper->viewRenderer("default/enrollbysemester");
     }
 
     public function teacherscoreAction()
@@ -698,7 +708,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->personType = "STUDENT";
         $this->view->objectType = "PARINFO";
     }
-    
+
     public function studentregistrationstatisticAction()
     {
         //$this->_helper->viewRenderer("filter/studentparentguardianfilter"); 
@@ -743,7 +753,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->personType = "STAFF";
         $this->view->objectType = "WORK_EXPERIENCE";
     }
-    
+
     public function teacherstatusfilterAction()
     {
         $this->_helper->viewRenderer("filter/statusstatistic");
