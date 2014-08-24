@@ -1504,33 +1504,59 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $academicId = isset($params["academicId"]) ? addText($params["academicId"]) : "";
         $academicObject = AcademicDBAccess::findGradeFromId($academicId);
 
-        $data = array();
+        $LOAD_DATA = array();
+        $DEFAULT_DATA = array();
         if ($academicObject)
         {
-            $SQL = self::dbAccess()->select();
-            $SQL->from("t_student_schoolyear", array("*"));
-            $SQL->where("STUDENT = ?", $studentId);
-            $SQL->where("GRADE = ?", $academicObject->GRADE_ID);
-            $SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
-            $SQL->where("CLASS = ?", $academicObject->ID);
+            $FIRST_SQL = self::dbAccess()->select();
+            $FIRST_SQL->from("t_student_schoolyear", array("*"));
+            $FIRST_SQL->where("STUDENT = ?", $studentId);
+            $FIRST_SQL->where("GRADE = ?", $academicObject->GRADE_ID);
+            $FIRST_SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
+            $FIRST_SQL->where("CLASS = ?", $academicObject->ID);
             //error_log($SQL->__toString());
-            $facette = self::dbAccess()->fetchRow($SQL);
+            $fristResult = self::dbAccess()->fetchRow($FIRST_SQL);
 
             $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($academicId, false);
-            if ($listSubjects && $facette)
+            if ($listSubjects && $fristResult)
             {
-                $selectedIds = explode(",", $facette->SUBJECTIDS);
-
                 foreach ($listSubjects as $value)
                 {
-                    $data["SUB_" . $value->SUBJECT_ID . ""] = (in_array($value->SUBJECT_ID, $selectedIds)) ? true : false;
+                    $DEFAULT_DATA["SUB_" . $value->SUBJECT_ID . ""] = $value->SUBJECT_ID;
+                }
+
+                if (!$fristResult->SUBJECTIDS)
+                {
+                    $subjectIds = implode(",", $DEFAULT_DATA);
+                    $UPDATE_SQL = "UPDATE";
+                    $UPDATE_SQL .= " t_student_schoolyear";
+                    $UPDATE_SQL .= " SET SUBJECTIDS = '" . $subjectIds . "'";
+                    $UPDATE_SQL .= " WHERE";
+                    $UPDATE_SQL .= " STUDENT = '" . $studentId . "'";
+                    $UPDATE_SQL .= " AND CLASS = '" . $academicObject->ID . "'";
+                    self::dbAccess()->query($UPDATE_SQL);
+                }
+
+                $SECOND_SQL = self::dbAccess()->select();
+                $SECOND_SQL->from("t_student_schoolyear", array("*"));
+                $SECOND_SQL->where("STUDENT = ?", $studentId);
+                $SECOND_SQL->where("GRADE = ?", $academicObject->GRADE_ID);
+                $SECOND_SQL->where("SCHOOL_YEAR = ?", $academicObject->SCHOOL_YEAR);
+                $SECOND_SQL->where("CLASS = ?", $academicObject->ID);
+                //error_log($SQL->__toString());
+                $secondResult = self::dbAccess()->fetchRow($SECOND_SQL);
+
+                $selectedIds = explode(",", $secondResult->SUBJECTIDS);
+                foreach ($listSubjects as $value)
+                {
+                    $LOAD_DATA["SUB_" . $value->SUBJECT_ID . ""] = (in_array($value->SUBJECT_ID, $selectedIds)) ? true : false;
                 }
             }
         }
 
         return array(
             "success" => true
-            , "data" => $data
+            , "data" => $LOAD_DATA
         );
     }
 
