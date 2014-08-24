@@ -391,7 +391,7 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                 $SEMESTER_ENROLLMENT = "{
                     title: '".SEMESTER_ENROLLMENT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysemester/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."")."'})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysemester/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->facette->ID."")."'})]
                 }";
                 $PENEL_ITEMS[] = $SEMESTER_ENROLLMENT;
                 break;
@@ -399,7 +399,7 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                 $SUBJECT_ENROLLMENT = "{
                     title: '".SUBJECT_ENROLLMENT."'
                     ,layout: 'fit'
-                    ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysubject/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->objectId."")."'})]
+                    ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: '/academic/enrollmentbysubject/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->facette->ID."")."'})]
                 }";
                 $PENEL_ITEMS[] = $SUBJECT_ENROLLMENT;
                 break;

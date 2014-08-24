@@ -360,13 +360,13 @@ Ext.onReady(function() {
         ,items: [{xtype: '".$ASSIGNED_STUDENTS->getObjectXType()."'}]
     }";
     $PENEL_ITEMS[] = $LIST_OF_STUDENTS;
-    
+
     switch($this->facette->ENROLLMENT_TYPE){
         case 1:
             $SEMESTER_ENROLLMENT = "{
                 title: '".SEMESTER_ENROLLMENT."'
                 ,layout: 'fit'
-                ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: ''})]
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: '/academic/enrollmentbysemester/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->facette->ID."")."'})]
             }";
             $PENEL_ITEMS[] = $SEMESTER_ENROLLMENT;
             break;
@@ -374,7 +374,7 @@ Ext.onReady(function() {
             $SUBJECT_ENROLLMENT = "{
                 title: '".SUBJECT_ENROLLMENT."'
                 ,layout: 'fit'
-                ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: ''})]
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: '/academic/enrollmentbysubject/?camIds=".$this->urlEncryp->encryptedGet("objectId=".$this->facette->ID."")."'})]
             }";
             $PENEL_ITEMS[] = $SUBJECT_ENROLLMENT;
             break;
