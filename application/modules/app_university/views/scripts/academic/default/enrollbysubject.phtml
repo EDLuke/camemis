@@ -16,9 +16,15 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$ASSIGNED_STUDENTS = new CamemisGrid("STUDENT", "LIST_CLASS");
-$ASSIGNED_STUDENTS->setLoadUrl("/student/jsonload/");
-$ASSIGNED_STUDENTS->setSaveUrl("/student/jsonsave/");
+$OBJECT_GRID = new CamemisGrid("STUDENT", "LIST_CLASS");
+$OBJECT_GRID->setLoadUrl("/student/jsonload/");
+$OBJECT_GRID->setSaveUrl("/student/jsonsave/");
+
+$OBJECT_FORM = new CamemisForm("ACADEMIC");
+$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
+$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+
+$listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->objectId, false);
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
@@ -27,15 +33,9 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
 ?>
 
 <script>
+    var objectId;
     Ext.onReady(function() {
         
-        function cssStatus(v, p, record){
-            return String.format('<div style=\"font-weight:bold;padding:4px;background:{1};color:{2};\">{0}</div>'
-            ,v
-            ,record.data['BG_COLOR']
-            ,record.data['BG_COLOR_FONT']
-            );
-        }
         function cssText(value, metadata, record){
             return '<div style="font-weight:normal; color:#000; padding: 5px; height: 15px;;">' + value + '</div>';
         }
@@ -46,21 +46,21 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
         
-        $ASSIGNED_STUDENTS->addReadField("name: 'FULL_NAME'");
-        $ASSIGNED_STUDENTS->addReadField("name: 'FIRSTNAME'");
-        $ASSIGNED_STUDENTS->addReadField("name: 'LASTNAME'");
-        $ASSIGNED_STUDENTS->addReadField("name: 'GENDER'");
-        $ASSIGNED_STUDENTS->addReadField("name: 'DATE_BIRTH'");
+        $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+        $OBJECT_GRID->addReadField("name: 'FIRSTNAME'");
+        $OBJECT_GRID->addReadField("name: 'LASTNAME'");
+        $OBJECT_GRID->addReadField("name: 'GENDER'");
+        $OBJECT_GRID->addReadField("name: 'DATE_BIRTH'");
         
         if(!SchoolDBAccess::displayPersonNameInGrid()){
-            $ASSIGNED_STUDENTS->addColumn("
+            $OBJECT_GRID->addColumn("
                 header: '<b>".LASTNAME."</b>'
                 , width: 110
                 , sortable: true
                 , dataIndex: 'LASTNAME'
             ");
 
-            $ASSIGNED_STUDENTS->addColumn("
+            $OBJECT_GRID->addColumn("
                 header: '<b>".FIRSTNAME."</b>'
                 , width: 110
                 , sortable: true
@@ -69,14 +69,14 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
 
         }else{
 
-            $ASSIGNED_STUDENTS->addColumn("
+            $OBJECT_GRID->addColumn("
                 header: '<b>".FIRSTNAME."</b>'
                 , width: 110
                 , sortable: true
                 , dataIndex: 'FIRSTNAME'
             ");
 
-            $ASSIGNED_STUDENTS->addColumn("
+            $OBJECT_GRID->addColumn("
                 header: '<b>".LASTNAME."</b>'
                 , width: 110
                 , sortable: true
@@ -84,21 +84,14 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
             ");
         }
 
-        $ASSIGNED_STUDENTS->addColumn("
+        $OBJECT_GRID->addColumn("
             header: '<b>".GENDER."</b>'
             ,dataIndex: 'GENDER'
-            ,width: 120
+            ,width:80
             ,align: 'left'
         ");
-
-        $ASSIGNED_STUDENTS->addColumn("
-            header: '<b>".DATE_BIRTH."</b>'
-            , width: 110
-            , sortable: true
-            , dataIndex: 'DATE_BIRTH'
-        ");
         
-        $ASSIGNED_STUDENTS->baseParams = "
+        $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
             ,classId: '".$this->facette->ID."'
@@ -106,48 +99,127 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
         ";
         
         /////////////////////////////////////////
-        $ASSIGNED_STUDENTS->addTBarItems("
+        $OBJECT_GRID->addTBarItems("
             tbar.add('->');
         ");
         
-        $ASSIGNED_STUDENTS->objectBorder = "false";
-        $ASSIGNED_STUDENTS->isQuickySearch = true;
-        $ASSIGNED_STUDENTS->forceFit = "false";
-        $ASSIGNED_STUDENTS->renderJS();
+        $OBJECT_GRID->objectBorder = "false";
+        $OBJECT_GRID->isQuickySearch = true;
+        $OBJECT_GRID->forceFit = "false";
+        $OBJECT_GRID->renderJS();
         
-        ?>
-        viewport = new Ext.Viewport({
-            layout: 'fit'
+        ////////////////////////////////////////////////////////////////////////
+        $PERSON_INFORMATION = "
+        {
+            layout: 'form'
             ,border: false
-            ,items:[{
-                layout:'border'
-                ,border: false
-                ,defaults: {
-                    collapsible: false
-                    ,split: true
-                }
-                ,items: [{
-                    title: '<?=SELECTED_SUBJECT;?>'
-                    ,region:'east'
-                    ,id: 'EAST_ID'
-                    ,margins: '3 3 3 0'
-                    ,cmargins: '3 3 3 3'
-                    ,width: 400
-                    ,minSize: 400
-                    ,maxSize: 400
-                },{
-                    title: ''
-                    ,border:true
-                    ,collapsible: false
-                    ,region:'center'
-                    ,id: 'center'
-                    ,layout: 'card'
-                    ,activeItem: 0
-                    ,margins: '3 0 3 3'
-                    ,items: [{xtype: '<?=$ASSIGNED_STUDENTS->getObjectXType();?>'}]
-                }]
-            }]
-        }); 
+            ,autoHeight:true
+            ,bodyStyle:'padding:15px;background:#FFF;'
+            ,items: [
+                {".CamemisField::Displayfield("PERSON_INFORMATION",STUDENT,false)."}
+            ]
+        }";
+        $DETAIL_INFORMATION_ITEMS = "[";
+        if($listSubjects){
+            $i = 0;
+            foreach($listSubjects as $value){
+                $SUBJECT_ID = $value->SUBJECT_ID;
+                $SUBJECT_NAME = "(".addslashes($value->SUBJECT_SHORT).") ".addslashes($value->SUBJECT_NAME);
+                $DETAIL_INFORMATION_ITEMS .= $i?",":"";
+                $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Checkbox("SUB_".$SUBJECT_ID."","SUB_".$value->SUBJECT_ID."",$SUBJECT_NAME, $SUBJECT_ID, false, false)."}";
+                $i++;
+            }
+        }
+        
+        $DETAIL_INFORMATION_ITEMS .= "]";
+        $DETAIL_INFORMATION = "
+        {
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle:'padding:15px;background:#d1ddef;'
+            ,items: ".$DETAIL_INFORMATION_ITEMS."
+        }";
+        $FORM_ITEMS = "";
+        $FORM_ITEMS .= $PERSON_INFORMATION;
+        $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+        $items = "
+            border: false
+            ,id: 'FORM_ITEMS'
+            ,bodyStyle: 'padding:10px'
+            ,items: [" . $FORM_ITEMS . "]
+        ";
+        $OBJECT_FORM->addObjectItems($items);
+        $OBJECT_FORM->labelAlign = "left";
+        $OBJECT_FORM->labelWidth = 80;
+        $OBJECT_FORM->addTBarItems("
+            text: '".APPLY."'
+            ,id: 'APPLY'
+            ,disabled:true
+            ,formBind:true
+            ,iconCls:'icon-lightning_add'
+            ,scope:this
+            ,handler: function(){
+                myForm = Ext.getCmp('".$OBJECT_FORM->getObjectId()."').getForm();
+                Ext.Ajax.request({
+                    url: '/student/jsonsave/'
+                    ,method: 'POST'
+                    ,params:{cmd: 'jsonAcationStudentEnrollSubject',objectId:objectId,academicId:'".$this->objectId."'}
+                    ,form: myForm.getEl().dom
+                    ,success: function(response, options) {
+                        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
+                    }
+                });
+            }
+        ");
+        
+        $OBJECT_FORM->bodyStyle = "padding:0px";
+        $OBJECT_FORM->renderJS();
+        
+        $js = "";
+        $js .= "viewport = new Ext.Viewport({";
+            $js .= "layout: 'fit'";
+            $js .= ",border: false";
+            $js .= ",items:[{";
+                $js .= "layout:'border'";
+                $js .= ",border: false";
+                $js .= ",defaults: {";
+                    $js .= "collapsible: false";
+                    $js .= ",split: true";
+                $js .= "}";
+                $js .= ",items: [{";
+                    $js .= "title: '".SELECTED_SUBJECT."'";
+                    $js .= ",region:'east'";
+                    $js .= ",id: 'EAST_ID'";
+                    $js .= ",margins: '3 3 3 0'";
+                    $js .= ",cmargins: '3 3 3 3'";
+                    $js .= ",width: 350";
+                    $js .= ",minSize: 350";
+                    $js .= ",maxSize: 350";
+                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+                $js .= "},{";
+                    $js .= "title: ''";
+                    $js .= ",border:true";
+                    $js .= ",collapsible: false";
+                    $js .= ",region:'center'";
+                    $js .= ",id: 'center'";
+                    $js .= ",layout: 'card'";
+                    $js .= ",activeItem: 0";
+                    $js .= ",margins: '3 0 3 3'";
+                    $js .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+                $js .= "}]";
+            $js .= "}]";
+        $js .= "}); ";
+        $js .= "var grid = Ext.getCmp('".$OBJECT_GRID->getObjectId()."');";
+        $js .= "if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
+            $js .= "var record = grid.store.getAt(rowIndex);";
+            $js .= "objectId = record.data.ID;";
+            $js .= "Ext.getCmp('APPLY').enable();";
+            $js .= "Ext.getCmp('PERSON_INFORMATION_ID').setValue(record.data.FULL_NAME);";
+        $js .= "});";
+        
+        echo $js;
+        ?>
    });
 </script>
 <?
