@@ -96,7 +96,7 @@ class AcademicDBAccess {
 
             $data["TITLE"] = $title;
             $data["COLOR"] = $facette->COLOR;
-            $data["SESSION_GROUP"] = $facette->SESSION_GROUP ? true : false;
+            $data["SESSION_GROUP"] = $facette->SESSION_GROUP;
             $data["ID"] = $facette->ID;
             $data["SHORT"] = $facette->SHORT;
             $data["SORTKEY"] = $facette->SORTKEY;
@@ -945,9 +945,6 @@ class AcademicDBAccess {
                     $FIRST_SAVEDATA["FORMULA_TERM"] = $schoolyearObject->FORMULA_TERM;
                     $FIRST_SAVEDATA["FORMULA_YEAR"] = $schoolyearObject->FORMULA_YEAR;
                     $FIRST_SAVEDATA["SESSION_GROUP"] = $schoolyearObject->SESSION_GROUP;
-                    $FIRST_SAVEDATA["FIRST_SESSION_GROUP"] = $schoolyearObject->FIRST_SESSION_GROUP;
-                    $FIRST_SAVEDATA["SECOND_SESSION_GROUP"] = $schoolyearObject->SECOND_SESSION_GROUP;
-                    $FIRST_SAVEDATA["THIRD_SESSION_GROUP"] = $schoolyearObject->THIRD_SESSION_GROUP;
 
                     $FIRST_WHERE = self::dbAccess()->quoteInto("ID = ?", $value->ID);
                     self::dbAccess()->update('t_grade', $FIRST_SAVEDATA, $FIRST_WHERE);

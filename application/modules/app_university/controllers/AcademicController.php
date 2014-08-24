@@ -506,7 +506,7 @@ class AcademicController extends Zend_Controller_Action {
                 $this->_redirect("/academic/studentlistteacher/?objectId=" . $this->objectId . "");
                 break;
             case "STUDENT":
-                $this->_redirect("/academic/studentlist/?objectId=" . $this->objectId . "");
+                $this->_redirect("/academic/enrollmentbyclass/?objectId=" . $this->objectId . "");
                 break;
         }
     }
@@ -558,7 +558,7 @@ class AcademicController extends Zend_Controller_Action {
         );
     }
 
-    public function studentlistAction()
+    public function enrollmentbyclassAction()
     {
 
         $this->view->facette = $this->facette;

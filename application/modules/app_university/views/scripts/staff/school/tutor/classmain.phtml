@@ -44,7 +44,7 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                         title: '<?=LIST_OF_STUDENTS?>'
                         /*,iconCls: 'icon-tabs'*/
                         ,layout:'fit'
-                        ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/academic/studentlist?objectId=<?=$classObject->ID;?>&gradeId=<?=$classObject->GRADE_ID;?>&schoolyearId=<?=$classObject->SCHOOL_YEAR;?>'})]
+                        ,items:[new Ext.ux.IFrameComponent({ id: 'LIST_OF_STUDENTS', url: '/academic/enrollmentbyclass?objectId=<?=$classObject->ID;?>&gradeId=<?=$classObject->GRADE_ID;?>&schoolyearId=<?=$classObject->SCHOOL_YEAR;?>'})]
                     },{
                         title: '<?=SCHEDULE?>'
                         /*,iconCls: 'icon-tabs'*/

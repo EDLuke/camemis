@@ -13,18 +13,19 @@ require_once setUserLoacalization();
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
 
-$LIST_OF_STUDENTS_GIRD = new CamemisGrid("LIST_OF_STUDENTS", "LIST_OF_STUDENTS");
-$LIST_OF_STUDENTS_GIRD->setLoadUrl("/student/jsonload/");
-$LIST_OF_STUDENTS_GIRD->setSaveUrl("/student/jsonsave/");
-$ASSIGNED_STUDENTS_GRID = new CamemisGrid("STUDENT", "LIST_CLASS");
-$ASSIGNED_STUDENTS_GRID->setLoadUrl("/student/jsonload/");
-$ASSIGNED_STUDENTS_GRID->setSaveUrl("/student/jsonsave/");
+$LIST_OF_STUDENTS = new CamemisGrid("LIST_OF_STUDENTS", "LIST_OF_STUDENTS");
+$LIST_OF_STUDENTS->setLoadUrl("/student/jsonload/");
+$LIST_OF_STUDENTS->setSaveUrl("/student/jsonsave/");
+
+$ASSIGNED_STUDENTS = new CamemisGrid("STUDENT", "LIST_CLASS");
+$ASSIGNED_STUDENTS->setLoadUrl("/student/jsonload/");
+$ASSIGNED_STUDENTS->setSaveUrl("/student/jsonsave/");
 
 if(!$this->facette) {header("Location: /main/permission/");exit;}
 
 $TERM_NUMBER = AcademicDBAccess::findAcademicTerm($this->facette->SCHOOL_YEAR);
 
-function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
+function deleteStudent($ASSIGNED_STUDENTS, $academicId){
     
     $js = "";
     $js .= "window.parent.Ext.MessageBox.show({";
@@ -41,7 +42,7 @@ function deleteStudent($ASSIGNED_STUDENTS_GRID, $academicId){
                 ,params: {cmd: 'jsonRemoveEnrolledStudentFromClass',academicId:'".$academicId."',removeId:record.data.ID}
                 ,success: function(response, options) {
                     XMsg('".STATUS."','".WAR_REMOVED_SUCCESSFULLY."');
-                    Ext.getCmp('" . $ASSIGNED_STUDENTS_GRID->getObjectId() . "').store.reload();
+                    Ext.getCmp('" . $ASSIGNED_STUDENTS->getObjectId() . "').store.reload();
                 }
                 ,failure: function(response, options) {}
             });
@@ -77,43 +78,43 @@ Ext.onReady(function() {
     $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
     
     ///////////////////////////////////////////////////////
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'CODE'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'STUDENT_SCHOOL_ID'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'LASTNAME'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'FIRSTNAME'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'GENDER'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'DATE_BIRTH'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'BG_COLOR'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'BG_COLOR_FONT'");
-    $LIST_OF_STUDENTS_GIRD->addReadField("name: 'STATUS_KEY'");
+    $LIST_OF_STUDENTS->addReadField("name: 'CODE'");
+    $LIST_OF_STUDENTS->addReadField("name: 'STUDENT_SCHOOL_ID'");
+    $LIST_OF_STUDENTS->addReadField("name: 'LASTNAME'");
+    $LIST_OF_STUDENTS->addReadField("name: 'FIRSTNAME'");
+    $LIST_OF_STUDENTS->addReadField("name: 'GENDER'");
+    $LIST_OF_STUDENTS->addReadField("name: 'DATE_BIRTH'");
+    $LIST_OF_STUDENTS->addReadField("name: 'BG_COLOR'");
+    $LIST_OF_STUDENTS->addReadField("name: 'BG_COLOR_FONT'");
+    $LIST_OF_STUDENTS->addReadField("name: 'STATUS_KEY'");
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
         case "VIETNAMESE": $width = 100;break;
         default: $width = 85;break;
     }
     
-    $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 80,dataIndex: 'CODE'");
+    $LIST_OF_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.",renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $LIST_OF_STUDENTS->addColumn("header: '<b>".CODE_ID."</b>', align:'left', renderer:cssText, sortable: true, width: 80,dataIndex: 'CODE'");
     
     if(!SchoolDBAccess::displayPersonNameInGrid()){
-        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".LASTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
-        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>".LASTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
     }else{
-        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
-        $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".LASTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>".FIRSTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'FIRSTNAME'");
+        $LIST_OF_STUDENTS->addColumn("header: '<b>".LASTNAME."</b>', width: 100,renderer:cssText, sortable: true, dataIndex: 'LASTNAME'");
     }
     
-    $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".GENDER."</b>', width: 100,renderer: cssText, sortable: true, dataIndex: 'GENDER'");
-    $LIST_OF_STUDENTS_GIRD->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 120,renderer: cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
+    $LIST_OF_STUDENTS->addColumn("header: '<b>".GENDER."</b>', width: 100,renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+    $LIST_OF_STUDENTS->addColumn("header: '<b>".DATE_BIRTH."</b>', width: 120,renderer: cssText, sortable: true, dataIndex: 'DATE_BIRTH'");
     
-    $LIST_OF_STUDENTS_GIRD->isQuickySearch = true;
-    $LIST_OF_STUDENTS_GIRD->isCheckboxSelect = true;
+    $LIST_OF_STUDENTS->isQuickySearch = true;
+    $LIST_OF_STUDENTS->isCheckboxSelect = true;
 
     if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
-        $LIST_OF_STUDENTS_GIRD->addTBarItems("
+        $LIST_OF_STUDENTS->addTBarItems("
             tbar.add('-');
         ");
-        $LIST_OF_STUDENTS_GIRD->addTBarItems("
+        $LIST_OF_STUDENTS->addTBarItems("
             tbar.add([{
                 id: 'LIST_ADD_ENROLLMENT_RECORD_ID'
                 ,text: '<b>".APPLY_INTO_LIST_OF_STUDENTS."</b>'
@@ -124,31 +125,31 @@ Ext.onReady(function() {
         ");
     }
     
-    $LIST_OF_STUDENTS_GIRD->baseParams = "
+    $LIST_OF_STUDENTS->baseParams = "
         start:0
         ,limit:100
         ,academicId: '".$this->facette->GUID."'
         ,cmd: 'jsonUnassignedStudentsByClass'
     ";
 
-    $LIST_OF_STUDENTS_GIRD->setSelectionParams("
+    $LIST_OF_STUDENTS->setSelectionParams("
         cmd: 'jsonAddStudent2GradeClassSchoolyear'
         ,academicId: '".$this->facette->GUID."'
     ");
 
-    $LIST_OF_STUDENTS_GIRD->setSelectionEmbeddedEvents("
-        Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."').store.reload();
+    $LIST_OF_STUDENTS->setSelectionEmbeddedEvents("
+        Ext.getCmp('".$ASSIGNED_STUDENTS->getObjectId()."').store.reload();
     ");
 
-    $LIST_OF_STUDENTS_GIRD->forceFit = "false";
-    $LIST_OF_STUDENTS_GIRD->renderJS();
+    $LIST_OF_STUDENTS->forceFit = "false";
+    $LIST_OF_STUDENTS->renderJS();
     
     ///////////////////////////////////////////////////////
-    $ASSIGNED_STUDENTS_GRID->addTBarItems("
+    $ASSIGNED_STUDENTS->addTBarItems("
         tbar.add('-');
     ");
     
-    $ASSIGNED_STUDENTS_GRID->addTBarItems("
+    $ASSIGNED_STUDENTS->addTBarItems("
         tbar.add([{
             text: '".CANCEL."'
             ,id: 'CANCEL_ID'
@@ -161,7 +162,7 @@ Ext.onReady(function() {
         }]);
     ");
     
-    $ASSIGNED_STUDENTS_GRID->addTBarItems("
+    $ASSIGNED_STUDENTS->addTBarItems("
         tbar.add('-',[{
             id: 'GRID_REFRESH_ID'
             ,text: '".REFRESH."'
@@ -169,25 +170,25 @@ Ext.onReady(function() {
             ,scope:this
             ,disabled: false
             ,handler: function(){
-                Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."').store.reload();
+                Ext.getCmp('".$ASSIGNED_STUDENTS->getObjectId()."').store.reload();
             }
         }]);
     ");
 
     if(UserAuth::getACLValue("ACADEMIC_GENERAL_EDUCATION_EXECUTE_RIGHT")){
-        $ASSIGNED_STUDENTS_GRID->addTBarItems("
+        $ASSIGNED_STUDENTS->addTBarItems("
             tbar.add(['-',{
                 id: 'ADD_STUDENTS'
                 ,iconCls:'icon-application_form_add'
                 ,text: '".ADD_STUDENTS." '
                 ,handler: function(){
-                    openWinXType('WinXType','".ADD_STUDENTS."', '".$LIST_OF_STUDENTS_GIRD->getObjectXType()."',percentWidth(80), percentHeight(85));
+                    openWinXType('WinXType','".ADD_STUDENTS."', '".$LIST_OF_STUDENTS->getObjectXType()."',percentWidth(80), percentHeight(85));
                 }
             }]);
         ");
     }
     
-    $ASSIGNED_STUDENTS_GRID->addTBarItems("
+    $ASSIGNED_STUDENTS->addTBarItems("
         tbar.add(['-', {
             text:''
             ,tooltip:'".CAMEMIS_HELP."'
@@ -200,7 +201,7 @@ Ext.onReady(function() {
         
     
     if(UserAuth::getACLValue("STUDENT_SEARCH_EXECUTE_RIGHT")){
-        $ASSIGNED_STUDENTS_GRID->addTBarItems("
+        $ASSIGNED_STUDENTS->addTBarItems("
             tbar.add(['->',{
                 text: '" . EXPORT_TO_EXCEL . "'
                 ,id: 'EXPORT_TO_EXCEL'
@@ -229,35 +230,34 @@ Ext.onReady(function() {
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'ID'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'CODE'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FULL_NAME'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT_SCHOOL_ID'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STUDENT'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRSTNAME'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'LASTNAME'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'GENDER'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'DATE_BIRTH'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'BG_COLOR_FONT'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS_KEY'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'STATUS'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'ID'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'CODE'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'FULL_NAME'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'FIRSTNAME'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'LASTNAME'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'STUDENT'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'GENDER'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'DATE_BIRTH'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'BG_COLOR'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'BG_COLOR_FONT'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'STATUS_KEY'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'STATUS'");
     
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FIRST_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'SECOND_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'THIRD_ACADEMIC'");
-    $ASSIGNED_STUDENTS_GRID->addReadField("name: 'FOURTH_ACADEMIC'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'FIRST_ACADEMIC'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'SECOND_ACADEMIC'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'THIRD_ACADEMIC'");
+    $ASSIGNED_STUDENTS->addReadField("name: 'FOURTH_ACADEMIC'");
     
     switch(Zend_Registry::get('SYSTEM_LANGUAGE')){
         case "VIETNAMESE": $width = 100;break;
         default: $width = 85;break;
     }
     
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
-    
+    $ASSIGNED_STUDENTS->addColumn("header: '<b>".STATUS."</b>', align:'center', width: ".$width.", renderer:cssStatus, sortable: true, dataIndex: 'STATUS_KEY'");
+    $ASSIGNED_STUDENTS->addColumn("header: '<b>".CODE_ID."</b>', align:'center', width: 80, renderer: cssText, sortable: true, dataIndex: 'CODE'");
+
     if(!SchoolDBAccess::displayPersonNameInGrid()){
-        $ASSIGNED_STUDENTS_GRID->addColumn("
+        $ASSIGNED_STUDENTS->addColumn("
             header: '<b>".LASTNAME."</b>'
             , width: 110
             , sortable: true
@@ -267,8 +267,8 @@ Ext.onReady(function() {
                 ,name: 'LASTNAME'
             })
         ");
-        
-        $ASSIGNED_STUDENTS_GRID->addColumn("
+
+        $ASSIGNED_STUDENTS->addColumn("
             header: '<b>".FIRSTNAME."</b>'
             , width: 110
             , sortable: true
@@ -278,10 +278,10 @@ Ext.onReady(function() {
                 ,name: 'FIRSTNAME'
             })
         ");
-        
+
     }else{
-        
-        $ASSIGNED_STUDENTS_GRID->addColumn("
+
+        $ASSIGNED_STUDENTS->addColumn("
             header: '<b>".FIRSTNAME."</b>'
             , width: 110
             , sortable: true
@@ -291,8 +291,8 @@ Ext.onReady(function() {
                 ,name: 'FIRSTNAME'
             })
         ");
-        
-        $ASSIGNED_STUDENTS_GRID->addColumn("
+
+        $ASSIGNED_STUDENTS->addColumn("
             header: '<b>".LASTNAME."</b>'
             , width: 110
             , sortable: true
@@ -303,9 +303,9 @@ Ext.onReady(function() {
             })
         ");
     }
-    
-    $ASSIGNED_STUDENTS_GRID->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, renderer: cssText, sortable: true, dataIndex: 'GENDER'");
-    $ASSIGNED_STUDENTS_GRID->addColumn("
+        
+    $ASSIGNED_STUDENTS->addColumn("header: '<b>".GENDER."</b>', align:'center',  width: 100, renderer: cssText, sortable: true, dataIndex: 'GENDER'");
+    $ASSIGNED_STUDENTS->addColumn("
         header: '<b>".DATE_BIRTH."</b>'
         , width: 110
         , sortable: true
@@ -316,54 +316,84 @@ Ext.onReady(function() {
         })
     ");
     
-    $ASSIGNED_STUDENTS_GRID->baseParams = "
+    $ASSIGNED_STUDENTS->baseParams = "
         start:0
         ,limit:100
         ,classId: '".$this->facette->ID."'
         ,cmd: 'jsonEnrolledStudentsToClass'
     ";
     
-    $ASSIGNED_STUDENTS_GRID->setRemoveEmbeddedEvents("
-        Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."').store.reload();
+    $ASSIGNED_STUDENTS->setRemoveEmbeddedEvents("
+        Ext.getCmp('".$ASSIGNED_STUDENTS->getObjectId()."').store.reload();
     ");
     
     switch(UserAuth::getUserType()){
         case "ADMIN":
         case "SUPERADMIN":
-            $ASSIGNED_STUDENTS_GRID->setSaveParams("
+            $ASSIGNED_STUDENTS->setSaveParams("
                 cmd: 'actionStudentGradeClassSchoolyear'
                 ,academicId: '".$this->facette->GUID."'
             ");
-            $ASSIGNED_STUDENTS_GRID->setAftereditCallback("
+            $ASSIGNED_STUDENTS->setAftereditCallback("
                 XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
             ");
-            $ASSIGNED_STUDENTS_GRID->isGridEditing = true;
+            $ASSIGNED_STUDENTS->isGridEditing = true;
             break;
     }
     
-    $ASSIGNED_STUDENTS_GRID->removeNAME = "STUDENT";
-    $ASSIGNED_STUDENTS_GRID->loadMask = true;
-    $ASSIGNED_STUDENTS_GRID->isQuickySearch = true;
-    $ASSIGNED_STUDENTS_GRID->isObjectDefaultOnLoad = true;
-    $ASSIGNED_STUDENTS_GRID->forceFit = "false";
-    $ASSIGNED_STUDENTS_GRID->setUserColumn = true;
-    $ASSIGNED_STUDENTS_GRID->renderJS();
+    $ASSIGNED_STUDENTS->removeNAME = "STUDENT";
+    $ASSIGNED_STUDENTS->loadMask = true;
+    $ASSIGNED_STUDENTS->isQuickySearch = true;
+    $ASSIGNED_STUDENTS->isObjectDefaultOnLoad = true;
+    $ASSIGNED_STUDENTS->forceFit = "false";
+    $ASSIGNED_STUDENTS->setUserColumn = true;
+    $ASSIGNED_STUDENTS->renderJS();
     ///////////////////////////////////////////////////////
     
+    $PENEL_ITEMS = Array();
+
+    $ENROLLMENT_EXAMINATION = "{
+        title: '".LIST_OF_STUDENTS."'
+        ,layout: 'fit'
+        ,items: [{xtype: '".$ASSIGNED_STUDENTS->getObjectXType()."'}]
+    }";
+    $PENEL_ITEMS[] = $ENROLLMENT_EXAMINATION;
+    
+    switch($this->facette->ENROLLMENT_TYPE){
+        case 1:
+            $SEMESTER_ENROLLMENT = "{
+                title: '".SEMESTER_ENROLLMENT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SEMESTER_ENROLLMENT', url: ''})]
+            }";
+            $PENEL_ITEMS[] = $SEMESTER_ENROLLMENT;
+            break;
+        case 2:
+            $SUBJECT_ENROLLMENT = "{
+                title: '".SUBJECT_ENROLLMENT."'
+                ,layout: 'fit'
+                ,items:[new Ext.ux.IFrameComponent({ id: 'SUBJECT_ENROLLMENT', url: ''})]
+            }";
+            $PENEL_ITEMS[] = $SUBJECT_ENROLLMENT;
+            break;
+    }
+    $CHOOSE_ITEMS = "[".implode(',',$PENEL_ITEMS)."]";
     ?>
             
     viewport = new Ext.Viewport({
         layout: 'fit'
         ,border: false
         ,items:[{
-            border: false
-            ,layout: 'card'
-            ,id: 'center'
-            ,activeItem: 0
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
             ,items:[{
-                border: false
-                ,layout: 'fit'
-                ,items: [{xtype: '<?=$ASSIGNED_STUDENTS_GRID->getObjectXType()?>'}]
+                xtype: 'tabpanel'
+                ,tabPosition: 'top'
+                ,plain:true
+                ,activeTab: 0
+                ,enableTabScroll:true
+                ,items:<?=$CHOOSE_ITEMS?>
             }]
         }]
     });
@@ -379,16 +409,14 @@ Ext.onReady(function() {
             ,handler: function(){
                 clickOpenPage('center','".SHOW_DETAIL." &raquo; ' + record.data.FULL_NAME,'/student/studentmonitor/?target=".camemisId()."&objectId=' + record.data.ID);
             }
-        }
-        ";
-        
+        }";
         $CONTEXT_ITEMS[] = $DETAIL_INFORMATION;
 
         $STUDENT_REMOVE_FROM_CLASS = "
         {
             text: '".REMOVE." &raquo; ' + record.data.FULL_NAME
             ,iconCls:'icon-delete'
-            ,handler:function(){".deleteStudent($ASSIGNED_STUDENTS_GRID,$this->facette->GUID)."}
+            ,handler:function(){".deleteStudent($ASSIGNED_STUDENTS,$this->facette->GUID)."}
         }
         ";
         
@@ -397,7 +425,7 @@ Ext.onReady(function() {
         
         if($CONTEXT_ITEMS){
             $js = "";
-            $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS_GRID->getObjectId()."');";
+            $js .="var grid = Ext.getCmp('".$ASSIGNED_STUDENTS->getObjectId()."');";
             $js .="if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
                 $js .="var record = grid.store.getAt(rowIndex);";
                 $js .= "if(columnIndex==1 || columnIndex==2){ ";

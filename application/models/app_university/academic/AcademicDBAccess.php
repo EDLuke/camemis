@@ -131,7 +131,7 @@ class AcademicDBAccess {
             $data["ID"] = $academicObject->ID;
             $data["SORTKEY"] = $academicObject->SORTKEY;
             $data["COLOR"] = $academicObject->COLOR;
-            $data["SESSION_GROUP"] = $academicObject->SESSION_GROUP ? true : false;
+            $data["SESSION_GROUP"] = $academicObject->SESSION_GROUP;
             $data["SHORT"] = $academicObject->SHORT;
             $data["GRADE_ID"] = $academicObject->GRADE_ID;
             $data["CAMPUS_ID"] = $academicObject->CAMPUS_ID;

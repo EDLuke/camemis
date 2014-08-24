@@ -123,7 +123,7 @@ $OBJECT_TREE->setURL('/staff/jsontree/');
         $LIST_OF_STUDENTS = "{";
             $LIST_OF_STUDENTS .= "text:'".LIST_OF_STUDENTS."'";
             $LIST_OF_STUDENTS .= ",leaf:true";
-            $LIST_OF_STUDENTS .= ",url:'/academic/studentlist?camIds=".$this->urlEncryp->encryptedGet($listOfStudentsParams)."'";
+            $LIST_OF_STUDENTS .= ",url:'/academic/enrollmentbyclass?camIds=".$this->urlEncryp->encryptedGet($listOfStudentsParams)."'";
             $LIST_OF_STUDENTS .= ",cls:'nodeTextBold'";
             $LIST_OF_STUDENTS .= ",iconCls: 'icon-component'";
         $LIST_OF_STUDENTS .= "}";
