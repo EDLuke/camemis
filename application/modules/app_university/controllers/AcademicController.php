@@ -289,13 +289,7 @@ class AcademicController extends Zend_Controller_Action {
 
         $this->_helper->viewRenderer("default/schoolyear");
     }
-
-    public function enrollmentbyclassAction()
-    {
-        //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
-        $this->view->facette = $this->facette;
-    }
-
+    
     public function enrollmentbysubjectgroupAction()
     {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
