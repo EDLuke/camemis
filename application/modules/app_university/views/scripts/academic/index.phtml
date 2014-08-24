@@ -358,7 +358,7 @@ if($entries){
                             $html .= ",iconCls: 'icon-group'";
                             $html .= ",handler: function(){";
                                 $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/academic/studentlist/?objectId=' + node.id + '&gradeId=' + node.attributes.gradeId + '&schoolyearId=' + node.attributes.schoolyearId);";
+                                $html .= "clickOpenPage('center','','/academic/enrollmentbyclass/?objectId=' + node.id + '&gradeId=' + node.attributes.gradeId + '&schoolyearId=' + node.attributes.schoolyearId);";
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
