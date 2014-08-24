@@ -20,9 +20,9 @@ $OBJECT_GRID = new CamemisGrid("STUDENT", "LIST_CLASS");
 $OBJECT_GRID->setLoadUrl("/student/jsonload/");
 $OBJECT_GRID->setSaveUrl("/student/jsonsave/");
 
-$OBJECT_FORM = new CamemisForm("ACADEMIC");
-$OBJECT_FORM->setLoadUrl('/academic/jsonload/');
-$OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
+$OBJECT_FORM = new CamemisForm("STUDENT");
+$OBJECT_FORM->setLoadUrl('/student/jsonload/');
+$OBJECT_FORM->setSaveUrl('/student/jsonsave/');
 
 $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->objectId, false);
 
@@ -164,7 +164,7 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                 Ext.Ajax.request({
                     url: '/student/jsonsave/'
                     ,method: 'POST'
-                    ,params:{cmd: 'jsonAcationStudentEnrollSubject',objectId:objectId,academicId:'".$this->objectId."'}
+                    ,params:{cmd: 'jsonSaveStudentEnrollBySubject',objectId:objectId,academicId:'".$this->objectId."'}
                     ,form: myForm.getEl().dom
                     ,success: function(response, options) {
                         XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."'); 
@@ -214,6 +214,13 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
         $js .= "if (grid) grid.on('cellclick', function(grid, rowIndex, columnIndex, event) {";
             $js .= "var record = grid.store.getAt(rowIndex);";
             $js .= "objectId = record.data.ID;";
+            
+            $js .= "Ext.getCmp('".$OBJECT_FORM->getObjectId()."').load({";
+                $js .= "url:'/student/jsonload/'";
+                $js .= ",loadMask: new Ext.LoadMask(Ext.getBody(), {msg:'<b>CAMEMIS " . LOADING . "</b>', msgCls:'x-mask-loading-camemis'})";
+                $js .= ",params:{cmd:'jsonLoadStudentEnrollBySubject',academicId:'".$this->facette->ID."',objectId:objectId}";
+            $js .= "});";
+            
             $js .= "Ext.getCmp('APPLY').enable();";
             $js .= "Ext.getCmp('PERSON_INFORMATION_ID').setValue(record.data.FULL_NAME);";
         $js .= "});";

@@ -474,7 +474,8 @@ class AcademicDBAccess {
         if (isset($params["NUMBER_OF_STUDENTS"]))
             $SAVEDATA['NUMBER_OF_STUDENTS'] = addText($params["NUMBER_OF_STUDENTS"]);
 
-        $SAVEDATA['SESSION_GROUP'] = isset($params["SESSION_GROUP"]) ? 1 : 0;
+        if (isset($params["SESSION_GROUP"]))
+            $SAVEDATA['SESSION_GROUP'] = addText($params["SESSION_GROUP"]);
 
         if (isset($params["CODE"]))
             $SAVEDATA['CODE'] = addText($params["CODE"]);
