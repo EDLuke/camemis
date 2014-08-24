@@ -91,6 +91,13 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
             ,align: 'left'
         ");
         
+        $OBJECT_GRID->addColumn("
+            header: '<b>".DATE_BIRTH."</b>'
+            ,dataIndex: 'DATE_BIRTH'
+            ,width:110
+            ,align: 'left'
+        ");
+        
         $OBJECT_GRID->baseParams = "
             start:0
             ,limit:100
@@ -188,17 +195,17 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                     $js .= ",split: true";
                 $js .= "}";
                 $js .= ",items: [{";
-                    $js .= "title: '".SELECTED_SUBJECT."'";
+                    $js .= "title: ''";
                     $js .= ",region:'east'";
                     $js .= ",id: 'EAST_ID'";
                     $js .= ",margins: '3 3 3 0'";
                     $js .= ",cmargins: '3 3 3 3'";
-                    $js .= ",width: percentWidth(45)";
-                    $js .= ",minSize: percentWidth(45)";
-                    $js .= ",maxSize: percentWidth(45)";
-                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
+                    $js .= ",width: percentWidth(55)";
+                    $js .= ",minSize: percentWidth(55)";
+                    $js .= ",maxSize: percentWidth(55)";
+                    $js .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
                 $js .= "},{";
-                    $js .= "title: ''";
+                    $js .= "title: '".SELECTED_SUBJECT."'";
                     $js .= ",border:true";
                     $js .= ",collapsible: false";
                     $js .= ",region:'center'";
@@ -206,7 +213,7 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                     $js .= ",layout: 'card'";
                     $js .= ",activeItem: 0";
                     $js .= ",margins: '3 0 3 3'";
-                    $js .= ",items: [{xtype: '".$OBJECT_GRID->getObjectXType()."'}]";
+                    $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
                 $js .= "}]";
             $js .= "}]";
         $js .= "}); ";
