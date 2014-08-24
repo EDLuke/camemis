@@ -14,6 +14,9 @@ require_once setUserLoacalization();
 
 abstract class AssessmentProperties {
 
+    const ENROLL_BY_SUBJECT = 2;
+    const ENROLL_BY_SEMESTER = 1;
+
     public $datafield = array();
 
     public function __construct()
@@ -493,35 +496,52 @@ abstract class AssessmentProperties {
         $data = array();
         $CHECK = 0;
         $result = $studentsearch->queryAllStudents();
+
         if ($result)
         {
             foreach ($result as $value)
             {
 
-                if ($this->getCurrentClass()->ENROLLMENT_TYPE == 1)
+                switch ($this->getCurrentClass()->ENROLLMENT_TYPE)
                 {
-                    switch ($this->term)
-                    {
-                        case "FIRST_SEMESTER":
-                        case "FIRST_TERM":
-                        case "FIRST_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FIRST_ACADEMIC");
-                            break;
-                        case "SECOND_SEMESTER":
-                        case "SECOND_TERM":
-                        case "SECOND_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "SECOND_ACADEMIC");
-                            break;
-                        case "THIRD_TERM":
-                        case "THIRD_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "THIRD_ACADEMIC");
-                            break;
-                        case "FOURTH_QUARTER":
-                            $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FOURTH_ACADEMIC");
-                            break;
-                    }
-                    if ($CHECK)
-                    {
+                    case self::ENROLL_BY_SUBJECT:
+                        break;
+                    case self::ENROLL_BY_SEMESTER:
+                        switch ($this->term)
+                        {
+                            case "FIRST_SEMESTER":
+                            case "FIRST_TERM":
+                            case "FIRST_QUARTER":
+                                $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FIRST_ACADEMIC");
+                                break;
+                            case "SECOND_SEMESTER":
+                            case "SECOND_TERM":
+                            case "SECOND_QUARTER":
+                                $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "SECOND_ACADEMIC");
+                                break;
+                            case "THIRD_TERM":
+                            case "THIRD_QUARTER":
+                                $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "THIRD_ACADEMIC");
+                                break;
+                            case "FOURTH_QUARTER":
+                                $CHECK = StudentAcademicDBAccess::checkDisplayStudentClassTermSchoolyear($value->ID, $this->getCurrentClass(), "FOURTH_ACADEMIC");
+                                break;
+                        }
+                        if ($CHECK)
+                        {
+                            $stdClass = new stdClass();
+                            $stdClass->ID = $value->ID;
+                            $stdClass->CODE = $value->CODE;
+                            $stdClass->GENDER = $value->GENDER;
+                            $stdClass->LASTNAME = $value->LASTNAME;
+                            $stdClass->FIRSTNAME = $value->FIRSTNAME;
+                            $stdClass->STUDENT_SCHOOL_ID = $value->STUDENT_SCHOOL_ID;
+                            $stdClass->LASTNAME_LATIN = $value->LASTNAME_LATIN;
+                            $stdClass->FIRSTNAME_LATIN = $value->FIRSTNAME_LATIN;
+                            $data[] = $stdClass;
+                        }
+                        break;
+                    default:
                         $stdClass = new stdClass();
                         $stdClass->ID = $value->ID;
                         $stdClass->CODE = $value->CODE;
@@ -532,20 +552,7 @@ abstract class AssessmentProperties {
                         $stdClass->LASTNAME_LATIN = $value->LASTNAME_LATIN;
                         $stdClass->FIRSTNAME_LATIN = $value->FIRSTNAME_LATIN;
                         $data[] = $stdClass;
-                    }
-                }
-                else
-                {
-                    $stdClass = new stdClass();
-                    $stdClass->ID = $value->ID;
-                    $stdClass->CODE = $value->CODE;
-                    $stdClass->GENDER = $value->GENDER;
-                    $stdClass->LASTNAME = $value->LASTNAME;
-                    $stdClass->FIRSTNAME = $value->FIRSTNAME;
-                    $stdClass->STUDENT_SCHOOL_ID = $value->STUDENT_SCHOOL_ID;
-                    $stdClass->LASTNAME_LATIN = $value->LASTNAME_LATIN;
-                    $stdClass->FIRSTNAME_LATIN = $value->FIRSTNAME_LATIN;
-                    $data[] = $stdClass;
+                        break;
                 }
             }
         }

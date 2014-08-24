@@ -1569,7 +1569,7 @@ class StudentAcademicDBAccess extends StudentDBAccess {
         $data = array();
         if ($academicObject)
         {
-            $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($this->objectId, false);
+            $listSubjects = GradeSubjectDBAccess::getListSubjectsFromAcademic($academicId, false);
             if ($listSubjects)
             {
                 foreach ($listSubjects as $value)
