@@ -193,9 +193,9 @@ if(!$this->facette) {header("Location: /main/permission/");exit;}
                     $js .= ",id: 'EAST_ID'";
                     $js .= ",margins: '3 3 3 0'";
                     $js .= ",cmargins: '3 3 3 3'";
-                    $js .= ",width: 350";
-                    $js .= ",minSize: 350";
-                    $js .= ",maxSize: 350";
+                    $js .= ",width: percentWidth(45)";
+                    $js .= ",minSize: percentWidth(45)";
+                    $js .= ",maxSize: percentWidth(45)";
                     $js .= ",items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]";
                 $js .= "},{";
                     $js .= "title: ''";

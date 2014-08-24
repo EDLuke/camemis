@@ -319,15 +319,6 @@ if($entries){
                                 //$html .="Ext.getCmp('ACADEMIC_ID').collapse();";
                             $html .= "}";
                         $html .= "},{"; 
-                            $html .= "text: '".ACADEMIC_PERFORMANCES."'";
-                            $html .= ",hidden: hiddMenu";
-                            $html .= ",iconCls: 'icon-wand'";
-                            $html .= ",handler: function(){";
-                                $html .= "Ext.getCmp('center').getLayout().setActiveItem(0);";
-                                $html .= "clickOpenPage('center','','/evaluation/classperformances/?classId=' + node.id);";
-                                $html .="Ext.getCmp('ACADEMIC_ID').collapse();";
-                            $html .= "}";
-                        $html .= "},{"; 
                             $html .= "text: '".ENROLLED_STUDENTS."'";
                             $html .= ",disabled: ".$GENERAL_EDUCATION."";
                             $html .= ",iconCls: 'icon-group'";
