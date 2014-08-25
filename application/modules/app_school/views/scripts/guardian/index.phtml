@@ -182,8 +182,40 @@ $columndata = Utiles::getGridColumnData("GUARDIAN_LIST_ID");
         
         $OBJECT_GRID->loadMask = true;
         $OBJECT_GRID->isPagingToolbar = true;
+        $OBJECT_GRID->addTBarItems("
+            tbar.add(['->',{
+                text: '" . EXPORT_TO_EXCEL . "'
+                ,id: 'EXPORT_TO_EXCEL'
+                ,iconCls:'icon-page_excel'
+                ,handler: function(){
+                    Ext.MessageBox.show({
+                        msg: '".SAVING_YOUR_DATA_PLEASE_WAIT."',
+                        progressText: 'Saving...',
+                        width:300,
+                        wait:true,
+                        waitConfig: {interval:200},
+                        icon:'ext-mb-download'
+                    });
+                    Ext.Ajax.request({
+                        url: '/export/jsonexcel/'
+                        ,method: 'POST'
+                        ,form: ".$OBJECT_FORM->ExtgetCmp().".getForm().getEl().dom
+                        ,params:{
+                            cmd: 'jsonGuardian'
+                            ,objectId: 'GUARDIAN_LIST_ID'
+                                             
+                        }
+                        ,success: function(response, options) {
+                            Ext.MessageBox.hide();
+                            window.location='/export/openguardian/'
+                        }
+                    });
+                }
+            }]);
+        ");
         $OBJECT_GRID->isQuickySearch = true;
         $OBJECT_GRID->isObjectDefaultOnLoad = true;
+        $OBJECT_GRID->setUserColumn = true;
         $OBJECT_GRID->forceFit = "false";
         $OBJECT_GRID->renderJS();
         ?>
