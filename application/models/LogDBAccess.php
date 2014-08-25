@@ -65,21 +65,28 @@ class LogDBAccess {
         if ($resultEntries)
             while (list($key, $row) = each($resultEntries)) {
                 $user  = StaffDBAccess::findStaffFromId($row->ACCESSED_BY);
-
                 $note  = "";
-                $str   = $row->FIELD_NOTE;
-                $dummy = json_decode($str, true);
-                foreach ($dummy as $key => $value) {
-                    $note .= constant( $this->getFieldConstant($row->TABLE_NAME .".". $key) ) ."=>". json_encode($value) ."  ";
+                $dummy = unserialize($row->FIELD_NOTE);
+                if ("UPDATE" == $row->ACCESS_TYPE) {
+                    foreach ($dummy as $value) {
+                        foreach ($value as $key => $val) {
+                            $note .= constant($key) ."= {". $val["OLD"] ." => ". $val["NEW"] ."} ";
+                        }
+                    }
+                } else {
+                    foreach ($dummy as $value) {
+                        foreach ($value as $key => $val) {
+                            $note .= constant($key) ."= {". $val ."} ";
+                        }
+                    }                    
                 }
-
                 $data[$i]["ID"]            = $row->ID;
                 $data[$i]["ACCESSED_BY"]   = $user->NAME;
                 $data[$i]["ACCESSED_DATE"] = $row->ACCESSED_DATE;
                 $data[$i]["TABLE_NAME"]    = constant($this->getTableConstant( $row->TABLE_NAME ));
                 $data[$i]["ACCESS_TYPE"]   = $row->ACCESS_TYPE;
                 $data[$i]["OBJECT_ID"]     = $row->OBJECT_ID;
-                $data[$i]["FIELD_NOTE"]    = $note; //$row->FIELD_NOTE;
+                $data[$i]["FIELD_NOTE"]    = $note;
 
                 $i++;
             }
