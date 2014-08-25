@@ -121,8 +121,8 @@ class StaffContractDBAccess {
         $SQL->joinLeft(array('C' => 't_members'), 'A.CREATED_BY = C.ID', array('FIRSTNAME AS MEMBER_FIRSTNAME', 'LASTNAME AS MEMBER_LASTNAME'));
         $SQL->joinLeft(array('D' => 't_camemis_type'), 'A.CONTRACT_TYPE = D.ID', array('NAME AS CONTRACT_NAME'));
         
-        if($objectId)
-            $SQL->where("B.ID = '".$objectId."'");
+        //if($objectId)
+            //$SQL->where("B.ID = '".$objectId."'");
             
         if($startDate and $endDate){
             if($searchType == 'START_DATE'){
