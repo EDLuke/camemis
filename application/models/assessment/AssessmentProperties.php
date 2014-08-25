@@ -505,6 +505,19 @@ abstract class AssessmentProperties {
                 switch ($this->getCurrentClass()->ENROLLMENT_TYPE)
                 {
                     case self::ENROLL_BY_SUBJECT:
+                        if ($this->checkEnrollStudentBySubject($value->ID))
+                        {
+                            $stdClass = new stdClass();
+                            $stdClass->ID = $value->ID;
+                            $stdClass->CODE = $value->CODE;
+                            $stdClass->GENDER = $value->GENDER;
+                            $stdClass->LASTNAME = $value->LASTNAME;
+                            $stdClass->FIRSTNAME = $value->FIRSTNAME;
+                            $stdClass->STUDENT_SCHOOL_ID = $value->STUDENT_SCHOOL_ID;
+                            $stdClass->LASTNAME_LATIN = $value->LASTNAME_LATIN;
+                            $stdClass->FIRSTNAME_LATIN = $value->FIRSTNAME_LATIN;
+                            $data[] = $stdClass;
+                        }
                         break;
                     case self::ENROLL_BY_SEMESTER:
                         switch ($this->term)
@@ -558,6 +571,23 @@ abstract class AssessmentProperties {
         }
 
         return $data;
+    }
+
+    protected function checkEnrollStudentBySubject($studentId)
+    {
+
+        $data = array();
+
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student_schoolyear", array("SUBJECTIDS"));
+        $SQL->where("STUDENT = ?", $studentId);
+        $SQL->where("SCHOOL_YEAR = ?", $this->getSchoolyearId());
+        $SQL->where("CLASS = ?", $this->academicId);
+        //error_log($SQL->__toString());
+        $result = self::dbAccess()->fetchRow($SQL);
+        $subjectIds = $result ? $result->SUBJECTIDS : "";
+        $data = explode(",", $subjectIds);
+        return (in_array($this->subjectId, $data)) ? true : false;
     }
 
 }
