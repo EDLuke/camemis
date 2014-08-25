@@ -25,6 +25,7 @@ require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffCon
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/TeachingSessionDBAccess.php"; 
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/schedule/TeacherScheduleDBAccess.php"; 
 require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/staff/StaffStatusDBAccess.php"; 
+require_once "models/" . Zend_Registry::get('MODUL_API_PATH') . "/GuardianDBAccess.php"; 
 error_reporting(E_ALL);
 
 abstract class CamemisExportDBAccess {
@@ -52,6 +53,7 @@ abstract class CamemisExportDBAccess {
         $this->DB_TEACHING_SESSION = TeachingSessionDBAccess::getInstance(); 
         $this->DB_TEACHER_TEACHING_SESSION = TeacherScheduleDBAccess::getInstance(); 
         $this->DB_STAFF_STATUS_LIST = StaffStatusDBAccess::getInstance();
+        $this->DB_GUARDIAN = GuardianDBAccess::getInstance();
     }
 
     public function getFileStaffList() {                                  
@@ -124,9 +126,12 @@ abstract class CamemisExportDBAccess {
     }
     public function getStaffContract() {
         return self::getUserPhath("_staffcontract.xls");
-    }
+    }                                                        
     public function getStaffStatus() {
         return self::getUserPhath("_staffstatus.xls");
+    }
+    public function getGuardian() {
+        return self::getUserPhath("_guardian.xls");
     }
     public function startContent() {
         return $this->startHeader + 1;
