@@ -211,107 +211,6 @@ Ext.onReady(function() {
         ,width: 550
         ,items:[{xtype: '".$PREREQUISITE_TREE->getObjectXtype()."'}]
     }";
-    //
-
-    $CREATED = "
-    {
-        title: '".CREATED."'
-        ,autoHeight: true
-        ,collapsible: true
-        ,collapsed: false
-        ,iconCls:'icon-about'
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,bodyStyle: 'padding:5px'
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,frame:true
-            ,bodyStyle: 'padding:10px'
-            ,items:[{
-                ".CamemisField::Displayfield("CREATED_DATE",CREATED_DATE,"".$OBJECT_DATA["CREATED_DATE"]."")."
-            },{
-                ".CamemisField::Displayfield("CREATED_BY",CREATED_BY,"".$OBJECT_DATA["CREATED_BY"]."")."
-            }]
-        }]
-    }
-    ";
-    
-    $MODIFIED = "
-    {
-        title: '".MODIFIED."'
-        ,autoHeight: true
-        ,collapsible: true
-        ,collapsed: false
-        ,iconCls:'icon-about'
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,bodyStyle: 'padding:5px'
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,frame:true
-            ,bodyStyle: 'padding:10px'
-            ,items:[{
-                ".CamemisField::Displayfield("MODIFY_DATE",MODIFY_DATE,"".$OBJECT_DATA["MODIFY_DATE"]."")."
-            },{
-                ".CamemisField::Displayfield("MODIFY_BY",MODIFY_BY,"".$OBJECT_DATA["MODIFY_BY"]."")."
-            }]
-        }]
-    }
-    ";
-    
-    $ENABLED = "
-    {
-        title: '".ENABLED."'
-        ,autoHeight: true
-        ,collapsible: true
-        ,collapsed: false
-        ,iconCls:'icon-about'
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,bodyStyle: 'padding:5px'
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,frame:true
-            ,bodyStyle: 'padding:10px'
-            ,items:[{
-                ".CamemisField::Displayfield("ENABLED_DATE",ENABLED_DATE,"".$OBJECT_DATA["ENABLED_DATE"]."")."
-            },{
-                ".CamemisField::Displayfield("ENABLED_BY",ENABLED_BY,"".$OBJECT_DATA["ENABLED_BY"]."")."
-            }]
-        }]
-    }
-    ";
-    
-    $DISABLED = "
-    {
-        title: '".DISABLED."'
-        ,autoHeight: true
-        ,collapsible: true
-        ,collapsed: false
-        ,iconCls:'icon-about'
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,bodyStyle: 'padding:5px'
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,frame:true
-            ,bodyStyle: 'padding:10px'
-            ,items:[{
-                ".CamemisField::Displayfield("DISABLED_DATE",DISABLED_DATE,"".$OBJECT_DATA["DISABLED_DATE"]."")."
-            },{
-                ".CamemisField::Displayfield("DISABLED_BY",DISABLED_BY,"".$OBJECT_DATA["DISABLED_BY"]."")."
-            }]
-        }]
-    }
-    ";
     
     $FORM_ITEMS = "[";
     $FORM_ITEMS .= $DETAIL_INFORMATION;
@@ -323,11 +222,7 @@ Ext.onReady(function() {
         }
         $FORM_ITEMS .= ",".$SCORE_NUMBER;
         $FORM_ITEMS .= ",".$SCORE_ALPHABET;
-        $FORM_ITEMS .= ",".$PRE_REQUISITE_COURSE;   
-        $FORM_ITEMS .= ",".$CREATED;  
-        $FORM_ITEMS .= ",".$MODIFIED;  
-        $FORM_ITEMS .= ",".$ENABLED;  
-        $FORM_ITEMS .= ",".$DISABLED;  
+        $FORM_ITEMS .= ",".$PRE_REQUISITE_COURSE;
     }
     $FORM_ITEMS .= "]";
     
