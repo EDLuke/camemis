@@ -232,7 +232,7 @@ class GuardianDBAccess {
         return self::dbAccess()->fetchAll($SQL);
     }
 
-    public static function jsonSearchStudentGuardian($params) {
+    public static function jsonSearchStudentGuardian($params,$isJson = true) {
         $start = isset($params["start"]) ? (int) $params["start"] : "0";
         $limit = isset($params["limit"]) ? (int) $params["limit"] : "50";
 
@@ -261,12 +261,15 @@ class GuardianDBAccess {
             if (isset($data[$i]))
                 $a[] = $data[$i];
         }
-
-        return array(
-            "success" => true
-            , "totalCount" => sizeof($data)
-            , "rows" => $a
-        );
+        if ($isJson) {
+            return array(
+                "success" => true
+                , "totalCount" => sizeof($data)
+                , "rows" => $a
+            );
+        } else {
+            return $data;
+        }
     }
 
     public function jsonRemoveGuardian($Id) {
