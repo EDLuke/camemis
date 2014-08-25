@@ -620,7 +620,7 @@ class ScheduleController extends Zend_Controller_Action {
         {
             if ($academicObject)
             {
-                if ($academicObject->MULTIPLE_SESSIONS)
+                if ($academicObject->SESSION_GROUP)
                 {
                     $this->_helper->viewRenderer("showmulticlassevent");
                 }else{
