@@ -24,6 +24,7 @@ require_once 'models/export/TeachingSessionExportDBAccess.php';
 require_once 'models/export/TeacherTeachingSessionExportDBAccess.php';
 require_once 'models/export/StaffContractExportDBAccess.php';
 require_once 'models/export/StaffStatusExportDBAccess.php';
+require_once 'models/export/GuardianExportDBAccess.php';
 class ExportController extends Zend_Controller_Action {
                                                                                
     public function init()
@@ -48,10 +49,11 @@ class ExportController extends Zend_Controller_Action {
         $this->TEACHER_TEACHING_SESSION_EXCEL = new TeacherTeachingSessionExportDBAccess($this->_getParam('objectId'));
         $this->STAFF_CONTRACT_EXCEL = new StaffContractExportDBAccess($this->_getParam('objectId'));
         $this->STAFF_STATUS_EXCEL = new StaffStatusExportDBAccess($this->_getParam('objectId'));
+        $this->GUARDIAN_EXCEL = new GuardianExportDBAccess($this->_getParam('objectId'));
         
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
                 $this->_getParam('academicId')
-                , $this->_getParam('trainingId')
+                , $this->_getParam('trainingId')                                              
         );
     }
 
@@ -189,6 +191,10 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
+    public function openguardianAction()
+    {
+         
+    }
     //End...
     public function jsonexcelAction()
     {
@@ -266,6 +272,9 @@ class ExportController extends Zend_Controller_Action {
                 break;
             case "jsonStaffStatus":
                 $jsondata = $this->STAFF_STATUS_EXCEL->jsonStaffStatus($this->REQUEST->getPost());
+                break;
+            case "jsonGuardian":
+                $jsondata = $this->GUARDIAN_EXCEL->jsonGuardian($this->REQUEST->getPost());
                 break;
         }
 
