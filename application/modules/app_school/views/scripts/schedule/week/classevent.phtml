@@ -253,20 +253,6 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
 
         $OBJECT_GRID->addReadField("name: 'ID'");
         $OBJECT_GRID->addReadField("name: 'HEIGHT'");
-        $OBJECT_GRID->addReadField("name: 'MO_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'TU_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'WE_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'TH_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'FR_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'SA_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'SU_GROUP'");
-        $OBJECT_GRID->addReadField("name: 'MO_GUID'");
-        $OBJECT_GRID->addReadField("name: 'TU_GUID'");
-        $OBJECT_GRID->addReadField("name: 'WE_GUID'");
-        $OBJECT_GRID->addReadField("name: 'TH_GUID'");
-        $OBJECT_GRID->addReadField("name: 'FR_GUID'");
-        $OBJECT_GRID->addReadField("name: 'SA_GUID'");
-        $OBJECT_GRID->addReadField("name: 'SU_GUID'");
         $OBJECT_GRID->addReadField("name: 'TIME'");
         $OBJECT_GRID->addReadField("name: 'MO'");
         $OBJECT_GRID->addReadField("name: 'TU'");
@@ -618,11 +604,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.MO_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.MO_GROUP >1){";
-                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";        
-                                $html .= "}else{";
-                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";        
-                                $html .= "}";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";      
+                                }else{
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsMO)."&scheduleId=' + record.data.MO_GUID);";    
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -637,11 +623,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TU_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.TU_GROUP >1){";
-                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);";        
-                                $html .= "}else{";
-                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);";        
-                                $html .= "}";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);"; 
+                                }else{
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TU_GUID);"; 
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -656,11 +642,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.WE_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.WE_GROUP >1){";
-                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsWE)."&scheduleId=' + record.data.WE_GUID);";        
-                                $html .= "}else{";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsWE)."&scheduleId=' + record.data.WE_GUID);"; 
+                                }else{
                                     $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsWE)."&scheduleId=' + record.data.WE_GUID);";        
-                                $html .= "}";
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -675,11 +661,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.TH_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.TH_GROUP >1){";
-                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";        
-                                $html .= "}else{";
-                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";        
-                                $html .= "}";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";  
+                                }else{
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsTH)."&scheduleId=' + record.data.TH_GUID);";    
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -694,11 +680,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.FR_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.FR_GROUP >1){";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
                                     $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsFR)."&scheduleId=' + record.data.FR_GUID);";        
-                                $html .= "}else{";
+                                }else{
                                     $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsFR)."&scheduleId=' + record.data.FR_GUID);";        
-                                $html .= "}";
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -713,11 +699,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SA_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.SA_GROUP >1){";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
                                     $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsSA)."&scheduleId=' + record.data.SA_GUID);";        
-                                $html .= "}else{";
-                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsSA)."&scheduleId=' + record.data.SA_GUID);";        
-                                $html .= "}";
+                                }else{
+                                    $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsSA)."&scheduleId=' + record.data.SA_GUID);";     
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";
@@ -732,11 +718,11 @@ $CHOOSE_COPY_FROM_TERM = implode(",",$COPY_FROM_TERM);
                             $html .= "text: '".SHOW_DETAIL." &raquo; ' + record.data.SU_EVENT";
                             $html .= ",iconCls: 'icon-application_form_magnify'";
                             $html .= ",handler: function(){";
-                                $html .= "if(record.data.SU_GROUP >1){";
-                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsSU)."&scheduleId=' + record.data.SU_GUID);";        
-                                $html .= "}else{";
+                                if($gradeSchoolyearObject->EDUCATION_SYSTEM){
+                                    $html .= "clickOpenPage('content','', '/schedule/groupschedule/?camIds=".$this->urlEncryp->encryptedGet($setparamsSU)."&scheduleId=' + record.data.SU_GUID);";      
+                                }else{
                                     $html .= "clickOpenPage('content','', '/schedule/showclassevent/?camIds=".$this->urlEncryp->encryptedGet($setparamsSU)."&scheduleId=' + record.data.SU_GUID);";        
-                                $html .= "}";
+                                }
                             $html .= "}";
                         $html .= "}]";
                     $html .= "});";

@@ -63,7 +63,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL .= " SELECT DISTINCT
             A.ID AS ID
             ,A.CODE AS CODE
-            ,A.USE_OF_GROUPS AS USE_OF_GROUPS
             ,A.GUID AS GUID
             ,A.PARENT AS PARENT
             ,A.STATUS AS STATUS
@@ -285,7 +284,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['campusId'] = $value->CAMPUS_ID;
                         $data['gradeId'] = $value->GRADE_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
-                        $data['useOfGroups'] = $value->USE_OF_GROUPS;
                         $data['click'] = true;
                         $data['leaf'] = true;
 

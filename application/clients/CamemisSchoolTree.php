@@ -283,7 +283,7 @@ class CamemisSchoolTree {
         $js .= "onAddClass: function(){";
         $js .= "var actionNode = this.getSelectionModel().getSelectedNode();";
         $js .= "var clickId = actionNode.attributes.id;";
-        $js .= "var url = '" . $this->utiles->buildURL('academic/addgroup', false, true) . "&parentId=' + clickId + '&objecttype=CLASS=system=' + actionNode.attributes.educationSystem;";
+        $js .= "var url = '" . $this->utiles->buildURL('academic/addcreditclass', false, true) . "&parentId=' + clickId + '&objecttype=CLASS=system=' + actionNode.attributes.educationSystem;";
         $js .= "clickOpenPage('center','" . GRADEGROUP . "', url);";
         $js .= "}";
 

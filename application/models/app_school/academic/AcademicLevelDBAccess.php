@@ -68,7 +68,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
         $SQL = "";
         $SQL .= " SELECT DISTINCT
             A.ID AS ID
-            ,A.USE_OF_GROUPS AS USE_OF_GROUPS
             ,A.GUID AS GUID
             ,A.PARENT AS PARENT
             ,A.NUMBER_CREDIT AS NUMBER_CREDIT
@@ -317,7 +316,6 @@ class AcademicLevelDBAccess extends AcademicDBAccess {
                         $data['campusId'] = $value->CAMPUS_ID;
                         $data['gradeId'] = $value->GRADE_ID;
                         $data['schoolyearId'] = $value->SCHOOL_YEAR;
-                        $data['useOfGroups'] = $value->USE_OF_GROUPS;
                         if ($isCurrentYear)
                         {
                             $data['cls'] = "nodeTextBlue";

@@ -216,7 +216,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->parentId = $this->parentId;
     }
 
-    public function addgroupAction()
+    public function addcreditclassAction()
     {
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");
         $this->view->facette = AcademicDBAccess::findGradeFromId($this->parentId);
@@ -377,7 +377,7 @@ class AcademicController extends Zend_Controller_Action {
         $this->view->status = isset($this->facette) ? $this->facette->STATUS : 0;
     }
 
-    public function editgroupAction()
+    public function editcreditclassAction()
     {
 
         //UserAuth::actionPermint($this->_request, "GENERAL_EDUCATION");

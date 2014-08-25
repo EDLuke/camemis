@@ -146,7 +146,7 @@ class GradeSubjectDBAccess extends SubjectDBAccess {
                     $schoolyearId = $objectAcademic->SCHOOL_YEAR;
                     $used_in_class = 1;
                     break;
-                case "SUBCLASS":
+                case "CREDITCLASS":
                     $academicId = $objectAcademic->PARENT;
                     $gradeId = $objectAcademic->GRADE_ID;
                     $schoolyearId = $objectAcademic->SCHOOL_YEAR;

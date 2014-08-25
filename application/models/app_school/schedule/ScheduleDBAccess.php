@@ -894,7 +894,6 @@ class ScheduleDBAccess {
                     }
                 $MO_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "MO", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["MO_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($MO_OBJECT);
                 $data[$i]["MO"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $MO_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["MO_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $MO_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["MO_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $MO_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -905,7 +904,6 @@ class ScheduleDBAccess {
 
                 $TU_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "TU", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["TU_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($TU_OBJECT);
                 $data[$i]["TU"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $TU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["TU_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $TU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["TU_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $TU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -916,7 +914,6 @@ class ScheduleDBAccess {
 
                 $WE_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "WE", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["WE_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($WE_OBJECT);
                 $data[$i]["WE"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $WE_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["WE_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $WE_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["WE_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $WE_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -927,7 +924,6 @@ class ScheduleDBAccess {
 
                 $TH_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "TH", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["TH_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($TH_OBJECT);
                 $data[$i]["TH"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $TH_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["TH_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $TH_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["TH_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $TH_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -938,7 +934,6 @@ class ScheduleDBAccess {
 
                 $FR_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "FR", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["FR_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($FR_OBJECT);
                 $data[$i]["FR"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $FR_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["FR_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $FR_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["FR_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $FR_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -949,7 +944,6 @@ class ScheduleDBAccess {
 
                 $SA_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "SA", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["SA_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($SA_OBJECT);
                 $data[$i]["SA"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $SA_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["SA_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $SA_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["SA_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $SA_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -960,7 +954,6 @@ class ScheduleDBAccess {
 
                 $SU_OBJECT = self::loadSQLClassEvents($value->START_TIME, $value->END_TIME, "SU", $value->$chooseId, $value->TERM, true, $type);
 
-                $data[$i]["SU_GROUP"] = ($trainingId) ? "" : self::checkDoubleGroupEvent($SU_OBJECT);
                 $data[$i]["SU"] = self::displayEvent("DAY_EVENT", $checkAcademicId, $SU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["SU_GUID"] = self::displayEvent("DAY_GUID", $checkAcademicId, $SU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
                 $data[$i]["SU_EVENT"] = self::displayEvent("DAY_NAME_EVENT", $checkAcademicId, $SU_OBJECT, $LINKED_SCHEDULE_CREDIT_DATA, $DISPLAY_SUBJECT);
@@ -2529,7 +2522,7 @@ class ScheduleDBAccess {
         );
     }
 
-    public static function displayGroupSubjectEvent($scheduleObject)
+    public static function displayAcademicCreditSubjectEvent($scheduleObject)
     {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();
@@ -2633,14 +2626,14 @@ class ScheduleDBAccess {
 
             if ($EVENT_OBJECT->SHARED_SCHEDULE)
             {
-                if (self::checkAcaemicGroup($EVENT_OBJECT->ACADEMIC_ID))
+                if (self::checkAcademicCreditClass($EVENT_OBJECT->ACADEMIC_ID))
                 {
-                    $DAY_EVENT .= self::displayGroupSubjectEvent($EVENT_OBJECT);
+                    $DAY_EVENT .= self::displayAcademicCreditSubjectEvent($EVENT_OBJECT);
                     $DAY_NAME_EVENT .= "";
                     $DAY_COLOR .= "#FFF";
                     $DAY_COLOR_FONT .= "#555";
                     $DAY_GUID .= $EVENT_OBJECT->GUID;
-                    $DAY_DESCRIPTION .= self::displayAcademicGroup($EVENT_OBJECT);
+                    $DAY_DESCRIPTION .= self::displayAcademicCredit($EVENT_OBJECT);
                     $DAY_DESCRIPTION_EX .= "";
                 }
                 else
@@ -2775,39 +2768,13 @@ class ScheduleDBAccess {
         }
     }
 
-    public static function checkDoubleGroupEvent($scheduleObject)
-    {
-
-        if ($scheduleObject)
-        {
-
-            $SQL = self::dbAccess()->select();
-            $SQL->distinct();
-            $SQL->from(array('A' => 't_schedule'), array('COUNT(*) AS C'));
-            $SQL->joinLeft(array('B' => 't_grade'), 'A.ACADEMIC_ID=B.ID', array());
-            $SQL->where("A.ACADEMIC_ID = '" . $scheduleObject->ACADEMIC_ID . "'");
-            $SQL->where("A.START_TIME = '" . $scheduleObject->START_TIME . "'");
-            $SQL->where("A.END_TIME = '" . $scheduleObject->END_TIME . "'");
-            $SQL->where("A.TERM = '" . $scheduleObject->TERM . "'");
-            $SQL->where("A.SHORTDAY = '" . $scheduleObject->SHORTDAY . "'");
-            $SQL->where("B.USE_OF_GROUPS = 1");
-            $result = self::dbAccess()->fetchRow($SQL);
-            //error_log($SQL);
-            return $result ? $result->C : 0;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    public static function checkAcaemicGroup($academicId)
+    public static function checkAcademicCreditClass($academicId)
     {
 
         $SQL = self::dbAccess()->select();
         $SQL->from('t_grade', 'COUNT(*) AS C');
         $SQL->where("PARENT = '" . $academicId . "'");
-        $SQL->where("OBJECT_TYPE = 'SUBCLASS'");
+        $SQL->where("OBJECT_TYPE = 'CREDITCLASS'");
         $result = self::dbAccess()->fetchRow($SQL);
         //error_log($SQL);
         return $result ? $result->C : 0;
@@ -2824,7 +2791,7 @@ class ScheduleDBAccess {
         return $result ? $result->C : 0;
     }
 
-    public static function displayAcademicGroup($scheduleObject)
+    public static function displayAcademicCredit($scheduleObject)
     {
         $SQL = self::dbAccess()->select();
         $SQL->distinct();

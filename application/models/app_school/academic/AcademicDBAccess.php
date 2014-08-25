@@ -139,7 +139,7 @@ class AcademicDBAccess {
             {
                 $data["EDUCATION_SYSTEM_NAME"] = TRADITIONAL;
             }
-            $data["USE_OF_GROUPS"] = $facette->USE_OF_GROUPS ? true : false;
+            
             $data["OBJECT_TYPE"] = $facette->OBJECT_TYPE;
             $data["SCHOOL_YEAR"] = $facette->SCHOOL_YEAR;
             $data["CLASS_TYPE"] = $facette->CLASS_TYPE;
@@ -466,46 +466,32 @@ class AcademicDBAccess {
 
         if (isset($params["CODE"]))
             $SAVEDATA['CODE'] = addText($params["CODE"]);
-
         if (isset($params["NAME"]))
             $SAVEDATA['NAME'] = addText($params["NAME"]);
-
         if (isset($params["SESSION_GROUP"]))
             $SAVEDATA['SESSION_GROUP'] = addText($params["SESSION_GROUP"]);
-
         if (isset($params["COLOR"]))
             $SAVEDATA['COLOR'] = addText($params["COLOR"]);
-
         if (isset($params["SHORT"]))
             $SAVEDATA['SHORT'] = addText($params["SHORT"]);
-
         if (isset($params["SORTKEY"]))
             $SAVEDATA['SORTKEY'] = addText($params["SORTKEY"]);
-
         if (isset($params["CLASS_TYPE"]))
             $SAVEDATA['CLASS_TYPE'] = addText($params["CLASS_TYPE"]);
-
         if (isset($params["CONTACT_PERSON"]))
             $SAVEDATA['CONTACT_PERSON'] = addText($params["CONTACT_PERSON"]);
-
         if (isset($params["PRE_REQUIREMENTS"]))
             $SAVEDATA['PRE_REQUIREMENTS'] = addText($params["PRE_REQUIREMENTS"]);
-
         if (isset($params["BOARD_OF_EXAMINERS"]))
             $SAVEDATA['BOARD_OF_EXAMINERS'] = addText($params["BOARD_OF_EXAMINERS"]);
-
         if (isset($params["NUMBER_OF_STUDENTS"]))
             $SAVEDATA['NUMBER_OF_STUDENTS'] = addText($params["NUMBER_OF_STUDENTS"]);
-
         if (isset($params["EMAIL"]))
             $SAVEDATA['EMAIL'] = addText($params["EMAIL"]);
-
         if (isset($params["PHONE"]))
             $SAVEDATA['PHONE'] = addText($params["PHONE"]);
-
         if (isset($params["LEVEL"]))
             $SAVEDATA['LEVEL'] = addText($params["LEVEL"]);
-
         if (isset($params["QUALIFICATION_TYPE"]))
         {
             $SAVEDATA['QUALIFICATION_TYPE'] = addText($params["QUALIFICATION_TYPE"]);
@@ -514,29 +500,20 @@ class AcademicDBAccess {
 
         if (isset($params["SCHOOL_TYPE"]))
             $SAVEDATA['SCHOOL_TYPE'] = addText($params["SCHOOL_TYPE"]);
-
         if (isset($params["NUMBER_CREDIT"]))
             $SAVEDATA['NUMBER_CREDIT'] = addText($params["NUMBER_CREDIT"]);
-
         if (isset($params["SEMESTER1_WEIGHTING"]))
             $SAVEDATA['SEMESTER1_WEIGHTING'] = addText($params["SEMESTER1_WEIGHTING"]);
-
         if (isset($params["SEMESTER2_WEIGHTING"]))
             $SAVEDATA['SEMESTER2_WEIGHTING'] = addText($params["SEMESTER2_WEIGHTING"]);
-
         if (isset($params["TERM1_WEIGHTING"]))
             $SAVEDATA['TERM1_WEIGHTING'] = addText($params["TERM1_WEIGHTING"]);
-
         if (isset($params["TERM2_WEIGHTING"]))
             $SAVEDATA['TERM2_WEIGHTING'] = addText($params["TERM2_WEIGHTING"]);
-
         if (isset($params["EVALUATION_TYPE"]))
             $SAVEDATA['EVALUATION_TYPE'] = (int) $params["EVALUATION_TYPE"];
-
         if (isset($params["YEAR_RESULT"]))
             $SAVEDATA['YEAR_RESULT'] = addText($params["YEAR_RESULT"]);
-
-        $SAVEDATA['USE_OF_GROUPS'] = isset($params["USE_OF_GROUPS"]) ? 1 : 0;
 
         $SAVEDATA['DISPLAY_MONTH_RESULT'] = isset($params["DISPLAY_MONTH_RESULT"]) ? 1 : 0;
         $SAVEDATA['DISPLAY_FIRST_RESULT'] = isset($params["DISPLAY_FIRST_RESULT"]) ? 1 : 0;
@@ -549,13 +526,10 @@ class AcademicDBAccess {
 
         if (isset($params["ENROLLMENT_TYPE"]))
             $SAVEDATA['ENROLLMENT_TYPE'] = addText($params["ENROLLMENT_TYPE"]);
-
         if (isset($params["EVALUATION_OPTION"]))
             $SAVEDATA['EVALUATION_OPTION'] = addText($params["EVALUATION_OPTION"]);
-
         if (isset($params["GRADING_TYPE"]))
             $SAVEDATA['GRADING_TYPE'] = addText($params["GRADING_TYPE"]);
-
         if (isset($params["PERFORMANCE_MONTH_DIVISION_VALUE"]))
             $SAVEDATA['PERFORMANCE_MONTH_DIVISION_VALUE'] = addText($params["PERFORMANCE_MONTH_DIVISION_VALUE"]);
         if (isset($params["PERFORMANCE_FIRST_DIVISION_VALUE"]))
@@ -1131,7 +1105,6 @@ class AcademicDBAccess {
                     $SAVEDATA["FR"] = $schoolyearsubjectObject->FR;
                     $SAVEDATA["SA"] = $schoolyearsubjectObject->SA;
                     $SAVEDATA["SU"] = $schoolyearsubjectObject->SU;
-                    $SAVEDATA["USE_OF_GROUPS"] = $schoolyearsubjectObject->USE_OF_GROUPS;
                     $SAVEDATA["SUBJECT_ID"] = $schoolyearsubjectObject->SUBJECT_ID;
 
                     $SAVEDATA["SESSION_GROUP"] = $schoolyearsubjectObject->SESSION_GROUP;
@@ -2006,7 +1979,7 @@ class AcademicDBAccess {
                 $SAVEDATA["GUID"] = generateGuid();
                 $SAVEDATA["NAME"] = addText($name);
                 $SAVEDATA["PARENT"] = $facette->ID;
-                $SAVEDATA["OBJECT_TYPE"] = "SUBCLASS";
+                $SAVEDATA["OBJECT_TYPE"] = "CREDITCLASS";
                 $SAVEDATA["CAMPUS_ID"] = $facette->CAMPUS_ID;
                 $SAVEDATA["GRADE_ID"] = $facette->GRADE_ID;
                 $SAVEDATA["EDUCATION_SYSTEM"] = $facette->EDUCATION_SYSTEM;
@@ -2093,7 +2066,7 @@ class AcademicDBAccess {
 
         $SQL = self::dbAccess()->select();
         $SQL->from("t_grade", array("*"));
-        $SQL->where("OBJECT_TYPE = 'SUBCLASS'");
+        $SQL->where("OBJECT_TYPE = 'CREDITCLASS'");
         $SQL->where("PARENT = ?", $parentId);
         return self::dbAccess()->fetchAll($SQL);
     }

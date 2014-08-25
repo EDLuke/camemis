@@ -912,16 +912,10 @@ Ext.onReady(function() {
     $setLink .= "&target=".$this->target."";
     $setLink .= "&trainingId=".$this->trainingId."";
     if($this->facette){
-        if(ScheduleDBAccess::checkDoubleGroupEvent($this->facette)>1){
-            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-                window.parent.window.location='/schedule/weekclassevents/?camIds=".$this->urlEncryp->encryptedGet($setLink)."';
-            "); 
-        }else{
-            $OBJECT_FORM->setOnEmbeddedRemoveEvents("
-                if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
-                window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
-            "); 
-        }
+        $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+            if (window.parent.Ext.getCmp('SCHEDULE_LIST_ID')) window.parent.Ext.getCmp('SCHEDULE_LIST_ID').store.reload();
+            window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        "); 
     }
     
     $OBJECT_FORM->isObjectDefaultOnLoad = true;

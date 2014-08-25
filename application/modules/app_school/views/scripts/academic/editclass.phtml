@@ -23,13 +23,6 @@ $OBJECT_FORM = new CamemisForm("ACADEMIC");
 $OBJECT_FORM->setLoadUrl('/academic/jsonload/');
 $OBJECT_FORM->setSaveUrl('/academic/jsonsave/');
 
-////////////////////////////////////////////////////////////////////////////////
-//GROUP
-$SUBCLASS_GRID = new CamemisGrid("ACADEMIC", "SUBCLASS");
-$SUBCLASS_GRID->setLoadUrl('/academic/jsonload/');
-$SUBCLASS_GRID->setSaveUrl('/academic/jsonsave/');
-////////////////////////////////////////////////////////////////////////////////
-
 $INSTRUCTOR_GRID = new CamemisGrid("INSTRUCTOR", "LIST");
 $INSTRUCTOR_GRID->setLoadUrl('/academic/jsonload/');
 $INSTRUCTOR_GRID->setSaveUrl('/academic/jsonsave/');
@@ -55,86 +48,7 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
          */
         $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
         $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
-
-        ////////////////////////////////////////////////////////////////////////
-        //GROUP..
-        $SUBCLASS_GRID->addTBarItems("
-            tbar.add('->');
-        ");
-        $SUBCLASS_GRID->addTBarItems(CamemisBar::tbarGridRemove("this.onRemove"));
-        $SUBCLASS_GRID->addTBarItems("
-            tbar.add('-');
-        ");
-        $SUBCLASS_GRID->addTBarItems("
-            tbar.add([{
-                id: 'DETAIL_INFORMATION_ID'
-                ,text: '".SHOW_DETAIL."'
-                ,iconCls:'icon-magnifier'
-                ,scope:this
-                ,handler: function(){
-                    clickOpenPage('CONTENT','".STUDENT_GROUP_ASSIGNMENT."', '/academic/studentsubclass/?objectId=".$this->objectId."');
-                }
-            }]);
-        ");
-        $SUBCLASS_GRID->addTBarItems("
-            tbar.add(['-',{
-                id: 'CREATE_ITEM_ID'
-                ,text: '".ADD_ENTRY."'
-                ,iconCls:'icon-application_form_add'
-                ,scope:this
-                ,handler: this.onAddItem
-            }]);
-        ");
-        $SUBCLASS_GRID->addReadField("name: 'ID'");
-        $SUBCLASS_GRID->addReadField("name: 'NAME'");
-        $SUBCLASS_GRID->addColumn("
-            header: '<b>" . NAME . "</b>'
-            , align:'left'
-            , sortable: false
-            , dataIndex: 'NAME'
-            , width: 300
-            , renderer: cssText
-            , editor: new Ext.form.TextField({
-                allowBlank: false
-                ,name: 'NAME'
-            })
-        ");
-        $SUBCLASS_GRID->baseParams = "
-            start:0
-            ,limit:100
-            ,objectId: '" . $this->objectId . "'
-            ,cmd: 'jsonListSubClass'
-        ";
-        $SUBCLASS_GRID->setSaveParams("
-            cmd: 'addSubClass'
-            ,objectId: '" . $this->objectId . "'
-        ");
-        $SUBCLASS_GRID->setRemoveParams("
-            cmd: 'deleteSubClass'
-        ");
         
-        $SUBCLASS_GRID->setRemoveEmbeddedEvents("
-            Ext.getCmp('".$SUBCLASS_GRID->getObjectId()."').store.reload();
-        ");
-        $SUBCLASS_GRID->isGridEditing = true;
-        $SUBCLASS_GRID->loadMask = false;
-        $SUBCLASS_GRID->isPagingToolbar = true;
-        $SUBCLASS_GRID->isObjectDefaultOnLoad = true;
-        $SUBCLASS_GRID->forceFit = "false";
-        if ($this->facette->USE_OF_GROUPS) $SUBCLASS_GRID->renderJS();
-        $DISPLAY_SUBCLASS = "
-        {
-            title: '".GROUP."'
-            ,collapsible: true
-            ,collapsed: false
-            ,style: 'padding-bottom:5px'
-            ,width: 550
-            ,height: 250
-            ,layout: 'fit'
-            ,items:[{xtype: '".$SUBCLASS_GRID->getObjectXtype()."'}]
-        }";
-        
-        ////////////////////////////////////////////////////////////////////////
         $INSTRUCTOR_GRID->addReadField("name: 'ID'");
         $INSTRUCTOR_GRID->addReadField("name: 'CHECKED'");
         $INSTRUCTOR_GRID->addReadField("name: 'CODE'");
@@ -370,7 +284,6 @@ print$CAMEMIS_PAGE_OBJECT->showCamemisHeader();
         
         $FORM_ITEMS = "";
         $FORM_ITEMS .= $DETAIL_INFORMATION;
-        if ($this->facette->USE_OF_GROUPS) $FORM_ITEMS .= ",".$DISPLAY_SUBCLASS;
         $FORM_ITEMS .= ",".$INSTRUCTOR_GRID;
         $FORM_ITEMS .= ",".$WORKING_DAYS;
         $FORM_ITEMS .= ",".$CREATED;
