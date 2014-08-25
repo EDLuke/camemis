@@ -1,0 +1,20 @@
+<?
+
+$fileName = UserAuth::getUserId() . "_guardian.xls";
+$exportFile = "../public/" . UserAuth::getMyFolder() . "/" . $fileName . "";
+
+header("Content-Type: application/x-msexcel;");
+header("Content-Disposition: attachment; filename=\"" . $fileName . "\"");
+// IE <= 6 cache fix
+header('Expires: 0');
+header('Pragma: cache');
+header('Cache-Control: private');
+
+if (file_exists($exportFile))
+{
+    $fh = fopen($exportFile, 'r');
+    fpassthru($fh);
+    fclose($fh);
+    unlink($exportFile);
+}
+?>
