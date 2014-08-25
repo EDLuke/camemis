@@ -19,6 +19,11 @@ require_once 'models/export/StudentTrainingExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/RoomExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/StudentPersonalInfoExportDBAccess.php';//@CHHE Vathana
 require_once 'models/export/StaffPersonalInfoExportDBAccess.php';//@CHHE Vathana
+require_once 'models/export/TeachingSessionExportDBAccess.php';
+require_once 'models/export/TeacherTeachingSessionExportDBAccess.php';
+require_once 'models/export/StaffContractExportDBAccess.php';
+require_once 'models/export/StaffStatusExportDBAccess.php';
+require_once 'models/export/GuardianExportDBAccess.php';
 
 class ExportController extends Zend_Controller_Action {
 
@@ -39,7 +44,11 @@ class ExportController extends Zend_Controller_Action {
         $this->ROOM_EXCEL = new RoomExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         $this->STUDENT_PERSONAL_EXCEL = new StudentPersonalInfoExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
         $this->STAFF_PERSONAL_EXCEL = new StaffPersonalInfoExportDBAccess($this->_getParam('objectId'));//@CHHE Vathana
-        
+        $this->TEACHING_SESSION_EXCEL = new TeachingSessionExportDBAccess($this->_getParam('objectId'));
+        $this->TEACHER_TEACHING_SESSION_EXCEL = new TeacherTeachingSessionExportDBAccess($this->_getParam('objectId'));
+        $this->STAFF_CONTRACT_EXCEL = new StaffContractExportDBAccess($this->_getParam('objectId'));
+        $this->STAFF_STATUS_EXCEL = new StaffStatusExportDBAccess($this->_getParam('objectId'));
+        $this->GUARDIAN_EXCEL = new GuardianExportDBAccess($this->_getParam('objectId'));
 
         $this->SCHEDULE_EXCEL = new ScheduleExportDBAccess(
                 $this->_getParam('academicId')
@@ -167,8 +176,26 @@ class ExportController extends Zend_Controller_Action {
     {
          
     }
-    
-    
+     public function openteachingsessionAction()
+    {
+         
+    }
+    public function openteacherteachingsessionAction()
+    {
+         
+    }
+    public function openstaffcontractAction()
+    {
+         
+    }
+    public function openstaffstatusAction()
+    {
+         
+    }
+    public function openguardianAction()
+    {
+         
+    }
     //End...
     
     //
@@ -227,7 +254,21 @@ class ExportController extends Zend_Controller_Action {
             case "staffpersonalinfo":
                 $jsondata = $this->STAFF_PERSONAL_EXCEL->staffpersonalinfo($this->REQUEST->getPost());
                 break;
-                
+            case "jsonTeachingSession":
+                $jsondata = $this->TEACHING_SESSION_EXCEL->jsonTeachingSession($this->REQUEST->getPost());
+                break;
+            case "jsonTeacherTeachingSession":
+                $jsondata = $this->TEACHER_TEACHING_SESSION_EXCEL->jsonTeacherTeachingSession($this->REQUEST->getPost());
+                break;
+            case "jsonStaffContract":
+                $jsondata = $this->STAFF_CONTRACT_EXCEL->jsonStaffContract($this->REQUEST->getPost());
+                break;
+            case "jsonStaffStatus":
+                $jsondata = $this->STAFF_STATUS_EXCEL->jsonStaffStatus($this->REQUEST->getPost());
+                break;  
+            case "jsonGuardian":
+                $jsondata = $this->GUARDIAN_EXCEL->jsonGuardian($this->REQUEST->getPost());
+                break; 
             //End...
         }
 
