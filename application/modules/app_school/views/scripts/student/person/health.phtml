@@ -99,7 +99,7 @@ Ext.onReady(function() {
         ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
     ");
     $FIRST_GRID->setAftereditCallback("
-        Ext.getCmp('".$FIRST_GRID->getObjectId()."').store.reload(); 
+        Ext.getCmp('".$FIRST_GRID->getObjectId()."').store.load();
     ");
     $FIRST_GRID->loadMask = false;
     $FIRST_GRID->isPagingToolbar = true;
@@ -136,11 +136,12 @@ Ext.onReady(function() {
     ";
     $SECOND_GRID->setSaveParams("
         cmd: 'actionStudentHealthEyeInfo'
-        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams,
+        Ext.getCmp('".$SECOND_GRID->getObjectId()."').store.load()."'
     ");
-    $SECOND_GRID->setAftereditCallback("
-        Ext.getCmp('".$SECOND_GRID->getObjectId()."').store.reload(); 
-    ");
+    /$SECOND_GRID->setAftereditCallback("
+        Ext.getCmp('".$SECOND_GRID->getObjectId()."').store.load();
+    ");/
     $SECOND_GRID->loadMask = false;
     $SECOND_GRID->isPagingToolbar = true;
     $SECOND_GRID->isObjectDefaultOnLoad = true;
@@ -178,7 +179,7 @@ Ext.onReady(function() {
     
     switch($target){
         case "VISION":
-            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('OTHER', 'OTHER', "Other", true)."}";
+           //$DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('OTHER', 'OTHER', "Other", true)."}";
             break;
         case "MEDICAL_VISIT":
             $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
@@ -382,21 +383,7 @@ Ext.onReady(function() {
     
     $VISION = "
     {
-        title: 'Eye treatment'
-        ,collapsible: true
-        ,collapsed: false
-        ,autoHeight: true
-        ,style: 'padding-bottom: 5px'
-        ,width: 550
-        ,items:[{
-            layout: 'form'
-            ,border: false
-            ,autoHeight:true
-            ,bodyStyle: 'padding:10px'
-            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
-        }]
-    },{
-        title: 'Eye Chart'
+        title: 'Eye Chart Used'
         ,collapsible: true
         ,collapsed: false
         ,autoHeight: true
@@ -409,10 +396,42 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("EYE_CHART"),2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
         }]
+    },{
+            title: 'Value Left Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
+        },{
+            title: 'Value Right Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
+        },{
+        title: 'Diagnosis'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
+        }]
     }
-    ";
+        ";
     
-    if($facette){
+   /* if($facette){
         $VISION .= "
         ,{
             title: 'Values for left eye'
@@ -434,7 +453,7 @@ Ext.onReady(function() {
             ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
         }
         ";
-    }
+    }*/
     
     $GROWTH_CHART = "
     {
