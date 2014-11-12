@@ -127,8 +127,16 @@ class StudentHealthDBAccess {
             $SAVEDATA['PULSE'] = addText($params["PULSE"]);
         }
 
-        if (isset($params["BLOOD_PRESSURE"])) {
-            $SAVEDATA['BLOOD_PRESSURE'] = addText($params["BLOOD_PRESSURE"]);
+        if (isset($params["BLOOD_PRESSURE_SYSTOLIC"])) {
+            $SAVEDATA['BLOOD_PRESSURE_SYSTOLIC'] = addText($params["BLOOD_PRESSURE_SYSTOLIC"]);
+        }
+
+        if (isset($params["BLOOD_PRESSURE_DIASTOLIC"])) {
+            $SAVEDATA['BLOOD_PRESSURE_DIASTOLIC'] = addText($params["BLOOD_PRESSURE_DIASTOLIC"]);
+        }
+
+        if (isset($params["TEMPERATURE"])) {
+            $SAVEDATA['TEMPERATURE'] = addText($params["TEMPERATURE"]);
         }
 
         if (isset($params["LOCATION"])) {
@@ -371,7 +379,9 @@ class StudentHealthDBAccess {
                     $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
                     $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
                     $data[$i]["PULSE"] = setShowText($value->PULSE);
-                    $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
+                    $data[$i]["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($value->BLOOD_PRESSURE_SYSTOLIC);
+                    $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
+                    $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
                     break;
             }
 
@@ -421,7 +431,9 @@ class StudentHealthDBAccess {
             $data["PULSE"] = setShowText($result->PULSE);
             $data["NEXT_VISIT"] = getShowDate($result->NEXT_VISIT);
             $data["NEXT_VISIT_TIME"] = secondToHour($result->NEXT_VISIT_TIME);
-            $data["BLOOD_PRESSURE"] = setShowText($result->BLOOD_PRESSURE);
+            $data["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($result->BLOOD_PRESSURE_SYSTOLIC);
+			$data["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($result->BLOOD_PRESSURE_DIASTOLIC);
+			$data["TEMPERATURE"] = setShowText($result->TEMPERATURE);
 
             $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
             if ($LIST_CHECKBOX) {
@@ -536,7 +548,9 @@ class StudentHealthDBAccess {
                         $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
                         $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
                         $data[$i]["PULSE"] = setShowText($value->PULSE);
-                        $data[$i]["BLOOD_PRESSURE"] = setShowText($value->BLOOD_PRESSURE);
+                        $data[$i]["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($value->BLOOD_PRESSURE_SYSTOLIC);
+                        $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
+                        $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
                         break;
                 }
 

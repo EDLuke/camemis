@@ -113,7 +113,6 @@ Ext.onReady(function() {
 
             break;
         case "BMI":
-            
             $OBJECT_GRID->addReadField("name: 'GENDER'");
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
@@ -128,19 +127,22 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
 
         break;
-        case "GROWTH_CHART":
-                
+        case "GROWTH_CHART":   
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
             $OBJECT_GRID->addReadField("name: 'PULSE'");
-            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE'");
+            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_SYSTOLIC'");
+            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_DIASTOLIC'");
+            $OBJECT_GRID->addReadField("name: 'TEMPERATURE'");
             $OBJECT_GRID->addReadField("name: 'DELETE'");
 
             $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
-            $OBJECT_GRID->addColumn("header: '<b>Blood Pressure</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE'"); 
-            
+            $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
+            $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'"); 
+            $OBJECT_GRID->addColumn("header: '<b>Temperature</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
+        
         break;
         case "MEDICAL_VISIT":
             $OBJECT_GRID->addReadField("name: 'FULL_NAME'");

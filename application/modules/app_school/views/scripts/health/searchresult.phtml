@@ -108,16 +108,16 @@ tr.filter-row-header .filter-row-icon input {
                 break;
             case "VISION":
                 $title = "Vision";
-                $OBJECT_GRID->addReadField("name: 'OTHER'");
+                //$OBJECT_GRID->addReadField("name: 'OTHER'");
                 $OBJECT_GRID->addReadField("name: 'EYE_TREATMENT'");
                 $OBJECT_GRID->addReadField("name: 'EYE_CHART'");
                 $OBJECT_GRID->addReadField("name: 'VALUES_OF_LEFT_EYE'");
                 $OBJECT_GRID->addReadField("name: 'VALUES_OF_RIGHT_EYE'");
-                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Other</b>',dataIndex: 'OTHER',width: 150");
-                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye treatment</b>',dataIndex: 'EYE_TREATMENT',width: 200");
-                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye chart</b>',dataIndex: 'EYE_CHART',width: 200");
-                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of left eye</b>',dataIndex: 'VALUES_OF_LEFT_EYE',width: 140");
-                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Values of right eye</b>',dataIndex: 'VALUES_OF_RIGHT_EYE',width: 140");
+                //OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Other</b>',dataIndex: 'OTHER',width: 150");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Diagnosis</b>',dataIndex: 'EYE_TREATMENT',width: 200");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Eye Chart Used</b>',dataIndex: 'EYE_CHART',width: 200");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Value Left Eye</b>',dataIndex: 'VALUES_OF_LEFT_EYE',width: 140");
+                $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Value Right Eye</b>',dataIndex: 'VALUES_OF_RIGHT_EYE',width: 140");
                 break;
             case "VACCINATION":
                 $title = "Vaccination";
@@ -139,14 +139,14 @@ tr.filter-row-header .filter-row-icon input {
                 $OBJECT_GRID->addReadField("name: 'KIND_OF_INJURY'");
                 $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Location</b>',dataIndex: 'LOCATION',width: 200");
                 $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Kind of Injury</b>',dataIndex: 'KIND_OF_INJURY',width: 200");
-
                 break;
             case "BMI":
                 $title = "Body Mass Index";
                 
                 $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
                 $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
-            
+
+				$OBJECT_GRID->addReadField("name: 'Gender'");
                 $OBJECT_GRID->addReadField("name: 'WEIGHT'");
                 $OBJECT_GRID->addReadField("name: 'HEIGHT'");
                 $OBJECT_GRID->addReadField("name: 'BMI'");
@@ -154,6 +154,7 @@ tr.filter-row-header .filter-row-icon input {
                 $OBJECT_GRID->addReadField("name: 'STANDARD'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
 
+				$OBJECT_GRID->addColumn("header: '<b>""</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'Gender'");
                 $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
                 $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
                 $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
@@ -163,21 +164,25 @@ tr.filter-row-header .filter-row-icon input {
 
             break;
             case "GROWTH_CHART":
-                $title = "Growth Chart";
-                
+                $title = "Vital Signs";
+
                 $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
                 $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
             
                 $OBJECT_GRID->addReadField("name: 'WEIGHT'");
                 $OBJECT_GRID->addReadField("name: 'HEIGHT'");
                 $OBJECT_GRID->addReadField("name: 'PULSE'");
-                $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE'");
+                $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_SYSTOLIC'");
+                $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_DIASTOLIC'");
+                $OBJECT_GRID->addReadField("name: 'TEMPERATURE'");
                 $OBJECT_GRID->addReadField("name: 'DELETE'");
 
                 $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
                 $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
                 $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
-                $OBJECT_GRID->addColumn("header: '<b>Blood Pressure</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE'"); 
+                $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
+                $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'");
+                $OBJECT_GRID->addColumn("header: '<b>Temperature</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'");  
 
             break;
             case "MEDICAL_VISIT":
@@ -192,7 +197,7 @@ tr.filter-row-header .filter-row-icon input {
 
                 $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showTextRed, sortable: false, dataIndex: 'NEXT_VISIT'");
                 $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'FULL_NAME'");
-                $OBJECT_GRID->addColumn("header: '<b>Visited by</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
+                $OBJECT_GRID->addColumn("header: '<b>Seen By</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
                 $OBJECT_GRID->addColumn("header: '<b>".LOCATION."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'LOCATION'");
                 $OBJECT_GRID->addColumn("header: '<b>Reason</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'REASON'");
                 $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'COMMENT'");
