@@ -373,6 +373,9 @@ class StudentHealthDBAccess {
                     $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
                     $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
                     $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
+                    $data[$i]["BMI_Z_SCORE"] = setshowText($value->BMI_Z_SCORE);
+                    $data[$i]["WT_Z_SCORE"] = setshowText($value->WT_Z_SCORE);
+                    $data[$i]["HT_Z_SCORE"] = setshowText($value->HT_Z_SCORE);
                     break;
 
                 case "GROWTH_CHART":
@@ -434,6 +437,9 @@ class StudentHealthDBAccess {
             $data["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($result->BLOOD_PRESSURE_SYSTOLIC);
 			$data["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($result->BLOOD_PRESSURE_DIASTOLIC);
 			$data["TEMPERATURE"] = setShowText($result->TEMPERATURE);
+			$data["BMI_Z_SCORE"] = setShowText($result->BMI_Z_SCORE);
+			$data["WT_Z_SCORE"] = setShowText($result->WT_Z_SCORE);
+			$data["HT_Z_SCORE"] = setShowText($result->HT_Z_SCORE);
 
             $LIST_CHECKBOX = explode(",", $result->CHECKBOX_DATA);
             if ($LIST_CHECKBOX) {
@@ -506,6 +512,9 @@ class StudentHealthDBAccess {
                         $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
                         $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
                         $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
+                        $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
+                        $data[$i]["WT_Z_SCORE"] = setShowText($value->WT_Z_SCORE);
+                        $data[$i]["HT_Z_SCORE"] = setShowText($value->HT_Z_SCORE);
                         break;
 
                     case "DENTAL":
@@ -602,6 +611,9 @@ class StudentHealthDBAccess {
                 $data = array();
                 $data['BMI']   = "'". $value ."'";
                 $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
+                $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
+                $data[$i]["WT_Z_SCORE"] = setShowText($value->WT_Z_SCORE);
+                $data[$i]["HT_Z_SCORE"] = setShowText($value->HT_Z_SCORE);
                 self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
         }

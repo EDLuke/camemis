@@ -118,6 +118,9 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'HEIGHT'");
             $OBJECT_GRID->addReadField("name: 'BMI'");
             $OBJECT_GRID->addReadField("name: 'STATUS'");
+            $OBJECT_GRID->addReadField("name: 'BMI_Z_SCORE'");
+            $OBJECT_GRID->addReadField("name: 'WT_Z_SCORE'");
+            $OBJECT_GRID->addReadField("name: 'HT_Z_SCORE'");
             $OBJECT_GRID->addReadField("name: 'STANDARD'");
             $OBJECT_GRID->addReadField("name: 'DELETE'");
             
@@ -125,6 +128,10 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
             $OBJECT_GRID->addColumn("header: '<b>BMI</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI'");
             $OBJECT_GRID->addColumn("header: '<b>Status</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'STATUS'");
+            $OBJECT_GRID->addColumn("header: '<b>BMI Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI_Z_SCORE'");
+            $OBJECT_GRID->addColumn("header: '<b>Weight Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'WT_Z_SCORE'");
+            $OBJECT_GRID->addColumn("header: '<b>Height Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HT_Z_SCORE'");
+            
 
         break;
         case "GROWTH_CHART":   

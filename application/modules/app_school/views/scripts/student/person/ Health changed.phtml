@@ -1,0 +1,747 @@
+<?
+///////////////////////////////////////////////////////////
+// @Kaom Vibolrith Senior Software Developer
+// Date: 16.02.2014
+// Am Stollheen 18, 55120 Mainz, Germany
+///////////////////////////////////////////////////////////
+require_once 'clients/CamemisPage.php';
+require_once 'clients/CamemisGrid.php';
+require_once 'clients/CamemisField.php';
+require_once 'clients/CamemisBar.php';
+require_once 'clients/CamemisForm.php';
+require_once 'include/Common.inc.php';
+require_once 'utiles/Utiles.php';
+require_once 'models/HealthSettingDBAccess.php';
+require_once setUserLoacalization();
+
+$CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
+$OBJECT_FORM = new CamemisForm("DATASET");
+$OBJECT_FORM->setSaveUrl("/student/jsonsave/");
+$OBJECT_FORM->setLoadUrl("/student/jsonload/");
+
+$setId = isset($_GET["setId"])?addText($_GET["setId"]):"";
+$settingId = isset($_GET["settingId"]) ? addText($_GET["settingId"]):"";
+$target = isset($_GET["target"]) ? addText($_GET["target"]):"";
+
+$studentObject = StudentDBAccess::findStudentFromId($this->objectId);
+
+if(!$studentObject){
+    exit;
+}
+
+$FIRST_GRID = new CamemisGrid("HEALTH", "FIRST");
+$FIRST_GRID->setLoadUrl('/student/jsonload/');
+$FIRST_GRID->setSaveUrl('/student/jsonsave/');
+
+$SECOND_GRID = new CamemisGrid("HEALTH", "SECOND");
+$SECOND_GRID->setLoadUrl('/student/jsonload/');
+$SECOND_GRID->setSaveUrl('/student/jsonsave/');
+    
+$facette = StudentHealthDBAccess::findStudentHealth($setId, $this->objectId, false);
+
+if($facette){
+    $target = $facette->OBJECT_TYPE;
+}
+
+$setParams = "objectId=".$this->objectId."";
+$setParams .= "&setId=".$setId."";
+$setParams .= "&target=".$target."";
+$setParams .= "&settingId=".$settingId."";
+
+$WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
+$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+    
+print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
+?>
+<script>
+Ext.onReady(function() {
+    function cssText(value, metadata, record){
+        return '<div style="font-weight:normal; color:#333;">' + value + '</div>';
+    }
+    <?
+    /**
+    * Extjs: s.gif
+    */
+    $CAMEMIS_PAGE_OBJECT->setCostumerCSS();
+    $CAMEMIS_PAGE_OBJECT->setExtDefaultGif();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //Foot	Metre	Decimal	LogMAR
+    $FIRST_GRID->addReadField("name: 'ID'");
+    $FIRST_GRID->addReadField("name: 'EYE_LEFT'");
+    $FIRST_GRID->addReadField("name: 'FOOT'");
+    $FIRST_GRID->addReadField("name: 'METRE'");
+    $FIRST_GRID->addReadField("name: 'DECIMAL'");
+    $FIRST_GRID->addReadField("name: 'LOGMAR'");
+    $FIRST_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".APPLY."</b>'
+        ,dataIndex: 'EYE_LEFT'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    $FIRST_GRID->addColumn("header: '<b>Foot</b>', align:'left', sortable: false, dataIndex: 'FOOT', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>Metre</b>', align:'left', sortable: false, dataIndex: 'METRE', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>Decimal</b>', align:'left', sortable: false, dataIndex: 'DECIMAL', width: 100, renderer: cssText");
+    $FIRST_GRID->addColumn("header: '<b>LogMAR</b>', align:'left', sortable: false, dataIndex: 'LOGMAR', width: 100, renderer: cssText");
+    $FIRST_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'listHealthValuesOfEye'
+    ";
+
+    $FIRST_GRID->setSaveParams("
+        cmd: 'actionStudentHealthEyeInfo'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    $FIRST_GRID->setAftereditCallback("
+        Ext.getCmp('".$FIRST_GRID->getObjectId()."').store.reload(); 
+    ");
+    $FIRST_GRID->loadMask = false;
+    $FIRST_GRID->isPagingToolbar = true;
+    $FIRST_GRID->isGridEditing = true;
+    $FIRST_GRID->isObjectDefaultOnLoad = true;
+    $FIRST_GRID->forceFit = "false";
+    $FIRST_GRID->renderJS();
+
+    $SECOND_GRID->addReadField("name: 'ID'");
+    $SECOND_GRID->addReadField("name: 'EYE_RIGHT'");
+    $SECOND_GRID->addReadField("name: 'FOOT'");
+    $SECOND_GRID->addReadField("name: 'METRE'");
+    $SECOND_GRID->addReadField("name: 'DECIMAL'");
+    $SECOND_GRID->addReadField("name: 'LOGMAR'");
+    $SECOND_GRID->addColumn("
+        xtype: 'checkboxcolumn'
+        ,align: 'center'
+        ,header: '<b>".APPLY."</b>'
+        ,dataIndex: 'EYE_RIGHT'
+        ,disabled: true
+        ,width: 80
+        ,on: 1
+        ,off: 0
+    ");
+    $SECOND_GRID->addColumn("header: '<b>Foot</b>', align:'left', sortable: false, dataIndex: 'FOOT', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>Metre</b>', align:'left', sortable: false, dataIndex: 'METRE', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>Decimal</b>', align:'left', sortable: false, dataIndex: 'DECIMAL', width: 100, renderer: cssText");
+    $SECOND_GRID->addColumn("header: '<b>LogMAR</b>', align:'left', sortable: false, dataIndex: 'LOGMAR', width: 100, renderer: cssText");
+    $SECOND_GRID->baseParams = "
+        start:0
+        ,limit:100
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+        ,cmd: 'listHealthValuesOfEye'
+    ";
+    $SECOND_GRID->setSaveParams("
+        cmd: 'actionStudentHealthEyeInfo'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    $SECOND_GRID->setAftereditCallback("
+        Ext.getCmp('".$SECOND_GRID->getObjectId()."').store.reload(); 
+    ");
+    $SECOND_GRID->loadMask = false;
+    $SECOND_GRID->isPagingToolbar = true;
+    $SECOND_GRID->isObjectDefaultOnLoad = true;
+    $SECOND_GRID->isGridEditing = true;
+    $SECOND_GRID->forceFit = "false";
+    $SECOND_GRID->renderJS();
+    ////////////////////////////////////////////////////////////////////////////
+    
+    $DETAIL_INFORMATION_ITEMS = "";
+    $DETAIL_INFORMATION_ITEMS .= "{".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}";
+    
+    $PERSONAL_INFORMATION = "
+    {
+        title: '".PERSONAL_INFORMATION."'
+        ,autoHeight: true
+        ,collapsible: true
+        ,collapsed: false
+        ,style: 'padding-bottom:5px'
+        ,width: 550
+        ,bodyStyle: 'padding:3px'
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,frame:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[
+                {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
+                ,{".CamemisField::Displayfield("LASTNAME", LASTNAME, setShowText($studentObject->LASTNAME),false,false,false)."}
+                ,{".CamemisField::Displayfield("DATE_BIRTH", DATE_BIRTH, getShowDate($studentObject->DATE_BIRTH),false,false,false)."}
+                ,{".CamemisField::Displayfield("AGE", AGE, StudentDBAccess::getAge($studentObject->ID),false,false,false)."}
+            ]
+        }]
+    }";
+    
+    switch($target){
+        case "VISION":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textfield('OTHER', 'OTHER', "Other", true)."}";
+            break;
+        case "MEDICAL_VISIT":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Datefield("NEXT_VISIT", 'Next Visit',false,false,false)."}";
+            $DETAIL_INFORMATION_ITEMS .= ",{
+                xtype: 'textfield'
+                ,emptyText: 'HH:MM'
+                ,name: 'NEXT_VISIT_TIME'
+                ,fieldLabel: '".TIME."'
+                ,width: 250
+                ,allowBlank:false
+            }";
+            break;
+        case "INJURY":
+            $DETAIL_INFORMATION_ITEMS .= ",{".CamemisField::Textarea("LOCATION", LOCATION, 60, false, false, false, 250)."}";
+            break;
+    }
+    
+    $DETAIL_INFORMATION = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[".$DETAIL_INFORMATION_ITEMS."]
+        }]
+    }";
+
+    $DESCRIPTION = "
+    {
+        title: '".DESCRIPTION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,height: 100
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; padding:3px'
+            ,items: [{".CamemisField::Textarea("DESCRIPTION", false,200)."}]
+        }]
+    }
+    ";
+    
+    $DOCTOR_COMMENT = "
+    {
+        title: 'Doctor Comment'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,height: 100
+        ,items:[{
+            layout: 'fit'
+            ,border: false
+            ,bodyStyle: 'background:#FFF; padding:3px'
+            ,items: [{".CamemisField::Textarea("DOCTOR_COMMENT", false,200)."}]
+        }]
+    }
+    ";
+    
+    $MEDICAL_VISIT = "
+    {
+        title: 'Visited by'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [
+                {".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}
+                ,{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("MEDICAL_VISIT_BY"),2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}
+            ]
+        }]
+    },{
+        title: 'Reason'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_REASON"))."}]
+        }]
+    }
+    ";
+    
+    $BODY_MASS_INDEX = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[
+                {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
+                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', $WEIGHT_NAME, true, false)."}
+                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', $HEIGHT_NAME, true, false)."}
+            ]
+        }]
+    }
+    ";
+     
+    $VACCINATION = "
+    {
+        title: 'Types of Vaccines'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(1, HealthSettingDBAccess::getListObjectIndizes("TYPES_OF_VACCINES"))."}]
+        }]
+    }
+    ";
+    
+    $VITAMIN = "
+    {
+        title: 'Vitamins and Deworming'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING"))."}]
+        }]
+    },{
+        title: 'Deworming Pill'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("VITAMINS_DEWORMING_PILL"),1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_DEWORMING_PILL"))."}]
+        }]
+    },{
+        title: 'Multiple micronutrient supplementation'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("VITAMINS_MMS"),1, HealthSettingDBAccess::getListObjectIndizes("VITAMINS_MMS"))."}]
+        }]
+    }
+    ";
+    
+    $VISION = "
+    {
+        title: 'Eye Chart Used'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("EYE_CHART"),2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
+        }]
+    },{
+            title: 'Value Left Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
+        },{
+            title: 'Value Right Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
+        },{
+        title: 'Diagnosis'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("EYE_TREATMENT"))."}]
+        }]
+    }
+        ";
+    
+   if($facette){
+        $VISION .= "
+        ,{
+            title: 'Value Left Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$FIRST_GRID->getObjectXtype()."'}]
+        },{
+            title: 'Value Right Eye'
+            ,collapsible: true
+            ,collapsed: false
+            ,style: 'padding-bottom: 5px'
+            ,width: 550
+            ,height:420
+            ,layout:'fit'
+            ,items:[{xtype: '".$SECOND_GRID->getObjectXtype()."'}]
+        }
+        ";
+    }
+
+    
+    $GROWTH_CHART = "
+    {
+        title: '".DETAIL_INFORMATION."'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items:[
+                {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
+                ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', $WEIGHT_NAME, true, false)."}
+                ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', $HEIGHT_NAME, true, false)."}
+                ,{".CamemisField::Numberfield('PULSE', 'PULSE', 'Pulse', true, false)."}
+                ,{".CamemisField::Numberfield('BLOOD_PRESSURE_SYSTOLIC', 'BLOOD_PRESSURE_SYSTOLIC', 'BP Systolic', true, false)."}
+                ,{".CamemisField::Numberfield('BLOOD_PRESSURE_DIASTOLIC', 'BLOOD_PRESSURE_DIASTOLIC', 'BP Diastolic', true, false)."}
+                ,{".CamemisField::Numberfield('TEMPERATURE', 'TEMPERATURE', 'Temperature', true, false)."}]
+        }]
+    }
+    ";
+    
+    $INJURY = "
+    {
+        title: 'Kind of injury'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("KIND_OF_INJURY"))."}]
+        }]
+    }
+    ";
+    
+    $DENTAL = "
+    {
+        title:'Exam Type'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_EXAM_TYPE"))."}]
+        }]
+    },{
+        title: 'Fluoride Treatment'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_FLUORIDE_TREATMENT"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_FLUORIDE_TREATMENT"))."}]
+        }]
+    },{
+        title: 'X-rays'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_X_RAYS"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_X_RAYS"))."}]
+        }]
+    },{
+        title: 'Dental Caries'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("DENTAL_CARIES"),1, HealthSettingDBAccess::getListObjectIndizes("DENTAL_CARIES"))."}]
+        }]
+    },{
+        title: 'Tooth Number'
+        ,collapsible: true
+        ,collapsed: false
+        ,autoHeight: true
+        ,style: 'padding-bottom: 5px'
+        ,width: 550
+        ,items:[{
+            layout: 'form'
+            ,border: false
+            ,autoHeight:true
+            ,bodyStyle: 'padding:10px'
+            ,items: [{".setExtCheckboxGroup(2, HealthSettingDBAccess::getListObjectIndizes("DENTAL_TOOTH_NUMBER"))."}]
+        }]
+    }
+    ";
+    
+    $FORM_ITEMS = "[";
+    
+    $FORM_ITEMS .= $PERSONAL_INFORMATION;
+    switch($target){
+        case "BMI":
+            $FORM_ITEMS .= ",".$BODY_MASS_INDEX;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "INJURY":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$INJURY;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "GROWTH_CHART":
+            $FORM_ITEMS .= ",".$GROWTH_CHART;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "MEDICAL_VISIT":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$MEDICAL_VISIT;
+            $FORM_ITEMS .= ",".$DOCTOR_COMMENT;
+            break;
+        case "DENTAL":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$DENTAL;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VACCINATION":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VACCINATION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VISION":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VISION;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        case "VITAMIN":
+            $FORM_ITEMS .= ",".$DETAIL_INFORMATION;
+            $FORM_ITEMS .= ",".$VITAMIN;
+            $FORM_ITEMS .= ",".$DESCRIPTION;
+            break;
+        default:
+            if (is_numeric($settingId)){
+                $FORM_ITEMS .= "".$DETAIL_INFORMATION;
+                $FORM_ITEMS .= ",".$DESCRIPTION;
+            }
+            break;
+    }
+    
+    $FORM_ITEMS .= "]";
+    $items = "
+        border: false
+        ,id: 'FORM_ITEMS'
+        ,bodyStyle: 'padding:0px'
+        ,items: ".$FORM_ITEMS."
+    ";
+    $OBJECT_FORM->addObjectItems($items);
+
+    $OBJECT_FORM->addTBarItems("
+        text: '".CANCEL."'
+        ,id: 'CANCEL_ID'
+        ,formBind:true
+        ,iconCls:'icon-cancel'
+        ,scope:this
+        ,handler: function(){
+            window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+        }
+    ");
+
+    if(is_numeric($setId)){
+        if(UserAuth::getUserType()=='SUPERADMIN' || UserAuth::getUserType()=='ADMIN'){ //@veasna
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarFormEasyRemoveObject());
+        }
+    }
+    if(UserAuth::getUserType()=='SUPERADMIN' || UserAuth::getUserType()=='ADMIN'){ //@veasna
+        $OBJECT_FORM->addTBarItems(CamemisBar::tbarSingleSave());
+    }
+    $OBJECT_FORM->setLoadParams("
+        cmd: 'loadStudentHealth'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    
+    $OBJECT_FORM->setSaveParams("
+        cmd: 'createStudentHealth'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+
+    $OBJECT_FORM->setRemoveParams("
+        cmd: 'deleteStudentHealth'
+        ,camIds:'".$this->urlEncryp->encryptedGet($setParams)."'
+    ");
+    
+    $OBJECT_FORM->setonEmbeddedEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        var result = Ext.util.JSON.decode(action.response.responseText);
+        window.location='".$_SERVER["REQUEST_URI"]."&setId='+result.setId;
+        if (window.parent.Ext.getCmp('HEALTH_LIST_ID')) window.parent.Ext.getCmp('HEALTH_LIST_ID').store.reload();
+    ");
+
+    $OBJECT_FORM->setOnEmbeddedRemoveEvents("
+        XMsg('".STATUS."','".ACTION_SUCCESSFULLY_SAVED."');
+        if (window.parent.Ext.getCmp('HEALTH_LIST_ID')) window.parent.Ext.getCmp('HEALTH_LIST_ID').store.reload();
+        window.parent.Ext.getCmp('content').getLayout().setActiveItem(0);
+    ");
+
+    $OBJECT_FORM->isObjectDefaultOnLoad = ($setId !="new")?true:false;
+    $OBJECT_FORM->labelAlign = "left";
+    $OBJECT_FORM->labelWidth = 120;
+    $OBJECT_FORM->renderJS();
+    
+    $setParams = "objectId=".$setId."";
+    $setParams .= "&template=health";
+    $setParams .= "&count=3";
+    
+    $FIRST_OPTION ="
+    [{
+        xtype: 'tabpanel'
+        ,tabPosition: 'top'
+        ,plain:true
+        ,activeTab: 0
+        ,enableTabScroll:true
+        ,items:[{
+            title:'".MAIN_CONTENT."'
+            ,layout: 'fit'
+            ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+        }]
+    }]
+    ";
+    
+    $SECOND_OPTION ="
+    [{
+        xtype: 'tabpanel'
+        ,tabPosition: 'top'
+        ,plain:true
+        ,activeTab: 0
+        ,enableTabScroll:true
+        ,items:[{
+            title:'".MAIN_CONTENT."'
+            ,layout: 'fit'
+            ,items: [{xtype: '".$OBJECT_FORM->getObjectXType()."'}]
+        },{
+            title:'".ATTACHMENT."'
+            ,layout: 'fit'
+            ,items: [new Ext.ux.IFrameComponent({ id: 'ATTACHMENT', url:'/dataset/attachment/?camIds=".$this->urlEncryp->encryptedGet($setParams)."'})]
+        }]
+    }]
+    ";
+    if(is_numeric($setId)){
+        $VIWPORT_ITEMS = $SECOND_OPTION;
+    }else{
+        $VIWPORT_ITEMS = $FIRST_OPTION;
+    }
+    ?>
+    
+    viewport = new Ext.Viewport({
+        layout: 'fit'
+        ,border: false
+        ,items:[{
+            layout:'fit'
+            ,bodyStyle: 'background:<?=CamemisPage::userBgColor();?>;padding:3px'
+            ,border: false
+            ,items:<?=$VIWPORT_ITEMS?>
+        }]
+    });
+});
+</script>
+<?
+print $CAMEMIS_PAGE_OBJECT->showCamemisFooter();
+?>
