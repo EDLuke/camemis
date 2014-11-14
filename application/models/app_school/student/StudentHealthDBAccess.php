@@ -138,6 +138,18 @@ class StudentHealthDBAccess {
         if (isset($params["TEMPERATURE"])) {
             $SAVEDATA['TEMPERATURE'] = addText($params["TEMPERATURE"]);
         }
+        	
+   		if (isset($params["BMI_Z_SCORE"])) {
+            $SAVEDATA['BMI_Z_SCORE'] = addText($params["BMI_Z_SCORE"]);
+        }
+
+        if (isset($params["WT_Z_SCORE"])) {
+            $SAVEDATA['WT_Z_SCORE'] = addText($params["WT_Z_SCORE"]);
+        }
+
+        if (isset($params["HT_Z_SCORE"])) {
+            $SAVEDATA['HT_Z_SCORE'] = addText($params["HT_Z_SCORE"]);
+        }
 
         if (isset($params["LOCATION"])) {
             $SAVEDATA['LOCATION'] = addText($params["LOCATION"]);
@@ -611,9 +623,6 @@ class StudentHealthDBAccess {
                 $data = array();
                 $data['BMI']   = "'". $value ."'";
                 $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
-                $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
-                $data[$i]["WT_Z_SCORE"] = setShowText($value->WT_Z_SCORE);
-                $data[$i]["HT_Z_SCORE"] = setShowText($value->HT_Z_SCORE);
                 self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
         }
