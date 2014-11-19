@@ -48,6 +48,88 @@ class StudentHealthDBAccess {
         return $data;
     }
 
+	//@Luke
+	//Data is from http://www.cdc.gov/growthcharts/2000growthchart-us.pdf
+	private static function getBMIMeanStd($age, $gender){
+	    if($gender == "Male"){
+	        if($age<2.49){return array(89.10,3.66);}
+            else if($age<2.99 ){return array(92.78,3.60);}
+            else if($age<3.49 ){return array(96.82, 4.03);}
+            else if($age<3.99 ){return array(100.45, 4.05);} 
+            else if($age<4.49 ){return array(104.00, 4.43);} 
+            else if($age<4.99 ){return array(107.14,4.63);} 
+            else if($age<5.49 ){return array(110.94, 4.92);} 
+            else if($age<5.99 ){return array(113.89, 4.92);} 
+            else if($age<6.49 ){return array(117.21, 5.45);}
+            else if($age<6.99 ){return array(120.19, 5.49);}
+            else if($age<7.49 ){return array(123.47, 5.62);}
+            else if($age<7.99 ){return array(126.61, 5.90);}
+            else if($age<8.49 ){return array(128.62, 5.76);}
+            else if($age<8.99 ){return array(131.58, 5.93);}
+            else if($age<9.49 ){return array(134.71, 6.22);}
+            else if($age<9.99 ){return array(136.91, 6.51);}
+            else if($age<10.49 ){return array(139.59, 7.67);}
+            else if($age<10.99 ){return array(142.32, 6.61);}
+            else if($age<11.49 ){return array(144.65, 6.87);}
+            else if($age<11.99 ){return array(147.90, 7.31);}
+            else if($age<12.49 ){return array(151.43, 8.05);}
+            else if($age<12.99 ){return array(154.79, 7.81);}
+            else if($age<13.49 ){return array(158.49, 8.47);}
+            else if($age<13.99 ){return array(160.98, 8.88);}
+            else if($age<14.49 ){return array(166.13, 8.53);}
+            else if($age<14.99 ){return array(168.42, 7.79);}
+            else if($age<15.49 ){return array(170.61, 7.67);}
+            else if($age<15.99 ){return array(172.39, 7.47);}
+            else if($age<16.49 ){return array(173.31, 6.78);}
+            else if($age<16.99 ){return array(175.63, 7.46);}
+            else if($age<17.49 ){return array(175.78, 7.92);}
+            else if($age<17.99 ){return array(176.10, 6.88);}
+            else if($age<18.49 ){return array(177.53, 6.87);}
+            else if($age<18.99 ){return array(176.51, 7.01);}
+            else if($age<19.49 ){return array(175.86, 6.30);}
+            else if($age<19.99 ){return array(176.25, 6.36);}
+	    }
+	    else{
+	        if($age<2.49){return array(87.73,4.03 );}
+            else if($age<2.99 ){return array(81.82,3.76);}
+            else if($age<3.49 ){return array(95.75,3.97);}
+            else if($age<3.99 ){return array(99.67,4.21 );} 
+            else if($age<4.49 ){return array(103.05,4.54);} 
+            else if($age<4.99 ){return array(105.98,4.88);} 
+            else if($age<5.49 ){return array(109.87,4.70);} 
+            else if($age<5.99 ){return array(113.77,5.37);} 
+            else if($age<6.49 ){return array(116.46,5.39);}
+            else if($age<6.99 ){return array(119.30,5.66);}
+            else if($age<7.49 ){return array(122.52,5.48);}
+            else if($age<7.99 ){return array(125.27,6.36);}
+            else if($age<8.49 ){return array(128.29,5.83);}
+            else if($age<8.99 ){return array(131.41,5.88);}
+            else if($age<9.49 ){return array(134.30,6.96);}
+            else if($age<9.99 ){return array(136.83,6.76);}
+            else if($age<10.49 ){return array(139.85,6.98);}
+            else if($age<10.99 ){return array(142.88,7.04);}
+            else if($age<11.49 ){return array(146.64,7.53);}
+            else if($age<11.99 ){return array(149.91,7.89);}
+            else if($age<12.49 ){return array(153.19,7.48);}
+            else if($age<12.99 ){return array(156.26,6.89);}
+            else if($age<13.49 ){return array(158.70,6.80);}
+            else if($age<13.99 ){return array(159.36,6.33);}
+            else if($age<14.49 ){return array(160.73,6.40);}
+            else if($age<14.99 ){return array(159.36,6.33);}
+            else if($age<15.49 ){return array(162.34,6.37);}
+            else if($age<15.99 ){return array(163.61,6.32);}
+            else if($age<16.49 ){return array(162.73,6.16);}
+            else if($age<16.99 ){return array(162.37,6.45);}
+            else if($age<17.49 ){return array(162.83,6.64);}
+            else if($age<17.99 ){return array(163.10,6.15);}
+            else if($age<18.49 ){return array(163.82,6.77);}
+            else if($age<18.99 ){return array(163.27,6.24);}
+            else if($age<19.49 ){return array(163.30,5.55);}
+            else if($age<19.99 ){return array(163.33,6.29);}
+	    }
+	    
+	}
+	
     public static function getEyeData($index) {
 
         $result = self::getListEyeDataInfo();
@@ -219,6 +301,7 @@ class StudentHealthDBAccess {
 
         if ($facette) {
             self::calculationBMI($facette->ID);
+			self::calculationZScore($facette->ID); //@Luke
         }
         return array(
             "success" => true
@@ -254,6 +337,22 @@ class StudentHealthDBAccess {
             $SQL->where("STUDENT_ID='" . $studentId . "'");
         //error_log($SQL->__toString());
         return self::dbAccess()->fetchRow($SQL);
+    }
+	
+	//@Luke
+    //could be modified to retrieve other information from student data
+    public static function findStudentAgeGender($Id){
+        $SQL = self::dbAccess()->select();
+        $SQL->from("t_student", array('*'));
+        $SQL->where("ID = ?", $Id);
+        error_log($SQL->__toString());
+	
+		$facette = self::dbAccess()->fetchRow($SQL);
+        $now = new DateTime();
+        $birth = new DateTime($facette->DATE_BIRTH);
+        $age = $now->diff($birth);
+        $ageDecimal = intval($age->y) + intval($age->m) / 12;
+        return array($facette->GENDER, $ageDecimal);
     }
 
     //@veasna
@@ -636,6 +735,41 @@ class StudentHealthDBAccess {
                 $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
                 self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
+        }
+    }
+	
+	public static function calculationZScore($Id) {
+		$facette = self::findStudentHealth($Id, false, false);
+
+        /**
+         * z = (score - mean) / standard deviation
+         */
+		$studentId = $facette->STUDENT_ID;
+		$ageGender = self::findStudentAgeGender($studentId);
+		$age = $ageGender[1];
+		$gender = $ageGender[0];
+		$score = "";
+		switch (HealthSettingDBAccess::unitBMI()) {
+                case 1: //metric?
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
+                        $score = round($facette->WEIGHT / pow($facette->HEIGHT / 100, 2), 2);
+                    }
+                    break;
+                case 2: //imperial?
+                    if (is_numeric($facette->HEIGHT) && is_numeric($facette->WEIGHT)) {
+                        $score = round((($facette->WEIGHT) / pow($facette->HEIGHT * 2.54, 2)) * 703, 2);
+                    }
+                    break;
+            }
+		$meanStd = self::getBMIMeanStd($age, $gender);		
+		
+		$mean = $meanStd[0];
+		$std  = $meanStd[1];
+		$value = round(($score - $mean) / $std);
+        if ($value) {
+            $data = array();
+            $data['ZSCORE']   = "'". $value ."'";
+            self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
         }
     }
 
