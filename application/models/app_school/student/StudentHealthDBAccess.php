@@ -335,6 +335,26 @@ class StudentHealthDBAccess {
             }
 
             switch ($health_type) {
+                
+                case "MEDICAL_VISIT":
+                    if (getShowDate($value->NEXT_VISIT) != "---") {
+                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT) . " " . secondToHour($value->NEXT_VISIT_TIME);
+                    } else {
+                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
+                    }
+
+                    $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
+                    $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
+                    $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
+                    $data[$i]["LOCATION"] = setShowText($value->LOCATION);
+                    $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                    $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                    $data[$i]["PULSE"] = setShowText($value->PULSE);
+                    $data[$i]["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($value->BLOOD_PRESSURE_SYSTOLIC);
+                    $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
+                    $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
+                    break;
+
                 case "DENTAL":
                     $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
                     $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
@@ -347,21 +367,7 @@ class StudentHealthDBAccess {
                     $data[$i]["LOCATION"] = setShowText($value->LOCATION);
                     $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
                     break;
-
-                case "MEDICAL_VISIT":
-
-                    if (getShowDate($value->NEXT_VISIT) != "---") {
-                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT) . " " . secondToHour($value->NEXT_VISIT_TIME);
-                    } else {
-                        $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT);
-                    }
-
-                    $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
-                    $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
-                    $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
-                    $data[$i]["LOCATION"] = setShowText($value->LOCATION);
-                    break;
-
+             
                 case "VACCINATION":
                     $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
                     break;
@@ -519,26 +525,6 @@ class StudentHealthDBAccess {
                 $data[$i]["CREATED_BY"] = setShowText($value->CREATED_BY);
 
                 switch ($target) {
-                    case "BMI":
-                        $data[$i]["BMI"] = setShowText($value->BMI);
-                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
-                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
-                        $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
-                        $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
-                        $data[$i]["WT_Z_SCORE"] = setShowText($value->WT_Z_SCORE);
-                        $data[$i]["HT_Z_SCORE"] = setShowText($value->HT_Z_SCORE);
-                        break;
-
-                    case "DENTAL":
-                        $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
-                        $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
-                        $data[$i]["X_RAYS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_X_RAYS");
-                        $data[$i]["DENTAL_CARIES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_CARIES");
-                        $data[$i]["TOOTH_NUMBER"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_TOOTH_NUMBER");
-                        break;
-                    case "INJURY":
-                        $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
-                        break;
                     case "MEDICAL_VISIT":
                         if (getShowDate($value->NEXT_VISIT) != "---") {
                             $data[$i]["NEXT_VISIT"] = getShowDate($value->NEXT_VISIT) . " " . secondToHour($value->NEXT_VISIT_TIME);
@@ -548,7 +534,32 @@ class StudentHealthDBAccess {
                         $data[$i]["FULL_NAME"] = setShowText($value->DOCTOR_NAME);
                         $data[$i]["VISITED_BY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_BY");
                         $data[$i]["REASON"] = self::getStudentHealthSetting($value->DATA_ITEMS, "MEDICAL_VISIT_REASON");
+                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                        $data[$i]["PULSE"] = setShowText($value->PULSE);
+                        $data[$i]["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($value->BLOOD_PRESSURE_SYSTOLIC);
+                        $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
+                        $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
                         $data[$i]["LOCATION"] = setShowText($value->LOCATION);
+                        break;
+                    case "BMI":
+                        $data[$i]["BMI"] = setShowText($value->BMI);
+                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                        $data[$i]["STATUS"] = self::showBMIStatus($value->STATUS);
+                        $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
+                        $data[$i]["WT_Z_SCORE"] = setShowText($value->WT_Z_SCORE);
+                        $data[$i]["HT_Z_SCORE"] = setShowText($value->HT_Z_SCORE);
+                        break;
+                    case "DENTAL":
+                        $data[$i]["EXAM_TYPE"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_EXAM_TYPE");
+                        $data[$i]["FLUORIDE_TREATMENT"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_FLUORIDE_TREATMENT");
+                        $data[$i]["X_RAYS"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_X_RAYS");
+                        $data[$i]["DENTAL_CARIES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_CARIES");
+                        $data[$i]["TOOTH_NUMBER"] = self::getStudentHealthSetting($value->DATA_ITEMS, "DENTAL_TOOTH_NUMBER");
+                        break;
+                    case "INJURY":
+                        $data[$i]["KIND_OF_INJURY"] = self::getStudentHealthSetting($value->DATA_ITEMS, "KIND_OF_INJURY");
                         break;
                     case "VACCINATION":
                         $data[$i]["TYPES_OF_VACCINES"] = self::getStudentHealthSetting($value->DATA_ITEMS, "TYPES_OF_VACCINES");
