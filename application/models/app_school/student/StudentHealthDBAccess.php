@@ -51,7 +51,7 @@ class StudentHealthDBAccess {
 	//@Luke
 	//Data is from http://www.cdc.gov/growthcharts/2000growthchart-us.pdf
 	private static function getBMIMeanStd($age, $gender){
-	    if($gender == "Male"){
+	    if(strcmp($gender, 'Male')){
 	        if($age<2.49){return array(89.10,3.66);}
             else if($age<2.99 ){return array(92.78,3.60);}
             else if($age<3.49 ){return array(96.82, 4.03);}
@@ -341,6 +341,7 @@ class StudentHealthDBAccess {
 	
 	//@Luke
     //could be modified to retrieve other information from student data
+	//working on the correct age
     public static function findStudentAgeGender($Id){
         $SQL = self::dbAccess()->select();
         $SQL->from("t_student", array('*'));
@@ -348,10 +349,10 @@ class StudentHealthDBAccess {
         error_log($SQL->__toString());
 	
 		$facette = self::dbAccess()->fetchRow($SQL);
-        $now = new DateTime();
+        $now = new DateTime('Y-m-d');
         $birth = new DateTime($facette->DATE_BIRTH);
         $age = $now->diff($birth);
-        $ageDecimal = intval($age->y) + intval($age->m) / 12;
+        $ageDecimal = intval($age->y) + floatval($age->m) / 12;
         return array($facette->GENDER, $ageDecimal);
     }
 
@@ -768,7 +769,7 @@ class StudentHealthDBAccess {
 		$value = round(($score - $mean) / $std);
         if ($value) {
             $data = array();
-            $data['ZSCORE']   = "'". $value ."'";
+            $data['BMI_Z_SCORE']   = "'". $value ."'";
             self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
         }
     }
