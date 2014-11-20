@@ -731,7 +731,7 @@ class StudentHealthDBAccess {
             }
             if ($value) {
                 $data = array();
-                $data['BMI']   = "'". $value ."'";
+                $data['BMI']   = "$value";
                 $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
                 self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
@@ -768,7 +768,7 @@ class StudentHealthDBAccess {
 		$value = round(($score - $mean) / $std);
         if ($value) {
             $data = array();
-            $data['ZSCORE']   = "'". $value ."'";
+            $data['BMI_Z_SCORE']   = "$value";
             self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
         }
     }
