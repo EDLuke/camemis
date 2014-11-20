@@ -2,14 +2,14 @@
 ///////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
 // Date: 18.07.2009
-// Am Stollheen 18, 55120 Mainz, Germany
+///\ Am Stollheen 18, 55120 Mainz, Germany
 ///////////////////////////////////////////////////////////
 require_once 'clients/CamemisPage.php';
 require_once 'clients/CamemisGrid.php';
 require_once 'clients/CamemisField.php';
 require_once 'clients/CamemisBar.php';
 require_once 'include/Common.inc.php';
-require_once setUserLoacalization();
+require_once  setUserLoacalization();
 require_once 'models/HealthSettingDBAccess.php';
 
 $CAMEMIS_PAGE_OBJECT = CamemisPage::getInstance();
@@ -24,9 +24,9 @@ $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
-//$GENDER = HealthSettingDBAccess::unitBMI()?"GENDER";
 $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
 $HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
+$TEMPERATURE_NAME = HealthSettingDBAccess::unitBMI()?"Temperature (".CELIUS.")":"Temperature (".FAHRENHEIT.")";
             
 $params = "objectId=".$this->objectId."";
 $params .= "&target=".$target."";
@@ -65,9 +65,38 @@ Ext.onReady(function() {
     $OBJECT_GRID->addReadField("name: 'CREATED_BY'");
     $OBJECT_GRID->addReadField("name: 'CREATED_DATE'");
 
-    $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 120, renderer: showTextBlue, sortable: false, dataIndex: 'MEDICAL_DATE'");
+    $OBJECT_GRID->addColumn("header: '<b>" . DATE . "</b>', width: 150, renderer: showTextBlue, sortable: false, dataIndex: 'MEDICAL_DATE'");
     
     switch($target){
+        
+        case "MEDICAL_VISIT":
+            $OBJECT_GRID->addReadField("name: 'VISITED_BY'");
+            $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
+            $OBJECT_GRID->addReadField("name: 'LOCATION'");
+            $OBJECT_GRID->addReadField("name: 'REASON'");
+            $OBJECT_GRID->addReadField("name: 'WEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'HEIGHT'");
+            $OBJECT_GRID->addReadField("name: 'PULSE'");
+            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_SYSTOLIC'");
+            $OBJECT_GRID->addReadField("name: 'BLOOD_PRESSURE_DIASTOLIC'");
+            $OBJECT_GRID->addReadField("name: 'TEMPERATURE'");
+            $OBJECT_GRID->addReadField("name: 'COMMENT'");
+            $OBJECT_GRID->addReadField("name: 'NEXT_VISIT'");
+            $OBJECT_GRID->addReadField("name: 'DELETE'");
+            
+            $OBJECT_GRID->addColumn("header: '<b>".LOCATION."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'LOCATION'");
+            $OBJECT_GRID->addColumn("header: '<b>Reason</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'REASON'");
+            $OBJECT_GRID->addColumn("header: '<b>Seen By</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
+            $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'FULL_NAME'");
+            $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showTextRed, sortable: false, dataIndex: 'NEXT_VISIT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$WEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'WEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>".$HEIGHT_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HEIGHT'");
+            $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
+            $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
+            $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'"); 
+            $OBJECT_GRID->addColumn("header: '<b>".$TEMPERATURE_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
+            $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'COMMENT'");  
+        break;
         case "DENTAL":
             $OBJECT_GRID->addReadField("name: 'EXAM_TYPE'");
             $OBJECT_GRID->addReadField("name: 'FLUORIDE_TREATMENT'");
@@ -110,7 +139,6 @@ Ext.onReady(function() {
             $OBJECT_GRID->addReadField("name: 'KIND_OF_INJURY'");
             $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Location</b>',dataIndex: 'LOCATION',width: 200");
             $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>Kind of Injury</b>',dataIndex: 'KIND_OF_INJURY',width: 200");
-
             break;
         case "BMI":
             $OBJECT_GRID->addReadField("name: 'GENDER'");
@@ -131,8 +159,6 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>BMI Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BMI_Z_SCORE'");
             $OBJECT_GRID->addColumn("header: '<b>Weight Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'WT_Z_SCORE'");
             $OBJECT_GRID->addColumn("header: '<b>Height Z Score</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'HT_Z_SCORE'");
-            
-
         break;
         case "GROWTH_CHART":   
             $OBJECT_GRID->addReadField("name: 'WEIGHT'");
@@ -148,30 +174,13 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
             $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
             $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'"); 
-            $OBJECT_GRID->addColumn("header: '<b>Temperature</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
-        
+            $OBJECT_GRID->addColumn("header: '<b>".$TEMPERATURE_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
         break;
-        case "MEDICAL_VISIT":
-            $OBJECT_GRID->addReadField("name: 'FULL_NAME'");
-            $OBJECT_GRID->addReadField("name: 'VISITED_BY'");
-            $OBJECT_GRID->addReadField("name: 'LOCATION'");
-            $OBJECT_GRID->addReadField("name: 'REASON'");
-            $OBJECT_GRID->addReadField("name: 'COMMENT'");
-            $OBJECT_GRID->addReadField("name: 'NEXT_VISIT'");
-            $OBJECT_GRID->addReadField("name: 'DELETE'");
-            
-            $OBJECT_GRID->addColumn("header: '<b>Next Visit</b>', width: 150, renderer: showTextRed, sortable: false, dataIndex: 'NEXT_VISIT'");
-            $OBJECT_GRID->addColumn("header: '<b>".FULL_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'FULL_NAME'");
-            $OBJECT_GRID->addColumn("header: '<b>Seen By</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'VISITED_BY'");
-            $OBJECT_GRID->addColumn("header: '<b>".LOCATION."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'LOCATION'");
-            $OBJECT_GRID->addColumn("header: '<b>Reason</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'REASON'");
-            $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'COMMENT'");
-            
-        break;
+
     }
 
-    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 130");
-    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 130");
+    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_DATE."</b>',dataIndex: 'CREATED_DATE',width: 150");
+    $OBJECT_GRID->addColumn("align: 'left',renderer: showText,header: '<b>".CREATED_BY."</b>',dataIndex: 'CREATED_BY',width: 150");
             
     $OBJECT_GRID->baseParams = "
         start:0
