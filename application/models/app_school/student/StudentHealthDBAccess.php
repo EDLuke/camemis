@@ -219,6 +219,10 @@ class StudentHealthDBAccess {
 
         if (isset($params["TEMPERATURE"])) {
             $SAVEDATA['TEMPERATURE'] = addText($params["TEMPERATURE"]);
+       }
+        	
+   		if (isset($params["BMI"])) {
+            $SAVEDATA['BMI'] = addText($params["BMI"]);
         }
         	
    		if (isset($params["BMI_Z_SCORE"])) {
@@ -554,6 +558,7 @@ class StudentHealthDBAccess {
             $data["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($result->BLOOD_PRESSURE_SYSTOLIC);
 			$data["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($result->BLOOD_PRESSURE_DIASTOLIC);
 			$data["TEMPERATURE"] = setShowText($result->TEMPERATURE);
+			$data["BMI"] = setShowText($result->BMI);
 			$data["BMI_Z_SCORE"] = setShowText($result->BMI_Z_SCORE);
 			$data["WT_Z_SCORE"] = setShowText($result->WT_Z_SCORE);
 			$data["HT_Z_SCORE"] = setShowText($result->HT_Z_SCORE);
@@ -731,7 +736,7 @@ class StudentHealthDBAccess {
             }
             if ($value) {
                 $data = array();
-                $data['BMI']   = "'". $value ."'";
+                $data['BMI']   = "$value";
                 $data['STATUS']= "'". self::calculationBMIStatus($value) ."'";
                 self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
             }
@@ -765,10 +770,10 @@ class StudentHealthDBAccess {
 		
 		$mean = $meanStd[0];
 		$std  = $meanStd[1];
-		$value = round(($score - $mean) / $std);
+		$value = round(($score - $mean) / $std); 
         if ($value) {
             $data = array();
-            $data['ZSCORE']   = "'". $value ."'";
+            $data['BMI_Z_SCORE']   = "$value";
             self::dbAccess()->update("t_student_medical", $data, "ID='". $facette->ID ."'");
         }
     }
