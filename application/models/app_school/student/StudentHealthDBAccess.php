@@ -350,9 +350,9 @@ class StudentHealthDBAccess {
 		$facette = self::dbAccess()->fetchRow($SQL);
         $now = new DateTime();
         $birth = new DateTime($facette->DATE_BIRTH);
-        $age = $now->diff($birth);
-        $ageDecimal = intval($age->y) + intval($age->m) / 12;
-        return array($facette->GENDER, $ageDecimal);
+        $age = $birth->diff($now);
+        $ageDecimal = intval($age->days) / 365.5 / 12;
+        return array((string)($facette->GENDER), $ageDecimal);
     }
 
     //@veasna
