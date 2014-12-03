@@ -25,7 +25,7 @@ $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
-$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";$TEMPERATURE_NAME = HealthSettingDBAccess::unitBMI()?"Temperature (".CELIUS.")":"Temperature (".FAHRENHEIT.")";
+$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
             
 $params = "objectId=".$this->objectId."";
 $params .= "&target=".$target."";
@@ -93,7 +93,7 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
             $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
             $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'"); 
-            $OBJECT_GRID->addColumn("header: '<b>".$TEMPERATURE_NAME."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
+            $OBJECT_GRID->addColumn("header: '<b>Temperature Celcius</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
             $OBJECT_GRID->addColumn("header: '<b>".COMMENT."</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'COMMENT'");  
         break;
         case "DENTAL":
@@ -173,7 +173,7 @@ Ext.onReady(function() {
             $OBJECT_GRID->addColumn("header: '<b>Pulse</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'PULSE'");
             $OBJECT_GRID->addColumn("header: '<b>BP Systolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_SYSTOLIC'");
             $OBJECT_GRID->addColumn("header: '<b>BP Diastolic</b>', width: 150, renderer: showText, sortable: false, dataIndex: 'BLOOD_PRESSURE_DIASTOLIC'"); 
-            $OBJECT_GRID->addColumn("header: '<b>".$TEMPERATURE_NAME."</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
+            $OBJECT_GRID->addColumn("header: '<b>Temperature Celcius</b>', width: 200, renderer: showText, sortable: false, dataIndex: 'TEMPERATURE'"); 
         break;
 
     }
