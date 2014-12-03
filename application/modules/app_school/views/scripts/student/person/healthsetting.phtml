@@ -25,8 +25,7 @@ $OBJECT_GRID->setSaveUrl('/student/jsonsave/');
 print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
 
 $WEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Weight (".KILOGRAMS.")":"Weight (".POUNDS.")";
-$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";
-$TEMPERATURE_NAME = HealthSettingDBAccess::unitBMI()?"Temperature (".CELIUS.")":"Temperature (".FAHRENHEIT.")";
+$HEIGHT_NAME = HealthSettingDBAccess::unitBMI()?"Height (".CENTIMETERS.")":"Height (".INCHES.")";$TEMPERATURE_NAME = HealthSettingDBAccess::unitBMI()?"Temperature (".CELIUS.")":"Temperature (".FAHRENHEIT.")";
             
 $params = "objectId=".$this->objectId."";
 $params .= "&target=".$target."";

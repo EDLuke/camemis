@@ -168,10 +168,11 @@ Ext.onReady(function() {
             ,frame:true
             ,bodyStyle: 'padding:10px'
             ,items:[
-                {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
+                 {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
                 ,{".CamemisField::Displayfield("LASTNAME", LASTNAME, setShowText($studentObject->LASTNAME),false,false,false)."}
                 ,{".CamemisField::Displayfield("DATE_BIRTH", DATE_BIRTH, getShowDate($studentObject->DATE_BIRTH),false,false,false)."}
                 ,{".CamemisField::Displayfield("AGE", AGE, StudentDBAccess::getAge($studentObject->ID),false,false,false)."}
+                ,{".CamemisField::Displayfield("GENDER_NAME", GENDER_NAME, getGenderName($studentObject->GENDER),false,false,false)."}  
             ]
         }]
     }";
@@ -333,9 +334,10 @@ Ext.onReady(function() {
                  {".CamemisField::Datefield("MEDICAL_DATE", DATE,true,false,false)."}
                 ,{".CamemisField::Numberfield('WEIGHT', 'WEIGHT', $WEIGHT_NAME, true, false)."}
                 ,{".CamemisField::Numberfield('HEIGHT', 'HEIGHT', $HEIGHT_NAME, true, false)."}
-                ,{".CamemisField::Textfield('BMI_Z_SCORE', 'BMI_Z_SCORE', 'BMI Z Score', false, false)."}
-                ,{".CamemisField::Textfield('WT_Z_SCORE', 'WT_Z_SCORE', 'Weight Z Score', false, false)."}
-                ,{".CamemisField::Textfield('HT_Z_SCORE', 'HT_Z_SCORE', 'Height Z Score', false, false)."}]
+                ,{".CamemisField::Textfield('BMI', 'BMI', 'BMI', false, true)."}
+                ,{".CamemisField::Textfield('BMI_Z_SCORE', 'BMI_Z_SCORE', 'BMI Z Score', false, true)."}
+                ,{".CamemisField::Textfield('WT_Z_SCORE', 'WT_Z_SCORE', 'Weight Z Score', false, true)."}
+                ,{".CamemisField::Textfield('HT_Z_SCORE', 'HT_Z_SCORE', 'Height Z Score', false, true)."}]
         }]
     }
     ";
@@ -480,7 +482,7 @@ Ext.onReady(function() {
                 ,{".CamemisField::Numberfield('PULSE', 'PULSE', 'Pulse', false, false)."}
                 ,{".CamemisField::Numberfield('BLOOD_PRESSURE_SYSTOLIC', 'BLOOD_PRESSURE_SYSTOLIC', 'BP Systolic', false, false)."}
                 ,{".CamemisField::Numberfield('BLOOD_PRESSURE_DIASTOLIC', 'BLOOD_PRESSURE_DIASTOLIC', 'BP Diastolic', false, false)."}
-                ,{".CamemisField::Numberfield('TEMPERATURE', 'TEMPERATURE', TEMPERATURE, false, false)."}]
+                
         }]
     }
     ";

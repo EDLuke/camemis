@@ -715,7 +715,7 @@ class StudentHealthDBAccess {
 			else if($age<239.5){return array(1.16863827, 176.8414914, 0.04036818);}
 			else if($age<240){return array(1.167279219, 176.8492322, 0.040369574);}
 		}else{
-			else if($age<24){return array(1.07244896, 84.97555512, 0.040791394);}
+			 if($age<24){return array(1.07244896, 84.97555512, 0.040791394);}
 			else if($age<24.5){return array(1.051272912, 85.3973169, 0.040859727);}
 			else if($age<25.5){return array(1.041951175, 86.29026318, 0.041142161);}
 			else if($age<26.5){return array(1.012592236, 87.15714182, 0.041349399);}
@@ -1601,11 +1601,11 @@ class StudentHealthDBAccess {
         $SQL->where("ID = ?", $Id);
         error_log($SQL->__toString());
 	
-		$facette = self::dbAccess()->fetchRow($SQL);
-        $now = new DateTime();
+        $facette = self::dbAccess()->fetchRow($SQL);
+        $mdate = new DateTime($facette->MEDICAL_DATE);
         $birth = new DateTime($facette->DATE_BIRTH);
-        $age = $birth->diff($now);
-        $ageDecimal = intval($age->days) / 365.5 / 12;
+        $aid = $mdate->diff($birth)->format('%a days');
+        $ageDecimal = (($aid / 365.5) * 12);
         return array((string)($facette->GENDER), $ageDecimal);
     }
 
@@ -2014,14 +2014,14 @@ class StudentHealthDBAccess {
                         $score = round((($facette->WEIGHT) / pow($facette->HEIGHT * 2.54, 2)) * 703, 2);
                     }
                     break;
-            }
-			
+            }     
+		
 		//BMI zscore
 		$meanStd = self::getBmiLMS($age, $gender);		
 		
-		$l = $meanStd[0];
-		$m  = $meanStd[1];
-		$s = $meanStd[2];
+		$L = $meanStd[0];
+		$M  = $meanStd[1];
+		$S = $meanStd[2];
 		$value = round (((($score / $M) ** $L) - 1) / ($S * $L), 2);
         if ($value) {
             $data = array();
@@ -2031,9 +2031,9 @@ class StudentHealthDBAccess {
 		
 		//Weight zscore
 		$meanStd = self::getWtLMS($age, $gender);	
-		$l = $meanStd[0];
-		$m  = $meanStd[1];
-		$s = $meanStd[2];
+		$L = $meanStd[0];
+		$M  = $meanStd[1];
+		$S = $meanStd[2];
 		$value = round (((($facette->WEIGHT / $M) ** $L) - 1) / ($S * $L), 2);
         if ($value) {
             $data = array();
@@ -2043,9 +2043,9 @@ class StudentHealthDBAccess {
 		
 		//Height zscore
 		$meanStd = self::getHtLMS($age, $gender);
-		$l = $meanStd[0];
-		$m  = $meanStd[1];
-		$s = $meanStd[2];
+		$L = $meanStd[0];
+		$M  = $meanStd[1];
+		$S = $meanStd[2];
 		$value = round (((($facette->HEIGHT / $M) ** $L) - 1) / ($S * $L), 2);
         if ($value) {
             $data = array();
@@ -2056,7 +2056,7 @@ class StudentHealthDBAccess {
 
     public static function calculationBMIStatus($value) {
         /**
-         * Underweight = <18.5
+          Underweight = <18.5
           Normal weight = 18.5–24.9
           Overweight = 25–29.9
           Obesity = BMI of 30 or greater
@@ -2096,7 +2096,7 @@ class StudentHealthDBAccess {
                 break;
         }
 
-        return $result;
+        return $result; 
     }
 
     public static function getHealthSetting($Id) {
