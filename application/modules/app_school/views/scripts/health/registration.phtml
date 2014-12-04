@@ -325,7 +325,7 @@ $STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_W
             ,{".CamemisField::Datefield("vision_date_taken", "Date Taken")."}
             ,{".CamemisField::Textfield("vision_right_eye", "right_eye", "Right Eye")."}
             ,{".CamemisField::Textfield("vision_left_eye", "left_eye", "Left Eye")."}
-            ,{".CamemisField::Textfield("vision_chart_type", "chart_type", "Chart Type Used")."}
+            ,{".CamemisField::Textfield("vision_chart_type", "chart_type", "Chart Type")."}
             ,{".CamemisField::Textfield("vision_initials", "initials", "Initials")."}
             ,{".CamemisField::Textfield("vision_referrals", "referrals", "Referrals")."}
             ,{".CamemisField::Textfield("vision_comments", "comments", "Comments")."}
@@ -423,7 +423,7 @@ $STUDENT_REGISTRATION_EDIT_RIGHT = UserAuth::getACLValue("STUDENT_REGISTRATION_W
             ,layout: 'form'
             ,items: ".$dentalItems."
         },{
-            title: 'Vital Sign Information'
+            title: 'Growth Chart Information'
             ,bodyStyle: 'padding:10px'
             ,width: 520
             ,layout: 'form'

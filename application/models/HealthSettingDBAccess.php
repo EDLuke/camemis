@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // @Kaom Vibolrith Senior Software Developer
 // Date: 16.02.2014
-// Am Stollheen 18, 55120 Mainz, Germanyc
+// Am Stollheen 18, 55120 Mainz, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
 require_once 'utiles/Utiles.php';
@@ -34,7 +34,6 @@ Class HealthSettingDBAccess {
     public static function unitBMI() {
         $facette = Zend_Registry::get('SCHOOL')->HEALTH_BMI_STANDARD;
         return $facette ? $facette : 1;
-        
     }
 
     public static function jsonSaveHealthSetting($params) {

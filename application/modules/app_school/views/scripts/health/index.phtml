@@ -227,20 +227,14 @@ print $CAMEMIS_PAGE_OBJECT->showCamemisHeader();
                 case 'MEDICAL_VISIT':
                     Ext.getCmp('MEDICAL_VISIT').show();
                     Ext.getCmp('BMI').hide();
-                  
-                   
                 break;
                 case 'BMI':
                     Ext.getCmp('MEDICAL_VISIT').hide();
                     Ext.getCmp('BMI').show();
-                 
-                    
                 break;
             	default:
-               		 Ext.getCmp('MEDICAL_VISIT').hide();
-                	 Ext.getCmp('BMI').hide();
-                
-                     
+                	Ext.getCmp('MEDICAL_VISIT').hide();
+                	Ext.getCmp('BMI').hide();
                 break;
             }
         });
