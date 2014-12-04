@@ -1757,6 +1757,11 @@ class StudentHealthDBAccess {
                     $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
                     $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
                     break;
+                case "Z_SCORES";
+                	$data[$i]["BMI_Z_SCORE"] = setshowText($value->BMI_Z_SCORE);
+                    $data[$i]["WT_Z_SCORE"] = setshowText($value->WT_Z_SCORE);
+                    $data[$i]["HT_Z_SCORE"] = setshowText($value->HT_Z_SCORE);
+                    break;
             }
 
             $data[$i]["CREATED_DATE"] = getShowDateTime($value->CREATED_DATE);
@@ -1936,6 +1941,13 @@ class StudentHealthDBAccess {
                         $data[$i]["BLOOD_PRESSURE_SYSTOLIC"] = setShowText($value->BLOOD_PRESSURE_SYSTOLIC);
                         $data[$i]["BLOOD_PRESSURE_DIASTOLIC"] = setShowText($value->BLOOD_PRESSURE_DIASTOLIC);
                         $data[$i]["TEMPERATURE"] = setShowText($value->TEMPERATURE);
+                        break;
+                    case "Z_SCORES":
+                        $data[$i]["WEIGHT"] = setShowText($value->WEIGHT);
+                        $data[$i]["HEIGHT"] = setShowText($value->HEIGHT);
+                        $data[$i]["BMI_Z_SCORE"] = setShowText($value->BMI_Z_SCORE);
+                        $data[$i]["WT_Z_SCORE"] =  setShowText($value->WT_Z_SCORE);
+                        $data[$i]["HT_Z_SCORE"] =  setShowText($value->HT_Z_SCORE);
                         break;
                 }
 
