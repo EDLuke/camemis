@@ -168,7 +168,7 @@ Ext.onReady(function() {
             ,frame:true
             ,bodyStyle: 'padding:10px'
             ,items:[
-                 {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
+                {".CamemisField::Displayfield("FIRSTNAME", FIRSTNAME, setShowText($studentObject->FIRSTNAME),false,false,false)."}
                 ,{".CamemisField::Displayfield("LASTNAME", LASTNAME, setShowText($studentObject->LASTNAME),false,false,false)."}
                 ,{".CamemisField::Displayfield("DATE_BIRTH", DATE_BIRTH, getShowDate($studentObject->DATE_BIRTH),false,false,false)."}
                 ,{".CamemisField::Displayfield("AGE", AGE, StudentDBAccess::getAge($studentObject->ID),false,false,false)."}
@@ -269,7 +269,8 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items: [
                 {".CamemisField::Textfield('FULL_NAME', 'FULL_NAME',FULL_NAME, true)."}
-                ,{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("MEDICAL_VISIT_BY"),2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}]
+                ,{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("MEDICAL_VISIT_BY"),2, HealthSettingDBAccess::getListObjectIndizes("MEDICAL_VISIT_BY"))."}
+            ]
         }]
     },{
         title: 'Reason'
@@ -435,10 +436,10 @@ Ext.onReady(function() {
             ,bodyStyle: 'padding:10px'
             ,items: [{".setExtRadioGroup(HealthSettingDBAccess::getIndexParentId("EYE_CHART"),2, HealthSettingDBAccess::getListObjectIndizes("EYE_CHART"))."}]
         }]
-	}
+    }
     ";
     
-   if($facette){
+    if($facette){
         $VISION .= "
         ,{
             title: 'Value Left Eye'
@@ -461,7 +462,7 @@ Ext.onReady(function() {
         }
         ";
     }
-
+    
     $GROWTH_CHART = "
     {
         title: '".DETAIL_INFORMATION."'
